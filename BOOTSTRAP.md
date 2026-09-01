@@ -11,12 +11,14 @@ in [WORKSPACE_PROVENANCE.md](WORKSPACE_PROVENANCE.md) and
 
 Before a bounded change:
 
-1. inspect the current branch, `HEAD`, remote state, and working-tree status;
-2. read [README.md](README.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md),
+1. read the committed generic projection in
+   `docs/ai-development/GENERATED_PROJECTION.md`;
+2. read `docs/ai-development/WORKSPACE_DEVELOPMENT_EXTENSION.md` and then
+   [README.md](README.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md),
    [ROADMAP.md](ROADMAP.md), and [AGENTS.md](AGENTS.md);
-3. identify the affected product boundary and validation needed; and
+3. identify the affected Workspace product boundary and validation needed; and
 4. run `bash scripts/validate.sh` before review.
 
-This is temporary repository-local development guidance pending the future
-family AI-development contract authority. It creates no generic authority and
-does not authorize Engineering Platform Managed execution.
+The committed projection is the generic authority and requires no sibling
+checkout or network access. This local entrypoint does not authorize
+Engineering Platform execution.

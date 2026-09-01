@@ -12,8 +12,9 @@ Workspace is a first-class peer of Forge. Preserve these boundaries:
   import its source or implement its consumer adapter without a bounded task.
 - TDE remains a separate product; do not copy its implementation or product
   documents here.
-- Generic AI-development contracts are pending family normalization. Keep this
-  guidance local to Workspace and do not promote it as a family authority.
+- Generic AI-development contracts are consumed from the committed local
+  projection in `docs/ai-development/`. Workspace owns only its local
+  development extension and product semantics.
 
 Before submitting a change, run `bash scripts/validate.sh`. Record the actual
 validation and any TDE observation status in the pull request.
