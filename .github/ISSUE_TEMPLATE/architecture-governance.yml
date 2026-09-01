@@ -1,0 +1,19 @@
+name: Architecture or governance decision
+description: Record a proposed Workspace architecture or governance change.
+title: "architecture: "
+labels: [architecture, governance]
+body:
+  - type: textarea
+    attributes:
+      label: Decision or question
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Boundary impact
+      description: Address Forge, Engineering Platform, TDE, and generic-contract implications.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Evidence and alternatives

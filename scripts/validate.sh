@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+required=(README.md BOOTSTRAP.md AGENTS.md ENGINEERING_METHOD.md SECURITY.md WORKSPACE_PROVENANCE.md ROADMAP.md BACKLOG.md docs/ARCHITECTURE.md)
+for file in "${required[@]}"; do
+  test -s "$file"
+done
+
+rg -q 'first-class peer' README.md
+rg -q 'No prior implementation history' WORKSPACE_PROVENANCE.md
+rg -q 'does not own Workspace' WORKSPACE_PROVENANCE.md
+rg -q 'Engineering Platform' docs/ARCHITECTURE.md
+rg -q 'TDE' docs/ARCHITECTURE.md
+
+echo 'Workspace foundation validation passed.'
