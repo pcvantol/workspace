@@ -21,6 +21,8 @@ Workspace behavior, an Engineering Platform adapter, or an execution runtime.
 - [Roadmap](ROADMAP.md)
 - [Backlog](BACKLOG.md)
 - [Provenance](WORKSPACE_PROVENANCE.md)
+- [Development bootstrap](BOOTSTRAP.md)
+- [Handoff navigation](HANDOFF.md)
 
 ## Boundaries
 
@@ -29,6 +31,6 @@ Workspace behavior, an Engineering Platform adapter, or an execution runtime.
   API; Workspace must not import Engineering Platform product source.
 - Technical Debt Engine remains an independent product. Workspace may later
   own only Workspace-specific TDE configuration and evidence mapping.
-- Generic AI-development contracts are not defined here. Until the family
-  contract repository exists, Workspace keeps only its local development
-  context.
+- Generic AI-development contracts are not defined here. The committed local
+  projection and Workspace development extension provide offline development
+  navigation without requiring another checkout.
