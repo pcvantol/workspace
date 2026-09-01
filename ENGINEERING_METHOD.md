@@ -1,8 +1,9 @@
 # Workspace Engineering Method
 
-Workspace changes are pull-request based and must be bounded to one clear
-product, architecture, governance, or maintenance objective. Repository
-evidence is authoritative over prior conversations.
+Generic change, validation, handoff, branch, and repository-governance rules
+are supplied by the committed AI-development projection. Workspace changes
+must additionally remain bounded to one clear Workspace product, architecture,
+governance, or maintenance objective.
 
 For the current foundation maturity, validation is limited to the tracked
 documentation and repository contract checks in `scripts/validate.sh`.
