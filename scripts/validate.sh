@@ -6,10 +6,10 @@ for file in "${required[@]}"; do
   test -s "$file"
 done
 
-rg -q 'first-class peer' README.md
-rg -q 'No prior implementation history' WORKSPACE_PROVENANCE.md
-rg -q 'does not own Workspace' WORKSPACE_PROVENANCE.md
-rg -q 'Engineering Platform' docs/ARCHITECTURE.md
-rg -q 'TDE' docs/ARCHITECTURE.md
+grep -q 'first-class peer' README.md
+grep -q 'No prior implementation history' WORKSPACE_PROVENANCE.md
+grep -q 'does not own Workspace' WORKSPACE_PROVENANCE.md
+grep -q 'Engineering Platform' docs/ARCHITECTURE.md
+grep -q 'TDE' docs/ARCHITECTURE.md
 
 echo 'Workspace foundation validation passed.'
