@@ -1,0 +1,9 @@
+{
+  "identifier": "workspace",
+  "name": "Workspace",
+  "repositoryRoot": "../..",
+  "repositoryType": "source",
+  "primaryLanguage": "Python",
+  "defaultAssessmentProfile": "standard",
+  "metadata": {"consumer": "Workspace", "rolloutPhase": "observe", "productSourceState": "foundation_only"}
+}
