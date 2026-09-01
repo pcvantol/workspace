@@ -6,9 +6,9 @@ for file in "${required[@]}"; do
   test -s "$file"
 done
 
-grep -q 'first-class peer' README.md
-grep -q 'No prior implementation history' WORKSPACE_PROVENANCE.md
-grep -q 'does not own Workspace' WORKSPACE_PROVENANCE.md
+grep -q 'peer of' README.md
+grep -q 'NO_IMPLEMENTATION_HISTORY_EXISTS' WORKSPACE_PROVENANCE.md
+grep -q 'does not become the Workspace source' WORKSPACE_PROVENANCE.md
 grep -q 'Engineering Platform' docs/ARCHITECTURE.md
 grep -q 'TDE' docs/ARCHITECTURE.md
 
