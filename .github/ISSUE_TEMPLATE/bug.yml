@@ -1,0 +1,19 @@
+name: Bug report
+description: Report unexpected Workspace behavior.
+title: "bug: "
+labels: [bug]
+body:
+  - type: textarea
+    attributes:
+      label: Observed behavior
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Safe reproduction and evidence
+      description: Redact secrets and private data.
