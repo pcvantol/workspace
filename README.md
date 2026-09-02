@@ -18,6 +18,7 @@ Workspace behavior, an Engineering Platform adapter, or an execution runtime.
 ## Entry points
 
 - [Architecture](docs/ARCHITECTURE.md)
+- [Proposed repository onboarding and qualification](docs/REPOSITORY_ONBOARDING.md)
 - [Roadmap](ROADMAP.md)
 - [Backlog](BACKLOG.md)
 - [Provenance](WORKSPACE_PROVENANCE.md)
