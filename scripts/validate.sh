@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-required=(README.md BOOTSTRAP.md AGENTS.md ENGINEERING_METHOD.md SECURITY.md WORKSPACE_PROVENANCE.md ROADMAP.md BACKLOG.md docs/ARCHITECTURE.md)
+required=(README.md BOOTSTRAP.md AGENTS.md ENGINEERING_METHOD.md SECURITY.md WORKSPACE_PROVENANCE.md ROADMAP.md BACKLOG.md docs/ARCHITECTURE.md docs/REPOSITORY_ONBOARDING.md)
 for file in "${required[@]}"; do
   test -s "$file"
 done
@@ -18,6 +18,8 @@ grep -q 'Engineering Platform' docs/ARCHITECTURE.md
 grep -q 'TDE' docs/ARCHITECTURE.md
 grep -q 'Workspace Server owns shared, server-authoritative' docs/ARCHITECTURE.md
 grep -q 'Local Project Agent API contract are EP-owned' docs/ARCHITECTURE.md
+grep -q 'Status: proposed' docs/REPOSITORY_ONBOARDING.md
+grep -q '.engineering-platform/repository.json' docs/REPOSITORY_ONBOARDING.md
 test -s docs/governance/AI_DEVELOPMENT_CONTRACT_SEMANTIC_EQUIVALENCE_RECEIPT.md
 
 echo 'Workspace foundation validation passed.'
