@@ -21,6 +21,24 @@ and remain execution authority; and EP Project Agents would perform the
 host-local clone/checkout/worktree/toolchain/provider work. The future GitHub
 integration and approval policy require their own bounded contracts.
 
+For a real admission-ready onboarding flow, this increment has two explicit
+external capability dependencies, not ownership of EP or Forge work:
+
+- `EP::PROJECT_ATTACHMENT_AND_ADMISSION_V1` — the EP-owned, qualified contract
+  for idempotent canonical project registration refresh, repository/Agent
+  attachment and admission readiness. It is allocated by EP Phase 4 / Increment
+  1 and is unavailable until its clean-install, fresh-registration, project
+  routing, idempotency and first-governed-execution qualification passes.
+- `Forge::L1_BOOTSTRAP_EVIDENCE_CONTRACT` — the Forge-owned managed-bootstrap
+  composition for flows that create a project-owned contract. Identity-only
+  onboarding may use fixtures before it is qualified; it may not claim the
+  managed bootstrap flow complete before the Forge gate passes.
+
+The qualified EP project-registration base (`EP::LOCAL_CONSUMER_API_V1`, Phase
+1 / Increments 1–3) is a prerequisite to the attachment capability, but is not
+by itself evidence that Workspace can attach or admit a project. Workspace
+does not allocate, implement or qualify either EP capability.
+
 Multi-repository parallel mutating lanes are explicitly post-verification work,
 not a prerequisite for onboarding. They require standalone EP verification and
 EP-managed leases, capacity, ordering, and retained qualification evidence.
@@ -50,8 +68,8 @@ only through a separately governed Workspace capability decision.
 
 | Workspace capability | Cross-product relationship | Earliest dependency | Required qualification |
 | --- | --- | --- | --- |
-| Quality governance surface | Present Effective DoR/DoD/Human Gates, repository-governance state and governed Quality Learning proposals. | Forge L0/L1 evidence and the Workspace onboarding/control-plane contract. | Attribution, freshness/degraded-state, accessibility and no-secondary-authority proof. |
-| Knowledge governance surface | Present evidence-linked Knowledge Observation/Candidate proposals and KB lifecycle status; initiate only permitted governed intents. | Approved KB evidence-export and read-only consumption contracts. | Source lineage/redaction, unavailable-KB degradation, accessibility and no-direct-certification proof. |
+| Quality governance surface | Present Effective DoR/DoD/Human Gates, repository-governance state and governed Quality Learning proposals. | `Forge::L0_ENGINEERING_CONTRACT_FOUNDATION`, `Forge::L1_BOOTSTRAP_EVIDENCE_CONTRACT` and Forge L2–L3 quality-learning evidence, plus the Workspace onboarding/control-plane contract. | Attribution, freshness/degraded-state, accessibility and no-secondary-authority proof. |
+| Knowledge governance surface | Present evidence-linked Knowledge Observation/Candidate proposals and KB lifecycle status; initiate only permitted governed intents. | KB-owned explicit evidence-export and read-only consumption contracts; this is additive and post-V1. | Source lineage/redaction, unavailable-KB degradation, accessibility and no-direct-certification proof. |
 
 The Forge L4/L7 labels are dependency references only. This roadmap is the
 canonical authority for whether, when and how Workspace develops either
