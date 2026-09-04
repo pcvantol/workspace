@@ -40,3 +40,19 @@ EP-managed leases, capacity, ordering, and retained qualification evidence.
 
 No item authorizes implementation, Engineering Platform integration, or
 AI-development-contract promotion by itself.
+
+## Cross-product dependency register
+
+Forge's roadmap may identify Workspace-owned capabilities as prerequisites for
+a Forge workflow, but it cannot sequence or authorize Workspace work. The
+following entries are Workspace's own planning placeholders; they become work
+only through a separately governed Workspace capability decision.
+
+| Workspace capability | Cross-product relationship | Earliest dependency | Required qualification |
+| --- | --- | --- | --- |
+| Quality governance surface | Present Effective DoR/DoD/Human Gates, repository-governance state and governed Quality Learning proposals. | Forge L0/L1 evidence and the Workspace onboarding/control-plane contract. | Attribution, freshness/degraded-state, accessibility and no-secondary-authority proof. |
+| Knowledge governance surface | Present evidence-linked Knowledge Observation/Candidate proposals and KB lifecycle status; initiate only permitted governed intents. | Approved KB evidence-export and read-only consumption contracts. | Source lineage/redaction, unavailable-KB degradation, accessibility and no-direct-certification proof. |
+
+The Forge L4/L7 labels are dependency references only. This roadmap is the
+canonical authority for whether, when and how Workspace develops either
+surface.
