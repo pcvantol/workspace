@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "project": {
+    "id": "workspace",
+    "authority_repository_id": "workspace"
+  },
+  "repository": {
+    "id": "workspace",
+    "role": "authority"
+  },
+  "validation": {
+    "kind": "script",
+    "entrypoint": "bash scripts/validate.sh",
+    "description": "Workspace repository and documentation contract validation"
+  }
+}
