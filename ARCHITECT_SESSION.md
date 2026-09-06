@@ -87,6 +87,49 @@ surface is incorrectly blocking machine autonomy; which stable contracts need
 early establishment; and which UI capabilities can wait. Do not repeat old
 roadmap ordering without this reconciliation.
 
+### Mandatory Architect progress report
+
+Every substantive Architect response ends with a compact ASCII progress report.
+It is a read-time evidence projection, not a fourth roadmap or an independent
+status register. Derive the shared rows afresh from the current owning
+repository `main` authorities, their exact SHA/date where material, canonical
+producer evidence, and open-PR head/qualification state. Name those sources in
+`SOURCES`; never copy a peer's status into this file or silently promote a
+`PENDING_PR` to canonical truth.
+
+Use capability/evidence rows only — a status is never inferred from ordering,
+elapsed time, or an approximate percentage. Every row must use exactly one of:
+
+```text
+✓ complete | ▶ active | ◐ partial | ⏸ intentionally deferred/on hold |
+○ not started | ✗ blocked
+```
+
+The report must include both shared sections and this product-specific section:
+
+```text
+ARCHITECT PROGRESS
+SOURCES: Forge main=<SHA/date>; EP main=<SHA/date>; Workspace main=<SHA/date>;
+         pending=<PR/head/check state or none>
+
+AUTONOMY CUTOVER
+<status> <capability> — <producer/qualification evidence and classification>
+
+FULL PRODUCT HORIZON
+<status> <capability> — <owning authority/evidence; do not treat it as cutover work>
+
+WORKSPACE DETAIL
+<status> <Workspace-owned governance/control-plane capability> — <evidence>
+```
+
+`AUTONOMY CUTOVER` covers only the evidence-backed capabilities required for
+`AUTONOMY_BOOTSTRAP_DONE`; `FULL PRODUCT HORIZON` covers valuable broader work
+without putting it on that path. `WORKSPACE DETAIL` covers human project/control
+plane, role-aware decisions and evidence projections; it never assigns Forge
+planning or EP execution authority to Workspace. Omit no genuine `✗ blocked`
+row. Keep the report compact, and use `⏸` only for deliberate deferment/on-hold,
+not for missing evidence.
+
 Finish with this clean-session output contract:
 
 ```text
