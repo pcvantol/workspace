@@ -54,7 +54,7 @@ Architecture seams:
 - `Decision Evidence Package` with canonical evidence references;
 - context-specific evidence projection;
 - `FACT / INFERENCE / FORECAST / RECOMMENDATION / DECISION` classification;
-- approve / reject / amend semantics;
+- approve / reject / amend / defer semantics;
 - single-role and multi-role Human Gates;
 - immutable decision provenance/audit history.
 
@@ -77,7 +77,7 @@ The mature surface should provide:
 - Forge-generated Roadmap/DAG Change Proposals;
 - before/after DAG/roadmap diff;
 - impact, risk and forecast projection;
-- role-routed approve/reject/amend;
+- role-routed approve/reject/amend/defer;
 - decision provenance;
 - automatic refresh after new canonical evidence.
 
@@ -127,7 +127,7 @@ The full governance UI is **not required for the first Forge -> EP -> Forge mach
 - canonical evidence-reference/provenance contract;
 - Decision Evidence Package contract;
 - claim semantic classification;
-- approve/reject/amend lifecycle;
+- approve/reject/amend/defer lifecycle;
 - Business/Architect/Engineering projection boundary.
 
 Can follow after first machine autonomy loop:

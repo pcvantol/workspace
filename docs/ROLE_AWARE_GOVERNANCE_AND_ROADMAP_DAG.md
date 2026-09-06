@@ -134,7 +134,7 @@ A package contains:
 - uncertainty/confidence where relevant;
 - Forge recommendation and reasoning, clearly marked as recommendation rather than fact;
 - before/after impact for roadmap or DAG changes;
-- decision provenance after approval/rejection/amendment.
+- decision provenance after approval/rejection/amendment/deferral.
 
 Workspace must never replace canonical evidence with an AI summary. The summary is a projection with traceable evidence references.
 
@@ -164,7 +164,7 @@ Workspace should eventually support:
 - Forge-generated Roadmap/DAG Change Proposals;
 - proposal before/after diff;
 - impact and forecast projection;
-- approve / reject / amend;
+- approve / reject / amend / defer;
 - decision audit/provenance;
 - automatic refresh after new canonical evidence.
 
@@ -196,7 +196,7 @@ FORECAST
 RECOMMENDATION
 - accept the proposed dependency removal
 
-[Approve] [Amend] [Reject]
+[Approve] [Amend] [Reject] [Defer]
 ```
 
 ## Business and architecture decisions use different projections
@@ -236,7 +236,7 @@ Expected Missions may appear/disappear as knowledge changes and must not be show
 - Decision Evidence Packages;
 - context-specific projections;
 - single-role and multi-role Human Gates;
-- approve / reject / amend;
+- approve / reject / amend / defer;
 - decision provenance and history.
 
 ### `WORKSPACE::ROADMAP_DAG_GOVERNANCE_V1`
@@ -247,7 +247,7 @@ Expected Missions may appear/disappear as knowledge changes and must not be show
 - Expected Mission / Mission Candidate overlays;
 - Forge Roadmap/DAG Change Proposals;
 - proposal diff and impact;
-- governed approval/amend/reject;
+- governed approval/amend/reject/defer;
 - refresh from EP/Forge evidence.
 
 These are core product directions, but full implementation is not required before the first Forge -> EP -> Forge autonomy canary.
@@ -261,7 +261,7 @@ These are core product directions, but full implementation is not required befor
 - evidence references and provenance model;
 - `FACT / INFERENCE / FORECAST / RECOMMENDATION / DECISION` semantics;
 - Decision Evidence Package contract;
-- approve/reject/amend lifecycle semantics;
+- approve/reject/amend/defer lifecycle semantics;
 - Business/Architect/Engineering projection boundary.
 
 ### Can follow after first machine autonomy loop
