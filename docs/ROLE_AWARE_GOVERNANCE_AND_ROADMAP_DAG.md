@@ -54,28 +54,25 @@ Answers primarily:
 - When is completion likely and how confident is that forecast?
 - Which business-level decisions require my attention?
 
-Typical projection:
+Illustrative projection only — labels and values below are not current EP
+status. A live Workspace projection must cite freshly resolved producer
+evidence and distinguish facts from forecasts and recommendations:
 
 ```text
-Project: Engineering Platform
-Overall progress       55%
-Current milestone      P-NEUTRAL
-Expected completion    3-5 weeks (68% confidence)
-Known blockers         1
+Project: <project>
+Overall progress       <evidence-backed projection>
+Current milestone      <fresh producer-owned frontier>
+Expected completion    <forecast + confidence>
+Known blockers         <evidence-backed count>
 
 Done
-  Standalone repository
-  CENTRAL authority
-  P-TRANSPORT
+  <completed capabilities with provenance>
 
 Now
-  P-NEUTRAL
+  <fresh producer-owned frontier>
 
 Next
-  Standalone installer
-  Real-project verification
-  Self-hosted engineering
-  Forge integration
+  <dependency-ordered future capabilities>
 ```
 
 Business Workspace deliberately suppresses schema versions, run IDs, trigger definitions and low-level validation details unless the user drills down.

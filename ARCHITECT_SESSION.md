@@ -59,17 +59,31 @@ right governed decision to the right human role.
    `gh pr list --repo pcvantol/workspace --state open` and inspect their diffs.
    Record each as pending, including head/base and disposition; do not silently
    promote it to merged authority.
-6. Consult the current canonical peer documents and relevant open peer PRs:
-   Forge Project Intelligence, Expected Missions, Mission Candidates, Mission
-   governance, roadmap/DAG reasoning, forecast, change proposals and learning;
-   EP execution/result/evidence, project/repository identity and consumer
-   contracts; and Forge Platform deployment/composition. Peer documents are
-   evidence about producer boundaries, not Workspace-owned copies of truth.
+6. Before using time-sensitive peer-product status, satisfy the
+   `PEER_AUTHORITY_FRESHNESS_CONTRACT`: refresh each peer remote, resolve its
+   current `origin/main`, and record repository, exact SHA, and UTC observation
+   timestamp. A local peer checkout, a previously observed SHA, and filesystem
+   timestamps are historical observation evidence only. If refresh or remote
+   resolution is unavailable, set `PEER_AUTHORITY_FRESHNESS = UNVERIFIED` and
+   do not present time-sensitive peer status as current.
+7. Consult the current canonical peer documents and relevant open peer PRs at
+   those resolved peer revisions: Forge Project Intelligence, Expected
+   Missions, Mission Candidates, Mission governance, roadmap/DAG reasoning,
+   forecast, change proposals and learning; EP execution/result/evidence,
+   project/repository identity and consumer contracts; and Forge Platform
+   deployment/composition. Peer documents are evidence about producer
+   boundaries, not Workspace-owned copies of truth.
 
 Classify every conclusion: `MERGED_CANONICAL`, `PENDING_PR`,
 `CURRENT_IMPLEMENTATION_EVIDENCE`, `QUALIFICATION_EVIDENCE`, `HISTORICAL`,
 `INFERENCE`, or `PROPOSAL`. A pending PR never becomes canonical merely
 because it is plausible or green.
+
+For every material current-status conclusion, record and distinguish
+`DOCUMENTED_STATUS`, `IMPLEMENTED`, `QUALIFIED`, `COMPLETION_EVIDENCE`,
+`AVAILABLE_TO_CONSUMER`, and `CURRENT_RECONCILED_STATUS`. Implementation alone
+never implies qualification or consumer availability. The required invariant is
+`CURRENT_STATUS_IS_EVIDENCE_RECONCILED = TRUE`.
 
 ## Two-pass method
 
@@ -81,21 +95,38 @@ dependencies on Forge, EP, and Forge Platform from their owning sources.
 
 ### Pass 2 — Evidence Reconciliation
 
-Actively check whether Workspace projections/dependency edges are stale;
-whether pending proposals supersede earlier assumptions; whether a Workspace
-surface is incorrectly blocking machine autonomy; which stable contracts need
-early establishment; and which UI capabilities can wait. Do not repeat old
-roadmap ordering without this reconciliation.
+Actively reconcile both within each owning repository and across producer /
+consumer boundaries. Compare roadmap prose, DAG/status projections,
+implementation evidence, qualification/completion evidence, and merged
+canonical history. Classify each result as `NO_CONFLICT`,
+`STALE_PROJECTION_SUSPECTED`, `PENDING_RECONCILIATION`, or
+`REAL_AUTHORITY_CONFLICT`.
+
+If `DOCUMENTED_STATUS` is active, planned, or incomplete while stronger owning
+canonical completion, qualification, or merged-closure evidence applies to the
+same capability, set `STALE_PROJECTION_SUSPECTED = TRUE`. Inspect that owning
+evidence and repair its roadmap/status/DAG projection when it is within that
+repository's authority; never repeat the stale label merely because roadmap
+prose contains it. Roadmap order is not stronger than canonical completion
+evidence. A stale projection is normally a bounded status/documentation repair,
+not automatically a new human architecture decision.
+
+Also check whether Workspace projections/dependency edges are stale; whether
+pending proposals supersede earlier assumptions; whether a Workspace surface is
+incorrectly blocking machine autonomy; which stable contracts need early
+establishment; and which UI capabilities can wait. Do not repeat old roadmap
+ordering without this reconciliation.
 
 ### Mandatory Architect progress report
 
 Every substantive Architect response ends with a compact ASCII progress report.
 It is a read-time evidence projection, not a fourth roadmap or an independent
-status register. Derive the shared rows afresh from the current owning
-repository `main` authorities, their exact SHA/date where material, canonical
-producer evidence, and open-PR head/qualification state. Name those sources in
-`SOURCES`; never copy a peer's status into this file or silently promote a
-`PENDING_PR` to canonical truth.
+status register. Derive the shared rows afresh from current remote owning
+`origin/main` authorities, their exact SHA and observation time, canonical
+producer evidence, and open-PR head/qualification state. Record
+`PEER_AUTHORITY_FRESHNESS = VERIFIED | UNVERIFIED`; never use a stale local
+peer checkout as current authority, copy peer status into this file, or silently
+promote a `PENDING_PR` to canonical truth.
 
 Use capability/evidence rows only — a status is never inferred from ordering,
 elapsed time, or an approximate percentage. Every row must use exactly one of:
@@ -109,8 +140,12 @@ The report must include both shared sections and this product-specific section:
 
 ```text
 ARCHITECT PROGRESS
-SOURCES: Forge main=<SHA/date>; EP main=<SHA/date>; Workspace main=<SHA/date>;
-         pending=<PR/head/check state or none>
+SOURCES
+Forge origin/main=<SHA>@<observed-at>
+EP origin/main=<SHA>@<observed-at>
+Workspace origin/main=<SHA>@<observed-at>
+PEER_AUTHORITY_FRESHNESS=VERIFIED | UNVERIFIED
+pending=<PR/head/check state or none>
 
 AUTONOMY CUTOVER
 <status> <capability> — <producer/qualification evidence and classification>
@@ -123,12 +158,14 @@ WORKSPACE DETAIL
 ```
 
 `AUTONOMY CUTOVER` covers only the evidence-backed capabilities required for
-`AUTONOMY_BOOTSTRAP_DONE`; `FULL PRODUCT HORIZON` covers valuable broader work
-without putting it on that path. `WORKSPACE DETAIL` covers human project/control
-plane, role-aware decisions and evidence projections; it never assigns Forge
-planning or EP execution authority to Workspace. Omit no genuine `✗ blocked`
-row. Keep the report compact, and use `⏸` only for deliberate deferment/on-hold,
-not for missing evidence.
+`AUTONOMY_BOOTSTRAP_DONE`; a row is `▶ active` only with evidence that it is the
+current active frontier. A completed predecessor is never `▶` solely because of
+stale prose. `FULL PRODUCT HORIZON` covers valuable broader work without putting
+it on that path. `WORKSPACE DETAIL` covers human project/control plane,
+role-aware decisions and evidence projections; it never assigns Forge planning
+or EP execution authority to Workspace. Omit no genuine `✗ blocked` row. Keep
+the report compact, and use `⏸` only for deliberate deferment/on-hold, not for
+missing evidence.
 
 Finish with this clean-session output contract:
 
@@ -150,6 +187,8 @@ CURRENT_WORKSPACE_CRITICAL_PATH_AS_DOCUMENTED =
 CURRENT_WORKSPACE_CRITICAL_PATH_AFTER_EVIDENCE_RECONCILIATION =
 AUTONOMY_CRITICAL =
 PARTIALLY_AUTONOMY_CRITICAL =
+WORKSPACE_AUTONOMY_CRITICAL =
+CROSS_PRODUCT_AUTONOMY_CRITICAL_PROJECTION =
 PARALLEL_NON_BLOCKING =
 POST_AUTONOMY =
 OPEN_ARCHITECT_DECISIONS =
@@ -200,9 +239,14 @@ security, or ambiguous choices.
 The current cross-product objective is the first real autonomous
 Forge → EP → Forge engineering loop, followed by autonomous successor work
 without an owner acting as message bus. Workspace is not automatically a gate.
-Use the Workspace roadmap as the current local critical-path assertion, then
-reconcile it with merged and pending peer evidence. Most rich Workspace UI and
-productization are expected to be `PARALLEL_NON_BLOCKING` or `POST_AUTONOMY`.
+Workspace may show `CROSS_PRODUCT_AUTONOMY_CRITICAL_PROJECTION`, but it is a
+read-only projection derived from fresh Forge and EP authority, not a second
+critical-path authority. `WORKSPACE_AUTONOMY_CRITICAL` includes only
+Workspace-owned capabilities that evidence proves block the objective; it is
+`NONE` unless such evidence exists. Use the Workspace roadmap only for its
+local capability/dependency assertions, then reconcile peer status with merged
+and pending peer evidence. Most rich Workspace UI and productization are
+expected to be `PARALLEL_NON_BLOCKING` or `POST_AUTONOMY`.
 
 Evaluate early seams separately from rich UI: stable project, capability,
 dependency, proposal, decision and evidence-reference identities; role
@@ -220,11 +264,12 @@ Persist a durable finding only in its owning authority:
 | Workspace architecture decision | Architecture document or ADR |
 | Workspace capability or sequencing change | [Workspace roadmap](ROADMAP.md) |
 | Workspace dependency change | Workspace DAG/dependency authority |
+| Stale Workspace current-status projection | Owning Workspace roadmap/status/DAG projection |
 | Governance UX or decision contract | Owning governance/design contract |
 | Onboarding contract | [Onboarding architecture](docs/REPOSITORY_ONBOARDING.md) |
 | Bootstrap method | This file |
-| Forge planning truth | Reference Forge authority; do not duplicate it |
-| EP execution truth | Reference EP authority; do not duplicate it |
+| Peer capability truth/status | Owning peer repository only; reference it after fresh resolution |
+| Workspace consumer dependency on a peer | Workspace dependency projection only; do not claim peer status |
 | Transient reasoning/status | Do not persist |
 
 Before review, run `bash scripts/validate.sh` and record the actual result and

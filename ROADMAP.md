@@ -8,9 +8,13 @@ Completed: establish standalone repository identity and record the absence of pr
 
 Workspace is **not** on the critical path for the first Forge → Engineering Platform → Forge autonomous-execution canary. Workspace remains the human/project control plane and projection surface; it is not planning or execution authority.
 
-Current cross-product sequencing:
+Current cross-product sequencing is a **read-only dependency projection**, not
+an independent status authority. Resolve EP and Forge status at their fresh
+remote `origin/main` revisions during an Architect session; this sequence says
+which producer conditions precede another, not whether a peer condition is
+currently active or complete.
 
-1. Engineering Platform completes P-NEUTRAL.
+1. EP-owned P-NEUTRAL closure precedes EP-owned P-INSTALLER-V1 qualification.
 2. Engineering Platform qualifies P-INSTALLER-V1 as an EP Server-only installed-product boundary.
 3. DJConnect receives/qualifies its committed B8R `.engineering-platform/repository.json`, attaches to installed CENTRAL EP and completes one real governed Engineering Action.
 4. EP records `EP::STANDALONE_EP_VERIFIED`.
@@ -174,8 +178,8 @@ Multi-repository parallel mutating lanes are explicitly post-verification work. 
 
 ## Next decisions
 
-1. Let EP complete P-NEUTRAL, P-INSTALLER-V1 and the DJConnect + EP self-development real-project proofs.
-2. Let Forge complete its direct-EP dogfood and first Forge → EP → Forge loop.
+1. Reconcile the fresh EP-owned P-NEUTRAL/P-INSTALLER-V1 status and the DJConnect + EP self-development real-project proofs.
+2. Reconcile the fresh Forge-owned direct-EP dogfood and first Forge → EP → Forge loop status.
 3. In parallel, stabilize the shared Project Intelligence / Decision Evidence / roadmap-DAG identity contracts without making the full Workspace UI a bootstrap blocker.
 4. After the first reliable machine loop, select a bounded first Workspace governance surface — likely project status + role-routed decision inbox + Architect DAG projection.
 5. Reconcile `docs/REPOSITORY_ONBOARDING.md` with B8R before implementing onboarding.
