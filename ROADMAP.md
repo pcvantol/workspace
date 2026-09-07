@@ -1,5 +1,19 @@
 # Workspace Roadmap
 
+## Installed Workspace Server and Client lane
+
+Workspace will deliver a headless installed Server with its own central runtime
+storage root, versioned HTTP application API, stable identity and macOS launchd
+lifecycle, plus a separately installable Workspace Client for client PCs.
+Client/server and server-peer discovery uses candidate-only LAN DNS-SD/mDNS or
+configured/unicast/tailnet bootstrap followed by authenticated pinned pairing;
+discovery never authorizes or silently changes an existing binding. Client
+trust, EP Agent trust and server-peer trust remain separate.
+
+This is a post-autonomy productization lane: the first Forge→EP→Forge canary
+does not require Workspace UI, client distribution or universal installer
+completion. See [Workspace Server and Client deployment target](docs/WORKSPACE_SERVER_CLIENT_DEPLOYMENT.md).
+
 ## Foundation
 
 Completed: establish standalone repository identity and record the absence of prior implementation history.

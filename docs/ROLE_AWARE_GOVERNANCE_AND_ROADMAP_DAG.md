@@ -1,5 +1,10 @@
 # Role-Aware Governance and Roadmap/DAG Management
 
+> **Deployment sequencing:** Workspace Server/Client installation, discovery
+> and pairing are a Workspace productization lane, not an authority prerequisite
+> for the first Forge→EP→Forge autonomy canary. See
+> [Workspace Server and Client deployment target](WORKSPACE_SERVER_CLIENT_DEPLOYMENT.md).
+
 ## Status
 
 Architecture direction for Workspace. This document defines core product concepts and authority boundaries; not every capability described here is a V1 critical-path requirement.

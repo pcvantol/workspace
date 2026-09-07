@@ -6,6 +6,10 @@ Workspace Server owns shared, server-authoritative project and team state.
 Workspace Client owns human-facing UX. Together, Workspace owns its
 product-specific state and experience:
 
+The installed server/client deployment, central storage/API and discovery
+boundary are canonical in
+[Workspace Server and Client deployment target](WORKSPACE_SERVER_CLIENT_DEPLOYMENT.md).
+
 - project and repository navigation;
 - development-workflow, queue, run, status, and report views;
 - handoff surfaces; and
