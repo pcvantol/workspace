@@ -10,6 +10,12 @@ The installed server/client deployment, central storage/API and discovery
 boundary are canonical in
 [Workspace Server and Client deployment target](WORKSPACE_SERVER_CLIENT_DEPLOYMENT.md).
 
+[Policy & Automation](POLICY_AND_AUTOMATION.md) defines the target role-aware
+policy-management experience. Workspace presents effective policy, change impact,
+decisions and history; Forge, EP and Forge Platform retain their own policy
+writers/evaluators/enforcement. The design distinguishes policy, grants and
+runtime consumption and does not implement a policy engine or management UI.
+
 - project and repository navigation;
 - development-workflow, queue, run, status, and report views;
 - handoff surfaces; and
