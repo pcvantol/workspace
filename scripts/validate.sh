@@ -6,6 +6,8 @@ for file in "${required[@]}"; do
   test -s "$file"
 done
 
+python3 scripts/advance_product_version.py --check
+
 python3 docs/ai-development/validate_projection.py \
   --profile workspace \
   --source-commit ec070e399ff4dbd92e760370002995fe4f4d52d6 \
