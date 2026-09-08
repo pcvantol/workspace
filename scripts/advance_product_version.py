@@ -18,7 +18,7 @@ import tempfile
 PRODUCT = "workspace"
 VERSION = re.compile(r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
 OPERATION_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{7,127}$")
-POLICY_REVISION = "workspace-product-versioning-v1"
+POLICY_REVISION = "workspace-bootstrap-release-cadence-v2"
 RELEASE_BRANCH = re.compile(r"^release-((?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*))$")
 
 def _pairs(pairs: list[tuple[str, object]]) -> dict[str, object]:
@@ -104,6 +104,8 @@ def _target(actual: tuple[int, int, int], component: str | None, exact: str | No
             raise RuntimeError("the requested release version must be stable X.Y.Z")
         return exact
     major, minor, patch = actual
+    if component == "none":
+        return f"{major}.{minor}.{patch}"
     if component == "patch":
         return f"{major}.{minor}.{patch + 1}"
     if component == "minor":
@@ -120,12 +122,16 @@ def _receipt(root: Path, operation_id: str, event_lineage: str, expected_head: s
         raise RuntimeError("event lineage and a full expected source revision are required")
     if policy_revision != POLICY_REVISION:
         raise RuntimeError(f"unsupported Workspace version policy revision: {policy_revision}")
+    release_class = "EXACT" if exact is not None else {"patch": "PATCH", "minor": "MINOR", "none": "NO_BUMP"}.get(component)
+    if release_class is None:
+        raise RuntimeError("unsupported bootstrap release classification")
     requested: dict[str, object] = {"exact_version": exact} if exact is not None else {"bump": component}
     value = {
         "schema_version": 1, "operation_id": operation_id, "product": PRODUCT,
         "policy_revision": policy_revision, "event_lineage": event_lineage,
         "expected_source_revision": expected_head, "expected_version": expected_version,
         "requested": requested, "determined_version": determined,
+        "release_class": release_class, "classification_rationale": event_lineage,
         "allowed_projection_paths": ["product-version.json"], "result_commit": None,
     }
     return root / ".version-operations" / f"{operation_id}.json", value
@@ -180,7 +186,7 @@ def apply(root: Path, component: str | None, exact: str | None, expected_version
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--source-root", type=Path, default=Path.cwd())
-    parser.add_argument("--bump", choices=("patch", "minor"))
+    parser.add_argument("--bump", choices=("none", "patch", "minor"))
     parser.add_argument("--set-version")
     parser.add_argument("--expected-version")
     parser.add_argument("--operation-id")

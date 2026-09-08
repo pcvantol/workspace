@@ -52,6 +52,12 @@ class ProductVersionOperationTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "operation ID conflict"):
             self.apply(component="minor")
 
+    def test_docs_only_no_bump_is_durable_and_cannot_be_reclassified(self) -> None:
+        self.assertEqual("2.3.0", self.apply(operation_id="increment-docs-1", component="none"))
+        self.assertEqual("2.3.0", self.apply(operation_id="increment-docs-1", component="none"))
+        with self.assertRaisesRegex(RuntimeError, "operation ID conflict"):
+            self.apply(operation_id="increment-docs-1", component="patch")
+
     def test_minor_and_explicit_release_target_are_deterministic(self) -> None:
         self.assertEqual("2.4.0", self.apply(operation_id="event-0002", component="minor"))
         # An explicit release target may be prepared only from the declared
