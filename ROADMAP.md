@@ -167,7 +167,7 @@ Why is this the sequence?
 What are the technical dependencies and producer gates?
 What is on/off the critical path?
 What work does Forge expect or recommend?
-Which DAG/architecture changes require me?
+Which DAG/architecture changes require an architect decision?
 ```
 
 Both are projections of the same canonical project state and Forge Project Intelligence, not separate roadmaps.
