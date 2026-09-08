@@ -1,6 +1,13 @@
 # Canonical product versioning adoption
 
-Workspace adopts Forge Platform's [canonical product versioning policy](https://github.com/pcvantol/forge-platform/blob/main/docs/architecture/CANONICAL_PRODUCT_VERSIONING.md), policy v1.
+Workspace adopts `BOOTSTRAP_RELEASE_CADENCE_V2` through
+`workspace-bootstrap-release-cadence-v2`. V1 receipts remain immutable
+historical evidence and are never reinterpreted.
+
+A bounded engineering increment defaults to `PATCH`; documentation-only work
+is explicit `NO_BUMP`; only an explicit capability boundary is `MINOR`; and
+`MAJOR`/`EXACT` require applicable authority. Repair, requalification and the
+protected merge are evidence for the same operation, never another allocation.
 
 `product-version.json` (`product=workspace`, `schema_version=1`, `version`) is
 Workspace's only product-release version source. Its committed `2.3.0` baseline
