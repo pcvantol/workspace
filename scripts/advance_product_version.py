@@ -19,6 +19,7 @@ PRODUCT = "workspace"
 VERSION = re.compile(r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
 OPERATION_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{7,127}$")
 POLICY_REVISION = "workspace-product-versioning-v1"
+RELEASE_BRANCH = re.compile(r"^release-((?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*))$")
 
 def _pairs(pairs: list[tuple[str, object]]) -> dict[str, object]:
     result: dict[str, object] = {}
@@ -74,6 +75,25 @@ def _head(root: Path) -> str:
     if result.returncode:
         raise RuntimeError("version operation requires a Git checkout with HEAD")
     return result.stdout.strip()
+
+
+def verify_release_source(root: Path, branch: str, approved_source: str) -> str:
+    """Verify a release candidate's exact source/version binding, read-only.
+
+    The caller supplies an exact source already approved by its owning route;
+    ancestry is intentionally insufficient because it permits extra commits.
+    """
+    match = RELEASE_BRANCH.fullmatch(branch)
+    if match is None:
+        raise RuntimeError("release branch must be exactly release-X.Y.Z")
+    if re.fullmatch(r"[0-9a-f]{40}", approved_source) is None:
+        raise RuntimeError("approved release source must be a full source revision")
+    _, payload, _ = current(root)
+    if payload["version"] != match.group(1):
+        raise RuntimeError("release branch target and canonical product version disagree")
+    if _head(root.resolve()) != approved_source:
+        raise RuntimeError("release candidate HEAD is not the exact approved source")
+    return match.group(1)
 
 
 def _target(actual: tuple[int, int, int], component: str | None, exact: str | None) -> str:
@@ -169,12 +189,25 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--policy-revision", default=POLICY_REVISION)
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--plan", action="store_true")
+    parser.add_argument("--verify-release-source", action="store_true")
+    parser.add_argument("--release-branch")
+    parser.add_argument("--approved-source")
     args = parser.parse_args(argv)
     if args.check:
-        if any((args.bump, args.set_version, args.operation_id, args.plan)):
+        if any((args.bump, args.set_version, args.operation_id, args.plan, args.verify_release_source)):
             parser.error("--check cannot change or plan a version")
         _, payload, _ = current(args.source_root)
         print(f"PRODUCT_VERSION=PASS version={payload['version']}")
+        return 0
+    if args.verify_release_source:
+        if any((args.bump, args.set_version, args.plan, args.operation_id, args.expected_version,
+                args.event_lineage, args.expected_head)):
+            parser.error("--verify-release-source is a separate read-only operation")
+        if not args.release_branch or not args.approved_source:
+            parser.error("release verification requires --release-branch and --approved-source")
+        print("RELEASE_SOURCE=PASS version=" + verify_release_source(
+            args.source_root, args.release_branch, args.approved_source
+        ))
         return 0
     if not all((args.expected_version, args.operation_id, args.event_lineage, args.expected_head)):
         parser.error("version operations require --expected-version, --operation-id, --event-lineage and --expected-head")

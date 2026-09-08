@@ -66,6 +66,15 @@ class ProductVersionOperationTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "major requires explicit"):
             version_helper.apply(self.root, "major", None, "2.3.0", "event-0004", "push:" + self.head, self.head)
 
+    def test_release_guard_requires_exact_branch_version_and_source(self) -> None:
+        self.assertEqual("2.3.0", version_helper.verify_release_source(self.root, "release-2.3.0", self.head))
+        with self.assertRaisesRegex(RuntimeError, "exactly release"):
+            version_helper.verify_release_source(self.root, "release-02.3.0", self.head)
+        with self.assertRaisesRegex(RuntimeError, "disagree"):
+            version_helper.verify_release_source(self.root, "release-2.3.1", self.head)
+        with self.assertRaisesRegex(RuntimeError, "exact approved"):
+            version_helper.verify_release_source(self.root, "release-2.3.0", "0" * 40)
+
     def test_stale_head_and_baseline_are_rejected(self) -> None:
         with self.assertRaisesRegex(RuntimeError, "source HEAD"):
             self.apply(expected_head="0" * 40)

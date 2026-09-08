@@ -32,3 +32,13 @@ until the existing protected delivery route commits and qualifies the complete
 operation. Builds consume only the committed version. A candidate patch number
 is not release compatibility or publication authority; major changes require an
 explicit approved exact-release operation.
+
+For the current foundation-only product there is no package artifact or
+installed runtime to verify. `--verify-release-source` is a read-only guard for
+a future authorized publication route: it accepts only `release-X.Y.Z`, requires
+that exact canonical version, and requires the candidate HEAD to equal (not
+merely descend from) the externally approved source revision. It neither
+authorizes a branch nor publishes an artifact. Workspace presently has no
+repository-local protected version-preparation dispatcher, GitHub App, or EP
+qualification integration capable of committing a prepared operation and
+binding hosted qualification evidence to its resulting SHA.
