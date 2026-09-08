@@ -1,5 +1,27 @@
 # Workspace Roadmap
 
+## Policy & Automation — documented governance lane
+
+The coordinated `POLICY_GOVERNANCE_AND_EFFECTIVE_PROFILES_V1` increment defines
+[Policy & Automation / Beleid & automatisering](docs/POLICY_AND_AUTOMATION.md).
+Workspace owns catalogue/effective-policy explanations, scoped change/impact,
+role-routed decisions, activation status and historical audit views. Forge, EP
+and Forge Platform remain the owners of their policy definitions and enforcement.
+A policy is not a grant; consumed repair budget is not an editable preference.
+
+Local DAG: `POL-0 -> POL-WC -> POL-W`; POL-W additionally requires cross-product
+POL-Q (qualified owner binding/evaluation/receipt contracts). POL-WC is a planned
+contract-first parallel lane, POL-W is planned post-autonomy UI. These are target
+milestones, not existing application features or newly created runtime authority.
+The coordinated documentary DAG lives at
+`pcvantol/forge:docs/roadmap/policy-governance-v1.json`.
+
+Native Forge release management and EP assurance feed the same view; independent
+product/component versions and actual published artifacts remain distinct.
+Pending Workspace #14 is repository-versioning work, not this management feature.
+No implementation, workflow, package version, grant or executable programme DAG
+changes here. Full policy UI is not a prerequisite for the first machine canary.
+
 ## Installed Workspace Server and Client lane
 
 Workspace will deliver a headless installed Server with its own central runtime
