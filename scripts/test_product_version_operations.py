@@ -58,6 +58,13 @@ class ProductVersionOperationTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "operation ID conflict"):
             self.apply(operation_id="increment-docs-1", component="patch")
 
+    def test_existing_increment_receipt_survives_a_later_delivery_head(self) -> None:
+        self.assertEqual("2.3.1", self.apply(operation_id="increment-delivery-1"))
+        (self.root / "delivery-evidence").write_text("merged", encoding="utf-8")
+        subprocess.run(["git", "-C", str(self.root), "add", "delivery-evidence"], check=True)
+        subprocess.run(["git", "-C", str(self.root), "-c", "user.name=test", "-c", "user.email=test@example.invalid", "commit", "-qm", "delivery"], check=True)
+        self.assertEqual("2.3.1", self.apply(operation_id="increment-delivery-1"))
+
     def test_minor_and_explicit_release_target_are_deterministic(self) -> None:
         self.assertEqual("2.4.0", self.apply(operation_id="event-0002", component="minor"))
         # An explicit release target may be prepared only from the declared

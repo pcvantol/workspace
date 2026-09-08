@@ -158,8 +158,6 @@ def apply(root: Path, component: str | None, exact: str | None, expected_version
     root = root.resolve()
     target, payload, parsed = current(root)
     actual = payload["version"]
-    if _head(root) != expected_head:
-        raise RuntimeError("stale version operation: source HEAD differs from expected source revision")
     # Calculate from the expected baseline when recovering after a crash, never
     # from the already-written target.
     if VERSION.fullmatch(expected_version) is None:
@@ -173,6 +171,8 @@ def apply(root: Path, component: str | None, exact: str | None, expected_version
         if actual != determined:
             raise RuntimeError("operation ID conflict: receipt and canonical version disagree")
         return determined
+    if _head(root) != expected_head:
+        raise RuntimeError("stale version operation: source HEAD differs from expected source revision")
     if actual not in (expected_version, determined):
         raise RuntimeError(f"stale version operation: expected {expected_version}, found {actual}")
     if actual == expected_version and determined != actual:
