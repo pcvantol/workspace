@@ -1,5 +1,19 @@
 # Workspace Roadmap
 
+## Governed progression and existing external delivery gates
+
+The coordinated `GOVERNED_PROGRESSION_AND_DELIVERY_AUTHORITY_V1` increment adds
+[project/Mission review cadence and external Human Gate design](docs/GOVERNED_PROGRESSION_AND_EXTERNAL_GATES.md)
+and the [GP-WC/GP-W roadmap](docs/GOVERNED_PROGRESSION_V1_ROADMAP.md).
+Workspace presents effective settings and owner-backed decisions, but does not
+choose Forge progression or take over a project's CD approval/deployment.
+Prototype Mission-end review and production after-Action review are configurable
+profiles within approved bounds. TST/ACC/PROD are target-bound classifications.
+An external production gate is shown with its owner/status/deep-link, not a
+second Workspace approval. All implementation remains PLANNED; this documentary
+sub-DAG does not modify the executable bootstrap programme or add rich UI/CD
+integration ahead of the first machine canary.
+
 ## Policy & Automation — documented governance lane
 
 The coordinated `POLICY_GOVERNANCE_AND_EFFECTIVE_PROFILES_V1` increment defines
@@ -153,7 +167,7 @@ Why is this the sequence?
 What are the technical dependencies and producer gates?
 What is on/off the critical path?
 What work does Forge expect or recommend?
-Which DAG/architecture changes require an architect decision?
+Which DAG/architecture changes require me?
 ```
 
 Both are projections of the same canonical project state and Forge Project Intelligence, not separate roadmaps.
