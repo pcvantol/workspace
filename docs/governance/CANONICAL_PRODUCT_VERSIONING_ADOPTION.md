@@ -42,3 +42,8 @@ authorizes a branch nor publishes an artifact. Workspace presently has no
 repository-local protected version-preparation dispatcher, GitHub App, or EP
 qualification integration capable of committing a prepared operation and
 binding hosted qualification evidence to its resulting SHA.
+
+Engineering Platform PR [#105](https://github.com/pcvantol/engineering-platform/pull/105)
+is a pending source-level bounded adapter for that future integration. It does
+not prove an installed writer, an active grant, protected merge delivery or
+artifact publication.
