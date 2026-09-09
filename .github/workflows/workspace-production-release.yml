@@ -1,0 +1,60 @@
+name: Workspace production release
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Exact already-merged origin/main commit to qualify and release
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v5
+        with: {ref: ${{ inputs.source_sha }}, fetch-depth: 0}
+      - name: Verify protected source and qualify it
+        env: {SOURCE_SHA: ${{ inputs.source_sha }}}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin main
+          test "$SOURCE_SHA" = "$(git rev-parse HEAD)"
+          test "$SOURCE_SHA" = "$(git rev-parse origin/main)"
+          test -z "$(git status --porcelain)"
+          bash scripts/validate.sh
+          python3 scripts/advance_product_version.py --verify-release-source --candidate-head "$SOURCE_SHA"
+      - name: Build exact source bundle and qualify digest
+        id: bundle
+        run: |
+          set -euo pipefail
+          VERSION="$(python3 -c 'import json; print(json.load(open("product-version.json"))["version"])')"
+          BUNDLE="workspace-${VERSION}-${{ inputs.source_sha }}.tar.gz"
+          git archive --format=tar.gz --prefix="workspace-${VERSION}/" HEAD > "$BUNDLE"
+          DIGEST="sha256:$(sha256sum "$BUNDLE" | cut -d' ' -f1)"
+          printf 'version=%s\nfilename=%s\ndigest=%s\n' "$VERSION" "$BUNDLE" "$DIGEST" >> "$GITHUB_OUTPUT"
+      - name: Publish immutable GitHub release asset
+        env: {GH_TOKEN: ${{ github.token }}}
+        run: |
+          gh release create "workspace-v${{ steps.bundle.outputs.version }}" "${{ steps.bundle.outputs.filename }}" --target "${{ inputs.source_sha }}" --title "Workspace ${{ steps.bundle.outputs.version }}" --generate-notes
+      - name: Registry readback and durable release evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.bundle.outputs.version }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          DIGEST: ${{ steps.bundle.outputs.digest }}
+        run: |
+          set -euo pipefail
+          mkdir readback evidence
+          gh release download "workspace-v${{ steps.bundle.outputs.version }}" --pattern "${{ steps.bundle.outputs.filename }}" --dir readback
+          test "sha256:$(sha256sum "readback/${{ steps.bundle.outputs.filename }}" | cut -d' ' -f1)" = "${{ steps.bundle.outputs.digest }}"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          Path('evidence/release-complete.json').write_text(json.dumps({'state':'RELEASE_COMPLETE','product':'workspace','version':os.environ['VERSION'],'source_revision':os.environ['SOURCE_SHA'],'artifact_digest':os.environ['DIGEST'],'registry':'github-release'}, sort_keys=True)+'\n')
+          PY
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a # v7.0.1
+        with: {name: workspace-release-evidence-${{ steps.bundle.outputs.version }}, path: evidence/}

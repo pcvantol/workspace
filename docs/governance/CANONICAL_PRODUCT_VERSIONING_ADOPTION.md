@@ -41,7 +41,10 @@ is not release compatibility or publication authority; major changes require an
 explicit approved exact-release operation.
 
 For the current foundation-only product there is no package artifact or
-installed runtime to verify. `--verify-release-source` is a read-only guard for
+installed runtime to verify. The protected release workflow publishes one exact
+GitHub Release source bundle only after it qualifies the selected current
+`main` SHA, then reads the asset back and verifies its SHA-256 before retaining
+`RELEASE_COMPLETE` evidence. `--verify-release-source` is a read-only guard for
 a future authorized publication route: it accepts only `release-X.Y.Z`, requires
 that exact canonical version, and requires the candidate HEAD to equal (not
 merely descend from) the externally approved source revision. It neither
