@@ -88,6 +88,13 @@ class ProductVersionOperationTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "exact approved"):
             version_helper.verify_release_source(self.root, "release-2.3.0", "0" * 40)
 
+    def test_main_release_guard_requires_exact_protected_source(self) -> None:
+        self.assertEqual("2.3.0", version_helper.verify_main_release_source(self.root, self.head))
+        with self.assertRaisesRegex(RuntimeError, "full source revision"):
+            version_helper.verify_main_release_source(self.root, "short")
+        with self.assertRaisesRegex(RuntimeError, "exact approved"):
+            version_helper.verify_main_release_source(self.root, "0" * 40)
+
     def test_stale_head_and_baseline_are_rejected(self) -> None:
         with self.assertRaisesRegex(RuntimeError, "source HEAD"):
             self.apply(expected_head="0" * 40)
