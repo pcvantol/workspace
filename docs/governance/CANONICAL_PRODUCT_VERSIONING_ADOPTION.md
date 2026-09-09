@@ -43,11 +43,15 @@ explicit approved exact-release operation.
 For the current foundation-only product there is no package artifact or
 installed runtime to verify. The protected release workflow produces one exact
 GitHub Release source bundle only after it qualifies the selected current
-`main` SHA. Before the GitHub Release mutation, it retains a
-`workspace-release-<version>-<source-prefix>` operation whose immutable identity
-binds the policy revision, full source SHA and source-bundle SHA-256. The
+`main` SHA. Before any source-bundle publication mutation, it retains a
+`workspace-release-<version>-<full-source-sha>` operation whose immutable
+identity binds `workspace-production-release-v2`, the full protected-main
+source SHA and the source-bundle SHA-256. Its `QUALIFIED` receipt is an asset
+on a GitHub **draft** Release, not merely a short-lived Actions artifact. The
 operation is serialized, refuses changed bytes or provenance under the same
-identity, and is rechecked immediately before publication.
+identity, and is byte-compared with that draft receipt immediately before
+publication. An existing GitHub Release or asset without the original matching
+receipt fails closed.
 
 The operation moves through `PREPARED`, `QUALIFIED`, `PUBLISHED`, optional
 `CLEANUP_PENDING`, and `RELEASE_COMPLETE`. GitHub Release asset readback and a
@@ -57,14 +61,16 @@ readback/download paths have been cleaned. A cleanup failure remains visible as
 `CLEANUP_PENDING` and can be resumed using the same exact release identity.
 `PUBLISHED` therefore never implies that cleanup or release closure succeeded.
 
-The GitHub Release asset and receipts provide durable publication evidence and
-make a lost answer after publication resumable without replacing bytes. The
-pre-publication operation is carried between workflow jobs as protected
-workflow evidence; cross-run recovery of an interruption before any GitHub
-Release exists remains limited by that evidence retention and is not yet a
-separate durable external operation registry. No release, publication,
-installation, or live-runtime qualification has been executed by this source
-change.
+The draft-qualified receipt, public source-bundle readback and subsequent
+receipts provide durable publication evidence and make an interrupted run
+resumable with the same operation and bytes. A source bundle is first uploaded
+only to its matching draft Release; that release is made public only after its
+qualified identity has been rechecked. `PUBLISHED` records the subsequent
+public name-and-digest readback, while `RELEASE_COMPLETE` is recorded only after
+the exact operation-local download and bundle paths have been removed. The
+terminal transition can use the already-recorded digest after that cleanup; it
+does not select a new artifact. No release, publication, installation, or
+live-runtime qualification has been executed by this source change.
 
 `--verify-release-source` is a read-only legacy candidate guard: it accepts
 only `release-X.Y.Z`, requires that exact canonical version, and requires the
@@ -78,6 +84,6 @@ integration capable of committing a prepared operation and binding hosted
 qualification evidence to its resulting SHA.
 
 Engineering Platform PR [#105](https://github.com/pcvantol/engineering-platform/pull/105)
-is a pending source-level bounded adapter for that future integration. It does
+is merged as a source-level bounded version-preparation adapter. It still does
 not prove an installed writer, an active grant, protected merge delivery or
 artifact publication.
