@@ -1,5 +1,23 @@
 # Workspace Roadmap
 
+## Repository Health and reconciliation chat — documented target
+
+`WORKSPACE::REPOSITORY_HEALTH_AND_RECONCILIATION_V1` is specified in the
+[Repository Health/chat design](docs/REPOSITORY_HEALTH_AND_RECONCILIATION.md)
+and [scoped roadmap](docs/PROJECT_HYGIENE_V1_ROADMAP.md), coordinated with
+Forge's documentary Project Hygiene DAG. Workspace presents evidence-backed
+observations, cases, proposals and decisions; Forge owns reasoning and EP owns
+host facts and admitted cleanup. Asking about/reconciling an old branch does
+not automatically allocate a Mission or authorize deletion.
+
+Sequence: `HY-0 -> HY-WC -> HY-WO -> HY-WM`. HY-WO additionally consumes Forge
+HY-F observations/cases; HY-WM requires qualified Forge/EP HY-Q command/receipt
+semantics. Read-only health/chat can ship without destructive controls. All
+implementation nodes remain PLANNED. Preserve actual actor/project scope,
+partial/stale inventory, exact confirmation sets and per-target audit outcomes.
+The full UI is not a first-canary prerequisite; no runtime configuration,
+credentials, policy activation, version or executable programme DAG changes here.
+
 ## Governed progression and existing external delivery gates
 
 The coordinated `GOVERNED_PROGRESSION_AND_DELIVERY_AUTHORITY_V1` increment adds
@@ -206,7 +224,7 @@ committed Workspace .engineering-platform/repository.json
   -> real bounded Workspace repository mutation
   -> Workspace canonical validation
   -> finalization
-  -> immutable receipt/result/provenance
+  -> immutable EP evidence
 ```
 
 This proves EP can engineer Workspace; it does not grant Workspace execution authority and does not require Workspace to orchestrate the run itself.
