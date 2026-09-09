@@ -40,17 +40,36 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           DIGEST: ${{ steps.bundle.outputs.digest }}
+          VERSION: ${{ steps.bundle.outputs.version }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
         run: |
           set -euo pipefail
-          TAG="workspace-v${{ steps.bundle.outputs.version }}"
+          TAG="workspace-v$VERSION"
           ASSET="${{ steps.bundle.outputs.filename }}"
           if gh release view "$TAG" --json targetCommitish >/dev/null 2>&1; then
-            test "$(gh release view "$TAG" --json targetCommitish --jq .targetCommitish)" = "${{ inputs.source_sha }}"
+            test "$(gh release view "$TAG" --json targetCommitish --jq .targetCommitish)" = "$SOURCE_SHA"
             mkdir existing-release
             gh release download "$TAG" --pattern "$ASSET" --dir existing-release
             test "sha256:$(sha256sum "existing-release/$ASSET" | cut -d' ' -f1)" = "$DIGEST"
           else
-            gh release create "$TAG" "$ASSET" --target "${{ inputs.source_sha }}" --title "Workspace ${{ steps.bundle.outputs.version }}" --generate-notes
+            gh release create "$TAG" "$ASSET" --target "$SOURCE_SHA" --title "Workspace $VERSION" --generate-notes
+          fi
+          PUBLISHED="workspace-published-$VERSION-$SOURCE_SHA.json"
+          python3 - "$PUBLISHED" <<'PY'
+          import json, os, sys
+          from pathlib import Path
+          Path(sys.argv[1]).write_text(json.dumps({
+              'schema_version': 1, 'state': 'PUBLISHED', 'product': 'workspace',
+              'version': os.environ['VERSION'], 'source_revision': os.environ['SOURCE_SHA'],
+              'artifact_digest': os.environ['DIGEST'], 'registry': 'github-release',
+          }, sort_keys=True) + '\n')
+          PY
+          if gh release view "$TAG" --json assets --jq '.assets[].name' | grep -Fx "$PUBLISHED" >/dev/null; then
+            mkdir published-readback
+            gh release download "$TAG" --pattern "$PUBLISHED" --dir published-readback
+            cmp "$PUBLISHED" "published-readback/$PUBLISHED"
+          else
+            gh release upload "$TAG" "$PUBLISHED"
           fi
       - name: Registry readback and durable release evidence
         env:
@@ -61,12 +80,31 @@ jobs:
         run: |
           set -euo pipefail
           mkdir readback evidence
-          gh release download "workspace-v${{ steps.bundle.outputs.version }}" --pattern "${{ steps.bundle.outputs.filename }}" --dir readback
+          TAG="workspace-v$VERSION"
+          PUBLISHED="workspace-published-$VERSION-$SOURCE_SHA.json"
+          COMPLETE="workspace-release-complete-$VERSION-$SOURCE_SHA.json"
+          gh release download "$TAG" --pattern "${{ steps.bundle.outputs.filename }}" --pattern "$PUBLISHED" --dir readback
           test "sha256:$(sha256sum "readback/${{ steps.bundle.outputs.filename }}" | cut -d' ' -f1)" = "${{ steps.bundle.outputs.digest }}"
-          python3 - <<'PY'
-          import json, os
+          python3 - "readback/$PUBLISHED" "evidence/release-complete.json" <<'PY'
+          import json, os, sys
           from pathlib import Path
-          Path('evidence/release-complete.json').write_text(json.dumps({'state':'RELEASE_COMPLETE','product':'workspace','version':os.environ['VERSION'],'source_revision':os.environ['SOURCE_SHA'],'artifact_digest':os.environ['DIGEST'],'registry':'github-release'}, sort_keys=True)+'\n')
+          published = json.loads(Path(sys.argv[1]).read_text())
+          expected = {'schema_version': 1, 'state': 'PUBLISHED', 'product': 'workspace',
+                      'version': os.environ['VERSION'], 'source_revision': os.environ['SOURCE_SHA'],
+                      'artifact_digest': os.environ['DIGEST'], 'registry': 'github-release'}
+          if published != expected:
+              raise SystemExit('published receipt does not bind the exact release identity')
+          Path(sys.argv[2]).write_text(json.dumps({**expected, 'state': 'RELEASE_COMPLETE'}, sort_keys=True)+'\n')
           PY
+          cp evidence/release-complete.json "$COMPLETE"
+          if gh release view "$TAG" --json assets --jq '.assets[].name' | grep -Fx "$COMPLETE" >/dev/null; then
+            mkdir complete-readback
+            gh release download "$TAG" --pattern "$COMPLETE" --dir complete-readback
+            cmp "$COMPLETE" "complete-readback/$COMPLETE"
+          else
+            gh release upload "$TAG" "$COMPLETE"
+          fi
+          rm -rf existing-release published-readback readback complete-readback
+          rm -f "${{ steps.bundle.outputs.filename }}" "$PUBLISHED" "$COMPLETE"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a # v7.0.1
         with: {name: workspace-release-evidence-${{ steps.bundle.outputs.version }}, path: evidence/}
