@@ -39,15 +39,17 @@ jobs:
           test -z "$(git status --porcelain)"
           python3 scripts/advance_product_version.py --verify-main-release-source --approved-source "$SOURCE_SHA"
           VERSION="$(python3 -c 'import json; print(json.load(open("product-version.json"))["version"])')"
-          printf 'version=%s\nsource_sha=%s\noperation_id=workspace-release-%s-%s\n' \
-            "$VERSION" "$SOURCE_SHA" "$VERSION" "${SOURCE_SHA:0:12}" >> "$GITHUB_OUTPUT"
+          printf 'version=%s\nsource_sha=%s\n' "$VERSION" "$SOURCE_SHA" >> "$GITHUB_OUTPUT"
+          echo "operation_id=workspace-release-$VERSION-$SOURCE_SHA" >> "$GITHUB_OUTPUT"
 
   qualify-source-bundle:
-    name: Build and qualify one exact source bundle
+    name: Build, qualify, and durably retain one exact source bundle
     needs: release-context
     runs-on: ubuntu-24.04
     permissions:
-      contents: read
+      # QUALIFIED is retained on a draft GitHub Release before a source-bundle
+      # publication mutation. The draft is not a published Workspace release.
+      contents: write
     outputs:
       filename: ${{ steps.bundle.outputs.filename }}
       digest: ${{ steps.bundle.outputs.digest }}
@@ -67,20 +69,21 @@ jobs:
           test -z "$(git status --porcelain)"
           bash scripts/validate.sh
       - id: bundle
-        name: Build, bind, and retain the qualified operation before publication
+        name: Build and bind the exact source-bundle identity
         env:
           OPERATION_ID: ${{ needs.release-context.outputs.operation_id }}
           SOURCE_SHA: ${{ needs.release-context.outputs.source_sha }}
           VERSION: ${{ needs.release-context.outputs.version }}
         run: |
           set -euo pipefail
-          mkdir dist release-evidence
+          mkdir -p dist release-evidence
           BUNDLE="workspace-$VERSION-$SOURCE_SHA.tar.gz"
           git archive --format=tar.gz --prefix="workspace-$VERSION/" HEAD > "dist/$BUNDLE"
           DIGEST="sha256:$(sha256sum "dist/$BUNDLE" | cut -d' ' -f1)"
           python3 - "$SOURCE_SHA" "$DIGEST" > qualification.json <<'PY'
           import json
           import sys
+
           print(json.dumps({
               "exact_main_sha": sys.argv[1],
               "artifact_digest": sys.argv[2],
@@ -92,14 +95,39 @@ jobs:
             --evidence-root release-evidence \
             --operation-id "$OPERATION_ID" \
             --version "$VERSION" \
-            --policy-revision workspace-production-release-v1 \
+            --policy-revision workspace-production-release-v2 \
             --source-revision "$SOURCE_SHA" \
             --artifact "dist/$BUNDLE" \
             --evidence-file qualification.json > qualified-operation.json
           cmp qualified-operation.json "release-evidence/operations/$OPERATION_ID.json"
           rm -f qualification.json qualified-operation.json
           printf 'filename=%s\ndigest=%s\n' "$BUNDLE" "$DIGEST" >> "$GITHUB_OUTPUT"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a # v7.0.1
+      - name: Retain the QUALIFIED operation outside the runner before publication
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OPERATION_ID: ${{ needs.release-context.outputs.operation_id }}
+          SOURCE_SHA: ${{ needs.release-context.outputs.source_sha }}
+          VERSION: ${{ needs.release-context.outputs.version }}
+        run: |
+          set -euo pipefail
+          TAG="workspace-v$VERSION"
+          QUALIFIED="workspace-release-qualified-$VERSION-$SOURCE_SHA.json"
+          cp "release-evidence/operations/$OPERATION_ID.json" "$QUALIFIED"
+          if gh release view "$TAG" --json targetCommitish >/dev/null 2>&1; then
+            test "$(gh release view "$TAG" --json targetCommitish --jq .targetCommitish)" = "$SOURCE_SHA"
+            qualified_readback="$(mktemp -d "$RUNNER_TEMP/workspace-qualified-readback-XXXXXX")"
+            if ! gh release download "$TAG" --pattern "$QUALIFIED" --dir "$qualified_readback"; then
+              echo 'Existing release lacks its original durable qualified-operation receipt.' >&2
+              exit 1
+            fi
+            cmp "$QUALIFIED" "$qualified_readback/$QUALIFIED"
+            rm -rf -- "$qualified_readback"
+          else
+            gh release create "$TAG" "$QUALIFIED" --draft --target "$SOURCE_SHA" --title "Workspace $VERSION"
+          fi
+          test "$(gh release view "$TAG" --json targetCommitish --jq .targetCommitish)" = "$SOURCE_SHA"
+          rm -f "$QUALIFIED"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: workspace-qualified-release-${{ needs.release-context.outputs.version }}-${{ needs.release-context.outputs.source_sha }}
           path: |
@@ -108,7 +136,7 @@ jobs:
           if-no-files-found: error
 
   publish-qualified-bundle:
-    name: Publish only the exact qualified source bundle
+    name: Publish only the durable-qualified source bundle
     needs: [release-context, qualify-source-bundle]
     runs-on: ubuntu-24.04
     permissions:
@@ -121,10 +149,11 @@ jobs:
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: workspace-qualified-release-${{ needs.release-context.outputs.version }}-${{ needs.release-context.outputs.source_sha }}
-          path: qualified-input
-      - name: Verify the retained qualified operation before publication
+          path: release-input
+      - name: Recheck durable qualified operation and receipt before publication
         env:
           FILENAME: ${{ needs.qualify-source-bundle.outputs.filename }}
+          GH_TOKEN: ${{ github.token }}
           OPERATION_ID: ${{ needs.release-context.outputs.operation_id }}
           SOURCE_SHA: ${{ needs.release-context.outputs.source_sha }}
           VERSION: ${{ needs.release-context.outputs.version }}
@@ -132,13 +161,21 @@ jobs:
           set -euo pipefail
           python3 scripts/release_operation.py \
             --validate-qualified \
-            --evidence-root qualified-input/release-evidence \
+            --evidence-root release-input/release-evidence \
             --operation-id "$OPERATION_ID" \
             --version "$VERSION" \
-            --policy-revision workspace-production-release-v1 \
+            --policy-revision workspace-production-release-v2 \
             --source-revision "$SOURCE_SHA" \
-            --artifact "qualified-input/dist/$FILENAME"
-      - name: Publish immutable GitHub Release asset or verify the exact prior publication
+            --artifact "release-input/dist/$FILENAME"
+          TAG="workspace-v$VERSION"
+          QUALIFIED="workspace-release-qualified-$VERSION-$SOURCE_SHA.json"
+          test "$(gh release view "$TAG" --json targetCommitish --jq .targetCommitish)" = "$SOURCE_SHA"
+          qualified_readback="$(mktemp -d "$RUNNER_TEMP/workspace-qualified-readback-XXXXXX")"
+          gh release download "$TAG" --pattern "$QUALIFIED" --dir "$qualified_readback"
+          cmp "release-input/release-evidence/operations/$OPERATION_ID.json" \
+            "$qualified_readback/$QUALIFIED"
+          rm -rf -- "$qualified_readback"
+      - name: Publish immutable source-bundle bytes or verify the exact prior publication
         env:
           DIGEST: ${{ needs.qualify-source-bundle.outputs.digest }}
           FILENAME: ${{ needs.qualify-source-bundle.outputs.filename }}
@@ -148,19 +185,28 @@ jobs:
         run: |
           set -euo pipefail
           TAG="workspace-v$VERSION"
-          ASSET="qualified-input/dist/$FILENAME"
-          if gh release view "$TAG" --json targetCommitish >/dev/null 2>&1; then
-            test "$(gh release view "$TAG" --json targetCommitish --jq .targetCommitish)" = "$SOURCE_SHA"
-            mkdir prior-publication
-            gh release download "$TAG" --pattern "$FILENAME" --dir prior-publication
-            test "sha256:$(sha256sum "prior-publication/$FILENAME" | cut -d' ' -f1)" = "$DIGEST"
-            rm -rf prior-publication
+          ASSET="release-input/dist/$FILENAME"
+          test "$(gh release view "$TAG" --json targetCommitish --jq .targetCommitish)" = "$SOURCE_SHA"
+          DRAFT="$(gh release view "$TAG" --json isDraft --jq .isDraft)"
+          case "$DRAFT" in true|false) ;; *) echo 'Release draft status is unreadable.' >&2; exit 1 ;; esac
+          publication_readback="$(mktemp -d "$RUNNER_TEMP/workspace-publication-readback-XXXXXX")"
+          if gh release download "$TAG" --pattern "$FILENAME" --dir "$publication_readback"; then
+            test "sha256:$(sha256sum "$publication_readback/$FILENAME" | cut -d' ' -f1)" = "$DIGEST"
           else
-            gh release create "$TAG" "$ASSET" --target "$SOURCE_SHA" --title "Workspace $VERSION" --generate-notes
+            if test "$DRAFT" != true; then
+              echo 'Existing public release lacks its source-bundle publication asset.' >&2
+              exit 1
+            fi
+            gh release upload "$TAG" "$ASSET"
           fi
+          rm -rf -- "$publication_readback"
+          if test "$DRAFT" = true; then
+            gh release edit "$TAG" --draft=false
+          fi
+          test "$(gh release view "$TAG" --json targetCommitish --jq .targetCommitish)" = "$SOURCE_SHA"
 
   registry-readback-and-published-evidence:
-    name: Read back publication and retain PUBLISHED evidence
+    name: Read back the public source bundle and retain PUBLISHED evidence
     needs: [release-context, qualify-source-bundle, publish-qualified-bundle]
     runs-on: ubuntu-24.04
     permissions:
@@ -173,8 +219,8 @@ jobs:
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: workspace-qualified-release-${{ needs.release-context.outputs.version }}-${{ needs.release-context.outputs.source_sha }}
-          path: qualified-input
-      - name: Verify registry bytes and transition the retained operation to PUBLISHED
+          path: release-input
+      - name: Verify public bytes and retain PUBLISHED evidence
         env:
           DIGEST: ${{ needs.qualify-source-bundle.outputs.digest }}
           FILENAME: ${{ needs.qualify-source-bundle.outputs.filename }}
@@ -185,43 +231,63 @@ jobs:
         run: |
           set -euo pipefail
           TAG="workspace-v$VERSION"
-          mkdir registry-readback
-          gh release download "$TAG" --pattern "$FILENAME" --dir registry-readback
-          test "sha256:$(sha256sum "registry-readback/$FILENAME" | cut -d' ' -f1)" = "$DIGEST"
-          python3 - "$TAG" "$FILENAME" "$DIGEST" "$SOURCE_SHA" > publication.json <<'PY'
+          QUALIFIED="workspace-release-qualified-$VERSION-$SOURCE_SHA.json"
+          PUBLISHED="workspace-release-published-$VERSION-$SOURCE_SHA.json"
+          test "$(gh release view "$TAG" --json targetCommitish,isDraft --jq .targetCommitish)" = "$SOURCE_SHA"
+          test "$(gh release view "$TAG" --json isDraft --jq .isDraft)" = false
+          python3 scripts/release_operation.py \
+            --validate-qualified \
+            --evidence-root release-input/release-evidence \
+            --operation-id "$OPERATION_ID" \
+            --version "$VERSION" \
+            --policy-revision workspace-production-release-v2 \
+            --source-revision "$SOURCE_SHA" \
+            --artifact "release-input/dist/$FILENAME" >/dev/null
+          qualified_readback="$(mktemp -d "$RUNNER_TEMP/workspace-qualified-readback-XXXXXX")"
+          gh release download "$TAG" --pattern "$QUALIFIED" --dir "$qualified_readback"
+          cmp "release-input/release-evidence/operations/$OPERATION_ID.json" \
+            "$qualified_readback/$QUALIFIED"
+          rm -rf -- "$qualified_readback"
+          registry_readback="$(mktemp -d "$RUNNER_TEMP/workspace-registry-readback-XXXXXX")"
+          gh release download "$TAG" --pattern "$FILENAME" --dir "$registry_readback"
+          test "sha256:$(sha256sum "$registry_readback/$FILENAME" | cut -d' ' -f1)" = "$DIGEST"
+          python3 - "$TAG" "$FILENAME" "$DIGEST" "$SOURCE_SHA" > release-input/release-evidence/registry-readback-digests.json <<'PY'
           import json
           import sys
+
           print(json.dumps({
               "registry": "github-release",
               "tag": sys.argv[1],
               "artifact_name": sys.argv[2],
-              "artifact_digest": sys.argv[3],
               "source_revision": sys.argv[4],
+              "observed_artifact_digests": {"source_bundle": sys.argv[3]},
+              "readback": "PASS",
           }, sort_keys=True))
           PY
           python3 scripts/release_operation.py \
             --mark-published \
-            --evidence-root qualified-input/release-evidence \
+            --evidence-root release-input/release-evidence \
             --operation-id "$OPERATION_ID" \
             --version "$VERSION" \
-            --policy-revision workspace-production-release-v1 \
+            --policy-revision workspace-production-release-v2 \
             --source-revision "$SOURCE_SHA" \
-            --artifact "qualified-input/dist/$FILENAME" \
-            --evidence-file publication.json > published-operation.json
-          PUBLISHED="workspace-release-published-$VERSION-$SOURCE_SHA.json"
-          cp "qualified-input/release-evidence/operations/$OPERATION_ID.json" "$PUBLISHED"
-          if gh release download "$TAG" --pattern "$PUBLISHED" --dir registry-readback; then
-            cmp "$PUBLISHED" "registry-readback/$PUBLISHED"
+            --artifact "release-input/dist/$FILENAME" \
+            --evidence-file release-input/release-evidence/registry-readback-digests.json > published-operation.json
+          cp "release-input/release-evidence/operations/$OPERATION_ID.json" "$PUBLISHED"
+          published_readback="$(mktemp -d "$RUNNER_TEMP/workspace-published-readback-XXXXXX")"
+          if gh release download "$TAG" --pattern "$PUBLISHED" --dir "$published_readback"; then
+            cmp "$PUBLISHED" "$published_readback/$PUBLISHED"
           else
             gh release upload "$TAG" "$PUBLISHED"
           fi
-          rm -f publication.json published-operation.json "$PUBLISHED"
+          rm -rf -- "$registry_readback" "$published_readback"
+          rm -f published-operation.json "$PUBLISHED"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: workspace-published-evidence-${{ needs.release-context.outputs.version }}-${{ needs.release-context.outputs.source_sha }}
           path: |
-            qualified-input/dist/
-            qualified-input/release-evidence/
+            release-input/dist/
+            release-input/release-evidence/
           if-no-files-found: error
 
   record-release-complete:
@@ -239,7 +305,7 @@ jobs:
         with:
           name: workspace-published-evidence-${{ needs.release-context.outputs.version }}-${{ needs.release-context.outputs.source_sha }}
           path: published-input
-      - name: Verify PUBLISHED receipt, clean exact temporary paths, and retain RELEASE_COMPLETE
+      - name: Verify PUBLISHED evidence, clean exact targets, and retain RELEASE_COMPLETE
         env:
           FILENAME: ${{ needs.qualify-source-bundle.outputs.filename }}
           GH_TOKEN: ${{ github.token }}
@@ -251,31 +317,56 @@ jobs:
           TAG="workspace-v$VERSION"
           PUBLISHED="workspace-release-published-$VERSION-$SOURCE_SHA.json"
           COMPLETE="workspace-release-complete-$VERSION-$SOURCE_SHA.json"
-          mkdir published-readback
-          gh release download "$TAG" --pattern "$PUBLISHED" --dir published-readback
-          cmp "published-input/release-evidence/operations/$OPERATION_ID.json" "published-readback/$PUBLISHED"
+          DIGEST="sha256:$(sha256sum "published-input/dist/$FILENAME" | cut -d' ' -f1)"
+          published_readback="$(mktemp -d "$RUNNER_TEMP/workspace-published-readback-XXXXXX")"
+          gh release download "$TAG" --pattern "$PUBLISHED" --dir "$published_readback"
+          cmp "published-input/release-evidence/operations/$OPERATION_ID.json" \
+            "$published_readback/$PUBLISHED"
           python3 scripts/release_operation.py \
-            --validate-qualified \
+            --show \
             --evidence-root published-input/release-evidence \
             --operation-id "$OPERATION_ID" \
             --version "$VERSION" \
-            --policy-revision workspace-production-release-v1 \
+            --policy-revision workspace-production-release-v2 \
             --source-revision "$SOURCE_SHA" \
-            --artifact "published-input/dist/$FILENAME" >/dev/null
-          python3 - > cleanup-complete.json <<'PY'
+            --artifact "published-input/dist/$FILENAME" > operation.json
+          python3 - operation.json <<'PY'
           import json
-          print(json.dumps({
-              "result": "COMPLETE",
-              "temporary_paths": ["published-readback", "registry-readback", "qualified-input"],
-          }, sort_keys=True))
+          import sys
+
+          operation = json.load(open(sys.argv[1], encoding="utf-8"))
+          if operation["state"] != "PUBLISHED":
+              raise SystemExit("terminal cleanup must start from PUBLISHED evidence")
           PY
-          if ! rm -rf published-readback; then
-            python3 - > cleanup-pending.json <<'PY'
+          rm -f operation.json
+          cleanup_targets=(
+            "$published_readback"
+            "published-input/dist"
+            "published-input/release-evidence/registry-readback-digests.json"
+          )
+          cleanup_evidence_targets=(
+            "published-readback"
+            "published-input/dist"
+            "published-input/release-evidence/registry-readback-digests.json"
+          )
+          failed_targets=()
+          for index in "${!cleanup_targets[@]}"; do
+            target="${cleanup_targets[$index]}"
+            if ! rm -rf -- "$target"; then
+              failed_targets+=("${cleanup_evidence_targets[$index]}")
+            elif test -e "$target" || test -L "$target"; then
+              failed_targets+=("${cleanup_evidence_targets[$index]}")
+            fi
+          done
+          if test "${#failed_targets[@]}" -ne 0; then
+            python3 - "${failed_targets[@]}" > cleanup-pending.json <<'PY'
           import json
+          import sys
+
           print(json.dumps({
               "result": "CLEANUP_PENDING",
-              "targets": ["published-readback"],
-              "error": "failed to remove operation-local readback directory",
+              "targets": sys.argv[1:],
+              "error": "operation-local cleanup did not complete",
           }, sort_keys=True))
           PY
             python3 scripts/release_operation.py \
@@ -283,38 +374,51 @@ jobs:
               --evidence-root published-input/release-evidence \
               --operation-id "$OPERATION_ID" \
               --version "$VERSION" \
-              --policy-revision workspace-production-release-v1 \
+              --policy-revision workspace-production-release-v2 \
               --source-revision "$SOURCE_SHA" \
-              --artifact "published-input/dist/$FILENAME" \
+              --artifact-digest "$DIGEST" \
               --evidence-file cleanup-pending.json > /dev/null
             PENDING="workspace-cleanup-pending-$VERSION-$SOURCE_SHA.json"
             cp "published-input/release-evidence/operations/$OPERATION_ID.json" "$PENDING"
-            if gh release download "$TAG" --pattern "$PENDING" --dir pending-readback; then
-              cmp "$PENDING" "pending-readback/$PENDING"
+            pending_readback="$(mktemp -d "$RUNNER_TEMP/workspace-pending-readback-XXXXXX")"
+            if gh release download "$TAG" --pattern "$PENDING" --dir "$pending_readback"; then
+              cmp "$PENDING" "$pending_readback/$PENDING"
             else
               gh release upload "$TAG" "$PENDING"
             fi
+            rm -rf -- "$pending_readback"
+            rm -f cleanup-pending.json "$PENDING"
             exit 1
           fi
+          python3 - "${cleanup_evidence_targets[@]}" > cleanup-complete.json <<'PY'
+          import json
+          import sys
+
+          print(json.dumps({
+              "result": "RELEASE_COMPLETE",
+              "temporary_paths": sys.argv[1:],
+          }, sort_keys=True))
+          PY
           python3 scripts/release_operation.py \
             --complete \
             --evidence-root published-input/release-evidence \
             --operation-id "$OPERATION_ID" \
             --version "$VERSION" \
-            --policy-revision workspace-production-release-v1 \
+            --policy-revision workspace-production-release-v2 \
             --source-revision "$SOURCE_SHA" \
-            --artifact "published-input/dist/$FILENAME" \
+            --artifact-digest "$DIGEST" \
             --evidence-file cleanup-complete.json > /dev/null
           cp "published-input/release-evidence/operations/$OPERATION_ID.json" "$COMPLETE"
-          if gh release download "$TAG" --pattern "$COMPLETE" --dir complete-readback; then
-            cmp "$COMPLETE" "complete-readback/$COMPLETE"
+          complete_readback="$(mktemp -d "$RUNNER_TEMP/workspace-complete-readback-XXXXXX")"
+          if gh release download "$TAG" --pattern "$COMPLETE" --dir "$complete_readback"; then
+            cmp "$COMPLETE" "$complete_readback/$COMPLETE"
           else
             gh release upload "$TAG" "$COMPLETE"
           fi
-          rm -rf complete-readback published-input
+          rm -rf -- "$complete_readback"
           rm -f cleanup-complete.json
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: workspace-release-evidence-${{ needs.release-context.outputs.version }}-${{ needs.release-context.outputs.source_sha }}
-          path: workspace-release-complete-*.json
+          path: workspace-release-complete-${{ needs.release-context.outputs.version }}-${{ needs.release-context.outputs.source_sha }}.json
           if-no-files-found: error

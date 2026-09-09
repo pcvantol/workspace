@@ -2,7 +2,9 @@
 """Behavioral tests for the Workspace source-bundle release journal."""
 from __future__ import annotations
 
+import contextlib
 import importlib.util
+import io
 import json
 import os
 from pathlib import Path
@@ -21,7 +23,7 @@ SPEC.loader.exec_module(release_operation)
 
 class WorkspaceReleaseOperationTests(unittest.TestCase):
     source = "a" * 40
-    policy = "workspace-production-release-v1"
+    policy = "workspace-production-release-v2"
 
     def setUp(self) -> None:
         self.temp = tempfile.TemporaryDirectory()
@@ -34,6 +36,15 @@ class WorkspaceReleaseOperationTests(unittest.TestCase):
         self.temp.cleanup()
 
     def expected(self, operation_id: str = "workspace-release-0001"):
+        return release_operation.ReleaseOperation.create(
+            operation_id=operation_id,
+            version="2.3.0",
+            policy_revision=self.policy,
+            source_revision=self.source,
+            artifacts={"source_bundle": release_operation.ReleaseOperationStore.artifact_digest(self.bundle)},
+        )
+
+    def expected_from_digest(self, operation_id: str = "workspace-release-0001"):
         return release_operation.ReleaseOperation.create(
             operation_id=operation_id,
             version="2.3.0",
@@ -105,6 +116,41 @@ class WorkspaceReleaseOperationTests(unittest.TestCase):
             {"result": "COMPLETE", "temporary_paths": ["readback", "dist"]},
         ))
 
+    def test_completion_can_use_recorded_digest_after_operation_local_bundle_cleanup(self) -> None:
+        self.publish()
+        expected = self.expected_from_digest()
+        self.bundle.unlink()
+        completed = release_operation.complete(
+            release_operation.ReleaseOperationStore(self.evidence),
+            expected,
+            {"result": "COMPLETE", "temporary_paths": ["source bundle"]},
+        )
+        self.assertEqual("RELEASE_COMPLETE", completed.state)
+
+    def test_cli_rejects_missing_or_ambiguous_artifact_identity(self) -> None:
+        parser = release_operation._parser()
+        arguments = [
+            "--show", "--evidence-root", str(self.evidence), "--operation-id", "workspace-release-0001",
+            "--version", "2.3.0", "--policy-revision", self.policy, "--source-revision", self.source,
+        ]
+        with contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit):
+                parser.parse_args(arguments)
+            with self.assertRaises(SystemExit):
+                parser.parse_args(arguments + ["--artifact", str(self.bundle), "--artifact-digest", "sha256:" + "0" * 64])
+
+    def test_cli_accepts_recorded_digest_after_bundle_cleanup(self) -> None:
+        self.publish()
+        digest = self.expected().artifacts["source_bundle"]
+        self.bundle.unlink()
+        command = [
+            "--show", "--evidence-root", str(self.evidence), "--operation-id", "workspace-release-0001",
+            "--version", "2.3.0", "--policy-revision", self.policy, "--source-revision", self.source,
+            "--artifact-digest", digest,
+        ]
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(0, release_operation.main(command))
+
     def test_changed_publication_receipt_cannot_rewrite_published_evidence(self) -> None:
         self.publish()
         with self.assertRaisesRegex(release_operation.ReleaseOperationError, "receipt changed"):
@@ -128,6 +174,19 @@ class WorkspaceReleaseOperationTests(unittest.TestCase):
             {"result": "COMPLETE", "temporary_paths": ["readback"]},
         )
         self.assertEqual("RELEASE_COMPLETE", completed.state)
+
+    def test_terminal_states_require_cleanup_evidence(self) -> None:
+        published = self.publish()
+        record = {
+            **release_operation.asdict(published),
+            "state": "CLEANUP_PENDING",
+            "cleanup": None,
+        }
+        with self.assertRaisesRegex(release_operation.ReleaseOperationError, "missing cleanup evidence"):
+            release_operation.ReleaseOperation.parse(record)
+        record["state"] = "RELEASE_COMPLETE"
+        with self.assertRaisesRegex(release_operation.ReleaseOperationError, "missing cleanup evidence"):
+            release_operation.ReleaseOperation.parse(record)
 
     def test_invalid_non_finite_json_evidence_is_rejected(self) -> None:
         with self.assertRaisesRegex(release_operation.ReleaseOperationError, "durable JSON evidence"):

@@ -2,10 +2,12 @@
 """Durable, fail-closed state for one Workspace source-bundle release.
 
 Workspace currently publishes an exact source bundle rather than an installed
-runtime artifact.  This journal binds that bundle to the exact protected-main
-revision, qualification, GitHub Release readback, and cleanup result.  It does
-not allocate a version, create a release by itself, install Workspace, or
-grant deployment authority.
+runtime artifact. This journal binds that bundle to the exact protected-main
+revision, qualification, GitHub Release readback, and cleanup result. A later
+transition may use the already-recorded bundle digest after operation-local
+cleanup; that does not select or publish another artifact. The helper does not
+allocate a version, create a release by itself, install Workspace, or grant
+deployment authority.
 """
 from __future__ import annotations
 
@@ -314,12 +316,20 @@ def _read_evidence(path: Path) -> Mapping[str, object]:
 
 
 def _expected(args: argparse.Namespace) -> ReleaseOperation:
+    if args.artifact is not None and args.artifact_digest is not None:
+        raise ReleaseOperationError("release source bundle accepts either an artifact path or a SHA-256 digest, not both")
+    if args.artifact is not None:
+        digest = ReleaseOperationStore.artifact_digest(args.artifact)
+    elif isinstance(args.artifact_digest, str) and _SHA256.fullmatch(args.artifact_digest) is not None:
+        digest = args.artifact_digest
+    else:
+        raise ReleaseOperationError("release source bundle requires an exact artifact path or SHA-256 digest")
     return ReleaseOperation.create(
         operation_id=args.operation_id,
         version=args.version,
         policy_revision=args.policy_revision,
         source_revision=args.source_revision,
-        artifacts={"source_bundle": ReleaseOperationStore.artifact_digest(args.artifact)},
+        artifacts={"source_bundle": digest},
     )
 
 
@@ -406,7 +416,9 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--version", required=True)
     parser.add_argument("--policy-revision", required=True)
     parser.add_argument("--source-revision", required=True)
-    parser.add_argument("--artifact", type=Path, required=True)
+    artifact = parser.add_mutually_exclusive_group(required=True)
+    artifact.add_argument("--artifact", type=Path)
+    artifact.add_argument("--artifact-digest")
     parser.add_argument("--evidence-file", type=Path)
     return parser
 
