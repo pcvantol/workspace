@@ -8,6 +8,7 @@ done
 
 python3 scripts/advance_product_version.py --check
 python3 scripts/test_product_version_operations.py
+python3 scripts/test_release_operation.py
 
 python3 docs/ai-development/validate_projection.py \
   --profile workspace \

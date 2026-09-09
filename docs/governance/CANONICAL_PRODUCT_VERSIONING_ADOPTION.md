@@ -41,17 +41,41 @@ is not release compatibility or publication authority; major changes require an
 explicit approved exact-release operation.
 
 For the current foundation-only product there is no package artifact or
-installed runtime to verify. The protected release workflow publishes one exact
+installed runtime to verify. The protected release workflow produces one exact
 GitHub Release source bundle only after it qualifies the selected current
-`main` SHA, then reads the asset back and verifies its SHA-256 before retaining
-`RELEASE_COMPLETE` evidence. `--verify-release-source` is a read-only guard for
-a future authorized publication route: it accepts only `release-X.Y.Z`, requires
-that exact canonical version, and requires the candidate HEAD to equal (not
-merely descend from) the externally approved source revision. It neither
-authorizes a branch nor publishes an artifact. Workspace presently has no
-repository-local protected version-preparation dispatcher, GitHub App, or EP
-qualification integration capable of committing a prepared operation and
-binding hosted qualification evidence to its resulting SHA.
+`main` SHA. Before the GitHub Release mutation, it retains a
+`workspace-release-<version>-<source-prefix>` operation whose immutable identity
+binds the policy revision, full source SHA and source-bundle SHA-256. The
+operation is serialized, refuses changed bytes or provenance under the same
+identity, and is rechecked immediately before publication.
+
+The operation moves through `PREPARED`, `QUALIFIED`, `PUBLISHED`, optional
+`CLEANUP_PENDING`, and `RELEASE_COMPLETE`. GitHub Release asset readback and a
+digest comparison are prerequisites for `PUBLISHED`; a separately retained
+release receipt records `RELEASE_COMPLETE` only after the operation-local
+readback/download paths have been cleaned. A cleanup failure remains visible as
+`CLEANUP_PENDING` and can be resumed using the same exact release identity.
+`PUBLISHED` therefore never implies that cleanup or release closure succeeded.
+
+The GitHub Release asset and receipts provide durable publication evidence and
+make a lost answer after publication resumable without replacing bytes. The
+pre-publication operation is carried between workflow jobs as protected
+workflow evidence; cross-run recovery of an interruption before any GitHub
+Release exists remains limited by that evidence retention and is not yet a
+separate durable external operation registry. No release, publication,
+installation, or live-runtime qualification has been executed by this source
+change.
+
+`--verify-release-source` is a read-only legacy candidate guard: it accepts
+only `release-X.Y.Z`, requires that exact canonical version, and requires the
+candidate HEAD to equal (not merely descend from) the externally approved source
+revision. The production workflow uses the separate
+`--verify-main-release-source` route, so a release branch may freeze a candidate
+but cannot remain the exclusive source of a published Workspace version. Neither
+helper authorizes publication. Workspace presently has no repository-local
+protected version-preparation dispatcher, GitHub App, or EP qualification
+integration capable of committing a prepared operation and binding hosted
+qualification evidence to its resulting SHA.
 
 Engineering Platform PR [#105](https://github.com/pcvantol/engineering-platform/pull/105)
 is a pending source-level bounded adapter for that future integration. It does
