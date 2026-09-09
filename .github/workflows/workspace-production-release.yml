@@ -36,10 +36,22 @@ jobs:
           git archive --format=tar.gz --prefix="workspace-${VERSION}/" HEAD > "$BUNDLE"
           DIGEST="sha256:$(sha256sum "$BUNDLE" | cut -d' ' -f1)"
           printf 'version=%s\nfilename=%s\ndigest=%s\n' "$VERSION" "$BUNDLE" "$DIGEST" >> "$GITHUB_OUTPUT"
-      - name: Publish immutable GitHub release asset
-        env: {GH_TOKEN: ${{ github.token }}}
+      - name: Publish immutable GitHub release asset or verify resumable prior publication
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DIGEST: ${{ steps.bundle.outputs.digest }}
         run: |
-          gh release create "workspace-v${{ steps.bundle.outputs.version }}" "${{ steps.bundle.outputs.filename }}" --target "${{ inputs.source_sha }}" --title "Workspace ${{ steps.bundle.outputs.version }}" --generate-notes
+          set -euo pipefail
+          TAG="workspace-v${{ steps.bundle.outputs.version }}"
+          ASSET="${{ steps.bundle.outputs.filename }}"
+          if gh release view "$TAG" --json targetCommitish >/dev/null 2>&1; then
+            test "$(gh release view "$TAG" --json targetCommitish --jq .targetCommitish)" = "${{ inputs.source_sha }}"
+            mkdir existing-release
+            gh release download "$TAG" --pattern "$ASSET" --dir existing-release
+            test "sha256:$(sha256sum "existing-release/$ASSET" | cut -d' ' -f1)" = "$DIGEST"
+          else
+            gh release create "$TAG" "$ASSET" --target "${{ inputs.source_sha }}" --title "Workspace ${{ steps.bundle.outputs.version }}" --generate-notes
+          fi
       - name: Registry readback and durable release evidence
         env:
           GH_TOKEN: ${{ github.token }}
