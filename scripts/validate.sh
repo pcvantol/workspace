@@ -13,7 +13,7 @@ python3 scripts/test_release_workflow_contract.py
 
 python3 docs/ai-development/validate_projection.py \
   --profile workspace \
-  --source-commit ec070e399ff4dbd92e760370002995fe4f4d52d6 \
+  --source-commit 6ec3b443c3ab3bdf76c626c2046d3778db570eb0 \
   --extension-identity WORKSPACE_DEVELOPMENT_EXTENSION
 
 grep -q 'peer of' README.md
