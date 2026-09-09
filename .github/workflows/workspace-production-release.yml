@@ -316,6 +316,7 @@ jobs:
           set -euo pipefail
           TAG="workspace-v$VERSION"
           PUBLISHED="workspace-release-published-$VERSION-$SOURCE_SHA.json"
+          PENDING="workspace-cleanup-pending-$VERSION-$SOURCE_SHA.json"
           COMPLETE="workspace-release-complete-$VERSION-$SOURCE_SHA.json"
           DIGEST="sha256:$(sha256sum "published-input/dist/$FILENAME" | cut -d' ' -f1)"
           published_readback="$(mktemp -d "$RUNNER_TEMP/workspace-published-readback-XXXXXX")"
@@ -339,6 +340,68 @@ jobs:
               raise SystemExit("terminal cleanup must start from PUBLISHED evidence")
           PY
           rm -f operation.json
+          pending_readback=""
+          pending_present=false
+          assets="$(gh release view "$TAG" --json assets --jq '.assets[].name')"
+          if printf '%s\n' "$assets" | grep -Fqx "$PENDING"; then
+            pending_present=true
+            pending_readback="$(mktemp -d "$RUNNER_TEMP/workspace-pending-readback-XXXXXX")"
+            gh release download "$TAG" --pattern "$PENDING" --dir "$pending_readback"
+            PYTHONPATH=. python3 - "$pending_readback/$PENDING" <<'PY'
+            from dataclasses import asdict
+            import json
+            import os
+            from pathlib import Path
+            import sys
+            from scripts.release_operation import ReleaseOperation, ReleaseOperationError, ReleaseOperationStore
+
+            receipt_path = Path(sys.argv[1])
+            payload = receipt_path.read_bytes()
+            pending = ReleaseOperation.parse(json.loads(payload))
+            canonical = (
+                json.dumps(asdict(pending), sort_keys=True, separators=(",", ":"), allow_nan=False) + "\n"
+            ).encode("utf-8")
+            if payload != canonical:
+                raise ReleaseOperationError("cleanup-pending receipt has non-canonical bytes")
+            store = ReleaseOperationStore(Path("published-input", "release-evidence"))
+            store.acquire(os.environ["OPERATION_ID"])
+            try:
+                current = store.load(os.environ["OPERATION_ID"])
+                if current is None or current.state != "PUBLISHED":
+                    raise ReleaseOperationError("terminal cleanup must start from PUBLISHED evidence")
+                if (
+                    pending.state != "CLEANUP_PENDING"
+                    or not current.same_identity(pending)
+                    or pending.qualification != current.qualification
+                    or pending.publication_receipt != current.publication_receipt
+                ):
+                    raise ReleaseOperationError("cleanup-pending receipt does not match published release evidence")
+                resumed = current.transition("CLEANUP_PENDING", evidence=pending.cleanup)
+                if resumed != pending:
+                    raise ReleaseOperationError("cleanup-pending receipt has inconsistent transition evidence")
+                store.replace(current, resumed)
+                store.record_publication(resumed)
+            finally:
+                store.release(os.environ["OPERATION_ID"])
+            PY
+          fi
+          python3 scripts/release_operation.py \
+            --show \
+            --evidence-root published-input/release-evidence \
+            --operation-id "$OPERATION_ID" \
+            --version "$VERSION" \
+            --policy-revision workspace-production-release-v2 \
+            --source-revision "$SOURCE_SHA" \
+            --artifact "published-input/dist/$FILENAME" > operation.json
+          python3 - operation.json <<'PY'
+          import json
+          import sys
+
+          operation = json.load(open(sys.argv[1], encoding="utf-8"))
+          if operation["state"] not in {"PUBLISHED", "CLEANUP_PENDING"}:
+              raise SystemExit("terminal cleanup must resume only PUBLISHED or CLEANUP_PENDING evidence")
+          PY
+          rm -f operation.json
           cleanup_targets=(
             "$published_readback"
             "published-input/dist"
@@ -349,6 +412,10 @@ jobs:
             "published-input/dist"
             "published-input/release-evidence/registry-readback-digests.json"
           )
+          if test -n "$pending_readback"; then
+            cleanup_targets+=("$pending_readback")
+            cleanup_evidence_targets+=("pending-readback")
+          fi
           failed_targets=()
           for index in "${!cleanup_targets[@]}"; do
             target="${cleanup_targets[$index]}"
@@ -359,7 +426,8 @@ jobs:
             fi
           done
           if test "${#failed_targets[@]}" -ne 0; then
-            python3 - "${failed_targets[@]}" > cleanup-pending.json <<'PY'
+            if test "$pending_present" = false; then
+              python3 - "${failed_targets[@]}" > cleanup-pending.json <<'PY'
           import json
           import sys
 
@@ -369,25 +437,25 @@ jobs:
               "error": "operation-local cleanup did not complete",
           }, sort_keys=True))
           PY
-            python3 scripts/release_operation.py \
-              --mark-cleanup-pending \
-              --evidence-root published-input/release-evidence \
-              --operation-id "$OPERATION_ID" \
-              --version "$VERSION" \
-              --policy-revision workspace-production-release-v2 \
-              --source-revision "$SOURCE_SHA" \
-              --artifact-digest "$DIGEST" \
-              --evidence-file cleanup-pending.json > /dev/null
-            PENDING="workspace-cleanup-pending-$VERSION-$SOURCE_SHA.json"
-            cp "published-input/release-evidence/operations/$OPERATION_ID.json" "$PENDING"
-            pending_readback="$(mktemp -d "$RUNNER_TEMP/workspace-pending-readback-XXXXXX")"
-            if gh release download "$TAG" --pattern "$PENDING" --dir "$pending_readback"; then
-              cmp "$PENDING" "$pending_readback/$PENDING"
-            else
-              gh release upload "$TAG" "$PENDING"
+              python3 scripts/release_operation.py \
+                --mark-cleanup-pending \
+                --evidence-root published-input/release-evidence \
+                --operation-id "$OPERATION_ID" \
+                --version "$VERSION" \
+                --policy-revision workspace-production-release-v2 \
+                --source-revision "$SOURCE_SHA" \
+                --artifact-digest "$DIGEST" \
+                --evidence-file cleanup-pending.json > /dev/null
+              cp "published-input/release-evidence/operations/$OPERATION_ID.json" "$PENDING"
+              pending_confirmation="$(mktemp -d "$RUNNER_TEMP/workspace-pending-confirmation-XXXXXX")"
+              if gh release download "$TAG" --pattern "$PENDING" --dir "$pending_confirmation"; then
+                cmp "$PENDING" "$pending_confirmation/$PENDING"
+              else
+                gh release upload "$TAG" "$PENDING"
+              fi
+              rm -rf -- "$pending_confirmation"
+              rm -f cleanup-pending.json "$PENDING"
             fi
-            rm -rf -- "$pending_readback"
-            rm -f cleanup-pending.json "$PENDING"
             exit 1
           fi
           python3 - "${cleanup_evidence_targets[@]}" > cleanup-complete.json <<'PY'
