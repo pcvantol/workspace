@@ -1,100 +1,106 @@
 # Workspace consolidation and parking — 10 September 2026
 
-Owning product: Workspace.
-[Main roadmap](../ROADMAP.md) · [documentary DAG](CONSOLIDATION_PARKING_2026_09_10_DAG.json).
+Increment: `FOUR_REPO_CONSOLIDATION_PARKING_2026_09_10`.
+Scoped record under [ROADMAP.md](../ROADMAP.md).
+[Documentary DAG](CONSOLIDATION_PARKING_2026_09_10_DAG.json).
 
 ## Decision and evidence boundary
 
-Owner request: inventory all four repositories, consolidate and park unfinished
-work for later. This is a documentation-only `NO_BUMP` change. The disposition
+The owner requested consolidation and parking of unfinished work, not further
+product implementation. This is documentation-only, NO_BUMP. The disposition
 becomes canonical only through the owning protected PR merge. It authorizes no
-product implementation, run, review-provider dispatch, merge of product work,
-release, installation, migration, credential change or ref/worktree deletion.
+runtime run, review-provider dispatch, product-work merge, release, installation,
+credential change, policy activation or branch/worktree deletion. PARKED is not
+cancellation or proof that a local process has stopped. Old handoff next-step
+text does not authorize resumption. Later work needs an explicitly selected
+bounded task; a missing prerequisite is recorded, not automatically built.
 
-`PARKED` is a planning disposition, not a failed/dismissed runtime state or a
-claim that local processes have stopped. No executable programme, queue, grant,
-repair consumption or deployment policy is changed. Prior broad handoff “next
-increment” text is not a pickup instruction while this parking decision applies.
-Existing architecture and mandatory assurance remain intact. Resume requires
-one explicitly selected bounded task, fresh evidence and applicable authority;
-a newly found prerequisite is recorded, never automatically implemented.
+SOURCE_VERIFIED is GitHub evidence at the pinned observation. USER_REPORTED
+is the owner's Workspace architecture report supplied in this task. The
+report is now retained instead of treating the entire local inventory as
+unknown. Exact worktree paths/tips, ignored files, stashes and live leases
+remain independently unverified. A clean report is not deletion authority.
 
-The accompanying JSON is a documentary dependency graph, not scheduler input.
-Its edges describe only the stated qualification/evidence relationships. Existing
-product DAGs retain their detailed dependencies; grouping their open work here
-does not rewrite those edges or add universal-installer/UI/optimization gates.
+## Remote snapshot and documentation change
 
-Source, hosted checks, user-reported local state and installed/runtime proof are
-separate. No installed/runtime qualification is established by this record.
-“Not observed” is not “absent”; branch age, merged PR or semantic supersession
-alone is not deletion authority. Preserve main, release refs, unknown ownership,
-original findings, ignored/untracked files, stashes and `.engineering` targets.
-
-## Remote snapshot
-
-Pinned main: `bad3dd7d7dafd6c907af440a10f9da0ed7261714`. The complete GitHub heads response on
-2026-09-10 contains **only main**; the open-PR response is empty. The scoped
-open non-PR issue search also returned no issues. There is no remote feature
-branch to merge, close or delete at this snapshot. This says nothing about
-unobserved local work or application completeness.
+Pinned main: `bad3dd7d7dafd6c907af440a10f9da0ed7261714`.
+The owner reports all PRs through #25 merged, no remote featurebranches and no
+open PRs. The subsequent fresh GitHub readback has the **documentation branch
+and PR #26 created by this consolidation task** in addition to main. This is
+not newly discovered unmerged product work and does not contradict the earlier
+snapshot. Reuse #26; do not create a duplicate consolidation PR.
 
 [Heads](https://api.github.com/repos/pcvantol/workspace/git/matching-refs/heads/) ·
-[open PRs](https://api.github.com/repos/pcvantol/workspace/pulls?state=open&per_page=100).
-Keep merged release/source work on main. No rollback, republishing, runtime or
-installation qualification is performed by this documentation.
+[Documentation #26](https://github.com/pcvantol/workspace/pull/26).
+No current claim is made that Workspace product implementation is complete:
+merged changes through #25 and an empty product PR queue are not completion of
+the still-planned control-plane features. Preserve delivered source on main.
 
-## Local worktrees: required evidence still open
+## Local report and per-branch disposition
 
-`LOCAL_WORKTREE_INVENTORY = UNVERIFIED`. The documenting session has a Linux
-container, not access to the user's Mac checkouts. No compatible local/SSH
-connector was found. Container staging files are not user worktrees. The remote
-head inventory cannot enumerate local branches, linked worktrees, independent
-clones, stashes, uncommitted/ignored files or live EP leases/processes.
+USER_REPORTED: primary checkout on clean main, nine commits behind remote;
+eight additional local featurebranches, each with a clean worktree under
+`/private/tmp`. Their former remote branches were removed. PRs #18-#25 are
+reported merged with corresponding squash commits on main. Thus the report
+implies main plus eight auxiliary worktrees; no independent host count is
+claimed. Exact full paths, current local tips and per-branch PR mapping remain
+to be captured before physical cleanup.
 
-On the actual Mac, capture `git worktree list --porcelain -z`, local/ref/upstream
-identities and each worktree's read-only status (including untracked/ignored
-presence), stash references and `.engineering` symlink metadata. Do not follow
-that symlink into runtime data. Record locks, prunable markers, missing paths,
-errors and incomplete coverage. A fresh product-owned read-only lease/run check
-is additionally required before changing an execution target. Preserve local
-work and create no “clean” claim by reset, stash, checkout, prune or deletion.
-Only after inventory and ownership/retention checks may a separate authorized
-operation select a cleanup action. This documentation does not perform it.
+| Branch | Disposition |
+| --- | --- |
+| codex/workspace-pending-recovery-v1 | CONDITIONAL_CLEANUP_CANDIDATE |
+| codex/workspace-release-evidence-projection-v1 | CONDITIONAL_CLEANUP_CANDIDATE |
+| codex/workspace-release-evidence-v1 | CONDITIONAL_CLEANUP_CANDIDATE |
+| codex/workspace-release-flow-parity-v2 | CONDITIONAL_CLEANUP_CANDIDATE |
+| codex/workspace-release-operation-parity-v1 | CONDITIONAL_CLEANUP_CANDIDATE |
+| codex/workspace-release-published-state-v1 | CONDITIONAL_CLEANUP_CANDIDATE |
+| codex/workspace-release-resume-v1 | CONDITIONAL_CLEANUP_CANDIDATE |
+| codex/workspace-release-source-contract-v1 | CONDITIONAL_CLEANUP_CANDIDATE |
 
-The supplied handoff reports an earlier local main `4277d5...` and local
-origin/main `4e268...`. These truncated historical anchors are not current exact
-identities. The actual checkout, linked worktrees, local-only refs and dirty
-state remain to be observed; do not fast-forward or reset first to hide the gap.
+The appropriate later action is a current per-target preservation check,
+fast-forward of main if still clean/nondivergent/unowned, then separately
+approved removal of confirmed redundant worktrees/branches. No command was
+executed on the Mac by this documentation task. Squash ancestry alone does not
+prove unmerged work; a merged PR alone does not exclude later local commits.
+Do not force-delete a branch solely because git calls it unmerged.
 
-## All retained roadmap concerns
+Check actual paths, full tips versus merged PR heads, all tracked/untracked/
+ignored content, stashes, locked/prunable markers and current run/PR/lease
+ownership. Preserve recovery evidence before removal. Do not follow or replace
+`.engineering` symlinks, copy private runtime data into Git, globally prune,
+reset or stash to manufacture cleanliness. Any unique residual is parked with
+its identity and content preserved, not automatically integrated.
 
-| DAG ID | Parked work | Required evidence on later resumption |
+## Scoped roadmap and retained open families
+
+| Node | Disposition | Required future result |
 | --- | --- | --- |
-| W-LOCAL | Local branches/worktrees/stashes/untracked/ignored and ownership | Current Mac evidence, coverage and retained unknown work |
-| W-CONTROL-PLANE | Installed Server and Client, peer discovery/pairing, role-aware decisions, project/Mission/Action/evidence views, chat, roadmap-DAG governance, forecasts, onboarding/B8R and consumer adapter | Exact bounded UI/contract objective, qualified producer identities and evidence, role/provenance/accessibility tests; no planning/execution authority |
-| W-POLICY-HYGIENE | HY-WC/HY-WO/HY-WM Repository Health, POL-WC/POL-W Policy & Automation, GP-WC/GP-W external gates | Existing owning contract/DAG and real Forge/EP producer qualification; read-only and destructive surfaces remain distinct |
-| W-RELEASE | Actual artifact/release/install closure and optional direct-EP dogfood | Exact version/source/digest/readback; separate install/operation authority; merged workflow source is not publication |
+| W-LOCAL | OPEN_EVIDENCE_GAP | Complete the per-target host inventory and PR-head mapping; retain reported clean state separately from fresh proof |
+| W-MAIN | FAST_FORWARD_CANDIDATE_NOT_EXECUTED | Current ancestry, clean main and no active owner; no checkout mutation before safety checks |
+| W-CLEANUP | CONDITIONAL_NO_DELETE_AUTHORITY | Eight named targets verified redundant with retained recovery evidence and explicit cleanup scope |
+| W-CONTROL-PLANE | PARKED | Installed Server/Client, role-aware decisions, project/Mission/Action/evidence views, chat, DAG/forecast UI, onboarding/B8R and producer adapter |
+| W-POLICY-HYGIENE | PARKED | Existing HY-WC/HY-WO/HY-WM, POL-WC/POL-W and GP-WC/GP-W contracts and qualification |
+| W-RELEASE | PARKED | Actual artifact/release/install closure and optional direct-EP dogfood, distinct from merged release-workflow source |
 
-The graph preserves these as work-family containers, not as a new detailed
-implementation programme. [ROADMAP.md](../ROADMAP.md),
-[Project Hygiene](PROJECT_HYGIENE_V1_ROADMAP.md),
+The [main roadmap](../ROADMAP.md), [Project Hygiene](PROJECT_HYGIENE_V1_ROADMAP.md),
 [Governed Progression](GOVERNED_PROGRESSION_V1_ROADMAP.md),
 [Policy & Automation](POLICY_AND_AUTOMATION.md),
 [Server/Client deployment](WORKSPACE_SERVER_CLIENT_DEPLOYMENT.md), and
-[Repository Onboarding](REPOSITORY_ONBOARDING.md) retain individual criteria and
-cross-product dependency semantics. Quality/Knowledge governance and later
-forecast/scenario/portfolio surfaces remain retained, not silently dropped.
+[Repository Onboarding](REPOSITORY_ONBOARDING.md) retain their detailed criteria
+and dependencies. Quality/Knowledge governance, scenario/portfolio/forecast
+surfaces remain retained, not silently cancelled. This grouping is not a new
+execution programme or a replacement for those graphs.
 
-Workspace is **not** required for the first serial Forge -> EP -> Forge Mission
-canary. Parking is not cancellation: later work resumes from an explicitly
-selected bounded item, not the first “next decision” in an old handoff. It may
-consume Forge/EP authenticated evidence; it never accesses peer SQL or acquires
-planning/execution authority. No new producer, credential, install or runtime
-state is created to make the documentary inventory look complete.
+Workspace is not required for the first serial Forge -> EP -> Forge canary.
+It consumes authenticated peer evidence, never peer SQL, Forge planning or EP
+execution authority. No full installer/UI gate is added to the original E2E.
 
-## Closure condition
+Cross-product index (canonical only after its own merge):
+[Forge consolidation](https://github.com/pcvantol/forge/blob/main/docs/roadmap/CONSOLIDATION_PARKING_2026_09_10.md).
 
-This change records all remote items observed and every open work family in the
-inspected Workspace roadmap. Local physical consolidation remains incomplete
-until W-LOCAL is resolved. Retain main and local work; do not create a cleanup
-PR solely because no remote feature branch remains.
+## Closure
+
+Remote source bookkeeping and owner-reported local findings are recorded.
+Physical cleanup, local-main synchronization and installed/runtime proof remain
+NOT_PERFORMED. Retain the eight worktrees until their final local checks; do
+not infer a missing worktree or safe deletion from a remote-only inventory.
