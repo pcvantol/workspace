@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "increment": "FOUR_REPO_CONSOLIDATION_PARKING_2026_09_10",
+  "documentary_only": true,
+  "execution_authorized": false,
+  "observed_date": "2026-09-10",
+  "base_main": "bad3dd7d7dafd6c907af440a10f9da0ed7261714",
+  "local_inventory": "USER_REPORTED_EIGHT_CLEAN_AUXILIARY_WORKTREES_PENDING_PER_TARGET_CHECK",
+  "cross_product_projection": "https://github.com/pcvantol/forge/blob/main/docs/roadmap/CONSOLIDATION_PARKING_2026_09_10_DAG.json",
+  "external_nodes": [],
+  "nodes": [
+    {"id":"W-LOCAL","disposition":"OPEN_EVIDENCE_GAP","depends_on":[],"acceptance":"Actual paths/tips, PR18-25 mapping, ignored/stash/lease/ownership and recovery evidence"},
+    {"id":"W-MAIN","disposition":"FAST_FORWARD_CANDIDATE_NOT_EXECUTED","depends_on":["W-LOCAL"],"acceptance":"Reported clean main nine behind; verify fresh ancestry and no owner before fast-forward"},
+    {"id":"W-CLEANUP","disposition":"CONDITIONAL_NO_DELETE_AUTHORITY","depends_on":["W-LOCAL"],"acceptance":"Eight named clean candidates only after full preservation checks; no force deletion based on squash ancestry"},
+    {"id":"W-CONTROL-PLANE","disposition":"PARKED","depends_on":[],"acceptance":"Existing ROADMAP and qualified producer contracts; not required for first Forge E2E"},
+    {"id":"W-POLICY-HYGIENE","disposition":"PARKED","depends_on":[],"acceptance":"Retain detailed HY/POL/GP graphs, roles and no-secondary-authority boundaries"},
+    {"id":"W-RELEASE","disposition":"PARKED","depends_on":[],"acceptance":"Exact actual source/artifact/registry/installed evidence and separately authorized operations"}
+  ]
+}
