@@ -4,16 +4,24 @@
   "documentary_only": true,
   "execution_authorized": false,
   "observed_date": "2026-09-10",
-  "base_main": "bad3dd7d7dafd6c907af440a10f9da0ed7261714",
-  "local_inventory": "USER_REPORTED_EIGHT_CLEAN_AUXILIARY_WORKTREES_PENDING_PER_TARGET_CHECK",
+  "base_main": "fa01cdfa86a772a38a3377fc86f87b7c948de8a7",
+  "local_inventory": "USER_REPORTED_AND_LOCAL_READBACK_CLEANUP_COMPLETE",
+  "cleanup_evidence": {
+    "baseline_worktrees": 1,
+    "removed_auxiliary_worktrees": 8,
+    "local_feature_branches": 0,
+    "unpreserved_wip": 0
+  },
+  "first_forge_e2e_critical_path": false,
+  "critical_path_disposition": "NOT_ON_FIRST_FORGE_E2E_CRITICAL_PATH",
   "cross_product_projection": "https://github.com/pcvantol/forge/blob/main/docs/roadmap/CONSOLIDATION_PARKING_2026_09_10_DAG.json",
   "external_nodes": [],
   "nodes": [
-    {"id":"W-LOCAL","disposition":"OPEN_EVIDENCE_GAP","depends_on":[],"acceptance":"Actual paths/tips, PR18-25 mapping, ignored/stash/lease/ownership and recovery evidence"},
-    {"id":"W-MAIN","disposition":"FAST_FORWARD_CANDIDATE_NOT_EXECUTED","depends_on":["W-LOCAL"],"acceptance":"Reported clean main nine behind; verify fresh ancestry and no owner before fast-forward"},
-    {"id":"W-CLEANUP","disposition":"CONDITIONAL_NO_DELETE_AUTHORITY","depends_on":["W-LOCAL"],"acceptance":"Eight named clean candidates only after full preservation checks; no force deletion based on squash ancestry"},
-    {"id":"W-CONTROL-PLANE","disposition":"PARKED","depends_on":[],"acceptance":"Existing ROADMAP and qualified producer contracts; not required for first Forge E2E"},
-    {"id":"W-POLICY-HYGIENE","disposition":"PARKED","depends_on":[],"acceptance":"Retain detailed HY/POL/GP graphs, roles and no-secondary-authority boundaries"},
-    {"id":"W-RELEASE","disposition":"PARKED","depends_on":[],"acceptance":"Exact actual source/artifact/registry/installed evidence and separately authorized operations"}
+    {"id":"W-LOCAL","disposition":"RESOLVED","depends_on":[],"acceptance":"One baseline worktree, zero local feature branches and zero unpreserved WIP"},
+    {"id":"W-MAIN","disposition":"COMPLETE","depends_on":["W-LOCAL"],"acceptance":"Local main equals origin/main before and after protected documentation delivery"},
+    {"id":"W-CLEANUP","disposition":"COMPLETE","depends_on":["W-LOCAL"],"removed_auxiliary_worktrees":8,"acceptance":"Eight auxiliary worktrees and branches removed with no unique residual"},
+    {"id":"W-CONTROL-PLANE","disposition":"PARKED","depends_on":[],"acceptance":"Existing Workspace control-plane roadmaps retained; not required for first Forge E2E"},
+    {"id":"W-POLICY-HYGIENE","disposition":"PARKED","depends_on":[],"acceptance":"Existing hygiene, policy and governed-progression graphs retained; not required for first Forge E2E"},
+    {"id":"W-RELEASE","disposition":"PARKED","depends_on":[],"acceptance":"Exact artifact, release, installation and optional dogfood evidence remain separately governed"}
   ]
 }
