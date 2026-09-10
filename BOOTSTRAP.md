@@ -1,5 +1,17 @@
 # Workspace Bootstrap
 
+## Current pickup checkpoint — consolidation and parking, 10 September 2026
+
+Read the [owning parking record](docs/CONSOLIDATION_PARKING_2026_09_10.md) and
+[documentary dependency DAG](docs/CONSOLIDATION_PARKING_2026_09_10_DAG.json) before selecting work.
+Product implementation is PARKED; old handoff “next increment” wording does
+not authorize resumption. The original Forge serial E2E remains the future
+integration goal, not a demand to finish every installer/UI/optimization lane.
+Local worktree inventory is explicitly UNVERIFIED, not empty or cleaned.
+Do not execute synchronization/checkout/cleanup merely to consolidate unknown
+local work. Existing contracts and validation/protection rules below remain
+intact; a new bounded task and actual local safety checks are needed to resume.
+
 ## Repository identity
 
 Workspace is the first-class repository `pcvantol/workspace`. It is not a

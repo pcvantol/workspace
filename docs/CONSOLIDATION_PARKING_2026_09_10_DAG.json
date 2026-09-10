@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "increment": "FOUR_REPO_CONSOLIDATION_PARKING_2026_09_10",
+  "documentary_only": true,
+  "execution_authorized": false,
+  "observed_date": "2026-09-10",
+  "base_main": "bad3dd7d7dafd6c907af440a10f9da0ed7261714",
+  "local_inventory": "UNVERIFIED",
+  "cross_product_projection": "https://github.com/pcvantol/forge/blob/main/docs/roadmap/CONSOLIDATION_PARKING_2026_09_10_DAG.json",
+  "external_nodes": [],
+  "nodes": [
+    {"id": "W-LOCAL", "owner": "pcvantol/workspace", "title": "Capture actual local worktrees, refs, stashes and ownership", "disposition": "OPEN_EVIDENCE_GAP", "depends_on": [], "resume_acceptance": "Fresh host-local inventory with explicit coverage; preserve all unknown-owned/untracked/ignored work.", "source_refs": [], "execution_authorized": false},
+    {"id": "W-CONTROL-PLANE", "owner": "pcvantol/workspace", "title": "Park Server/Client, role-aware UI, DAG/governance and onboarding", "disposition": "PARKED", "depends_on": ["W-LOCAL"], "resume_acceptance": "Existing ROADMAP and qualified producer contracts; no Forge planning or EP execution authority; not required by first F-E2E.", "source_refs": [], "execution_authorized": false},
+    {"id": "W-POLICY-HYGIENE", "owner": "pcvantol/workspace", "title": "Park HY-WC/HY-WO/HY-WM, POL-W and GP-W work", "disposition": "PARKED", "depends_on": [], "resume_acceptance": "Detailed existing HY/POL/GP graphs retained. No runtime state inferred from an empty remote branch list.", "source_refs": [], "execution_authorized": false},
+    {"id": "W-RELEASE", "owner": "pcvantol/workspace", "title": "Retain release source; park publication/install/dogfood proof", "disposition": "PARKED", "depends_on": [], "resume_acceptance": "Separate actual source/registry/installed evidence and authority; no release inferred from merged release-workflow source.", "source_refs": [], "execution_authorized": false}
+  ]
+}
