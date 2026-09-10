@@ -7,9 +7,10 @@ Read the [owning parking record](docs/CONSOLIDATION_PARKING_2026_09_10.md) and
 Product implementation is PARKED; old handoff next-increment wording does
 not authorize resumption. The original Forge serial E2E remains a future
 integration goal, not a demand to finish every installer/UI/optimization lane.
-The owner reports eight clean auxiliary worktrees; direct per-target host
-verification and cleanup remain outstanding. Do not reset, switch, prune or
-delete unknown local work to make this documentary task look complete.
+The consolidation record now reflects completed physical cleanup: all eight
+auxiliary worktrees/branches were removed, leaving one local `main` worktree,
+no local feature branches and no unpreserved WIP at the pre-documentation
+baseline. Workspace remains `NOT_ON_FIRST_FORGE_E2E_CRITICAL_PATH`.
 Existing contracts and validation/protection rules below remain intact.
 
 ## Repository identity
