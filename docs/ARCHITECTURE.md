@@ -31,6 +31,21 @@ onboarding choices and authority split are recorded in
 The implementation stack is intentionally undecided: no prior Workspace
 application source was discovered, so this repository does not infer one.
 
+## Role-aware conversations
+
+[Business, Architect and UX conversations](ROLE_AWARE_CONVERSATIONS_V1.md)
+share project context and linked history while retaining per-turn advisor
+identity. Workspace owns conversation UX/navigation; Forge owns admitted
+reasoning-session, proposal and decision provenance. Advice mode is not an
+operator role, and UX is not an extra universal approval gate. Conversation,
+proposal, decision and engineering authorization remain distinct.
+
+The [owning roadmap](ROLE_AWARE_CONVERSATIONS_V1_ROADMAP.md) and
+[documentary DAG](ROLE_AWARE_CONVERSATIONS_V1_DAG.json) refine existing role-aware
+governance without choosing a UI stack or implementing a second planner. All
+runtime work remains PLANNED and the full UI is not a first-canary prerequisite.
+Forge Server Console remains instance administration, not this project interface.
+
 ## External boundaries
 
 | System | Boundary |

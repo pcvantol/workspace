@@ -27,4 +27,6 @@ grep -q 'Status: proposed' docs/REPOSITORY_ONBOARDING.md
 grep -q '.engineering-platform/repository.json' docs/REPOSITORY_ONBOARDING.md
 test -s docs/governance/AI_DEVELOPMENT_CONTRACT_SEMANTIC_EQUIVALENCE_RECEIPT.md
 
+python3 scripts/test_role_aware_conversations_contract.py
+
 echo 'Workspace foundation validation passed.'
