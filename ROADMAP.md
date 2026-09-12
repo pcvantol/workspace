@@ -1,5 +1,24 @@
 # Workspace Roadmap
 
+## Business, Architect and UX conversations — designed productization lane
+
+`ROLE_AWARE_CONVERSATIONS_V1` is specified in the
+[functional design](docs/ROLE_AWARE_CONVERSATIONS_V1.md),
+[owning delivery roadmap](docs/ROLE_AWARE_CONVERSATIONS_V1_ROADMAP.md) and
+[documentary DAG](docs/ROLE_AWARE_CONVERSATIONS_V1_DAG.json). It refines existing
+role-aware governance with one project conversation capability and three advice
+modes, shared context/history, proposals, artifact review and explicit handoff.
+UX Advisor adds advice, not a new mandatory Mission approval stage.
+
+`RC-WC -> RC-WS -> RC-WP -> RC-WQ` consumes the corresponding qualified Forge
+contract/session/proposal/service subsets RC-FC/FS/FP/FQ under existing F6.
+All runtime nodes remain PLANNED. Contract-first work is parallel non-blocking;
+full Workspace delivery is POST_AUTONOMY. No edge is added to the first live
+canary, and neither full policy UI nor the universal installer is a prerequisite.
+Twenty shared scenario families distinguish future runtime/Playwright proof
+from the offline documentary guards in this increment. RC-T18 joins the later
+outer-loop CI programme; it does not block basic conversation delivery.
+
 ## Repository Health and reconciliation chat — documented target
 
 `WORKSPACE::REPOSITORY_HEALTH_AND_RECONCILIATION_V1` is specified in the

@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "increment": "ROLE_AWARE_CONVERSATIONS_V1",
+  "contract_target_version": 1,
+  "authority": "DOCUMENTARY_ONLY",
+  "executable": false,
+  "first_canary_prerequisite": false,
+  "advisor_kinds": [
+    "BUSINESS",
+    "ARCHITECTURE",
+    "UX"
+  ],
+  "invariants": {
+    "CHAT_TRANSCRIPT_IS_AUTHORITY": false,
+    "ADVISOR_KIND_IS_AUTHORIZATION_ROLE": false,
+    "UX_REVIEW_REQUIRED_FOR_EVERY_MISSION": false,
+    "CHAT_DIRECT_REPOSITORY_MUTATION": false,
+    "CHAT_CREATES_EXECUTION_AUTHORITY": false,
+    "ROLE_CHAT_REQUIRED_FOR_FIRST_CANARY": false
+  },
+  "scenario_ids": [
+    "RC-T01",
+    "RC-T02",
+    "RC-T03",
+    "RC-T04",
+    "RC-T05",
+    "RC-T06",
+    "RC-T07",
+    "RC-T08",
+    "RC-T09",
+    "RC-T10",
+    "RC-T11",
+    "RC-T12",
+    "RC-T13",
+    "RC-T14",
+    "RC-T15",
+    "RC-T16",
+    "RC-T17",
+    "RC-T18",
+    "RC-T19",
+    "RC-T20"
+  ],
+  "deferred_scenario_ids": [
+    "RC-T18"
+  ],
+  "owner": "Workspace",
+  "parent_reference": "WORKSPACE::ROLE_AWARE_GOVERNANCE_V1",
+  "parent_relationship": "PRODUCTIZATION_REFINEMENT_NOT_EXECUTION_EDGE",
+  "architecture": "docs/ROLE_AWARE_CONVERSATIONS_V1.md",
+  "roadmap": "docs/ROLE_AWARE_CONVERSATIONS_V1_ROADMAP.md",
+  "peer_graph": "pcvantol/forge:docs/roadmap/role-aware-conversations-v1.json",
+  "locales": [
+    "en",
+    "nl",
+    "de",
+    "fr",
+    "es"
+  ],
+  "external_predecessors": {
+    "RC-FC": {
+      "owner": "Forge",
+      "reference": "RC-FC",
+      "required_contract": "Versioned conversation/session/proposal contract fixtures"
+    },
+    "RC-FS": {
+      "owner": "Forge",
+      "reference": "RC-FS",
+      "required_contract": "Durable session/context readback"
+    },
+    "RC-FP": {
+      "owner": "Forge",
+      "reference": "RC-FP",
+      "required_contract": "Governed proposal/decision/handoff receipts"
+    },
+    "RC-FQ": {
+      "owner": "Forge",
+      "reference": "RC-FQ",
+      "required_contract": "Qualified integrated service contracts"
+    },
+    "WORKSPACE_SERVER_API_SUBSET": {
+      "owner": "Workspace",
+      "reference": "docs/WORKSPACE_SERVER_CLIENT_DEPLOYMENT.md",
+      "required_contract": "Authenticated Workspace Server/API, conversation/project state, expected revisions and reconnect; not universal installer."
+    }
+  },
+  "nodes": [
+    {
+      "id": "RC-WC",
+      "title": "Consumer and UX contract",
+      "status": "PLANNED",
+      "predecessors": [],
+      "external_predecessors": [
+        "RC-FC"
+      ],
+      "qualification": [
+        "Target projections/states",
+        "No secondary authority",
+        "Capability negotiation"
+      ]
+    },
+    {
+      "id": "RC-WS",
+      "title": "Conversation shell and continuity",
+      "status": "PLANNED",
+      "predecessors": [
+        "RC-WC"
+      ],
+      "external_predecessors": [
+        "RC-FS",
+        "WORKSPACE_SERVER_API_SUBSET"
+      ],
+      "qualification": [
+        "Three advice modes/context/history",
+        "Safe attachments",
+        "No invocation on load/reconnect"
+      ]
+    },
+    {
+      "id": "RC-WP",
+      "title": "Proposal review and decision UX",
+      "status": "PLANNED",
+      "predecessors": [
+        "RC-WS"
+      ],
+      "external_predecessors": [
+        "RC-FP"
+      ],
+      "qualification": [
+        "Exact confirmation and conflicts",
+        "Artifact revision binding",
+        "Existing role routing"
+      ]
+    },
+    {
+      "id": "RC-WQ",
+      "title": "Installed/API and browser qualification",
+      "status": "PLANNED",
+      "predecessors": [
+        "RC-WP"
+      ],
+      "external_predecessors": [
+        "RC-FQ"
+      ],
+      "qualification": [
+        "RC-T01..RC-T17, RC-T19, RC-T20",
+        "Playwright en/nl/de/fr/es",
+        "New executable components >80% coverage plus critical negatives"
+      ]
+    }
+  ]
+}
