@@ -283,3 +283,21 @@ These are core product directions, but full implementation is not required befor
 - Role projections do not create new underlying facts.
 - A human-facing summary is never sufficient evidence when the governing contract requires canonical producer evidence.
 - Human approval is not required for routine evidence ingestion or engineering repair loops that policy already authorizes.
+
+## Live roadmap and approved-pending management — functional refinement
+
+`LIVE_PROJECT_ROADMAP_MANAGEMENT_V1` now details this existing family in the
+[functional design](LIVE_PROJECT_ROADMAP_MANAGEMENT_V1.md),
+[scoped roadmap](LIVE_PROJECT_ROADMAP_MANAGEMENT_V1_ROADMAP.md) and
+[documentary DAG](LIVE_PROJECT_ROADMAP_MANAGEMENT_V1_DAG.json). One snapshot
+combines capabilities, active Missions, approved pending work, Candidates,
+Expected work and history, with an attention facet and iteration-change view.
+
+Frozen revision, approvals, automatic release authority, current eligibility and
+actual activation are distinct. Existing Forge services can activate explicitly
+preapproved/released Missions after current evidence and safety gates, without
+another owner message; Workspace does not approve them or schedule them. A new
+Candidate still needs real approvals. HTTP-only peers, separate EP admission,
+unchanged budgets and immutable history remain. Six Forge and four Workspace
+planned nodes share twenty-four future qualification families. This adds no
+implementation, live grant, executable programme or first-canary dependency.
