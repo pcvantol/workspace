@@ -209,3 +209,18 @@ The root [roadmap](../ROADMAP.md) is the Workspace scheduling authority. Existin
 #14 only versions this repository and remains a separate proposal requiring
 reconciliation with native Forge release management; it does not implement this
 policy UI. This documentation grants no permission to merge, publish or deploy.
+
+## Adaptive increment-size preference
+
+[ADAPTIVE_ACTION_SIZING_V1](ADAPTIVE_ACTION_SIZING_V1.md) and the
+[two-node local DAG](adaptive-action-sizing-v1.json) refine planning preferences
+with Smaller / Balanced-adaptive / Larger-coherent increments. Forge owns sizing;
+EP exposes and rechecks execution AND mandatory-review feasibility. Model/effort,
+authority and hard limits remain separate. The UI shows effective policy and
+why an Action fits, with estimated versus observed cycle costs and uncertainty.
+It never changes active snapshots, grants or failed-lineage consumption silently.
+
+The local AS-W nodes consume qualified Forge policy/evidence HTTP subsets and
+remain PLANNED. Five-language/accessibility and shared AS scenario acceptance
+are required for the feature; no runtime setting, default model, API subscription,
+Mission, CI workflow or first-canary prerequisite is activated by this document.
