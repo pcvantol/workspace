@@ -25,3 +25,13 @@ HTTP server; it must not create a second writer or perform peer integration.
 OpenAPI, implemented routes, operation inventory and derived Postman cases stay
 in parity. The WH-CONTRACT/SERVICES/HTTP/CLI/PEERS/Q nodes remain PLANNED and do
 not add a current live-canary prerequisite or change existing product ownership.
+
+## Installable software distribution — PyPI target
+
+The owner-requested [PyPI distribution roadmap](WORKSPACE_PYPI_DISTRIBUTION_V1.md)
+and [WPK delivery DAG](WORKSPACE_PYPI_DISTRIBUTION_V1_DAG.json) replace GitHub
+source-bundle delivery as the target channel for installable Workspace software.
+Keep Server/Client role mapping explicit; GitHub may retain historical releases
+and evidence but is not an implicit software fallback. Names, wheel/sdist
+packaging, Trusted Publishing, exact registry readback and installer consumption
+remain PLANNED. No publication, stack choice or runtime delivery is claimed.

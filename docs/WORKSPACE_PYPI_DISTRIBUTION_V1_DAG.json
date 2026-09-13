@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "increment": "WORKSPACE_PYPI_DISTRIBUTION_V1",
+  "owner": "workspace",
+  "authority": "DOCUMENTARY",
+  "status": "PLANNED",
+  "version_change": "NO_BUMP",
+  "executable": false,
+  "authorizes_execution": false,
+  "first_canary_prerequisite": false,
+  "source_revision": "36d294836cb653361fda3972de38acce3d2970f8",
+  "architecture": "docs/WORKSPACE_SERVER_CLIENT_DEPLOYMENT.md",
+  "roadmap": "docs/WORKSPACE_PYPI_DISTRIBUTION_V1.md",
+  "canonical_installable_channel": "PyPI",
+  "github_release_role": "HISTORICAL_SOURCE_AND_EVIDENCE_NOT_SOFTWARE_FALLBACK",
+  "nodes": [
+    {
+      "id": "WPK-IDENTITY",
+      "depends_on": [],
+      "status": "PLANNED",
+      "qualification_evidence": []
+    },
+    {
+      "id": "WPK-PACKAGE",
+      "depends_on": [
+        "WPK-IDENTITY"
+      ],
+      "status": "PLANNED",
+      "qualification_evidence": []
+    },
+    {
+      "id": "WPK-PUBLISH",
+      "depends_on": [
+        "WPK-PACKAGE"
+      ],
+      "status": "PLANNED",
+      "qualification_evidence": []
+    },
+    {
+      "id": "WPK-READBACK",
+      "depends_on": [
+        "WPK-PUBLISH"
+      ],
+      "status": "PLANNED",
+      "qualification_evidence": []
+    },
+    {
+      "id": "WPK-CONSUMER",
+      "depends_on": [
+        "WPK-READBACK"
+      ],
+      "status": "PLANNED",
+      "qualification_evidence": []
+    }
+  ],
+  "required_scenarios": [
+    "WPK-T01",
+    "WPK-T02",
+    "WPK-T03",
+    "WPK-T04",
+    "WPK-T05",
+    "WPK-T06"
+  ],
+  "invariants": {
+    "names_owned_before_publish": true,
+    "server_and_client_mapping_required": true,
+    "source_archive_is_installed_proof": false,
+    "same_version_different_bytes_allowed": false,
+    "pypi_fallback_to_github": false,
+    "publication_implies_live_installation": false,
+    "cleanup_failure_erases_publication": false,
+    "production_workflow_changed": false
+  },
+  "evidence_gates": {
+    "WPK-PACKAGE": [
+      "OWNED_ROLE_ENTRYPOINT_AND_ASSET_SUBSET"
+    ],
+    "WPK-PUBLISH": [
+      "QUALIFIED_INSTALLABLE_ROLE_SUBSET",
+      "CONFIGURED_PYPI_PUBLISHER"
+    ],
+    "WPK-CONSUMER": [
+      "EXACT_PUBLISHED_ARTIFACT_AND_RUNTIME_EVIDENCE"
+    ]
+  }
+}
