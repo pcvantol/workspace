@@ -1,144 +1,41 @@
 # Workspace repository onboarding and qualification
 
-## Status and purpose
+## Status and scope
 
-**Status: proposed.** This document is the canonical Workspace product design
-for presenting and initiating project/repository onboarding. It records intent
-and boundaries only. It does not establish an implemented Workspace UI, a
-GitHub integration, an Engineering Platform (EP) protocol, an EP repository
-schema, or permission to provision external resources.
+**Status: proposed.** This is the canonical target design; implementation and installed qualification remain PLANNED. This record and the [detailed project-bootstrap design](PROJECT_BOOTSTRAP_V1.md) define Workspace's product experience, not an executed onboarding operation or permission to provision resources. The [scoped roadmap](PROJECT_BOOTSTRAP_V1_ROADMAP.md) and [documentary DAG](PROJECT_BOOTSTRAP_V1_DAG.json) decompose the onboarding/control-plane lane of [ROADMAP.md](../ROADMAP.md).
 
-Workspace is the user- and project-control plane above Forge planning and EP
-execution: it gives people one place to understand project topology and to
-start permitted lifecycle actions. “Above” describes the user experience and
-control-plane composition, never an authority to bypass Forge, CENTRAL, EP, or
-the Project Agent. The product boundaries remain defined in
-[Architecture](ARCHITECTURE.md), and sequencing remains in the
-[roadmap](../ROADMAP.md).
+The detailed contract resolves the formerly unspecified artifact-preview, Genesis/Managed adoption and promotion design. It does not claim runtime closure of those capabilities. EP B8R already owns committed project/repository identity and authenticated attachment; this replaces only this document's older wording that the declaration schema/registration were entirely future. A complete create/adopt/promotion product journey still requires new qualified composition.
 
-## Intended onboarding choices
+## Entry points
 
-The planned Workspace onboarding surface offers these mutually distinct entry
-points:
+| Choice | Target outcome |
+| --- | --- |
+| New Genesis project | Common local product/engineering foundation in an approved missing/empty target or unborn Git; no remote effects |
+| Adopt local Genesis work | Explicitly reviewed local content/identity mapping, preserved history and local qualification |
+| New Managed repository | Approved remote birth, project foundation and verified host governance |
+| Adopt Managed repository | Actual remote inventory/drift review, protected changes and B8R attachment; no history recreation |
+| Promote Genesis to Managed | Same project/authority IDs and ancestry, explicit publication and remote-governance proof |
 
-| Choice | Planned outcome | Intended use |
-| --- | --- | --- |
-| **Use existing repository** | Register an already-existing GitHub repository in a logical project and request eligible Agent attachment. | Adopt an existing codebase without recreating its Git history. |
-| **Create new repository** | Request governed GitHub provisioning, then register the created repository in the logical project. | Start a normal new repository under an approved owner/namespace. |
-| **Genesis project** | Create a logical project and its initial canonical project/repository topology, then request an initial repository bootstrap. | Start a new product with no prior repository. |
-| **Qualification-only repository** | Create or attach an explicitly disposable repository used solely for a bounded installed-product qualification. | Prove a route without attaching a canonical product repository. |
+Qualification-only is an independent purpose with explicit disposable-resource retention/deletion policy, not a mode or generic cleanup authorization. The exact target/effects are approved before execution. A remote failure cannot silently change mode. A local directory is selected through the eligible EP host, not inferred from the browser machine.
 
-The choices are plans, not current Workspace capabilities. A future product
-decision must define their request/API model, the EP-owned repository contract,
-supported GitHub settings, user roles, approval thresholds, retention, and
-failure/recovery behavior.
+## Owning boundaries
 
-## Logical and physical authority
+Workspace owns human-facing drafts, conversations, views and permitted intents; Forge owns product meaning, artifact/contract selection, desired policy and readiness interpretation; EP owns accepted effect authorization, repository-host/local mutation, leases, validation, attachment and evidence. Project Agents provide scoped physical capabilities, not logical topology authority. Forge and Workspace do not command Agent filesystems directly or use peer CLI/import/SQL as a substitute for HTTP.
 
-The future flow separates a logical declaration from the physical host work.
-This prevents a browser, a planner, or a local Agent from silently becoming the
-authority for every concern.
+Logical identity stays in the EP-owned `.engineering-platform/repository.json`, using its supported packaged schema. Project and repository IDs and the single authority-repository relationship are portable; paths, server/Agent identities and credentials are not. Workspace display naming is not identity. Before a first commit, a reserved name/ID is shown as provisional; canonical registration follows validated committed declaration evidence. The detailed companion specifies how this avoids an identity/permission circular dependency.
 
-| Concern | Planned authority | Not the authority |
-| --- | --- | --- |
-| User-facing project/repository control and topology presentation | Workspace Server and Client | A local checkout or Project Agent |
-| Cross-project planning, dependencies, and proposed lane intent | Forge | Workspace UI or a GitHub repository |
-| Accepted project/repository intent, execution admission, durable lifecycle state, and EP evidence | EP CENTRAL / EP Server | Forge, Workspace, or a Project Agent |
-| GitHub resource provisioning from accepted intent | A future governed CENTRAL-backed GitHub integration, with Workspace/Forge as permitted requesters | A Project Agent acting on its own initiative |
-| Clone, checkout, worktree, local toolchain, provider-host readiness, and local credential use | EP Project Agent on the selected host | Workspace, Forge, or CENTRAL directly accessing the host filesystem |
+## End-to-end experience
 
-Workspace may initiate a permitted request and show its state. Forge may
-produce the related plan. Neither may issue a direct Agent filesystem command,
-admit an execution, allocate a repository lease, or turn a proposed repository
-into a provisioned resource without the applicable CENTRAL decision and
-operator controls.
+Describe product -> choose Genesis/Managed and target -> inspect/adoption mapping -> select installed baseline and profiles -> preview exact artifact and settings changes -> obtain applicable scoped decisions -> submit the same stable operation -> observe owning effects/readback -> show mode-specific readiness -> separately refine/approve a first Mission.
 
-## Portable repository declaration
+The authoritative artifact manifest and file contents are Forge-owned, not a second Workspace hardcoded template. Users see common product/engineering documents, conditional host assets, before/after hashes, source provenance and unresolved questions. Edits invalidate incompatible decisions. Existing project-owned files and dirty/staged/untracked work are preserved, never auto-overwritten or committed.
 
-The intended logical declaration is a portable,
-repository-relative `.engineering-platform/repository.json`. It describes the
-logical project/repository relationship that EP can consume when the repository
-is attached. It must be safe to carry in Git and must not encode facts that
-only make sense on one machine or in one installation.
+Genesis uses local validation and commit/reconciliation evidence, no fake remote CI/PR success. Managed birth has a reviewed absent-resource boundary before ordinary protected work; it cannot bypass existing branch rules. Managed adoption reads back real governance rather than treating requested settings as compliance. Promotion discloses selected history/privacy/license/visibility, preserves ancestry and switches effective mode only after full qualified result.
 
-The eventual EP-owned schema may include stable logical identifiers, a
-repository role, and non-secret source/provider references. It must not include
-any of the following:
+## Recovery, qualification and portability
 
-- `server_url` or other CENTRAL endpoint/address;
-- `agent_id` or host identity;
-- `local_path`, clone path, worktree path, or IDE path; or
-- credentials, access tokens, private keys, cookies, or other secrets.
+Persist owning operation/plan/decision references, not a parallel execution queue. Duplicate request, lost acknowledgement, reconnect and cancellation read back the same operation. Partial effects, privacy-sensitive publication and unresolved ownership stay visible; no silent fresh repo, automatic remote deletion, force-push or database repair. Accepted, delivered, governance-qualified, project-ready and Mission-accepted are separate outcomes.
 
-EP owns the schema and validation rules; this document does not define them.
-Host attachment and credentials remain local Agent/secure-store concerns.
-This boundary also allows a repository to move between eligible hosts without
-rewriting a server- or machine-bound declaration.
+Qualification-only resources keep explicit purpose/identity, exact candidate/artifact/proof and eventual disposition. Deletion/archive needs its own applicable approval and cannot be inferred from a green test. User production projects are not disposable fixtures.
 
-## Disposable qualification lifecycle
-
-A qualification-only repository is intentionally not a shortcut around
-canonical project governance. Its planned lifecycle is:
-
-```text
-explicit qualification purpose and scope
-  → approved create or attach request
-  → GitHub repository provisioned or verified
-  → portable logical declaration and project registration
-  → Project Agent clone/checkout/attachment and host preflight
-  → installed product qualification through the canonical route
-  → durable, redacted evidence and disposition recorded
-  → archive or delete under the approved retention policy
-```
-
-The qualification record must identify that the repository is disposable and
-must retain the relevant logical identity, exact artifact/revision context,
-outcome, and redacted evidence. It must not retain credentials or treat a
-successful qualification as authorization to use the same repository as a
-canonical product repository. Archive versus deletion, retention duration, and
-any evidence export are future operator-policy decisions.
-
-## GitHub integration and operator governance
-
-GitHub is a future external resource provider, not a new project authority.
-Before implementation, the owning product contracts must define:
-
-- who may request use, creation, archive, and deletion;
-- which organization/account, namespace, visibility, naming, default-branch,
-  protection, and template choices are permitted;
-- when a request needs explicit operator approval, including all destructive
-  disposal actions;
-- how CENTRAL records idempotency, the accepted intent, provider result, and
-  redacted audit/evidence; and
-- how failed, partially provisioned, or manually changed resources are shown
-  and recovered without guessing their authority.
-
-Workspace should show the request, approval, provisioning, attachment, and
-qualification states clearly. It must not expose provider credentials to a
-client, implement approval policy locally, or claim that a GitHub-side change
-has succeeded until the governing service records it.
-
-## Relationship to project topology and lanes
-
-One logical project can have one canonical project authority repository and
-zero or more child repositories. Workspace presents this multi-project/multi-
-repository topology; Forge plans dependencies across it; EP CENTRAL admits and
-records executable work; and Project Agents supply local physical capability.
-
-Multi-repository parallel mutation is deliberately later. It may begin only
-after standalone EP verification and requires EP-managed repository leases,
-capacity-aware admission, dependency ordering, and qualification evidence. The
-initial safety rule remains one mutating lane per repository. Same-repository
-worktree or declared-disjoint-scope parallelism is a separate later proposal.
-
-For the cross-product sequencing and constraints, see the Forge Platform
-[MVP roadmap](https://github.com/pcvantol/forge-platform/blob/main/docs/roadmap/MVP_1_0.md#post-verification-multi-repository-parallel-lane-execution)
-and its [project/repository/Agent ADR](https://github.com/pcvantol/forge-platform/blob/main/docs/architecture/adr/ADR-0002-project-repository-host-agent-model.md).
-
-## Decision checkpoints
-
-No implementation should start from this design alone. The next bounded
-decisions are to establish the owner and contract for repository registration,
-the EP-owned declaration schema, the GitHub integration/approval model, and
-the first limited Workspace onboarding experience. Each must be reviewed as a
-separate proposed-to-implemented change with its own validation and evidence.
+Multi-repository projects have one authority repo and independent children/results. No cross-repo atomicity or new parallel-mutation permission is implied. The first headless bootstrap and existing Mission-3 canary do not wait for Workspace UI. See [the PB-01..PB-40 test coverage mapping](PROJECT_BOOTSTRAP_V1_ROADMAP.md) for installed HTTP/UX, accessibility, five-language and failure-path qualification. Source checkout independence and safe portable manifests are mandatory; development repositories are not runtime template authorities.

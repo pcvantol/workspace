@@ -1,0 +1,19 @@
+{
+  "schema_version":"1.0",
+  "increment":"PROJECT_BOOTSTRAP_AND_ARTIFACT_MANIFEST_V1",
+  "owner":"workspace",
+  "authority":"DOCUMENTARY_DERIVED",
+  "executable":false,
+  "version_decision":"NO_BUMP",
+  "parent_lanes":["ONBOARDING_CONTROL_PLANE_V1","FWV1-G003","FWV1-G013"],
+  "architecture":"docs/PROJECT_BOOTSTRAP_V1.md",
+  "current_mission_3_dependency":false,
+  "nodes":[
+    {"id":"PB-W0","status":"PLANNED","depends_on":[],"deliverable":"Five-journey UX, role and owning capability contract"},
+    {"id":"PB-W1","status":"PLANNED","depends_on":["PB-W0"],"external_evidence":["forge:PB-F0","engineering-platform:PB-E0"],"deliverable":"Typed Workspace HTTP adapters and safe draft references"},
+    {"id":"PB-W2","status":"PLANNED","depends_on":["PB-W1"],"external_evidence":["forge:PB-F2","forge:PB-F7","engineering-platform:PB-E1"],"deliverable":"Genesis/Managed create/adopt and exact-plan decision UX"},
+    {"id":"PB-W3","status":"PLANNED","depends_on":["PB-W1"],"external_evidence":["forge:PB-F4","forge:PB-F5","forge:PB-F7","engineering-platform:PB-E5"],"deliverable":"Mode-correct progress, recovery, readiness and exports"},
+    {"id":"PB-W4","status":"PLANNED","depends_on":["PB-W2","PB-W3"],"external_evidence":["forge:PB-F6","engineering-platform:PB-E4"],"deliverable":"Explicit history-preserving Managed promotion UX"},
+    {"id":"PB-WQ","status":"PLANNED","depends_on":["PB-W2","PB-W3","PB-W4"],"external_evidence":["forge:PB-FQ","engineering-platform:PB-EQ"],"deliverable":"Installed five-journey, accessibility and five-locale qualification"}
+  ]
+}

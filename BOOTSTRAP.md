@@ -1,5 +1,17 @@
 # Workspace Bootstrap
 
+## New-project bootstrap and promotion design
+
+Read [Project bootstrap V1](docs/PROJECT_BOOTSTRAP_V1.md), the reconciled
+[repository onboarding contract](docs/REPOSITORY_ONBOARDING.md),
+[scoped roadmap](docs/PROJECT_BOOTSTRAP_V1_ROADMAP.md) and
+[documentary DAG](docs/PROJECT_BOOTSTRAP_V1_DAG.json) for both Genesis and
+Managed project creation/adoption, plus explicit history-preserving promotion.
+The design consumes Forge's exact artifact manifest and EP's qualified
+operation/readback contracts through HTTP. All PB-W runtime nodes remain
+PLANNED. This does not implement a UI, create a project/Mission, activate
+permissions, change package versions or add a Mission-3 prerequisite.
+
 ## Current pickup checkpoint — consolidation and parking, 10 September 2026
 
 Read the [owning parking record](docs/CONSOLIDATION_PARKING_2026_09_10.md) and
