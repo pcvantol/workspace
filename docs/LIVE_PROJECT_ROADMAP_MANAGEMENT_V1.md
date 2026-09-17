@@ -153,6 +153,113 @@ is distinct, authorized and budgeted. Closing a tab stops its polling only, not
 server work. Offline caches are redacted, scoped and read-only; old browser
 eligibility never authorizes an operation after reconnect.
 
+## Project-loop authority refinement — 17 September 2026
+
+Refinement `PROJECT_LOOP_AUTHORITY_2026_09_17` follows the owner-requested Forge
+contract addition, observed against Forge
+`107936d56223a3fa9fef4b6d2ac6b831d97ff9d2` and Workspace
+`eb6c656a92d71666cb493059d517fd174857855d`. These are documentary bases, not
+installation or activation evidence. The interface must distinguish autonomy
+inside an approved Mission from permission to select another product objective.
+Mission 3 remains its separately defined single-Mission multi-Action test;
+this project-loop design neither expands that test nor claims it has passed.
+
+### Three planned modes and independent decisions
+
+| Planned project mode | User-facing meaning | What is not implied |
+| --- | --- | --- |
+| MISSION_RELEASE | Autonomously execute one specifically approved and released Mission; show proposed follow-up work | Completion does not start the next Candidate |
+| APPROVED_WORKLIST | Continue through an exact approved workset under its approved order or explicit selection rule | New findings do not join the workset or jump the queue |
+| DELEGATED_DEVELOPMENT | Develop within explicitly delegated product goals, scope, decision roles and remaining limits | Selecting the mode creates no grant, approval, merge or deployment authority |
+
+These are target policy terms, not existing lifecycle enums or currently enabled
+controls. The design recommends MISSION_RELEASE by default but changes no active
+setting. Show the effective mode, policy revision, actual grant, remaining limits
+and why a requested mode is unsupported or waiting. A full-autonomy toggle without
+qualified delegated decision support must not be presented as effective authority.
+Required personal human gates remain visible and blocking; a model cannot sign
+as the human or approve its own exception.
+
+Keep four decisions visibly separate: approve exact scope, approve committed
+priority/workset, release for start, and observe actual activation. A valid
+Business/Architecture decision is not requested a second time just to release.
+AUTO_WHEN_ELIGIBLE remains release of already-approved work, not permission to
+approve new Candidates. Intermediate review cadence is independent of these modes.
+
+Business evaluates value/cost/timing; Architect evaluates technical scope, risk
+and dependencies. One person may hold both roles without collapsing their decision
+records. Workspace routes decisions to the owning Forge service; it does not
+make itself the approval authority or infer a decision from a chat sentiment.
+
+### Recommendation versus committed execution order
+
+Show distinct recommended and committed order, exact workset membership, per-item
+approved revision, release state and selector policy. A changed recommendation
+gets a reason and impact preview, not an automatic execution reorder.
+The authorized user may select any eligible item instead of the top recommendation;
+show blocking prerequisites rather than offering a bypass for ineligible work.
+A saved list sort or drag preview is not an applied priority decision.
+
+Default workset behavior waits on an ineligible next item. Skipping/reordering is
+allowed only by its explicitly approved selector. Add/remove/reorder requests bind
+exact subjects, before/after revisions, actual actor/role and idempotency identity.
+Readback confirms application; stale clicks and concurrent changes cannot silently
+expand the selected set. After exhaustion show idle plus proposals, not an invented
+next Mission. Do not pre-check all future Candidates in a bulk approval control.
+
+Example, not live state:
+
+```text
+M1 delivered and reconciled.
+Committed next: approved M2, automatic release authorized.
+New finding: Candidate C7; Forge recommends priority above M2.
+Decision needed: Business/Architecture assessment and workset amendment.
+Until decided: C7 does not execute or replace M2.
+```
+
+### Findings and their disposition
+
+The Changes view distinguishes current acceptance defects from optional future
+work. Moving an unmet criterion to a Candidate cannot make the current Mission
+pass. Out-of-scope non-blocking findings are evidence-linked proposals, retaining
+origin Action/run/candidate, impact, uncertainty and prior dispositions.
+
+Offer authorized refine/approve/defer/reject/accept-risk actions through the owning
+contracts; do not invent a universal acceptance role. Preserve duplicate links,
+rejection and accepted-risk reasons. Materially new evidence may propose reopening,
+not silently erase a previous decision. An urgent scoped safety stop does not grant
+authority to build the suggested broader fix. Completed Mission and unresolved
+non-blocking Candidates may legitimately coexist.
+
+### Runtime facts and canonical repository publication
+
+Display approval, admission, execution, partial results, block/failure/cancellation,
+reconciliation and acceptance with their separate evidence and timestamps. Automatic
+factual refresh is not roadmap direction approval. A capability can have several
+contributing Missions and a Mission can contribute to several capabilities;
+counts of completed Missions do not prove capability acceptance.
+
+Show both the latest Forge runtime snapshot and the canonical repository's last
+published roadmap snapshot, including source revision, projection operation and
+freshness. Pending/conflicting publication does not erase proven delivery. Allow
+inspection of the bounded publication diff and receipt where authorized; no browser
+filesystem patch or silent human-text replacement. Repository publication is routed
+through the existing authorized EP delivery owner, not a new Workspace scheduler.
+A projection-only commit cannot create another product Mission or an endless update.
+
+### Rollout and evidence
+
+PRM-W-DECISIONS covers mode, workset and finding decisions; PRM-W-SYNC covers dual
+freshness/publication evidence. Existing read-only views and basic management may
+ship before full delegated mode. Each control advertises only the qualified owning
+subset and actual role authority. Source docs do not enable delegation.
+
+The shared PMT-25..36 cases extend the existing registry. Prove human-selected
+non-top work, unapproved high-priority findings not entering a released workset,
+expired/revoked delegation, stale amendments, all lifecycle outcomes and repository
+publication conflicts. No internal approval stubs or test-driver orchestration.
+Headless Forge continuation remains independent of an open Workspace tab.
+
 ## UI, API and evidence requirements
 
 Use the common EP-aligned design system, two themes, en/nl/de/fr/es, accessible
