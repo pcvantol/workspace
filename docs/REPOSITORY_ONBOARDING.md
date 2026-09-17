@@ -2,7 +2,7 @@
 
 ## Status and scope
 
-**Status:** canonical target design; implementation and installed qualification remain PLANNED. This record and the [detailed project-bootstrap design](PROJECT_BOOTSTRAP_V1.md) define Workspace's product experience, not an executed onboarding operation or permission to provision resources. The [scoped roadmap](PROJECT_BOOTSTRAP_V1_ROADMAP.md) and [documentary DAG](PROJECT_BOOTSTRAP_V1_DAG.json) decompose the onboarding/control-plane lane of [ROADMAP.md](../ROADMAP.md).
+**Status: proposed.** This is the canonical target design; implementation and installed qualification remain PLANNED. This record and the [detailed project-bootstrap design](PROJECT_BOOTSTRAP_V1.md) define Workspace's product experience, not an executed onboarding operation or permission to provision resources. The [scoped roadmap](PROJECT_BOOTSTRAP_V1_ROADMAP.md) and [documentary DAG](PROJECT_BOOTSTRAP_V1_DAG.json) decompose the onboarding/control-plane lane of [ROADMAP.md](../ROADMAP.md).
 
 The detailed contract resolves the formerly unspecified artifact-preview, Genesis/Managed adoption and promotion design. It does not claim runtime closure of those capabilities. EP B8R already owns committed project/repository identity and authenticated attachment; this replaces only this document's older wording that the declaration schema/registration were entirely future. A complete create/adopt/promotion product journey still requires new qualified composition.
 
