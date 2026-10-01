@@ -3,6 +3,7 @@
 import json
 import os
 from pathlib import Path
+import re
 import secrets
 import stat
 from datetime import datetime, timezone
@@ -28,11 +29,11 @@ def _regular_private(path):
     return path.read_text(encoding="utf-8")
 
 
-def _unique_catalogue_object(pairs):
+def _unique_json_object(pairs):
     result = {}
     for key, value in pairs:
         if key in result:
-            raise ValueError("duplicate catalogue key")
+            raise ValueError("duplicate JSON key")
         result[key] = value
     return result
 
@@ -67,10 +68,23 @@ def initialize(root):
 class Service:
     def __init__(self, root):
         self.root = _private_root(root)
-        self.identity = json.loads(_regular_private(self.root / "instance.json"))
+        self.identity = json.loads(_regular_private(self.root / "instance.json"),
+                                   object_pairs_hook=_unique_json_object)
         self.token = _regular_private(self.root / "token").strip()
-        if not isinstance(self.identity.get("instance_id"), str) or len(self.identity["instance_id"]) != 32:
+        if not isinstance(self.identity, dict) or set(self.identity) != {"instance_id", "created_at"}:
             raise ValueError("invalid instance identity")
+        instance_id = self.identity["instance_id"]
+        if not isinstance(instance_id, str) or re.fullmatch(r"[0-9a-f]{32}", instance_id) is None:
+            raise ValueError("invalid instance identity")
+        created = self.identity["created_at"]
+        if not isinstance(created, str):
+            raise ValueError("invalid instance creation time")
+        try:
+            timestamp = datetime.fromisoformat(created.replace("Z", "+00:00"))
+        except ValueError as exc:
+            raise ValueError("invalid instance creation time") from exc
+        if timestamp.tzinfo is None or timestamp.utcoffset() is None:
+            raise ValueError("invalid instance creation time")
         if len(self.token) < 32:
             raise ValueError("invalid instance token")
 
@@ -91,7 +105,7 @@ class Service:
         if not catalogue.exists() and not catalogue.is_symlink():
             return {"state": "UNCONFIGURED", "projects": [], "source": None,
                     "partial": False, "stale": False}
-        raw = json.loads(_regular_private(catalogue), object_pairs_hook=_unique_catalogue_object)
+        raw = json.loads(_regular_private(catalogue), object_pairs_hook=_unique_json_object)
         if not isinstance(raw, dict) or raw.get("source") not in ("LOCAL", "DEMO"):
             raise ValueError("invalid catalogue source")
         items = raw.get("projects")

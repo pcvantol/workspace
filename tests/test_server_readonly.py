@@ -207,6 +207,28 @@ class ReadOnlyTests(unittest.TestCase):
         token.chmod(0o644)
         self.assertRaises(ValueError, Service, self.root)
 
+    def test_invalid_instance_state_fails_closed_without_reset(self):
+        identity = self.root / "instance.json"
+        original = identity.read_text()
+        secret = (self.root / "token").read_text()
+        valid = json.loads(original)
+        duplicate_id = original.replace('"instance_id":', '"instance_id": "' + "0" * 32 + '", "instance_id":', 1)
+        cases = ["[]", "null", "{not-json", json.dumps({"instance_id": self.instance}),
+                 json.dumps(dict(valid, unexpected="accepted")),
+                 json.dumps(dict(valid, instance_id="z" * 32)),
+                 json.dumps(dict(valid, instance_id="A" * 32)),
+                 json.dumps(dict(valid, created_at="not-a-date")),
+                 json.dumps(dict(valid, created_at="2026-10-01T00:00:00")), duplicate_id]
+        for raw in cases:
+            with self.subTest(raw=raw):
+                identity.write_text(raw)
+                self.assertRaises(ValueError, Service, self.root)
+                self.assertEqual(main(["--root", str(self.root), "status"]), 2)
+        identity.write_text(original)
+        restored = Service(self.root)
+        self.assertEqual(restored.instance_id, self.instance)
+        self.assertEqual((self.root / "token").read_text(), secret)
+
     def test_init_race_preserves_other_initializer_files(self):
         fresh = Path(self.temp.name) / "racing"
         fresh.mkdir(mode=0o700)
