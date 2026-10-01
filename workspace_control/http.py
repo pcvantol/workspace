@@ -115,7 +115,7 @@ def handler_for(service):
             parsed = urlsplit(target)
             path = parsed.path
             if (not target.startswith("/") or target.startswith("//") or parsed.scheme or parsed.netloc or
-                    parsed.query or parsed.fragment or "%" in path or ".." in path):
+                    "?" in target or "#" in target or "%" in path or ".." in path):
                 return self._reply(400, {"error": "INVALID_PATH"})
             if path == "/":
                 html = importlib.resources.files("workspace_control").joinpath("client.html").read_bytes()

@@ -23,6 +23,10 @@ GET and HEAD accept only origin-form targets beginning with one `/`. An
 absolute-form URI or `//` authority target is INVALID_PATH (400), even with a
 valid loopback Host header; its embedded authority cannot be ignored while
 serving a public or authenticated route.
+The target must also omit query and fragment delimiters entirely. Even an
+empty trailing `?` or `#` is INVALID_PATH (400) rather than an alias for a
+declared read route. The Server rejects these before public or protected route
+dispatch, after checking Host and Origin.
 
 Protected reads require one unambiguous bearer Authorization header and one
 instance-pin header. Duplicate values, even if identical, are rejected before
