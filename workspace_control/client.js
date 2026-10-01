@@ -71,7 +71,9 @@ document.getElementById('connect').addEventListener('click', async () => {
       projectState.textContent = 'UNAVAILABLE';
       return;
     }
-    if (!projectResponse.ok) throw new Error('UNAUTHORIZED');
+    if (projectResponse.status === 401) throw new Error('UNAUTHORIZED');
+    if (projectResponse.status === 409) throw new Error('WRONG_INSTANCE');
+    if (!projectResponse.ok) throw new Error('UNAVAILABLE');
     const catalogue = await projectResponse.json();
     if (attempt !== connectionAttempt) return;
     const labels = [catalogue.state];
