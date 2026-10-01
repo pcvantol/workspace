@@ -8,6 +8,18 @@
   "execution_authority": false,
   "version_change": "NO_BUMP",
   "first_live_canary_prerequisite": false,
+  "lane_allocation": {
+    "lane": "LANE_4",
+    "register": "https://github.com/pcvantol/forge/issues/208",
+    "decision_date": "2026-10-01",
+    "owning_scope": "docs/WORKSPACE_LANE_4_START_V1.md",
+    "assignment_id": "L4-WORKSPACE-SERVER-READONLY-V1-20261001",
+    "selected_node_subsets": ["WH-CONTRACT", "WH-SERVICES", "WH-HTTP", "WH-CLI"],
+    "selection_is_implementation_evidence": false,
+    "current_installer_release_dependency": false,
+    "peer_and_full_parent_qualification_remain_open": true,
+    "existing_dependency_and_external_evidence_gates_unchanged": true
+  },
   "parent_reference": "INSTALLED_WORKSPACE_SERVER_CLIENT",
   "parent_relationship": "SCOPED_REFINEMENT_NOT_REVERSE_DEPENDENCY",
   "architecture": "docs/WORKSPACE_HTTP_API_V1.md",
