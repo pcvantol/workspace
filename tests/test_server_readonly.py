@@ -178,6 +178,8 @@ class ReadOnlyTests(unittest.TestCase):
         routes = {item["request"]["url"].removeprefix("{{baseUrl}}") for item in collection["item"]}
         self.assertEqual(set(ROUTES), set(api["paths"]))
         self.assertEqual(set(ROUTES), routes)
+        self.assertTrue(all(api["paths"][path]["get"]["responses"]["403"]["description"] ==
+                            "Host or Origin denied" for path in ROUTES))
         inventory = json.loads(self.authorized("/v1/capabilities")[1])
         self.assertEqual((inventory["schema_version"], inventory["instance_id"]), (1, self.instance))
         self.assertFalse(inventory["peer_operations_qualified"])
