@@ -70,6 +70,25 @@ def verify_catalogue_failure_isolation(url, instance_id, token, catalogue, page)
     page.locator("#project-state").get_by_text("AVAILABLE · DEMO").wait_for()
 
 
+def verify_stale_partial_catalogue(url, instance_id, token, catalogue, page):
+    """Preserve independent age, completeness and empty evidence in installed UI."""
+    stamp = "2020-01-01T00:00:00Z"
+    catalogue.write_text(json.dumps({"source": "LOCAL", "observed_at": stamp,
+                                     "projects": [], "partial": True}))
+    code, body = read(url + "/v1/projects", token=token, instance=instance_id)
+    assert code == 200
+    result = json.loads(body)
+    assert (result["state"], result["partial"], result["stale"], result["projects"]) == ("STALE", True, True, [])
+    assert json.loads(read(url + "/v1/status", token=token, instance=instance_id)[1])["project_source"] == "STALE"
+    page.locator("#connect").click()
+    page.locator("#project-state").get_by_text("STALE · PARTIAL · EMPTY · LOCAL").wait_for()
+    assert page.locator("#projects li").count() == 0
+    catalogue.write_text(json.dumps({"source": "LOCAL", "observed_at": datetime.now(timezone.utc).isoformat(),
+                                     "projects": [{"id": "restored", "name": "Restored"}], "partial": False}))
+    page.locator("#connect").click()
+    page.locator("#project-state").get_by_text("AVAILABLE · LOCAL").wait_for()
+
+
 def verify_unique_project_ids(url, instance_id, token, catalogue, page):
     """Reject duplicate identities while retaining distinct IDs with one label."""
     stamp = datetime.now(timezone.utc).isoformat()
@@ -189,6 +208,7 @@ def main(wheel):
                                                  "projects": [{"id": "demo", "name": "Demo project"}]}))
                 page.locator("#connect").click()
                 page.locator("#project-state").get_by_text("STALE · DEMO").wait_for()
+                verify_stale_partial_catalogue(first_url, first_id, token, catalogue, page)
                 verify_catalogue_failure_isolation(first_url, first_id, token, catalogue, page)
                 verify_unique_project_ids(first_url, first_id, token, catalogue, page)
                 verify_unique_catalogue_keys(first_url, first_id, token, catalogue, page)

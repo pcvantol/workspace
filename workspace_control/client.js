@@ -35,7 +35,11 @@ document.getElementById('connect').addEventListener('click', async () => {
     }
     if (!projectResponse.ok) throw new Error('UNAUTHORIZED');
     const catalogue = await projectResponse.json();
-    projectState.textContent = `${catalogue.state}${catalogue.source ? ` · ${catalogue.source}` : ''}`;
+    const labels = [catalogue.state];
+    if (catalogue.stale && catalogue.partial) labels.push('PARTIAL');
+    if (catalogue.projects.length === 0 && !['EMPTY', 'UNCONFIGURED'].includes(catalogue.state)) labels.push('EMPTY');
+    if (catalogue.source) labels.push(catalogue.source);
+    projectState.textContent = labels.join(' · ');
     for (const item of catalogue.projects) {
       const row = document.createElement('li');
       row.textContent = `${item.name} (${item.id})${catalogue.source === 'DEMO' ? ' · DEMO' : ''}`;

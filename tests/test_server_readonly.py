@@ -132,7 +132,9 @@ class ReadOnlyTests(unittest.TestCase):
         from datetime import datetime, timezone
         stamp = lambda seconds: datetime.fromtimestamp(seconds, timezone.utc).isoformat()
         write([], stamp(now))
-        self.assertEqual(json.loads(self.authorized("/v1/projects")[1])["state"], "EMPTY")
+        self.assertEqual({key: json.loads(self.authorized("/v1/projects")[1])[key]
+                          for key in ("state", "partial", "stale")},
+                         {"state": "EMPTY", "partial": False, "stale": False})
         write([{"id": "sample", "name": "Sample"}], stamp(now), "DEMO")
         result = json.loads(self.authorized("/v1/projects")[1])
         self.assertEqual((result["state"], result["source"]), ("AVAILABLE", "DEMO"))
@@ -144,9 +146,19 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual(json.loads(self.authorized("/v1/status")[1])["project_source"],
                          "SOURCE_UNAVAILABLE")
         write([{"id": "sample", "name": "Sample"}], stamp(now - 600))
-        self.assertEqual(json.loads(self.authorized("/v1/projects")[1])["state"], "STALE")
+        result = json.loads(self.authorized("/v1/projects")[1])
+        self.assertEqual((result["state"], result["partial"], result["stale"]),
+                         ("STALE", False, True))
         target.write_text(json.dumps({"source": "LOCAL", "projects": [], "partial": True, "observed_at": stamp(now)}))
-        self.assertEqual(json.loads(self.authorized("/v1/projects")[1])["state"], "PARTIAL")
+        result = json.loads(self.authorized("/v1/projects")[1])
+        self.assertEqual((result["state"], result["partial"], result["stale"]),
+                         ("PARTIAL", True, False))
+        target.write_text(json.dumps({"source": "LOCAL", "projects": [], "partial": True,
+                                      "observed_at": stamp(now - 600)}))
+        result = json.loads(self.authorized("/v1/projects")[1])
+        self.assertEqual((result["state"], result["partial"], result["stale"], result["projects"]),
+                         ("STALE", True, True, []))
+        self.assertEqual(json.loads(self.authorized("/v1/status")[1])["project_source"], "STALE")
         target.write_text("bad")
         self.assertEqual(self.authorized("/v1/projects")[0], 503)
         code, status, _ = self.authorized("/v1/status")

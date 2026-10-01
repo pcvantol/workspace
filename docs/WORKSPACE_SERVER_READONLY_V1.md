@@ -12,6 +12,13 @@ Acceptance: an explicit private data root initializes one opaque stable instance
 
 The optional `projects.json` is a private regular file (mode 0600) in the data root. Its schema is `{"source":"LOCAL","observed_at":"2026-10-01T15:00:00Z","projects":[{"id":"project-1","name":"Project One"}],"partial":false}`. `source` is `LOCAL` or `DEMO`; the latter is visibly labelled. No file means UNCONFIGURED. A configured empty list means EMPTY. An explicitly incomplete catalogue is PARTIAL. Observations older than five minutes are STALE. Invalid or unreadable input returns SOURCE_UNAVAILABLE. This catalogue is Workspace-owned manual data, not a peer projection or live platform status.
 
+`GET /v1/projects` preserves that primary `state` and also returns independent
+`partial` and `stale` booleans. A stale, incomplete catalogue has primary state
+STALE with `partial:true` and `stale:true`; the browser displays both labels.
+When its list is empty, the browser also labels EMPTY. An unconfigured source
+returns both flags false. The Server's own status remains READY and its
+`project_source` retains the primary catalogue state.
+
 Project IDs must be unique within one catalogue. Repeated names are allowed;
 names are labels, not identity. Duplicate IDs make the source unavailable
 rather than choosing an arbitrary row or displaying an ambiguous project list.
