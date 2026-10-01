@@ -86,6 +86,9 @@ Protected delivery and independent read-only review are recorded in the LANE_4
 register. PR #36 added required CI coverage and wheel-install gates. Live peer
 qualification remains separate; this subset does not complete the full installed
 Server/Client target.
+The local operation-inventory follow-up exposes only own reads and explicitly
+keeps initialization/serving as local administration. It does not qualify peer
+operations or full WH-Q.
 
 Workspace will deliver a headless installed Server with its own central runtime
 storage root, versioned HTTP application API, stable identity and macOS launchd

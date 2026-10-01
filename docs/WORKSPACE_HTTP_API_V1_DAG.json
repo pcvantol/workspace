@@ -22,9 +22,10 @@
   },
   "first_slice_checkpoint": {
     "scope": "WH-CONTRACT/WH-SERVICES/WH-HTTP/WH-CLI local read-only subset",
-    "source_status": "IMPLEMENTED_CANDIDATE_PENDING_PROTECTED_DELIVERY",
+    "source_status": "LOCAL_READ_ONLY_SUBSET_PROTECTED_DELIVERED",
     "evidence": ["scripts/validate.sh", "tests/test_server_readonly.py", "scripts/qualify_installed_server.py"],
     "ci_coverage_gate": "scripts/validate_runtime_coverage.py",
+    "operation_inventory_subset": "GET /v1/capabilities",
     "peer_operations_qualified": false,
     "full_parent_qualified": false
   },

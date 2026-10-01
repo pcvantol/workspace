@@ -5,6 +5,7 @@
     {"name": "identity", "request": {"method": "GET", "url": "{{baseUrl}}/v1/identity"}},
     {"name": "status", "request": {"method": "GET", "url": "{{baseUrl}}/v1/status", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "X-Workspace-Instance", "value": "{{instanceId}}"}]}},
     {"name": "projects", "request": {"method": "GET", "url": "{{baseUrl}}/v1/projects", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "X-Workspace-Instance", "value": "{{instanceId}}"}]}},
-    {"name": "openapi", "request": {"method": "GET", "url": "{{baseUrl}}/v1/openapi.json", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "X-Workspace-Instance", "value": "{{instanceId}}"}]}}
+    {"name": "openapi", "request": {"method": "GET", "url": "{{baseUrl}}/v1/openapi.json", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "X-Workspace-Instance", "value": "{{instanceId}}"}]}},
+    {"name": "capabilities", "request": {"method": "GET", "url": "{{baseUrl}}/v1/capabilities", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "X-Workspace-Instance", "value": "{{instanceId}}"}]}}
   ]
 }

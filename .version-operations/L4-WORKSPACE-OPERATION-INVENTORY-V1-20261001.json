@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "workspace-lane-4-r6-operation-inventory",
+  "determined_version": "2.4.3",
+  "event_lineage": "workspace-lane-4-r6-operation-inventory",
+  "expected_source_revision": "02c2777a4d3fc819c9cc1e495d8c2d3909b172ef",
+  "expected_version": "2.4.2",
+  "operation_id": "L4-WORKSPACE-OPERATION-INVENTORY-V1-20261001",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

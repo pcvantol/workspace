@@ -1,7 +1,8 @@
 # Workspace HTTP API and transport boundaries V1
 
 **Increment:** `HTTP_ONLY_PEERS_AND_THIN_CLI_V1`. **Owner:** Workspace.
-**Status:** design/roadmap only; implementation/qualification PLANNED; NO_BUMP.
+**Status:** full parent design/qualification PLANNED; bounded local Server/CLI
+and operation-inventory subsets implemented. This original design was NO_BUMP.
 This refines the [Server/Client target](WORKSPACE_SERVER_CLIENT_DEPLOYMENT.md)
 and its existing installed Server lane, not a new planner or Console product.
 [Documentary DAG](WORKSPACE_HTTP_API_V1_DAG.json).
@@ -48,6 +49,10 @@ installation authority, exact instance/root and locks. Never silently spawn a
 writer when HTTP is down, bypass preconditions or replace missing peer APIs with
 CLI. An operation inventory declares which capabilities are HTTP_EXPOSED and
 which LOCAL_ONLY_ADMIN; parity compares only supported equivalent operations.
+The local read-only subset now serves `GET /v1/capabilities` for the pinned
+instance. It declares only actual Workspace HTTP reads and local-only `init`/
+`serve`; `peer_operations_qualified=false` remains explicit. Full WH-CONTRACT,
+WH-PEERS and WH-Q retain their separate evidence gates.
 
 Workspace is still the human project/governance interface. Forge Server Console
 is instance administration, not its replacement. HTTP transport grants no new
