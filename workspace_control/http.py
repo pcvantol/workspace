@@ -9,22 +9,56 @@ import secrets
 import stat
 from urllib.parse import urlsplit
 
+from . import __version__
 from .service import Service
 
 
-ROUTES = {"/v1/identity": "public identity", "/v1/status": "authenticated status",
-          "/v1/projects": "authenticated catalogue", "/v1/openapi.json": "authenticated API contract"}
+OPERATIONS = {
+    "identity.read": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/identity",
+                      "auth": "PUBLIC", "summary": "public identity"},
+    "status.read": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/status",
+                    "auth": "BEARER_PINNED", "local_cli": "status", "summary": "authenticated status"},
+    "projects.read": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/projects",
+                      "auth": "BEARER_PINNED", "summary": "authenticated catalogue"},
+    "openapi.read": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/openapi.json",
+                     "auth": "BEARER_PINNED", "summary": "authenticated API contract"},
+    "capabilities.read": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/capabilities",
+                         "auth": "BEARER_PINNED", "summary": "own operation inventory"},
+    "instance.init": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "init",
+                      "auth": "PRIVATE_ROOT_OWNER", "summary": "initialize private instance"},
+    "server.serve": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "serve",
+                     "auth": "PRIVATE_ROOT_OWNER", "summary": "serve private instance"},
+}
+ROUTES = {details["path"]: details["summary"] for details in OPERATIONS.values()
+          if details["exposure"] == "HTTP_EXPOSED"}
+
+
+def operation_inventory(instance_id):
+    operations = []
+    for operation_id, details in sorted(OPERATIONS.items()):
+        operation = {"id": operation_id, "exposure": details["exposure"], "auth": details["auth"]}
+        for key in ("method", "path", "local_cli"):
+            if key in details:
+                operation[key] = details[key]
+        operations.append(operation)
+    return {"schema_version": 1, "product_version": __version__,
+            "instance_id": instance_id, "operations": operations,
+            "peer_operations_qualified": False}
 
 
 def openapi_contract():
     paths = {}
-    for route, summary in ROUTES.items():
-        operation = {"summary": summary, "responses": {"200": {"description": "Read result"},
+    for operation_id, details in OPERATIONS.items():
+        if details["exposure"] != "HTTP_EXPOSED":
+            continue
+        route = details["path"]
+        operation = {"operationId": operation_id, "summary": details["summary"],
+                     "responses": {"200": {"description": "Read result"},
                                                        "400": {"description": "Invalid path"},
                                                        "401": {"description": "Unauthorized"},
                                                        "409": {"description": "Wrong instance"},
                                                        "503": {"description": "Source unavailable"}}}
-        if route != "/v1/identity":
+        if details["auth"] == "BEARER_PINNED":
             operation["security"] = [{"bearerAuth": []}]
             operation["parameters"] = [{"name": "X-Workspace-Instance", "in": "header", "required": True,
                                         "schema": {"type": "string"}}]
@@ -77,8 +111,10 @@ def handler_for(service):
                     result = service.status()
                 elif path == "/v1/projects":
                     result = service.projects()
-                else:
+                elif path == "/v1/openapi.json":
                     result = openapi_contract()
+                else:
+                    result = operation_inventory(service.instance_id)
             except (ValueError, OSError, json.JSONDecodeError):
                 return self._reply(503, {"error": "SOURCE_UNAVAILABLE"})
             return self._reply(200, result)

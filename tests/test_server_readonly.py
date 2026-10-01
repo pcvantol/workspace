@@ -13,7 +13,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from workspace_control.cli import main, client_main
-from workspace_control.http import ThreadingHTTPServer, handler_for, serve, ROUTES
+from workspace_control.http import ThreadingHTTPServer, handler_for, serve, ROUTES, OPERATIONS
 from workspace_control.service import Service, initialize
 
 
@@ -74,8 +74,12 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual(self.authorized("/v1/projects")[0], 200)
         self.assertEqual(json.loads(self.authorized("/v1/projects")[1])["state"], "UNCONFIGURED")
         self.assertIn(b"openapi", self.authorized("/v1/openapi.json")[1])
+        self.assertEqual(self.request("/v1/capabilities")[0], 401)
+        self.assertEqual(self.request("/v1/capabilities", token=self.service.token, instance="wrong")[0], 409)
+        self.assertEqual(self.authorized("/v1/capabilities")[0], 200)
         for method in ("POST", "PUT", "PATCH", "DELETE"):
             self.assertEqual(self.request("/v1/projects", method=method)[0], 405)
+            self.assertEqual(self.request("/v1/capabilities", method=method)[0], 405)
         self.assertFalse((self.root / "projects.json").exists())
 
     def test_browser_is_real_client_asset(self):
@@ -95,6 +99,24 @@ class ReadOnlyTests(unittest.TestCase):
         routes = {item["request"]["url"].removeprefix("{{baseUrl}}") for item in collection["item"]}
         self.assertEqual(set(ROUTES), set(api["paths"]))
         self.assertEqual(set(ROUTES), routes)
+        inventory = json.loads(self.authorized("/v1/capabilities")[1])
+        self.assertEqual((inventory["schema_version"], inventory["instance_id"]), (1, self.instance))
+        self.assertFalse(inventory["peer_operations_qualified"])
+        operations = {operation["id"]: operation for operation in inventory["operations"]}
+        self.assertEqual(set(operations), set(OPERATIONS))
+        http_routes = {operation["path"] for operation in operations.values()
+                       if operation["exposure"] == "HTTP_EXPOSED"}
+        self.assertEqual(http_routes, set(ROUTES))
+        self.assertEqual({api["paths"][path]["get"]["operationId"] for path in http_routes},
+                         {operation["id"] for operation in operations.values()
+                          if operation["exposure"] == "HTTP_EXPOSED"})
+        self.assertEqual({operation["id"] for operation in operations.values()
+                          if operation["exposure"] == "LOCAL_ONLY_ADMIN"},
+                         {"instance.init", "server.serve"})
+        self.assertTrue(all("path" not in operation for operation in operations.values()
+                            if operation["exposure"] == "LOCAL_ONLY_ADMIN"))
+        self.assertTrue(all(operation["auth"] == "BEARER_PINNED" for operation in operations.values()
+                            if operation.get("path") not in (None, "/v1/identity")))
         for item in collection["item"]:
             self.assertEqual(item["request"]["method"], "GET")
             if item["name"] != "identity":

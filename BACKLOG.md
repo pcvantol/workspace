@@ -72,6 +72,15 @@ cleanup proposal and engineering proposal; offline negatives guard no Mission
 allocation, no deletion, no unknown-as-healthy and external owner routing. This
 does not bind qualified Forge/EP producers or implement HY-WO/HY-WM UI/effects.
 
+### LANE_4 own operation-inventory follow-up
+
+The #208 r6 assignment `L4-WORKSPACE-OPERATION-INVENTORY-V1-20261001` adds
+authenticated, instance-pinned `GET /v1/capabilities` for the installed
+read-only Server. It declares implemented HTTP_EXPOSED reads and LOCAL_ONLY_ADMIN
+`init`/`serve` modes from one operation table, with OpenAPI/Postman and real
+installed-wheel parity. This is a local WH-CONTRACT subset, not live
+Forge/EP peer availability or full WH-Q qualification.
+
 ## Historical foundation and remaining candidates
 
 The repository foundation originally authorized no product implementation.

@@ -89,6 +89,14 @@ def main(wheel):
             assert read(first_url + "/v1/status")[0] == 401
             assert read(first_url + "/v1/status", token=other_token, instance=first_id)[0] == 401
             assert read(first_url + "/v1/status", token=token, instance=second_id)[0] == 409
+            assert read(first_url + "/v1/capabilities")[0] == 401
+            assert read(first_url + "/v1/capabilities", token=token, instance=second_id)[0] == 409
+            capabilities = json.loads(read(first_url + "/v1/capabilities", token=token, instance=first_id)[1])
+            assert capabilities["instance_id"] == first_id and capabilities["peer_operations_qualified"] is False
+            inventory = {item["id"]: item for item in capabilities["operations"]}
+            assert inventory["capabilities.read"]["path"] == "/v1/capabilities"
+            assert inventory["instance.init"]["exposure"] == "LOCAL_ONLY_ADMIN"
+            assert "path" not in inventory["instance.init"]
             assert json.loads(read(first_url + "/v1/projects", token=token, instance=first_id)[1])["state"] == "UNCONFIGURED"
             assert b"/client.js" in read(first_url + "/")[1]
             assert b"fetch('/v1/projects'" in read(first_url + "/client.js")[1]
@@ -139,7 +147,8 @@ def main(wheel):
                 browser.close()
             print(json.dumps({"result": "PASS", "wheel_sha256": digest, "installed_outside_checkout": True,
                               "server_instances": 2, "restart_identity_and_catalogue": "PASS",
-                              "api_cli_browser": "PASS", "peer_contacted": False}, sort_keys=True))
+                              "api_cli_browser": "PASS", "operation_inventory": "PASS",
+                              "peer_contacted": False}, sort_keys=True))
         finally:
             for process in processes:
                 if process.poll() is None:
