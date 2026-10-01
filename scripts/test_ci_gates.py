@@ -17,13 +17,24 @@ class CIGateTests(unittest.TestCase):
             source.write_text("pass\n")
             cover = root / "workspace_control.http.cover"
             cover.write_text("".join(["    1: pass\n"] * 402 + [">>>>>> pass\n"] * 98))
-            self.assertEqual(summarize(root, [source])["http.py"], (402, 500))
+            self.assertEqual(summarize(root, [source], root)["http.py"], (402, 500))
             cover.write_text("".join(["    1: pass\n"] * 401 + [">>>>>> pass\n"] * 99))
             with self.assertRaisesRegex(ValueError, "strictly exceed"):
-                summarize(root, [source])
+                summarize(root, [source], root)
             cover.unlink()
             with self.assertRaisesRegex(ValueError, "missing executable-line evidence"):
-                summarize(root, [source])
+                summarize(root, [source], root)
+
+    def test_nested_product_module_requires_own_evidence(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            nested = root / "extra" / "module.py"
+            nested.parent.mkdir()
+            nested.write_text("pass\n")
+            with self.assertRaisesRegex(ValueError, "missing executable-line evidence"):
+                summarize(root, [nested], root)
+            (root / "workspace_control.extra.module.cover").write_text("    1: pass\n")
+            self.assertEqual(summarize(root, [nested], root)["extra/module.py"], (1, 1))
 
     def test_wheel_missing_role_files_fails(self):
         with tempfile.TemporaryDirectory() as directory:

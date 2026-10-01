@@ -12,11 +12,13 @@ PRODUCT = ROOT / "workspace_control"
 HIT = re.compile(r"^\s*\d+: ")
 
 
-def summarize(cover_dir, sources):
+def summarize(cover_dir, sources, product_root=PRODUCT):
     """Return per-file hit/total counts, failing closed on missing or low evidence."""
     results = {}
     for source in sources:
-        cover = cover_dir / f"workspace_control.{source.stem}.cover"
+        relative = source.relative_to(product_root)
+        dotted = ".".join(("workspace_control", *relative.with_suffix("").parts))
+        cover = cover_dir / f"{dotted}.cover"
         if not cover.is_file():
             raise ValueError(f"missing executable-line evidence: {source.name}")
         lines = cover.read_text(encoding="utf-8").splitlines()
@@ -25,12 +27,12 @@ def summarize(cover_dir, sources):
         total = hits + misses
         if total == 0 or hits * 1000 <= total * 802:
             raise ValueError(f"coverage does not strictly exceed 80.2%: {source.name} ({hits}/{total})")
-        results[source.name] = (hits, total)
+        results[relative.as_posix()] = (hits, total)
     return results
 
 
 def main():
-    sources = sorted(PRODUCT.glob("*.py"))
+    sources = sorted(PRODUCT.rglob("*.py"))
     if not sources:
         raise ValueError("no Workspace product modules found")
     with tempfile.TemporaryDirectory(prefix="workspace-coverage-") as directory:
