@@ -136,6 +136,13 @@ class ReadOnlyTests(unittest.TestCase):
         write([{"id": "sample", "name": "Sample"}], stamp(now), "DEMO")
         result = json.loads(self.authorized("/v1/projects")[1])
         self.assertEqual((result["state"], result["source"]), ("AVAILABLE", "DEMO"))
+        write([{"id": "one", "name": "Shared name"}, {"id": "two", "name": "Shared name"}], stamp(now))
+        self.assertEqual([item["id"] for item in json.loads(self.authorized("/v1/projects")[1])["projects"]],
+                         ["one", "two"])
+        write([{"id": "same", "name": "First"}, {"id": "same", "name": "Second"}], stamp(now))
+        self.assertEqual(self.authorized("/v1/projects")[0], 503)
+        self.assertEqual(json.loads(self.authorized("/v1/status")[1])["project_source"],
+                         "SOURCE_UNAVAILABLE")
         write([{"id": "sample", "name": "Sample"}], stamp(now - 600))
         self.assertEqual(json.loads(self.authorized("/v1/projects")[1])["state"], "STALE")
         target.write_text(json.dumps({"source": "LOCAL", "projects": [], "partial": True, "observed_at": stamp(now)}))
