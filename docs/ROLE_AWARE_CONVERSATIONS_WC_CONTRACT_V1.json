@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "contract": "WORKSPACE_ROLE_AWARE_CONVERSATIONS_WC_V1",
+  "owner": "workspace",
+  "authority": "CONTRACT_ONLY",
+  "producer_bindings": "UNQUALIFIED",
+  "request": {
+    "actor": "AUTHENTICATED_PRINCIPAL_REFERENCE",
+    "scope": ["project_id", "principal_id"],
+    "scope_resolution": "EXPLICIT_OR_UNAMBIGUOUS_AUTHENTICATED_SELECTION",
+    "client_advice_mode_is_role": false,
+    "untrusted_context_is_instruction": false,
+    "operation_identity": "STABLE_UNTIL_OWNER_READBACK"
+  },
+  "advisor_modes": ["BUSINESS", "ARCHITECTURE", "UX"],
+  "capability_states": ["QUALIFIED_AUTHORIZED", "UNSUPPORTED", "UNQUALIFIED", "DENIED", "OFFLINE"],
+  "presentation_states": ["READY", "PARTIAL", "STALE", "OFFLINE", "PENDING", "UNCERTAIN", "UNSUPPORTED", "DENIED"],
+  "projections": {
+    "ConversationSummary": {"owner": "workspace", "required": ["conversation_id", "project_id", "title", "last_activity_at", "last_advice_mode", "archive_state", "source_revision", "availability"]},
+    "ConversationDetail": {"owner": "workspace", "required": ["conversation_id", "project_id", "turn_refs", "context_ref", "session_refs", "source_revision", "availability"]},
+    "ContextManifest": {"owner": "forge", "required": ["context_id", "project_id", "included_sources", "excluded_sources", "source_revisions", "access_scope", "freshness", "availability"]},
+    "SessionProjection": {"owner": "forge", "required": ["session_id", "conversation_id", "operation_id", "advice_mode", "status", "result_ref", "source_revision", "availability"]},
+    "ProposalProjection": {"owner": "forge", "required": ["proposal_id", "project_id", "owner", "revision", "digest", "affected_scope", "status", "availability"]},
+    "ArtifactRevision": {"owner": "forge", "required": ["artifact_id", "proposal_id", "revision", "digest", "source_refs", "availability"]},
+    "DecisionProjection": {"owner": "forge", "required": ["decision_id", "proposal_id", "proposal_revision", "artifact_revision", "owner", "owner_receipt", "status", "availability"]}
+  },
+  "interaction_boundary": {
+    "passive_actions": ["LOAD", "FILTER", "POLL", "RECONNECT", "CHANGE_MODE", "OPEN_MODAL"],
+    "passive_actions_invoke_provider": false,
+    "send_requires_explicit_submit": true,
+    "send_requires_qualified_authorized_capability": true,
+    "decision_requires_exact_revision_and_owner_receipt": true,
+    "lost_response": "READ_BACK_SAME_OPERATION",
+    "offline_auto_submit": false,
+    "conversation_state_is_decision_authority": false,
+    "advice_completion_is_approval": false,
+    "workspace_direct_engineering_execution": false
+  }
+}

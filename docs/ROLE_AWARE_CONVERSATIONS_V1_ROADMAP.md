@@ -8,6 +8,11 @@ See [functional design](ROLE_AWARE_CONVERSATIONS_V1.md),
 [Forge plan](https://github.com/pcvantol/forge/blob/main/docs/roadmap/ROLE_AWARE_CONVERSATIONS_V1.md).
 Design is canonical after owning protected merge; all runtime nodes are PLANNED.
 
+The [RC-WC Workspace consumer contract](ROLE_AWARE_CONVERSATIONS_WC_CONTRACT_V1.md)
+now supplies offline target projections, capability negotiation and negative
+interaction fixtures. Forge RC-FC binding and live UI/API qualification are
+still unqualified/planned.
+
 This refines ROLE_AWARE_GOVERNANCE_V1 and ROADMAP_DAG_GOVERNANCE_V1, rather than
 adding an independent planner, approval authority or roadmap. UX is an advice
 lens within the same conversation capability. The full Workspace chat is
