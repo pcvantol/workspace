@@ -93,6 +93,10 @@ def verify_loopback_host_binding(port, instance_id, token):
         for method in ("POST", "HEAD", "OPTIONS", "TRACE", "CONNECT"):
             assert raw("/v1/status", hosts, method=method)[0] == 403
     host = f"127.0.0.1:{port}"
+    for target in ("http://evil.example/v1/identity",
+                   f"http://{host}/v1/status", "//evil.example/v1/identity"):
+        for method in ("GET", "HEAD"):
+            assert raw(target, (host,), method=method)[0] == 400
     assert raw("/v1/status", (host,), ("http://evil.example",))[0] == 403
     assert raw("/v1/openapi.json", (host,), ("http://evil.example",))[0] == 403
     assert raw("/", (host,), (f"http://{host}", f"http://{host}"))[0] == 403

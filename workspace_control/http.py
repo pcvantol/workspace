@@ -111,9 +111,11 @@ def handler_for(service):
         def do_GET(self):
             if not self._trusted_origin():
                 return
-            parsed = urlsplit(self.path)
+            target = self.requestline.split()[1]
+            parsed = urlsplit(target)
             path = parsed.path
-            if parsed.query or parsed.fragment or "%" in path or ".." in path:
+            if (not target.startswith("/") or target.startswith("//") or parsed.scheme or parsed.netloc or
+                    parsed.query or parsed.fragment or "%" in path or ".." in path):
                 return self._reply(400, {"error": "INVALID_PATH"})
             if path == "/":
                 html = importlib.resources.files("workspace_control").joinpath("client.html").read_bytes()
