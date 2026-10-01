@@ -29,6 +29,8 @@ test -s docs/governance/AI_DEVELOPMENT_CONTRACT_SEMANTIC_EQUIVALENCE_RECEIPT.md
 
 python3 scripts/test_role_aware_conversations_contract.py
 python3 scripts/test_four_lane_entry.py
-python3 -m unittest discover -s tests -p 'test_server_readonly.py'
+python3 scripts/test_ci_gates.py
+python3 scripts/validate_runtime_coverage.py
+python3 scripts/validate_wheel.py
 
 echo 'Workspace validation passed.'
