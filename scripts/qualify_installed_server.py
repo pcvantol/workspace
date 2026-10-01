@@ -279,6 +279,32 @@ def verify_installed_capabilities(server_exe, instance_root, cwd, env, url,
     assert "path" not in inventory["instance.init"]
 
 
+def verify_browser_project_error_semantics(page, instance_root):
+    """Preserve a visible row across each injected project-read failure and recovery."""
+    catalogue = instance_root / "projects.json"
+    catalogue.write_text(json.dumps({"source": "LOCAL",
+                                     "observed_at": datetime.now(timezone.utc).isoformat(),
+                                     "projects": [{"id": "before-error", "name": "Before error"}]}))
+    catalogue.chmod(0o600)
+    page.locator("#connect").click()
+    page.get_by_text("Before error (before-error)").wait_for()
+    for code, label in ((401, "UNAUTHORIZED"), (409, "WRONG INSTANCE"),
+                        (400, "UNAVAILABLE")):
+        def handler(route):
+            route.fulfill(status=code, body="{}")
+        page.route("**/v1/projects", handler)
+        page.locator("#connect").click()
+        page.get_by_role("status").get_by_text(label).wait_for()
+        assert page.locator("#projects li").count() == 0
+        assert page.locator("#capabilities li").count() == 0
+        page.unroute("**/v1/projects", handler)
+        page.locator("#connect").click()
+        page.get_by_text("Before error (before-error)").wait_for()
+    catalogue.unlink()
+    page.locator("#connect").click()
+    page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
+
+
 def main(wheel):
     wheel = wheel.resolve()
     digest = hashlib.sha256(wheel.read_bytes()).hexdigest()
@@ -336,28 +362,7 @@ def main(wheel):
                 listed = page.locator("#capabilities li").all_text_contents()
                 assert "capabilities.read · HTTP_EXPOSED" in listed
                 assert "instance.init · LOCAL_ONLY_ADMIN" in listed
-                error_catalogue = first / "projects.json"
-                error_catalogue.write_text(json.dumps({"source": "LOCAL",
-                                                       "observed_at": datetime.now(timezone.utc).isoformat(),
-                                                       "projects": [{"id": "before-error", "name": "Before error"}]}))
-                error_catalogue.chmod(0o600)
-                page.locator("#connect").click()
-                page.get_by_text("Before error (before-error)").wait_for()
-                for code, label in ((401, "UNAUTHORIZED"), (409, "WRONG INSTANCE"),
-                                    (400, "UNAVAILABLE")):
-                    def handler(route):
-                        route.fulfill(status=code, body="{}")
-                    page.route("**/v1/projects", handler)
-                    page.locator("#connect").click()
-                    page.get_by_role("status").get_by_text(label).wait_for()
-                    assert page.locator("#projects li").count() == 0
-                    assert page.locator("#capabilities li").count() == 0
-                    page.unroute("**/v1/projects", handler)
-                    page.locator("#connect").click()
-                    page.get_by_text("Before error (before-error)").wait_for()
-                error_catalogue.unlink()
-                page.locator("#connect").click()
-                page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
+                verify_browser_project_error_semantics(page, first)
                 page.route("**/v1/capabilities", lambda route: route.fulfill(status=503, body="{}"))
                 page.locator("#connect").click()
                 page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
