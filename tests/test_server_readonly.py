@@ -112,10 +112,14 @@ class ReadOnlyTests(unittest.TestCase):
                 self.assertEqual(self.raw_request("/v1/status", method=method, hosts=hosts)[0], 403)
         host = f"127.0.0.1:{port}"
         for target in ("http://evil.example/v1/identity",
-                       f"http://{host}/v1/status", "//evil.example/v1/identity"):
+                       f"http://{host}/v1/status", "//evil.example/v1/identity",
+                       "/v1/identity?", "/v1/identity#", "/v1/status?", "/v1/status#"):
             for method in ("GET", "HEAD"):
                 with self.subTest(target=target, method=method):
-                    self.assertEqual(self.raw_request(target, method=method, hosts=(host,))[0], 400)
+                    response = self.raw_request(target, method=method, hosts=(host,))
+                    self.assertEqual(response[0], 400)
+                    if method == "GET":
+                        self.assertEqual(response[1]["error"], "INVALID_PATH")
         for origins in (("http://evil.example",), (f"http://{host}", f"http://{host}"),
                         ("null",)):
             for path in ("/v1/identity", "/v1/status", "/"):
