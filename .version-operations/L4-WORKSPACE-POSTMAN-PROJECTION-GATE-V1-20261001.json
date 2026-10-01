@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "LANE-4-R29",
+  "determined_version": "2.4.20",
+  "event_lineage": "LANE-4-R29",
+  "expected_source_revision": "7511900d57ee2a86deec055c0c35275d946ed3f8",
+  "expected_version": "2.4.20",
+  "operation_id": "L4-WORKSPACE-POSTMAN-PROJECTION-GATE-V1-20261001",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "NO_BUMP",
+  "requested": {
+    "bump": "none"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

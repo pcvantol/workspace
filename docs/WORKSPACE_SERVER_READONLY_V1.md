@@ -76,6 +76,11 @@ The contract lists `200`, malformed-path `400`, and Host/Origin `403` for public
 for that public read. Protected reads additionally list ambiguous-credentials
 `400`, unauthorized `401`, wrong-instance `409`, and source-unavailable `503`,
 matching the HTTP handler's guarded read path.
+The checked-in Postman collection is generated from the same own OpenAPI reads
+with `python3 scripts/project_postman.py --write`. Required validation runs its
+`--check` mode, so route, method, base URL or authentication drift fails before
+delivery. Unsupported future security or method forms require an explicit
+projection update instead of silently emitting incomplete requests.
 The local browser now renders this authenticated inventory after a successful
 instance-pinned connection. It labels HTTP reads and local-only administration
 separately and continues to label peer operations UNQUALIFIED. Failed reads,
