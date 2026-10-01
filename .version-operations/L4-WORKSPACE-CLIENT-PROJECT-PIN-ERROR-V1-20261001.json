@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "LANE-4-R25",
+  "determined_version": "2.4.18",
+  "event_lineage": "LANE-4-R25",
+  "expected_source_revision": "75fff6020bbb957720d3cad5fa88e3a8d2a7342b",
+  "expected_version": "2.4.17",
+  "operation_id": "L4-WORKSPACE-CLIENT-PROJECT-PIN-ERROR-V1-20261001",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

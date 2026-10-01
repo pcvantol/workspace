@@ -83,4 +83,8 @@ still reports its own READY identity/version with `project_source=SOURCE_UNAVAIL
 The project endpoint remains 503, and the browser shows a connected Server with
 project information UNAVAILABLE and no project rows. Repairing the catalogue
 restores normal project readback without resetting Server identity or token.
+If a protected project read instead returns 401 or 409 after a successful
+status read, the browser clears old rows and labels UNAUTHORIZED or WRONG
+INSTANCE respectively. Other failed project responses are UNAVAILABLE, not
+falsely classified as token failure.
 The inventory is a local WH-CONTRACT subset, not full WH-Q.
