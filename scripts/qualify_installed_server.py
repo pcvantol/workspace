@@ -338,6 +338,10 @@ def verify_installed_response_schemas(url, token, instance_id, api):
             assert set(body) <= set(schemas[name]["properties"])
 
 
+def verify_browser_observation(page, expected):
+    assert page.locator("#project-observed").inner_text() == expected
+
+
 def verify_browser_project_error_semantics(page, instance_root):
     """Preserve a visible row across each injected project-read failure and recovery."""
     catalogue = instance_root / "projects.json"
@@ -347,6 +351,8 @@ def verify_browser_project_error_semantics(page, instance_root):
     catalogue.chmod(0o600)
     page.locator("#connect").click()
     page.get_by_text("Before error (before-error)").wait_for()
+    observed = json.loads(catalogue.read_text())["observed_at"]
+    verify_browser_observation(page, f"Observed: {observed}")
     for code, label in ((401, "UNAUTHORIZED"), (409, "WRONG INSTANCE"),
                         (400, "UNAVAILABLE")):
         def handler(route):
@@ -356,12 +362,26 @@ def verify_browser_project_error_semantics(page, instance_root):
         page.get_by_role("status").get_by_text(label).wait_for()
         assert page.locator("#projects li").count() == 0
         assert page.locator("#capabilities li").count() == 0
+        verify_browser_observation(page, "No observation")
         page.unroute("**/v1/projects", handler)
         page.locator("#connect").click()
         page.get_by_text("Before error (before-error)").wait_for()
+        verify_browser_observation(page, f"Observed: {observed}")
+    def missing_observation(route):
+        route.fulfill(status=200, content_type="application/json",
+                      body=json.dumps({"state": "AVAILABLE", "source": "LOCAL",
+                                       "partial": False, "stale": False,
+                                       "projects": [{"id": "incomplete", "name": "Incomplete"}]}))
+    page.route("**/v1/projects", missing_observation)
+    page.locator("#connect").click()
+    page.get_by_role("status").get_by_text("UNAVAILABLE").wait_for()
+    assert page.locator("#projects li").count() == 0
+    verify_browser_observation(page, "No observation")
+    page.unroute("**/v1/projects", missing_observation)
     catalogue.unlink()
     page.locator("#connect").click()
     page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
+    verify_browser_observation(page, "No observation")
 
 
 def verify_browser_identity_mismatch(page, other_id, expected_pin):
@@ -457,6 +477,7 @@ def main(wheel):
                 verify_browser_identity_mismatch(page, second_id, None)
                 page.locator("#connect").click()
                 page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
+                verify_browser_observation(page, "No observation")
                 page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
                 page.get_by_text("capabilities.read · HTTP_EXPOSED").wait_for()
                 assert page.evaluate("localStorage.getItem('workspace.instanceId')") == first_id
@@ -480,6 +501,7 @@ def main(wheel):
                 page.get_by_role("status").get_by_text("WRONG INSTANCE").wait_for()
                 assert page.locator("#capabilities li").count() == 0
                 page.locator("#forget").click()
+                verify_browser_observation(page, "No observation")
                 assert page.locator("#capabilities li").count() == 0
                 assert page.locator("#token").input_value() == ""
                 page.locator("#connect").click()
@@ -497,6 +519,8 @@ def main(wheel):
                 page.locator("#connect").click()
                 page.locator("#project-state").get_by_text("AVAILABLE · DEMO").wait_for()
                 page.get_by_text("Demo project (demo) · DEMO").wait_for()
+                observed = json.loads(catalogue.read_text())["observed_at"]
+                verify_browser_observation(page, f"Observed: {observed}")
                 verify_browser_inventory_identity_mismatch(page, second_id, first_id)
                 page.locator("#connect").click()
                 page.get_by_text("Demo project (demo) · DEMO").wait_for()
@@ -504,6 +528,7 @@ def main(wheel):
                                                  "projects": [{"id": "demo", "name": "Demo project"}]}))
                 page.locator("#connect").click()
                 page.locator("#project-state").get_by_text("STALE · DEMO").wait_for()
+                verify_browser_observation(page, "Observed: 2020-01-01T00:00:00Z")
                 verify_stale_partial_catalogue(first_url, first_id, token, catalogue, page)
                 verify_catalogue_failure_isolation(first_url, first_id, token, catalogue, page)
                 verify_unique_project_ids(first_url, first_id, token, catalogue, page)
@@ -516,6 +541,7 @@ def main(wheel):
                 assert processes[0].returncode == -signal.SIGTERM
                 page.locator("#connect").click()
                 page.get_by_role("status").get_by_text("UNAVAILABLE").wait_for()
+                verify_browser_observation(page, "No observation")
                 assert page.locator("#capabilities li").count() == 0
                 replacement = subprocess.Popen([str(server_exe), "--root", str(first), "serve", "--port", str(first_port)],
                                                cwd=root, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -543,6 +569,7 @@ def main(wheel):
                               "openapi_response_schemas": "PASS",
                               "browser_capabilities_and_clear": "PASS",
                               "browser_project_error_semantics": "PASS",
+                              "browser_catalogue_observation_provenance": "PASS",
                               "browser_forget_token": "PASS",
                               "browser_identity_consistency": "PASS",
                               "browser_inventory_identity_consistency": "PASS",
