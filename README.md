@@ -37,6 +37,8 @@ requires ownership of the private root and is not a Forge/EP transport.
 Authenticated `GET /v1/capabilities` lists own HTTP reads and local-only
 administration commands for the pinned instance. It makes no peer-availability
 claim.
+`workspace-server --root /absolute/private/workspace-data capabilities` reads
+the same own inventory under private-root ownership without contacting a peer.
 
 ## Entry points
 

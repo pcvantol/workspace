@@ -63,6 +63,9 @@ identity. The Server rejects such a catalogue as SOURCE_UNAVAILABLE.
 The bounded follow-up `L4-WORKSPACE-OPERATION-INVENTORY-V1-20261001` adds pinned,
 authenticated `GET /v1/capabilities`. It names only own implemented HTTP reads
 and local-only `init`/`serve` commands, with matching OpenAPI/Postman routes.
+The local `workspace-server --root ROOT capabilities` command returns the same
+instance-bound inventory object as HTTP through the shared product function.
+It does not contact a Server or peer and cannot change any operation exposure.
 It does not expose local administration over HTTP or claim peer availability.
 
 If the private catalogue is invalid or unreadable, authenticated Server status
