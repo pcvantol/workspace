@@ -493,9 +493,13 @@ class ReadOnlyTests(unittest.TestCase):
         with patch("workspace_control.cli.serve") as mock_serve:
             self.assertEqual(main(["--root", str(self.root), "serve", "--port", "8767"]), 0)
             mock_serve.assert_called_once_with(str(self.root), 8767)
-        with patch("workspace_control.cli.webbrowser.open") as open_browser:
+        with patch("workspace_control.cli.webbrowser.open", return_value=True) as open_browser:
             self.assertEqual(client_main(["--url", "http://127.0.0.1:8767"]), 0)
             open_browser.assert_called_once_with("http://127.0.0.1:8767/")
+        with patch("workspace_control.cli.webbrowser.open", return_value=False):
+            self.assertEqual(client_main(["--url", "http://127.0.0.1:8767"]), 2)
+        with patch("workspace_control.cli.webbrowser.open", side_effect=OSError("unavailable")):
+            self.assertEqual(client_main(["--url", "http://127.0.0.1:8767"]), 2)
         for url in ("https://127.0.0.1:8767", "http://127.0.0.1:8767@evil.example",
                     "http://127.0.0.1:bad", "http://localhost:8767/v1/status"):
             with self.assertRaises(SystemExit):
