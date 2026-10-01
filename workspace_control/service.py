@@ -70,8 +70,12 @@ class Service:
         return self.identity["instance_id"]
 
     def status(self):
+        try:
+            project_source = self.projects()["state"]
+        except (ValueError, OSError, UnicodeError):
+            project_source = "SOURCE_UNAVAILABLE"
         return {"instance_id": self.instance_id, "version": __version__,
-                "state": "READY", "project_source": self.projects()["state"]}
+                "state": "READY", "project_source": project_source}
 
     def projects(self):
         catalogue = self.root / "projects.json"

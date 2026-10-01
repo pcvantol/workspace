@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "workspace-readonly-status-catalogue-failure-isolation",
+  "determined_version": "2.4.4",
+  "event_lineage": "workspace-readonly-status-catalogue-failure-isolation",
+  "expected_source_revision": "66d4e8ecb4f0fa175056e3240f3ebb4ec6252aaf",
+  "expected_version": "2.4.3",
+  "operation_id": "L4-STATUS-CATALOGUE-ISOLATION-20261001",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

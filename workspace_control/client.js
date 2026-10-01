@@ -25,12 +25,16 @@ document.getElementById('connect').addEventListener('click', async () => {
     if (statusResponse.status === 409) throw new Error('WRONG_INSTANCE');
     if (!statusResponse.ok) throw new Error('UNAVAILABLE');
     const status = await statusResponse.json();
-    const projectResponse = await fetch('/v1/projects', {headers, cache: 'no-store'});
-    if (!projectResponse.ok) throw new Error(projectResponse.status === 503 ? 'UNAVAILABLE' : 'UNAUTHORIZED');
-    const catalogue = await projectResponse.json();
     if (!pinned) localStorage.setItem('workspace.instanceId', identity.instance_id);
     state.textContent = 'CONNECTED';
     server.textContent = `${status.instance_id} · version ${status.version} · ${status.state}`;
+    const projectResponse = await fetch('/v1/projects', {headers, cache: 'no-store'});
+    if (projectResponse.status === 503) {
+      projectState.textContent = 'UNAVAILABLE';
+      return;
+    }
+    if (!projectResponse.ok) throw new Error('UNAUTHORIZED');
+    const catalogue = await projectResponse.json();
     projectState.textContent = `${catalogue.state}${catalogue.source ? ` · ${catalogue.source}` : ''}`;
     for (const item of catalogue.projects) {
       const row = document.createElement('li');

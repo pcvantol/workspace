@@ -115,7 +115,7 @@ def handler_for(service):
                     result = openapi_contract()
                 else:
                     result = operation_inventory(service.instance_id)
-            except (ValueError, OSError, json.JSONDecodeError):
+            except (ValueError, OSError, UnicodeError):
                 return self._reply(503, {"error": "SOURCE_UNAVAILABLE"})
             return self._reply(200, result)
 
