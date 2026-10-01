@@ -15,6 +15,8 @@ port (`127.0.0.1` or `localhost`). If Origin is supplied, it must appear once
 and match that Host's HTTP origin. Other, missing or duplicate authorities are
 denied before public Client assets, identity and authenticated routes; this
 keeps the loopback browser boundary from trusting a re-bound DNS name.
+HEAD follows the corresponding GET status and headers without a response body;
+other recognized non-GET methods remain read-only rejections.
 
 The own `instance.json` created by `init` has exactly `instance_id` (32
 lowercase hexadecimal characters) and a timezone-aware `created_at` timestamp.

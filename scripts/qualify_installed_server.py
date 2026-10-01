@@ -67,25 +67,27 @@ def verify_loopback_host_binding(port, instance_id, token):
             connection.putheader("X-Workspace-Instance", instance_id)
             connection.endheaders()
             response = connection.getresponse()
-            response.read()
-            return response.status
+            body = response.read()
+            return response.status, response.getheader("Content-Length"), body
         finally:
             connection.close()
     for host in (f"127.0.0.1:{port}", f"localhost:{port}"):
-        assert raw("/v1/status", (host,), (f"http://{host}",)) == 200
-        assert raw("/", (host,)) == 200
-        for method in ("POST", "HEAD", "OPTIONS", "TRACE", "CONNECT"):
-            assert raw("/v1/status", (host,), method=method) == 405
+        get = raw("/v1/status", (host,), (f"http://{host}",))
+        head = raw("/v1/status", (host,), method="HEAD")
+        assert get[0] == head[0] == 200 and get[1] == head[1] and head[2] == b""
+        assert raw("/", (host,))[0] == 200
+        for method in ("POST", "OPTIONS", "TRACE", "CONNECT"):
+            assert raw("/v1/status", (host,), method=method)[0] == 405
     for hosts in ((), (f"evil.example:{port}",),
                   (f"127.0.0.1:{port}", f"127.0.0.1:{port}")):
-        assert raw("/v1/status", hosts) == 403
-        assert raw("/v1/identity", hosts) == 403
-        assert raw("/", hosts) == 403
+        assert raw("/v1/status", hosts)[0] == 403
+        assert raw("/v1/identity", hosts)[0] == 403
+        assert raw("/", hosts)[0] == 403
         for method in ("POST", "HEAD", "OPTIONS", "TRACE", "CONNECT"):
-            assert raw("/v1/status", hosts, method=method) == 403
+            assert raw("/v1/status", hosts, method=method)[0] == 403
     host = f"127.0.0.1:{port}"
-    assert raw("/v1/status", (host,), ("http://evil.example",)) == 403
-    assert raw("/", (host,), (f"http://{host}", f"http://{host}")) == 403
+    assert raw("/v1/status", (host,), ("http://evil.example",))[0] == 403
+    assert raw("/", (host,), (f"http://{host}", f"http://{host}"))[0] == 403
 
 
 def verify_catalogue_failure_isolation(url, instance_id, token, catalogue, page):

@@ -76,7 +76,8 @@ class ReadOnlyTests(unittest.TestCase):
             connection.endheaders()
             response = connection.getresponse()
             body = response.read()
-            return response.status, json.loads(body) if body and path.startswith("/v1/") else None
+            return (response.status, json.loads(body) if body and path.startswith("/v1/") else None,
+                    response.headers, body)
         finally:
             connection.close()
 
@@ -87,8 +88,13 @@ class ReadOnlyTests(unittest.TestCase):
                 with self.subTest(host=host, path=path):
                     self.assertEqual(self.raw_request(path, hosts=(host,),
                                                       origins=(f"http://{host}",))[0], 200)
-            for method in ("POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS", "TRACE", "CONNECT"):
+            for method in ("POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE", "CONNECT"):
                 self.assertEqual(self.raw_request("/v1/status", method=method, hosts=(host,))[0], 405)
+            get = self.raw_request("/v1/status", hosts=(host,))
+            head = self.raw_request("/v1/status", method="HEAD", hosts=(host,))
+            self.assertEqual(head[0], get[0])
+            self.assertEqual(head[2]["Content-Length"], get[2]["Content-Length"])
+            self.assertEqual(head[3], b"")
         for hosts in ((), (f"evil.example:{port}",),
                       (f"127.0.0.1:{port}", f"evil.example:{port}"),
                       (f"127.0.0.1:{port}", f"127.0.0.1:{port}")):

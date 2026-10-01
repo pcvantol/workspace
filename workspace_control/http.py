@@ -73,8 +73,6 @@ def handler_for(service):
     class Handler(BaseHTTPRequestHandler):
         def _reply(self, code, value, content_type="application/json; charset=utf-8"):
             payload = value if isinstance(value, bytes) else json.dumps(value, sort_keys=True).encode()
-            if self.command == "HEAD":
-                payload = b""
             self.send_response(code)
             self.send_header("Content-Type", content_type)
             self.send_header("Content-Length", str(len(payload)))
@@ -82,7 +80,8 @@ def handler_for(service):
             self.send_header("X-Content-Type-Options", "nosniff")
             self.send_header("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'unsafe-inline'")
             self.end_headers()
-            self.wfile.write(payload)
+            if self.command != "HEAD":
+                self.wfile.write(payload)
 
         def _trusted_origin(self):
             hosts = self.headers.get_all("Host", [])
@@ -141,7 +140,7 @@ def handler_for(service):
         do_PUT = do_POST
         do_PATCH = do_POST
         do_DELETE = do_POST
-        do_HEAD = do_POST
+        do_HEAD = do_GET
         do_OPTIONS = do_POST
         do_TRACE = do_POST
         do_CONNECT = do_POST
