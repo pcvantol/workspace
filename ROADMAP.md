@@ -75,12 +75,14 @@ changes here. Full policy UI is not a prerequisite for the first machine canary.
 
 ## Installed Workspace Server and Client lane
 
-The first selected local read-only subset is implemented on Workspace PR #35:
+The first selected local read-only subset was merged on Workspace PR #35:
 private instance identity/state, loopback authenticated HTTP, own CLI and a
 browser Client served from installed wheel bytes. Its local source and installed
 tests are recorded in [the first-slice contract](docs/WORKSPACE_SERVER_READONLY_V1.md).
-Protected delivery, independent review and live peer qualification are separate
-gates; this subset does not complete the full installed Server/Client target.
+Protected delivery and independent read-only review are recorded in the LANE_4
+register. PR #36 added required CI coverage and wheel-install gates. Live peer
+qualification remains separate; this subset does not complete the full installed
+Server/Client target.
 
 Workspace will deliver a headless installed Server with its own central runtime
 storage root, versioned HTTP application API, stable identity and macOS launchd

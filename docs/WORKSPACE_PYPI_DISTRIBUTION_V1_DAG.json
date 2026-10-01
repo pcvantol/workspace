@@ -23,9 +23,10 @@
   },
   "first_slice_checkpoint": {
     "scope": "WPK-IDENTITY/WPK-PACKAGE local wheel and role entrypoints only",
-    "source_status": "IMPLEMENTED_CANDIDATE_PENDING_PROTECTED_DELIVERY",
+    "source_status": "LOCAL_WHEEL_SUBSET_PROTECTED_DELIVERED",
     "evidence": ["pyproject.toml", "scripts/qualify_installed_server.py"],
     "ci_wheel_gate": "scripts/validate_wheel.py",
+    "sdist_roundtrip_candidate": "scripts/validate_wheel.py",
     "public_namespace_qualified": false,
     "publisher_configured": false,
     "full_parent_qualified": false

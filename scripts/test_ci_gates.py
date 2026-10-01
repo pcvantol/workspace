@@ -1,12 +1,14 @@
 """Gate negatives: insufficient or missing evidence cannot pass."""
 
 from pathlib import Path
+import io
+import tarfile
 import tempfile
 import unittest
 from zipfile import ZipFile
 
 from validate_runtime_coverage import summarize
-from validate_wheel import inspect_wheel
+from validate_wheel import assert_equivalent_wheels, inspect_sdist, inspect_wheel
 
 
 class CIGateTests(unittest.TestCase):
@@ -43,6 +45,28 @@ class CIGateTests(unittest.TestCase):
                 archive.writestr("workspace_control/__init__.py", "")
             with self.assertRaisesRegex(ValueError, "wheel lacks required files"):
                 inspect_wheel(wheel, "2.4.0")
+
+    def test_sdist_missing_canonical_source_fails(self):
+        with tempfile.TemporaryDirectory() as directory:
+            sdist = Path(directory) / "incomplete.tar.gz"
+            with tarfile.open(sdist, "w:gz") as archive:
+                data = b"[build-system]\n"
+                info = tarfile.TarInfo("pcvantol_workspace_control-2.4.2/pyproject.toml")
+                info.size = len(data)
+                archive.addfile(info, io.BytesIO(data))
+            with self.assertRaisesRegex(ValueError, "sdist lacks required source files"):
+                inspect_sdist(sdist, "2.4.2")
+
+    def test_sdist_rebuilt_wheel_content_mismatch_fails(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / "source.whl"
+            rebuilt = Path(directory) / "rebuilt.whl"
+            with ZipFile(source, "w") as archive:
+                archive.writestr("workspace_control/client.js", "source")
+            with ZipFile(rebuilt, "w") as archive:
+                archive.writestr("workspace_control/client.js", "changed")
+            with self.assertRaisesRegex(ValueError, "sdist-rebuilt wheel differs"):
+                assert_equivalent_wheels(source, rebuilt, "2.4.2")
 
 
 if __name__ == "__main__":
