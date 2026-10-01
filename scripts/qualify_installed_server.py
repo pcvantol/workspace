@@ -52,6 +52,24 @@ def wait_ready(url, process):
     raise RuntimeError("server did not become ready")
 
 
+def verify_catalogue_failure_isolation(url, instance_id, token, catalogue, page):
+    """Qualify the distinct installed Server and catalogue failure states."""
+    catalogue.write_bytes(b"\xff")
+    assert read(url + "/v1/projects", token=token, instance=instance_id)[0] == 503
+    code, body = read(url + "/v1/status", token=token, instance=instance_id)
+    assert code == 200
+    assert json.loads(body)["project_source"] == "SOURCE_UNAVAILABLE"
+    page.locator("#connect").click()
+    page.get_by_role("status").get_by_text("CONNECTED").wait_for()
+    page.locator("#project-state").get_by_text("UNAVAILABLE").wait_for()
+    assert instance_id in page.locator("#server").inner_text()
+    assert page.locator("#projects li").count() == 0
+    catalogue.write_text(json.dumps({"source": "DEMO", "observed_at": datetime.now(timezone.utc).isoformat(),
+                                     "projects": [{"id": "demo", "name": "Demo project"}]}))
+    page.locator("#connect").click()
+    page.locator("#project-state").get_by_text("AVAILABLE · DEMO").wait_for()
+
+
 def main(wheel):
     wheel = wheel.resolve()
     digest = hashlib.sha256(wheel.read_bytes()).hexdigest()
@@ -130,20 +148,7 @@ def main(wheel):
                                                  "projects": [{"id": "demo", "name": "Demo project"}]}))
                 page.locator("#connect").click()
                 page.locator("#project-state").get_by_text("STALE · DEMO").wait_for()
-                catalogue.write_bytes(b"\xff")
-                assert read(first_url + "/v1/projects", token=token, instance=first_id)[0] == 503
-                code, body = read(first_url + "/v1/status", token=token, instance=first_id)
-                assert code == 200
-                assert json.loads(body)["project_source"] == "SOURCE_UNAVAILABLE"
-                page.locator("#connect").click()
-                page.get_by_role("status").get_by_text("CONNECTED").wait_for()
-                page.locator("#project-state").get_by_text("UNAVAILABLE").wait_for()
-                assert first_id in page.locator("#server").inner_text()
-                assert page.locator("#projects li").count() == 0
-                catalogue.write_text(json.dumps({"source": "DEMO", "observed_at": datetime.now(timezone.utc).isoformat(),
-                                                 "projects": [{"id": "demo", "name": "Demo project"}]}))
-                page.locator("#connect").click()
-                page.locator("#project-state").get_by_text("AVAILABLE · DEMO").wait_for()
+                verify_catalogue_failure_isolation(first_url, first_id, token, catalogue, page)
                 processes[0].send_signal(signal.SIGTERM)
                 processes[0].wait(timeout=5)
                 assert processes[0].returncode == -signal.SIGTERM
