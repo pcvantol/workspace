@@ -264,6 +264,12 @@ This proves EP can engineer Workspace; it does not grant Workspace execution aut
 
 A bounded onboarding experience for logical projects/repositories remains planned. It may offer **Use existing repository**, **Create new repository**, **Genesis project**, and a **qualification-only repository** variant. The canonical design remains in `docs/REPOSITORY_ONBOARDING.md` and must be reconciled with B8R before implementation.
 
+PB-W0 now defines the five Genesis/Managed user intents and their owner
+capability families in the [versioned contract](docs/PROJECT_BOOTSTRAP_W0_CONTRACT_V1.md).
+Its offline examples guard provisional identity, unavailable/denied actions and
+no implicit remote fallback. PB-W1's actual producer binding and every installed
+onboarding action remain planned.
+
 Workspace presents and initiates permitted intent; Forge plans and reasons about project dependencies; EP CENTRAL accepts durable execution/lifecycle intent and remains execution authority. Host-local engineering remains EP-owned.
 
 For a real admission-ready onboarding flow, consumer-facing producer qualification remains EP-owned. The current B8R project identity/attachment runtime is sufficient for direct EP dogfooding; richer onboarding/cutover UX remains a later Workspace capability.

@@ -55,6 +55,14 @@ wheel without checkout imports. This is candidate evidence until protected
 delivery; it does not qualify a public PyPI identity, publisher, full
 WPK-PACKAGE parent, or bitwise reproducibility.
 
+### LANE_4 PB-W0 contract-first follow-up
+
+The #208 r4 assignment `L4-WORKSPACE-PB-W0-CONTRACT-V1-20261001` adds a
+machine-readable five-journey onboarding intent/capability contract, owning
+boundary mapping and offline negative examples. This is contract source only,
+not an installed onboarding UI, exact Forge/EP producer binding, project
+reservation, provisioning effect or closure of PB-W1 and later nodes.
+
 ## Historical foundation and remaining candidates
 
 The repository foundation originally authorized no product implementation.

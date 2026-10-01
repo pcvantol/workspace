@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "contract": "WORKSPACE_PROJECT_BOOTSTRAP_W0_V1",
+  "purpose": "CONTRACT_FIXTURES_ONLY_NOT_RUNTIME_QUALIFICATION",
+  "submit_examples": [
+    {"id": "new-genesis-ready", "journey": "NEW_GENESIS", "owner_capability": "QUALIFIED_AUTHORIZED", "fresh": true, "frozen_plan": true, "decisions": true, "stable_operation": true, "expected": "AVAILABLE"},
+    {"id": "adopt-genesis-ready", "journey": "ADOPT_GENESIS", "owner_capability": "QUALIFIED_AUTHORIZED", "fresh": true, "frozen_plan": true, "decisions": true, "stable_operation": true, "expected": "AVAILABLE"},
+    {"id": "new-managed-ready", "journey": "NEW_MANAGED", "owner_capability": "QUALIFIED_AUTHORIZED", "fresh": true, "frozen_plan": true, "decisions": true, "stable_operation": true, "remote_approval": true, "expected": "AVAILABLE"},
+    {"id": "adopt-managed-ready", "journey": "ADOPT_MANAGED", "owner_capability": "QUALIFIED_AUTHORIZED", "fresh": true, "frozen_plan": true, "decisions": true, "stable_operation": true, "remote_approval": true, "expected": "AVAILABLE"},
+    {"id": "promote-genesis-ready", "journey": "PROMOTE_GENESIS", "owner_capability": "QUALIFIED_AUTHORIZED", "fresh": true, "frozen_plan": true, "decisions": true, "stable_operation": true, "remote_approval": true, "history_review": true, "expected": "AVAILABLE"},
+    {"id": "unsupported-is-not-fallback", "journey": "NEW_MANAGED", "owner_capability": "UNSUPPORTED", "fresh": true, "frozen_plan": true, "decisions": true, "stable_operation": true, "expected": "UNSUPPORTED"},
+    {"id": "offline-is-not-fallback", "journey": "NEW_GENESIS", "owner_capability": "UNAVAILABLE", "fresh": true, "frozen_plan": true, "decisions": true, "stable_operation": true, "expected": "UNAVAILABLE"},
+    {"id": "denied-is-not-grant", "journey": "ADOPT_MANAGED", "owner_capability": "DENIED", "fresh": true, "frozen_plan": true, "decisions": true, "stable_operation": true, "expected": "DENIED"},
+    {"id": "stale-cannot-submit", "journey": "NEW_GENESIS", "owner_capability": "QUALIFIED_AUTHORIZED", "fresh": false, "frozen_plan": true, "decisions": true, "stable_operation": true, "expected": "STALE"},
+    {"id": "draft-is-not-approval", "journey": "ADOPT_GENESIS", "owner_capability": "QUALIFIED_AUTHORIZED", "fresh": true, "frozen_plan": true, "decisions": false, "stable_operation": true, "expected": "BLOCKED"},
+    {"id": "missing-operation-is-not-retry", "journey": "PROMOTE_GENESIS", "owner_capability": "QUALIFIED_AUTHORIZED", "fresh": true, "frozen_plan": true, "decisions": true, "stable_operation": false, "remote_approval": true, "history_review": true, "expected": "BLOCKED"},
+    {"id": "managed-requires-remote-approval", "journey": "NEW_MANAGED", "owner_capability": "QUALIFIED_AUTHORIZED", "fresh": true, "frozen_plan": true, "decisions": true, "stable_operation": true, "remote_approval": false, "expected": "BLOCKED"},
+    {"id": "promotion-requires-history-review", "journey": "PROMOTE_GENESIS", "owner_capability": "QUALIFIED_AUTHORIZED", "fresh": true, "frozen_plan": true, "decisions": true, "stable_operation": true, "remote_approval": true, "history_review": false, "expected": "BLOCKED"}
+  ],
+  "identity_examples": [
+    {"id": "reservation", "owner_readback": "NONE", "expected": "PROVISIONAL"},
+    {"id": "committed-declaration", "owner_readback": "EP_COMMITTED_REPOSITORY_DECLARATION", "expected": "COMMITTED"},
+    {"id": "promotion-keeps-ids", "owner_readback": "EP_PROMOTION_READBACK_SAME_IDS", "expected": "COMMITTED_SAME_IDS"}
+  ]
+}

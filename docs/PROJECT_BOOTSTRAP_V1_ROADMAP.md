@@ -12,6 +12,11 @@ This is the scoped implementation decomposition of onboarding/control plane in [
 | PB-W4 | PB-W2, PB-W3; Forge PB-F6 and EP PB-E4 | History/publication-aware Genesis-to-Managed promotion, fenced activation and recovery UX |
 | PB-WQ | PB-W2, PB-W3, PB-W4; qualified Forge PB-FQ and EP PB-EQ | Installed HTTP integration for all five journeys, desktop/mobile, five locales, accessibility and negative authority cases |
 
+PB-W0 now has a versioned [Workspace intent/capability contract](PROJECT_BOOTSTRAP_W0_CONTRACT_V1.md)
+and offline negative projection fixtures. This defines the five journeys and
+owner boundaries but supplies no producer binding, endpoint, UI, provisioning
+or installed qualification. PB-W1 and all later runtime nodes remain PLANNED.
+
 PB-W0/W1 can advance contract-first without runtime services being complete; delivered user actions remain gated by actual compatible owner capabilities. Workspace qualification consumes peer evidence but is not a prerequisite of Forge PB-FQ or EP PB-EQ. The documentary DAG allocates Workspace work only; owner roadmaps decide peer implementation status and order.
 
 Companions:
