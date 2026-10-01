@@ -57,6 +57,9 @@ document.getElementById('connect').addEventListener('click', async () => {
     if (capabilityResponse.ok) {
       const inventory = await capabilityResponse.json();
       if (attempt !== connectionAttempt) return;
+      if (typeof inventory.instance_id === 'string' && inventory.instance_id !== identity.instance_id) {
+        throw new Error('WRONG_INSTANCE');
+      }
       if (inventory.schema_version === 1 && inventory.instance_id === identity.instance_id &&
           inventory.peer_operations_qualified === false && Array.isArray(inventory.operations) &&
           inventory.operations.every(operation => typeof operation.id === 'string' &&

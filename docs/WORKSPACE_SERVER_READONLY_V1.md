@@ -91,6 +91,9 @@ and checks that authenticated Server status names that same instance. An
 inconsistent status is WRONG INSTANCE; it clears displayed readbacks and cannot
 create or replace the saved pin. This is local consistency checking, not remote
 pairing or an additional trust grant.
+An authenticated capability inventory naming another instance is also WRONG
+INSTANCE: the Client clears capability and project rows, keeps its existing
+binding intact and requires a later consistent read before displaying data.
 Forgetting the local browser binding also clears the token input immediately;
 reconnection requires the operator to enter the private-root token again.
 It does not expose local administration over HTTP or claim peer availability.
