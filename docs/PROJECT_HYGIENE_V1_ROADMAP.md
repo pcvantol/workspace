@@ -7,7 +7,7 @@ Coordinated [documentary DAG](https://github.com/pcvantol/forge/blob/main/docs/r
 
 | Node | Deliverable | Dependencies | Status |
 | --- | --- | --- | --- |
-| HY-WC | Health/chat/case/decision request and projection contracts with real actor/scope and evidence classification | HY-0 coordinated documentation | PLANNED |
+| HY-WC | Health/chat/case/decision request and projection contracts with real actor/scope and evidence classification | HY-0 coordinated documentation | CONTRACT_DEFINED; producer bindings unqualified |
 | HY-WO | Read-only Repository Health and chat: explain, refresh, reconcile; no automatic Mission or deletion | HY-WC, Forge HY-F | PLANNED |
 | HY-WM | Scoped cleanup proposal/decision and receipt/history UX | HY-WO, Forge/EP HY-Q | PLANNED |
 
@@ -15,6 +15,10 @@ HY-WC may proceed contract-first in parallel with EP observation. HY-WO does not
 wait for destructive command support; unsupported mutation is absent/disabled
 with an explanation. HY-WM requires the actual qualified authority/conditional
 cleanup/receipt path, not just a green interface mock.
+
+The versioned [HY-WC request/projection contract](REPOSITORY_HEALTH_WC_CONTRACT_V1.md)
+defines the symbolic owner families and offline negative cases. It does not
+bind an actual Forge/EP endpoint or implement HY-WO/HY-WM.
 
 Required acceptance includes project isolation, stale/partial/offline inventories,
 read versus reconciliation versus delete-intent separation, no Mission allocation

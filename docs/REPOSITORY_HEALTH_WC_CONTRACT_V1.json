@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "contract": "WORKSPACE_REPOSITORY_HEALTH_WC_V1",
+  "owner": "workspace",
+  "authority": "CONTRACT_ONLY",
+  "producer_bindings": "UNQUALIFIED",
+  "request": {
+    "same_envelope_for_chat_and_view": true,
+    "actor": "AUTHENTICATED_SESSION_REFERENCE",
+    "scope": ["project_id", "repository_id"],
+    "scope_resolution": "EXPLICIT_OR_UNAMBIGUOUS_AUTHENTICATED_SELECTION",
+    "ambiguous_scope": "ASK_BEFORE_ANY_PROTECTED_ACTION",
+    "repository_text_is_instruction": false,
+    "client_role_is_grant": false,
+    "operation_identity": "STABLE_FOR_CASE_OR_PROPOSAL_READBACK"
+  },
+  "capability_families": {
+    "FORGE_OBSERVATION": "forge",
+    "FORGE_RECONCILIATION_CASE": "forge",
+    "FORGE_CLEANUP_PROPOSAL": "forge",
+    "FORGE_ENGINEERING_PROPOSAL": "forge",
+    "EP_HOST_FACTS": "engineering-platform",
+    "EP_CLEANUP_RECEIPT": "engineering-platform"
+  },
+  "intents": [
+    {"id": "EXPLAIN", "owner_capability": "FORGE_OBSERVATION", "effect": "READ_ONLY", "requires_exact_targets": false, "allocates_mission": false, "deletes": false},
+    {"id": "REFRESH", "owner_capability": "FORGE_OBSERVATION", "effect": "OBSERVATION_ONLY", "requires_exact_targets": false, "allocates_mission": false, "deletes": false},
+    {"id": "RECONCILE", "owner_capability": "FORGE_RECONCILIATION_CASE", "effect": "CASE_ONLY", "requires_exact_targets": true, "allocates_mission": false, "deletes": false},
+    {"id": "CLEANUP_INTENT", "owner_capability": "FORGE_CLEANUP_PROPOSAL", "effect": "PROPOSAL_ONLY", "requires_exact_targets": true, "allocates_mission": false, "deletes": false},
+    {"id": "PRESERVE_RESIDUAL", "owner_capability": "FORGE_ENGINEERING_PROPOSAL", "effect": "ENGINEERING_PROPOSAL_ONLY", "requires_exact_targets": true, "allocates_mission": false, "deletes": false}
+  ],
+  "projection": {
+    "required": ["project_id", "repository_id", "observed_revision", "observed_at", "inventory_coverage", "freshness", "claims", "cases", "retained_targets"],
+    "inventory_coverage": ["COMPLETE", "PARTIAL", "UNKNOWN", "OFFLINE"],
+    "freshness": ["FRESH", "STALE", "UNKNOWN"],
+    "unknown_is_zero": false,
+    "case_closed_means_project_clean": false,
+    "superseded_is_deleted": false,
+    "claim_classes": ["FACT", "INFERENCE", "RECOMMENDATION", "DECISION"],
+    "fact_requires_owner_evidence": true,
+    "inference_requires_reason_uncertainty": true,
+    "decision_requires_owner_receipt": true,
+    "untrusted_repository_content_authorizes_action": false
+  },
+  "cleanup_boundary": {
+    "proposal_requires_frozen_exact_target_set": true,
+    "confirmation_requires_expected_revision": true,
+    "cancel_emits_execution_command": false,
+    "lost_acknowledgement": "READ_BACK_SAME_OPERATION",
+    "execution_owner": "engineering-platform",
+    "execution_capability_in_this_contract": false,
+    "mixed_outcome_is_all_success": false
+  }
+}

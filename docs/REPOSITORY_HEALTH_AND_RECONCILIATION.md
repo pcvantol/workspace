@@ -13,6 +13,8 @@ This surface extends [Workspace architecture](ARCHITECTURE.md),
 Forge owns the native [hygiene/reconciliation capability](https://github.com/pcvantol/forge/blob/main/docs/architecture/PROJECT_HYGIENE_AND_REPOSITORY_RECONCILIATION.md).
 EP owns fresh host facts and admitted mutations; Workspace owns the human
 experience, not Git truth, Forge planning or EP cleanup authority.
+The contract-first [HY-WC request/projection source](REPOSITORY_HEALTH_WC_CONTRACT_V1.md)
+defines the common chat/view envelope; actual producer bindings remain open.
 
 ## One request boundary for chat and structured views
 
