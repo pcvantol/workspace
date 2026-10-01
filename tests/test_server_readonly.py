@@ -10,7 +10,7 @@ import tempfile
 import threading
 import time
 import unittest
-from contextlib import redirect_stderr
+from contextlib import redirect_stderr, redirect_stdout
 from unittest.mock import patch
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -184,6 +184,7 @@ class ReadOnlyTests(unittest.TestCase):
         http_routes = {operation["path"] for operation in operations.values()
                        if operation["exposure"] == "HTTP_EXPOSED"}
         self.assertEqual(http_routes, set(ROUTES))
+        self.assertEqual(operations["projects.read"]["local_cli"], "projects")
         self.assertEqual({api["paths"][path]["get"]["operationId"] for path in http_routes},
                          {operation["id"] for operation in operations.values()
                           if operation["exposure"] == "HTTP_EXPOSED"})
@@ -220,6 +221,7 @@ class ReadOnlyTests(unittest.TestCase):
                          ["one", "two"])
         write([{"id": "same", "name": "First"}, {"id": "same", "name": "Second"}], stamp(now))
         self.assertEqual(self.authorized("/v1/projects")[0], 503)
+
         self.assertEqual(json.loads(self.authorized("/v1/status")[1])["project_source"],
                          "SOURCE_UNAVAILABLE")
         write([{"id": "sample", "name": "Sample"}], stamp(now - 600))
@@ -262,6 +264,45 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual(json.loads(self.authorized("/v1/projects")[1])["projects"][0]["id"], "restored")
         target.unlink()
         target.symlink_to(self.root / "token")
+        self.assertEqual(self.authorized("/v1/projects")[0], 503)
+
+    def test_cli_projects_matches_service_and_fails_closed(self):
+        from datetime import datetime, timedelta, timezone
+        target = self.root / "projects.json"
+        def cli_read():
+            stdout, stderr = io.StringIO(), io.StringIO()
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                code = main(["--root", str(self.root), "projects"])
+            return code, stdout.getvalue(), stderr.getvalue()
+        code, output, error = cli_read()
+        self.assertEqual((code, error), (0, ""))
+        self.assertEqual(json.loads(output), json.loads(self.authorized("/v1/projects")[1]))
+        now = datetime.now(timezone.utc)
+        for value, expected in (({"source": "LOCAL", "observed_at": now.isoformat(),
+                                 "projects": []}, "EMPTY"),
+                                ({"source": "DEMO", "observed_at": now.isoformat(),
+                                  "projects": [{"id": "one", "name": "Sample"}]}, "AVAILABLE"),
+                                ({"source": "LOCAL", "observed_at": now.isoformat(),
+                                  "projects": [], "partial": True}, "PARTIAL"),
+                                ({"source": "LOCAL", "observed_at":
+                                  (now - timedelta(minutes=10)).isoformat(),
+                                  "projects": [], "partial": True}, "STALE")):
+            with self.subTest(state=expected):
+                target.write_text(json.dumps(value))
+                target.chmod(0o600)
+                code, output, error = cli_read()
+                self.assertEqual((code, error), (0, ""))
+                self.assertEqual(json.loads(output)["state"], expected)
+                self.assertEqual(json.loads(output), json.loads(self.authorized("/v1/projects")[1]))
+        invalid = {"source": "LOCAL", "observed_at": now.isoformat(),
+                   "projects": [], "peer_status": "QUALIFIED"}
+        target.write_text(json.dumps(invalid))
+        before = target.read_bytes()
+        code, output, error = cli_read()
+        self.assertEqual((code, output), (2, ""))
+        self.assertIn("workspace-server:", error)
+        self.assertNotIn(self.service.token, error)
+        self.assertEqual(target.read_bytes(), before)
         self.assertEqual(self.authorized("/v1/projects")[0], 503)
 
     def test_restart_isolation_and_cli(self):

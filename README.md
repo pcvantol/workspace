@@ -30,6 +30,10 @@ The Client asks for the token in the root's private `token` file; it keeps the
 token in the current page only. The Server listens on loopback. The optional
 private `projects.json` catalogue format and state semantics are documented in
 [the read-only Server contract](docs/WORKSPACE_SERVER_READONLY_V1.md).
+`workspace-server --root /absolute/private/workspace-data projects` prints the
+same own catalogue projection as `GET /v1/projects`; invalid or unreadable
+catalogue data exits nonzero without printing project rows. This local command
+requires ownership of the private root and is not a Forge/EP transport.
 Authenticated `GET /v1/capabilities` lists own HTTP reads and local-only
 administration commands for the pinned instance. It makes no peer-availability
 claim.

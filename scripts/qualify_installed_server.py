@@ -204,6 +204,40 @@ def verify_catalogue_schema(url, instance_id, token, catalogue, page):
     page.locator("#project-state").get_by_text("AVAILABLE · DEMO").wait_for()
 
 
+def verify_installed_cli_projects(server_exe, instance_root, cwd, env, url, instance_id, token, catalogue):
+    """The installed local CLI must expose exactly the own service projection."""
+    original = catalogue.read_text()
+    command = [str(server_exe), "--root", str(instance_root), "projects"]
+    def cli():
+        return subprocess.run(command, cwd=cwd, env=env, capture_output=True, text=True)
+    try:
+        catalogue.unlink()
+        result = cli()
+        assert result.returncode == 0 and result.stderr == ""
+        assert json.loads(result.stdout) == json.loads(read(url + "/v1/projects", token=token,
+                                                           instance=instance_id)[1])
+        stamp = datetime.now(timezone.utc).isoformat()
+        for payload in ({"source": "LOCAL", "observed_at": stamp, "projects": []},
+                        {"source": "DEMO", "observed_at": stamp,
+                         "projects": [{"id": "one", "name": "Sample"}]},
+                        {"source": "LOCAL", "observed_at": "2020-01-01T00:00:00Z",
+                         "projects": [], "partial": True}):
+            catalogue.write_text(json.dumps(payload))
+            catalogue.chmod(0o600)
+            result = cli()
+            assert result.returncode == 0 and result.stderr == ""
+            assert json.loads(result.stdout) == json.loads(read(url + "/v1/projects", token=token,
+                                                               instance=instance_id)[1])
+        catalogue.write_text(json.dumps({"source": "LOCAL", "observed_at": stamp,
+                                         "projects": [], "peer_status": "QUALIFIED"}))
+        result = cli()
+        assert result.returncode == 2 and result.stdout == "" and token not in result.stderr
+        assert read(url + "/v1/projects", token=token, instance=instance_id)[0] == 503
+    finally:
+        catalogue.write_text(original)
+        catalogue.chmod(0o600)
+
+
 def main(wheel):
     wheel = wheel.resolve()
     digest = hashlib.sha256(wheel.read_bytes()).hexdigest()
@@ -288,6 +322,8 @@ def main(wheel):
                 verify_unique_project_ids(first_url, first_id, token, catalogue, page)
                 verify_unique_catalogue_keys(first_url, first_id, token, catalogue, page)
                 verify_catalogue_schema(first_url, first_id, token, catalogue, page)
+                verify_installed_cli_projects(server_exe, first, root, env, first_url,
+                                              first_id, token, catalogue)
                 processes[0].send_signal(signal.SIGTERM)
                 processes[0].wait(timeout=5)
                 assert processes[0].returncode == -signal.SIGTERM
@@ -312,6 +348,7 @@ def main(wheel):
                               "catalogue_schema": "PASS",
                               "loopback_host_origin_binding": "PASS",
                               "unique_auth_pin_headers": "PASS",
+                              "local_projects_cli_parity": "PASS",
                               "peer_contacted": False}, sort_keys=True))
         finally:
             for process in processes:
