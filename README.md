@@ -41,6 +41,9 @@ claim.
 the same own inventory under private-root ownership without contacting a peer.
 The local browser displays these own capabilities after connection, including
 the HTTP/local-only distinction and the unqualified peer boundary.
+`workspace-server --root /absolute/private/workspace-data openapi` prints the
+same own API contract as authenticated `GET /v1/openapi.json`, using only the
+installed package and private-root ownership; it does not start a Server.
 
 ## Entry points
 
