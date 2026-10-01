@@ -188,6 +188,7 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual(http_routes, set(ROUTES))
         self.assertEqual(operations["projects.read"]["local_cli"], "projects")
         self.assertEqual(operations["capabilities.read"]["local_cli"], "capabilities")
+        self.assertEqual(operations["openapi.read"]["local_cli"], "openapi")
         self.assertEqual({api["paths"][path]["get"]["operationId"] for path in http_routes},
                          {operation["id"] for operation in operations.values()
                           if operation["exposure"] == "HTTP_EXPOSED"})
@@ -226,6 +227,25 @@ class ReadOnlyTests(unittest.TestCase):
         finally:
             identity.chmod(0o600)
         self.assertEqual(json.loads(cli_read()[1]), inventory)
+
+    def test_cli_openapi_matches_http_and_requires_private_instance(self):
+        def cli_read():
+            stdout, stderr = io.StringIO(), io.StringIO()
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                code = main(["--root", str(self.root), "openapi"])
+            return code, stdout.getvalue(), stderr.getvalue()
+        code, output, error = cli_read()
+        self.assertEqual((code, error), (0, ""))
+        self.assertEqual(json.loads(output), json.loads(self.authorized("/v1/openapi.json")[1]))
+        self.assertNotIn(self.service.token, output)
+        identity = self.root / "instance.json"
+        identity.chmod(0o644)
+        try:
+            code, output, error = cli_read()
+            self.assertEqual((code, output), (2, ""))
+            self.assertNotIn(self.service.token, error)
+        finally:
+            identity.chmod(0o600)
 
     def test_catalogue_states_and_failure(self):
         target = self.root / "projects.json"

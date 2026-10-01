@@ -6,7 +6,7 @@ import sys
 from urllib.parse import urlsplit
 import webbrowser
 
-from .http import operation_inventory, serve
+from .http import openapi_contract, operation_inventory, serve
 from .service import Service, initialize
 
 
@@ -18,6 +18,7 @@ def main(argv=None):
     commands.add_parser("status")
     commands.add_parser("projects")
     commands.add_parser("capabilities")
+    commands.add_parser("openapi")
     start = commands.add_parser("serve")
     start.add_argument("--port", type=int, default=8765)
     args = parser.parse_args(argv)
@@ -30,6 +31,9 @@ def main(argv=None):
             print(json.dumps(Service(args.root).projects(), sort_keys=True))
         elif args.command == "capabilities":
             print(json.dumps(operation_inventory(Service(args.root).instance_id), sort_keys=True))
+        elif args.command == "openapi":
+            Service(args.root)
+            print(json.dumps(openapi_contract(), sort_keys=True))
         else:
             if not 1 <= args.port <= 65535:
                 raise ValueError("port out of range")

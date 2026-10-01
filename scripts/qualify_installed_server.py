@@ -253,11 +253,20 @@ def verify_installed_capabilities(server_exe, instance_root, cwd, env, url,
     assert cli_capabilities.returncode == 0 and cli_capabilities.stderr == ""
     assert json.loads(cli_capabilities.stdout) == capabilities
     assert token not in cli_capabilities.stdout
+    assert read(url + "/v1/openapi.json")[0] == 401
+    assert read(url + "/v1/openapi.json", token=token, instance=other_instance_id)[0] == 409
+    api = json.loads(read(url + "/v1/openapi.json", token=token, instance=instance_id)[1])
+    openapi_command = [str(server_exe), "--root", str(instance_root), "openapi"]
+    cli_api = subprocess.run(openapi_command, cwd=cwd, env=env, capture_output=True, text=True)
+    assert cli_api.returncode == 0 and cli_api.stderr == "" and json.loads(cli_api.stdout) == api
+    assert token not in cli_api.stdout
     identity_path = instance_root / "instance.json"
     identity_path.chmod(0o644)
     try:
         denied = subprocess.run(command, cwd=cwd, env=env, capture_output=True, text=True)
         assert denied.returncode == 2 and denied.stdout == "" and token not in denied.stderr
+        denied_api = subprocess.run(openapi_command, cwd=cwd, env=env, capture_output=True, text=True)
+        assert denied_api.returncode == 2 and denied_api.stdout == "" and token not in denied_api.stderr
     finally:
         identity_path.chmod(0o600)
     assert json.loads(read(url + "/v1/capabilities", token=token,
@@ -265,6 +274,7 @@ def verify_installed_capabilities(server_exe, instance_root, cwd, env, url,
     inventory = {item["id"]: item for item in capabilities["operations"]}
     assert inventory["capabilities.read"]["path"] == "/v1/capabilities"
     assert inventory["capabilities.read"]["local_cli"] == "capabilities"
+    assert inventory["openapi.read"]["local_cli"] == "openapi"
     assert inventory["instance.init"]["exposure"] == "LOCAL_ONLY_ADMIN"
     assert "path" not in inventory["instance.init"]
 
@@ -392,6 +402,7 @@ def main(wheel):
                               "unique_auth_pin_headers": "PASS",
                               "local_projects_cli_parity": "PASS",
                               "local_capabilities_cli_parity": "PASS",
+                              "local_openapi_cli_parity": "PASS",
                               "browser_capabilities_and_clear": "PASS",
                               "browser_forget_token": "PASS",
                               "peer_contacted": False}, sort_keys=True))
