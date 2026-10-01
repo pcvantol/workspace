@@ -14,6 +14,7 @@ function clearCapabilities() {
 document.getElementById('forget').addEventListener('click', () => {
   connectionAttempt += 1;
   localStorage.removeItem('workspace.instanceId');
+  document.getElementById('token').value = '';
   state.textContent = 'UNCONFIGURED';
   server.textContent = 'No server binding';
   projectState.textContent = 'UNCONFIGURED';
