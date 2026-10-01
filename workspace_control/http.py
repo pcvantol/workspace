@@ -59,6 +59,7 @@ def openapi_contract():
                      "responses": {"200": {"description": "Read result"},
                                                        "400": {"description": "Invalid path or ambiguous credentials"},
                                                        "401": {"description": "Unauthorized"},
+                                                       "403": {"description": "Host or Origin denied"},
                                                        "409": {"description": "Wrong instance"},
                                                        "503": {"description": "Source unavailable"}}}
         if details["auth"] == "BEARER_PINNED":

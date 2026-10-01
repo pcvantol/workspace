@@ -88,11 +88,13 @@ def verify_loopback_host_binding(port, instance_id, token):
                   (f"127.0.0.1:{port}", f"127.0.0.1:{port}")):
         assert raw("/v1/status", hosts)[0] == 403
         assert raw("/v1/identity", hosts)[0] == 403
+        assert raw("/v1/openapi.json", hosts)[0] == 403
         assert raw("/", hosts)[0] == 403
         for method in ("POST", "HEAD", "OPTIONS", "TRACE", "CONNECT"):
             assert raw("/v1/status", hosts, method=method)[0] == 403
     host = f"127.0.0.1:{port}"
     assert raw("/v1/status", (host,), ("http://evil.example",))[0] == 403
+    assert raw("/v1/openapi.json", (host,), ("http://evil.example",))[0] == 403
     assert raw("/", (host,), (f"http://{host}", f"http://{host}"))[0] == 403
     valid_auth = "Bearer " + token
     for authorizations in ((valid_auth, valid_auth), (valid_auth, "Bearer wrong"),
