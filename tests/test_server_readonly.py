@@ -293,6 +293,11 @@ class ReadOnlyTests(unittest.TestCase):
     def test_rejected_catalogues(self):
         target = self.root / "projects.json"
         cases = [[], {"source": "PEER", "projects": [], "observed_at": "2026-10-01T00:00:00Z"},
+                 {"source": "LOCAL", "projects": [], "observed_at": "2026-10-01T00:00:00Z",
+                  "peer_status": "QUALIFIED"},
+                 {"source": "LOCAL", "projects": [], "observed_at": "2026-10-01T00:00:00Z",
+                  "parital": True},
+                 {"source": "LOCAL", "projects": []},
                  {"source": "LOCAL", "projects": "wrong", "observed_at": "2026-10-01T00:00:00Z"},
                  {"source": "LOCAL", "projects": [{"id": "x"}], "observed_at": "2026-10-01T00:00:00Z"},
                  {"source": "LOCAL", "projects": [{"id": "", "name": "x"}], "observed_at": "2026-10-01T00:00:00Z"},

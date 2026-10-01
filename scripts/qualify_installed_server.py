@@ -130,6 +130,25 @@ def verify_unique_catalogue_keys(url, instance_id, token, catalogue, page):
     page.locator("#project-state").get_by_text("AVAILABLE · DEMO").wait_for()
 
 
+def verify_catalogue_schema(url, instance_id, token, catalogue, page):
+    """An unknown top-level claim must not appear as available project evidence."""
+    valid = json.loads(catalogue.read_text())
+    for invalid in ({**valid, "peer_status": "QUALIFIED"},
+                    {**valid, "parital": True},
+                    {key: value for key, value in valid.items() if key != "observed_at"}):
+        catalogue.write_text(json.dumps(invalid))
+        assert read(url + "/v1/projects", token=token, instance=instance_id)[0] == 503
+        code, body = read(url + "/v1/status", token=token, instance=instance_id)
+        assert code == 200 and json.loads(body)["project_source"] == "SOURCE_UNAVAILABLE"
+        page.locator("#connect").click()
+        page.get_by_role("status").get_by_text("CONNECTED").wait_for()
+        page.locator("#project-state").get_by_text("UNAVAILABLE").wait_for()
+        assert page.locator("#projects li").count() == 0
+    catalogue.write_text(json.dumps(valid))
+    page.locator("#connect").click()
+    page.locator("#project-state").get_by_text("AVAILABLE · DEMO").wait_for()
+
+
 def main(wheel):
     wheel = wheel.resolve()
     digest = hashlib.sha256(wheel.read_bytes()).hexdigest()
@@ -212,6 +231,7 @@ def main(wheel):
                 verify_catalogue_failure_isolation(first_url, first_id, token, catalogue, page)
                 verify_unique_project_ids(first_url, first_id, token, catalogue, page)
                 verify_unique_catalogue_keys(first_url, first_id, token, catalogue, page)
+                verify_catalogue_schema(first_url, first_id, token, catalogue, page)
                 processes[0].send_signal(signal.SIGTERM)
                 processes[0].wait(timeout=5)
                 assert processes[0].returncode == -signal.SIGTERM
@@ -233,6 +253,7 @@ def main(wheel):
                               "catalogue_failure_isolation_and_recovery": "PASS",
                               "unique_project_ids": "PASS",
                               "unique_catalogue_keys": "PASS",
+                              "catalogue_schema": "PASS",
                               "peer_contacted": False}, sort_keys=True))
         finally:
             for process in processes:

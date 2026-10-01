@@ -24,6 +24,11 @@ weaken authentication when its file is malformed.
 
 The optional `projects.json` is a private regular file (mode 0600) in the data root. Its schema is `{"source":"LOCAL","observed_at":"2026-10-01T15:00:00Z","projects":[{"id":"project-1","name":"Project One"}],"partial":false}`. `source` is `LOCAL` or `DEMO`; the latter is visibly labelled. No file means UNCONFIGURED. A configured empty list means EMPTY. An explicitly incomplete catalogue is PARTIAL. Observations older than five minutes are STALE. Invalid or unreadable input returns SOURCE_UNAVAILABLE. This catalogue is Workspace-owned manual data, not a peer projection or live platform status.
 
+The top-level object requires exactly `source`, `observed_at`, and `projects`,
+with optional boolean `partial` (default false). Unknown or missing fields
+make the source unavailable; they cannot silently masquerade as live peer
+evidence or override the documented local catalogue meaning.
+
 `GET /v1/projects` preserves that primary `state` and also returns independent
 `partial` and `stale` booleans. A stale, incomplete catalogue has primary state
 STALE with `partial:true` and `stale:true`; the browser displays both labels.

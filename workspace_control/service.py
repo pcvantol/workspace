@@ -112,7 +112,10 @@ class Service:
             return {"state": "UNCONFIGURED", "projects": [], "source": None,
                     "partial": False, "stale": False}
         raw = json.loads(_regular_private(catalogue), object_pairs_hook=_unique_json_object)
-        if not isinstance(raw, dict) or raw.get("source") not in ("LOCAL", "DEMO"):
+        required = {"source", "observed_at", "projects"}
+        if not isinstance(raw, dict) or not required <= raw.keys() or raw.keys() - required - {"partial"}:
+            raise ValueError("invalid catalogue schema")
+        if raw["source"] not in ("LOCAL", "DEMO"):
             raise ValueError("invalid catalogue source")
         items = raw.get("projects")
         if not isinstance(items, list) or len(items) > 100:
