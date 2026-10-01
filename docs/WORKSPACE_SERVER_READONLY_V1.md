@@ -18,6 +18,12 @@ keeps the loopback browser boundary from trusting a re-bound DNS name.
 HEAD follows the corresponding GET status and headers without a response body;
 other recognized non-GET methods remain read-only rejections.
 
+Protected reads require one unambiguous bearer Authorization header and one
+instance-pin header. Duplicate values, even if identical, are rejected before
+reading product state; missing or wrong single values retain their existing
+unauthorized/wrong-instance responses. Public Client assets and identity do not
+require either header.
+
 The own `instance.json` created by `init` has exactly `instance_id` (32
 lowercase hexadecimal characters) and a timezone-aware `created_at` timestamp.
 Startup rejects malformed, duplicate-key, missing/extra-field or ambiguous
