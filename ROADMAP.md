@@ -1,5 +1,14 @@
 # Workspace Roadmap
 
+## Live project roadmap consumer boundary
+
+The [PRM-W-CONTRACT offline projection](docs/LIVE_PROJECT_ROADMAP_WC_CONTRACT_V1.md)
+defines typed current/approved/Candidate/Expected/history items and separate
+approval, release, eligibility, activation and execution evidence. Its negative
+fixtures guard stale or partial snapshots, implicit starts and Workspace authority
+drift. Forge producer binding, live UI and project-loop qualification remain
+PLANNED under the [owning DAG](docs/LIVE_PROJECT_ROADMAP_MANAGEMENT_V1_ROADMAP.md).
+
 ## Business, Architect and UX conversations — designed productization lane
 
 `ROLE_AWARE_CONVERSATIONS_V1` is specified in the

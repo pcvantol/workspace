@@ -18,7 +18,9 @@ WORKSPACE::ROADMAP_DAG_GOVERNANCE_V1, not the Forge Server admin Console.
 | PRM-W-SYNC | Runtime and repository projection freshness, publication evidence and conflict explanations | PRM-W-VIEW |
 | PRM-W-Q | Installed HTTP/browser, localization and separately scoped project-mode qualification | PRM-W-MANAGE, PRM-W-DECISIONS, PRM-W-SYNC |
 
-All six Workspace nodes remain PLANNED with empty qualification evidence.
+The bounded [PRM-W-CONTRACT offline consumer contract](LIVE_PROJECT_ROADMAP_WC_CONTRACT_V1.md)
+has documentary fixtures. It does not qualify a producer or close the full node;
+all six Workspace runtime/qualification nodes remain PLANNED.
 External evidence is a real producer subset, not permission to allocate peer work.
 
 | Workspace node | Required Forge producer nodes |

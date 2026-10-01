@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "contract": "WORKSPACE_LIVE_PROJECT_ROADMAP_WC_V1",
+  "owner": "workspace",
+  "authority": "CONTRACT_ONLY",
+  "producer_bindings": "UNQUALIFIED",
+  "producer_owners": {"roadmap": "forge", "eligibility": "forge", "activation": "forge", "execution": "engineering-platform"},
+  "request": {"actor": "AUTHENTICATED_PRINCIPAL_REFERENCE", "scope": ["project_id", "subject_id"], "expected_revision_for_command": true, "operation_id_for_command": true, "owner_http_only": true},
+  "projection": {
+    "ProjectSnapshot": ["project_id", "snapshot_id", "source_revision", "observed_at", "availability", "partial", "pagination_cursor"],
+    "RoadmapItem": ["kind", "typed_id", "project_id", "source_revision", "owner", "lifecycle", "provenance_refs", "availability"],
+    "Approval": ["subject_id", "subject_revision", "decision_owner", "role", "decision_ref", "availability"],
+    "Release": ["subject_id", "subject_revision", "release_mode", "release_receipt", "availability"],
+    "Eligibility": ["subject_id", "subject_revision", "evaluated_at", "blockers", "owner_receipt", "availability"],
+    "Activation": ["mission_id", "approved_subject_ref", "activation_receipt", "lifecycle", "availability"],
+    "Execution": ["mission_id", "action_id", "admission_receipt", "run_state", "availability"]
+  },
+  "item_kinds": ["CAPABILITY", "APPROVED_SUBJECT", "CANDIDATE", "EXPECTED", "MISSION", "HISTORY"],
+  "availability": ["QUALIFIED_AUTHORIZED", "UNQUALIFIED", "UNSUPPORTED", "DENIED", "OFFLINE", "STALE"],
+  "consumer_boundary": {
+    "workspace_owns_planning_or_activation": false,
+    "expected_is_approved": false,
+    "candidate_is_approved": false,
+    "approved_is_released": false,
+    "released_is_active": false,
+    "eligibility_is_activation": false,
+    "sort_changes_committed_priority": false,
+    "refresh_starts_planning_or_mission": false,
+    "missing_mission_id_may_be_invented": false,
+    "mixed_revision_pages_are_complete": false,
+    "stale_projection_can_authorize_command": false,
+    "unknown_count_is_zero": false,
+    "offline_peer_fallback": false,
+    "producer_transport": "QUALIFIED_AUTHENTICATED_HTTP_ONLY"
+  },
+  "passive_actions": ["VIEW", "REFRESH", "SORT", "OPEN"],
+  "command_actions": ["PROPOSE_PRIORITY", "RELEASE"],
+  "evidence_status": "OFFLINE_FIXTURES_ONLY"
+}
