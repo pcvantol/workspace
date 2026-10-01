@@ -71,6 +71,8 @@ instance-pinned connection. It labels HTTP reads and local-only administration
 separately and continues to label peer operations UNQUALIFIED. Failed reads,
 wrong instances and forgotten bindings clear previously displayed operations;
 the Client adds no operation or peer authority.
+Forgetting the local browser binding also clears the token input immediately;
+reconnection requires the operator to enter the private-root token again.
 It does not expose local administration over HTTP or claim peer availability.
 
 If the private catalogue is invalid or unreadable, authenticated Server status

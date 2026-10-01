@@ -338,6 +338,10 @@ def main(wheel):
                 assert page.locator("#capabilities li").count() == 0
                 page.locator("#forget").click()
                 assert page.locator("#capabilities li").count() == 0
+                assert page.locator("#token").input_value() == ""
+                page.locator("#connect").click()
+                page.get_by_role("status").get_by_text("UNAUTHORIZED").wait_for()
+                page.locator("#token").fill(token)
                 page.locator("#connect").click()
                 page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
                 page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
@@ -389,6 +393,7 @@ def main(wheel):
                               "local_projects_cli_parity": "PASS",
                               "local_capabilities_cli_parity": "PASS",
                               "browser_capabilities_and_clear": "PASS",
+                              "browser_forget_token": "PASS",
                               "peer_contacted": False}, sort_keys=True))
         finally:
             for process in processes:
