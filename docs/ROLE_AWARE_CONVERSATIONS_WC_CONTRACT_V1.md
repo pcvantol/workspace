@@ -18,6 +18,8 @@ explicit or unambiguous project; advice mode never grants an operator role.
 The consumer separates qualified and authorized capability from unsupported,
 unqualified, denied and offline states. Loading, filtering, polling,
 reconnecting, opening a modal or changing mode never invokes a provider.
+Protected reads and operation readbacks require their own qualified, authorized
+capability; an offline read without an explicitly available cache is unavailable.
 Explicit send requires a stable operation ID and a qualified authorized
 capability. After a lost response, the same operation is read back; absent an
 ID the outcome remains uncertain and cannot be replayed blindly. Offline

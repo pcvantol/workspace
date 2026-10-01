@@ -24,16 +24,16 @@ def outcome(example):
         return "DENIED"
     if example["scope"] != "EXACT":
         return "ASK_SCOPE"
+    if example["capability"] == "DENIED":
+        return "DENIED"
+    if example["capability"] in {"UNQUALIFIED", "UNSUPPORTED"}:
+        return "UNSUPPORTED"
+    if not example["online"] or example["capability"] == "OFFLINE":
+        return "OFFLINE_DRAFT_ONLY" if action in {"SEND", "DECIDE"} else "OFFLINE_UNAVAILABLE"
     if action in {"LOAD", "FILTER", "POLL", "CHANGE_MODE", "OPEN_MODAL"}:
         return "READ_ONLY"
     if action in {"RECONNECT", "RECOVER"}:
         return "READ_BACK_SAME_OPERATION" if example["operation_id"] else "UNCERTAIN_NO_REPLAY"
-    if not example["online"]:
-        return "OFFLINE_DRAFT_ONLY"
-    if example["capability"] == "DENIED":
-        return "DENIED"
-    if example["capability"] != "QUALIFIED_AUTHORIZED":
-        return "UNSUPPORTED"
     if not example["operation_id"]:
         return "BLOCKED_NO_OPERATION_ID"
     if action == "SEND":
@@ -89,7 +89,7 @@ def validate(contract=None, fixtures=None):
             "RC-WC authority/replay drift")
     examples = fixtures["examples"]
     require(len(examples) == len({item["id"] for item in examples}), "RC-WC duplicate fixture")
-    require({item["id"] for item in examples} >= {"history", "mode-switch", "reconnect", "send-explicit", "send-unqualified", "send-offline", "ambiguous-project", "cross-principal", "decision-exact", "decision-stale", "decision-no-receipt", "lost-response", "lost-response-no-id"}, "RC-WC missing critical example")
+    require({item["id"] for item in examples} >= {"history", "mode-switch", "reconnect", "send-explicit", "send-unqualified", "send-offline", "ambiguous-project", "cross-principal", "denied-history", "unqualified-history", "denied-recovery", "offline-history-without-cache", "decision-exact", "decision-stale", "decision-no-receipt", "lost-response", "lost-response-no-id"}, "RC-WC missing critical example")
     for item in examples:
         require(item["scope"] in {"EXACT", "AMBIGUOUS"} and
                 item["capability"] in contract["capability_states"] and

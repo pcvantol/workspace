@@ -34,6 +34,10 @@ class ConsumerContractTests(unittest.TestCase):
         contract["interaction_boundary"]["passive_actions_invoke_provider"] = True
         with self.assertRaisesRegex(ValueError, "authority/replay"):
             validate(contract, self.fixtures)
+        history = next(item for item in self.fixtures["examples"] if item["id"] == "history")
+        self.assertEqual("DENIED", outcome({**history, "capability": "DENIED"}))
+        self.assertEqual("UNSUPPORTED", outcome({**history, "capability": "UNQUALIFIED"}))
+        self.assertEqual("OFFLINE_UNAVAILABLE", outcome({**history, "online": False}))
 
     def test_lost_response_never_replays(self):
         recover = next(item for item in self.fixtures["examples"] if item["id"] == "lost-response")
