@@ -46,7 +46,7 @@ jobs:
           qualification_exit="$?"
           set -e
           jq -r '.evidence.assessment.executedCapabilities | join(", ")' tde-observe/assessment.json > tde-observe/executed-capabilities.txt 2>/dev/null || echo unavailable > tde-observe/executed-capabilities.txt
-          printf 'coverage_evidence=not_available_for_foundation_only_repository\nassessment_exit=%s\nqualification_exit=%s\n' "$assessment_exit" "$qualification_exit" > tde-observe/summary.txt
+          printf 'coverage_evidence=not_collected_by_observe_job\nassessment_exit=%s\nqualification_exit=%s\n' "$assessment_exit" "$qualification_exit" > tde-observe/summary.txt
       - name: Publish TDE observe evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

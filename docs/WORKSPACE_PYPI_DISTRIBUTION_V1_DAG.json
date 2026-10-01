@@ -21,6 +21,14 @@
     "public_publish_readback_consumer_gates_remain_open": true,
     "existing_dependency_and_external_evidence_gates_unchanged": true
   },
+  "first_slice_checkpoint": {
+    "scope": "WPK-IDENTITY/WPK-PACKAGE local wheel and role entrypoints only",
+    "source_status": "IMPLEMENTED_CANDIDATE_PENDING_PROTECTED_DELIVERY",
+    "evidence": ["pyproject.toml", "scripts/qualify_installed_server.py"],
+    "public_namespace_qualified": false,
+    "publisher_configured": false,
+    "full_parent_qualified": false
+  },
   "source_revision": "36d294836cb653361fda3972de38acce3d2970f8",
   "architecture": "docs/WORKSPACE_SERVER_CLIENT_DEPLOYMENT.md",
   "roadmap": "docs/WORKSPACE_PYPI_DISTRIBUTION_V1.md",

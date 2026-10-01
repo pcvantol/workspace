@@ -15,9 +15,10 @@ identity/state, authenticated HTTP, thin CLI, minimal read-only browser surface
 and installed-wheel proof. Its owning HTTP/distribution DAGs retain every
 existing hard dependency and unqualified implementation status. This selection
 supersedes the historical parking below only for this bounded scope; unrelated
-families remain parked or unselected. Implementation and a Work-session start
-are not claimed by these documents. Verify local writers and resources and
-register exactly one pickup before implementation.
+families remain parked or unselected. The entry document itself claimed no
+implementation or Work-session start; the later same-assignment source and
+pickup evidence are recorded in [BACKLOG.md](BACKLOG.md) and #208. Verify local
+writers and resources before any further implementation effect.
 
 LANE_1 retains the existing installer, LANE_2 retains EP and its active r30,
 and LANE_3 owns Forge. This Workspace slice neither takes their source/host

@@ -28,8 +28,10 @@ plane, not execution or provisioning authority. The proposed repository
 onboarding choices and authority split are recorded in
 [Repository onboarding and qualification](REPOSITORY_ONBOARDING.md).
 
-The implementation stack is intentionally undecided: no prior Workspace
-application source was discovered, so this repository does not infer one.
+The first bounded local read-only Server/Client slice uses a Python standard
+library HTTP Server with an installed wheel and browser assets. This does not
+select the later remote deployment, native Client or peer adapter stack. Its
+[scope and acceptance contract](WORKSPACE_SERVER_READONLY_V1.md) is explicit.
 
 ## Role-aware conversations
 
@@ -59,6 +61,6 @@ Forge Server Console remains instance administration, not this project interface
 
 ## Explicit non-goals
 
-This foundation does not add application behavior, a UI stack, an EP adapter,
-EP execution, credentials, runtime storage, TDE implementation, or generic
-governance.
+The first slice adds own read-only application behavior and private local
+state. It does not add an EP adapter, EP execution, production credentials,
+system-service installation, TDE implementation or generic governance.

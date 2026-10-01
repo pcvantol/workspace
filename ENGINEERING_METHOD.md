@@ -5,10 +5,9 @@ are supplied by the committed AI-development projection. Workspace changes
 must additionally remain bounded to one clear Workspace product, architecture,
 governance, or maintenance objective.
 
-For the current foundation maturity, validation is limited to the tracked
-documentation and repository contract checks in `scripts/validate.sh`.
-Workspace has no application runtime, test suite, build pipeline, or TDE
-evidence profile yet. Do not claim those capabilities until an implementation
-increment establishes them.
+The selected read-only Server slice adds its own runtime tests and wheel build.
+`scripts/validate.sh` runs repository contracts and runtime tests. CI also
+checks executable-line coverage and builds the wheel. Live peer, installer and
+public release evidence are not established by this slice.
 
 Use squash merge, resolve review conversations, and delete merged branches.

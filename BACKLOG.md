@@ -22,6 +22,18 @@ credential, reboot, peer-source or public-package publication authority is
 added. Full peer/UI qualification and public distribution remain separate
 uncompleted gates. Workspace is not added to the first installer release DoD.
 
+### Delivery checkpoint
+
+The selected source now contains the local read-only Server, own CLI, browser
+Client, tests and wheel builder on the same PR #35 branch. The local candidate
+passed `bash scripts/validate.sh`, strict per-module source coverage and a
+non-editable installed-wheel readback with two isolated instances, restart and
+real browser interaction. See
+[the slice contract](docs/WORKSPACE_SERVER_READONLY_V1.md). These are local
+candidate results, not a protected merge, independent review, public package,
+system installation or live peer qualification. The HTTP and distribution DAG
+parent nodes remain PLANNED until their full stated gates are met.
+
 ## Historical foundation and remaining candidates
 
 The repository foundation originally authorized no product implementation.

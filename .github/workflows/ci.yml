@@ -15,4 +15,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: python3 -m venv .venv && .venv/bin/python -m pip install coverage build
       - run: bash scripts/validate.sh
+      - run: .venv/bin/python -m coverage run --source=workspace_control -m unittest discover -s tests -p 'test_server_readonly.py'
+      - run: .venv/bin/python -m coverage json -o /tmp/workspace-coverage.json
+      - run: python3 scripts/check_source_coverage.py /tmp/workspace-coverage.json
+      - run: .venv/bin/python -m build --wheel

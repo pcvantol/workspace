@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "forge-208-r1",
+  "determined_version": "2.4.0",
+  "event_lineage": "forge-208-r1",
+  "expected_source_revision": "9ffd042409bb0975aeb3380c2d4033ef79a8a112",
+  "expected_version": "2.3.0",
+  "operation_id": "L4-WORKSPACE-SERVER-READONLY-V1-20261001",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "MINOR",
+  "requested": {
+    "bump": "minor"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}
