@@ -64,9 +64,11 @@ and Forge Platform remain the owners of their policy definitions and enforcement
 A policy is not a grant; consumed repair budget is not an editable preference.
 
 Local DAG: `POL-0 -> POL-WC -> POL-W`; POL-W additionally requires cross-product
-POL-Q (qualified owner binding/evaluation/receipt contracts). POL-WC is a planned
-contract-first parallel lane, POL-W is planned post-autonomy UI. These are target
-milestones, not existing application features or newly created runtime authority.
+POL-Q (qualified owner binding/evaluation/receipt contracts). The bounded
+[`POL-WC` offline consumer contract](docs/POLICY_AUTOMATION_WC_CONTRACT_V1.md)
+is versioned with negative fixtures; its producer bindings and runtime UI remain
+unqualified. POL-W is planned post-autonomy UI. These milestones do not create
+runtime authority.
 The coordinated documentary DAG lives at
 `pcvantol/forge:docs/roadmap/policy-governance-v1.json`.
 

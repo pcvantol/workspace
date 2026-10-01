@@ -32,6 +32,8 @@ python3 scripts/validate_role_aware_conversations_wc.py
 python3 scripts/test_role_aware_conversations_wc.py
 python3 scripts/validate_governed_progression_wc.py
 python3 scripts/test_governed_progression_wc.py
+python3 scripts/validate_policy_automation_wc.py
+python3 scripts/test_policy_automation_wc.py
 python3 scripts/validate_project_bootstrap_w0.py
 python3 scripts/test_project_bootstrap_w0.py
 python3 scripts/validate_repository_health_wc.py
