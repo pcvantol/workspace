@@ -86,6 +86,11 @@ instance-pinned connection. It labels HTTP reads and local-only administration
 separately and continues to label peer operations UNQUALIFIED. Failed reads,
 wrong instances and forgotten bindings clear previously displayed operations;
 the Client adds no operation or peer authority.
+Before accepting a local binding, the Client requires a canonical own identity
+and checks that authenticated Server status names that same instance. An
+inconsistent status is WRONG INSTANCE; it clears displayed readbacks and cannot
+create or replace the saved pin. This is local consistency checking, not remote
+pairing or an additional trust grant.
 Forgetting the local browser binding also clears the token input immediately;
 reconnection requires the operator to enter the private-root token again.
 It does not expose local administration over HTTP or claim peer availability.

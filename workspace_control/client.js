@@ -32,6 +32,9 @@ document.getElementById('connect').addEventListener('click', async () => {
     if (!identityResponse.ok) throw new Error('UNAVAILABLE');
     const identity = await identityResponse.json();
     if (attempt !== connectionAttempt) return;
+    if (typeof identity.instance_id !== 'string' || !/^[0-9a-f]{32}$/.test(identity.instance_id)) {
+      throw new Error('UNAVAILABLE');
+    }
     const pinned = localStorage.getItem('workspace.instanceId');
     if (pinned && pinned !== identity.instance_id) throw new Error('WRONG_INSTANCE');
     const token = document.getElementById('token').value;
@@ -43,6 +46,7 @@ document.getElementById('connect').addEventListener('click', async () => {
     if (!statusResponse.ok) throw new Error('UNAVAILABLE');
     const status = await statusResponse.json();
     if (attempt !== connectionAttempt) return;
+    if (status.instance_id !== identity.instance_id) throw new Error('WRONG_INSTANCE');
     if (!pinned) localStorage.setItem('workspace.instanceId', identity.instance_id);
     state.textContent = 'CONNECTED';
     server.textContent = `${status.instance_id} · version ${status.version} · ${status.state}`;

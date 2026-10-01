@@ -313,6 +313,22 @@ def verify_browser_project_error_semantics(page, instance_root):
     page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
 
 
+def verify_browser_identity_mismatch(page, other_id, expected_pin):
+    """An inconsistent authenticated status must never create or replace a pin."""
+    def inconsistent_status(route):
+        route.fulfill(status=200, content_type="application/json",
+                      body=json.dumps({"instance_id": other_id, "version": "2.4.21", "state": "READY"}))
+    page.route("**/v1/status", inconsistent_status)
+    try:
+        page.locator("#connect").click()
+        page.get_by_role("status").get_by_text("WRONG INSTANCE").wait_for()
+        assert page.evaluate("localStorage.getItem('workspace.instanceId')") == expected_pin
+        assert page.locator("#projects li").count() == 0
+        assert page.locator("#capabilities li").count() == 0
+    finally:
+        page.unroute("**/v1/status", inconsistent_status)
+
+
 def main(wheel):
     wheel = wheel.resolve()
     digest = hashlib.sha256(wheel.read_bytes()).hexdigest()
@@ -363,9 +379,22 @@ def main(wheel):
                 page.locator("#connect").click()
                 page.get_by_role("status").get_by_text("UNAUTHORIZED").wait_for()
                 page.locator("#token").fill(token)
+                page.route("**/v1/identity", lambda route: route.fulfill(
+                    status=200, content_type="application/json", body='{"instance_id":"bad"}'))
+                page.locator("#connect").click()
+                page.get_by_role("status").get_by_text("UNAVAILABLE").wait_for()
+                assert page.evaluate("localStorage.getItem('workspace.instanceId')") is None
+                page.unroute("**/v1/identity")
+                verify_browser_identity_mismatch(page, second_id, None)
                 page.locator("#connect").click()
                 page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
                 page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
+                page.get_by_text("capabilities.read · HTTP_EXPOSED").wait_for()
+                assert page.evaluate("localStorage.getItem('workspace.instanceId')") == first_id
+                verify_browser_identity_mismatch(page, second_id, first_id)
+                page.locator("#connect").click()
+                page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
+                page.get_by_text("capabilities.read · HTTP_EXPOSED").wait_for()
                 assert page.locator("#peer-state").inner_text() == "Peer operations: UNQUALIFIED"
                 listed = page.locator("#capabilities li").all_text_contents()
                 assert "capabilities.read · HTTP_EXPOSED" in listed
@@ -441,6 +470,7 @@ def main(wheel):
                               "browser_capabilities_and_clear": "PASS",
                               "browser_project_error_semantics": "PASS",
                               "browser_forget_token": "PASS",
+                              "browser_identity_consistency": "PASS",
                               "peer_contacted": False}, sort_keys=True))
         finally:
             for process in processes:
