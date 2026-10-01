@@ -168,6 +168,8 @@ class ReadOnlyTests(unittest.TestCase):
         code, script, _ = self.request("/client.js")
         self.assertEqual(code, 200)
         self.assertIn(b"fetch('/v1/projects'", script)
+        self.assertIn(b"fetch('/v1/capabilities'", script)
+        self.assertIn(b'id="capabilities"', html)
 
     def test_openapi_postman_route_parity(self):
         api = json.loads(self.authorized("/v1/openapi.json")[1])
