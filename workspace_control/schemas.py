@@ -25,7 +25,8 @@ OPENAPI_SCHEMAS = {
         "properties": {"state": {"type": "string", "enum": PROJECT_STATES},
                        "projects": {"type": "array", "items": {"$ref": "#/components/schemas/Project"}},
                        "source": {"type": "string", "nullable": True, "enum": ["LOCAL", "DEMO", None]},
-                       "observed_at": {"type": "string", "format": "date-time"},
+                       "observed_at": {"type": "string",
+                                       "description": "Timezone-aware ISO 8601 source timestamp; original spelling preserved"},
                        "partial": {"type": "boolean"}, "stale": {"type": "boolean"}},
     },
     "Operation": {

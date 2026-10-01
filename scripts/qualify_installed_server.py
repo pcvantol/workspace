@@ -201,6 +201,12 @@ def verify_catalogue_schema(url, instance_id, token, catalogue, page):
         page.get_by_role("status").get_by_text("CONNECTED").wait_for()
         page.locator("#project-state").get_by_text("UNAVAILABLE").wait_for()
         assert page.locator("#projects li").count() == 0
+    now = datetime.now(timezone.utc)
+    week = now.isocalendar()
+    observed_at = f"{week.year}-W{week.week:02d}-{week.weekday}T{now:%H:%M:%S}+00:00"
+    catalogue.write_text(json.dumps({**valid, "observed_at": observed_at}))
+    code, body = read(url + "/v1/projects", token=token, instance=instance_id)
+    assert code == 200 and json.loads(body)["observed_at"] == observed_at
     catalogue.write_text(json.dumps(valid))
     page.locator("#connect").click()
     page.locator("#project-state").get_by_text("AVAILABLE · DEMO").wait_for()
