@@ -1,5 +1,28 @@
 # Workspace Bootstrap
 
+## Active lane and selected scope — 1 October 2026
+
+Workspace now has its own LANE_4 / ARCHITECT_4 under the owner's four-product
+lane decision. Read [the bounded first slice](docs/WORKSPACE_LANE_4_START_V1.md),
+[the updated owning backlog](BACKLOG.md) and
+[the LANE_4 register](https://github.com/pcvantol/forge/issues/208).
+The portfolio transition is proposed in
+[Forge #209](https://github.com/pcvantol/forge/pull/209); use its protected
+canonical four-lane plan and all four current registers before effects.
+
+Only `L4-WORKSPACE-SERVER-READONLY-V1-20261001` is selected: own Server
+identity/state, authenticated HTTP, thin CLI, minimal read-only browser surface
+and installed-wheel proof. Its owning HTTP/distribution DAGs retain every
+existing hard dependency and unqualified implementation status. This selection
+supersedes the historical parking below only for this bounded scope; unrelated
+families remain parked or unselected. Implementation and a Work-session start
+are not claimed by these documents. Verify local writers and resources and
+register exactly one pickup before implementation.
+
+LANE_1 retains the existing installer, LANE_2 retains EP and its active r30,
+and LANE_3 owns Forge. This Workspace slice neither takes their source/host
+holds nor adds Workspace to the current first-installer release requirements.
+
 ## New-project bootstrap and promotion design
 
 Read [Project bootstrap V1](docs/PROJECT_BOOTSTRAP_V1.md), the reconciled
@@ -12,17 +35,20 @@ operation/readback contracts through HTTP. All PB-W runtime nodes remain
 PLANNED. This does not implement a UI, create a project/Mission, activate
 permissions, change package versions or add a Mission-3 prerequisite.
 
-## Current pickup checkpoint — consolidation and parking, 10 September 2026
+## Historical pickup checkpoint — consolidation and parking, 10 September 2026
 
 Read the [owning parking record](docs/CONSOLIDATION_PARKING_2026_09_10.md) and
 [documentary dependency DAG](docs/CONSOLIDATION_PARKING_2026_09_10_DAG.json) before selecting work.
-Product implementation is PARKED; old handoff next-increment wording does
-not authorize resumption. The original Forge serial E2E remains a future
-integration goal, not a demand to finish every installer/UI/optimization lane.
-The consolidation record now reflects completed physical cleanup: all eight
+Product implementation was PARKED at that checkpoint; old handoff next-increment
+wording does not authorize resumption. The selected 1 October scope above is
+its explicit bounded exception, not a blanket removal of parking. The original
+Forge serial E2E remains a future integration goal, not a demand to finish every
+installer/UI/optimization lane.
+The consolidation record reflects completed physical cleanup: all eight
 auxiliary worktrees/branches were removed, leaving one local `main` worktree,
 no local feature branches and no unpreserved WIP at the pre-documentation
-baseline. Workspace remains `NOT_ON_FIRST_FORGE_E2E_CRITICAL_PATH`.
+baseline. This is historical evidence, not a fresh local inventory. Workspace
+remains `NOT_ON_FIRST_FORGE_E2E_CRITICAL_PATH`.
 Existing contracts and validation/protection rules below remain intact.
 
 ## Repository identity
