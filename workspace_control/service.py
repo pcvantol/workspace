@@ -1,5 +1,6 @@
 """Instance and catalogue services shared by the own CLI and HTTP ingress."""
 
+import base64
 import json
 import os
 from pathlib import Path
@@ -70,7 +71,14 @@ class Service:
         self.root = _private_root(root)
         self.identity = json.loads(_regular_private(self.root / "instance.json"),
                                    object_pairs_hook=_unique_json_object)
-        self.token = _regular_private(self.root / "token").strip()
+        token_file = _regular_private(self.root / "token")
+        if re.fullmatch(r"[A-Za-z0-9_-]{43}\n", token_file) is None:
+            raise ValueError("invalid instance token")
+        token = token_file[:-1]
+        decoded = base64.urlsafe_b64decode(token + "=")
+        if len(decoded) != 32 or base64.urlsafe_b64encode(decoded).rstrip(b"=").decode("ascii") != token:
+            raise ValueError("invalid instance token")
+        self.token = token
         if not isinstance(self.identity, dict) or set(self.identity) != {"instance_id", "created_at"}:
             raise ValueError("invalid instance identity")
         instance_id = self.identity["instance_id"]
@@ -85,8 +93,6 @@ class Service:
             raise ValueError("invalid instance creation time") from exc
         if timestamp.tzinfo is None or timestamp.utcoffset() is None:
             raise ValueError("invalid instance creation time")
-        if len(self.token) < 32:
-            raise ValueError("invalid instance token")
 
     @property
     def instance_id(self):
