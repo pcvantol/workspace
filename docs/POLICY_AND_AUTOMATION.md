@@ -190,10 +190,10 @@ successful preview or a unavailable owner as a new default profile.
 | ID | Owning Workspace deliverable | Dependencies | Status |
 | --- | --- | --- | --- |
 | POL-0 | Adopt common classifications/authority and this UX target | none | Documentation proposal in this increment |
-| POL-WC | Versioned effective-policy/proposal/decision consumer contract and offline fixtures | POL-0 | PLANNED, parallel/non-blocking |
+| POL-WC | Versioned effective-policy/proposal/decision consumer contract and offline fixtures | POL-0 | Offline consumer contract and fixtures; producer binding unqualified |
 | POL-W | Real Policy & Automation UI and authenticated owner adapters | POL-WC and cross-product POL-Q | PLANNED, POST_AUTONOMY |
 
-Contract-first POL-WC requires no running UI. POL-W additionally depends on the
+The [contract-first POL-WC projection](POLICY_AUTOMATION_WC_CONTRACT_V1.md) requires no running UI. POL-W additionally depends on the
 qualified owner policy binding/evaluation/receipt semantics (POL-Q); it does not
 create that authority. Native Forge release operations (VR-F/VR-Q) and installer
 composition (POL-P) remain separate owning lanes. The cross-product documentary

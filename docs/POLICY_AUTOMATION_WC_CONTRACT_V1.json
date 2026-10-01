@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "contract": "WORKSPACE_POLICY_AUTOMATION_WC_V1",
+  "owner": "workspace",
+  "authority": "CONTRACT_ONLY",
+  "producer_bindings": "UNQUALIFIED",
+  "request": {
+    "actor": "AUTHENTICATED_PRINCIPAL_REFERENCE",
+    "scope": ["installation_id", "project_id", "component_id", "subject_id"],
+    "expected_revision_required_for_command": true,
+    "operation_id_required_for_command": true,
+    "ui_role_is_grant": false,
+    "workspace_writes_owner_policy": false
+  },
+  "projections": {
+    "PolicyDefinition": {"owner": "declared_policy_owner", "required": ["policy_id", "owner", "classification", "definition_revision", "definition_digest", "scope", "constraints", "source_refs", "availability"]},
+    "PolicyAssignment": {"owner": "declared_policy_owner", "required": ["policy_id", "subject_id", "assignment_revision", "definition_revision", "scope", "assigned_by_ref", "availability"]},
+    "EffectivePolicy": {"owner": "declared_policy_owner", "required": ["policy_id", "subject_id", "definition_revision", "assignment_revision", "activation_revision", "effective_value", "resolution_explanation", "source_refs", "observed_at", "availability"]},
+    "RunPolicySnapshot": {"owner": "execution_or_planning_owner", "required": ["run_id", "policy_id", "snapshot_digest", "effective_revision", "captured_at", "owner_receipt", "availability"]},
+    "PolicyProposal": {"owner": "declared_policy_owner", "required": ["proposal_id", "policy_id", "subject_id", "base_revision", "proposed_revision", "proposed_digest", "impact_ref", "status", "availability"]},
+    "PolicyDecision": {"owner": "declared_decision_owner", "required": ["decision_id", "proposal_id", "proposal_revision", "actor_ref", "required_role", "outcome", "owner_receipt", "availability"]},
+    "PolicyActivation": {"owner": "declared_policy_owner", "required": ["activation_id", "proposal_id", "policy_id", "active_revision", "owner_receipt", "observed_at", "availability"]}
+  },
+  "policy_classes": ["INVARIANT", "GOVERNED_POLICY", "OPERATIONAL_CONFIGURATION", "AUTHORIZATION_GRANT", "RUNTIME_FACT", "IMPLEMENTATION_LIMIT"],
+  "availability": ["QUALIFIED_AUTHORIZED", "UNQUALIFIED", "UNSUPPORTED", "DENIED", "OFFLINE", "STALE"],
+  "presentation_states": ["CURRENT", "DRAFT", "PENDING_DECISION", "PARTIALLY_ACTIVE", "STALE", "UNAVAILABLE", "UNSUPPORTED", "DENIED", "UNCERTAIN"],
+  "consumer_boundary": {
+    "read_only_cached_projection_can_authorize": false,
+    "draft_is_active": false,
+    "impact_preview_is_decision": false,
+    "ui_role_is_owner_grant": false,
+    "proposal_approves_itself": false,
+    "policy_change_resets_existing_grant_or_budget": false,
+    "in_flight_snapshot_rewritten": false,
+    "cross_owner_activation_is_atomic": false,
+    "missing_owner_receipt_is_success": false,
+    "offline_command_allowed": false,
+    "lost_acknowledgement": "READ_BACK_SAME_OPERATION_WHEN_OWNER_AVAILABLE_ELSE_KEEP_OPERATION_UNCERTAIN",
+    "owner_transport": "QUALIFIED_AUTHENTICATED_HTTP_ONLY"
+  }
+}
