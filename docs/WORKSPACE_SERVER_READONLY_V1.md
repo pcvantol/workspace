@@ -16,6 +16,12 @@ Startup rejects malformed, duplicate-key, missing/extra-field or ambiguous
 identity state. It does not reset or silently replace the identity/token; a
 valid restored file keeps the same browser pin across restart.
 
+The private `token` file has exactly one canonical URL-safe 32-byte random
+value (43 encoded characters) and one trailing newline, as written by `init`.
+Whitespace, extra lines, invalid characters or noncanonical encoding make
+startup fail closed. The Server does not print the token, regenerate it or
+weaken authentication when its file is malformed.
+
 The optional `projects.json` is a private regular file (mode 0600) in the data root. Its schema is `{"source":"LOCAL","observed_at":"2026-10-01T15:00:00Z","projects":[{"id":"project-1","name":"Project One"}],"partial":false}`. `source` is `LOCAL` or `DEMO`; the latter is visibly labelled. No file means UNCONFIGURED. A configured empty list means EMPTY. An explicitly incomplete catalogue is PARTIAL. Observations older than five minutes are STALE. Invalid or unreadable input returns SOURCE_UNAVAILABLE. This catalogue is Workspace-owned manual data, not a peer projection or live platform status.
 
 `GET /v1/projects` preserves that primary `state` and also returns independent

@@ -2,12 +2,14 @@
 
 import json
 import importlib
+import io
 import os
 from pathlib import Path
 import tempfile
 import threading
 import time
 import unittest
+from contextlib import redirect_stderr
 from unittest.mock import patch
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -228,6 +230,25 @@ class ReadOnlyTests(unittest.TestCase):
         restored = Service(self.root)
         self.assertEqual(restored.instance_id, self.instance)
         self.assertEqual((self.root / "token").read_text(), secret)
+
+    def test_invalid_token_state_fails_closed_without_disclosure(self):
+        token_file = self.root / "token"
+        original = token_file.read_text()
+        cases = [original.rstrip("\n"), original + "\n", " " + original,
+                 original[:-1] + " \n", original[:-2] + "!\n",
+                 original[:-2] + "B\n", "\u00e9" * 43 + "\n"]
+        for raw in cases:
+            with self.subTest(length=len(raw)):
+                token_file.write_text(raw)
+                self.assertRaises(ValueError, Service, self.root)
+                stderr = io.StringIO()
+                with redirect_stderr(stderr):
+                    self.assertEqual(main(["--root", str(self.root), "status"]), 2)
+                self.assertNotIn(original.strip(), stderr.getvalue())
+        token_file.write_text(original)
+        restored = Service(self.root)
+        self.assertEqual(restored.instance_id, self.instance)
+        self.assertEqual(restored.token + "\n", original)
 
     def test_init_race_preserves_other_initializer_files(self):
         fresh = Path(self.temp.name) / "racing"
