@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "workspace-lane-4-r3-sdist-roundtrip",
+  "determined_version": "2.4.2",
+  "event_lineage": "workspace-lane-4-r3-sdist-roundtrip",
+  "expected_source_revision": "05ec6d305ab1f1ca732fd7f44c072e0bed8448f2",
+  "expected_version": "2.4.1",
+  "operation_id": "L4-WORKSPACE-SDIST-ROUNDTRIP-V1-20261001",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}
