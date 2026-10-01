@@ -42,6 +42,7 @@ python3 scripts/validate_repository_health_wc.py
 python3 scripts/test_repository_health_wc.py
 python3 scripts/test_four_lane_entry.py
 python3 scripts/test_ci_gates.py
+python3 scripts/test_postman_projection.py
 python3 scripts/project_postman.py --check
 python3 scripts/validate_runtime_coverage.py
 python3 scripts/validate_wheel.py

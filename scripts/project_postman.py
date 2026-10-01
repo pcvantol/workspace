@@ -17,6 +17,14 @@ TARGET = ROOT / "docs" / "WORKSPACE_SERVER_READONLY_V1.postman.json"
 
 def collection():
     contract = openapi_contract()
+    if contract.get("security") not in (None, []):
+        raise ValueError("global OpenAPI security requires explicit Postman projection")
+    if contract["components"]["securitySchemes"] != {
+        "bearerAuth": {"type": "http", "scheme": "bearer"}
+    }:
+        raise ValueError("OpenAPI security scheme requires explicit Postman projection")
+    if len(contract["servers"]) != 1:
+        raise ValueError("OpenAPI server list requires explicit Postman projection")
     server = contract["servers"][0]
     base_url = server["url"].replace("{port}", server["variables"]["port"]["default"])
     items = []
