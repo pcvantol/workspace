@@ -1,6 +1,7 @@
 const state = document.getElementById('state');
 const server = document.getElementById('server');
 const projectState = document.getElementById('project-state');
+const projectObserved = document.getElementById('project-observed');
 const projects = document.getElementById('projects');
 const capabilityState = document.getElementById('capability-state');
 const peerState = document.getElementById('peer-state');
@@ -18,6 +19,7 @@ document.getElementById('forget').addEventListener('click', () => {
   state.textContent = 'UNCONFIGURED';
   server.textContent = 'No server binding';
   projectState.textContent = 'UNCONFIGURED';
+  projectObserved.textContent = 'No observation';
   projects.replaceChildren();
   clearCapabilities();
 });
@@ -25,6 +27,7 @@ document.getElementById('connect').addEventListener('click', async () => {
   const attempt = ++connectionAttempt;
   state.textContent = 'CONNECTING';
   projects.replaceChildren();
+  projectObserved.textContent = 'No observation';
   clearCapabilities();
   try {
     const identityResponse = await fetch('/v1/identity', {cache: 'no-store'});
@@ -83,11 +86,17 @@ document.getElementById('connect').addEventListener('click', async () => {
     if (!projectResponse.ok) throw new Error('UNAVAILABLE');
     const catalogue = await projectResponse.json();
     if (attempt !== connectionAttempt) return;
+    if (catalogue.state !== 'UNCONFIGURED' &&
+        (typeof catalogue.observed_at !== 'string' || catalogue.observed_at.length === 0)) {
+      throw new Error('UNAVAILABLE');
+    }
     const labels = [catalogue.state];
     if (catalogue.stale && catalogue.partial) labels.push('PARTIAL');
     if (catalogue.projects.length === 0 && !['EMPTY', 'UNCONFIGURED'].includes(catalogue.state)) labels.push('EMPTY');
     if (catalogue.source) labels.push(catalogue.source);
     projectState.textContent = labels.join(' · ');
+    projectObserved.textContent = catalogue.state === 'UNCONFIGURED' ?
+      'No observation' : `Observed: ${catalogue.observed_at}`;
     for (const item of catalogue.projects) {
       const row = document.createElement('li');
       row.textContent = `${item.name} (${item.id})${catalogue.source === 'DEMO' ? ' · DEMO' : ''}`;
@@ -99,6 +108,7 @@ document.getElementById('connect').addEventListener('click', async () => {
       error.message === 'WRONG_INSTANCE' ? 'WRONG INSTANCE' : 'UNAVAILABLE';
     server.textContent = 'No connection';
     projectState.textContent = 'UNAVAILABLE';
+    projectObserved.textContent = 'No observation';
     projects.replaceChildren();
     clearCapabilities();
   }

@@ -59,6 +59,11 @@ STALE with `partial:true` and `stale:true`; the browser displays both labels.
 The local `workspace-server --root ROOT projects` read uses the same service
 projection and emits one JSON object; invalid sources exit nonzero with no
 project JSON on stdout. It is a private-root owner read, not peer transport.
+For configured catalogue data, the browser shows the exact Server-provided
+`observed_at` alongside its state and source. It does not replace the source
+spelling with the browser's current time. An unconfigured catalogue, reconnect,
+failed read or forgotten binding shows no observation; stale/partial labels and
+rows retain their existing semantics.
 When its list is empty, the browser also labels EMPTY. An unconfigured source
 returns both flags false. The Server's own status remains READY and its
 `project_source` retains the primary catalogue state.
