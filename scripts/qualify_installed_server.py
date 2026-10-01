@@ -309,6 +309,7 @@ def main(wheel):
             assert json.loads(read(first_url + "/v1/projects", token=token, instance=first_id)[1])["state"] == "UNCONFIGURED"
             assert b"/client.js" in read(first_url + "/")[1]
             assert b"fetch('/v1/projects'" in read(first_url + "/client.js")[1]
+            assert b"fetch('/v1/capabilities'" in read(first_url + "/client.js")[1]
             from playwright.sync_api import sync_playwright
             with sync_playwright() as playwright:
                 browser = playwright.chromium.launch(headless=True, executable_path="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
@@ -320,12 +321,26 @@ def main(wheel):
                 page.locator("#token").fill(token)
                 page.locator("#connect").click()
                 page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
+                page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
+                assert page.locator("#peer-state").inner_text() == "Peer operations: UNQUALIFIED"
+                listed = page.locator("#capabilities li").all_text_contents()
+                assert "capabilities.read · HTTP_EXPOSED" in listed
+                assert "instance.init · LOCAL_ONLY_ADMIN" in listed
+                page.route("**/v1/capabilities", lambda route: route.fulfill(status=503, body="{}"))
+                page.locator("#connect").click()
+                page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
+                assert page.locator("#capability-state").inner_text() == "UNAVAILABLE"
+                assert page.locator("#capabilities li").count() == 0
+                page.unroute("**/v1/capabilities")
                 page.evaluate("localStorage.setItem('workspace.instanceId', 'wrong')")
                 page.locator("#connect").click()
                 page.get_by_role("status").get_by_text("WRONG INSTANCE").wait_for()
+                assert page.locator("#capabilities li").count() == 0
                 page.locator("#forget").click()
+                assert page.locator("#capabilities li").count() == 0
                 page.locator("#connect").click()
                 page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
+                page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
                 assert json.loads(read(second_url + "/v1/status", token=other_token, instance=second_id)[1])["instance_id"] == second_id
                 catalogue = first / "projects.json"
                 catalogue.write_text(json.dumps({"source": "DEMO", "observed_at": datetime.now(timezone.utc).isoformat(),
@@ -351,6 +366,7 @@ def main(wheel):
                 assert processes[0].returncode == -signal.SIGTERM
                 page.locator("#connect").click()
                 page.get_by_role("status").get_by_text("UNAVAILABLE").wait_for()
+                assert page.locator("#capabilities li").count() == 0
                 replacement = subprocess.Popen([str(server_exe), "--root", str(first), "serve", "--port", str(first_port)],
                                                cwd=root, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 processes[0] = replacement
@@ -372,6 +388,7 @@ def main(wheel):
                               "unique_auth_pin_headers": "PASS",
                               "local_projects_cli_parity": "PASS",
                               "local_capabilities_cli_parity": "PASS",
+                              "browser_capabilities_and_clear": "PASS",
                               "peer_contacted": False}, sort_keys=True))
         finally:
             for process in processes:

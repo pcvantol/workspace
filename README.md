@@ -39,6 +39,8 @@ administration commands for the pinned instance. It makes no peer-availability
 claim.
 `workspace-server --root /absolute/private/workspace-data capabilities` reads
 the same own inventory under private-root ownership without contacting a peer.
+The local browser displays these own capabilities after connection, including
+the HTTP/local-only distinction and the unqualified peer boundary.
 
 ## Entry points
 
