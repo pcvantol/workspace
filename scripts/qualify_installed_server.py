@@ -280,8 +280,26 @@ def main(wheel):
             assert read(first_url + "/v1/capabilities", token=token, instance=second_id)[0] == 409
             capabilities = json.loads(read(first_url + "/v1/capabilities", token=token, instance=first_id)[1])
             assert capabilities["instance_id"] == first_id and capabilities["peer_operations_qualified"] is False
+            cli_capabilities_command = [str(server_exe), "--root", str(first), "capabilities"]
+            cli_capabilities = subprocess.run(cli_capabilities_command, cwd=root, env=env,
+                                              capture_output=True, text=True)
+            assert cli_capabilities.returncode == 0 and cli_capabilities.stderr == ""
+            assert json.loads(cli_capabilities.stdout) == capabilities
+            assert token not in cli_capabilities.stdout
+            identity_path = first / "instance.json"
+            identity_path.chmod(0o644)
+            try:
+                denied_capabilities = subprocess.run(cli_capabilities_command, cwd=root, env=env,
+                                                     capture_output=True, text=True)
+                assert denied_capabilities.returncode == 2 and denied_capabilities.stdout == ""
+                assert token not in denied_capabilities.stderr
+            finally:
+                identity_path.chmod(0o600)
+            assert json.loads(read(first_url + "/v1/capabilities", token=token,
+                                   instance=first_id)[1]) == capabilities
             inventory = {item["id"]: item for item in capabilities["operations"]}
             assert inventory["capabilities.read"]["path"] == "/v1/capabilities"
+            assert inventory["capabilities.read"]["local_cli"] == "capabilities"
             assert inventory["instance.init"]["exposure"] == "LOCAL_ONLY_ADMIN"
             assert "path" not in inventory["instance.init"]
             assert json.loads(read(first_url + "/v1/projects", token=token, instance=first_id)[1])["state"] == "UNCONFIGURED"
@@ -349,6 +367,7 @@ def main(wheel):
                               "loopback_host_origin_binding": "PASS",
                               "unique_auth_pin_headers": "PASS",
                               "local_projects_cli_parity": "PASS",
+                              "local_capabilities_cli_parity": "PASS",
                               "peer_contacted": False}, sort_keys=True))
         finally:
             for process in processes:
