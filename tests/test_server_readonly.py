@@ -180,6 +180,17 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual(set(ROUTES), routes)
         self.assertTrue(all(api["paths"][path]["get"]["responses"]["403"]["description"] ==
                             "Host or Origin denied" for path in ROUTES))
+        public = api["paths"]["/v1/identity"]["get"]
+        self.assertEqual(set(public["responses"]), {"200", "400", "403"})
+        self.assertNotIn("security", public)
+        self.assertNotIn("parameters", public)
+        self.assertEqual(self.request("/v1/identity", token="bad", instance="wrong")[0], 200)
+        self.assertEqual(self.request("/v1/identity?x=1")[0], 400)
+        self.assertEqual(self.request("/v1/identity", origin="https://evil.test")[0], 403)
+        for path in set(ROUTES) - {"/v1/identity"}:
+            protected = api["paths"][path]["get"]
+            self.assertEqual(set(protected["responses"]), {"200", "400", "401", "403", "409", "503"})
+            self.assertEqual(protected["security"], [{"bearerAuth": []}])
         inventory = json.loads(self.authorized("/v1/capabilities")[1])
         self.assertEqual((inventory["schema_version"], inventory["instance_id"]), (1, self.instance))
         self.assertFalse(inventory["peer_operations_qualified"])
