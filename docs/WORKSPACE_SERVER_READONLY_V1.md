@@ -16,4 +16,10 @@ The bounded follow-up `L4-WORKSPACE-OPERATION-INVENTORY-V1-20261001` adds pinned
 authenticated `GET /v1/capabilities`. It names only own implemented HTTP reads
 and local-only `init`/`serve` commands, with matching OpenAPI/Postman routes.
 It does not expose local administration over HTTP or claim peer availability.
+
+If the private catalogue is invalid or unreadable, authenticated Server status
+still reports its own READY identity/version with `project_source=SOURCE_UNAVAILABLE`.
+The project endpoint remains 503, and the browser shows a connected Server with
+project information UNAVAILABLE and no project rows. Repairing the catalogue
+restores normal project readback without resetting Server identity or token.
 The inventory is a local WH-CONTRACT subset, not full WH-Q.

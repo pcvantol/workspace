@@ -130,6 +130,20 @@ def main(wheel):
                                                  "projects": [{"id": "demo", "name": "Demo project"}]}))
                 page.locator("#connect").click()
                 page.locator("#project-state").get_by_text("STALE · DEMO").wait_for()
+                catalogue.write_bytes(b"\xff")
+                assert read(first_url + "/v1/projects", token=token, instance=first_id)[0] == 503
+                code, body = read(first_url + "/v1/status", token=token, instance=first_id)
+                assert code == 200
+                assert json.loads(body)["project_source"] == "SOURCE_UNAVAILABLE"
+                page.locator("#connect").click()
+                page.get_by_role("status").get_by_text("CONNECTED").wait_for()
+                page.locator("#project-state").get_by_text("UNAVAILABLE").wait_for()
+                assert first_id in page.locator("#server").inner_text()
+                assert page.locator("#projects li").count() == 0
+                catalogue.write_text(json.dumps({"source": "DEMO", "observed_at": datetime.now(timezone.utc).isoformat(),
+                                                 "projects": [{"id": "demo", "name": "Demo project"}]}))
+                page.locator("#connect").click()
+                page.locator("#project-state").get_by_text("AVAILABLE · DEMO").wait_for()
                 processes[0].send_signal(signal.SIGTERM)
                 processes[0].wait(timeout=5)
                 assert processes[0].returncode == -signal.SIGTERM
@@ -148,6 +162,7 @@ def main(wheel):
             print(json.dumps({"result": "PASS", "wheel_sha256": digest, "installed_outside_checkout": True,
                               "server_instances": 2, "restart_identity_and_catalogue": "PASS",
                               "api_cli_browser": "PASS", "operation_inventory": "PASS",
+                              "catalogue_failure_isolation_and_recovery": "PASS",
                               "peer_contacted": False}, sort_keys=True))
         finally:
             for process in processes:
