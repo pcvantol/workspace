@@ -55,14 +55,16 @@ def openapi_contract():
         if details["exposure"] != "HTTP_EXPOSED":
             continue
         route = details["path"]
+        responses = {"200": {"description": "Read result"},
+                     "400": {"description": "Invalid path"},
+                     "403": {"description": "Host or Origin denied"}}
         operation = {"operationId": operation_id, "summary": details["summary"],
-                     "responses": {"200": {"description": "Read result"},
-                                                       "400": {"description": "Invalid path or ambiguous credentials"},
-                                                       "401": {"description": "Unauthorized"},
-                                                       "403": {"description": "Host or Origin denied"},
-                                                       "409": {"description": "Wrong instance"},
-                                                       "503": {"description": "Source unavailable"}}}
+                     "responses": responses}
         if details["auth"] == "BEARER_PINNED":
+            responses["400"] = {"description": "Invalid path or ambiguous credentials"}
+            responses.update({"401": {"description": "Unauthorized"},
+                              "409": {"description": "Wrong instance"},
+                              "503": {"description": "Source unavailable"}})
             operation["security"] = [{"bearerAuth": []}]
             operation["parameters"] = [{"name": "X-Workspace-Instance", "in": "header", "required": True,
                                         "schema": {"type": "string"}}]

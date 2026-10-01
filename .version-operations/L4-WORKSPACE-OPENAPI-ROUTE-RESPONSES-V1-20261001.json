@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "LANE-4-R28",
+  "determined_version": "2.4.20",
+  "event_lineage": "LANE-4-R28",
+  "expected_source_revision": "64526f9feaeacbc3af237c0e46db0eac0d536ee3",
+  "expected_version": "2.4.19",
+  "operation_id": "L4-WORKSPACE-OPENAPI-ROUTE-RESPONSES-V1-20261001",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

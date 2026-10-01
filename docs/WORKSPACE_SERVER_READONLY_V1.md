@@ -71,6 +71,11 @@ It does not contact a Server or peer and cannot change any operation exposure.
 The local `workspace-server --root ROOT openapi` command returns the same own
 API contract as authenticated `GET /v1/openapi.json` after validating private
 instance state. It requires no running Server and grants no new HTTP operation.
+The contract lists `200`, malformed-path `400`, and Host/Origin `403` for public
+`GET /v1/identity`. It does not advertise bearer, instance-pin, or source errors
+for that public read. Protected reads additionally list ambiguous-credentials
+`400`, unauthorized `401`, wrong-instance `409`, and source-unavailable `503`,
+matching the HTTP handler's guarded read path.
 The local browser now renders this authenticated inventory after a successful
 instance-pinned connection. It labels HTTP reads and local-only administration
 separately and continues to label peer operations UNQUALIFIED. Failed reads,

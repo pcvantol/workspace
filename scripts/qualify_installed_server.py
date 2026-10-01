@@ -258,6 +258,12 @@ def verify_installed_capabilities(server_exe, instance_root, cwd, env, url,
     assert read(url + "/v1/openapi.json")[0] == 401
     assert read(url + "/v1/openapi.json", token=token, instance=other_instance_id)[0] == 409
     api = json.loads(read(url + "/v1/openapi.json", token=token, instance=instance_id)[1])
+    public = api["paths"]["/v1/identity"]["get"]
+    assert set(public["responses"]) == {"200", "400", "403"}
+    assert "security" not in public and "parameters" not in public
+    assert set(api["paths"]["/v1/status"]["get"]["responses"]) == {
+        "200", "400", "401", "403", "409", "503"}
+    assert read(url + "/v1/identity", token="wrong", instance="wrong")[0] == 200
     openapi_command = [str(server_exe), "--root", str(instance_root), "openapi"]
     cli_api = subprocess.run(openapi_command, cwd=cwd, env=env, capture_output=True, text=True)
     assert cli_api.returncode == 0 and cli_api.stderr == "" and json.loads(cli_api.stdout) == api
