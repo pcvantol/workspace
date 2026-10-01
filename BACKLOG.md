@@ -34,6 +34,17 @@ candidate results, not a protected merge, independent review, public package,
 system installation or live peer qualification. The HTTP and distribution DAG
 parent nodes remain PLANNED until their full stated gates are met.
 
+### LANE_4 CI qualification follow-up
+
+The owner's continuation selected the bounded #208 r2 quality gate:
+`L4-WORKSPACE-CI-GATES-V1-20261001`. The existing `scripts/validate.sh` now
+runs executable-line coverage with Python's standard-library tracer and fails
+unless every Workspace product module strictly exceeds 80.2%. It also builds
+the declared wheel, checks canonical version/role/assets, and installs it
+non-editably in a fresh environment outside the checkout. These are candidate
+source gates until protected CI/merge readback is recorded in #208. This does
+not qualify WH-PEERS, public WPK distribution or a system installation.
+
 ## Historical foundation and remaining candidates
 
 The repository foundation originally authorized no product implementation.

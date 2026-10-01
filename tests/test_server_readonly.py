@@ -20,9 +20,10 @@ from workspace_control.service import Service, initialize
 class ReadOnlyTests(unittest.TestCase):
     def test_version_projection_uses_package_and_source(self):
         import workspace_control
-        self.assertEqual(importlib.reload(workspace_control).__version__, "2.4.0")
-        with patch("pathlib.Path.read_text", side_effect=FileNotFoundError), patch("importlib.metadata.version", return_value="2.4.0"):
-            self.assertEqual(importlib.reload(workspace_control).__version__, "2.4.0")
+        expected = json.loads((Path(__file__).resolve().parents[1] / "product-version.json").read_text())["version"]
+        self.assertEqual(importlib.reload(workspace_control).__version__, expected)
+        with patch("pathlib.Path.read_text", side_effect=FileNotFoundError), patch("importlib.metadata.version", return_value=expected):
+            self.assertEqual(importlib.reload(workspace_control).__version__, expected)
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()

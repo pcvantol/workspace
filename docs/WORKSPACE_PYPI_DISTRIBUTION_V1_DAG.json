@@ -25,6 +25,7 @@
     "scope": "WPK-IDENTITY/WPK-PACKAGE local wheel and role entrypoints only",
     "source_status": "IMPLEMENTED_CANDIDATE_PENDING_PROTECTED_DELIVERY",
     "evidence": ["pyproject.toml", "scripts/qualify_installed_server.py"],
+    "ci_wheel_gate": "scripts/validate_wheel.py",
     "public_namespace_qualified": false,
     "publisher_configured": false,
     "full_parent_qualified": false

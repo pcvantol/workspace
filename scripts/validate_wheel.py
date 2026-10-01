@@ -1,0 +1,75 @@
+"""Build and install the declared wheel from source in disposable environments."""
+
+import configparser
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import venv
+from zipfile import ZipFile
+
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def inspect_wheel(wheel, expected_version):
+    with ZipFile(wheel) as archive:
+        names = set(archive.namelist())
+        prefix = f"pcvantol_workspace_control-{expected_version}.dist-info/"
+        required = {"workspace_control/__init__.py", "workspace_control/service.py",
+                    "workspace_control/http.py", "workspace_control/cli.py",
+                    "workspace_control/client.html", "workspace_control/client.js",
+                    prefix + "METADATA", prefix + "entry_points.txt"}
+        if not required <= names:
+            raise ValueError(f"wheel lacks required files: {sorted(required - names)}")
+        metadata = archive.read(prefix + "METADATA").decode("utf-8")
+        if f"Name: pcvantol-workspace-control\n" not in metadata or f"Version: {expected_version}\n" not in metadata:
+            raise ValueError("wheel metadata does not match canonical product identity/version")
+        entries = configparser.ConfigParser()
+        entries.read_string(archive.read(prefix + "entry_points.txt").decode("utf-8"))
+        expected = {"workspace-server": "workspace_control.cli:main",
+                    "workspace-client": "workspace_control.cli:client_main"}
+        if dict(entries["console_scripts"]) != expected:
+            raise ValueError("wheel role entrypoints do not match declared roles")
+
+
+def main():
+    expected_version = json.loads((ROOT / "product-version.json").read_text())["version"]
+    with tempfile.TemporaryDirectory(prefix="workspace-wheel-gate-") as directory:
+        temp = Path(directory)
+        build_env, install_env = temp / "build-env", temp / "install-env"
+        venv.create(build_env, with_pip=True)
+        build_python = build_env / "bin" / "python"
+        subprocess.run([str(build_python), "-m", "pip", "wheel", "--no-deps", "--wheel-dir", str(temp), str(ROOT)],
+                       check=True, cwd=temp, stdout=subprocess.DEVNULL)
+        wheels = list(temp.glob("*.whl"))
+        if len(wheels) != 1 or wheels[0].name != f"pcvantol_workspace_control-{expected_version}-py3-none-any.whl":
+            raise ValueError("unexpected wheel identity")
+        inspect_wheel(wheels[0], expected_version)
+        venv.create(install_env, with_pip=True)
+        install_python = install_env / "bin" / "python"
+        env = dict(os.environ)
+        env.pop("PYTHONPATH", None)
+        subprocess.run([str(install_python), "-m", "pip", "install", "--no-index", "--no-deps", str(wheels[0])],
+                       check=True, cwd=temp, env=env, stdout=subprocess.DEVNULL)
+        probe = ("import importlib.resources, json, pathlib, workspace_control; "
+                 "root = importlib.resources.files('workspace_control'); "
+                 "assert (root / 'client.html').is_file(); "
+                 "assert (root / 'client.js').is_file(); "
+                 "print(json.dumps({'version': workspace_control.__version__, "
+                 "'path': str(pathlib.Path(workspace_control.__file__).resolve())}))")
+        result = subprocess.run([str(install_python), "-c", probe], check=True,
+                                cwd=temp, env=env, capture_output=True, text=True)
+        installed = json.loads(result.stdout)
+        if installed["version"] != expected_version or not Path(installed["path"]).is_relative_to(install_env.resolve()):
+            raise ValueError("runtime import escaped the fresh installed wheel")
+        for role in ("workspace-server", "workspace-client"):
+            subprocess.run([str(install_env / "bin" / role), "--help"], check=True,
+                           cwd=temp, env=env, stdout=subprocess.DEVNULL)
+        print(f"Workspace wheel build, metadata, assets, roles and isolated install passed: {expected_version}.")
+
+
+if __name__ == "__main__":
+    main()
