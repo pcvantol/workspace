@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "LANE-4-R30",
+  "determined_version": "2.4.21",
+  "event_lineage": "LANE-4-R30",
+  "expected_source_revision": "0119b017991e90b1723d7866d44f72308a9fa157",
+  "expected_version": "2.4.20",
+  "operation_id": "L4-WORKSPACE-CLIENT-STATUS-IDENTITY-V1-20261001",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}
