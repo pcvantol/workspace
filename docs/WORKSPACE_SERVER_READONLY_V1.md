@@ -81,6 +81,11 @@ with `python3 scripts/project_postman.py --write`. Required validation runs its
 `--check` mode, so route, method, base URL or authentication drift fails before
 delivery. Unsupported future security or method forms require an explicit
 projection update instead of silently emitting incomplete requests.
+Each implemented GET response now references an own machine-readable OpenAPI
+schema for identity, status, project catalogue, capability inventory or the
+top-level OpenAPI document. Documented error responses reference the common
+`{"error": string}` shape. The contract describes these local read results;
+it does not advertise peer operations or qualify the full WH-CONTRACT parent.
 The local browser now renders this authenticated inventory after a successful
 instance-pinned connection. It labels HTTP reads and local-only administration
 separately and continues to label peer operations UNQUALIFIED. Failed reads,

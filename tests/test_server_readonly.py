@@ -178,6 +178,25 @@ class ReadOnlyTests(unittest.TestCase):
         routes = {item["request"]["url"].removeprefix("{{baseUrl}}") for item in collection["item"]}
         self.assertEqual(set(ROUTES), set(api["paths"]))
         self.assertEqual(set(ROUTES), routes)
+        expected_reads = {"/v1/identity": "Identity", "/v1/status": "Status",
+                          "/v1/projects": "Projects", "/v1/openapi.json": "OpenAPIContract",
+                          "/v1/capabilities": "Capabilities"}
+        schemas = api["components"]["schemas"]
+        for path, name in expected_reads.items():
+            responses = api["paths"][path]["get"]["responses"]
+            for code, response in responses.items():
+                expected = name if code == "200" else "Error"
+                self.assertEqual(response["content"]["application/json"]["schema"]["$ref"],
+                                 f"#/components/schemas/{expected}")
+                self.assertIn(expected, schemas)
+            body = json.loads((self.request(path) if path == "/v1/identity" else
+                               self.authorized(path))[1])
+            schema = schemas[name]
+            self.assertTrue(set(schema["required"]) <= set(body))
+            if schema.get("additionalProperties") is False:
+                self.assertTrue(set(body) <= set(schema["properties"]))
+        self.assertEqual(schemas["Projects"]["properties"]["projects"]["items"]["$ref"],
+                         "#/components/schemas/Project")
         self.assertTrue(all(api["paths"][path]["get"]["responses"]["403"]["description"] ==
                             "Host or Origin denied" for path in ROUTES))
         public = api["paths"]["/v1/identity"]["get"]
