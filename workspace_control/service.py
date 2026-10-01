@@ -89,7 +89,8 @@ class Service:
     def projects(self):
         catalogue = self.root / "projects.json"
         if not catalogue.exists() and not catalogue.is_symlink():
-            return {"state": "UNCONFIGURED", "projects": [], "source": None}
+            return {"state": "UNCONFIGURED", "projects": [], "source": None,
+                    "partial": False, "stale": False}
         raw = json.loads(_regular_private(catalogue), object_pairs_hook=_unique_catalogue_object)
         if not isinstance(raw, dict) or raw.get("source") not in ("LOCAL", "DEMO"):
             raise ValueError("invalid catalogue source")
@@ -116,6 +117,9 @@ class Service:
         age = (datetime.now(timezone.utc) - observed).total_seconds()
         if age < -60:
             raise ValueError("observed_at is in the future")
-        state = "STALE" if age > 300 else ("PARTIAL" if raw.get("partial", False) else
+        partial = raw.get("partial", False)
+        stale = age > 300
+        state = "STALE" if stale else ("PARTIAL" if partial else
                                           ("EMPTY" if not items else "AVAILABLE"))
-        return {"state": state, "projects": items, "source": raw["source"], "observed_at": stamp}
+        return {"state": state, "projects": items, "source": raw["source"],
+                "observed_at": stamp, "partial": partial, "stale": stale}
