@@ -3,6 +3,7 @@
 import argparse
 from datetime import datetime, timezone
 import hashlib
+import http.client
 import json
 import os
 from pathlib import Path
@@ -50,6 +51,43 @@ def wait_ready(url, process):
             pass
         time.sleep(0.05)
     raise RuntimeError("server did not become ready")
+
+
+def verify_loopback_host_binding(port, instance_id, token):
+    """Probe raw authority headers against the installed Server."""
+    def raw(path, hosts, origins=(), method="GET"):
+        connection = http.client.HTTPConnection("127.0.0.1", port, timeout=2)
+        try:
+            connection.putrequest(method, path, skip_host=True, skip_accept_encoding=True)
+            for host in hosts:
+                connection.putheader("Host", host)
+            for origin in origins:
+                connection.putheader("Origin", origin)
+            connection.putheader("Authorization", "Bearer " + token)
+            connection.putheader("X-Workspace-Instance", instance_id)
+            connection.endheaders()
+            response = connection.getresponse()
+            body = response.read()
+            return response.status, response.getheader("Content-Length"), body
+        finally:
+            connection.close()
+    for host in (f"127.0.0.1:{port}", f"localhost:{port}"):
+        get = raw("/v1/status", (host,), (f"http://{host}",))
+        head = raw("/v1/status", (host,), method="HEAD")
+        assert get[0] == head[0] == 200 and get[1] == head[1] and head[2] == b""
+        assert raw("/", (host,))[0] == 200
+        for method in ("POST", "OPTIONS", "TRACE", "CONNECT"):
+            assert raw("/v1/status", (host,), method=method)[0] == 405
+    for hosts in ((), (f"evil.example:{port}",),
+                  (f"127.0.0.1:{port}", f"127.0.0.1:{port}")):
+        assert raw("/v1/status", hosts)[0] == 403
+        assert raw("/v1/identity", hosts)[0] == 403
+        assert raw("/", hosts)[0] == 403
+        for method in ("POST", "HEAD", "OPTIONS", "TRACE", "CONNECT"):
+            assert raw("/v1/status", hosts, method=method)[0] == 403
+    host = f"127.0.0.1:{port}"
+    assert raw("/v1/status", (host,), ("http://evil.example",))[0] == 403
+    assert raw("/", (host,), (f"http://{host}", f"http://{host}"))[0] == 403
 
 
 def verify_catalogue_failure_isolation(url, instance_id, token, catalogue, page):
@@ -183,6 +221,7 @@ def main(wheel):
                 wait_ready(f"http://127.0.0.1:{port}", process)
             first_url = f"http://127.0.0.1:{first_port}"
             second_url = f"http://127.0.0.1:{second_port}"
+            verify_loopback_host_binding(first_port, first_id, token)
             assert read(first_url + "/v1/status")[0] == 401
             assert read(first_url + "/v1/status", token=other_token, instance=first_id)[0] == 401
             assert read(first_url + "/v1/status", token=token, instance=second_id)[0] == 409
@@ -254,6 +293,7 @@ def main(wheel):
                               "unique_project_ids": "PASS",
                               "unique_catalogue_keys": "PASS",
                               "catalogue_schema": "PASS",
+                              "loopback_host_origin_binding": "PASS",
                               "peer_contacted": False}, sort_keys=True))
         finally:
             for process in processes:

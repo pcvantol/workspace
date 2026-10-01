@@ -1,6 +1,7 @@
 """Real HTTP and state qualification for the own read-only slice."""
 
 import json
+import http.client
 import importlib
 import io
 import os
@@ -61,6 +62,54 @@ class ReadOnlyTests(unittest.TestCase):
 
     def authorized(self, path):
         return self.request(path, token=self.service.token, instance=self.instance)
+
+    def raw_request(self, path, *, method="GET", hosts=(), origins=()):
+        connection = http.client.HTTPConnection("127.0.0.1", self.server.server_port, timeout=2)
+        try:
+            connection.putrequest(method, path, skip_host=True, skip_accept_encoding=True)
+            for host in hosts:
+                connection.putheader("Host", host)
+            for origin in origins:
+                connection.putheader("Origin", origin)
+            connection.putheader("Authorization", "Bearer " + self.service.token)
+            connection.putheader("X-Workspace-Instance", self.instance)
+            connection.endheaders()
+            response = connection.getresponse()
+            body = response.read()
+            return (response.status, json.loads(body) if body and path.startswith("/v1/") else None,
+                    response.headers, body)
+        finally:
+            connection.close()
+
+    def test_loopback_host_and_origin_are_bound_before_assets_and_api(self):
+        port = self.server.server_port
+        for host in (f"127.0.0.1:{port}", f"localhost:{port}"):
+            for path in ("/v1/identity", "/v1/status", "/"):
+                with self.subTest(host=host, path=path):
+                    self.assertEqual(self.raw_request(path, hosts=(host,),
+                                                      origins=(f"http://{host}",))[0], 200)
+            for method in ("POST", "PUT", "PATCH", "DELETE", "OPTIONS", "TRACE", "CONNECT"):
+                self.assertEqual(self.raw_request("/v1/status", method=method, hosts=(host,))[0], 405)
+            get = self.raw_request("/v1/status", hosts=(host,))
+            head = self.raw_request("/v1/status", method="HEAD", hosts=(host,))
+            self.assertEqual(head[0], get[0])
+            self.assertEqual(head[2]["Content-Length"], get[2]["Content-Length"])
+            self.assertEqual(head[3], b"")
+        for hosts in ((), (f"evil.example:{port}",),
+                      (f"127.0.0.1:{port}", f"evil.example:{port}"),
+                      (f"127.0.0.1:{port}", f"127.0.0.1:{port}")):
+            for path in ("/v1/identity", "/v1/status", "/"):
+                with self.subTest(hosts=hosts, path=path):
+                    self.assertEqual(self.raw_request(path, hosts=hosts)[0], 403)
+            for method in ("POST", "HEAD", "OPTIONS", "TRACE", "CONNECT"):
+                self.assertEqual(self.raw_request("/v1/status", method=method, hosts=hosts)[0], 403)
+        host = f"127.0.0.1:{port}"
+        for origins in (("http://evil.example",), (f"http://{host}", f"http://{host}"),
+                        ("null",)):
+            for path in ("/v1/identity", "/v1/status", "/"):
+                with self.subTest(origins=origins, path=path):
+                    self.assertEqual(self.raw_request(path, hosts=(host,), origins=origins)[0], 403)
+        self.assertEqual(self.authorized("/v1/status")[0], 200)
 
     def test_identity_auth_routes_and_read_only(self):
         code, data, _ = self.request("/v1/identity")
