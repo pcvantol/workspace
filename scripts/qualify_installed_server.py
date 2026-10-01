@@ -329,6 +329,23 @@ def verify_browser_identity_mismatch(page, other_id, expected_pin):
         page.unroute("**/v1/status", inconsistent_status)
 
 
+def verify_browser_inventory_identity_mismatch(page, other_id, expected_pin):
+    """A foreign capability inventory cannot leave connected project rows visible."""
+    def foreign_inventory(route):
+        route.fulfill(status=200, content_type="application/json",
+                      body=json.dumps({"schema_version": 1, "instance_id": other_id,
+                                       "peer_operations_qualified": False, "operations": []}))
+    page.route("**/v1/capabilities", foreign_inventory)
+    try:
+        page.locator("#connect").click()
+        page.get_by_role("status").get_by_text("WRONG INSTANCE").wait_for()
+        assert page.evaluate("localStorage.getItem('workspace.instanceId')") == expected_pin
+        assert page.locator("#projects li").count() == 0
+        assert page.locator("#capabilities li").count() == 0
+    finally:
+        page.unroute("**/v1/capabilities", foreign_inventory)
+
+
 def main(wheel):
     wheel = wheel.resolve()
     digest = hashlib.sha256(wheel.read_bytes()).hexdigest()
@@ -428,6 +445,9 @@ def main(wheel):
                 page.locator("#connect").click()
                 page.locator("#project-state").get_by_text("AVAILABLE · DEMO").wait_for()
                 page.get_by_text("Demo project (demo) · DEMO").wait_for()
+                verify_browser_inventory_identity_mismatch(page, second_id, first_id)
+                page.locator("#connect").click()
+                page.get_by_text("Demo project (demo) · DEMO").wait_for()
                 catalogue.write_text(json.dumps({"source": "DEMO", "observed_at": "2020-01-01T00:00:00Z",
                                                  "projects": [{"id": "demo", "name": "Demo project"}]}))
                 page.locator("#connect").click()
@@ -471,6 +491,7 @@ def main(wheel):
                               "browser_project_error_semantics": "PASS",
                               "browser_forget_token": "PASS",
                               "browser_identity_consistency": "PASS",
+                              "browser_inventory_identity_consistency": "PASS",
                               "peer_contacted": False}, sort_keys=True))
         finally:
             for process in processes:
