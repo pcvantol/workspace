@@ -63,7 +63,8 @@ class ReadOnlyTests(unittest.TestCase):
     def authorized(self, path):
         return self.request(path, token=self.service.token, instance=self.instance)
 
-    def raw_request(self, path, *, method="GET", hosts=(), origins=()):
+    def raw_request(self, path, *, method="GET", hosts=(), origins=(),
+                    authorizations=None, pins=None):
         connection = http.client.HTTPConnection("127.0.0.1", self.server.server_port, timeout=2)
         try:
             connection.putrequest(method, path, skip_host=True, skip_accept_encoding=True)
@@ -71,8 +72,14 @@ class ReadOnlyTests(unittest.TestCase):
                 connection.putheader("Host", host)
             for origin in origins:
                 connection.putheader("Origin", origin)
-            connection.putheader("Authorization", "Bearer " + self.service.token)
-            connection.putheader("X-Workspace-Instance", self.instance)
+            if authorizations is None:
+                authorizations = ("Bearer " + self.service.token,)
+            if pins is None:
+                pins = (self.instance,)
+            for authorization in authorizations:
+                connection.putheader("Authorization", authorization)
+            for pin in pins:
+                connection.putheader("X-Workspace-Instance", pin)
             connection.endheaders()
             response = connection.getresponse()
             body = response.read()
@@ -110,6 +117,25 @@ class ReadOnlyTests(unittest.TestCase):
                 with self.subTest(origins=origins, path=path):
                     self.assertEqual(self.raw_request(path, hosts=(host,), origins=origins)[0], 403)
         self.assertEqual(self.authorized("/v1/status")[0], 200)
+
+    def test_ambiguous_auth_and_pin_headers_are_rejected(self):
+        host = f"127.0.0.1:{self.server.server_port}"
+        valid_auth = "Bearer " + self.service.token
+        for values in ((valid_auth, valid_auth), (valid_auth, "Bearer wrong"),
+                       ("Bearer wrong", valid_auth)):
+            with self.subTest(authorizations=values):
+                response = self.raw_request("/v1/status", hosts=(host,), authorizations=values)
+                self.assertEqual((response[0], response[1]["error"]), (400, "AMBIGUOUS_CREDENTIALS"))
+        for values in ((self.instance, self.instance), (self.instance, "wrong"),
+                       ("wrong", self.instance)):
+            with self.subTest(pins=values):
+                response = self.raw_request("/v1/status", hosts=(host,), pins=values)
+                self.assertEqual((response[0], response[1]["error"]), (400, "AMBIGUOUS_CREDENTIALS"))
+        self.assertEqual(self.raw_request("/v1/status", hosts=(host,), authorizations=())[0], 401)
+        self.assertEqual(self.raw_request("/v1/status", hosts=(host,), pins=())[0], 409)
+        self.assertEqual(self.raw_request("/v1/status", hosts=(host,))[0], 200)
+        self.assertEqual(self.raw_request("/v1/identity", hosts=(host,),
+                                          authorizations=(valid_auth, valid_auth))[0], 200)
 
     def test_identity_auth_routes_and_read_only(self):
         code, data, _ = self.request("/v1/identity")

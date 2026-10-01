@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "LANE-4-R19",
+  "determined_version": "2.4.12",
+  "event_lineage": "LANE-4-R19",
+  "expected_source_revision": "5f01f82cc29df9bbfdc5fb7562ee2d22c589f51b",
+  "expected_version": "2.4.11",
+  "operation_id": "L4-WORKSPACE-UNIQUE-AUTH-PIN-HEADERS-V1-20261001",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

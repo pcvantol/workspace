@@ -55,7 +55,7 @@ def wait_ready(url, process):
 
 def verify_loopback_host_binding(port, instance_id, token):
     """Probe raw authority headers against the installed Server."""
-    def raw(path, hosts, origins=(), method="GET"):
+    def raw(path, hosts, origins=(), method="GET", authorizations=None, pins=None):
         connection = http.client.HTTPConnection("127.0.0.1", port, timeout=2)
         try:
             connection.putrequest(method, path, skip_host=True, skip_accept_encoding=True)
@@ -63,8 +63,14 @@ def verify_loopback_host_binding(port, instance_id, token):
                 connection.putheader("Host", host)
             for origin in origins:
                 connection.putheader("Origin", origin)
-            connection.putheader("Authorization", "Bearer " + token)
-            connection.putheader("X-Workspace-Instance", instance_id)
+            if authorizations is None:
+                authorizations = ("Bearer " + token,)
+            if pins is None:
+                pins = (instance_id,)
+            for authorization in authorizations:
+                connection.putheader("Authorization", authorization)
+            for pin in pins:
+                connection.putheader("X-Workspace-Instance", pin)
             connection.endheaders()
             response = connection.getresponse()
             body = response.read()
@@ -88,6 +94,17 @@ def verify_loopback_host_binding(port, instance_id, token):
     host = f"127.0.0.1:{port}"
     assert raw("/v1/status", (host,), ("http://evil.example",))[0] == 403
     assert raw("/", (host,), (f"http://{host}", f"http://{host}"))[0] == 403
+    valid_auth = "Bearer " + token
+    for authorizations in ((valid_auth, valid_auth), (valid_auth, "Bearer wrong"),
+                           ("Bearer wrong", valid_auth)):
+        response = raw("/v1/status", (host,), authorizations=authorizations)
+        assert response[0] == 400 and json.loads(response[2])["error"] == "AMBIGUOUS_CREDENTIALS"
+    for pins in ((instance_id, instance_id), (instance_id, "wrong"), ("wrong", instance_id)):
+        response = raw("/v1/status", (host,), pins=pins)
+        assert response[0] == 400 and json.loads(response[2])["error"] == "AMBIGUOUS_CREDENTIALS"
+    assert raw("/v1/status", (host,), authorizations=())[0] == 401
+    assert raw("/v1/status", (host,), pins=())[0] == 409
+    assert raw("/v1/status", (host,))[0] == 200
 
 
 def verify_catalogue_failure_isolation(url, instance_id, token, catalogue, page):
@@ -294,6 +311,7 @@ def main(wheel):
                               "unique_catalogue_keys": "PASS",
                               "catalogue_schema": "PASS",
                               "loopback_host_origin_binding": "PASS",
+                              "unique_auth_pin_headers": "PASS",
                               "peer_contacted": False}, sort_keys=True))
         finally:
             for process in processes:

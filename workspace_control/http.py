@@ -54,7 +54,7 @@ def openapi_contract():
         route = details["path"]
         operation = {"operationId": operation_id, "summary": details["summary"],
                      "responses": {"200": {"description": "Read result"},
-                                                       "400": {"description": "Invalid path"},
+                                                       "400": {"description": "Invalid path or ambiguous credentials"},
                                                        "401": {"description": "Unauthorized"},
                                                        "409": {"description": "Wrong instance"},
                                                        "503": {"description": "Source unavailable"}}}
@@ -113,11 +113,15 @@ def handler_for(service):
                 return self._reply(200, {"instance_id": service.instance_id})
             if path not in ROUTES:
                 return self._reply(404, {"error": "NOT_FOUND"})
-            auth = self.headers.get("Authorization", "")
+            authorizations = self.headers.get_all("Authorization", [])
+            pins = self.headers.get_all("X-Workspace-Instance", [])
+            if len(authorizations) > 1 or len(pins) > 1:
+                return self._reply(400, {"error": "AMBIGUOUS_CREDENTIALS"})
+            auth = authorizations[0] if authorizations else ""
             provided = auth[7:] if auth.startswith("Bearer ") else ""
             if not secrets.compare_digest(provided, service.token):
                 return self._reply(401, {"error": "UNAUTHORIZED"})
-            if self.headers.get("X-Workspace-Instance") != service.instance_id:
+            if (pins[0] if pins else None) != service.instance_id:
                 return self._reply(409, {"error": "WRONG_INSTANCE"})
             try:
                 if path == "/v1/status":
