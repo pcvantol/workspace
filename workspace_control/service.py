@@ -28,6 +28,15 @@ def _regular_private(path):
     return path.read_text(encoding="utf-8")
 
 
+def _unique_catalogue_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("duplicate catalogue key")
+        result[key] = value
+    return result
+
+
 def initialize(root):
     """Create the single immutable local identity and secret in an explicit root."""
     path = _private_root(root)
@@ -81,7 +90,7 @@ class Service:
         catalogue = self.root / "projects.json"
         if not catalogue.exists() and not catalogue.is_symlink():
             return {"state": "UNCONFIGURED", "projects": [], "source": None}
-        raw = json.loads(_regular_private(catalogue))
+        raw = json.loads(_regular_private(catalogue), object_pairs_hook=_unique_catalogue_object)
         if not isinstance(raw, dict) or raw.get("source") not in ("LOCAL", "DEMO"):
             raise ValueError("invalid catalogue source")
         items = raw.get("projects")
