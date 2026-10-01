@@ -74,12 +74,15 @@ def verify_loopback_host_binding(port, instance_id, token):
     for host in (f"127.0.0.1:{port}", f"localhost:{port}"):
         assert raw("/v1/status", (host,), (f"http://{host}",)) == 200
         assert raw("/", (host,)) == 200
-        assert raw("/v1/status", (host,), method="POST") == 405
+        for method in ("POST", "HEAD", "OPTIONS", "TRACE", "CONNECT"):
+            assert raw("/v1/status", (host,), method=method) == 405
     for hosts in ((), (f"evil.example:{port}",),
                   (f"127.0.0.1:{port}", f"127.0.0.1:{port}")):
         assert raw("/v1/status", hosts) == 403
         assert raw("/v1/identity", hosts) == 403
         assert raw("/", hosts) == 403
+        for method in ("POST", "HEAD", "OPTIONS", "TRACE", "CONNECT"):
+            assert raw("/v1/status", hosts, method=method) == 403
     host = f"127.0.0.1:{port}"
     assert raw("/v1/status", (host,), ("http://evil.example",)) == 403
     assert raw("/", (host,), (f"http://{host}", f"http://{host}")) == 403

@@ -73,6 +73,8 @@ def handler_for(service):
     class Handler(BaseHTTPRequestHandler):
         def _reply(self, code, value, content_type="application/json; charset=utf-8"):
             payload = value if isinstance(value, bytes) else json.dumps(value, sort_keys=True).encode()
+            if self.command == "HEAD":
+                payload = b""
             self.send_response(code)
             self.send_header("Content-Type", content_type)
             self.send_header("Content-Length", str(len(payload)))
@@ -139,6 +141,10 @@ def handler_for(service):
         do_PUT = do_POST
         do_PATCH = do_POST
         do_DELETE = do_POST
+        do_HEAD = do_POST
+        do_OPTIONS = do_POST
+        do_TRACE = do_POST
+        do_CONNECT = do_POST
 
     return Handler
 

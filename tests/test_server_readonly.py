@@ -75,7 +75,8 @@ class ReadOnlyTests(unittest.TestCase):
             connection.putheader("X-Workspace-Instance", self.instance)
             connection.endheaders()
             response = connection.getresponse()
-            return response.status, json.loads(response.read()) if path.startswith("/v1/") else None
+            body = response.read()
+            return response.status, json.loads(body) if body and path.startswith("/v1/") else None
         finally:
             connection.close()
 
@@ -86,14 +87,16 @@ class ReadOnlyTests(unittest.TestCase):
                 with self.subTest(host=host, path=path):
                     self.assertEqual(self.raw_request(path, hosts=(host,),
                                                       origins=(f"http://{host}",))[0], 200)
-            self.assertEqual(self.raw_request("/v1/status", method="POST", hosts=(host,))[0], 405)
+            for method in ("POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS", "TRACE", "CONNECT"):
+                self.assertEqual(self.raw_request("/v1/status", method=method, hosts=(host,))[0], 405)
         for hosts in ((), (f"evil.example:{port}",),
                       (f"127.0.0.1:{port}", f"evil.example:{port}"),
                       (f"127.0.0.1:{port}", f"127.0.0.1:{port}")):
             for path in ("/v1/identity", "/v1/status", "/"):
                 with self.subTest(hosts=hosts, path=path):
                     self.assertEqual(self.raw_request(path, hosts=hosts)[0], 403)
-            self.assertEqual(self.raw_request("/v1/status", method="POST", hosts=hosts)[0], 403)
+            for method in ("POST", "HEAD", "OPTIONS", "TRACE", "CONNECT"):
+                self.assertEqual(self.raw_request("/v1/status", method=method, hosts=hosts)[0], 403)
         host = f"127.0.0.1:{port}"
         for origins in (("http://evil.example",), (f"http://{host}", f"http://{host}"),
                         ("null",)):
