@@ -238,6 +238,37 @@ def verify_installed_cli_projects(server_exe, instance_root, cwd, env, url, inst
         catalogue.chmod(0o600)
 
 
+def verify_installed_capabilities(server_exe, instance_root, cwd, env, url,
+                                  instance_id, other_instance_id, token, other_token):
+    """Check protected operation inventory and its local CLI projection."""
+    assert read(url + "/v1/status")[0] == 401
+    assert read(url + "/v1/status", token=other_token, instance=instance_id)[0] == 401
+    assert read(url + "/v1/status", token=token, instance=other_instance_id)[0] == 409
+    assert read(url + "/v1/capabilities")[0] == 401
+    assert read(url + "/v1/capabilities", token=token, instance=other_instance_id)[0] == 409
+    capabilities = json.loads(read(url + "/v1/capabilities", token=token, instance=instance_id)[1])
+    assert capabilities["instance_id"] == instance_id and capabilities["peer_operations_qualified"] is False
+    command = [str(server_exe), "--root", str(instance_root), "capabilities"]
+    cli_capabilities = subprocess.run(command, cwd=cwd, env=env, capture_output=True, text=True)
+    assert cli_capabilities.returncode == 0 and cli_capabilities.stderr == ""
+    assert json.loads(cli_capabilities.stdout) == capabilities
+    assert token not in cli_capabilities.stdout
+    identity_path = instance_root / "instance.json"
+    identity_path.chmod(0o644)
+    try:
+        denied = subprocess.run(command, cwd=cwd, env=env, capture_output=True, text=True)
+        assert denied.returncode == 2 and denied.stdout == "" and token not in denied.stderr
+    finally:
+        identity_path.chmod(0o600)
+    assert json.loads(read(url + "/v1/capabilities", token=token,
+                           instance=instance_id)[1]) == capabilities
+    inventory = {item["id"]: item for item in capabilities["operations"]}
+    assert inventory["capabilities.read"]["path"] == "/v1/capabilities"
+    assert inventory["capabilities.read"]["local_cli"] == "capabilities"
+    assert inventory["instance.init"]["exposure"] == "LOCAL_ONLY_ADMIN"
+    assert "path" not in inventory["instance.init"]
+
+
 def main(wheel):
     wheel = wheel.resolve()
     digest = hashlib.sha256(wheel.read_bytes()).hexdigest()
@@ -273,35 +304,8 @@ def main(wheel):
             first_url = f"http://127.0.0.1:{first_port}"
             second_url = f"http://127.0.0.1:{second_port}"
             verify_loopback_host_binding(first_port, first_id, token)
-            assert read(first_url + "/v1/status")[0] == 401
-            assert read(first_url + "/v1/status", token=other_token, instance=first_id)[0] == 401
-            assert read(first_url + "/v1/status", token=token, instance=second_id)[0] == 409
-            assert read(first_url + "/v1/capabilities")[0] == 401
-            assert read(first_url + "/v1/capabilities", token=token, instance=second_id)[0] == 409
-            capabilities = json.loads(read(first_url + "/v1/capabilities", token=token, instance=first_id)[1])
-            assert capabilities["instance_id"] == first_id and capabilities["peer_operations_qualified"] is False
-            cli_capabilities_command = [str(server_exe), "--root", str(first), "capabilities"]
-            cli_capabilities = subprocess.run(cli_capabilities_command, cwd=root, env=env,
-                                              capture_output=True, text=True)
-            assert cli_capabilities.returncode == 0 and cli_capabilities.stderr == ""
-            assert json.loads(cli_capabilities.stdout) == capabilities
-            assert token not in cli_capabilities.stdout
-            identity_path = first / "instance.json"
-            identity_path.chmod(0o644)
-            try:
-                denied_capabilities = subprocess.run(cli_capabilities_command, cwd=root, env=env,
-                                                     capture_output=True, text=True)
-                assert denied_capabilities.returncode == 2 and denied_capabilities.stdout == ""
-                assert token not in denied_capabilities.stderr
-            finally:
-                identity_path.chmod(0o600)
-            assert json.loads(read(first_url + "/v1/capabilities", token=token,
-                                   instance=first_id)[1]) == capabilities
-            inventory = {item["id"]: item for item in capabilities["operations"]}
-            assert inventory["capabilities.read"]["path"] == "/v1/capabilities"
-            assert inventory["capabilities.read"]["local_cli"] == "capabilities"
-            assert inventory["instance.init"]["exposure"] == "LOCAL_ONLY_ADMIN"
-            assert "path" not in inventory["instance.init"]
+            verify_installed_capabilities(server_exe, first, root, env, first_url,
+                                          first_id, second_id, token, other_token)
             assert json.loads(read(first_url + "/v1/projects", token=token, instance=first_id)[1])["state"] == "UNCONFIGURED"
             assert b"/client.js" in read(first_url + "/")[1]
             assert b"fetch('/v1/projects'" in read(first_url + "/client.js")[1]
