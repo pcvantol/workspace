@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "contract": "WORKSPACE_REPOSITORY_HEALTH_WC_V1",
+  "purpose": "OFFLINE_CONTRACT_FIXTURES_NOT_RUNTIME_PROOF",
+  "request_examples": [
+    {"id": "explain-scoped", "intent": "EXPLAIN", "actor": true, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "targets": [], "revision": true, "expected": "AVAILABLE_READ"},
+    {"id": "refresh-scoped", "intent": "REFRESH", "actor": true, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "targets": [], "revision": true, "expected": "AVAILABLE_OBSERVATION"},
+    {"id": "reconcile-case", "intent": "RECONCILE", "actor": true, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "targets": ["ref-a"], "revision": true, "expected": "CASE_ONLY"},
+    {"id": "cleanup-proposal", "intent": "CLEANUP_INTENT", "actor": true, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "targets": ["ref-a", "ref-b"], "revision": true, "frozen_targets": true, "expected": "PROPOSAL_ONLY"},
+    {"id": "residual-proposal", "intent": "PRESERVE_RESIDUAL", "actor": true, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "targets": ["ref-a"], "revision": true, "expected": "ENGINEERING_PROPOSAL_ONLY"},
+    {"id": "ambiguous-chat-scope", "intent": "RECONCILE", "actor": true, "scope": "AMBIGUOUS", "capability": "QUALIFIED_AUTHORIZED", "targets": ["ref-a"], "revision": true, "expected": "ASK_SCOPE"},
+    {"id": "no-actor", "intent": "EXPLAIN", "actor": false, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "targets": [], "revision": true, "expected": "DENIED"},
+    {"id": "unsupported-cleanup", "intent": "CLEANUP_INTENT", "actor": true, "scope": "EXACT", "capability": "UNSUPPORTED", "targets": ["ref-a"], "revision": true, "frozen_targets": true, "expected": "UNSUPPORTED"},
+    {"id": "empty-cleanup-set", "intent": "CLEANUP_INTENT", "actor": true, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "targets": [], "revision": true, "frozen_targets": true, "expected": "BLOCKED"},
+    {"id": "unfrozen-cleanup-set", "intent": "CLEANUP_INTENT", "actor": true, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "targets": ["ref-a"], "revision": true, "frozen_targets": false, "expected": "BLOCKED"},
+    {"id": "stale-targets", "intent": "CLEANUP_INTENT", "actor": true, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "targets": ["ref-a"], "revision": false, "frozen_targets": true, "expected": "STALE"}
+  ],
+  "projection_examples": [
+    {"id": "fresh-complete", "coverage": "COMPLETE", "freshness": "FRESH", "open_cases": 0, "unknown_targets": 0, "expected": "COMPLETE_FRESH"},
+    {"id": "partial-zero-is-not-healthy", "coverage": "PARTIAL", "freshness": "FRESH", "open_cases": 0, "unknown_targets": 4, "expected": "INCOMPLETE"},
+    {"id": "offline-zero-is-not-healthy", "coverage": "OFFLINE", "freshness": "UNKNOWN", "open_cases": 0, "unknown_targets": 0, "expected": "INCOMPLETE"},
+    {"id": "stale-complete-is-not-current", "coverage": "COMPLETE", "freshness": "STALE", "open_cases": 0, "unknown_targets": 0, "expected": "STALE"},
+    {"id": "closed-case-not-clean-project", "coverage": "COMPLETE", "freshness": "FRESH", "open_cases": 0, "unknown_targets": 1, "expected": "INCOMPLETE"}
+  ],
+  "claim_examples": [
+    {"id": "fact-backed", "class": "FACT", "owner_evidence": true, "reason": false, "uncertainty": false, "owner_receipt": false, "expected": true},
+    {"id": "fact-unbacked", "class": "FACT", "owner_evidence": false, "reason": false, "uncertainty": false, "owner_receipt": false, "expected": false},
+    {"id": "inference-reasoned", "class": "INFERENCE", "owner_evidence": true, "reason": true, "uncertainty": true, "owner_receipt": false, "expected": true},
+    {"id": "inference-without-uncertainty", "class": "INFERENCE", "owner_evidence": true, "reason": true, "uncertainty": false, "owner_receipt": false, "expected": false},
+    {"id": "recommendation-reasoned", "class": "RECOMMENDATION", "owner_evidence": true, "reason": true, "uncertainty": true, "owner_receipt": false, "expected": true},
+    {"id": "decision-with-receipt", "class": "DECISION", "owner_evidence": true, "reason": false, "uncertainty": false, "owner_receipt": true, "expected": true},
+    {"id": "decision-without-receipt", "class": "DECISION", "owner_evidence": true, "reason": false, "uncertainty": false, "owner_receipt": false, "expected": false}
+  ]
+}

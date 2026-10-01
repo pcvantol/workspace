@@ -63,6 +63,15 @@ boundary mapping and offline negative examples. This is contract source only,
 not an installed onboarding UI, exact Forge/EP producer binding, project
 reservation, provisioning effect or closure of PB-W1 and later nodes.
 
+### LANE_4 HY-WC contract-first follow-up
+
+The #208 r5 assignment `L4-WORKSPACE-HY-WC-CONTRACT-V1-20261001` adds a
+machine-readable scoped Repository Health/chat request and evidence projection
+contract. The same chat/view intent boundary distinguishes read/refresh, case,
+cleanup proposal and engineering proposal; offline negatives guard no Mission
+allocation, no deletion, no unknown-as-healthy and external owner routing. This
+does not bind qualified Forge/EP producers or implement HY-WO/HY-WM UI/effects.
+
 ## Historical foundation and remaining candidates
 
 The repository foundation originally authorized no product implementation.

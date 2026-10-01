@@ -34,6 +34,9 @@ HY-F observations/cases; HY-WM requires qualified Forge/EP HY-Q command/receipt
 semantics. Read-only health/chat can ship without destructive controls. All
 implementation nodes remain PLANNED. Preserve actual actor/project scope,
 partial/stale inventory, exact confirmation sets and per-target audit outcomes.
+The [HY-WC contract](docs/REPOSITORY_HEALTH_WC_CONTRACT_V1.md) now defines the
+scoped request/projection and owner boundaries; live producer binding and UI
+remain planned.
 The full UI is not a first-canary prerequisite; no runtime configuration,
 credentials, policy activation, version or executable programme DAG changes here.
 
