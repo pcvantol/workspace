@@ -1,0 +1,10 @@
+{
+  "info": {"name": "Workspace read-only V1", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},
+  "variable": [{"key": "baseUrl", "value": "http://127.0.0.1:8765"}, {"key": "token", "value": ""}, {"key": "instanceId", "value": ""}],
+  "item": [
+    {"name": "identity", "request": {"method": "GET", "url": "{{baseUrl}}/v1/identity"}},
+    {"name": "status", "request": {"method": "GET", "url": "{{baseUrl}}/v1/status", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "X-Workspace-Instance", "value": "{{instanceId}}"}]}},
+    {"name": "projects", "request": {"method": "GET", "url": "{{baseUrl}}/v1/projects", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "X-Workspace-Instance", "value": "{{instanceId}}"}]}},
+    {"name": "openapi", "request": {"method": "GET", "url": "{{baseUrl}}/v1/openapi.json", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "X-Workspace-Instance", "value": "{{instanceId}}"}]}}
+  ]
+}

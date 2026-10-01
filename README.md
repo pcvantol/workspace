@@ -11,9 +11,25 @@ does not own Workspace source, architecture, roadmap, governance, or releases.
 ## Current maturity
 
 This repository was established on 2026-09-01 after an evidence-based search
-found no prior independent Workspace implementation history. It currently
-contains product foundation and provenance only; it does not implement
-Workspace behavior, an Engineering Platform adapter, or an execution runtime.
+found no prior independent Workspace implementation history. The selected
+LANE_4 slice now supplies an own read-only Server, thin CLI and browser Client.
+It does not implement an Engineering Platform adapter or execution runtime.
+
+## Local read-only Server
+
+Create a private absolute data root, initialize it once, then start the Server:
+
+```sh
+mkdir -m 700 /absolute/private/workspace-data
+workspace-server --root /absolute/private/workspace-data init
+workspace-server --root /absolute/private/workspace-data serve --port 8765
+```
+
+Open `http://127.0.0.1:8765/` using `workspace-client --url http://127.0.0.1:8765`.
+The Client asks for the token in the root's private `token` file; it keeps the
+token in the current page only. The Server listens on loopback. The optional
+private `projects.json` catalogue format and state semantics are documented in
+[the read-only Server contract](docs/WORKSPACE_SERVER_READONLY_V1.md).
 
 ## Entry points
 

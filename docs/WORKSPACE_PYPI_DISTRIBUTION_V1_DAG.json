@@ -8,6 +8,27 @@
   "executable": false,
   "authorizes_execution": false,
   "first_canary_prerequisite": false,
+  "lane_allocation": {
+    "lane": "LANE_4",
+    "register": "https://github.com/pcvantol/forge/issues/208",
+    "decision_date": "2026-10-01",
+    "owning_scope": "docs/WORKSPACE_LANE_4_START_V1.md",
+    "assignment_id": "L4-WORKSPACE-SERVER-READONLY-V1-20261001",
+    "selected_node_subsets": ["WPK-IDENTITY", "WPK-PACKAGE"],
+    "first_slice_delivery": "LOCAL_NONEDITABLE_INSTALLED_WHEEL_NOT_PUBLIC_RELEASE",
+    "selection_is_implementation_evidence": false,
+    "current_installer_release_dependency": false,
+    "public_publish_readback_consumer_gates_remain_open": true,
+    "existing_dependency_and_external_evidence_gates_unchanged": true
+  },
+  "first_slice_checkpoint": {
+    "scope": "WPK-IDENTITY/WPK-PACKAGE local wheel and role entrypoints only",
+    "source_status": "IMPLEMENTED_CANDIDATE_PENDING_PROTECTED_DELIVERY",
+    "evidence": ["pyproject.toml", "scripts/qualify_installed_server.py"],
+    "public_namespace_qualified": false,
+    "publisher_configured": false,
+    "full_parent_qualified": false
+  },
   "source_revision": "36d294836cb653361fda3972de38acce3d2970f8",
   "architecture": "docs/WORKSPACE_SERVER_CLIENT_DEPLOYMENT.md",
   "roadmap": "docs/WORKSPACE_PYPI_DISTRIBUTION_V1.md",

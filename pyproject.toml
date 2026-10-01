@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pcvantol-workspace-control"
+dynamic = ["version"]
+description = "Workspace Server and read-only browser Client"
+requires-python = ">=3.10"
+license = "LicenseRef-Proprietary"
+
+[project.scripts]
+workspace-server = "workspace_control.cli:main"
+workspace-client = "workspace_control.cli:client_main"
+
+[tool.setuptools]
+packages = ["workspace_control"]
+
+[tool.setuptools.package-data]
+workspace_control = ["client.html", "client.js"]
