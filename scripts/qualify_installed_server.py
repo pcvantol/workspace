@@ -70,6 +70,30 @@ def verify_catalogue_failure_isolation(url, instance_id, token, catalogue, page)
     page.locator("#project-state").get_by_text("AVAILABLE · DEMO").wait_for()
 
 
+def verify_unique_project_ids(url, instance_id, token, catalogue, page):
+    """Reject duplicate identities while retaining distinct IDs with one label."""
+    stamp = datetime.now(timezone.utc).isoformat()
+    catalogue.write_text(json.dumps({"source": "LOCAL", "observed_at": stamp,
+                                     "projects": [{"id": "same", "name": "First"},
+                                                  {"id": "same", "name": "Second"}]}))
+    assert read(url + "/v1/projects", token=token, instance=instance_id)[0] == 503
+    assert json.loads(read(url + "/v1/status", token=token, instance=instance_id)[1])["project_source"] == "SOURCE_UNAVAILABLE"
+    page.locator("#connect").click()
+    page.get_by_role("status").get_by_text("CONNECTED").wait_for()
+    page.locator("#project-state").get_by_text("UNAVAILABLE").wait_for()
+    assert page.locator("#projects li").count() == 0
+    catalogue.write_text(json.dumps({"source": "LOCAL", "observed_at": stamp,
+                                     "projects": [{"id": "one", "name": "Shared"},
+                                                  {"id": "two", "name": "Shared"}]}))
+    page.locator("#connect").click()
+    page.locator("#project-state").get_by_text("AVAILABLE · LOCAL").wait_for()
+    assert page.locator("#projects li").count() == 2
+    assert {item["id"] for item in json.loads(read(url + "/v1/projects", token=token,
+                                                instance=instance_id)[1])["projects"]} == {"one", "two"}
+    catalogue.write_text(json.dumps({"source": "DEMO", "observed_at": stamp,
+                                     "projects": [{"id": "demo", "name": "Demo project"}]}))
+
+
 def main(wheel):
     wheel = wheel.resolve()
     digest = hashlib.sha256(wheel.read_bytes()).hexdigest()
@@ -149,6 +173,7 @@ def main(wheel):
                 page.locator("#connect").click()
                 page.locator("#project-state").get_by_text("STALE · DEMO").wait_for()
                 verify_catalogue_failure_isolation(first_url, first_id, token, catalogue, page)
+                verify_unique_project_ids(first_url, first_id, token, catalogue, page)
                 processes[0].send_signal(signal.SIGTERM)
                 processes[0].wait(timeout=5)
                 assert processes[0].returncode == -signal.SIGTERM
@@ -168,6 +193,7 @@ def main(wheel):
                               "server_instances": 2, "restart_identity_and_catalogue": "PASS",
                               "api_cli_browser": "PASS", "operation_inventory": "PASS",
                               "catalogue_failure_isolation_and_recovery": "PASS",
+                              "unique_project_ids": "PASS",
                               "peer_contacted": False}, sort_keys=True))
         finally:
             for process in processes:
