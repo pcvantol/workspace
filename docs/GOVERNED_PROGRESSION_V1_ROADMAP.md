@@ -3,6 +3,9 @@
 Scoped under [Workspace Roadmap](../ROADMAP.md) and the existing policy/governance
 surfaces. Increment: `GOVERNED_PROGRESSION_AND_DELIVERY_AUTHORITY_V1`.
 Design: [governed progression and external gates](GOVERNED_PROGRESSION_AND_EXTERNAL_GATES.md).
+The [GP-WC consumer contract](GOVERNED_PROGRESSION_WC_CONTRACT_V1.md) now
+defines offline review/gate projections and negative command fixtures; live
+producer binding and GP-W UI remain planned.
 The shared documentary DAG is
 `pcvantol/forge:docs/roadmap/governed-progression-v1.json`.
 

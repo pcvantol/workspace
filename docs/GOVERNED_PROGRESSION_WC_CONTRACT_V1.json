@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "contract": "WORKSPACE_GOVERNED_PROGRESSION_WC_V1",
+  "owner": "workspace",
+  "authority": "CONTRACT_ONLY",
+  "producer_bindings": "UNQUALIFIED",
+  "request": {
+    "actor": "AUTHENTICATED_PRINCIPAL_REFERENCE",
+    "scope": ["project_id", "subject_id", "requirement_id"],
+    "expected_revision_required_for_command": true,
+    "operation_id_required_for_command": true,
+    "ui_role_is_grant": false,
+    "target_label_is_classification": false
+  },
+  "projections": {
+    "EffectiveCadence": {"owner": "forge", "required": ["project_id", "mission_id", "definition_revision", "assignment_revision", "effective_profile", "supported_range", "mandatory_minimum", "override_allowed", "source_refs", "availability"]},
+    "ReviewRequirement": {"owner": "forge", "required": ["requirement_id", "project_id", "subject_id", "subject_revision", "decision_owner", "required_role", "blocking_scope", "evidence_refs", "status", "availability"]},
+    "DeliveryTarget": {"owner": "declared_external_owner", "required": ["target_id", "project_id", "environment_class", "classification_evidence", "artifact_id", "artifact_digest", "source_revision", "trigger_owner", "approval_owner", "delivery_owner", "availability"]},
+    "ExternalGate": {"owner": "declared_external_owner", "required": ["gate_id", "requirement_id", "target_id", "artifact_digest", "authority_binding", "owner_status", "owner_receipt", "observed_at", "availability"]}
+  },
+  "review_boundary": {
+    "local_decision_owner": "forge",
+    "external_approval_owner": "declared_external_owner",
+    "external_gate_has_workspace_approve_control": false,
+    "request_is_approval": false,
+    "request_is_deployed": false,
+    "ui_click_is_owner_decision": false,
+    "owner_receipt_required_for_success": true,
+    "stale_subject_can_decide": false,
+    "fence_scope": "OWNER_DECLARED_SUBJECT_OR_MISSION",
+    "local_rejection_cancels_running_external_work": false,
+    "offline_command_allowed": false,
+    "lost_acknowledgement": "READ_BACK_SAME_OPERATION"
+  },
+  "external_modes": ["OBSERVE_ONLY", "REQUEST_AND_WAIT"],
+  "availability": ["QUALIFIED_AUTHORIZED", "UNQUALIFIED", "UNSUPPORTED", "DENIED", "OFFLINE"]
+}
