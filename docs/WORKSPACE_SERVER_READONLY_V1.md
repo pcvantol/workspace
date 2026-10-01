@@ -15,6 +15,9 @@ The optional `projects.json` is a private regular file (mode 0600) in the data r
 Project IDs must be unique within one catalogue. Repeated names are allowed;
 names are labels, not identity. Duplicate IDs make the source unavailable
 rather than choosing an arbitrary row or displaying an ambiguous project list.
+Duplicate JSON object keys at any level are also invalid: a second `source`
+or project `id` cannot silently replace the first and alter provenance or
+identity. The Server rejects such a catalogue as SOURCE_UNAVAILABLE.
 
 The bounded follow-up `L4-WORKSPACE-OPERATION-INVENTORY-V1-20261001` adds pinned,
 authenticated `GET /v1/capabilities`. It names only own implemented HTTP reads

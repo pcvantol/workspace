@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "workspace-readonly-unique-catalogue-json-keys",
+  "determined_version": "2.4.6",
+  "event_lineage": "workspace-readonly-unique-catalogue-json-keys",
+  "expected_source_revision": "5b8135dbae43e9c91f1c5927ea45d52194a8dfed",
+  "expected_version": "2.4.5",
+  "operation_id": "L4-UNIQUE-CATALOGUE-JSON-KEYS-20261001",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

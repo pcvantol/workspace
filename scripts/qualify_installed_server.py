@@ -94,6 +94,23 @@ def verify_unique_project_ids(url, instance_id, token, catalogue, page):
                                      "projects": [{"id": "demo", "name": "Demo project"}]}))
 
 
+def verify_unique_catalogue_keys(url, instance_id, token, catalogue, page):
+    """Reject duplicate provenance and nested identity keys in installed reads."""
+    valid = catalogue.read_text()
+    catalogue.write_text(valid.replace('"source": "DEMO"', '"source": "LOCAL", "source": "DEMO"', 1))
+    assert read(url + "/v1/projects", token=token, instance=instance_id)[0] == 503
+    assert json.loads(read(url + "/v1/status", token=token, instance=instance_id)[1])["project_source"] == "SOURCE_UNAVAILABLE"
+    page.locator("#connect").click()
+    page.get_by_role("status").get_by_text("CONNECTED").wait_for()
+    page.locator("#project-state").get_by_text("UNAVAILABLE").wait_for()
+    assert page.locator("#projects li").count() == 0
+    catalogue.write_text(valid.replace('"id": "demo"', '"id": "hidden", "id": "demo"', 1))
+    assert read(url + "/v1/projects", token=token, instance=instance_id)[0] == 503
+    catalogue.write_text(valid)
+    page.locator("#connect").click()
+    page.locator("#project-state").get_by_text("AVAILABLE · DEMO").wait_for()
+
+
 def main(wheel):
     wheel = wheel.resolve()
     digest = hashlib.sha256(wheel.read_bytes()).hexdigest()
@@ -174,6 +191,7 @@ def main(wheel):
                 page.locator("#project-state").get_by_text("STALE · DEMO").wait_for()
                 verify_catalogue_failure_isolation(first_url, first_id, token, catalogue, page)
                 verify_unique_project_ids(first_url, first_id, token, catalogue, page)
+                verify_unique_catalogue_keys(first_url, first_id, token, catalogue, page)
                 processes[0].send_signal(signal.SIGTERM)
                 processes[0].wait(timeout=5)
                 assert processes[0].returncode == -signal.SIGTERM
@@ -194,6 +212,7 @@ def main(wheel):
                               "api_cli_browser": "PASS", "operation_inventory": "PASS",
                               "catalogue_failure_isolation_and_recovery": "PASS",
                               "unique_project_ids": "PASS",
+                              "unique_catalogue_keys": "PASS",
                               "peer_contacted": False}, sort_keys=True))
         finally:
             for process in processes:
