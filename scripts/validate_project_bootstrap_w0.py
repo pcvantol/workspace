@@ -8,6 +8,14 @@ ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 JOURNEYS = {"NEW_GENESIS", "ADOPT_GENESIS", "NEW_MANAGED", "ADOPT_MANAGED", "PROMOTE_GENESIS"}
 PHASES = {"prepare", "submit", "readback", "enter"}
+JOURNEY_BOUNDARIES = {
+    "NEW_GENESIS": ("NONE", "GENESIS", "LOCAL_MISSING_EMPTY_OR_UNBORN", "FORBIDDEN", "PROVISIONAL", "EP_GENESIS_CREATE"),
+    "ADOPT_GENESIS": ("LOCAL_EXISTING", "GENESIS", "LOCAL_EXISTING_REVIEWED", "FORBIDDEN", "PROVISIONAL", "EP_GENESIS_ADOPT"),
+    "NEW_MANAGED": ("NONE", "MANAGED", "REMOTE_ABSENT_VERIFIED", "EXPLICIT_APPROVAL_REQUIRED", "PROVISIONAL", "EP_MANAGED_CREATE"),
+    "ADOPT_MANAGED": ("REMOTE_EXISTING", "MANAGED", "REMOTE_EXISTING_REVIEWED", "EXPLICIT_APPROVAL_REQUIRED", "PROVISIONAL", "EP_MANAGED_ADOPT"),
+    "PROMOTE_GENESIS": ("GENESIS", "MANAGED", "EXISTING_GENESIS_AND_EXPLICIT_REMOTE_DESTINATION",
+                        "HISTORY_PUBLICATION_APPROVAL_REQUIRED", "EXISTING_COMMITTED", "EP_PROMOTE_MANAGED"),
+}
 
 
 def _unique(pairs):
@@ -44,6 +52,33 @@ def submit_state(example):
     return "AVAILABLE"
 
 
+def validate_journey_boundaries(contract):
+    owners = contract["capability_families"]
+    journeys = contract["journeys"]
+    by_id = {journey["id"]: journey for journey in journeys}
+    _require(len(journeys) == len(by_id) == 5 and set(by_id) == JOURNEYS,
+             "PB-W0 must define exactly five distinct journeys")
+    for name, journey in by_id.items():
+        phases = journey["capabilities_by_phase"]
+        _require(set(phases) == PHASES and all(phases[phase] for phase in PHASES),
+                 f"PB-W0 missing capability phase: {name}")
+        _require(all(capability in owners for group in phases.values() for capability in group),
+                 f"PB-W0 unknown capability: {name}")
+        source_mode, target_mode, target_class, remote_effect, identity, submit = JOURNEY_BOUNDARIES[name]
+        _require((journey["source_mode"], journey["target_mode"], journey["target_class"],
+                  journey["remote_effect"], journey["identity_before_readback"]) ==
+                 (source_mode, target_mode, target_class, remote_effect, identity),
+                 f"PB-W0 source/target/remote boundary drift: {name}")
+        _require(phases["submit"] == [submit] and owners[submit] == "engineering-platform" and
+                 journey["effect_owner"] == "engineering-platform",
+                 f"PB-W0 journey submit operation escaped owner boundary: {name}")
+        _require(phases["readback"] == ["EP_OPERATION_READBACK"] and
+                 phases["enter"] == ["FORGE_PROJECT_READINESS"] and
+                 "FORGE_ARTIFACT_PLAN" in phases["prepare"] and
+                 ("EP_HOST_TARGET_INVENTORY" if target_mode == "GENESIS" else "EP_PROVIDER_SCOPE") in phases["prepare"],
+                 f"PB-W0 prepare/readback/readiness boundary drift: {name}")
+
+
 def validate():
     contract = _load("PROJECT_BOOTSTRAP_W0_CONTRACT_V1.json")
     examples = _load("PROJECT_BOOTSTRAP_W0_EXAMPLES_V1.json")
@@ -62,34 +97,8 @@ def validate():
     _require(owners and set(owners.values()) == {"forge", "engineering-platform"} and
              all(name.startswith("FORGE_") == (owner == "forge") for name, owner in owners.items()),
              "PB-W0 capability owner drift")
-    journeys = contract["journeys"]
-    by_id = {journey["id"]: journey for journey in journeys}
-    _require(len(journeys) == len(by_id) == 5 and set(by_id) == JOURNEYS,
-             "PB-W0 must define exactly five distinct journeys")
-    for journey in journeys:
-        phases = journey["capabilities_by_phase"]
-        _require(set(phases) == PHASES and all(phases[phase] for phase in PHASES),
-                 f"PB-W0 missing capability phase: {journey['id']}")
-        _require(all(capability in owners for group in phases.values() for capability in group),
-                 f"PB-W0 unknown capability: {journey['id']}")
-        _require(all(owners[capability] == "engineering-platform" for capability in phases["submit"]),
-                 f"PB-W0 effect authority escaped EP: {journey['id']}")
-        _require(journey["effect_owner"] == "engineering-platform" and
-                 "EP_OPERATION_READBACK" in phases["readback"] and
-                 "FORGE_PROJECT_READINESS" in phases["enter"],
-                 f"PB-W0 effect/readiness owner drift: {journey['id']}")
-    for name in ("NEW_GENESIS", "ADOPT_GENESIS"):
-        _require(by_id[name]["target_mode"] == "GENESIS" and
-                 by_id[name]["remote_effect"] == "FORBIDDEN", "Genesis cannot cause remote effects")
-    for name in ("NEW_MANAGED", "ADOPT_MANAGED", "PROMOTE_GENESIS"):
-        _require(by_id[name]["target_mode"] == "MANAGED" and
-                 "EP_PROVIDER_SCOPE" in by_id[name]["capabilities_by_phase"]["prepare"] and
-                 "APPROVAL_REQUIRED" in by_id[name]["remote_effect"],
-                 "Managed effects require scoped approval")
-    _require(by_id["PROMOTE_GENESIS"]["source_mode"] == "GENESIS" and
-             by_id["PROMOTE_GENESIS"]["identity_before_readback"] == "EXISTING_COMMITTED" and
-             by_id["PROMOTE_GENESIS"]["remote_effect"] == "HISTORY_PUBLICATION_APPROVAL_REQUIRED",
-             "promotion must preserve identity and disclose history")
+    validate_journey_boundaries(contract)
+    by_id = {journey["id"]: journey for journey in contract["journeys"]}
     submission = contract["submission"]
     _require(submission["mode_fallback"] == "FORBIDDEN" and
              submission["workspace_executes_effects"] is False and
