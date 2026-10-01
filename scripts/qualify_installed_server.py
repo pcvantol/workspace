@@ -342,6 +342,31 @@ def verify_browser_observation(page, expected):
     assert page.locator("#project-observed").inner_text() == expected
 
 
+def verify_browser_reconnect_clears_readbacks(page, expected_pin, token):
+    """A pending reconnect must not retain the previous visible snapshot."""
+    assert expected_pin in page.locator("#server").inner_text()
+    assert "AVAILABLE" in page.locator("#project-state").inner_text()
+    page.evaluate("""() => {
+      window.workspaceOriginalFetch = window.fetch;
+      window.fetch = (...args) => args[0] === '/v1/identity' ?
+        new Promise(() => {}) : window.workspaceOriginalFetch(...args);
+    }""")
+    try:
+        page.locator("#connect").click()
+        page.locator("#state").get_by_text("CONNECTING").wait_for()
+        assert page.locator("#server").inner_text() == "No connection"
+        assert page.locator("#project-state").inner_text() == "UNAVAILABLE"
+        assert page.locator("#projects li").count() == 0
+        assert page.locator("#capabilities li").count() == 0
+        verify_browser_observation(page, "No observation")
+        assert page.evaluate("localStorage.getItem('workspace.instanceId')") == expected_pin
+        assert page.locator("#token").input_value() == token
+    finally:
+        page.evaluate("window.fetch = window.workspaceOriginalFetch")
+    page.locator("#connect").click()
+    page.get_by_text("Demo project (demo) · DEMO").wait_for()
+
+
 def verify_browser_project_error_semantics(page, instance_root):
     """Preserve a visible row across each injected project-read failure and recovery."""
     catalogue = instance_root / "projects.json"
@@ -521,6 +546,7 @@ def main(wheel):
                 page.get_by_text("Demo project (demo) · DEMO").wait_for()
                 observed = json.loads(catalogue.read_text())["observed_at"]
                 verify_browser_observation(page, f"Observed: {observed}")
+                verify_browser_reconnect_clears_readbacks(page, first_id, token)
                 verify_browser_inventory_identity_mismatch(page, second_id, first_id)
                 page.locator("#connect").click()
                 page.get_by_text("Demo project (demo) · DEMO").wait_for()
@@ -570,6 +596,7 @@ def main(wheel):
                               "browser_capabilities_and_clear": "PASS",
                               "browser_project_error_semantics": "PASS",
                               "browser_catalogue_observation_provenance": "PASS",
+                              "browser_reconnect_readback_clear": "PASS",
                               "browser_forget_token": "PASS",
                               "browser_identity_consistency": "PASS",
                               "browser_inventory_identity_consistency": "PASS",
