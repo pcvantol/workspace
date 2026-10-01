@@ -46,6 +46,9 @@ evidence or override the documented local catalogue meaning.
 `GET /v1/projects` preserves that primary `state` and also returns independent
 `partial` and `stale` booleans. A stale, incomplete catalogue has primary state
 STALE with `partial:true` and `stale:true`; the browser displays both labels.
+The local `workspace-server --root ROOT projects` read uses the same service
+projection and emits one JSON object; invalid sources exit nonzero with no
+project JSON on stdout. It is a private-root owner read, not peer transport.
 When its list is empty, the browser also labels EMPTY. An unconfigured source
 returns both flags false. The Server's own status remains READY and its
 `project_source` retains the primary catalogue state.
