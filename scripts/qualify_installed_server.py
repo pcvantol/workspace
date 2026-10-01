@@ -53,6 +53,23 @@ def wait_ready(url, process):
     raise RuntimeError("server did not become ready")
 
 
+def verify_installed_client_launch(python, root, env):
+    """Exercise the installed Client's OS launch result without opening a browser."""
+    program = """\
+from unittest.mock import patch
+from workspace_control.cli import client_main
+with patch('workspace_control.cli.webbrowser.open', return_value=True) as browser:
+    assert client_main(['--url', 'http://127.0.0.1:8765']) == 0
+    browser.assert_called_once_with('http://127.0.0.1:8765/')
+with patch('workspace_control.cli.webbrowser.open', return_value=False):
+    assert client_main(['--url', 'http://127.0.0.1:8765']) == 2
+with patch('workspace_control.cli.webbrowser.open', side_effect=OSError('unavailable')):
+    assert client_main(['--url', 'http://127.0.0.1:8765']) == 2
+"""
+    subprocess.run([str(python), "-c", program], check=True, cwd=root, env=env,
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
 def verify_loopback_host_binding(port, instance_id, token):
     """Probe raw authority headers against the installed Server."""
     def raw(path, hosts, origins=(), method="GET", authorizations=None, pins=None):
@@ -388,6 +405,7 @@ def main(wheel):
                        stdout=subprocess.DEVNULL)
         env = dict(os.environ)
         env.pop("PYTHONPATH", None)
+        verify_installed_client_launch(python, root, env)
         for name in ("one", "two"):
             instance_root = root / name
             instance_root.mkdir(mode=0o700)
@@ -508,6 +526,7 @@ def main(wheel):
             print(json.dumps({"result": "PASS", "wheel_sha256": digest, "installed_outside_checkout": True,
                               "server_instances": 2, "restart_identity_and_catalogue": "PASS",
                               "api_cli_browser": "PASS", "operation_inventory": "PASS",
+                              "installed_client_launch_outcome": "PASS",
                               "catalogue_failure_isolation_and_recovery": "PASS",
                               "unique_project_ids": "PASS",
                               "unique_catalogue_keys": "PASS",

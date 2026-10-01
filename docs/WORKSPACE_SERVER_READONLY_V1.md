@@ -98,6 +98,10 @@ instance-pinned connection. It labels HTTP reads and local-only administration
 separately and continues to label peer operations UNQUALIFIED. Failed reads,
 wrong instances and forgotten bindings clear previously displayed operations;
 the Client adds no operation or peer authority.
+The local `workspace-client --url` launcher exits nonzero with a clear error
+when the OS browser launcher reports failure or raises an OS/browser error.
+Its success exit means the browser accepted the open request; it does not
+assert that a Server connection or authenticated read completed.
 Before accepting a local binding, the Client requires a canonical own identity
 and checks that authenticated Server status names that same instance. An
 inconsistent status is WRONG INSTANCE; it clears displayed readbacks and cannot

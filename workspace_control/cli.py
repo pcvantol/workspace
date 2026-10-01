@@ -57,7 +57,14 @@ def client_main(argv=None):
             not valid_port or parsed.username or parsed.password or parsed.path not in ("", "/") or
             parsed.query or parsed.fragment):
         parser.error("this first Client supports only a loopback Workspace Server")
-    webbrowser.open(args.url.rstrip("/") + "/")
+    try:
+        opened = webbrowser.open(args.url.rstrip("/") + "/")
+    except (OSError, webbrowser.Error) as exc:
+        print(f"workspace-client: browser launch failed: {exc}", file=sys.stderr)
+        return 2
+    if not opened:
+        print("workspace-client: browser launch failed", file=sys.stderr)
+        return 2
     return 0
 
 
