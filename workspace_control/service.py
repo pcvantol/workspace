@@ -39,15 +39,17 @@ def initialize(root):
     created = datetime.now(timezone.utc).isoformat()
     values = ((identity, json.dumps({"instance_id": instance_id, "created_at": created}) + "\n"),
               (token, secrets.token_urlsafe(32) + "\n"))
+    created_paths = []
     try:
         for target, content in values:
             fd = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+            created_paths.append(target)
             with os.fdopen(fd, "w", encoding="utf-8") as stream:
                 stream.write(content)
                 stream.flush()
                 os.fsync(stream.fileno())
     except Exception:
-        for target, _ in values:
+        for target in created_paths:
             target.unlink(missing_ok=True)
         raise
     return instance_id

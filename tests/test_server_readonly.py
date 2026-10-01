@@ -143,6 +143,29 @@ class ReadOnlyTests(unittest.TestCase):
         token.chmod(0o644)
         self.assertRaises(ValueError, Service, self.root)
 
+    def test_init_race_preserves_other_initializer_files(self):
+        fresh = Path(self.temp.name) / "racing"
+        fresh.mkdir(mode=0o700)
+        real_open = os.open
+        def race_at_identity(path, flags, mode):
+            if Path(path).name == "instance.json":
+                Path(path).write_text("winner")
+                raise FileExistsError("other initializer won")
+            return real_open(path, flags, mode)
+        with patch("workspace_control.service.os.open", side_effect=race_at_identity):
+            self.assertRaises(FileExistsError, initialize, fresh)
+        self.assertEqual((fresh / "instance.json").read_text(), "winner")
+        (fresh / "instance.json").unlink()
+        def race_at_token(path, flags, mode):
+            if Path(path).name == "token":
+                Path(path).write_text("winner token")
+                raise FileExistsError("other initializer won")
+            return real_open(path, flags, mode)
+        with patch("workspace_control.service.os.open", side_effect=race_at_token):
+            self.assertRaises(FileExistsError, initialize, fresh)
+        self.assertFalse((fresh / "instance.json").exists())
+        self.assertEqual((fresh / "token").read_text(), "winner token")
+
     def test_cli_modes_and_server_lock(self):
         self.assertEqual(main(["--root", str(self.root), "serve", "--port", "0"]), 2)
         with patch("workspace_control.cli.serve") as mock_serve:
