@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "contract": "WORKSPACE_ROLE_AWARE_CONVERSATIONS_WC_V1",
+  "purpose": "OFFLINE_CONSUMER_FIXTURES_NOT_RUNTIME_PROOF",
+  "examples": [
+    {"id": "history", "action": "LOAD", "actor": true, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "online": true, "operation_id": false, "exact_revision": false, "owner_receipt": false, "expected": "READ_ONLY"},
+    {"id": "mode-switch", "action": "CHANGE_MODE", "actor": true, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "online": true, "operation_id": false, "exact_revision": false, "owner_receipt": false, "expected": "READ_ONLY"},
+    {"id": "reconnect", "action": "RECONNECT", "actor": true, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "online": true, "operation_id": true, "exact_revision": false, "owner_receipt": false, "expected": "READ_BACK_SAME_OPERATION"},
+    {"id": "send-explicit", "action": "SEND", "actor": true, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "online": true, "operation_id": true, "exact_revision": false, "owner_receipt": false, "expected": "SUBMIT_ONE_BOUNDED_TURN"},
+    {"id": "send-unqualified", "action": "SEND", "actor": true, "scope": "EXACT", "capability": "UNQUALIFIED", "online": true, "operation_id": true, "exact_revision": false, "owner_receipt": false, "expected": "UNSUPPORTED"},
+    {"id": "send-offline", "action": "SEND", "actor": true, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "online": false, "operation_id": true, "exact_revision": false, "owner_receipt": false, "expected": "OFFLINE_DRAFT_ONLY"},
+    {"id": "ambiguous-project", "action": "SEND", "actor": true, "scope": "AMBIGUOUS", "capability": "QUALIFIED_AUTHORIZED", "online": true, "operation_id": true, "exact_revision": false, "owner_receipt": false, "expected": "ASK_SCOPE"},
+    {"id": "cross-principal", "action": "LOAD", "actor": false, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "online": true, "operation_id": false, "exact_revision": false, "owner_receipt": false, "expected": "DENIED"},
+    {"id": "decision-exact", "action": "DECIDE", "actor": true, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "online": true, "operation_id": true, "exact_revision": true, "owner_receipt": true, "expected": "OWNER_DECISION_READBACK"},
+    {"id": "decision-stale", "action": "DECIDE", "actor": true, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "online": true, "operation_id": true, "exact_revision": false, "owner_receipt": true, "expected": "STALE"},
+    {"id": "decision-no-receipt", "action": "DECIDE", "actor": true, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "online": true, "operation_id": true, "exact_revision": true, "owner_receipt": false, "expected": "PENDING_OWNER_READBACK"},
+    {"id": "lost-response", "action": "RECOVER", "actor": true, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "online": true, "operation_id": true, "exact_revision": false, "owner_receipt": false, "expected": "READ_BACK_SAME_OPERATION"},
+    {"id": "lost-response-no-id", "action": "RECOVER", "actor": true, "scope": "EXACT", "capability": "QUALIFIED_AUTHORIZED", "online": true, "operation_id": false, "exact_revision": false, "owner_receipt": false, "expected": "UNCERTAIN_NO_REPLAY"}
+  ]
+}
