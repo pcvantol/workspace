@@ -25,6 +25,8 @@ deployment proof.
 
 Denied, unqualified, ambiguous, stale and offline actions fail closed. A lost
 acknowledgement is resolved by the same operation ID without blind replay. A
+stale display label cannot prevent that readback; the returned owner target
+classification controls the refreshed view and later commands. A
 review fence applies only to its owner-declared subject or Mission scope; a
 local rejection cannot cancel already-running external work. These offline
 examples do not qualify a real Forge/EP/CD producer or installed Workspace UI.

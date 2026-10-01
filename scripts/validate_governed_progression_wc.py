@@ -27,12 +27,12 @@ def outcome(item):
     if not item["online"]:
         return "OFFLINE_UNAVAILABLE"
     action = item["action"]
+    if action == "RECOVER":
+        return "READ_BACK_SAME_OPERATION" if item["operation_id"] else "UNCERTAIN_NO_REPLAY"
     if item["target_class"] != item["label_class"]:
         return "TARGET_CLASS_CONFLICT"
     if action == "VIEW":
         return "OWNER_PROJECTION"
-    if action == "RECOVER":
-        return "READ_BACK_SAME_OPERATION" if item["operation_id"] else "UNCERTAIN_NO_REPLAY"
     if action == "DECIDE" and item["requirement_owner"] == "EXTERNAL":
         return "EXTERNAL_OWNER_ONLY"
     if action == "REQUEST_EXTERNAL" and (item["requirement_owner"] != "EXTERNAL" or
@@ -93,7 +93,7 @@ def validate(contract=None, fixtures=None):
             set(contract["availability"]) == {"QUALIFIED_AUTHORIZED", "UNQUALIFIED", "UNSUPPORTED", "DENIED", "OFFLINE"},
             "GP-WC capability drift")
     examples = fixtures["examples"]
-    required_examples = {"view-local-requirement", "view-external-gate", "view-prod-renamed-acc", "local-decision-pending", "local-decision-receipt", "external-no-duplicate-approve", "request-observe-only", "request-pending", "request-acknowledged-not-deployed", "prod-renamed-acc", "stale-local-decision", "ambiguous-requirement", "denied-view", "unqualified-request", "offline-decision", "lost-acknowledgement", "lost-acknowledgement-no-id"}
+    required_examples = {"view-local-requirement", "view-external-gate", "view-prod-renamed-acc", "local-decision-pending", "local-decision-receipt", "external-no-duplicate-approve", "request-observe-only", "request-pending", "request-acknowledged-not-deployed", "prod-renamed-acc", "stale-local-decision", "ambiguous-requirement", "denied-view", "unqualified-request", "offline-decision", "lost-acknowledgement", "lost-acknowledgement-no-id", "recover-mismatched-label"}
     require(len(examples) == len({item["id"] for item in examples}) and
             {item["id"] for item in examples} >= required_examples, "GP-WC critical fixture drift")
     for item in examples:

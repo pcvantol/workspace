@@ -47,6 +47,7 @@ class GovernedProgressionConsumerTests(unittest.TestCase):
         self.assertEqual("UNSUPPORTED", outcome(self.cases["unqualified-request"]))
         self.assertEqual("OFFLINE_UNAVAILABLE", outcome(self.cases["offline-decision"]))
         self.assertEqual("UNCERTAIN_NO_REPLAY", outcome(self.cases["lost-acknowledgement-no-id"]))
+        self.assertEqual("READ_BACK_SAME_OPERATION", outcome(self.cases["recover-mismatched-label"]))
         changed = copy.deepcopy(self.contract)
         changed["review_boundary"]["local_rejection_cancels_running_external_work"] = True
         with self.assertRaisesRegex(ValueError, "gate/decision authority"):
