@@ -10,6 +10,12 @@ registration and public name mapping remain WPK-IDENTITY gates.
 
 Acceptance: an explicit private data root initializes one opaque stable instance ID and token; the same root survives a normal process restart; two roots remain independent. Versioned read-only HTTP requires bearer authentication and a pinned instance header, rejects malformed paths, input and origin, and exposes status, project catalogue and OpenAPI. A thin local CLI uses the same service. The browser uses actual HTTP responses and labels EMPTY, UNCONFIGURED, STALE, UNAVAILABLE and UNAUTHORIZED separately. A sample catalogue is explicitly demo data. Source tests, strict per-file coverage, local validation, a non-editable wheel install outside the checkout and API/CLI/browser readback form the evidence. No live peer, installer, public registry or production runtime qualification is claimed.
 
+Every HTTP request requires exactly one Host for the Server's actual loopback
+port (`127.0.0.1` or `localhost`). If Origin is supplied, it must appear once
+and match that Host's HTTP origin. Other, missing or duplicate authorities are
+denied before public Client assets, identity and authenticated routes; this
+keeps the loopback browser boundary from trusting a re-bound DNS name.
+
 The own `instance.json` created by `init` has exactly `instance_id` (32
 lowercase hexadecimal characters) and a timezone-aware `created_at` timestamp.
 Startup rejects malformed, duplicate-key, missing/extra-field or ambiguous

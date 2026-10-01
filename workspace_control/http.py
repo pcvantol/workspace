@@ -82,7 +82,22 @@ def handler_for(service):
             self.end_headers()
             self.wfile.write(payload)
 
+        def _trusted_origin(self):
+            hosts = self.headers.get_all("Host", [])
+            allowed = {f"127.0.0.1:{self.server.server_port}",
+                       f"localhost:{self.server.server_port}"}
+            if len(hosts) != 1 or hosts[0] not in allowed:
+                self._reply(403, {"error": "HOST_DENIED"})
+                return False
+            origins = self.headers.get_all("Origin", [])
+            if len(origins) > 1 or (origins and origins[0] != f"http://{hosts[0]}"):
+                self._reply(403, {"error": "ORIGIN_DENIED"})
+                return False
+            return True
+
         def do_GET(self):
+            if not self._trusted_origin():
+                return
             parsed = urlsplit(self.path)
             path = parsed.path
             if parsed.query or parsed.fragment or "%" in path or ".." in path:
@@ -97,9 +112,6 @@ def handler_for(service):
                 return self._reply(200, {"instance_id": service.instance_id})
             if path not in ROUTES:
                 return self._reply(404, {"error": "NOT_FOUND"})
-            expected_origin = f"http://{self.headers.get('Host', '')}"
-            if self.headers.get("Origin") not in (None, expected_origin):
-                return self._reply(403, {"error": "ORIGIN_DENIED"})
             auth = self.headers.get("Authorization", "")
             provided = auth[7:] if auth.startswith("Bearer ") else ""
             if not secrets.compare_digest(provided, service.token):
@@ -120,6 +132,8 @@ def handler_for(service):
             return self._reply(200, result)
 
         def do_POST(self):
+            if not self._trusted_origin():
+                return
             self._reply(405, {"error": "READ_ONLY"})
 
         do_PUT = do_POST
