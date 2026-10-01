@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "contract": "WORKSPACE_PROJECT_BOOTSTRAP_W0_V1",
+  "owner": "workspace",
+  "authority": "CONTRACT_ONLY",
+  "producer_bindings": "UNQUALIFIED",
+  "identity": {
+    "canonical_source": "EP_COMMITTED_REPOSITORY_DECLARATION",
+    "reservation": "PROVISIONAL_UNTIL_OWNER_READBACK",
+    "display_name_is_identity": false,
+    "promotion_preserves_project_and_repository_ids": true
+  },
+  "capability_families": {
+    "FORGE_ARTIFACT_PLAN": "forge",
+    "FORGE_PROJECT_READINESS": "forge",
+    "EP_HOST_TARGET_INVENTORY": "engineering-platform",
+    "EP_GENESIS_CREATE": "engineering-platform",
+    "EP_GENESIS_ADOPT": "engineering-platform",
+    "EP_PROVIDER_SCOPE": "engineering-platform",
+    "EP_MANAGED_CREATE": "engineering-platform",
+    "EP_MANAGED_ADOPT": "engineering-platform",
+    "EP_PROMOTE_MANAGED": "engineering-platform",
+    "EP_OPERATION_READBACK": "engineering-platform"
+  },
+  "journeys": [
+    {
+      "id": "NEW_GENESIS",
+      "source_mode": "NONE",
+      "target_mode": "GENESIS",
+      "target_class": "LOCAL_MISSING_EMPTY_OR_UNBORN",
+      "remote_effect": "FORBIDDEN",
+      "identity_before_readback": "PROVISIONAL",
+      "capabilities_by_phase": {
+        "prepare": ["EP_HOST_TARGET_INVENTORY", "FORGE_ARTIFACT_PLAN"],
+        "submit": ["EP_GENESIS_CREATE"],
+        "readback": ["EP_OPERATION_READBACK"],
+        "enter": ["FORGE_PROJECT_READINESS"]
+      },
+      "effect_owner": "engineering-platform"
+    },
+    {
+      "id": "ADOPT_GENESIS",
+      "source_mode": "LOCAL_EXISTING",
+      "target_mode": "GENESIS",
+      "target_class": "LOCAL_EXISTING_REVIEWED",
+      "remote_effect": "FORBIDDEN",
+      "identity_before_readback": "PROVISIONAL",
+      "capabilities_by_phase": {
+        "prepare": ["EP_HOST_TARGET_INVENTORY", "FORGE_ARTIFACT_PLAN"],
+        "submit": ["EP_GENESIS_ADOPT"],
+        "readback": ["EP_OPERATION_READBACK"],
+        "enter": ["FORGE_PROJECT_READINESS"]
+      },
+      "effect_owner": "engineering-platform"
+    },
+    {
+      "id": "NEW_MANAGED",
+      "source_mode": "NONE",
+      "target_mode": "MANAGED",
+      "target_class": "REMOTE_ABSENT_VERIFIED",
+      "remote_effect": "EXPLICIT_APPROVAL_REQUIRED",
+      "identity_before_readback": "PROVISIONAL",
+      "capabilities_by_phase": {
+        "prepare": ["EP_PROVIDER_SCOPE", "FORGE_ARTIFACT_PLAN"],
+        "submit": ["EP_MANAGED_CREATE"],
+        "readback": ["EP_OPERATION_READBACK"],
+        "enter": ["FORGE_PROJECT_READINESS"]
+      },
+      "effect_owner": "engineering-platform"
+    },
+    {
+      "id": "ADOPT_MANAGED",
+      "source_mode": "REMOTE_EXISTING",
+      "target_mode": "MANAGED",
+      "target_class": "REMOTE_EXISTING_REVIEWED",
+      "remote_effect": "EXPLICIT_APPROVAL_REQUIRED",
+      "identity_before_readback": "PROVISIONAL",
+      "capabilities_by_phase": {
+        "prepare": ["EP_PROVIDER_SCOPE", "FORGE_ARTIFACT_PLAN"],
+        "submit": ["EP_MANAGED_ADOPT"],
+        "readback": ["EP_OPERATION_READBACK"],
+        "enter": ["FORGE_PROJECT_READINESS"]
+      },
+      "effect_owner": "engineering-platform"
+    },
+    {
+      "id": "PROMOTE_GENESIS",
+      "source_mode": "GENESIS",
+      "target_mode": "MANAGED",
+      "target_class": "EXISTING_GENESIS_AND_EXPLICIT_REMOTE_DESTINATION",
+      "remote_effect": "HISTORY_PUBLICATION_APPROVAL_REQUIRED",
+      "identity_before_readback": "EXISTING_COMMITTED",
+      "capabilities_by_phase": {
+        "prepare": ["EP_PROVIDER_SCOPE", "FORGE_ARTIFACT_PLAN"],
+        "submit": ["EP_PROMOTE_MANAGED"],
+        "readback": ["EP_OPERATION_READBACK"],
+        "enter": ["FORGE_PROJECT_READINESS"]
+      },
+      "effect_owner": "engineering-platform"
+    }
+  ],
+  "submission": {
+    "requires": ["EXACT_SCOPE", "FRESH_CAPABILITY_SNAPSHOT", "QUALIFIED_OWNER_OPERATION", "FROZEN_PLAN_DIGEST", "APPLICABLE_DECISION_RECEIPTS", "STABLE_OPERATION_ID"],
+    "unsupported_or_denied_action": "DISABLED_WITH_OWNER_REASON",
+    "lost_acknowledgement": "READ_BACK_SAME_OPERATION",
+    "mode_fallback": "FORBIDDEN",
+    "draft_is_authorization": false,
+    "workspace_executes_effects": false
+  },
+  "projection_states": ["LOADING", "AVAILABLE", "BLOCKED", "UNSUPPORTED", "UNAVAILABLE", "DENIED", "STALE", "CONFLICT", "PARTIAL", "FAILED", "CANCEL_PENDING"],
+  "readiness": {
+    "accepted_is_ready": false,
+    "genesis_remote_ci": "NOT_APPLICABLE",
+    "managed_requires_remote_governance_readback": true,
+    "mission_selection_is_separate": true
+  }
+}
