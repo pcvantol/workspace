@@ -178,6 +178,25 @@ class ReadOnlyTests(unittest.TestCase):
         routes = {item["request"]["url"].removeprefix("{{baseUrl}}") for item in collection["item"]}
         self.assertEqual(set(ROUTES), set(api["paths"]))
         self.assertEqual(set(ROUTES), routes)
+        expected_reads = {"/v1/identity": "Identity", "/v1/status": "Status",
+                          "/v1/projects": "Projects", "/v1/openapi.json": "OpenAPIContract",
+                          "/v1/capabilities": "Capabilities"}
+        schemas = api["components"]["schemas"]
+        for path, name in expected_reads.items():
+            responses = api["paths"][path]["get"]["responses"]
+            for code, response in responses.items():
+                expected = name if code == "200" else "Error"
+                self.assertEqual(response["content"]["application/json"]["schema"]["$ref"],
+                                 f"#/components/schemas/{expected}")
+                self.assertIn(expected, schemas)
+            body = json.loads((self.request(path) if path == "/v1/identity" else
+                               self.authorized(path))[1])
+            schema = schemas[name]
+            self.assertTrue(set(schema["required"]) <= set(body))
+            if schema.get("additionalProperties") is False:
+                self.assertTrue(set(body) <= set(schema["properties"]))
+        self.assertEqual(schemas["Projects"]["properties"]["projects"]["items"]["$ref"],
+                         "#/components/schemas/Project")
         self.assertTrue(all(api["paths"][path]["get"]["responses"]["403"]["description"] ==
                             "Host or Origin denied" for path in ROUTES))
         public = api["paths"]["/v1/identity"]["get"]
@@ -324,6 +343,22 @@ class ReadOnlyTests(unittest.TestCase):
         target.unlink()
         target.symlink_to(self.root / "token")
         self.assertEqual(self.authorized("/v1/projects")[0], 503)
+
+    def test_catalogue_observed_at_schema_preserves_accepted_iso_week_spelling(self):
+        from datetime import datetime, timezone
+        now = datetime.now(timezone.utc)
+        week = now.isocalendar()
+        observed_at = f"{week.year}-W{week.week:02d}-{week.weekday}T{now:%H:%M:%S}+00:00"
+        target = self.root / "projects.json"
+        target.write_text(json.dumps({"source": "LOCAL", "observed_at": observed_at,
+                                      "projects": []}))
+        target.chmod(0o600)
+        result = json.loads(self.authorized("/v1/projects")[1])
+        self.assertEqual(result["observed_at"], observed_at)
+        api = json.loads(self.authorized("/v1/openapi.json")[1])
+        schema = api["components"]["schemas"]["Projects"]["properties"]["observed_at"]
+        self.assertEqual(schema["type"], "string")
+        self.assertNotIn("format", schema)
 
     def test_cli_projects_matches_service_and_fails_closed(self):
         from datetime import datetime, timedelta, timezone

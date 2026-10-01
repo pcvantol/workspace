@@ -10,6 +10,7 @@ import stat
 from urllib.parse import urlsplit
 
 from . import __version__
+from .schemas import OPENAPI_SCHEMAS, SUCCESS_SCHEMA
 from .service import Service
 
 
@@ -68,10 +69,15 @@ def openapi_contract():
             operation["security"] = [{"bearerAuth": []}]
             operation["parameters"] = [{"name": "X-Workspace-Instance", "in": "header", "required": True,
                                         "schema": {"type": "string"}}]
+        for code, response in responses.items():
+            schema = SUCCESS_SCHEMA[operation_id] if code == "200" else "Error"
+            response["content"] = {"application/json": {
+                "schema": {"$ref": f"#/components/schemas/{schema}"}}}
         paths[route] = {"get": operation}
     return {"openapi": "3.0.3", "info": {"title": "Workspace read-only V1", "version": "1"},
             "servers": [{"url": "http://127.0.0.1:{port}", "variables": {"port": {"default": "8765"}}}],
-            "components": {"securitySchemes": {"bearerAuth": {"type": "http", "scheme": "bearer"}}},
+            "components": {"securitySchemes": {"bearerAuth": {"type": "http", "scheme": "bearer"}},
+                           "schemas": OPENAPI_SCHEMAS},
             "paths": paths}
 
 

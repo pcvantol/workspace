@@ -201,6 +201,12 @@ def verify_catalogue_schema(url, instance_id, token, catalogue, page):
         page.get_by_role("status").get_by_text("CONNECTED").wait_for()
         page.locator("#project-state").get_by_text("UNAVAILABLE").wait_for()
         assert page.locator("#projects li").count() == 0
+    now = datetime.now(timezone.utc)
+    week = now.isocalendar()
+    observed_at = f"{week.year}-W{week.week:02d}-{week.weekday}T{now:%H:%M:%S}+00:00"
+    catalogue.write_text(json.dumps({**valid, "observed_at": observed_at}))
+    code, body = read(url + "/v1/projects", token=token, instance=instance_id)
+    assert code == 200 and json.loads(body)["observed_at"] == observed_at
     catalogue.write_text(json.dumps(valid))
     page.locator("#connect").click()
     page.locator("#project-state").get_by_text("AVAILABLE · DEMO").wait_for()
@@ -258,6 +264,7 @@ def verify_installed_capabilities(server_exe, instance_root, cwd, env, url,
     assert read(url + "/v1/openapi.json")[0] == 401
     assert read(url + "/v1/openapi.json", token=token, instance=other_instance_id)[0] == 409
     api = json.loads(read(url + "/v1/openapi.json", token=token, instance=instance_id)[1])
+    verify_installed_response_schemas(url, token, instance_id, api)
     public = api["paths"]["/v1/identity"]["get"]
     assert set(public["responses"]) == {"200", "400", "403"}
     assert "security" not in public and "parameters" not in public
@@ -285,6 +292,25 @@ def verify_installed_capabilities(server_exe, instance_root, cwd, env, url,
     assert inventory["openapi.read"]["local_cli"] == "openapi"
     assert inventory["instance.init"]["exposure"] == "LOCAL_ONLY_ADMIN"
     assert "path" not in inventory["instance.init"]
+
+
+def verify_installed_response_schemas(url, token, instance_id, api):
+    """Resolve every own 200/error schema against real installed HTTP reads."""
+    expected = {"/v1/identity": "Identity", "/v1/status": "Status",
+                "/v1/projects": "Projects", "/v1/openapi.json": "OpenAPIContract",
+                "/v1/capabilities": "Capabilities"}
+    schemas = api["components"]["schemas"]
+    for path, name in expected.items():
+        responses = api["paths"][path]["get"]["responses"]
+        for code, response in responses.items():
+            target = name if code == "200" else "Error"
+            assert response["content"]["application/json"]["schema"]["$ref"] == \
+                f"#/components/schemas/{target}"
+            assert target in schemas
+        body = json.loads(read(url + path, token=token, instance=instance_id)[1])
+        assert set(schemas[name]["required"]) <= set(body)
+        if schemas[name].get("additionalProperties") is False:
+            assert set(body) <= set(schemas[name]["properties"])
 
 
 def verify_browser_project_error_semantics(page, instance_root):
@@ -487,6 +513,7 @@ def main(wheel):
                               "local_projects_cli_parity": "PASS",
                               "local_capabilities_cli_parity": "PASS",
                               "local_openapi_cli_parity": "PASS",
+                              "openapi_response_schemas": "PASS",
                               "browser_capabilities_and_clear": "PASS",
                               "browser_project_error_semantics": "PASS",
                               "browser_forget_token": "PASS",
