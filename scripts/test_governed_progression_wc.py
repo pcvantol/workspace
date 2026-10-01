@@ -34,6 +34,7 @@ class GovernedProgressionConsumerTests(unittest.TestCase):
     def test_revision_target_and_receipt_are_exact(self):
         self.assertEqual("STALE", outcome(self.cases["stale-local-decision"]))
         self.assertEqual("TARGET_CLASS_CONFLICT", outcome(self.cases["prod-renamed-acc"]))
+        self.assertEqual("TARGET_CLASS_CONFLICT", outcome(self.cases["view-prod-renamed-acc"]))
         self.assertEqual("PENDING_OWNER_READBACK", outcome(self.cases["local-decision-pending"]))
         changed = copy.deepcopy(self.contract)
         changed["projections"]["ExternalGate"]["required"].remove("owner_receipt")
