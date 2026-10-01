@@ -19,6 +19,10 @@ The generated OpenAPI contract lists HTTP 403 for this Host/Origin denial on
 every declared read, including the public identity route.
 HEAD follows the corresponding GET status and headers without a response body;
 other recognized non-GET methods remain read-only rejections.
+GET and HEAD accept only origin-form targets beginning with one `/`. An
+absolute-form URI or `//` authority target is INVALID_PATH (400), even with a
+valid loopback Host header; its embedded authority cannot be ignored while
+serving a public or authenticated route.
 
 Protected reads require one unambiguous bearer Authorization header and one
 instance-pin header. Duplicate values, even if identical, are rejected before
