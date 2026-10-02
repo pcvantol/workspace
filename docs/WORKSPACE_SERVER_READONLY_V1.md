@@ -64,6 +64,8 @@ After authenticated Server status succeeds, a network failure reading one option
 
 The local Client marks an authenticated Server CONNECTED and stores its instance pin only after the status envelope names the same instance, a canonical three-part product version, READY state and a recognized own project-source state. A malformed or contradictory successful status leaves the connection UNAVAILABLE without readbacks or a new pin; a foreign instance remains WRONG_INSTANCE.
 
+Pressing Enter in the labelled instance-token field activates the same explicit Connect action as the button, outside text composition. The existing authentication, instance pin, readback and Forget behavior apply to either keyboard or button activation.
+
 The top-level object requires exactly `source`, `observed_at`, and `projects`,
 with optional boolean `partial` (default false). Unknown or missing fields
 make the source unavailable; they cannot silently masquerade as live peer

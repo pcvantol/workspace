@@ -105,6 +105,12 @@ function clearCapabilities() {
   peerState.textContent = `${copy.peerOperations}: ${label('UNQUALIFIED')}`;
   capabilities.replaceChildren();
 }
+document.getElementById('token').addEventListener('keydown', event => {
+  if (event.key === 'Enter' && !event.isComposing && !event.repeat) {
+    event.preventDefault();
+    document.getElementById('connect').click();
+  }
+});
 function validProjectCatalogue(catalogue) {
   if (!catalogue || !Array.isArray(catalogue.projects)) return false;
   if (catalogue.projects.length > 100 || !catalogue.projects.every(item => item &&
