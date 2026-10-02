@@ -5,5 +5,5 @@
   "repositoryType": "source",
   "primaryLanguage": "Python",
   "defaultAssessmentProfile": "standard",
-  "metadata": {"consumer": "Workspace", "rolloutPhase": "observe", "productSourceState": "foundation_only"}
+  "metadata": {"consumer": "Workspace", "rolloutPhase": "observe", "productSourceState": "local_readonly_server_client_subset"}
 }
