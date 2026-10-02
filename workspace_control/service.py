@@ -102,6 +102,44 @@ def _validated_token(token_file):
     return token
 
 
+def _validated_identity(identity):
+    legacy_fields = {"instance_id", "created_at"}
+    fields = set(identity) if isinstance(identity, dict) else set()
+    if fields not in (legacy_fields, legacy_fields | {"init_protocol"}):
+        raise ValueError("invalid instance identity")
+    marker_required = "init_protocol" in fields
+    if marker_required and identity["init_protocol"] != "COMMIT_MARKER_V1":
+        raise ValueError("invalid instance identity")
+    instance_id = identity["instance_id"]
+    if not isinstance(instance_id, str) or re.fullmatch(r"[0-9a-f]{32}", instance_id) is None:
+        raise ValueError("invalid instance identity")
+    created = identity["created_at"]
+    if not isinstance(created, str):
+        raise ValueError("invalid instance creation time")
+    try:
+        timestamp = datetime.fromisoformat(created.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise ValueError("invalid instance creation time") from exc
+    if timestamp.tzinfo is None or timestamp.utcoffset() is None:
+        raise ValueError("invalid instance creation time")
+    return instance_id, marker_required
+
+
+def _validate_initialization_marker(root_fd, instance_id, marker_required):
+    try:
+        marker_info = os.stat("initialized", dir_fd=root_fd, follow_symlinks=False)
+    except FileNotFoundError:
+        if marker_required:
+            raise ValueError("instance initialization incomplete")
+        return  # Legacy roots were initialized before the completion marker.
+    if not marker_required:
+        raise ValueError("invalid legacy instance marker")
+    if not stat.S_ISREG(marker_info.st_mode) or stat.S_IMODE(marker_info.st_mode) != 0o600:
+        raise ValueError("instance initialization incomplete")
+    if _regular_private("initialized", dir_fd=root_fd) != instance_id + "\n":
+        raise ValueError("instance initialization incomplete")
+
+
 def initialize(root):
     """Create the single immutable local identity and secret in an explicit root."""
     _, root_fd = _open_private_root(root)
@@ -157,37 +195,8 @@ class Service:
     def _load_instance(self):
         self.identity = _private_json("instance.json", dir_fd=self._root_fd)
         self.token = _validated_token(_regular_private("token", dir_fd=self._root_fd))
-        legacy_fields = {"instance_id", "created_at"}
-        fields = set(self.identity) if isinstance(self.identity, dict) else set()
-        if fields not in (legacy_fields, legacy_fields | {"init_protocol"}):
-            raise ValueError("invalid instance identity")
-        marker_required = "init_protocol" in fields
-        if marker_required and self.identity["init_protocol"] != "COMMIT_MARKER_V1":
-            raise ValueError("invalid instance identity")
-        instance_id = self.identity["instance_id"]
-        if not isinstance(instance_id, str) or re.fullmatch(r"[0-9a-f]{32}", instance_id) is None:
-            raise ValueError("invalid instance identity")
-        created = self.identity["created_at"]
-        if not isinstance(created, str):
-            raise ValueError("invalid instance creation time")
-        try:
-            timestamp = datetime.fromisoformat(created.replace("Z", "+00:00"))
-        except ValueError as exc:
-            raise ValueError("invalid instance creation time") from exc
-        if timestamp.tzinfo is None or timestamp.utcoffset() is None:
-            raise ValueError("invalid instance creation time")
-        try:
-            marker_info = os.stat("initialized", dir_fd=self._root_fd, follow_symlinks=False)
-        except FileNotFoundError:
-            if marker_required:
-                raise ValueError("instance initialization incomplete")
-            return  # Legacy roots were initialized before the completion marker.
-        if not marker_required:
-            raise ValueError("invalid legacy instance marker")
-        if not stat.S_ISREG(marker_info.st_mode) or stat.S_IMODE(marker_info.st_mode) != 0o600:
-            raise ValueError("instance initialization incomplete")
-        if _regular_private("initialized", dir_fd=self._root_fd) != instance_id + "\n":
-            raise ValueError("instance initialization incomplete")
+        instance_id, marker_required = _validated_identity(self.identity)
+        _validate_initialization_marker(self._root_fd, instance_id, marker_required)
 
     def close(self):
         with self._root_lock:
