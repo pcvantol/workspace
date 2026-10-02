@@ -194,6 +194,9 @@ and checks that authenticated Server status names that same instance. An
 inconsistent status is WRONG INSTANCE; it clears displayed readbacks and cannot
 create or replace the saved pin. This is local consistency checking, not remote
 pairing or an additional trust grant.
+The public identity response has exactly its canonical `instance_id` field.
+An undeclared field leaves an unpinned Client UNAVAILABLE; a canonical foreign
+ID still yields WRONG INSTANCE against an existing pin before any new readback.
 An authenticated capability inventory naming another instance is also WRONG
 INSTANCE: the Client clears capability and project rows, keeps its existing
 binding intact and requires a later consistent read before displaying data.

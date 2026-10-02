@@ -780,6 +780,14 @@ def _verify_browser_bindings(page, first_url, token, first_id, second_id, first)
     page.get_by_role("status").get_by_text("UNAVAILABLE").wait_for()
     assert page.evaluate("localStorage.getItem('workspace.instanceId')") is None
     page.unroute("**/v1/identity")
+    page.route("**/v1/identity", lambda route: route.fulfill(
+        status=200, content_type="application/json",
+        body=json.dumps({"instance_id": first_id, "peer_authority": True})))
+    page.locator("#connect").click()
+    page.get_by_role("status").get_by_text("UNAVAILABLE").wait_for()
+    assert page.evaluate("localStorage.getItem('workspace.instanceId')") is None
+    assert page.locator("#capabilities li").count() == 0
+    page.unroute("**/v1/identity")
     verify_browser_identity_mismatch(page, second_id, None)
     verify_browser_status_envelope(page, first_url, token, first_id)
     page.locator("#connect").click()
@@ -788,6 +796,13 @@ def _verify_browser_bindings(page, first_url, token, first_id, second_id, first)
     page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
     page.get_by_text("capabilities.read · HTTP_EXPOSED").wait_for()
     assert page.evaluate("localStorage.getItem('workspace.instanceId')") == first_id
+    page.route("**/v1/identity", lambda route: route.fulfill(
+        status=200, content_type="application/json",
+        body=json.dumps({"instance_id": second_id, "peer_authority": True})))
+    page.locator("#connect").click()
+    page.get_by_role("status").get_by_text("WRONG INSTANCE").wait_for()
+    assert page.evaluate("localStorage.getItem('workspace.instanceId')") == first_id
+    page.unroute("**/v1/identity")
     verify_browser_identity_mismatch(page, second_id, first_id)
     page.locator("#connect").click()
     page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
