@@ -173,11 +173,15 @@ document.getElementById('connect').addEventListener('click', async () => {
     if (!identityResponse.ok) throw new Error('UNAVAILABLE');
     const identity = await identityResponse.json();
     if (attempt !== connectionAttempt) return;
-    if (typeof identity.instance_id !== 'string' || !/^[0-9a-f]{32}$/.test(identity.instance_id)) {
+    if (!identity || typeof identity !== 'object' || Array.isArray(identity) ||
+        typeof identity.instance_id !== 'string' || !/^[0-9a-f]{32}$/.test(identity.instance_id)) {
       throw new Error('UNAVAILABLE');
     }
     const pinned = localStorage.getItem('workspace.instanceId');
     if (pinned && pinned !== identity.instance_id) throw new Error('WRONG_INSTANCE');
+    if (Object.keys(identity).length !== 1 || !Object.hasOwn(identity, 'instance_id')) {
+      throw new Error('UNAVAILABLE');
+    }
     const token = document.getElementById('token').value;
     const headers = {'Authorization': `Bearer ${token}`, 'X-Workspace-Instance': identity.instance_id};
     const statusResponse = await fetch('/v1/status', {headers, cache: 'no-store'});
