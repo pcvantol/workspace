@@ -34,7 +34,7 @@ native app signing/distribution and remote host qualification remain separate
 evidence gates; do not infer them from a source build. Other quality and UI
 improvements remain candidates after this selected delivery.
 
-### Native Client local milestone and active lifecycle repair
+### Native Client local milestones and HTTPS Server candidate
 
 Protected PR #117 delivered the local 2.5.0 milestone. Its test bundle opens
 as a real macOS window and reads identity,
@@ -49,8 +49,11 @@ fresh ad hoc build exposed a blocking Keychain read before the app window
 appeared when macOS awaited access for the changed signature. The active r81
 repair moves credential work off the UI thread, keeps a visible cancel path and
 tests pending-access startup; signed candidate Keychain behavior remains
-`NOT_RUN`. The current Server binds loopback only, so a controlled HTTPS
-listener and real second-Mac trust/auth readback remain open.
+`NOT_RUN`. PR #118 protected-delivered the responsive Keychain lifecycle. The
+next same-assignment candidate adds an explicit-interface TLS listener to the
+installed Server, with loopback certificate/Host/auth/pin qualification. Real
+second-Mac trust/auth readback remains `NOT_RUN` until an actual host and
+trusted certificate are qualified; local TLS cannot close it.
 
 ## Historical first implementation — 1 October 2026
 

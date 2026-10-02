@@ -22,6 +22,10 @@ def main(argv=None):
     commands.add_parser("openapi")
     start = commands.add_parser("serve")
     start.add_argument("--port", type=int, default=8765)
+    start.add_argument("--bind", default="127.0.0.1", help="explicit IPv4 listener interface")
+    start.add_argument("--tls-server-name", help="exact HTTPS Host and certificate name")
+    start.add_argument("--tls-cert", help="absolute owner-held TLS certificate path")
+    start.add_argument("--tls-key", help="absolute private TLS key path (mode 0600)")
     args = parser.parse_args(argv)
     try:
         if args.command == "init":
@@ -42,7 +46,12 @@ def main(argv=None):
         else:
             if not 1 <= args.port <= 65535:
                 raise ValueError("port out of range")
-            serve(args.root, args.port)
+            if (args.bind, args.tls_server_name, args.tls_cert, args.tls_key) == (
+                    "127.0.0.1", None, None, None):
+                serve(args.root, args.port)
+            else:
+                serve(args.root, args.port, bind=args.bind, server_name=args.tls_server_name,
+                      cert_file=args.tls_cert, key_file=args.tls_key)
     except (OSError, ValueError, UnicodeError) as exc:
         print(f"workspace-server: {exc}", file=sys.stderr)
         return 2

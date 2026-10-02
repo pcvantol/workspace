@@ -8,6 +8,8 @@ import os
 from pathlib import Path
 import re
 import socket
+import ssl
+import subprocess
 import tempfile
 import threading
 import time
@@ -18,7 +20,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from workspace_control.cli import main, client_main
-from workspace_control.http import ThreadingHTTPServer, handler_for, serve, ROUTES, OPERATIONS
+from workspace_control.http import ThreadingHTTPServer, handler_for, listener_config, serve, ROUTES, OPERATIONS
 from workspace_control.service import Service, _regular_private, initialize, inspect
 
 
@@ -480,6 +482,107 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertFalse((moved / "instance.json").exists())
         self.assertFalse((fresh / "initialized").exists())
 
+    def test_remote_listener_requires_exact_interface_and_complete_tls(self):
+        for bind in ("0.0.0.0", "::", "localhost", "127.0.0.2", "224.0.0.1"):
+            with self.subTest(bind=bind), self.assertRaises(ValueError):
+                listener_config(bind)
+        with self.assertRaisesRegex(ValueError, "requires TLS"):
+            listener_config("192.168.1.134")
+        for supplied in ({"server_name": "server.example"},
+                         {"cert_file": "/tmp/cert.pem", "key_file": "/tmp/key.pem"}):
+            with self.subTest(supplied=supplied), self.assertRaisesRegex(ValueError, "together"):
+                listener_config("127.0.0.1", **supplied)
+        self.assertIsNone(listener_config("127.0.0.1"))
+
+    def test_https_verified_certificate_host_origin_and_pinned_auth(self):
+        cert = Path(self.temp.name) / "tls-cert.pem"
+        key = Path(self.temp.name) / "tls-key.pem"
+        subprocess.run(["openssl", "req", "-x509", "-newkey", "rsa:2048", "-nodes",
+                        "-keyout", str(key), "-out", str(cert), "-days", "1",
+                        "-subj", "/CN=localhost", "-addext", "subjectAltName=DNS:localhost"],
+                       check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        key.chmod(0o600)
+        context = listener_config("127.0.0.1", "localhost", str(cert), str(key))
+        for bad_name in ("bad/name", "bad..name", "https://localhost"):
+            with self.subTest(bad_name=bad_name), self.assertRaises(ValueError):
+                listener_config("127.0.0.1", bad_name, str(cert), str(key))
+        key.chmod(0o644)
+        with self.assertRaisesRegex(ValueError, "private key"):
+            listener_config("127.0.0.1", "localhost", str(cert), str(key))
+        key.chmod(0o600)
+        trusted = ssl.create_default_context(cafile=str(cert))
+        secure = ThreadingHTTPServer(("127.0.0.1", 0),
+                                     handler_for(self.service, public_host="localhost", scheme="https"))
+        secure.socket = context.wrap_socket(secure.socket, server_side=True,
+                                            do_handshake_on_connect=False)
+        thread = threading.Thread(target=secure.serve_forever, daemon=True)
+        thread.start()
+        self.addCleanup(secure.server_close)
+        self.addCleanup(secure.shutdown)
+
+        def request(host, origin=None, token=None, pin=None, client_context=trusted):
+            connection = http.client.HTTPSConnection("localhost", secure.server_port,
+                                                     timeout=2, context=client_context)
+            try:
+                connection.putrequest("GET", "/v1/status", skip_host=True)
+                connection.putheader("Host", host)
+                if origin is not None:
+                    connection.putheader("Origin", origin)
+                if token is not None:
+                    connection.putheader("Authorization", "Bearer " + token)
+                if pin is not None:
+                    connection.putheader("X-Workspace-Instance", pin)
+                connection.endheaders()
+                response = connection.getresponse()
+                return response.status, json.loads(response.read())
+            finally:
+                connection.close()
+
+        host = f"localhost:{secure.server_port}"
+        self.assertEqual(request(host, f"https://{host}", self.service.token, self.instance)[0], 200)
+        connection = http.client.HTTPSConnection("localhost", secure.server_port,
+                                                 timeout=2, context=trusted)
+        try:
+            connection.request("GET", "/v1/openapi.json", headers={
+                "Authorization": "Bearer " + self.service.token,
+                "X-Workspace-Instance": self.instance,
+            })
+            response = connection.getresponse()
+            self.assertEqual(response.status, 200)
+            self.assertEqual(json.loads(response.read())["servers"],
+                             [{"url": f"https://{host}"}])
+        finally:
+            connection.close()
+        self.assertEqual(request("evil.example:" + str(secure.server_port),
+                                 token=self.service.token, pin=self.instance),
+                         (403, {"error": "HOST_DENIED"}))
+        self.assertEqual(request(host, f"http://{host}", self.service.token, self.instance),
+                         (403, {"error": "ORIGIN_DENIED"}))
+        self.assertEqual(request(host, token="wrong", pin=self.instance),
+                         (401, {"error": "UNAUTHORIZED"}))
+        self.assertEqual(request(host, token=self.service.token, pin="wrong"),
+                         (409, {"error": "WRONG_INSTANCE"}))
+        with self.assertRaises(ssl.SSLCertVerificationError):
+            request(host, client_context=ssl.create_default_context())
+        with socket.create_connection(("127.0.0.1", secure.server_port), timeout=2) as raw:
+            with self.assertRaises(ssl.SSLCertVerificationError):
+                trusted.wrap_socket(raw, server_hostname="other.example")
+
+    def test_serve_wraps_explicit_tls_listener(self):
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        with patch("workspace_control.http.listener_config", return_value=context), \
+             patch("workspace_control.http.ThreadingHTTPServer") as server_class, \
+             patch.object(context, "wrap_socket", return_value=object()) as wrap:
+            original_socket = object()
+            server_class.return_value.socket = original_socket
+            serve(self.root, 0, bind="192.0.2.10", server_name="server.example",
+                  cert_file="/absolute/cert", key_file="/absolute/key")
+            server_class.assert_called_once()
+            self.assertEqual(server_class.call_args.args[0], ("192.0.2.10", 0))
+            wrap.assert_called_once_with(original_socket, server_side=True,
+                                         do_handshake_on_connect=False)
+            server_class.return_value.serve_forever.assert_called_once_with(poll_interval=0.1)
+
     def test_serve_lock_uses_opened_root_when_path_changes_before_lock(self):
         other = Path(self.temp.name) / "two"
         other.mkdir(mode=0o700)
@@ -813,8 +916,8 @@ class ReadOnlyTests(unittest.TestCase):
         other.chmod(0o600)
         real_open = os.open
 
-        def replace_after_open(path, flags):
-            descriptor = real_open(path, flags)
+        def replace_after_open(path, flags, mode=0o777, *, dir_fd=None):
+            descriptor = real_open(path, flags, mode, dir_fd=dir_fd)
             source.unlink()
             source.symlink_to(other)
             return descriptor
@@ -948,6 +1051,13 @@ class ReadOnlyTests(unittest.TestCase):
         with patch("workspace_control.cli.serve") as mock_serve:
             self.assertEqual(main(["--root", str(self.root), "serve", "--port", "8767"]), 0)
             mock_serve.assert_called_once_with(str(self.root), 8767)
+        with patch("workspace_control.cli.serve") as mock_serve:
+            self.assertEqual(main(["--root", str(self.root), "serve", "--port", "8767",
+                                   "--bind", "192.0.2.10", "--tls-server-name", "server.example",
+                                   "--tls-cert", "/absolute/cert", "--tls-key", "/absolute/key"]), 0)
+            mock_serve.assert_called_once_with(str(self.root), 8767, bind="192.0.2.10",
+                                               server_name="server.example",
+                                               cert_file="/absolute/cert", key_file="/absolute/key")
         with patch("workspace_control.cli.webbrowser.open", return_value=True) as open_browser:
             self.assertEqual(client_main(["--url", "http://127.0.0.1:8767"]), 0)
             open_browser.assert_called_once_with("http://127.0.0.1:8767/")
