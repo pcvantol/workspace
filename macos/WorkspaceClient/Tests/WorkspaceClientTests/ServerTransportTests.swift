@@ -80,6 +80,23 @@ final class PendingCredentials: CredentialStore, @unchecked Sendable {
     func forget() throws {}
 }
 
+final class PendingSaveCredentials: CredentialStore, @unchecked Sendable {
+    let release = DispatchSemaphore(value: 0)
+    private(set) var savedBinding: ServerBinding?
+    private(set) var savedToken: String?
+    func binding() throws -> ServerBinding? { savedBinding }
+    func token() throws -> String? { savedToken }
+    func save(binding: ServerBinding, token: String) throws {
+        release.wait()
+        savedBinding = binding
+        savedToken = token
+    }
+    func forget() throws {
+        savedBinding = nil
+        savedToken = nil
+    }
+}
+
 final class ServerTransportTests: XCTestCase {
     let instance = "0123456789abcdef0123456789abcdef"
 
@@ -260,5 +277,40 @@ final class ServerTransportTests: XCTestCase {
         credentials.release.signal()
         try? await Task.sleep(for: .milliseconds(30))
         await MainActor.run { XCTAssertEqual(state.phase, "UNAVAILABLE") }
+    }
+
+    func testPendingPinSaveCannotBeCancelledOrSuperseded() async {
+        let credentials = PendingSaveCredentials()
+        let instance = self.instance
+        let client = transport { request in
+            switch request.url!.path {
+            case "/v1/identity":
+                return (200, Data("{\"instance_id\":\"\(instance)\"}".utf8))
+            case "/v1/status":
+                return (200, Data("{\"instance_id\":\"\(instance)\",\"version\":\"2.5.1\",\"state\":\"READY\",\"project_source\":\"UNCONFIGURED\"}".utf8))
+            case "/v1/projects":
+                return (200, Data("{\"state\":\"UNCONFIGURED\",\"projects\":[],\"source\":null,\"observed_at\":null,\"partial\":false,\"stale\":false}".utf8))
+            case "/v1/capabilities":
+                return (200, Data("{\"peer_operations_qualified\":false,\"operations\":[]}".utf8))
+            default:
+                XCTFail("Unexpected route")
+                return (404, Data())
+            }
+        }
+        let state = await MainActor.run { ClientState(keychain: credentials, transport: client) }
+        await Self.waitUntil { state.phase == "UNCONFIGURED" }
+        await MainActor.run { state.connect(address: "http://127.0.0.1:8765", enteredToken: "secret") }
+        await Self.waitUntil { state.phase == "SAVING" }
+        await MainActor.run {
+            state.cancel()
+            state.connect(address: "https://other.example", enteredToken: "other")
+            state.forget()
+            XCTAssertEqual(state.phase, "SAVING")
+        }
+        credentials.release.signal()
+        await Self.waitUntil { state.phase == "CONNECTED" }
+        XCTAssertEqual(credentials.savedBinding?.instanceID, instance)
+        XCTAssertEqual(credentials.savedBinding?.endpoint, "http://127.0.0.1:8765/")
+        XCTAssertEqual(credentials.savedToken, "secret")
     }
 }

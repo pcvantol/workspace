@@ -120,12 +120,13 @@ final class ClientState: ObservableObject {
     @Published private(set) var canForgetBinding = false
 
     private let credentials: CredentialWorker
-    private let transport = ServerTransport()
+    private let transport: ServerTransport
     private var activeTask: Task<Void, Never>?
     private var attempt = 0
 
-    init(keychain: any CredentialStore = ClientKeychain()) {
+    init(keychain: any CredentialStore = ClientKeychain(), transport: ServerTransport = ServerTransport()) {
         credentials = CredentialWorker(store: keychain)
+        self.transport = transport
         phase = "LOADING"
         detail = "Checking the saved Server binding."
         Task {
@@ -157,7 +158,7 @@ final class ClientState: ObservableObject {
     }
 
     func connect(address: String, enteredToken: String = "") {
-        guard phase != "FORGETTING" else { return }
+        guard phase != "FORGETTING", phase != "SAVING" else { return }
         activeTask?.cancel()
         attempt += 1
         let current = attempt
@@ -181,8 +182,9 @@ final class ClientState: ObservableObject {
                 guard !Task.isCancelled, current == attempt else { return }
                 let newBinding = ServerBinding(endpoint: endpoint.url.absoluteString,
                                                instanceID: result.identity.instance_id)
+                phase = "SAVING"
+                detail = "Saving the verified Server binding in Mac Keychain."
                 try await credentials.save(binding: newBinding, token: token)
-                guard !Task.isCancelled, current == attempt else { return }
                 savedEndpoint = newBinding.endpoint
                 savedInstance = newBinding.instanceID
                 canForgetBinding = true
@@ -201,16 +203,18 @@ final class ClientState: ObservableObject {
 
     func reconnect() {
         guard !savedEndpoint.isEmpty,
-              phase != "LOADING", phase != "CONNECTING", phase != "FORGETTING" else { return }
+              phase != "LOADING", phase != "CONNECTING", phase != "SAVING",
+              phase != "FORGETTING" else { return }
         connect(address: savedEndpoint)
     }
 
     func cancel() {
+        guard phase != "SAVING", phase != "FORGETTING" else { return }
         activeTask?.cancel()
         attempt += 1
         if phase == "LOADING" {
             phase = "UNAVAILABLE"
-            detail = "Saved credential check cancelled. Open Settings to retry."
+            detail = "Saved credential check cancelled. A pending Mac Keychain request may need to finish before retry."
         } else {
             phase = "DISCONNECTED"
             detail = "Connection cancelled. Previous data, if shown, is cached."
@@ -218,6 +222,7 @@ final class ClientState: ObservableObject {
     }
 
     func forget() {
+        guard phase != "SAVING", phase != "FORGETTING" else { return }
         activeTask?.cancel()
         attempt += 1
         let current = attempt
