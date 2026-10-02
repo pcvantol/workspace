@@ -41,7 +41,9 @@ The local HTTP handler does not write raw request targets to stderr or access
 logs. Rejected queries and malformed requests may contain accidental token text;
 their response status is preserved without copying that text into logs.
 Parser-level error responses also omit the supplied raw request line and
-error detail, while retaining the HTTP error status.
+error detail, while retaining the HTTP error status. They use the same generic
+JSON, no-store, nosniff and anti-framing headers as routed errors, close the
+connection, and emit no body for HEAD.
 
 Protected reads require one unambiguous bearer Authorization header and one
 instance-pin header. Duplicate values, even if identical, are rejected before

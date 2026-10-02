@@ -99,6 +99,36 @@ def verify_loopback_host_binding(port, instance_id, token):
     _verify_rejected_hosts(raw, port)
     _verify_rejected_targets(raw, port)
     _verify_auth_headers(raw, port, instance_id, token)
+    _verify_parser_error_boundary(port)
+
+
+def _verify_parser_error_boundary(port):
+    """Reject malformed installed requests without losing own response guards."""
+    secret = b"installed-parser-secret"
+    for request, status, expect_body in (
+        (b"GET /?token=" + secret + b" HTTP/1.1 EXTRA\r\n", b"400", True),
+        (b"UNKNOWN /?token=" + secret + b" HTTP/1.1\r\n", b"501", True),
+        (b"HEAD /?token=" + secret + b" HTTP/1.1 EXTRA\r\n", b"400", False),
+        (b"HEAD\t/?token=" + secret + b" HTTP/1.1 EXTRA\r\n", b"400", False),
+    ):
+        with socket.create_connection(("127.0.0.1", port), timeout=2) as connection:
+            connection.sendall(request + b"Host: 127.0.0.1\r\n\r\n")
+            chunks = []
+            while chunk := connection.recv(4096):
+                chunks.append(chunk)
+        response = b"".join(chunks)
+        headers, body = response.split(b"\r\n\r\n", 1)
+        assert b" " + status + b" " in headers.split(b"\r\n", 1)[0]
+        assert b"Content-Type: application/json; charset=utf-8" in headers
+        assert b"Cache-Control: no-store" in headers
+        assert b"X-Content-Type-Options: nosniff" in headers
+        assert b"frame-ancestors 'none'" in headers
+        assert b"X-Frame-Options: DENY" in headers
+        assert secret not in response
+        if expect_body:
+            assert json.loads(body) == {"error": "REQUEST_REJECTED"}
+        else:
+            assert body == b""
 
 
 def _verify_allowed_hosts(raw, port):

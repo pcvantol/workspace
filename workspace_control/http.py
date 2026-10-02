@@ -91,8 +91,14 @@ def handler_for(service):
             return
 
         def send_error(self, code, message=None, explain=None):
-            # The parser can include the raw request line in its error message.
-            super().send_error(code)
+            # Parser diagnostics can contain the raw request line. Keep its
+            # status, but return the same private, non-embeddable response
+            # shape as all other own HTTP errors.
+            self.close_connection = True
+            # Python 3.10 can leave an invalid request at the HTTP/0.9
+            # default, which would suppress the status line and all headers.
+            self.request_version = "HTTP/1.0"
+            self._reply(code, {"error": "REQUEST_REJECTED"})
 
         def _reply(self, code, value, content_type="application/json; charset=utf-8"):
             payload = value if isinstance(value, bytes) else json.dumps(value, sort_keys=True).encode()
@@ -104,7 +110,10 @@ def handler_for(service):
             self.send_header("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; frame-ancestors 'none'")
             self.send_header("X-Frame-Options", "DENY")
             self.end_headers()
-            if self.command != "HEAD":
+            # A malformed HEAD request line can fail parsing before command is set.
+            is_head = (getattr(self, "command", None) == "HEAD" or
+                       getattr(self, "raw_requestline", b"").split(None, 1)[:1] == [b"HEAD"])
+            if not is_head:
                 self.wfile.write(payload)
 
         def _trusted_origin(self):

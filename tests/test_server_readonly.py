@@ -144,9 +144,11 @@ class ReadOnlyTests(unittest.TestCase):
 
     def test_parser_errors_do_not_echo_request_targets(self):
         secret = b"private-token-value-do-not-echo"
-        for request_line, status in (
-            (b"GET /v1/identity?token=" + secret + b" HTTP/1.1 EXTRA\r\n", b"400"),
-            (b"UNKNOWN /v1/identity?token=" + secret + b" HTTP/1.1\r\n", b"501"),
+        for request_line, status, body_expected in (
+            (b"GET /v1/identity?token=" + secret + b" HTTP/1.1 EXTRA\r\n", b"400", True),
+            (b"UNKNOWN /v1/identity?token=" + secret + b" HTTP/1.1\r\n", b"501", True),
+            (b"HEAD /v1/identity?token=" + secret + b" HTTP/1.1 EXTRA\r\n", b"400", False),
+            (b"HEAD\t/v1/identity?token=" + secret + b" HTTP/1.1 EXTRA\r\n", b"400", False),
         ):
             with self.subTest(status=status), socket.create_connection(
                 ("127.0.0.1", self.server.server_port), timeout=2
@@ -156,7 +158,17 @@ class ReadOnlyTests(unittest.TestCase):
                 while chunk := connection.recv(4096):
                     chunks.append(chunk)
                 response = b"".join(chunks)
-                self.assertIn(b" " + status + b" ", response.split(b"\r\n", 1)[0])
+                headers, body = response.split(b"\r\n\r\n", 1)
+                self.assertIn(b" " + status + b" ", headers.split(b"\r\n", 1)[0])
+                self.assertIn(b"Content-Type: application/json; charset=utf-8", headers)
+                self.assertIn(b"Cache-Control: no-store", headers)
+                self.assertIn(b"X-Content-Type-Options: nosniff", headers)
+                self.assertIn(b"frame-ancestors 'none'", headers)
+                self.assertIn(b"X-Frame-Options: DENY", headers)
+                if body_expected:
+                    self.assertEqual(json.loads(body), {"error": "REQUEST_REJECTED"})
+                else:
+                    self.assertEqual(body, b"")
                 self.assertNotIn(secret, response)
 
     def test_ambiguous_auth_and_pin_headers_are_rejected(self):
