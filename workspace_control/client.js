@@ -106,7 +106,7 @@ function clearCapabilities() {
   capabilities.replaceChildren();
 }
 document.getElementById('token').addEventListener('keydown', event => {
-  if (event.key === 'Enter' && !event.isComposing) {
+  if (event.key === 'Enter' && !event.isComposing && !event.repeat) {
     event.preventDefault();
     document.getElementById('connect').click();
   }

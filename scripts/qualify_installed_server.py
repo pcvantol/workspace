@@ -455,7 +455,21 @@ def verify_browser_locales(browser, url, token):
             assert page.locator("#capability-readback #capabilities").count() == 1
             assert page.locator("label[for=token]").inner_text() == token_label
             page.locator("#token").fill("wrong")
-            page.locator("#token").press("Enter")
+            if locale == "en-US":
+                identity_requests = []
+                def observe_identity(route):
+                    identity_requests.append(route.request.url)
+                    route.continue_()
+                page.route("**/v1/identity", observe_identity)
+                page.locator("#token").focus()
+                page.keyboard.down("Enter")
+                page.keyboard.down("Enter")
+                page.keyboard.up("Enter")
+                page.locator("#state").get_by_text(unauthorized).wait_for()
+                assert len(identity_requests) == 1
+                page.unroute("**/v1/identity", observe_identity)
+            else:
+                page.locator("#token").press("Enter")
             page.locator("#state").get_by_text(unauthorized).wait_for()
             page.locator("#token").fill(token)
             page.locator("#token").press("Enter")
