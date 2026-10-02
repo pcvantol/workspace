@@ -15,7 +15,8 @@ from zipfile import ZipFile
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGE_FILES = {"workspace_control/__init__.py", "workspace_control/service.py",
                  "workspace_control/http.py", "workspace_control/cli.py",
-                 "workspace_control/client.html", "workspace_control/client.js"}
+                 "workspace_control/client.html", "workspace_control/client.js",
+                 "workspace_control/client.css"}
 
 
 def inspect_wheel(wheel, expected_version):
@@ -106,6 +107,7 @@ def main():
                  "root = importlib.resources.files('workspace_control'); "
                  "assert (root / 'client.html').is_file(); "
                  "assert (root / 'client.js').is_file(); "
+                 "assert (root / 'client.css').is_file(); "
                  "print(json.dumps({'version': workspace_control.__version__, "
                  "'path': str(pathlib.Path(workspace_control.__file__).resolve())}))")
         result = subprocess.run([str(install_python), "-c", probe], check=True,

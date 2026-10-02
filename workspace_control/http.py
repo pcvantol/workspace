@@ -90,7 +90,7 @@ def handler_for(service):
             self.send_header("Content-Length", str(len(payload)))
             self.send_header("Cache-Control", "no-store")
             self.send_header("X-Content-Type-Options", "nosniff")
-            self.send_header("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'unsafe-inline'; frame-ancestors 'none'")
+            self.send_header("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; frame-ancestors 'none'")
             self.send_header("X-Frame-Options", "DENY")
             self.end_headers()
             if self.command != "HEAD":
@@ -124,6 +124,9 @@ def handler_for(service):
             if path == "/client.js":
                 script = importlib.resources.files("workspace_control").joinpath("client.js").read_bytes()
                 return self._reply(200, script, "text/javascript; charset=utf-8")
+            if path == "/client.css":
+                style = importlib.resources.files("workspace_control").joinpath("client.css").read_bytes()
+                return self._reply(200, style, "text/css; charset=utf-8")
             if path == "/v1/identity":
                 return self._reply(200, {"instance_id": service.instance_id})
             if path not in ROUTES:

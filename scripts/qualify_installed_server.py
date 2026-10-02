@@ -117,6 +117,7 @@ def _verify_rejected_hosts(raw, port):
         assert raw("/v1/identity", hosts)[0] == 403
         assert raw("/v1/openapi.json", hosts)[0] == 403
         assert raw("/", hosts)[0] == 403
+        assert raw("/client.css", hosts)[0] == 403
         for method in ("POST", "HEAD", "OPTIONS", "TRACE", "CONNECT"):
             assert raw("/v1/status", hosts, method=method)[0] == 403
 
@@ -384,6 +385,11 @@ def verify_browser_frame_denial(browser, url):
         response = page.request.get(url + "/")
         assert response.headers["x-frame-options"] == "DENY"
         assert "frame-ancestors 'none'" in response.headers["content-security-policy"]
+        assert "style-src 'self'" in response.headers["content-security-policy"]
+        assert "'unsafe-inline'" not in response.headers["content-security-policy"]
+        style = page.request.get(url + "/client.css")
+        assert style.status == 200 and style.headers["content-type"] == "text/css; charset=utf-8"
+        assert style.headers["cache-control"] == "no-store"
         identity = page.request.get(url + "/v1/identity")
         assert identity.headers["x-frame-options"] == "DENY"
         with page.expect_console_message(lambda message: "frame-ancestors 'none'" in message.text) as denial:
@@ -683,6 +689,7 @@ def main(wheel):
                                           first_id, second_id, token, other_token)
             assert json.loads(read(first_url + "/v1/projects", token=token, instance=first_id)[1])["state"] == "UNCONFIGURED"
             assert b"/client.js" in read(first_url + "/")[1]
+            assert b"/client.css" in read(first_url + "/")[1]
             assert b"fetch('/v1/projects'" in read(first_url + "/client.js")[1]
             assert b"fetch('/v1/capabilities'" in read(first_url + "/client.js")[1]
             from playwright.sync_api import sync_playwright
@@ -691,6 +698,7 @@ def main(wheel):
                 verify_browser_frame_denial(browser, first_url)
                 page = browser.new_page(locale="en-US")
                 _verify_browser_bindings(page, first_url, token, first_id, second_id, first)
+                assert page.locator("body").evaluate("element => getComputedStyle(element).backgroundColor") == "rgb(246, 248, 250)"
                 _verify_browser_auth_recovery(page, token, second_id, second_url, other_token)
                 _verify_browser_catalogue(page, browser, first_url, token, first_id, second_id,
                                           first, root, env, server_exe)

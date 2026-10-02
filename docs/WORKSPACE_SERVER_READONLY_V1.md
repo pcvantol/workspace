@@ -21,6 +21,10 @@ Every own response also denies embedding with CSP `frame-ancestors 'none'` and
 `X-Frame-Options: DENY`. The public local Client and token-entry surface must
 open as a top-level page, not inside an unrelated page's frame. This does not
 change route authentication or allow a non-loopback Host/Origin.
+The Client stylesheet is a packaged same-origin public asset at `/client.css`;
+the Server's CSP permits styles only from `self` and no longer permits inline
+styles. The CSS route has the same Host/Origin, no-store and anti-framing
+response boundary as the other local Client assets.
 HEAD follows the corresponding GET status and headers without a response body;
 other recognized non-GET methods remain read-only rejections.
 GET and HEAD accept only origin-form targets beginning with one `/`. An
