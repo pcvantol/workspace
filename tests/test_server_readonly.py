@@ -581,6 +581,8 @@ class ReadOnlyTests(unittest.TestCase):
             created = initialize(fresh)
         self.assertEqual(Service(moved).instance_id, created)
         self.assertTrue((moved / "token").is_file())
+        self.assertEqual((moved / "initialized").read_text(), created + "\n")
+        self.assertEqual((moved / "initialized").stat().st_mode & 0o777, 0o600)
         self.assertEqual(Service(other).instance_id, other_id)
         self.assertEqual((other / "token").read_bytes(), other_token)
 
@@ -597,7 +599,7 @@ class ReadOnlyTests(unittest.TestCase):
         def fail_second_sync(descriptor):
             nonlocal calls
             calls += 1
-            if calls == 2:
+            if calls == 3:
                 fresh.rename(moved)
                 fresh.symlink_to(other, target_is_directory=True)
                 (moved / "instance.json").rename(moved / "original-instance.json")
@@ -609,10 +611,40 @@ class ReadOnlyTests(unittest.TestCase):
                 initialize(fresh)
         self.assertEqual((moved / "instance.json").read_bytes(), b"replacement")
         self.assertTrue((moved / "token").is_file())
+        self.assertEqual((moved / "initialized").stat().st_mode & 0o777, 0)
         self.assertRaises(ValueError, initialize, moved)
         self.assertRaises(ValueError, Service, moved)
         self.assertEqual(Service(other).instance_id, other_id)
         self.assertEqual((other / "token").read_bytes(), other_token)
+
+    def test_final_sync_failure_cannot_publish_new_instance(self):
+        fresh = Path(self.temp.name) / "fresh"
+        fresh.mkdir(mode=0o700)
+        actual_fsync = os.fsync
+        calls = 0
+        def fail_token_sync(descriptor):
+            nonlocal calls
+            calls += 1
+            if calls == 3:
+                raise OSError("token sync failure")
+            return actual_fsync(descriptor)
+        with patch("workspace_control.service.os.fsync", side_effect=fail_token_sync):
+            with self.assertRaisesRegex(OSError, "token sync failure"):
+                initialize(fresh)
+        self.assertTrue((fresh / "instance.json").is_file())
+        self.assertTrue((fresh / "token").is_file())
+        self.assertEqual((fresh / "initialized").stat().st_mode & 0o777, 0)
+        self.assertRaisesRegex(ValueError, "incomplete", Service, fresh)
+        self.assertRaises(ValueError, initialize, fresh)
+
+    def test_marker_publication_failure_cannot_start_instance(self):
+        fresh = Path(self.temp.name) / "fresh"
+        fresh.mkdir(mode=0o700)
+        with patch("workspace_control.service.os.fchmod", side_effect=OSError("publish failure")):
+            with self.assertRaisesRegex(OSError, "publish failure"):
+                initialize(fresh)
+        self.assertEqual((fresh / "initialized").stat().st_mode & 0o777, 0)
+        self.assertRaisesRegex(ValueError, "incomplete", Service, fresh)
 
     def test_bad_roots_and_private_files(self):
         self.assertEqual(main(["--root", "relative", "init"]), 2)

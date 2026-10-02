@@ -56,6 +56,10 @@ root directory. If the path is renamed or replaced during initialization, both
 files remain in that opened root. A failed initialization leaves any partial
 files for operator inspection rather than deleting a concurrent replacement;
 retry refuses a partial root.
+New roots receive a private `initialized` marker that remains unreadable until
+identity and token writes have synced. The final permission change publishes
+the marker; startup rejects an unfinished marker even if both data files look
+valid. A missing marker retains compatibility with roots from earlier releases.
 Startup rejects malformed, duplicate-key, missing/extra-field or ambiguous
 identity state. It does not reset or silently replace the identity/token; a
 valid restored file keeps the same browser pin across restart.

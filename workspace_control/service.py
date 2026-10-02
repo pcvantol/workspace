@@ -105,14 +105,21 @@ def _validated_token(token_file):
 def initialize(root):
     """Create the single immutable local identity and secret in an explicit root."""
     _, root_fd = _open_private_root(root)
+    marker_fd = None
     try:
-        for name in ("instance.json", "token"):
+        for name in ("instance.json", "token", "initialized"):
             try:
                 os.stat(name, dir_fd=root_fd, follow_symlinks=False)
             except FileNotFoundError:
                 continue
             raise ValueError("instance already initialized or partially initialized")
         instance_id = secrets.token_hex(16)
+        marker_fd = os.open("initialized", os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                            0o000, dir_fd=root_fd)
+        marker = (instance_id + "\n").encode("ascii")
+        if os.write(marker_fd, marker) != len(marker):
+            raise OSError("incomplete initialization marker")
+        os.fsync(marker_fd)
         created = datetime.now(timezone.utc).isoformat()
         values = (("instance.json", json.dumps({"instance_id": instance_id, "created_at": created}) + "\n"),
                   ("token", secrets.token_urlsafe(32) + "\n"))
@@ -123,9 +130,15 @@ def initialize(root):
                 stream.write(content)
                 stream.flush()
                 os.fsync(stream.fileno())
+        os.fchmod(marker_fd, 0o600)
         return instance_id
     finally:
-        os.close(root_fd)
+        for descriptor in (marker_fd, root_fd):
+            if descriptor is not None:
+                try:
+                    os.close(descriptor)
+                except OSError:
+                    pass  # No fallible step after the marker's final publication.
 
 
 class Service:
@@ -155,6 +168,14 @@ class Service:
             raise ValueError("invalid instance creation time") from exc
         if timestamp.tzinfo is None or timestamp.utcoffset() is None:
             raise ValueError("invalid instance creation time")
+        try:
+            marker_info = os.stat("initialized", dir_fd=self._root_fd, follow_symlinks=False)
+        except FileNotFoundError:
+            return  # Legacy roots were initialized before the completion marker.
+        if not stat.S_ISREG(marker_info.st_mode) or stat.S_IMODE(marker_info.st_mode) != 0o600:
+            raise ValueError("instance initialization incomplete")
+        if _regular_private("initialized", dir_fd=self._root_fd) != instance_id + "\n":
+            raise ValueError("instance initialization incomplete")
 
     def close(self):
         with self._root_lock:
