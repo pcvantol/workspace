@@ -10,6 +10,7 @@ import unittest
 import zipfile
 import hashlib
 import json
+import os
 
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -59,10 +60,10 @@ class CandidateArchiveTests(unittest.TestCase):
 
 @unittest.skipUnless(platform.system() == "Darwin", "macOS bundle tools required")
 class MacOSPackagingTests(unittest.TestCase):
-    def run_builder(self, *args: str) -> subprocess.CompletedProcess[str]:
+    def run_builder(self, *args: str, env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
             ["bash", str(BUILDER), *args], cwd=ROOT, capture_output=True,
-            text=True, timeout=20, check=False,
+            text=True, timeout=20, check=False, env=env,
         )
 
     def test_stable_app_and_keychain_identity(self) -> None:
@@ -92,6 +93,85 @@ class MacOSPackagingTests(unittest.TestCase):
         result = self.run_builder("--identity", "Developer ID Application: Test", "/tmp/Workspace.app")
         self.assertEqual(result.returncode, 2)
         self.assertIn("Usage:", result.stderr)
+
+    def test_signed_mode_rejects_source_drift_during_build(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            fake_bin = root / "bin"
+            fake_bin.mkdir()
+            revision = "a" * 40
+            sentinel = root / "source-drift"
+            fake_git = fake_bin / "git"
+            fake_git.write_text(
+                '#!/bin/sh\n'
+                'case "$1 $2" in\n'
+                '  "rev-parse HEAD") echo "$MOCK_SOURCE_REVISION" ;;\n'
+                '  "remote get-url") echo "$MOCK_ORIGIN_URL" ;;\n'
+                '  "ls-remote origin") printf "%s\\trefs/heads/main\\n" "$MOCK_SOURCE_REVISION" ;;\n'
+                '  "status --porcelain") if test -f "$MOCK_SENTINEL"; then echo " M changed.swift"; fi ;;\n'
+                '  *) exit 99 ;;\n'
+                'esac\n'
+            )
+            fake_swift = fake_bin / "swift"
+            fake_swift.write_text(
+                '#!/bin/sh\n'
+                'previous=\n'
+                'for argument in "$@"; do\n'
+                '  if test "$previous" = --scratch-path; then echo "$argument" >> "$MOCK_SCRATCH_LOG"; fi\n'
+                '  previous="$argument"\n'
+                'done\n'
+                'case " $* " in\n'
+                '  *" --show-bin-path "*) echo "$MOCK_BIN_DIR" ;;\n'
+                '  *) touch "$MOCK_SENTINEL" ;;\n'
+                'esac\n'
+            )
+            fake_git.chmod(0o755)
+            fake_swift.chmod(0o755)
+            env = os.environ.copy()
+            env.update({
+                "PATH": str(fake_bin) + os.pathsep + env["PATH"],
+                "MOCK_SOURCE_REVISION": revision,
+                "MOCK_ORIGIN_URL": "https://github.com/pcvantol/workspace.git",
+                "MOCK_SENTINEL": str(sentinel),
+                "MOCK_BIN_DIR": str(root),
+                "MOCK_SCRATCH_LOG": str(root / "scratch-log"),
+                "WORKSPACE_SWIFT_SCRATCH": str(root / "shared-scratch"),
+            })
+            result = self.run_builder(
+                "--mode", "developer-id", "--identity", "Developer ID Application: Test (ABCDEFGHIJ)",
+                "--team-id", "ABCDEFGHIJ", "--notary-profile", "test-profile",
+                "--source-revision", revision, str(root / "Workspace.app"), env=env,
+            )
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("throughout the build", result.stderr)
+            self.assertFalse((root / "Workspace.app").exists())
+            scratch_paths = (root / "scratch-log").read_text().splitlines()
+            self.assertEqual(len(scratch_paths), 2)
+            self.assertEqual(scratch_paths[0], scratch_paths[1])
+            self.assertIn("workspace-client-signed.", scratch_paths[0])
+            self.assertNotEqual(scratch_paths[0], env["WORKSPACE_SWIFT_SCRATCH"])
+            self.assertFalse(pathlib.Path(scratch_paths[0]).exists())
+
+            sentinel.unlink()
+            env["MOCK_ORIGIN_URL"] = "https://github.com/example/unprotected.git"
+            result = self.run_builder(
+                "--mode", "developer-id", "--identity", "Developer ID Application: Test (ABCDEFGHIJ)",
+                "--team-id", "ABCDEFGHIJ", "--notary-profile", "test-profile",
+                "--source-revision", revision, str(root / "Workspace.app"), env=env,
+            )
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("canonical Workspace origin", result.stderr)
+            self.assertFalse(sentinel.exists())
+
+            env["MOCK_ORIGIN_URL"] = "https://github.com/pcvantol/workspace.git"
+            result = self.run_builder(
+                "--mode", "developer-id", "--identity", "Developer ID Application: Test (ABCDEFGHIJ)",
+                "--team-id", "ABCDEFGHIJ", "--notary-profile", "test-profile",
+                "--source-revision", revision, str(pathlib.Path("/tmp").resolve() / "Workspace.app"), env=env,
+            )
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("owned by this user and private", result.stderr)
+            self.assertFalse(sentinel.exists())
 
 
 if __name__ == "__main__":

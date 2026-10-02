@@ -18,6 +18,7 @@ team_id=
 notary_profile=
 source_revision=
 output=
+output_supplied=0
 while (($#)); do
   case "$1" in
     --mode|--identity|--team-id|--notary-profile|--source-revision)
@@ -31,7 +32,7 @@ while (($#)); do
       esac
       shift 2 ;;
     --*) usage ;;
-    *) [[ -z "$output" ]] || usage; output="$1"; shift ;;
+    *) [[ -z "$output" ]] || usage; output="$1"; output_supplied=1; shift ;;
   esac
 done
 output="${output:-${TMPDIR:-/tmp}/workspace-client-dist/Workspace.app}"
@@ -46,22 +47,32 @@ version="$(plutil -extract version raw -o - product-version.json)"
 [[ "$(plutil -extract CFBundleIdentifier raw -o - "$package/Resources/Info.plist")" == "$bundle_id" ]] || {
   echo 'Unexpected Workspace bundle identifier.' >&2; exit 2;
 }
-rg -Fq "private let service = \"$keychain_service\"" "$package/Sources/WorkspaceClient/ClientState.swift" || {
+grep -Fq "private let service = \"$keychain_service\"" "$package/Sources/WorkspaceClient/ClientState.swift" || {
   echo 'Unexpected Workspace Keychain service.' >&2; exit 2;
 }
 
+check_protected_source() {
+  [[ "$(git remote get-url origin)" == 'https://github.com/pcvantol/workspace.git' &&
+     "$source_revision" == "$(git rev-parse HEAD)" &&
+     "$source_revision" == "$(git ls-remote origin refs/heads/main | cut -f1)" &&
+     -z "$(git status --porcelain --untracked-files=all)" ]] || {
+    echo 'Developer ID mode requires canonical Workspace origin and clean, exact current protected main throughout the build.' >&2
+    exit 2
+  }
+}
+
 if [[ "$mode" == developer-id ]]; then
+  (( output_supplied == 1 )) || {
+    echo 'Developer ID mode requires an explicit private output destination.' >&2
+    exit 2
+  }
+  umask 077
   [[ "$identity" == 'Developer ID Application: '* && -n "$notary_profile" &&
      "$team_id" =~ ^[A-Z0-9]{10}$ && "$source_revision" =~ ^[0-9a-f]{40}$ ]] || {
     echo 'Developer ID mode requires an application identity, team ID, notary profile and exact source SHA.' >&2
     exit 2
   }
-  [[ "$source_revision" == "$(git rev-parse HEAD)" &&
-     "$source_revision" == "$(git ls-remote origin refs/heads/main | cut -f1)" &&
-     -z "$(git status --porcelain --untracked-files=all)" ]] || {
-    echo 'Developer ID mode requires clean, exact current protected main.' >&2
-    exit 2
-  }
+  check_protected_source
   resolved_output="$(python3 - "$output" <<'PY'
 import pathlib
 import sys
@@ -72,17 +83,38 @@ PY
     echo 'Developer ID output must be an absolute path outside the source checkout.' >&2
     exit 2
   }
-  [[ ! -e "$output" && ! -e "${output}.zip" && ! -e "${output}.manifest.json" ]] || {
+  output_parent="$(dirname "$output")"
+  [[ ! -L "$output_parent" ]] || {
+    echo 'Developer ID output parent cannot be a symlink.' >&2
+    exit 2
+  }
+  mkdir -p -- "$output_parent"
+  parent_mode="$(stat -f %Lp "$output_parent")"
+  [[ "$(stat -f %u "$output_parent")" == "$(id -u)" ]] &&
+    (( (8#$parent_mode & 077) == 0 )) || {
+    echo 'Developer ID output parent must be owned by this user and private.' >&2
+    exit 2
+  }
+  [[ ! -e "$output" && ! -L "$output" &&
+     ! -e "${output}.zip" && ! -L "${output}.zip" &&
+     ! -e "${output}.manifest.json" && ! -L "${output}.manifest.json" ]] || {
     echo 'Developer ID output already exists; choose an unused destination.' >&2
     exit 2
   }
+  signed_scratch=
   cleanup_incomplete_candidate() {
     if (($? != 0)); then
       rm -f -- "${output}.zip" "${output}.manifest.json"
       rm -rf -- "$output"
     fi
+    if [[ -n "$signed_scratch" ]]; then
+      rm -rf -- "$signed_scratch"
+    fi
   }
   trap cleanup_incomplete_candidate EXIT
+  # A signed candidate must never copy bytes from a concurrent/shared Swift build.
+  scratch="$(mktemp -d "${TMPDIR:-/tmp}/workspace-client-signed.XXXXXXXX")"
+  signed_scratch="$scratch"
   # Signing needs its own confirmed L1/L4 resource slot. Never unlock or alter a Keychain here.
 else
   [[ -z "$identity$team_id$notary_profile$source_revision" ]] || usage
@@ -90,6 +122,10 @@ fi
 
 swift build --package-path "$package" --scratch-path "$scratch" -c release --product WorkspaceClient
 binary_dir="$(swift build --package-path "$package" --scratch-path "$scratch" -c release --show-bin-path)"
+if [[ "$mode" == developer-id ]]; then
+  # The built bytes must still correspond to the protected tree admitted above.
+  check_protected_source
+fi
 mkdir -p "$(dirname "$output")"
 if [[ "$mode" == ad-hoc ]]; then
   rm -rf -- "$output"
@@ -100,7 +136,7 @@ cp "$package/Resources/Info.plist" "$output/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $version" "$output/Contents/Info.plist"
 chmod 755 "$output/Contents/MacOS/WorkspaceClient"
 plutil -lint "$output/Contents/Info.plist"
-if otool -L "$output/Contents/MacOS/WorkspaceClient" | rg -qi python; then
+if otool -L "$output/Contents/MacOS/WorkspaceClient" | grep -qi python; then
   echo 'Native Client unexpectedly links Python.' >&2
   exit 1
 fi
@@ -113,6 +149,7 @@ if [[ "$mode" == ad-hoc ]]; then
   exit 0
 fi
 
+check_protected_source
 # The unsandboxed SwiftUI/URLSession/Keychain app needs no entitlements.
 # Do not grant get-task-allow or hardened-runtime exceptions.
 codesign --force --sign "$identity" --options runtime --timestamp "$output"
@@ -127,7 +164,7 @@ signature_details="$(codesign -dv --verbose=4 "$output" 2>&1)"
   echo 'Developer ID signature, team, hardened runtime or secure timestamp is missing.' >&2
   exit 1
 }
-if codesign -d --entitlements - "$output" 2>/dev/null | rg -q '<key>'; then
+if codesign -d --entitlements - "$output" 2>/dev/null | grep -q '<key>'; then
   echo 'Unexpected signed entitlements in Workspace.app.' >&2
   exit 1
 fi
@@ -172,4 +209,5 @@ PY
 python3 scripts/verify_macos_app_candidate.py "${output}.zip" "${output}.manifest.json" \
   --source-revision "$source_revision" --team-id "$team_id"
 echo "Built notarized Developer ID candidate: ${output}.zip ($final_sha)"
+rm -rf -- "$signed_scratch"
 trap - EXIT

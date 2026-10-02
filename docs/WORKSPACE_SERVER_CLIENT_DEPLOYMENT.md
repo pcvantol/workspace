@@ -27,7 +27,13 @@ For a private Developer ID qualification candidate, the same builder accepts
 `Developer ID Application` identity, its ten-character team ID and an existing
 notarytool Keychain profile. These values and the exclusive L1/L4 signing
 window must be confirmed before invoking it. The mode rejects a dirty or
-non-current source, absent credentials and occupied output paths; it does not
+non-current source or noncanonical Workspace origin, missing identity/profile
+arguments, and occupied output paths. It requires an explicit output path in
+an owner-owned private directory and writes with a restrictive umask;
+each signed build also uses a fresh private Swift scratch directory, ignoring
+the shared development scratch override;
+the actual signer and notarization credentials are validated by signing and
+notarytool in the confirmed exclusive slot. It does not
 fall back to ad hoc signing. It signs with hardened runtime and a secure
 timestamp, checks the team and designated requirement, submits the archive to
 Apple notarization, staples the app, assesses it with Gatekeeper and emits a
