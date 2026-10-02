@@ -61,6 +61,14 @@ final class BrokenCredentials: CredentialStore {
     func forget() throws { forgotten = true }
 }
 
+final class OrphanCredentials: CredentialStore {
+    var forgotten = false
+    func binding() throws -> ServerBinding? { nil }
+    func token() throws -> String? { forgotten ? nil : "orphan-secret" }
+    func save(binding: ServerBinding, token: String) throws {}
+    func forget() throws { forgotten = true }
+}
+
 final class ServerTransportTests: XCTestCase {
     let instance = "0123456789abcdef0123456789abcdef"
 
@@ -191,6 +199,22 @@ final class ServerTransportTests: XCTestCase {
             let state = ClientState(keychain: credentials)
             XCTAssertEqual(state.phase, "UNAVAILABLE")
             XCTAssertTrue(state.canForgetBinding)
+            state.forget()
+            XCTAssertTrue(credentials.forgotten)
+            XCTAssertFalse(state.canForgetBinding)
+            XCTAssertEqual(state.phase, "UNCONFIGURED")
+        }
+    }
+
+    func testTokenOnlyPartialSaveCanBeForgotten() async {
+        let credentials = OrphanCredentials()
+        await MainActor.run {
+            let state = ClientState(keychain: credentials)
+            XCTAssertEqual(state.phase, "UNAVAILABLE")
+            XCTAssertTrue(state.canForgetBinding)
+            state.connect(address: "https://server.example")
+            XCTAssertEqual(state.phase, "UNAVAILABLE")
+            XCTAssertTrue(state.detail.contains("token was saved without"))
             state.forget()
             XCTAssertTrue(credentials.forgotten)
             XCTAssertFalse(state.canForgetBinding)

@@ -7,12 +7,13 @@ struct ServerBinding: Codable, Equatable, Sendable {
 }
 
 enum CredentialError: Error, LocalizedError {
-    case keychain(OSStatus), corruptBinding
+    case keychain(OSStatus), corruptBinding, incompleteBinding
 
     var errorDescription: String? {
         switch self {
         case .keychain: "The Mac Keychain could not store or read this Workspace binding."
         case .corruptBinding: "The saved Workspace binding is invalid. Forget it explicitly to start again."
+        case .incompleteBinding: "A token was saved without a Server binding. Forget it explicitly before pairing again."
         }
     }
 }
@@ -111,6 +112,10 @@ final class ClientState: ObservableObject {
                 canForgetBinding = true
                 phase = "DISCONNECTED"
                 detail = "Saved Server binding; reconnect to read current data."
+            } else if try keychain.token() != nil {
+                canForgetBinding = true
+                phase = "UNAVAILABLE"
+                detail = CredentialError.incompleteBinding.localizedDescription
             }
         } catch {
             canForgetBinding = true
@@ -126,10 +131,14 @@ final class ClientState: ObservableObject {
         do {
             let endpoint = try ServerEndpoint(address)
             let binding = try keychain.binding()
+            let storedToken = try keychain.token()
+            if binding == nil && storedToken != nil {
+                throw CredentialError.incompleteBinding
+            }
             if let binding, binding.endpoint != endpoint.url.absoluteString {
                 throw ClientError.bindingChanged
             }
-            let token = enteredToken.isEmpty ? try keychain.token() ?? "" : enteredToken
+            let token = enteredToken.isEmpty ? storedToken ?? "" : enteredToken
             guard !token.isEmpty else { throw ClientError.noToken }
             phase = "CONNECTING"
             detail = "Reading the Server identity and current status."
@@ -149,6 +158,7 @@ final class ClientState: ObservableObject {
                     detail = "Fresh Server read at \(result.observedAt.formatted(date: .abbreviated, time: .standard))."
                 } catch {
                     guard !Task.isCancelled, current == attempt else { return }
+                    if error is CredentialError { canForgetBinding = true }
                     phase = "UNAVAILABLE"
                     let prior = snapshot.map { " Last successful read: \($0.observedAt.formatted(date: .abbreviated, time: .standard)); displayed data is cached." } ?? ""
                     detail = error.localizedDescription + prior
