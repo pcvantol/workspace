@@ -534,8 +534,7 @@ def verify_browser_project_error_semantics(page, instance_root):
     page.get_by_text("Before error (before-error)").wait_for()
     observed = json.loads(catalogue.read_text())["observed_at"]
     verify_browser_observation(page, f"Observed: {observed}")
-    for code, label in ((401, "UNAUTHORIZED"), (409, "WRONG INSTANCE"),
-                        (400, "UNAVAILABLE")):
+    for code, label in ((401, "UNAUTHORIZED"), (409, "WRONG INSTANCE")):
         def handler(route):
             route.fulfill(status=code, body="{}")
         page.route("**/v1/projects", handler)
@@ -548,9 +547,25 @@ def verify_browser_project_error_semantics(page, instance_root):
         page.locator("#connect").click()
         page.get_by_text("Before error (before-error)").wait_for()
         verify_browser_observation(page, f"Observed: {observed}")
+    expected_pin = page.evaluate("localStorage.getItem('workspace.instanceId')")
+    for code in (400, 404, 500, 503):
+        def unavailable(route):
+            route.fulfill(status=code, body="{}")
+        page.route("**/v1/projects", unavailable)
+        page.locator("#connect").click()
+        page.get_by_role("status").get_by_text("CONNECTED").wait_for()
+        page.locator("#project-state").get_by_text("UNAVAILABLE").wait_for()
+        assert page.locator("#capability-state").inner_text() == "AVAILABLE"
+        assert page.locator("#capabilities li").count() > 0
+        assert page.locator("#projects li").count() == 0
+        assert page.evaluate("localStorage.getItem('workspace.instanceId')") == expected_pin
+        verify_browser_observation(page, "No observation")
+        page.unroute("**/v1/projects", unavailable)
+        page.locator("#connect").click()
+        page.get_by_text("Before error (before-error)").wait_for()
+        verify_browser_observation(page, f"Observed: {observed}")
     valid = {"state": "AVAILABLE", "source": "LOCAL", "partial": False, "stale": False,
              "observed_at": observed, "projects": [{"id": "before-error", "name": "Before error"}]}
-    expected_pin = page.evaluate("localStorage.getItem('workspace.instanceId')")
     for invalid in ({key: value for key, value in valid.items() if key != "projects"},
                     {**valid, "projects": [{"id": "", "name": "Unnamed"}]},
                     {**valid, "projects": [{"id": "before-error", "name": 3}]},

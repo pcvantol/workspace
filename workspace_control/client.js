@@ -211,13 +211,9 @@ document.getElementById('connect').addEventListener('click', async () => {
     const projectResponse = await fetch('/v1/projects', {headers, cache: 'no-store'})
       .catch(() => ({status: 503, ok: false}));
     if (attempt !== connectionAttempt) return;
-    if (projectResponse.status === 503) {
-      projectState.textContent = label('UNAVAILABLE');
-      return;
-    }
     if (projectResponse.status === 401) throw new Error('UNAUTHORIZED');
     if (projectResponse.status === 409) throw new Error('WRONG_INSTANCE');
-    if (!projectResponse.ok) throw new Error('UNAVAILABLE');
+    if (!projectResponse.ok) return;
     const catalogue = await projectResponse.json().catch(() => null);
     if (attempt !== connectionAttempt) return;
     if (!validProjectCatalogue(catalogue)) return;
