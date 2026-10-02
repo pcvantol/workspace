@@ -26,10 +26,10 @@
     "register": "https://github.com/pcvantol/forge/issues/208",
     "selection_date": "2026-10-02",
     "python_server_support": ">=3.14,<3.15",
-    "wheel_metadata_gate": "NOT_RUN",
+    "wheel_metadata_gate": "PASS_PYTHON_314_ONLY_PR116",
     "native_client_artifact": "MACOS_WORKSPACE_APP_SEPARATE_FROM_PYPI_SERVER_ROLE",
     "native_client_requires_python_or_local_server": false,
-    "native_client_finder_installed_server_gate": "CANDIDATE_LOCAL_PASS_PENDING_PROTECTED_DELIVERY",
+    "native_client_finder_installed_server_gate": "LOCAL_PACKAGED_FINDER_READBACK_PROTECTED_DELIVERED",
     "native_client_signed_keychain_trust_gate": "NOT_RUN",
     "public_python_distribution_status": "PLANNED",
     "first_installer_release_dependency": false

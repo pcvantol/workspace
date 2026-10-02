@@ -35,7 +35,7 @@ struct ContentView: View {
                 SettingsLink { Label("Settings", systemImage: "gearshape") }
                 Button("Reconnect") { client.reconnect() }
                     .disabled(client.savedEndpoint.isEmpty || client.phase == "CONNECTING")
-                if client.phase == "CONNECTING" {
+                if client.phase == "LOADING" || client.phase == "CONNECTING" {
                     Button("Cancel") { client.cancel() }
                 }
             }
@@ -127,7 +127,7 @@ struct SettingsView: View {
                     Button("Connect") {
                         client.connect(address: address, enteredToken: token)
                         token = ""
-                    }
+                    }.disabled(client.phase == "LOADING" || client.phase == "FORGETTING")
                     Button("Forget Server") {
                         client.forget()
                         address = ""

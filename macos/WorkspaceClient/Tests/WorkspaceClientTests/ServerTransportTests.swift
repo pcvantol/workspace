@@ -53,7 +53,7 @@ final class RedirectProtocol: URLProtocol, @unchecked Sendable {
     }
 }
 
-final class BrokenCredentials: CredentialStore {
+final class BrokenCredentials: CredentialStore, @unchecked Sendable {
     var forgotten = false
     func binding() throws -> ServerBinding? { throw CredentialError.corruptBinding }
     func token() throws -> String? { nil }
@@ -61,7 +61,7 @@ final class BrokenCredentials: CredentialStore {
     func forget() throws { forgotten = true }
 }
 
-final class OrphanCredentials: CredentialStore {
+final class OrphanCredentials: CredentialStore, @unchecked Sendable {
     var forgotten = false
     func binding() throws -> ServerBinding? { nil }
     func token() throws -> String? { forgotten ? nil : "orphan-secret" }
@@ -69,8 +69,28 @@ final class OrphanCredentials: CredentialStore {
     func forget() throws { forgotten = true }
 }
 
+final class PendingCredentials: CredentialStore, @unchecked Sendable {
+    let release = DispatchSemaphore(value: 0)
+    func binding() throws -> ServerBinding? {
+        release.wait()
+        return nil
+    }
+    func token() throws -> String? { nil }
+    func save(binding: ServerBinding, token: String) throws {}
+    func forget() throws {}
+}
+
 final class ServerTransportTests: XCTestCase {
     let instance = "0123456789abcdef0123456789abcdef"
+
+    @MainActor
+    private static func waitUntil(_ predicate: @MainActor () -> Bool) async {
+        for _ in 0..<100 {
+            if predicate() { return }
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        XCTFail("Client state did not settle")
+    }
 
     private func transport(_ handler: @escaping (URLRequest) throws -> (Int, Data)) -> ServerTransport {
         StubProtocol.handler = handler
@@ -195,30 +215,50 @@ final class ServerTransportTests: XCTestCase {
 
     func testCorruptBindingCanBeForgotten() async {
         let credentials = BrokenCredentials()
-        await MainActor.run {
-            let state = ClientState(keychain: credentials)
-            XCTAssertEqual(state.phase, "UNAVAILABLE")
-            XCTAssertTrue(state.canForgetBinding)
-            state.forget()
-            XCTAssertTrue(credentials.forgotten)
-            XCTAssertFalse(state.canForgetBinding)
-            XCTAssertEqual(state.phase, "UNCONFIGURED")
-        }
+        let state = await MainActor.run { ClientState(keychain: credentials) }
+        await Self.waitUntil { state.phase == "UNAVAILABLE" }
+        await MainActor.run { state.forget() }
+        await Self.waitUntil { state.phase == "UNCONFIGURED" }
+        XCTAssertTrue(credentials.forgotten)
+        await MainActor.run { XCTAssertFalse(state.canForgetBinding) }
     }
 
     func testTokenOnlyPartialSaveCanBeForgotten() async {
         let credentials = OrphanCredentials()
+        let state = await MainActor.run { ClientState(keychain: credentials) }
+        await Self.waitUntil { state.phase == "UNAVAILABLE" }
         await MainActor.run {
-            let state = ClientState(keychain: credentials)
-            XCTAssertEqual(state.phase, "UNAVAILABLE")
             XCTAssertTrue(state.canForgetBinding)
             state.connect(address: "https://server.example")
-            XCTAssertEqual(state.phase, "UNAVAILABLE")
-            XCTAssertTrue(state.detail.contains("token was saved without"))
-            state.forget()
-            XCTAssertTrue(credentials.forgotten)
-            XCTAssertFalse(state.canForgetBinding)
-            XCTAssertEqual(state.phase, "UNCONFIGURED")
         }
+        await Self.waitUntil { state.phase == "UNAVAILABLE" && state.detail.contains("token was saved without") }
+        await MainActor.run { state.forget() }
+        await Self.waitUntil { state.phase == "UNCONFIGURED" }
+        XCTAssertTrue(credentials.forgotten)
+        await MainActor.run { XCTAssertFalse(state.canForgetBinding) }
+    }
+
+    func testPendingKeychainReadDoesNotBlockWindowInitialization() async {
+        let credentials = PendingCredentials()
+        let state = await MainActor.run { ClientState(keychain: credentials) }
+        await MainActor.run {
+            XCTAssertEqual(state.phase, "LOADING")
+            XCTAssertEqual(state.detail, "Checking the saved Server binding.")
+        }
+        credentials.release.signal()
+        await Self.waitUntil { state.phase == "UNCONFIGURED" }
+    }
+
+    func testCancelledPendingCredentialReadCannotRestoreStaleBinding() async {
+        let credentials = PendingCredentials()
+        let state = await MainActor.run { ClientState(keychain: credentials) }
+        await MainActor.run {
+            XCTAssertEqual(state.phase, "LOADING")
+            state.cancel()
+            XCTAssertEqual(state.phase, "UNAVAILABLE")
+        }
+        credentials.release.signal()
+        try? await Task.sleep(for: .milliseconds(30))
+        await MainActor.run { XCTAssertEqual(state.phase, "UNAVAILABLE") }
     }
 }
