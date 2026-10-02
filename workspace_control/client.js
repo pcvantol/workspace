@@ -165,7 +165,8 @@ document.getElementById('connect').addEventListener('click', async () => {
     if (!pinned) localStorage.setItem('workspace.instanceId', identity.instance_id);
     state.textContent = label('CONNECTED');
     server.textContent = `${status.instance_id} · ${copy.version} ${status.version} · ${label(status.state)}`;
-    const capabilityResponse = await fetch('/v1/capabilities', {headers, cache: 'no-store'});
+    const capabilityResponse = await fetch('/v1/capabilities', {headers, cache: 'no-store'})
+      .catch(() => ({status: 503, ok: false}));
     if (attempt !== connectionAttempt) return;
     if (capabilityResponse.status === 401) throw new Error('UNAUTHORIZED');
     if (capabilityResponse.status === 409) throw new Error('WRONG_INSTANCE');
@@ -192,7 +193,8 @@ document.getElementById('connect').addEventListener('click', async () => {
         }
       }
     }
-    const projectResponse = await fetch('/v1/projects', {headers, cache: 'no-store'});
+    const projectResponse = await fetch('/v1/projects', {headers, cache: 'no-store'})
+      .catch(() => ({status: 503, ok: false}));
     if (attempt !== connectionAttempt) return;
     if (projectResponse.status === 503) {
       projectState.textContent = label('UNAVAILABLE');

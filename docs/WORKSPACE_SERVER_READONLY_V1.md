@@ -60,6 +60,8 @@ The local Client keeps its authenticated Server and own capability readbacks whe
 
 Likewise, malformed JSON or a null body in a successful own capability-inventory response leaves only own capabilities UNAVAILABLE, without operation rows. Authenticated Server status, project readback and instance pin continue; a foreign inventory instance ID or authorization/pin failure still invalidates the connection.
 
+After authenticated Server status succeeds, a network failure reading one optional Client feed is isolated to that feed: the failed capabilities or projects readback stays UNAVAILABLE while the other continues. A later connection attempt can recover. Explicit 401/409 responses retain their authority/instance handling.
+
 The top-level object requires exactly `source`, `observed_at`, and `projects`,
 with optional boolean `partial` (default false). Unknown or missing fields
 make the source unavailable; they cannot silently masquerade as live peer

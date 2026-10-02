@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "pcvantol/forge#208-r50",
+  "determined_version": "2.4.41",
+  "event_lineage": "pcvantol/forge#208-r50",
+  "expected_source_revision": "06a6e58e6058f3fcb5a16ad2d28eab6f6d4e2c82",
+  "expected_version": "2.4.40",
+  "operation_id": "L4-WORKSPACE-READBACK-TRANSPORT-ISOLATION-V1-20261002",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}
