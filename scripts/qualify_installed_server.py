@@ -617,6 +617,33 @@ def verify_browser_inventory_consistency(page, url, token, instance_id):
     page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
 
 
+def verify_browser_feed_transport_isolation(page, instance_id):
+    """A failed optional feed must not erase the other authenticated readbacks."""
+    for failed_feed in ("capabilities", "projects"):
+        pattern = f"**/v1/{failed_feed}"
+        def abort(route):
+            route.abort("failed")
+        page.route(pattern, abort)
+        try:
+            page.locator("#connect").click()
+            page.get_by_role("status").get_by_text("CONNECTED").wait_for()
+            if failed_feed == "capabilities":
+                page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
+                assert page.locator("#capability-state").inner_text() == "UNAVAILABLE"
+                assert page.locator("#capabilities li").count() == 0
+            else:
+                page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
+                assert page.locator("#project-state").inner_text() == "UNAVAILABLE"
+                assert page.locator("#projects li").count() == 0
+            assert page.locator("#peer-state").inner_text() == "Peer operations: UNQUALIFIED"
+            assert page.evaluate("localStorage.getItem('workspace.instanceId')") == instance_id
+        finally:
+            page.unroute(pattern, abort)
+        page.locator("#connect").click()
+        page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
+        page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
+
+
 def _verify_browser_bindings(page, first_url, token, first_id, second_id, first):
     page.goto(first_url)
     page.locator("#token").fill("wrong")
@@ -645,6 +672,7 @@ def _verify_browser_bindings(page, first_url, token, first_id, second_id, first)
     assert "capabilities.read · HTTP_EXPOSED" in listed
     assert "instance.init · LOCAL_ONLY_ADMIN" in listed
     verify_browser_inventory_consistency(page, first_url, token, first_id)
+    verify_browser_feed_transport_isolation(page, first_id)
     verify_browser_project_error_semantics(page, first)
 
 
