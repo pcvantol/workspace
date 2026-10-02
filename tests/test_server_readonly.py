@@ -174,6 +174,8 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertIn(b"/client.js", html)
         self.assertIn(b"Read-only", html)
         self.assertIn("no-store", headers["Cache-Control"])
+        self.assertIn("frame-ancestors 'none'", headers["Content-Security-Policy"])
+        self.assertEqual(headers["X-Frame-Options"], "DENY")
         code, script, _ = self.request("/client.js")
         self.assertEqual(code, 200)
         self.assertIn(b"fetch('/v1/projects'", script)

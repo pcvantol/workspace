@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "pcvantol/forge#208-r38",
+  "determined_version": "2.4.29",
+  "event_lineage": "pcvantol/forge#208-r38",
+  "expected_source_revision": "bdaf8bf30184e9f8a4c3128d65edfa7b59e01afe",
+  "expected_version": "2.4.28",
+  "operation_id": "L4-WORKSPACE-DENY-CLIENT-FRAMING-V1-20261002",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}
