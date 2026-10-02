@@ -120,6 +120,11 @@ instance-pinned connection. It labels HTTP reads and local-only administration
 separately and continues to label peer operations UNQUALIFIED. Failed reads,
 wrong instances and forgotten bindings clear previously displayed operations;
 the Client adds no operation or peer authority.
+The Client displays the own operation inventory only when its product version
+matches the authenticated status and the inventory has nonempty, unique
+operation IDs and at least one operation.
+An inconsistent inventory remains visibly UNAVAILABLE without claiming peer
+qualification; project readback and the instance pin remain independent.
 The first-slice browser shell chooses en, nl, de, fr or es from the browser's
 language and falls back to en. Static copy and the Client's own status, source,
 observation and capability labels use that language; product names, project

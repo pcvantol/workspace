@@ -159,9 +159,13 @@ document.getElementById('connect').addEventListener('click', async () => {
         throw new Error('WRONG_INSTANCE');
       }
       if (inventory.schema_version === 1 && inventory.instance_id === identity.instance_id &&
+          inventory.product_version === status.version &&
           inventory.peer_operations_qualified === false && Array.isArray(inventory.operations) &&
-          inventory.operations.every(operation => typeof operation.id === 'string' &&
-            ['HTTP_EXPOSED', 'LOCAL_ONLY_ADMIN'].includes(operation.exposure))) {
+          inventory.operations.length > 0 &&
+          inventory.operations.every(operation => operation && typeof operation.id === 'string' &&
+            operation.id.trim().length > 0 &&
+            ['HTTP_EXPOSED', 'LOCAL_ONLY_ADMIN'].includes(operation.exposure)) &&
+          new Set(inventory.operations.map(operation => operation.id)).size === inventory.operations.length) {
         capabilityState.textContent = label('AVAILABLE');
         for (const operation of inventory.operations) {
           const row = document.createElement('li');
