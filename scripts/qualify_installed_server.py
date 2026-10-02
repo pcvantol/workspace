@@ -653,6 +653,7 @@ def verify_browser_status_envelope(page, url, token, instance_id):
     status = json.loads(read(url + "/v1/status", token=token, instance=instance_id)[1])
     for invalid in ({key: value for key, value in status.items() if key != "version"},
                     {key: value for key, value in status.items() if key != "instance_id"},
+                    {**status, "peer_qualified": True},
                     {**status, "instance_id": "malformed"},
                     {**status, "version": "02.4.41"},
                     {**status, "state": "STARTING"},

@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "pcvantol/forge#208-r65",
+  "determined_version": "2.4.56",
+  "event_lineage": "pcvantol/forge#208-r65",
+  "expected_source_revision": "24329a83a93a68c1b0cdfdf9e7094ba2ff7ce468",
+  "expected_version": "2.4.55",
+  "operation_id": "L4-R65-CLIENT-STATUS-SHAPE",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}
