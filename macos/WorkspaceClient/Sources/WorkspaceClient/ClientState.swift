@@ -17,7 +17,14 @@ enum CredentialError: Error, LocalizedError {
     }
 }
 
-struct ClientKeychain {
+protocol CredentialStore {
+    func binding() throws -> ServerBinding?
+    func token() throws -> String?
+    func save(binding: ServerBinding, token: String) throws
+    func forget() throws
+}
+
+struct ClientKeychain: CredentialStore {
     private let service = "com.pcvantol.workspace.native-client.v1"
 
     private func query(_ account: String) -> [CFString: Any] {
@@ -88,21 +95,25 @@ final class ClientState: ObservableObject {
     @Published private(set) var snapshot: ServerSnapshot?
     @Published private(set) var savedEndpoint = ""
     @Published private(set) var savedInstance = ""
+    @Published private(set) var canForgetBinding = false
 
-    private let keychain = ClientKeychain()
+    private let keychain: any CredentialStore
     private let transport = ServerTransport()
     private var activeTask: Task<Void, Never>?
     private var attempt = 0
 
-    init() {
+    init(keychain: any CredentialStore = ClientKeychain()) {
+        self.keychain = keychain
         do {
             if let binding = try keychain.binding() {
                 savedEndpoint = binding.endpoint
                 savedInstance = binding.instanceID
+                canForgetBinding = true
                 phase = "DISCONNECTED"
                 detail = "Saved Server binding; reconnect to read current data."
             }
         } catch {
+            canForgetBinding = true
             phase = "UNAVAILABLE"
             detail = error.localizedDescription
         }
@@ -132,6 +143,7 @@ final class ClientState: ObservableObject {
                     try keychain.save(binding: newBinding, token: token)
                     savedEndpoint = newBinding.endpoint
                     savedInstance = newBinding.instanceID
+                    canForgetBinding = true
                     snapshot = result
                     phase = "CONNECTED"
                     detail = "Fresh Server read at \(result.observedAt.formatted(date: .abbreviated, time: .standard))."
@@ -167,6 +179,7 @@ final class ClientState: ObservableObject {
             try keychain.forget()
             savedEndpoint = ""
             savedInstance = ""
+            canForgetBinding = false
             snapshot = nil
             phase = "UNCONFIGURED"
             detail = "Server binding removed."

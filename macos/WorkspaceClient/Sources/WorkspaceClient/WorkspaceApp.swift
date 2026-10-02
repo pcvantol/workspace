@@ -132,7 +132,7 @@ struct SettingsView: View {
                         client.forget()
                         address = ""
                         token = ""
-                    }.disabled(client.savedInstance.isEmpty)
+                    }.disabled(!client.canForgetBinding)
                 }
                 Text(client.detail).font(.caption).foregroundStyle(.secondary)
             }

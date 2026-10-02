@@ -30,6 +30,37 @@ final class HangingProtocol: URLProtocol, @unchecked Sendable {
     override func stopLoading() {}
 }
 
+final class RedirectProtocol: URLProtocol, @unchecked Sendable {
+    nonisolated(unsafe) static var destination = ""
+    nonisolated(unsafe) static var requests: [URLRequest] = []
+
+    override class func canInit(with request: URLRequest) -> Bool { true }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override func stopLoading() {}
+    override func startLoading() {
+        Self.requests.append(request)
+        let identity = request.url?.path == "/v1/identity"
+        let code = identity ? 200 : 302
+        let headers = identity ? ["Content-Type": "application/json"] :
+            ["Content-Type": "application/json", "Location": Self.destination]
+        let response = HTTPURLResponse(url: request.url!, statusCode: code,
+                                       httpVersion: "HTTP/1.1", headerFields: headers)!
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        if identity {
+            client?.urlProtocol(self, didLoad: Data("{\"instance_id\":\"0123456789abcdef0123456789abcdef\"}".utf8))
+        }
+        client?.urlProtocolDidFinishLoading(self)
+    }
+}
+
+final class BrokenCredentials: CredentialStore {
+    var forgotten = false
+    func binding() throws -> ServerBinding? { throw CredentialError.corruptBinding }
+    func token() throws -> String? { nil }
+    func save(binding: ServerBinding, token: String) throws {}
+    func forget() throws { forgotten = true }
+}
+
 final class ServerTransportTests: XCTestCase {
     let instance = "0123456789abcdef0123456789abcdef"
 
@@ -37,7 +68,7 @@ final class ServerTransportTests: XCTestCase {
         StubProtocol.handler = handler
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [StubProtocol.self]
-        return ServerTransport(session: URLSession(configuration: config))
+        return ServerTransport(configuration: config)
     }
 
     func testEndpointSecurityAndCanonicalAddress() throws {
@@ -120,7 +151,7 @@ final class ServerTransportTests: XCTestCase {
     func testCancellingPendingIdentityReadStopsConnection() async throws {
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [HangingProtocol.self]
-        let client = ServerTransport(session: URLSession(configuration: config))
+        let client = ServerTransport(configuration: config)
         let task = Task {
             try await client.connect(endpoint: ServerEndpoint("https://server.example"),
                                      token: "secret", pinnedInstance: nil)
@@ -132,6 +163,38 @@ final class ServerTransportTests: XCTestCase {
             XCTFail("Cancelled request became a connection")
         } catch is CancellationError {
             // Expected: the pending URLSession request is cancelled.
+        }
+    }
+
+    func testRedirectCannotDowngradeOrChangeCredentialDestination() async throws {
+        for destination in ["http://other.example/v1/status", "https://other.example/v1/status"] {
+            RedirectProtocol.destination = destination
+            RedirectProtocol.requests = []
+            let config = URLSessionConfiguration.ephemeral
+            config.protocolClasses = [RedirectProtocol.self]
+            let client = ServerTransport(configuration: config)
+            do {
+                _ = try await client.connect(endpoint: ServerEndpoint("https://server.example"),
+                                             token: "secret", pinnedInstance: nil)
+                XCTFail("Redirect followed to \(destination)")
+            } catch let error as ClientError {
+                XCTAssertEqual(error, .server(302))
+            }
+            XCTAssertEqual(RedirectProtocol.requests.map { $0.url?.host }, ["server.example", "server.example"])
+            XCTAssertEqual(RedirectProtocol.requests.map { $0.url?.path }, ["/v1/identity", "/v1/status"])
+        }
+    }
+
+    func testCorruptBindingCanBeForgotten() async {
+        let credentials = BrokenCredentials()
+        await MainActor.run {
+            let state = ClientState(keychain: credentials)
+            XCTAssertEqual(state.phase, "UNAVAILABLE")
+            XCTAssertTrue(state.canForgetBinding)
+            state.forget()
+            XCTAssertTrue(credentials.forgotten)
+            XCTAssertFalse(state.canForgetBinding)
+            XCTAssertEqual(state.phase, "UNCONFIGURED")
         }
     }
 }

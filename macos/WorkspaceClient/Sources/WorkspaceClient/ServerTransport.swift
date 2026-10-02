@@ -100,20 +100,24 @@ struct ServerSnapshot: Sendable {
     let observedAt: Date
 }
 
+final class RejectRedirects: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
+    func urlSession(_ session: URLSession, task: URLSessionTask,
+                    willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest,
+                    completionHandler: @escaping (URLRequest?) -> Void) {
+        completionHandler(nil)
+    }
+}
+
 struct ServerTransport: Sendable {
     let session: URLSession
 
-    init(session: URLSession? = nil) {
-        if let session {
-            self.session = session
-        } else {
-            let configuration = URLSessionConfiguration.ephemeral
-            configuration.timeoutIntervalForRequest = 8
-            configuration.timeoutIntervalForResource = 15
-            configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
-            configuration.waitsForConnectivity = false
-            self.session = URLSession(configuration: configuration)
-        }
+    init(configuration supplied: URLSessionConfiguration? = nil) {
+        let configuration = supplied ?? URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = 8
+        configuration.timeoutIntervalForResource = 15
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        configuration.waitsForConnectivity = false
+        self.session = URLSession(configuration: configuration, delegate: RejectRedirects(), delegateQueue: nil)
     }
 
     private func read<T: Decodable>(_ type: T.Type, endpoint: ServerEndpoint, path: String,
