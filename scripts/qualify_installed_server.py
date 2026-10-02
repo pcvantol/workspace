@@ -342,6 +342,23 @@ def verify_browser_observation(page, expected):
     assert page.locator("#project-observed").inner_text() == expected
 
 
+def verify_browser_frame_denial(browser, url):
+    """The installed token-entry page must reject a foreign parent frame."""
+    page = browser.new_page()
+    try:
+        response = page.request.get(url + "/")
+        assert response.headers["x-frame-options"] == "DENY"
+        assert "frame-ancestors 'none'" in response.headers["content-security-policy"]
+        identity = page.request.get(url + "/v1/identity")
+        assert identity.headers["x-frame-options"] == "DENY"
+        with page.expect_console_message(lambda message: "frame-ancestors 'none'" in message.text) as denial:
+            page.set_content(f'<iframe src="{url}/"></iframe>')
+        assert denial.value.type == "error"
+        assert all(frame.url != url + "/" for frame in page.frames)
+    finally:
+        page.close()
+
+
 def verify_browser_reconnect_clears_readbacks(page, expected_pin, token):
     """A pending reconnect must not retain the previous visible snapshot."""
     assert expected_pin in page.locator("#server").inner_text()
@@ -487,6 +504,7 @@ def main(wheel):
             from playwright.sync_api import sync_playwright
             with sync_playwright() as playwright:
                 browser = playwright.chromium.launch(headless=True, executable_path="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
+                verify_browser_frame_denial(browser, first_url)
                 page = browser.new_page()
                 page.goto(first_url)
                 page.locator("#token").fill("wrong")
@@ -597,6 +615,7 @@ def main(wheel):
                               "browser_project_error_semantics": "PASS",
                               "browser_catalogue_observation_provenance": "PASS",
                               "browser_reconnect_readback_clear": "PASS",
+                              "browser_frame_denial": "PASS",
                               "browser_forget_token": "PASS",
                               "browser_identity_consistency": "PASS",
                               "browser_inventory_identity_consistency": "PASS",

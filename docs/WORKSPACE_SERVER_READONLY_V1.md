@@ -17,6 +17,10 @@ denied before public Client assets, identity and authenticated routes; this
 keeps the loopback browser boundary from trusting a re-bound DNS name.
 The generated OpenAPI contract lists HTTP 403 for this Host/Origin denial on
 every declared read, including the public identity route.
+Every own response also denies embedding with CSP `frame-ancestors 'none'` and
+`X-Frame-Options: DENY`. The public local Client and token-entry surface must
+open as a top-level page, not inside an unrelated page's frame. This does not
+change route authentication or allow a non-loopback Host/Origin.
 HEAD follows the corresponding GET status and headers without a response body;
 other recognized non-GET methods remain read-only rejections.
 GET and HEAD accept only origin-form targets beginning with one `/`. An
