@@ -26,6 +26,8 @@ document.getElementById('forget').addEventListener('click', () => {
 document.getElementById('connect').addEventListener('click', async () => {
   const attempt = ++connectionAttempt;
   state.textContent = 'CONNECTING';
+  server.textContent = 'No connection';
+  projectState.textContent = 'UNAVAILABLE';
   projects.replaceChildren();
   projectObserved.textContent = 'No observation';
   clearCapabilities();

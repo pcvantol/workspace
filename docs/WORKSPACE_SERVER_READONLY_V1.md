@@ -64,6 +64,11 @@ For configured catalogue data, the browser shows the exact Server-provided
 spelling with the browser's current time. An unconfigured catalogue, reconnect,
 failed read or forgotten binding shows no observation; stale/partial labels and
 rows retain their existing semantics.
+On reconnect, the browser immediately clears the previous Server identity and
+project state as well as rows, capabilities and observation time. A pending
+identity read displays CONNECTING without retaining old READY/AVAILABLE
+readbacks; the saved instance pin and typed token remain available for the
+same attempt.
 When its list is empty, the browser also labels EMPTY. An unconfigured source
 returns both flags false. The Server's own status remains READY and its
 `project_source` retains the primary catalogue state.
