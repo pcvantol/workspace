@@ -872,6 +872,22 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual((second / "token").read_text(), "winner token")
         self.assertEqual((second / "initialized").stat().st_mode & 0o777, 0)
 
+    def test_cli_read_commands_close_private_root_on_success_and_error(self):
+        real_close = Service.close
+        for command in ("status", "projects", "capabilities", "openapi"):
+            with self.subTest(command=command), patch.object(
+                    Service, "close", autospec=True, side_effect=real_close) as closed:
+                with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                    self.assertEqual(main(["--root", str(self.root), command]), 0)
+                self.assertEqual(closed.call_count, 1)
+        catalogue = self.root / "projects.json"
+        catalogue.write_text("{invalid")
+        catalogue.chmod(0o600)
+        with patch.object(Service, "close", autospec=True, side_effect=real_close) as closed:
+            with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                self.assertEqual(main(["--root", str(self.root), "projects"]), 2)
+            self.assertEqual(closed.call_count, 1)
+
     def test_cli_modes_and_server_lock(self):
         self.assertEqual(main(["--root", str(self.root), "serve", "--port", "0"]), 2)
         with patch("workspace_control.cli.serve") as mock_serve:

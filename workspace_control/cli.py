@@ -28,15 +28,17 @@ def main(argv=None):
             print(json.dumps({"instance_id": initialize(args.root)}))
         elif args.command == "inspect":
             print(json.dumps(inspect(args.root), sort_keys=True))
-        elif args.command == "status":
-            print(json.dumps(Service(args.root).status(), sort_keys=True))
-        elif args.command == "projects":
-            print(json.dumps(Service(args.root).projects(), sort_keys=True))
-        elif args.command == "capabilities":
-            print(json.dumps(operation_inventory(Service(args.root).instance_id), sort_keys=True))
-        elif args.command == "openapi":
-            Service(args.root)
-            print(json.dumps(openapi_contract(), sort_keys=True))
+        elif args.command in ("status", "projects", "capabilities", "openapi"):
+            with Service(args.root) as service:
+                if args.command == "status":
+                    result = service.status()
+                elif args.command == "projects":
+                    result = service.projects()
+                elif args.command == "capabilities":
+                    result = operation_inventory(service.instance_id)
+                else:
+                    result = openapi_contract()
+            print(json.dumps(result, sort_keys=True))
         else:
             if not 1 <= args.port <= 65535:
                 raise ValueError("port out of range")

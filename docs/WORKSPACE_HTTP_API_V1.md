@@ -50,8 +50,8 @@ writer when HTTP is down, bypass preconditions or replace missing peer APIs with
 CLI. An operation inventory declares which capabilities are HTTP_EXPOSED and
 which LOCAL_ONLY_ADMIN; parity compares only supported equivalent operations.
 The local read-only subset now serves `GET /v1/capabilities` for the pinned
-instance. It declares only actual Workspace HTTP reads and local-only `init`/
-`serve`; `peer_operations_qualified=false` remains explicit. Full WH-CONTRACT,
+instance. It declares only actual Workspace HTTP reads and owner-local `init`,
+`inspect` and `serve`; `peer_operations_qualified=false` remains explicit. Full WH-CONTRACT,
 WH-PEERS and WH-Q retain their separate evidence gates.
 
 Workspace is still the human project/governance interface. Forge Server Console
