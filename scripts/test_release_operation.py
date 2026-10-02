@@ -188,6 +188,23 @@ class WorkspaceReleaseOperationTests(unittest.TestCase):
         with self.assertRaisesRegex(release_operation.ReleaseOperationError, "missing cleanup evidence"):
             release_operation.ReleaseOperation.parse(record)
 
+    def test_each_state_requires_its_prior_evidence(self) -> None:
+        errors = {
+            "qualification": "missing qualification evidence",
+            "publication_receipt": "missing publication receipt",
+            "cleanup": "missing cleanup evidence",
+        }
+        for state, required in release_operation._REQUIRED_EVIDENCE.items():
+            record = release_operation.asdict(self.expected())
+            record["state"] = state
+            for key in required:
+                record[key] = {"readback": "PASS"}
+            self.assertEqual(state, release_operation.ReleaseOperation.parse(record).state)
+            for key in required:
+                incomplete = {**record, key: None}
+                with self.assertRaisesRegex(release_operation.ReleaseOperationError, errors[key]):
+                    release_operation.ReleaseOperation.parse(incomplete)
+
     def test_invalid_non_finite_json_evidence_is_rejected(self) -> None:
         with self.assertRaisesRegex(release_operation.ReleaseOperationError, "durable JSON evidence"):
             self.prepare(qualification={"exact_main_sha": self.source, "score": float("nan")})
