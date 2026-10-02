@@ -86,9 +86,11 @@ recovered its own saved binding and visibly displayed `CONNECTED`, Workspace
 Server 2.8.0 `READY`, and Forge 2.7.59 `OBSERVED` / `AVAILABLE` / `CURRENT`
 for the exact `repo-1` scope. Both servers ran from isolated Python 3.14.8
 installations outside the checkout; the app used only their HTTP routes.
-This closes the **local packaged Finder readback candidate gate** for the
-first Forge read. Protected PR delivery is pending. It does not close remote
-two-Mac, Developer ID signing, macOS system trust or full peer qualification.
+Workspace PR #122 protected-delivered this **local packaged Finder readback
+gate** on main `cffba509e0a5786f55544ad61fcd9cab5a78d2bf`. The next
+native gate is the two-Mac app readback under normal macOS HTTPS trust. This
+local result does not close Developer ID signing, signed Keychain behavior
+or full peer qualification.
 The pre-release Keychain service moved from `.v1` to `.v2` because a changed
 ad hoc signature left the old test item awaiting macOS access. The old item
 is retained, not silently rebound or deleted; this candidate needs explicit

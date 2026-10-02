@@ -119,8 +119,9 @@ and showed the installed Workspace Server's authenticated Forge `OBSERVED`
 response for `repo-1`, including Forge 2.7.59, `AVAILABLE` and `CURRENT`. It
 recovered the saved binding after quit and relaunch. The Workspace and Forge
 Servers were separately installed in Python 3.14.8 environments outside their
-checkouts; this is a local loopback candidate result awaiting protected PR
-delivery. A SwiftUI `GroupBox` in the connection panel prevented this
+checkouts; this local loopback result was protected-delivered in Workspace
+PR #122/main `cffba509e0a5786f55544ad61fcd9cab5a78d2bf`. A SwiftUI
+`GroupBox` in the connection panel prevented this
 candidate's main window from opening on the test Mac; the native panels now
 use an explicit SwiftUI card. A changed ad hoc signature also left the earlier
 pre-release `.v1` Keychain test item awaiting macOS access, so the candidate
