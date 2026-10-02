@@ -693,31 +693,38 @@ class ReadOnlyTests(unittest.TestCase):
     def test_inspect_reports_private_init_state_without_secret_or_writes(self):
         fresh = Path(self.temp.name) / "fresh"
         fresh.mkdir(mode=0o700)
-        self.assertEqual(inspect(fresh), {"state": "UNINITIALIZED"})
-        self.assertEqual(inspect(self.root), {"state": "READY", "instance_id": self.instance})
+        empty = {"identity": False, "token": False, "marker": False}
+        complete = {"identity": True, "token": True, "marker": True}
+        legacy_files = {"identity": True, "token": True, "marker": False}
+        self.assertEqual(inspect(fresh), {"state": "UNINITIALIZED", "files": empty})
+        self.assertEqual(inspect(self.root), {"state": "READY", "files": complete,
+                                              "instance_id": self.instance})
         token = (self.root / "token").read_text().strip()
         output = io.StringIO()
         with redirect_stdout(output):
             self.assertEqual(main(["--root", str(self.root), "inspect"]), 0)
-        self.assertEqual(json.loads(output.getvalue()), {"state": "READY", "instance_id": self.instance})
+        self.assertEqual(json.loads(output.getvalue()), {"state": "READY", "files": complete,
+                                                         "instance_id": self.instance})
         self.assertNotIn(token, output.getvalue())
         (fresh / "initialized").write_text(self.instance + "\n")
         (fresh / "initialized").chmod(0)
-        self.assertEqual(inspect(fresh), {"state": "INCOMPLETE"})
+        self.assertEqual(inspect(fresh), {"state": "INCOMPLETE",
+                                          "files": {"identity": False, "token": False, "marker": True}})
         self.assertEqual((fresh / "initialized").stat().st_mode & 0o777, 0)
         self.assertRaises(ValueError, initialize, fresh)
         (fresh / "initialized").unlink()
         created = initialize(fresh)
-        self.assertEqual(inspect(fresh), {"state": "READY", "instance_id": created})
+        self.assertEqual(inspect(fresh), {"state": "READY", "files": complete, "instance_id": created})
         (fresh / "initialized").unlink()
-        self.assertEqual(inspect(fresh), {"state": "INCOMPLETE"})
+        self.assertEqual(inspect(fresh), {"state": "INCOMPLETE", "files": legacy_files})
         identity = fresh / "instance.json"
         legacy = json.loads(identity.read_text())
         legacy.pop("init_protocol")
         identity.write_text(json.dumps(legacy))
-        self.assertEqual(inspect(fresh), {"state": "READY", "instance_id": created})
+        self.assertEqual(inspect(fresh), {"state": "READY", "files": legacy_files,
+                                          "instance_id": created})
         (fresh / "token").chmod(0o644)
-        self.assertEqual(inspect(fresh), {"state": "INCOMPLETE"})
+        self.assertEqual(inspect(fresh), {"state": "INCOMPLETE", "files": legacy_files})
         fresh.chmod(0o755)
         self.assertRaises(ValueError, inspect, fresh)
 

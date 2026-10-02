@@ -158,20 +158,21 @@ def inspect(root):
     _, root_fd = _open_private_root(root)
     try:
         present = {}
-        for name in ("instance.json", "token", "initialized"):
+        for label, name in (("identity", "instance.json"), ("token", "token"),
+                            ("marker", "initialized")):
             try:
                 os.stat(name, dir_fd=root_fd, follow_symlinks=False)
             except FileNotFoundError:
-                present[name] = False
+                present[label] = False
             else:
-                present[name] = True
+                present[label] = True
         if not any(present.values()):
-            return {"state": "UNINITIALIZED"}
+            return {"state": "UNINITIALIZED", "files": present}
         try:
             identity, _ = _load_instance(root_fd)
         except (OSError, ValueError, UnicodeError):
-            return {"state": "INCOMPLETE"}
-        return {"state": "READY", "instance_id": identity["instance_id"]}
+            return {"state": "INCOMPLETE", "files": present}
+        return {"state": "READY", "files": present, "instance_id": identity["instance_id"]}
     finally:
         os.close(root_fd)
 
