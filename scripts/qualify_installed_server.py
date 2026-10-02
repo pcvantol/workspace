@@ -546,6 +546,32 @@ def verify_browser_inventory_identity_mismatch(page, other_id, expected_pin):
         page.unroute("**/v1/capabilities", foreign_inventory)
 
 
+def verify_browser_inventory_consistency(page, url, token, instance_id):
+    """A contradictory own inventory must not appear as available operations."""
+    inventory = json.loads(read(url + "/v1/capabilities", token=token, instance=instance_id)[1])
+    invalid = (
+        {**inventory, "product_version": "0.0.0"},
+        {**inventory, "operations": inventory["operations"] + [inventory["operations"][0]]},
+        {**inventory, "operations": inventory["operations"] + [{"id": "", "exposure": "HTTP_EXPOSED"}]},
+    )
+    for item in invalid:
+        def altered(route):
+            route.fulfill(status=200, content_type="application/json", body=json.dumps(item))
+        page.route("**/v1/capabilities", altered)
+        try:
+            page.locator("#connect").click()
+            page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
+            assert page.locator("#state").inner_text() == "CONNECTED"
+            assert page.locator("#capability-state").inner_text() == "UNAVAILABLE"
+            assert page.locator("#capabilities li").count() == 0
+            assert page.locator("#peer-state").inner_text() == "Peer operations: UNQUALIFIED"
+            assert page.evaluate("localStorage.getItem('workspace.instanceId')") == instance_id
+        finally:
+            page.unroute("**/v1/capabilities", altered)
+    page.locator("#connect").click()
+    page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
+
+
 def _verify_browser_bindings(page, first_url, token, first_id, second_id, first):
     page.goto(first_url)
     page.locator("#token").fill("wrong")
@@ -573,6 +599,7 @@ def _verify_browser_bindings(page, first_url, token, first_id, second_id, first)
     listed = page.locator("#capabilities li").all_text_contents()
     assert "capabilities.read · HTTP_EXPOSED" in listed
     assert "instance.init · LOCAL_ONLY_ADMIN" in listed
+    verify_browser_inventory_consistency(page, first_url, token, first_id)
     verify_browser_project_error_semantics(page, first)
 
 
@@ -728,6 +755,7 @@ def main(wheel):
                               "browser_forget_token": "PASS",
                               "browser_identity_consistency": "PASS",
                               "browser_inventory_identity_consistency": "PASS",
+                              "browser_inventory_consistency": "PASS",
                               "peer_contacted": False}, sort_keys=True))
         finally:
             for process in processes:
