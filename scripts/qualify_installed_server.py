@@ -701,6 +701,15 @@ def verify_browser_inventory_consistency(page, url, token, instance_id):
         {**inventory, "operations": [{key: value for key, value in inventory["operations"][0].items()
                                        if key != "auth"}]},
         {**inventory, "operations": [{**inventory["operations"][0], "method": "POST"}]},
+        {**inventory, "operations": [{**operation, "auth": "PUBLIC"} if operation["id"] == "status.read"
+                                       else operation for operation in inventory["operations"]]},
+        {**inventory, "operations": [{**operation, "path": "//evil.example/v1/status"}
+                                       if operation["id"] == "status.read" else operation
+                                       for operation in inventory["operations"]]},
+        {**inventory, "operations": [{**operation, "path": "/v1/status?token=x"}
+                                       if operation["id"] == "status.read" else operation
+                                       for operation in inventory["operations"]]},
+        {**inventory, "operations": inventory["operations"][:-1]},
         {**inventory, "operations": []},
         {**inventory, "operations": inventory["operations"] + [inventory["operations"][0]]},
         {**inventory, "operations": inventory["operations"] + [{"id": "", "exposure": "HTTP_EXPOSED"}]},

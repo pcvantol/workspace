@@ -133,22 +133,20 @@ function validProjectCatalogue(catalogue) {
   return catalogue.state === expectedState && ['LOCAL', 'DEMO'].includes(catalogue.source) &&
     typeof catalogue.observed_at === 'string' && catalogue.observed_at.length > 0;
 }
+const ownOperations = {
+  'identity.read': {exposure: 'HTTP_EXPOSED', auth: 'PUBLIC', method: 'GET', path: '/v1/identity'},
+  'status.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/status', local_cli: 'status'},
+  'projects.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/projects', local_cli: 'projects'},
+  'openapi.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/openapi.json', local_cli: 'openapi'},
+  'capabilities.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/capabilities', local_cli: 'capabilities'},
+  'instance.init': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'init'},
+  'server.serve': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'serve'}
+};
 function validOwnOperation(operation) {
-  if (!operation || typeof operation.id !== 'string' || !operation.id.trim()) return false;
-  const keys = Object.keys(operation);
-  if (operation.exposure === 'HTTP_EXPOSED') {
-    const required = ['id', 'exposure', 'auth', 'method', 'path'];
-    return required.every(key => Object.hasOwn(operation, key)) &&
-      keys.every(key => [...required, 'local_cli'].includes(key)) &&
-      ['PUBLIC', 'BEARER_PINNED'].includes(operation.auth) && operation.method === 'GET' &&
-      typeof operation.path === 'string' && operation.path.startsWith('/') &&
-      (!Object.hasOwn(operation, 'local_cli') ||
-        (typeof operation.local_cli === 'string' && operation.local_cli.length > 0));
-  }
-  return operation.exposure === 'LOCAL_ONLY_ADMIN' &&
-    keys.length === 4 && ['id', 'exposure', 'auth', 'local_cli'].every(key => Object.hasOwn(operation, key)) &&
-    operation.auth === 'PRIVATE_ROOT_OWNER' &&
-    typeof operation.local_cli === 'string' && operation.local_cli.length > 0;
+  if (!operation || !Object.hasOwn(ownOperations, operation.id)) return false;
+  const expected = ownOperations[operation.id];
+  return Object.keys(operation).length === Object.keys(expected).length + 1 &&
+    Object.entries(expected).every(([key, value]) => operation[key] === value);
 }
 document.getElementById('forget').addEventListener('click', () => {
   connectionAttempt += 1;
@@ -222,7 +220,7 @@ document.getElementById('connect').addEventListener('click', async () => {
           inventory.schema_version === 1 && inventory.instance_id === identity.instance_id &&
           inventory.product_version === status.version &&
           inventory.peer_operations_qualified === false && Array.isArray(inventory.operations) &&
-          inventory.operations.length > 0 &&
+          inventory.operations.length === Object.keys(ownOperations).length &&
           inventory.operations.every(validOwnOperation) &&
           new Set(inventory.operations.map(operation => operation.id)).size === inventory.operations.length) {
         capabilityState.textContent = label('AVAILABLE');
