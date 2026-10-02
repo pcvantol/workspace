@@ -3,11 +3,11 @@
 <title>Workspace Client</title><style>
 body{font:16px system-ui,sans-serif;max-width:52rem;margin:3rem auto;padding:0 1rem;color:#17212b;background:#f6f8fa}
 main{background:white;border:1px solid #d4dce3;border-radius:12px;padding:2rem}input{width:100%;box-sizing:border-box;padding:.7rem;margin:.5rem 0}button{padding:.7rem 1.2rem}li{margin:.6rem 0}.state{font-weight:bold}
-</style></head><body><main><h1>Workspace</h1><p>Read-only Server status and project information</p>
-<label for="token">Instance token</label><input id="token" type="password" autocomplete="off" placeholder="Paste the token from your private data root">
-<button id="connect">Connect</button> <button id="forget" type="button">Forget server binding</button><p id="state" class="state" role="status">UNAVAILABLE</p>
-<section><h2>Server</h2><p id="server">No connection</p></section>
-<section><h2>Projects</h2><p id="project-state">UNAVAILABLE</p><p id="project-observed">No observation</p><ul id="projects"></ul></section>
-<section><h2>Server capabilities</h2><p id="capability-state">UNAVAILABLE</p><p id="peer-state">Peer operations: UNQUALIFIED</p><ul id="capabilities"></ul></section>
-<p>Project information is Workspace-owned local data. Demo entries are labelled DEMO. Forge and Engineering Platform sources are unconfigured.</p>
+</style></head><body><main><h1>Workspace</h1><p data-i18n="intro">Read-only Server status and project information</p>
+<label for="token" data-i18n="tokenLabel">Instance token</label><input id="token" type="password" autocomplete="off" placeholder="Paste the token from your private data root">
+<button id="connect" data-i18n="connect">Connect</button> <button id="forget" type="button" data-i18n="forget">Forget server binding</button><p id="state" class="state" role="status">UNAVAILABLE</p>
+<section><h2 data-i18n="serverHeading">Server</h2><p id="server">No connection</p></section>
+<section><h2 data-i18n="projectsHeading">Projects</h2><p id="project-state">UNAVAILABLE</p><p id="project-observed">No observation</p><ul id="projects"></ul></section>
+<section><h2 data-i18n="capsHeading">Server capabilities</h2><p id="capability-state">UNAVAILABLE</p><p id="peer-state">Peer operations: UNQUALIFIED</p><ul id="capabilities"></ul></section>
+<p data-i18n="note">Project information is Workspace-owned local data. Demo entries are labelled DEMO. Forge and Engineering Platform sources are unconfigured.</p>
 </main><script src="/client.js" defer></script></body></html>
