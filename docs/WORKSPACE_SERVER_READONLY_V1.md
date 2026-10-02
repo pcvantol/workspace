@@ -8,6 +8,12 @@ The local wheel distribution name `pcvantol-workspace-control` is an internal
 candidate identity for installed tests. PyPI namespace ownership, publisher
 registration and public name mapping remain WPK-IDENTITY gates.
 
+Workspace's TDE observe definition identifies this delivered local read-only
+Server/Client subset. Required Workspace validation runs its own strict runtime
+coverage gate before the TDE assessment; the coverage counts are not supplied
+as TDE assessment evidence. The TDE run remains observe-only and does not
+qualify peers, public distribution or a production installation.
+
 Acceptance: an explicit private data root initializes one opaque stable instance ID and token; the same root survives a normal process restart; two roots remain independent. Versioned read-only HTTP requires bearer authentication and a pinned instance header, rejects malformed paths, input and origin, and exposes status, project catalogue and OpenAPI. A thin local CLI uses the same service. The browser uses actual HTTP responses and labels EMPTY, UNCONFIGURED, STALE, UNAVAILABLE and UNAUTHORIZED separately. A sample catalogue is explicitly demo data. Source tests, strict per-file coverage, local validation, a non-editable wheel install outside the checkout and API/CLI/browser readback form the evidence. No live peer, installer, public registry or production runtime qualification is claimed.
 
 Every handled HTTP method requires exactly one Host for the Server's actual loopback
