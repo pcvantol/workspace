@@ -15,20 +15,25 @@ from . import __version__
 
 def _private_root(root):
     path = Path(root)
-    if not path.is_absolute() or not path.is_dir() or path.is_symlink():
+    if not path.is_absolute():
         raise ValueError("data root must be an existing absolute directory")
-    if path.stat().st_uid != os.getuid() or path.stat().st_mode & 0o077:
+    info = os.stat(path, follow_symlinks=False)
+    if not stat.S_ISDIR(info.st_mode):
+        raise ValueError("data root must be an existing absolute directory")
+    if info.st_uid != os.getuid() or info.st_mode & 0o077:
         raise ValueError("data root must be owned by this user and mode 0700")
-    return path
+    return path, info
 
 
 def _open_private_root(root):
-    path = _private_root(root)
+    path, inspected = _private_root(root)
     descriptor = os.open(path, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
     try:
         info = os.fstat(descriptor)
         if not stat.S_ISDIR(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o077:
             raise ValueError("data root must be owned by this user and mode 0700")
+        if (info.st_dev, info.st_ino) != (inspected.st_dev, inspected.st_ino):
+            raise ValueError("data root changed during open")
     except Exception:
         os.close(descriptor)
         raise

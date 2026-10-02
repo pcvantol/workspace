@@ -429,6 +429,45 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual(json.loads(self.authorized("/v1/status")[1])["instance_id"], self.instance)
         self.assertEqual(json.loads(self.authorized("/v1/projects")[1])["projects"][0]["id"], "one")
 
+    def test_startup_rejects_root_replaced_between_inspection_and_open(self):
+        other = Path(self.temp.name) / "other"
+        other.mkdir(mode=0o700)
+        initialize(other)
+        moved = Path(self.temp.name) / "one-moved"
+        actual_open = os.open
+        def swap_on_root(path, flags, mode=0o777, *, dir_fd=None):
+            if Path(path) == self.root and flags & os.O_DIRECTORY:
+                self.root.rename(moved)
+                other.rename(self.root)
+            return actual_open(path, flags, mode, dir_fd=dir_fd)
+        try:
+            with patch("workspace_control.service.os.open", side_effect=swap_on_root):
+                with self.assertRaisesRegex(ValueError, "changed during open"):
+                    Service(self.root)
+        finally:
+            self.root.rename(other)
+            moved.rename(self.root)
+        self.assertEqual(Service(self.root).instance_id, self.instance)
+
+    def test_init_rejects_root_replaced_between_inspection_and_open(self):
+        fresh = Path(self.temp.name) / "fresh"
+        fresh.mkdir(mode=0o700)
+        other = Path(self.temp.name) / "other"
+        other.mkdir(mode=0o700)
+        moved = Path(self.temp.name) / "fresh-moved"
+        actual_open = os.open
+        def swap_on_root(path, flags, mode=0o777, *, dir_fd=None):
+            if Path(path) == fresh and flags & os.O_DIRECTORY:
+                fresh.rename(moved)
+                other.rename(fresh)
+            return actual_open(path, flags, mode, dir_fd=dir_fd)
+        with patch("workspace_control.service.os.open", side_effect=swap_on_root):
+            with self.assertRaisesRegex(ValueError, "changed during open"):
+                initialize(fresh)
+        self.assertFalse((fresh / "instance.json").exists())
+        self.assertFalse((moved / "instance.json").exists())
+        self.assertFalse((fresh / "initialized").exists())
+
     def test_serve_lock_uses_opened_root_when_path_changes_before_lock(self):
         other = Path(self.temp.name) / "two"
         other.mkdir(mode=0o700)

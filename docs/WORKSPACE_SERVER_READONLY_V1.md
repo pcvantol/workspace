@@ -81,6 +81,9 @@ The running Server holds its validated private-root directory open. Identity,
 token, later catalogue reads and its server lock resolve against that directory,
 so renaming or replacing the root path cannot make an authenticated instance
 read another root's projects or place its lock there.
+Initialization and Server startup also compare the inspected no-follow root
+directory identity with the opened directory descriptor. A path replacement
+between those steps is rejected before using either root's private state.
 Shutdown drains in-flight local HTTP requests before closing the root descriptor;
 a closed Service rejects later catalogue reads rather than resolving a relative
 filename from the process directory.
