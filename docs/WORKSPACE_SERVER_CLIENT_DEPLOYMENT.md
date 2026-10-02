@@ -32,10 +32,10 @@ inventory came from those real responses. Server stop/restart produced an
 honest unavailable/cached state and then fresh readback; Client quit/relaunch
 recovered its pinned binding from its own Keychain namespace. This local app
 evidence was protected-delivered in #117 and its responsive Keychain UI repair
-in #118. The next Server candidate adds explicitly bound TLS; two-Mac HTTPS
-trust/authorization and a Developer ID signed candidate remain `NOT_RUN`.
+in #118. PR #119 delivered explicitly bound TLS. The native app's two-Mac
+system trust and a Developer ID signed candidate remain `NOT_RUN`.
 
-### Explicit HTTPS Server candidate
+### Explicit HTTPS Server
 
 The Workspace Server continues to default to `127.0.0.1` plaintext for local
 qualification. A separate-Mac deployment must name one concrete IPv4
@@ -60,6 +60,22 @@ The authenticated OpenAPI document from an HTTPS listener advertises the
 configured HTTPS authority and actual port; it never advertises a plaintext
 loopback address to a remote HTTPS Client. CLI OpenAPI remains the historical
 local template because it has no active listener context.
+
+### Two-Mac transport readback
+
+After PR #119 merged, an installed Python 3.14 Server 2.6.0 on `macmini-m6`
+listened at `192.168.1.134:8766` using a disposable one-day certificate with
+that IP in its SAN. The separate `MBP-van-Peter` Mac reached it over LAN. Curl
+on the client Mac validated the supplied temporary certificate with
+`--cacert` (`curl ssl_verify_result=0`, meaning verification succeeded)
+and an authenticated, instance-pinned `GET /v1/status` returned HTTP 200 and
+the Server's real READY/UNCONFIGURED response. Without the test CA, TLS failed
+before HTTP; with CA, missing bearer returned 401, wrong pin 409 and foreign
+Host 403. The test did not disable certificate validation or install trust in
+macOS. Test state and listener were removed. This closes the two-Mac Server
+HTTP transport subset only. Packaged `Workspace.app` remote readback under
+normal macOS system trust, Developer ID signing and Keychain/trust behavior
+remain `NOT_RUN`.
 
 Workspace Server is a headless installed, independently restartable service. It owns server-authoritative Workspace project/control/governance state in a Workspace central runtime-storage root outside Git/source checkouts, with its product-owned SQL database plus files, artifacts, logs, backups and cache. It exposes a versioned HTTP API over interface-neutral Workspace application services and is launchd-managed on macOS. It projects Forge/EP truth through their versioned authenticated HTTP APIs; it does not take planning, execution, queue, lease, evidence or repository authority and never reads a peer database.
 

@@ -35,11 +35,14 @@
       "separate Python 3.14.8 installed Workspace Server 2.5.0 at loopback HTTP served identity/status/projects/capabilities",
       "visible project source became STALE after five minutes and Server outage displayed cached data before successful reconnect"
     ],
-    "two_mac_host_trust_authorization_gate": "NOT_RUN",
+    "two_mac_host_trust_authorization_gate": "INSTALLED_SERVER_REMOTE_HTTPS_HTTP_TRANSPORT_PASS_NATIVE_APP_NOT_RUN",
     "native_client_keychain_ui_lifecycle_gate": "LOCAL_PACKAGED_UI_PROTECTED_DELIVERED",
-    "https_server_listener_gate": "CANDIDATE_LOCAL_TLS_TEST_PENDING_PROTECTED_DELIVERY",
-    "two_mac_missing": ["protected nonloopback Workspace Server HTTPS listener delivery", "qualified second Mac host and certificate trust", "remote authorization readback"],
+    "https_server_listener_gate": "PROTECTED_DELIVERED_WORKSPACE_PR_119",
+    "two_mac_transport_evidence": ["macmini-m6 installed Server 2.6.0 on 192.168.1.134:8766 and MBP-van-Peter remote curl with explicit ephemeral test CA", "verified HTTPS and bearer plus pinned instance returned HTTP 200", "without test CA TLS verification failed; absent bearer HTTP 401; wrong pin HTTP 409; foreign Host HTTP 403"],
+    "two_mac_missing": ["packaged Workspace.app remote readback under normal macOS system trust", "Developer ID signed candidate and client-owned Keychain/trust qualification"],
     "forge_read_gate": "NOT_RUN",
+    "selected_forge_read_routes": ["GET /v1/instance", "GET /v1/status"],
+    "forge_read_only_bearer_gate": "FORGE_LANE_3_R23_PRODUCER_RUNNING_WORKSPACE_CONSUMPTION_NOT_RUN",
     "qualified_forge_producer_contract_required": true,
     "first_installer_release_dependency": false,
     "full_forge_ep_canary_dependency": false

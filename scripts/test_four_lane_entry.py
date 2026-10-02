@@ -40,7 +40,13 @@ class FourLaneEntryTests(unittest.TestCase):
                                         active.get('native_client_requires_python_or_local_server')))
             self.assertEqual(graph['status'], 'PLANNED')
             self.assertFalse(graph['first_slice_checkpoint']['full_parent_qualified'])
-        self.assertEqual(self.http['active_product_priority']['two_mac_host_trust_authorization_gate'], 'NOT_RUN')
+        remote = self.http['active_product_priority']
+        self.assertEqual(remote['two_mac_host_trust_authorization_gate'],
+                         'INSTALLED_SERVER_REMOTE_HTTPS_HTTP_TRANSPORT_PASS_NATIVE_APP_NOT_RUN')
+        self.assertEqual(remote['https_server_listener_gate'], 'PROTECTED_DELIVERED_WORKSPACE_PR_119')
+        self.assertTrue(any('packaged Workspace.app remote readback' in item
+                            for item in remote['two_mac_missing']))
+        self.assertEqual(remote['forge_read_gate'], 'NOT_RUN')
         self.assertEqual(self.package['active_product_priority']['native_client_signed_keychain_trust_gate'], 'NOT_RUN')
 
     def test_http_dependencies_preserved(self):
