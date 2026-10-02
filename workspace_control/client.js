@@ -161,7 +161,16 @@ document.getElementById('connect').addEventListener('click', async () => {
     if (!statusResponse.ok) throw new Error('UNAVAILABLE');
     const status = await statusResponse.json();
     if (attempt !== connectionAttempt) return;
+    if (!status || typeof status !== 'object' || Array.isArray(status) ||
+        typeof status.instance_id !== 'string' || !/^[0-9a-f]{32}$/.test(status.instance_id)) {
+      throw new Error('UNAVAILABLE');
+    }
     if (status.instance_id !== identity.instance_id) throw new Error('WRONG_INSTANCE');
+    if (typeof status.version !== 'string' ||
+        !/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(status.version) ||
+        status.state !== 'READY' ||
+        !['UNCONFIGURED', 'EMPTY', 'PARTIAL', 'STALE', 'AVAILABLE', 'SOURCE_UNAVAILABLE']
+          .includes(status.project_source)) throw new Error('UNAVAILABLE');
     if (!pinned) localStorage.setItem('workspace.instanceId', identity.instance_id);
     state.textContent = label('CONNECTED');
     server.textContent = `${status.instance_id} · ${copy.version} ${status.version} · ${label(status.state)}`;

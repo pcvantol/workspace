@@ -570,6 +570,31 @@ def verify_browser_identity_mismatch(page, other_id, expected_pin):
         page.unroute("**/v1/status", inconsistent_status)
 
 
+def verify_browser_status_envelope(page, url, token, instance_id):
+    """Only a coherent authenticated own status may claim a connection and pin."""
+    status = json.loads(read(url + "/v1/status", token=token, instance=instance_id)[1])
+    for invalid in ({key: value for key, value in status.items() if key != "version"},
+                    {key: value for key, value in status.items() if key != "instance_id"},
+                    {**status, "instance_id": "malformed"},
+                    {**status, "version": "02.4.41"},
+                    {**status, "state": "STARTING"},
+                    {**status, "project_source": "PEER_QUALIFIED"},
+                    None, [], "{"):
+        def altered(route):
+            route.fulfill(status=200, content_type="application/json",
+                          body=invalid if isinstance(invalid, str) else json.dumps(invalid))
+        page.route("**/v1/status", altered)
+        try:
+            page.locator("#connect").click()
+            page.get_by_role("status").get_by_text("UNAVAILABLE").wait_for()
+            assert page.locator("#server").inner_text() == "No connection"
+            assert page.locator("#projects li").count() == 0
+            assert page.locator("#capabilities li").count() == 0
+            assert page.evaluate("localStorage.getItem('workspace.instanceId')") is None
+        finally:
+            page.unroute("**/v1/status", altered)
+
+
 def verify_browser_inventory_identity_mismatch(page, other_id, expected_pin):
     """A foreign capability inventory cannot leave connected project rows visible."""
     def foreign_inventory(route):
@@ -657,6 +682,7 @@ def _verify_browser_bindings(page, first_url, token, first_id, second_id, first)
     assert page.evaluate("localStorage.getItem('workspace.instanceId')") is None
     page.unroute("**/v1/identity")
     verify_browser_identity_mismatch(page, second_id, None)
+    verify_browser_status_envelope(page, first_url, token, first_id)
     page.locator("#connect").click()
     page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
     verify_browser_observation(page, "No observation")
