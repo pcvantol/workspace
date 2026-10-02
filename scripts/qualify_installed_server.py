@@ -331,11 +331,30 @@ def verify_installed_capabilities(server_exe, instance_root, cwd, env, url,
     assert "path" not in inventory["instance.init"]
     assert inventory["instance.inspect"]["local_cli"] == "inspect"
     assert "path" not in inventory["instance.inspect"]
+    _verify_installed_inspection(server_exe, instance_root, cwd, env, instance_id, token)
+
+
+def _verify_installed_inspection(server_exe, instance_root, cwd, env, instance_id, token):
+    """Exercise read-only inspection on installed complete and incomplete roots."""
     inspected = subprocess.run([str(server_exe), "--root", str(instance_root), "inspect"],
                                cwd=cwd, env=env, capture_output=True, text=True)
     assert inspected.returncode == 0 and inspected.stderr == ""
-    assert json.loads(inspected.stdout) == {"state": "READY", "instance_id": instance_id}
+    assert json.loads(inspected.stdout) == {"state": "READY", "instance_id": instance_id,
+                                            "files": {"identity": True, "token": True, "marker": True}}
     assert token not in inspected.stdout
+    diagnostic_root = cwd / "diagnostic"
+    diagnostic_root.mkdir(mode=0o700)
+    diagnostic = [str(server_exe), "--root", str(diagnostic_root), "inspect"]
+    empty = subprocess.run(diagnostic, cwd=cwd, env=env, capture_output=True, text=True)
+    assert empty.returncode == 0 and json.loads(empty.stdout) == {
+        "state": "UNINITIALIZED", "files": {"identity": False, "token": False, "marker": False}}
+    marker = diagnostic_root / "initialized"
+    marker.write_text("unfinished\n")
+    marker.chmod(0)
+    partial = subprocess.run(diagnostic, cwd=cwd, env=env, capture_output=True, text=True)
+    assert partial.returncode == 0 and json.loads(partial.stdout) == {
+        "state": "INCOMPLETE", "files": {"identity": False, "token": False, "marker": True}}
+    assert marker.stat().st_mode & 0o777 == 0
 
 
 def _verify_capabilities_cli(server_exe, instance_root, cwd, env, url,

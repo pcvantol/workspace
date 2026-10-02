@@ -32,7 +32,8 @@ token in the current page only. The Server listens on loopback. The optional
 private `projects.json` catalogue format and state semantics are documented in
 [the read-only Server contract](docs/WORKSPACE_SERVER_READONLY_V1.md).
 `inspect` reads the private initialization state as `UNINITIALIZED`, `INCOMPLETE`
-or `READY` without printing the token or changing files. An incomplete root
+or `READY`, with presence flags for identity, token and completion marker,
+without printing the token or changing files. An incomplete root
 requires operator investigation; `init` refuses to overwrite it.
 `workspace-server --root /absolute/private/workspace-data projects` prints the
 same own catalogue projection as `GET /v1/projects`; invalid or unreadable

@@ -63,7 +63,11 @@ private root and validates identity, token and completion marker as startup.
 It reports `UNINITIALIZED` if all three are absent, `INCOMPLETE` if any present
 state cannot pass validation, and `READY` with the instance ID when validation
 passes (including an earlier valid two-field identity). It never prints the
-token or changes the root. `INCOMPLETE` is a diagnostic, not repair authority;
+token or changes the root. Every result includes a `files` map with boolean
+`identity`, `token` and `marker` presence flags. Presence does not establish
+validity; `READY` flags reflect validated files. Other flags are a read-only
+snapshot and may become stale if another process initializes the root.
+`INCOMPLETE` is a diagnostic, not repair authority;
 `init` still refuses to overwrite partial state.
 New roots receive a private `initialized` marker that remains unreadable until
 identity and token writes have synced. The final permission change publishes
