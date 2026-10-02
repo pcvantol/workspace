@@ -34,6 +34,19 @@ native app signing/distribution and remote host qualification remain separate
 evidence gates; do not infer them from a source build. Other quality and UI
 improvements remain candidates after this selected delivery.
 
+### Native Client candidate readback
+
+The local 2.5.0 test bundle opens as a real macOS window and reads identity,
+status, projects and capabilities over HTTP from a separate installed Python
+3.14.8 Workspace Server 2.5.0. A restart recovered the saved binding from the
+Client's own Keychain namespace. An interrupted Server showed `UNAVAILABLE`
+with the prior observation visibly cached; reconnect recovered, and the sample
+project became `STALE` after the Server's five-minute window. The Swift transport
+suite and packaged binary/signature checks passed locally. This is candidate
+evidence pending protected delivery, not a public/signed distribution or
+two-Mac PASS. The current Server binds loopback only, so a controlled HTTPS
+listener and real second-Mac trust/auth readback remain open.
+
 ## Historical first implementation — 1 October 2026
 
 The owner selected independent Workspace development as LANE_4 alongside the

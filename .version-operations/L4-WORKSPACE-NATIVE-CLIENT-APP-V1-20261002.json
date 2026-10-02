@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "r81 first native macOS Client HTTP capability boundary",
+  "determined_version": "2.5.0",
+  "event_lineage": "r81 first native macOS Client HTTP capability boundary",
+  "expected_source_revision": "e362e4bf8fcc32d28eb3c85198399189dd7c091e",
+  "expected_version": "2.4.67",
+  "operation_id": "L4-WORKSPACE-NATIVE-CLIENT-APP-V1-20261002",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "MINOR",
+  "requested": {
+    "bump": "minor"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}
