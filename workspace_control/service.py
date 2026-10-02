@@ -89,15 +89,26 @@ def _observed_datetime(stamp):
     normalized = stamp.replace("Z", "+00:00")
     if re.search(r"[+-][0-9]{2}$", normalized):
         normalized += ":00"
+    week = re.fullmatch(r"[0-9]{4}-W[0-9]{2}-[1-7]T[0-9]{2}:[0-9]{2}"
+                        r"(?::[0-9]{2}(?:\.[0-9]{1,6})?)?[+-][0-9]{2}:[0-9]{2}", normalized)
+    compact = re.fullmatch(r"[0-9]{8}T[0-9]{4}(?:[0-9]{2}(?:\.[0-9]{1,6})?)?"
+                           r"[+-][0-9]{2}:?[0-9]{2}", normalized)
+    if week or compact:
+        date_pattern = "%G-W%V-%uT%H:%M" if week else "%Y%m%dT%H%M"
+        time_part = normalized.split("T", 1)[1].split("+", 1)[0].split("-", 1)[0]
+        if week and time_part.count(":") == 2 or compact and len(time_part.split(".")[0]) == 6:
+            date_pattern += ":%S" if week else "%S"
+        if "." in time_part:
+            date_pattern += ".%f"
+        try:
+            return datetime.strptime(normalized, date_pattern + "%z")
+        except ValueError:
+            raise ValueError("invalid observed_at") from None
+    if re.match(r"^[0-9]{4}-W|^[0-9]{7,8}T", normalized):
+        raise ValueError("invalid observed_at")
     try:
         return datetime.fromisoformat(normalized)
     except ValueError:
-        for pattern in ("%G-W%V-%uT%H:%M:%S%z", "%G-W%V-%uT%H:%M:%S.%f%z",
-                        "%Y%m%dT%H%M%S%z", "%Y%m%dT%H%M%S.%f%z"):
-            try:
-                return datetime.strptime(normalized, pattern)
-            except ValueError:
-                continue
         raise ValueError("invalid observed_at") from None
 
 

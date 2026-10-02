@@ -538,11 +538,14 @@ class ReadOnlyTests(unittest.TestCase):
 
     def test_catalogue_observed_at_schema_preserves_accepted_iso_week_spelling(self):
         from datetime import datetime, timezone
+        from workspace_control.service import _observed_datetime
         now = datetime.now(timezone.utc)
         week = now.isocalendar()
         target = self.root / "projects.json"
         spellings = (f"{week.year}-W{week.week:02d}-{week.weekday}T{now:%H:%M:%S}+00:00",
+                     f"{week.year}-W{week.week:02d}-{week.weekday}T{now:%H:%M}+00:00",
                      now.strftime("%Y%m%dT%H%M%S+0000"),
+                     now.strftime("%Y%m%dT%H%M+0000"),
                      now.strftime("%Y-%m-%dT%H:%M:%S+00"))
         for observed_at in spellings:
             with self.subTest(observed_at=observed_at):
@@ -552,8 +555,13 @@ class ReadOnlyTests(unittest.TestCase):
                 code, body, _ = self.authorized("/v1/projects")
                 self.assertEqual(code, 200)
                 self.assertEqual(json.loads(body)["observed_at"], observed_at)
+                expected = now.replace(second=0, microsecond=0) if observed_at in (
+                    spellings[1], spellings[3]) else now.replace(microsecond=0)
+                self.assertEqual(_observed_datetime(observed_at), expected)
         for observed_at in (f"{week.year}-W54-1T{now:%H:%M:%S}+00:00",
-                            now.strftime("%Y-%m-%dT%H:%M:%S+25")):
+                            now.strftime("%Y-%m-%dT%H:%M:%S+25"),
+                            now.strftime("%Y%m%dT%H%M%S+0000")[0:7] +
+                            now.strftime("T%H%M%S+0000")):
             with self.subTest(invalid=observed_at):
                 target.write_text(json.dumps({"source": "LOCAL", "observed_at": observed_at,
                                               "projects": []}))
