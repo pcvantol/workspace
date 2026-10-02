@@ -85,10 +85,7 @@ def _validated_catalogue_items(raw):
     return items
 
 
-def _observed_datetime(stamp):
-    normalized = stamp.replace("Z", "+00:00")
-    if re.search(r"[+-][0-9]{2}$", normalized):
-        normalized += ":00"
+def _alternate_observed_datetime(normalized):
     week = re.fullmatch(r"[0-9]{4}-W[0-9]{2}-[1-7]T[0-9]{2}:[0-9]{2}"
                         r"(?::[0-9]{2}(?:\.[0-9]{1,6})?)?[+-][0-9]{2}:?[0-9]{2}", normalized)
     compact = re.fullmatch(r"[0-9]{8}T(?:[0-9]{4}(?:[0-9]{2}(?:\.[0-9]{1,6})?)?"
@@ -109,6 +106,16 @@ def _observed_datetime(stamp):
             raise ValueError("invalid observed_at") from None
     if re.match(r"^[0-9]{4}-W|^[0-9]{7,8}T", normalized):
         raise ValueError("invalid observed_at")
+    return None
+
+
+def _observed_datetime(stamp):
+    normalized = stamp.replace("Z", "+00:00")
+    if re.search(r"[+-][0-9]{2}$", normalized):
+        normalized += ":00"
+    alternate = _alternate_observed_datetime(normalized)
+    if alternate is not None:
+        return alternate
     try:
         return datetime.fromisoformat(normalized)
     except ValueError:
