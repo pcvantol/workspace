@@ -68,6 +68,9 @@ The running Server holds its validated private-root directory open. Identity,
 token, later catalogue reads and its server lock resolve against that directory,
 so renaming or replacing the root path cannot make an authenticated instance
 read another root's projects or place its lock there.
+Shutdown drains in-flight local HTTP requests before closing the root descriptor;
+a closed Service rejects later catalogue reads rather than resolving a relative
+filename from the process directory.
 Excessive JSON nesting in private identity or catalogue input is invalid
 source data. It produces the ordinary local startup error or catalogue
 SOURCE_UNAVAILABLE/HTTP 503 outcome, without an uncaught parser exception.

@@ -82,6 +82,8 @@ def openapi_contract():
 
 def handler_for(service):
     class Handler(BaseHTTPRequestHandler):
+        timeout = 5
+
         def log_message(self, format, *args):
             # BaseHTTPRequestHandler would log the raw target, including rejected queries.
             return
@@ -191,6 +193,7 @@ def serve(root, port):
             except BlockingIOError as exc:
                 raise ValueError("instance already served") from exc
             server = ThreadingHTTPServer(("127.0.0.1", port), handler_for(service))
+            server.daemon_threads = False
             try:
                 server.serve_forever(poll_interval=0.1)
             finally:

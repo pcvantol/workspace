@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 import secrets
 import stat
+import threading
 from datetime import datetime, timezone
 
 from . import __version__
@@ -108,6 +109,7 @@ def initialize(root):
 class Service:
     def __init__(self, root):
         self.root = _private_root(root)
+        self._root_lock = threading.Lock()
         self._root_fd = os.open(self.root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
         try:
             self._load_instance()
@@ -144,9 +146,10 @@ class Service:
             raise ValueError("invalid instance creation time")
 
     def close(self):
-        if self._root_fd is not None:
-            os.close(self._root_fd)
-            self._root_fd = None
+        with self._root_lock:
+            if self._root_fd is not None:
+                os.close(self._root_fd)
+                self._root_fd = None
 
     def __enter__(self):
         return self
@@ -171,11 +174,14 @@ class Service:
                 "state": "READY", "project_source": project_source}
 
     def projects(self):
-        try:
-            raw = _private_json("projects.json", dir_fd=self._root_fd)
-        except FileNotFoundError:
-            return {"state": "UNCONFIGURED", "projects": [], "source": None,
-                    "partial": False, "stale": False}
+        with self._root_lock:
+            if self._root_fd is None:
+                raise ValueError("instance is closed")
+            try:
+                raw = _private_json("projects.json", dir_fd=self._root_fd)
+            except FileNotFoundError:
+                return {"state": "UNCONFIGURED", "projects": [], "source": None,
+                        "partial": False, "stale": False}
         items = _validated_catalogue_items(raw)
         stamp = raw.get("observed_at")
         if not isinstance(stamp, str):
