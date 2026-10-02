@@ -382,6 +382,8 @@ def verify_browser_locales(browser, url, token):
             page.goto(url)
             assert page.evaluate("document.documentElement.lang") == language
             assert page.title() == title
+            assert page.locator("#server").get_attribute("aria-live") == "polite"
+            assert page.locator("#server").get_attribute("aria-atomic") == "true"
             for readback in ("#project-readback", "#capability-readback"):
                 assert page.locator(readback).get_attribute("aria-live") == "polite"
                 assert page.locator(readback).get_attribute("aria-atomic") == "true"
@@ -392,6 +394,7 @@ def verify_browser_locales(browser, url, token):
             page.locator("#token").fill(token)
             page.locator("#connect").click()
             page.locator("#state").get_by_text(connected).wait_for()
+            assert page.request.get(url + "/v1/identity").json()["instance_id"] in page.locator("#server").inner_text()
             page.locator("#project-state").get_by_text(project_state).wait_for()
             assert page.locator("#project-observed").inner_text().startswith(observed)
             assert page.locator("#peer-state").inner_text() == peer
@@ -477,6 +480,7 @@ def verify_browser_identity_mismatch(page, other_id, expected_pin):
     try:
         page.locator("#connect").click()
         page.get_by_role("status").get_by_text("WRONG INSTANCE").wait_for()
+        assert page.locator("#server").inner_text() == "No connection"
         assert page.evaluate("localStorage.getItem('workspace.instanceId')") == expected_pin
         assert page.locator("#projects li").count() == 0
         assert page.locator("#capabilities li").count() == 0

@@ -124,6 +124,9 @@ local subset does not qualify the five-language role-aware/peer UI parent.
 Project observation and capability readbacks are polite, atomic live regions
 so their local reconnect, forget and error updates can be announced without
 moving keyboard focus. This does not attest a full screen-reader audit.
+The changing connected-Server identity/version/state line is also a polite,
+atomic live region; a reconnect or identity error replaces it with the local
+no-connection label. The separate connection state remains a status region.
 The local `workspace-client --url` launcher exits nonzero with a clear error
 when the OS browser launcher reports failure or raises an OS/browser error.
 Its success exit means the browser accepted the open request; it does not
