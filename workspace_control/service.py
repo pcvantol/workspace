@@ -85,6 +85,43 @@ def _validated_catalogue_items(raw):
     return items
 
 
+def _alternate_observed_datetime(normalized):
+    week = re.fullmatch(r"[0-9]{4}-W[0-9]{2}-[1-7]T[0-9]{2}:[0-9]{2}"
+                        r"(?::[0-9]{2}(?:\.[0-9]{1,6})?)?[+-][0-9]{2}:?[0-9]{2}", normalized)
+    compact = re.fullmatch(r"[0-9]{8}T(?:[0-9]{4}(?:[0-9]{2}(?:\.[0-9]{1,6})?)?"
+                           r"|[0-9]{2}:[0-9]{2}(?::[0-9]{2}(?:\.[0-9]{1,6})?)?)"
+                           r"[+-][0-9]{2}:?[0-9]{2}", normalized)
+    if week or compact:
+        time_part = normalized.split("T", 1)[1].split("+", 1)[0].split("-", 1)[0]
+        date_pattern = "%G-W%V-%uT" if week else "%Y%m%dT"
+        extended = ":" in time_part
+        date_pattern += "%H:%M" if extended else "%H%M"
+        if extended and time_part.count(":") == 2 or not extended and len(time_part.split(".")[0]) == 6:
+            date_pattern += ":%S" if extended else "%S"
+        if "." in time_part:
+            date_pattern += ".%f"
+        try:
+            return datetime.strptime(normalized, date_pattern + "%z")
+        except ValueError:
+            raise ValueError("invalid observed_at") from None
+    if re.match(r"^[0-9]{4}-W|^[0-9]{7,8}T", normalized):
+        raise ValueError("invalid observed_at")
+    return None
+
+
+def _observed_datetime(stamp):
+    normalized = stamp.replace("Z", "+00:00")
+    if re.search(r"[+-][0-9]{2}$", normalized):
+        normalized += ":00"
+    alternate = _alternate_observed_datetime(normalized)
+    if alternate is not None:
+        return alternate
+    try:
+        return datetime.fromisoformat(normalized)
+    except ValueError:
+        raise ValueError("invalid observed_at") from None
+
+
 def _validate_project_items(items):
     project_ids = set()
     for item in items:
@@ -275,7 +312,7 @@ class Service:
         stamp = raw.get("observed_at")
         if not isinstance(stamp, str):
             raise ValueError("missing observed_at")
-        observed = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+        observed = _observed_datetime(stamp)
         if observed.tzinfo is None:
             raise ValueError("observed_at requires timezone")
         age = (datetime.now(timezone.utc) - observed).total_seconds()

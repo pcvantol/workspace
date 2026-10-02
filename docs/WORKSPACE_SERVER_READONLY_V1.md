@@ -186,7 +186,10 @@ The Status and Capabilities schemas share the canonical stable `X.Y.Z`
 product-version pattern already enforced by the version source and Client.
 The catalogue's `observed_at` is a plain string in this schema because the
 current service accepts timezone-aware ISO 8601 spellings, including ISO week
-dates, and echoes the source spelling. It is not restricted to RFC 3339.
+dates, compact calendar dates and hour-only UTC offsets, and echoes the source
+spelling. These forms have the same meaning on every supported Python version.
+Invalid dates and offsets leave the catalogue SOURCE_UNAVAILABLE. The field is
+not restricted to RFC 3339.
 The local browser now renders this authenticated inventory after a successful
 instance-pinned connection. It labels HTTP reads and local-only administration
 separately and continues to label peer operations UNQUALIFIED. Failed reads,
