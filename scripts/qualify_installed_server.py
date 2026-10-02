@@ -331,6 +331,11 @@ def verify_installed_capabilities(server_exe, instance_root, cwd, env, url,
     assert "path" not in inventory["instance.init"]
     assert inventory["instance.inspect"]["local_cli"] == "inspect"
     assert "path" not in inventory["instance.inspect"]
+    _verify_installed_inspection(server_exe, instance_root, cwd, env, instance_id, token)
+
+
+def _verify_installed_inspection(server_exe, instance_root, cwd, env, instance_id, token):
+    """Exercise read-only inspection on installed complete and incomplete roots."""
     inspected = subprocess.run([str(server_exe), "--root", str(instance_root), "inspect"],
                                cwd=cwd, env=env, capture_output=True, text=True)
     assert inspected.returncode == 0 and inspected.stderr == ""
