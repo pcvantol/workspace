@@ -83,6 +83,9 @@ authenticated Server connection and capability readback intact, with projects
 UNAVAILABLE and no stale rows or observation. A later successful read recovers.
 
 The local Client marks an authenticated Server CONNECTED and stores its instance pin only after the status envelope names the same instance, a canonical three-part product version, READY state and a recognized own project-source state. A malformed or contradictory successful status leaves the connection UNAVAILABLE without readbacks or a new pin; a foreign instance remains WRONG_INSTANCE.
+The status envelope has exactly the Server's `instance_id`, `version`, `state`
+and `project_source` fields. An undeclared peer-authority field cannot establish
+a Client binding.
 
 Pressing Enter in the labelled instance-token field activates the same explicit Connect action as the button, outside text composition. The existing authentication, instance pin, readback and Forget behavior apply to either keyboard or button activation.
 

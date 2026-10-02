@@ -177,7 +177,9 @@ document.getElementById('connect').addEventListener('click', async () => {
       throw new Error('UNAVAILABLE');
     }
     if (status.instance_id !== identity.instance_id) throw new Error('WRONG_INSTANCE');
-    if (typeof status.version !== 'string' ||
+    if (Object.keys(status).length !== 4 ||
+        !['instance_id', 'version', 'state', 'project_source'].every(key => Object.hasOwn(status, key)) ||
+        typeof status.version !== 'string' ||
         !/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(status.version) ||
         status.state !== 'READY' ||
         !['UNCONFIGURED', 'EMPTY', 'PARTIAL', 'STALE', 'AVAILABLE', 'SOURCE_UNAVAILABLE']
