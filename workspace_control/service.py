@@ -79,6 +79,16 @@ def _validate_project_items(items):
         project_ids.add(item["id"])
 
 
+def _validated_token(token_file):
+    if re.fullmatch(r"[A-Za-z0-9_-]{43}\n", token_file) is None:
+        raise ValueError("invalid instance token")
+    token = token_file[:-1]
+    decoded = base64.urlsafe_b64decode(token + "=")
+    if len(decoded) != 32 or base64.urlsafe_b64encode(decoded).rstrip(b"=").decode("ascii") != token:
+        raise ValueError("invalid instance token")
+    return token
+
+
 def initialize(root):
     """Create the single immutable local identity and secret in an explicit root."""
     path = _private_root(root)
@@ -122,14 +132,7 @@ class Service:
         if not stat.S_ISDIR(root_info.st_mode) or root_info.st_uid != os.getuid() or root_info.st_mode & 0o077:
             raise ValueError("data root must be owned by this user and mode 0700")
         self.identity = _private_json("instance.json", dir_fd=self._root_fd)
-        token_file = _regular_private("token", dir_fd=self._root_fd)
-        if re.fullmatch(r"[A-Za-z0-9_-]{43}\n", token_file) is None:
-            raise ValueError("invalid instance token")
-        token = token_file[:-1]
-        decoded = base64.urlsafe_b64decode(token + "=")
-        if len(decoded) != 32 or base64.urlsafe_b64encode(decoded).rstrip(b"=").decode("ascii") != token:
-            raise ValueError("invalid instance token")
-        self.token = token
+        self.token = _validated_token(_regular_private("token", dir_fd=self._root_fd))
         if not isinstance(self.identity, dict) or set(self.identity) != {"instance_id", "created_at"}:
             raise ValueError("invalid instance identity")
         instance_id = self.identity["instance_id"]
