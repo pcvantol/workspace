@@ -339,7 +339,8 @@ class Service:
             os.close(descriptor)
 
     def configure_forge_read(self, endpoint, instance_id, repository_id, token_file,
-                             *, expected_instance_id=None, expected_repository_id=None):
+                             *, expected_instance_id=None, expected_repository_id=None,
+                             expected_revision=None):
         """Local administration only; no peer business read through the CLI."""
         from .forge_peer import configure
 
@@ -350,6 +351,7 @@ class Service:
         try:
             return configure(descriptor, endpoint, instance_id, repository_id, token_file,
                              expected_instance_id=expected_instance_id,
-                             expected_repository_id=expected_repository_id)
+                             expected_repository_id=expected_repository_id,
+                             expected_revision=expected_revision)
         finally:
             os.close(descriptor)

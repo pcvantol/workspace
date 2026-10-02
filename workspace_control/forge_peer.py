@@ -1,6 +1,7 @@
 """Bounded read-only Forge Server HTTP consumer for Workspace Server."""
 
 from datetime import datetime, timezone
+import fcntl
 import http.client
 import ipaddress
 import json
@@ -8,6 +9,7 @@ import os
 import re
 import secrets
 import ssl
+import stat
 from urllib.parse import urlsplit
 
 from .service import _private_json, _regular_private
@@ -52,42 +54,35 @@ def _endpoint(value):
 def _binding(root_fd):
     try:
         config = _private_json("forge-read-binding.json", dir_fd=root_fd)
-        token = _regular_private("forge-read-token", dir_fd=root_fd).strip()
     except FileNotFoundError:
-        try:
-            _regular_private("forge-read-token", dir_fd=root_fd)
-        except FileNotFoundError:
-            try:
-                _private_json("forge-read-binding.json", dir_fd=root_fd)
-            except FileNotFoundError:
-                raise PeerReadError("UNCONFIGURED") from None
-            except (OSError, ValueError, UnicodeError):
-                raise PeerReadError("INVALID_CONFIGURATION") from None
-        except (OSError, ValueError, UnicodeError):
-            raise PeerReadError("INVALID_CONFIGURATION") from None
-        raise PeerReadError("INVALID_CONFIGURATION") from None
+        raise PeerReadError("UNCONFIGURED") from None
     except (OSError, ValueError, UnicodeError):
         raise PeerReadError("INVALID_CONFIGURATION") from None
-    if (not isinstance(config, dict) or set(config) != {"schema_version", "endpoint", "instance_id", "repository_id"}
+    if (not isinstance(config, dict) or set(config) != {"schema_version", "revision", "endpoint", "instance_id", "repository_id", "token"}
             or type(config["schema_version"]) is not int or config["schema_version"] != 1
+            or type(config["revision"]) is not int or config["revision"] < 1
             or not isinstance(config["instance_id"], str)
             or not re.fullmatch(r"[A-Za-z0-9_-]{8,128}", config["instance_id"])
             or not isinstance(config["repository_id"], str)
             or not re.fullmatch(r"[A-Za-z0-9_.:-]{1,128}", config["repository_id"])
-            or not re.fullmatch(r"[A-Za-z0-9_-]{32,256}", token)):
+            or not isinstance(config["token"], str)
+            or not re.fullmatch(r"[A-Za-z0-9_-]{32,256}", config["token"])):
         raise PeerReadError("INVALID_CONFIGURATION")
     try:
         scheme, host, port = _endpoint(config["endpoint"])
     except ValueError:
         raise PeerReadError("INVALID_CONFIGURATION") from None
-    return config, token, scheme, host, port
+    return config, config["token"], scheme, host, port
+
+
+def _publish(temporary, root_fd):
+    os.replace(temporary, "forge-read-binding.json", src_dir_fd=root_fd, dst_dir_fd=root_fd)
 
 
 def configure(root_fd, endpoint, instance_id, repository_id, token_file,
-              *, expected_instance_id=None, expected_repository_id=None):
+              *, expected_instance_id=None, expected_repository_id=None,
+              expected_revision=None):
     """Store a separately issued read token as owner-held Server configuration."""
-    config = {"schema_version": 1, "endpoint": endpoint, "instance_id": instance_id,
-              "repository_id": repository_id}
     _endpoint(endpoint)
     if (not isinstance(instance_id, str) or not re.fullmatch(r"[A-Za-z0-9_-]{8,128}", instance_id)
             or not isinstance(repository_id, str)
@@ -97,42 +92,50 @@ def configure(root_fd, endpoint, instance_id, repository_id, token_file,
     token = _regular_private(token_file).strip()
     if not re.fullmatch(r"[A-Za-z0-9_-]{32,256}", token):
         raise ValueError("invalid Forge read credential")
-    if expected_instance_id is None and expected_repository_id is None:
-        for name in ("forge-read-binding.json", "forge-read-token"):
-            try:
-                os.stat(name, dir_fd=root_fd, follow_symlinks=False)
-            except FileNotFoundError:
-                continue
-            raise ValueError("Forge read binding already exists; guarded replacement required")
-    elif expected_instance_id and expected_repository_id:
-        prior, *_unused = _binding(root_fd)
-        if (prior["instance_id"] != expected_instance_id
-                or prior["repository_id"] != expected_repository_id):
-            raise ValueError("current Forge read binding differs from expected")
-    else:
-        raise ValueError("replacement requires both expected binding identifiers")
-    staged = []
+    config = {"schema_version": 1, "revision": 1, "endpoint": endpoint,
+              "instance_id": instance_id, "repository_id": repository_id, "token": token}
+    lock_fd = os.open(".forge-read-config.lock", os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW,
+                      0o600, dir_fd=root_fd)
     try:
-        for name, content in (("forge-read-token", token + "\n"),
-                              ("forge-read-binding.json", json.dumps(config, sort_keys=True))):
-            temporary = ".forge-read-" + secrets.token_hex(12)
-            descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
-                                 0o600, dir_fd=root_fd)
-            staged.append((temporary, name))
+        info = os.fstat(lock_fd)
+        if not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o077:
+            raise ValueError("Forge read configuration lock must be owner-held")
+        fcntl.flock(lock_fd, fcntl.LOCK_EX)
+        if expected_instance_id is None and expected_repository_id is None and expected_revision is None:
+            try:
+                os.stat("forge-read-binding.json", dir_fd=root_fd, follow_symlinks=False)
+            except FileNotFoundError:
+                pass
+            else:
+                raise ValueError("Forge read binding already exists; guarded replacement required")
+        elif expected_instance_id and expected_repository_id and type(expected_revision) is int:
+            prior, *_unused = _binding(root_fd)
+            if (prior["instance_id"] != expected_instance_id
+                    or prior["repository_id"] != expected_repository_id
+                    or prior["revision"] != expected_revision):
+                raise ValueError("current Forge read binding differs from expected")
+            config["revision"] = expected_revision + 1
+        else:
+            raise ValueError("replacement requires expected binding identifiers and revision")
+        temporary = ".forge-read-" + secrets.token_hex(12)
+        descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                             0o600, dir_fd=root_fd)
+        try:
             with os.fdopen(descriptor, "wb") as stream:
-                stream.write(content.encode("utf-8"))
+                stream.write(json.dumps(config, sort_keys=True).encode("utf-8"))
                 stream.flush()
                 os.fsync(stream.fileno())
-        for temporary, name in staged:
-            os.replace(temporary, name, src_dir_fd=root_fd, dst_dir_fd=root_fd)
-        os.fsync(root_fd)
-    finally:
-        for temporary, _name in staged:
+            _publish(temporary, root_fd)
+            os.fsync(root_fd)
+        finally:
             try:
                 os.unlink(temporary, dir_fd=root_fd)
             except FileNotFoundError:
                 pass
+    finally:
+        os.close(lock_fd)
     return {"instance_id": instance_id, "repository_id": repository_id,
+            "revision": config["revision"],
             "endpoint": endpoint}
 
 

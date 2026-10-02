@@ -28,6 +28,7 @@ def main(argv=None):
                                help="absolute owner-held file containing the scoped Forge read token")
     forge_binding.add_argument("--expected-current-instance")
     forge_binding.add_argument("--expected-current-repository")
+    forge_binding.add_argument("--expected-current-revision", type=int)
     start = commands.add_parser("serve")
     start.add_argument("--port", type=int, default=8765)
     start.add_argument("--bind", default="127.0.0.1", help="explicit IPv4 listener interface")
@@ -56,7 +57,8 @@ def main(argv=None):
                 result = service.configure_forge_read(
                     args.endpoint, args.instance_id, args.repository_id, args.token_file,
                     expected_instance_id=args.expected_current_instance,
-                    expected_repository_id=args.expected_current_repository)
+                    expected_repository_id=args.expected_current_repository,
+                    expected_revision=args.expected_current_revision)
             print(json.dumps(result, sort_keys=True))
         else:
             if not 1 <= args.port <= 65535:

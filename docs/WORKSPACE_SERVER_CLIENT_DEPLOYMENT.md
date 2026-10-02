@@ -87,12 +87,15 @@ This is a concrete client trust `NOT_RUN` gate, not a remote app result.
 The Workspace Server 2.7.0 candidate exposes authenticated
 `GET /v1/forge/status`. It reads only Forge Server v1 `GET /v1/instance` and
 `GET /v1/status` through a separately issued read bearer. The Forge endpoint,
-expected instance ID and expected repository ID live in owner-held
-`forge-read-binding.json`; the separate token lives in owner-held
-`forge-read-token`. The local `forge-read-configure` administration command
-copies a previously issued token from an absolute owner-only file into that
-Workspace data root without putting it in an argument or response. Replacing
-a binding requires both expected current identifiers. This command only
+expected instance ID, expected repository ID and token live in one owner-held
+`forge-read-binding.json` record. The local `forge-read-configure`
+administration command copies a previously issued token from an absolute
+owner-only file into that Workspace data root without putting it in an
+argument or response. It publishes the whole record atomically under a
+private configuration lock, so a concurrent read cannot combine an endpoint
+with another generation's token. Replacing a binding requires both expected
+current identifiers and its revision, so concurrent stale replacements fail.
+This command only
 configures Workspace; it never reads Forge business data.
 
 The consumer permits HTTP only to `127.0.0.1`. Any other Forge endpoint uses
