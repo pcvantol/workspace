@@ -132,6 +132,9 @@ schema for identity, status, project catalogue, capability inventory or the
 top-level OpenAPI document. Documented error responses reference the common
 `{"error": string}` shape. The contract describes these local read results;
 it does not advertise peer operations or qualify the full WH-CONTRACT parent.
+The Project schema declares the Server's one-to-120-code-point `id` and `name`
+limits; the Projects schema caps the array at 100 entries. These are existing
+source limits, now also visible to generated-contract consumers.
 The catalogue's `observed_at` is a plain string in this schema because the
 current service accepts timezone-aware ISO 8601 spellings, including ISO week
 dates, and echoes the source spelling. It is not restricted to RFC 3339.

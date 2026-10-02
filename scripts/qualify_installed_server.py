@@ -395,6 +395,10 @@ def verify_installed_response_schemas(url, token, instance_id, api):
         assert set(schemas[name]["required"]) <= set(body)
         if schemas[name].get("additionalProperties") is False:
             assert set(body) <= set(schemas[name]["properties"])
+    assert schemas["Projects"]["properties"]["projects"]["maxItems"] == 100
+    for field in ("id", "name"):
+        assert schemas["Project"]["properties"][field]["minLength"] == 1
+        assert schemas["Project"]["properties"][field]["maxLength"] == 120
 
 
 def verify_browser_observation(page, expected):
