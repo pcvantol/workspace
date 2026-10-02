@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "pcvantol/forge#208-r48",
+  "determined_version": "2.4.39",
+  "event_lineage": "pcvantol/forge#208-r48",
+  "expected_source_revision": "5fb25cedb77192989e778e5570194824c60fd8ba",
+  "expected_version": "2.4.38",
+  "operation_id": "L4-WORKSPACE-MALFORMED-PROJECT-READBACK-ISOLATION-V1-20261002",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

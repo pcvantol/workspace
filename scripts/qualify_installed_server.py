@@ -209,6 +209,18 @@ def verify_unique_project_ids(url, instance_id, token, catalogue, page):
     assert page.locator("#projects li").count() == 2
     assert {item["id"] for item in json.loads(read(url + "/v1/projects", token=token,
                                                 instance=instance_id)[1])["projects"]} == {"one", "two"}
+    catalogue.write_text(json.dumps({"source": "LOCAL", "observed_at": stamp,
+                                     "projects": [{"id": " ", "name": " "}]}))
+    assert read(url + "/v1/projects", token=token, instance=instance_id)[0] == 200
+    page.locator("#connect").click()
+    page.locator("#projects li").wait_for()
+    assert page.locator("#project-state").inner_text() == "AVAILABLE · LOCAL"
+    assert page.locator("#projects li").count() == 1
+    catalogue.write_text(json.dumps({"source": "LOCAL", "observed_at": stamp,
+                                     "projects": [{"id": "emoji", "name": "😀" * 120}]}))
+    assert read(url + "/v1/projects", token=token, instance=instance_id)[0] == 200
+    page.locator("#connect").click()
+    page.get_by_text("😀" * 120).wait_for()
     catalogue.write_text(json.dumps({"source": "DEMO", "observed_at": stamp,
                                      "projects": [{"id": "demo", "name": "Demo project"}]}))
 
@@ -250,6 +262,17 @@ def verify_catalogue_schema(url, instance_id, token, catalogue, page):
     catalogue.write_text(json.dumps({**valid, "observed_at": observed_at}))
     code, body = read(url + "/v1/projects", token=token, instance=instance_id)
     assert code == 200 and json.loads(body)["observed_at"] == observed_at
+    page.locator("#connect").click()
+    page.locator("#project-observed").get_by_text(f"Observed: {observed_at}").wait_for()
+    verify_browser_observation(page, f"Observed: {observed_at}")
+    for alternate in (now.strftime("%Y%m%dT%H%M%S+0000"),
+                      now.strftime("%Y-%m-%dT%H:%M:%S+00")):
+        catalogue.write_text(json.dumps({**valid, "observed_at": alternate}))
+        code, body = read(url + "/v1/projects", token=token, instance=instance_id)
+        assert code == 200 and json.loads(body)["observed_at"] == alternate
+        page.locator("#connect").click()
+        page.locator("#project-observed").get_by_text(f"Observed: {alternate}").wait_for()
+        verify_browser_observation(page, f"Observed: {alternate}")
     catalogue.write_text(json.dumps(valid))
     page.locator("#connect").click()
     page.locator("#project-state").get_by_text("AVAILABLE · DEMO").wait_for()
@@ -499,17 +522,31 @@ def verify_browser_project_error_semantics(page, instance_root):
         page.locator("#connect").click()
         page.get_by_text("Before error (before-error)").wait_for()
         verify_browser_observation(page, f"Observed: {observed}")
-    def missing_observation(route):
-        route.fulfill(status=200, content_type="application/json",
-                      body=json.dumps({"state": "AVAILABLE", "source": "LOCAL",
-                                       "partial": False, "stale": False,
-                                       "projects": [{"id": "incomplete", "name": "Incomplete"}]}))
-    page.route("**/v1/projects", missing_observation)
-    page.locator("#connect").click()
-    page.get_by_role("status").get_by_text("UNAVAILABLE").wait_for()
-    assert page.locator("#projects li").count() == 0
-    verify_browser_observation(page, "No observation")
-    page.unroute("**/v1/projects", missing_observation)
+    valid = {"state": "AVAILABLE", "source": "LOCAL", "partial": False, "stale": False,
+             "observed_at": observed, "projects": [{"id": "before-error", "name": "Before error"}]}
+    expected_pin = page.evaluate("localStorage.getItem('workspace.instanceId')")
+    for invalid in ({key: value for key, value in valid.items() if key != "projects"},
+                    {**valid, "projects": [{"id": "", "name": "Unnamed"}]},
+                    {**valid, "projects": [{"id": "before-error", "name": 3}]},
+                    {**valid, "projects": []},
+                    {**valid, "state": "EMPTY"},
+                    {key: value for key, value in valid.items() if key != "observed_at"},
+                    {**valid, "state": "UNCONFIGURED"}, "{"):
+        def malformed(route):
+            route.fulfill(status=200, content_type="application/json",
+                          body=invalid if isinstance(invalid, str) else json.dumps(invalid))
+        page.route("**/v1/projects", malformed)
+        page.locator("#connect").click()
+        page.get_by_role("status").get_by_text("CONNECTED").wait_for()
+        page.locator("#project-state").get_by_text("UNAVAILABLE").wait_for()
+        assert page.locator("#capability-state").inner_text() == "AVAILABLE"
+        assert page.locator("#capabilities li").count() > 0
+        assert page.evaluate("localStorage.getItem('workspace.instanceId')") == expected_pin
+        assert page.locator("#projects li").count() == 0
+        verify_browser_observation(page, "No observation")
+        page.unroute("**/v1/projects", malformed)
+        page.locator("#connect").click()
+        page.get_by_text("Before error (before-error)").wait_for()
     catalogue.unlink()
     page.locator("#connect").click()
     page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
