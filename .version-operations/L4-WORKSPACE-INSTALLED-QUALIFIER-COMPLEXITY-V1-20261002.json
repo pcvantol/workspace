@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "pcvantol/forge#208-r43",
+  "determined_version": "2.4.34",
+  "event_lineage": "pcvantol/forge#208-r43",
+  "expected_source_revision": "6415c9d5801b2cb891ef1a9bd7c5d55dc909152e",
+  "expected_version": "2.4.33",
+  "operation_id": "L4-WORKSPACE-INSTALLED-QUALIFIER-COMPLEXITY-V1-20261002",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

@@ -94,6 +94,13 @@ def verify_loopback_host_binding(port, instance_id, token):
             return response.status, response.getheader("Content-Length"), body
         finally:
             connection.close()
+    _verify_allowed_hosts(raw, port)
+    _verify_rejected_hosts(raw, port)
+    _verify_rejected_targets(raw, port)
+    _verify_auth_headers(raw, port, instance_id, token)
+
+
+def _verify_allowed_hosts(raw, port):
     for host in (f"127.0.0.1:{port}", f"localhost:{port}"):
         get = raw("/v1/status", (host,), (f"http://{host}",))
         head = raw("/v1/status", (host,), method="HEAD")
@@ -101,6 +108,9 @@ def verify_loopback_host_binding(port, instance_id, token):
         assert raw("/", (host,))[0] == 200
         for method in ("POST", "OPTIONS", "TRACE", "CONNECT"):
             assert raw("/v1/status", (host,), method=method)[0] == 405
+
+
+def _verify_rejected_hosts(raw, port):
     for hosts in ((), (f"evil.example:{port}",),
                   (f"127.0.0.1:{port}", f"127.0.0.1:{port}")):
         assert raw("/v1/status", hosts)[0] == 403
@@ -109,6 +119,9 @@ def verify_loopback_host_binding(port, instance_id, token):
         assert raw("/", hosts)[0] == 403
         for method in ("POST", "HEAD", "OPTIONS", "TRACE", "CONNECT"):
             assert raw("/v1/status", hosts, method=method)[0] == 403
+
+
+def _verify_rejected_targets(raw, port):
     host = f"127.0.0.1:{port}"
     for target in ("http://evil.example/v1/identity",
                    f"http://{host}/v1/status", "//evil.example/v1/identity",
@@ -121,6 +134,10 @@ def verify_loopback_host_binding(port, instance_id, token):
     assert raw("/v1/status", (host,), ("http://evil.example",))[0] == 403
     assert raw("/v1/openapi.json", (host,), ("http://evil.example",))[0] == 403
     assert raw("/", (host,), (f"http://{host}", f"http://{host}"))[0] == 403
+
+
+def _verify_auth_headers(raw, port, instance_id, token):
+    host = f"127.0.0.1:{port}"
     valid_auth = "Bearer " + token
     for authorizations in ((valid_auth, valid_auth), (valid_auth, "Bearer wrong"),
                            ("Bearer wrong", valid_auth)):
@@ -274,6 +291,23 @@ def verify_installed_cli_projects(server_exe, instance_root, cwd, env, url, inst
 def verify_installed_capabilities(server_exe, instance_root, cwd, env, url,
                                   instance_id, other_instance_id, token, other_token):
     """Check protected operation inventory and its local CLI projection."""
+    capabilities, command = _verify_capabilities_cli(server_exe, instance_root, cwd, env, url,
+                                                      instance_id, other_instance_id, token, other_token)
+    openapi_command = _verify_openapi_cli(server_exe, instance_root, cwd, env, url,
+                                          instance_id, other_instance_id, token)
+    _verify_private_root_denial(instance_root, cwd, env, command, openapi_command, token)
+    assert json.loads(read(url + "/v1/capabilities", token=token,
+                           instance=instance_id)[1]) == capabilities
+    inventory = {item["id"]: item for item in capabilities["operations"]}
+    assert inventory["capabilities.read"]["path"] == "/v1/capabilities"
+    assert inventory["capabilities.read"]["local_cli"] == "capabilities"
+    assert inventory["openapi.read"]["local_cli"] == "openapi"
+    assert inventory["instance.init"]["exposure"] == "LOCAL_ONLY_ADMIN"
+    assert "path" not in inventory["instance.init"]
+
+
+def _verify_capabilities_cli(server_exe, instance_root, cwd, env, url,
+                             instance_id, other_instance_id, token, other_token):
     assert read(url + "/v1/status")[0] == 401
     assert read(url + "/v1/status", token=other_token, instance=instance_id)[0] == 401
     assert read(url + "/v1/status", token=token, instance=other_instance_id)[0] == 409
@@ -286,6 +320,11 @@ def verify_installed_capabilities(server_exe, instance_root, cwd, env, url,
     assert cli_capabilities.returncode == 0 and cli_capabilities.stderr == ""
     assert json.loads(cli_capabilities.stdout) == capabilities
     assert token not in cli_capabilities.stdout
+    return capabilities, command
+
+
+def _verify_openapi_cli(server_exe, instance_root, cwd, env, url,
+                        instance_id, other_instance_id, token):
     assert read(url + "/v1/openapi.json")[0] == 401
     assert read(url + "/v1/openapi.json", token=token, instance=other_instance_id)[0] == 409
     api = json.loads(read(url + "/v1/openapi.json", token=token, instance=instance_id)[1])
@@ -300,6 +339,10 @@ def verify_installed_capabilities(server_exe, instance_root, cwd, env, url,
     cli_api = subprocess.run(openapi_command, cwd=cwd, env=env, capture_output=True, text=True)
     assert cli_api.returncode == 0 and cli_api.stderr == "" and json.loads(cli_api.stdout) == api
     assert token not in cli_api.stdout
+    return openapi_command
+
+
+def _verify_private_root_denial(instance_root, cwd, env, command, openapi_command, token):
     identity_path = instance_root / "instance.json"
     identity_path.chmod(0o644)
     try:
@@ -309,14 +352,6 @@ def verify_installed_capabilities(server_exe, instance_root, cwd, env, url,
         assert denied_api.returncode == 2 and denied_api.stdout == "" and token not in denied_api.stderr
     finally:
         identity_path.chmod(0o600)
-    assert json.loads(read(url + "/v1/capabilities", token=token,
-                           instance=instance_id)[1]) == capabilities
-    inventory = {item["id"]: item for item in capabilities["operations"]}
-    assert inventory["capabilities.read"]["path"] == "/v1/capabilities"
-    assert inventory["capabilities.read"]["local_cli"] == "capabilities"
-    assert inventory["openapi.read"]["local_cli"] == "openapi"
-    assert inventory["instance.init"]["exposure"] == "LOCAL_ONLY_ADMIN"
-    assert "path" not in inventory["instance.init"]
 
 
 def verify_installed_response_schemas(url, token, instance_id, api):
@@ -505,6 +540,109 @@ def verify_browser_inventory_identity_mismatch(page, other_id, expected_pin):
         page.unroute("**/v1/capabilities", foreign_inventory)
 
 
+def _verify_browser_bindings(page, first_url, token, first_id, second_id, first):
+    page.goto(first_url)
+    page.locator("#token").fill("wrong")
+    page.locator("#connect").click()
+    page.get_by_role("status").get_by_text("UNAUTHORIZED").wait_for()
+    page.locator("#token").fill(token)
+    page.route("**/v1/identity", lambda route: route.fulfill(
+        status=200, content_type="application/json", body='{"instance_id":"bad"}'))
+    page.locator("#connect").click()
+    page.get_by_role("status").get_by_text("UNAVAILABLE").wait_for()
+    assert page.evaluate("localStorage.getItem('workspace.instanceId')") is None
+    page.unroute("**/v1/identity")
+    verify_browser_identity_mismatch(page, second_id, None)
+    page.locator("#connect").click()
+    page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
+    verify_browser_observation(page, "No observation")
+    page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
+    page.get_by_text("capabilities.read · HTTP_EXPOSED").wait_for()
+    assert page.evaluate("localStorage.getItem('workspace.instanceId')") == first_id
+    verify_browser_identity_mismatch(page, second_id, first_id)
+    page.locator("#connect").click()
+    page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
+    page.get_by_text("capabilities.read · HTTP_EXPOSED").wait_for()
+    assert page.locator("#peer-state").inner_text() == "Peer operations: UNQUALIFIED"
+    listed = page.locator("#capabilities li").all_text_contents()
+    assert "capabilities.read · HTTP_EXPOSED" in listed
+    assert "instance.init · LOCAL_ONLY_ADMIN" in listed
+    verify_browser_project_error_semantics(page, first)
+
+
+def _verify_browser_auth_recovery(page, token, second_id, second_url, other_token):
+    page.route("**/v1/capabilities", lambda route: route.fulfill(status=503, body="{}"))
+    page.locator("#connect").click()
+    page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
+    assert page.locator("#capability-state").inner_text() == "UNAVAILABLE"
+    assert page.locator("#capabilities li").count() == 0
+    page.unroute("**/v1/capabilities")
+    page.evaluate("localStorage.setItem('workspace.instanceId', 'wrong')")
+    page.locator("#connect").click()
+    page.get_by_role("status").get_by_text("WRONG INSTANCE").wait_for()
+    assert page.locator("#capabilities li").count() == 0
+    page.locator("#forget").click()
+    verify_browser_observation(page, "No observation")
+    assert page.locator("#capabilities li").count() == 0
+    assert page.locator("#token").input_value() == ""
+    page.locator("#connect").click()
+    page.get_by_role("status").get_by_text("UNAUTHORIZED").wait_for()
+    page.locator("#token").fill(token)
+    page.locator("#connect").click()
+    page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
+    page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
+    assert json.loads(read(second_url + "/v1/status", token=other_token, instance=second_id)[1])["instance_id"] == second_id
+
+
+def _verify_browser_catalogue(page, browser, first_url, token, first_id, second_id, first, root, env, server_exe):
+    catalogue = first / "projects.json"
+    catalogue.write_text(json.dumps({"source": "DEMO", "observed_at": datetime.now(timezone.utc).isoformat(),
+                                     "projects": [{"id": "demo", "name": "Demo project"}]}))
+    catalogue.chmod(0o600)
+    assert json.loads(read(first_url + "/v1/projects", token=token, instance=first_id)[1])["state"] == "AVAILABLE"
+    page.locator("#connect").click()
+    page.locator("#project-state").get_by_text("AVAILABLE · DEMO").wait_for()
+    page.get_by_text("Demo project (demo) · DEMO").wait_for()
+    observed = json.loads(catalogue.read_text())["observed_at"]
+    verify_browser_observation(page, f"Observed: {observed}")
+    verify_browser_locales(browser, first_url, token)
+    verify_browser_reconnect_clears_readbacks(page, first_id, token)
+    verify_browser_inventory_identity_mismatch(page, second_id, first_id)
+    page.locator("#connect").click()
+    page.get_by_text("Demo project (demo) · DEMO").wait_for()
+    catalogue.write_text(json.dumps({"source": "DEMO", "observed_at": "2020-01-01T00:00:00Z",
+                                     "projects": [{"id": "demo", "name": "Demo project"}]}))
+    page.locator("#connect").click()
+    page.locator("#project-state").get_by_text("STALE · DEMO").wait_for()
+    verify_browser_observation(page, "Observed: 2020-01-01T00:00:00Z")
+    verify_stale_partial_catalogue(first_url, first_id, token, catalogue, page)
+    verify_catalogue_failure_isolation(first_url, first_id, token, catalogue, page)
+    verify_unique_project_ids(first_url, first_id, token, catalogue, page)
+    verify_unique_catalogue_keys(first_url, first_id, token, catalogue, page)
+    verify_catalogue_schema(first_url, first_id, token, catalogue, page)
+    verify_installed_cli_projects(server_exe, first, root, env, first_url,
+                                  first_id, token, catalogue)
+
+
+def _verify_browser_restart(page, processes, first, first_port, first_url, first_id, token, root, env, server_exe):
+    processes[0].send_signal(signal.SIGTERM)
+    processes[0].wait(timeout=5)
+    assert processes[0].returncode == -signal.SIGTERM
+    page.locator("#connect").click()
+    page.get_by_role("status").get_by_text("UNAVAILABLE").wait_for()
+    verify_browser_observation(page, "No observation")
+    assert page.locator("#capabilities li").count() == 0
+    replacement = subprocess.Popen([str(server_exe), "--root", str(first), "serve", "--port", str(first_port)],
+                                   cwd=root, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    processes[0] = replacement
+    wait_ready(first_url, replacement)
+    assert json.loads(read(first_url + "/v1/status", token=token, instance=first_id)[1])["instance_id"] == first_id
+    assert json.loads(read(first_url + "/v1/projects", token=token, instance=first_id)[1])["projects"][0]["id"] == "demo"
+    cli = subprocess.run([str(server_exe), "--root", str(first), "status"], check=True,
+                         cwd=root, env=env, capture_output=True, text=True)
+    assert json.loads(cli.stdout)["instance_id"] == first_id
+
+
 def main(wheel):
     wheel = wheel.resolve()
     digest = hashlib.sha256(wheel.read_bytes()).hexdigest()
@@ -552,97 +690,12 @@ def main(wheel):
                 browser = playwright.chromium.launch(headless=True, executable_path="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
                 verify_browser_frame_denial(browser, first_url)
                 page = browser.new_page(locale="en-US")
-                page.goto(first_url)
-                page.locator("#token").fill("wrong")
-                page.locator("#connect").click()
-                page.get_by_role("status").get_by_text("UNAUTHORIZED").wait_for()
-                page.locator("#token").fill(token)
-                page.route("**/v1/identity", lambda route: route.fulfill(
-                    status=200, content_type="application/json", body='{"instance_id":"bad"}'))
-                page.locator("#connect").click()
-                page.get_by_role("status").get_by_text("UNAVAILABLE").wait_for()
-                assert page.evaluate("localStorage.getItem('workspace.instanceId')") is None
-                page.unroute("**/v1/identity")
-                verify_browser_identity_mismatch(page, second_id, None)
-                page.locator("#connect").click()
-                page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
-                verify_browser_observation(page, "No observation")
-                page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
-                page.get_by_text("capabilities.read · HTTP_EXPOSED").wait_for()
-                assert page.evaluate("localStorage.getItem('workspace.instanceId')") == first_id
-                verify_browser_identity_mismatch(page, second_id, first_id)
-                page.locator("#connect").click()
-                page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
-                page.get_by_text("capabilities.read · HTTP_EXPOSED").wait_for()
-                assert page.locator("#peer-state").inner_text() == "Peer operations: UNQUALIFIED"
-                listed = page.locator("#capabilities li").all_text_contents()
-                assert "capabilities.read · HTTP_EXPOSED" in listed
-                assert "instance.init · LOCAL_ONLY_ADMIN" in listed
-                verify_browser_project_error_semantics(page, first)
-                page.route("**/v1/capabilities", lambda route: route.fulfill(status=503, body="{}"))
-                page.locator("#connect").click()
-                page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
-                assert page.locator("#capability-state").inner_text() == "UNAVAILABLE"
-                assert page.locator("#capabilities li").count() == 0
-                page.unroute("**/v1/capabilities")
-                page.evaluate("localStorage.setItem('workspace.instanceId', 'wrong')")
-                page.locator("#connect").click()
-                page.get_by_role("status").get_by_text("WRONG INSTANCE").wait_for()
-                assert page.locator("#capabilities li").count() == 0
-                page.locator("#forget").click()
-                verify_browser_observation(page, "No observation")
-                assert page.locator("#capabilities li").count() == 0
-                assert page.locator("#token").input_value() == ""
-                page.locator("#connect").click()
-                page.get_by_role("status").get_by_text("UNAUTHORIZED").wait_for()
-                page.locator("#token").fill(token)
-                page.locator("#connect").click()
-                page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
-                page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
-                assert json.loads(read(second_url + "/v1/status", token=other_token, instance=second_id)[1])["instance_id"] == second_id
-                catalogue = first / "projects.json"
-                catalogue.write_text(json.dumps({"source": "DEMO", "observed_at": datetime.now(timezone.utc).isoformat(),
-                                                 "projects": [{"id": "demo", "name": "Demo project"}]}))
-                catalogue.chmod(0o600)
-                assert json.loads(read(first_url + "/v1/projects", token=token, instance=first_id)[1])["state"] == "AVAILABLE"
-                page.locator("#connect").click()
-                page.locator("#project-state").get_by_text("AVAILABLE · DEMO").wait_for()
-                page.get_by_text("Demo project (demo) · DEMO").wait_for()
-                observed = json.loads(catalogue.read_text())["observed_at"]
-                verify_browser_observation(page, f"Observed: {observed}")
-                verify_browser_locales(browser, first_url, token)
-                verify_browser_reconnect_clears_readbacks(page, first_id, token)
-                verify_browser_inventory_identity_mismatch(page, second_id, first_id)
-                page.locator("#connect").click()
-                page.get_by_text("Demo project (demo) · DEMO").wait_for()
-                catalogue.write_text(json.dumps({"source": "DEMO", "observed_at": "2020-01-01T00:00:00Z",
-                                                 "projects": [{"id": "demo", "name": "Demo project"}]}))
-                page.locator("#connect").click()
-                page.locator("#project-state").get_by_text("STALE · DEMO").wait_for()
-                verify_browser_observation(page, "Observed: 2020-01-01T00:00:00Z")
-                verify_stale_partial_catalogue(first_url, first_id, token, catalogue, page)
-                verify_catalogue_failure_isolation(first_url, first_id, token, catalogue, page)
-                verify_unique_project_ids(first_url, first_id, token, catalogue, page)
-                verify_unique_catalogue_keys(first_url, first_id, token, catalogue, page)
-                verify_catalogue_schema(first_url, first_id, token, catalogue, page)
-                verify_installed_cli_projects(server_exe, first, root, env, first_url,
-                                              first_id, token, catalogue)
-                processes[0].send_signal(signal.SIGTERM)
-                processes[0].wait(timeout=5)
-                assert processes[0].returncode == -signal.SIGTERM
-                page.locator("#connect").click()
-                page.get_by_role("status").get_by_text("UNAVAILABLE").wait_for()
-                verify_browser_observation(page, "No observation")
-                assert page.locator("#capabilities li").count() == 0
-                replacement = subprocess.Popen([str(server_exe), "--root", str(first), "serve", "--port", str(first_port)],
-                                               cwd=root, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                processes[0] = replacement
-                wait_ready(first_url, replacement)
-                assert json.loads(read(first_url + "/v1/status", token=token, instance=first_id)[1])["instance_id"] == first_id
-                assert json.loads(read(first_url + "/v1/projects", token=token, instance=first_id)[1])["projects"][0]["id"] == "demo"
-                cli = subprocess.run([str(server_exe), "--root", str(first), "status"], check=True,
-                                     cwd=root, env=env, capture_output=True, text=True)
-                assert json.loads(cli.stdout)["instance_id"] == first_id
+                _verify_browser_bindings(page, first_url, token, first_id, second_id, first)
+                _verify_browser_auth_recovery(page, token, second_id, second_url, other_token)
+                _verify_browser_catalogue(page, browser, first_url, token, first_id, second_id,
+                                          first, root, env, server_exe)
+                _verify_browser_restart(page, processes, first, first_port, first_url, first_id,
+                                        token, root, env, server_exe)
                 browser.close()
             print(json.dumps({"result": "PASS", "wheel_sha256": digest, "installed_outside_checkout": True,
                               "server_instances": 2, "restart_identity_and_catalogue": "PASS",
