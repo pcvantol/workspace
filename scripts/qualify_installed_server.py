@@ -579,11 +579,15 @@ def _verify_project_malformed_readbacks(page, observed, expected_pin):
     valid = {"state": "AVAILABLE", "source": "LOCAL", "partial": False, "stale": False,
              "observed_at": observed, "projects": [{"id": "before-error", "name": "Before error"}]}
     for invalid in ({key: value for key, value in valid.items() if key != "projects"},
+                    {**valid, "peer_source": "FORGE"},
+                    {**valid, "projects": [{"id": "before-error", "name": "Before error", "owner": "FORGE"}]},
                     {**valid, "projects": [{"id": "", "name": "Unnamed"}]},
                     {**valid, "projects": [{"id": "before-error", "name": 3}]},
                     {**valid, "projects": []},
                     {**valid, "state": "EMPTY"},
                     {key: value for key, value in valid.items() if key != "observed_at"},
+                    {"state": "UNCONFIGURED", "source": None, "partial": False, "stale": False,
+                     "projects": [], "observed_at": observed},
                     {**valid, "state": "UNCONFIGURED"}, "{"):
         def malformed(route):
             route.fulfill(status=200, content_type="application/json",

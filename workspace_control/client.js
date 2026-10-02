@@ -113,7 +113,12 @@ document.getElementById('token').addEventListener('keydown', event => {
 });
 function validProjectCatalogue(catalogue) {
   if (!catalogue || !Array.isArray(catalogue.projects)) return false;
+  const required = ['state', 'source', 'partial', 'stale', 'projects'];
+  if (catalogue.state !== 'UNCONFIGURED') required.push('observed_at');
+  if (Object.keys(catalogue).length !== required.length ||
+      required.some(key => !Object.hasOwn(catalogue, key))) return false;
   if (catalogue.projects.length > 100 || !catalogue.projects.every(item => item &&
+      Object.keys(item).length === 2 && Object.hasOwn(item, 'id') && Object.hasOwn(item, 'name') &&
       typeof item.id === 'string' && Array.from(item.id).length >= 1 && Array.from(item.id).length <= 120 &&
       typeof item.name === 'string' && Array.from(item.name).length >= 1 &&
       Array.from(item.name).length <= 120)) return false;
