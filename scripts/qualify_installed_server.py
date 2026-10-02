@@ -76,6 +76,18 @@ def _installed_tls_get(port, trusted, request_host, credential=None, pin=None,
         connection.close()
 
 
+def _wait_installed_tls_ready(get, process, host, token, instance_id):
+    for _ in range(100):
+        if process.poll() is not None:
+            raise RuntimeError(f"installed HTTPS Server exited: {process.returncode}")
+        try:
+            if get(host, token, instance_id)[0] == 200:
+                return
+        except OSError:
+            time.sleep(0.05)
+    raise RuntimeError("installed HTTPS Server did not become ready")
+
+
 def verify_installed_tls(server_exe, root, env):
     """Verify installed HTTPS, explicit trust, Host, bearer and pin on loopback only."""
     tls_root = root / "tls-instance"
@@ -101,16 +113,7 @@ def verify_installed_tls(server_exe, root, env):
     get = partial(_installed_tls_get, port, trusted)
 
     try:
-        for _ in range(100):
-            if process.poll() is not None:
-                raise RuntimeError(f"installed HTTPS Server exited: {process.returncode}")
-            try:
-                if get(host, token, instance_id)[0] == 200:
-                    break
-            except OSError:
-                time.sleep(0.05)
-        else:
-            raise RuntimeError("installed HTTPS Server did not become ready")
+        _wait_installed_tls_ready(get, process, host, token, instance_id)
         assert get(host, token, instance_id, f"https://{host}")[0] == 200
         openapi_status, openapi = get(host, token, instance_id, path="/v1/openapi.json")
         assert openapi_status == 200 and openapi["servers"] == [
