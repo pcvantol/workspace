@@ -38,6 +38,8 @@ dispatch, after checking Host and Origin.
 The local HTTP handler does not write raw request targets to stderr or access
 logs. Rejected queries and malformed requests may contain accidental token text;
 their response status is preserved without copying that text into logs.
+Parser-level error responses also omit the supplied raw request line and
+error detail, while retaining the HTTP error status.
 
 Protected reads require one unambiguous bearer Authorization header and one
 instance-pin header. Duplicate values, even if identical, are rejected before

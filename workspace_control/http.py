@@ -87,6 +87,10 @@ def handler_for(service):
             # BaseHTTPRequestHandler would log the raw target, including rejected queries.
             return
 
+        def send_error(self, code, message=None, explain=None):
+            # The parser can include the raw request line in its error message.
+            super().send_error(code)
+
         def _reply(self, code, value, content_type="application/json; charset=utf-8"):
             payload = value if isinstance(value, bytes) else json.dumps(value, sort_keys=True).encode()
             self.send_response(code)
