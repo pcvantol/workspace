@@ -93,6 +93,8 @@ The pre-release Keychain service moved from `.v1` to `.v2` because a changed
 ad hoc signature left the old test item awaiting macOS access. The old item
 is retained, not silently rebound or deleted; this candidate needs explicit
 re-pairing once. Signed-candidate Keychain behavior is still `NOT_RUN`.
+`Forget Server` removes only the current `.v2` pairing; the deployment guide
+records the exact manual cleanup boundary for retained pre-release `.v1` items.
 
 ## Historical first implementation — 1 October 2026
 

@@ -130,6 +130,16 @@ native read remain `NOT_RUN`. The general Forge administrator bearer is never ac
 as an implicit Workspace read grant; the consumer requires the scoped response
 attestation. No Forge project/Mission membership is inferred.
 
+`Forget Server` removes the current `.v2` binding and token only. It does not
+revoke a Server token or delete the retained pre-release `.v1` items. To remove
+the earlier Client test pairing, use macOS Keychain Access on that Mac, search
+the exact service `com.pcvantol.workspace.native-client.v1`, and review the
+`server-binding` and `server-token` account items before deleting those two
+items. This is an owner action for that earlier local pairing, not part of the
+current Client's automatic cleanup. A prior app with access to the `.v1`
+service can still use that retained token until it is removed or invalidated
+at its Server.
+
 Workspace Server is a headless installed, independently restartable service. It owns server-authoritative Workspace project/control/governance state in a Workspace central runtime-storage root outside Git/source checkouts, with its product-owned SQL database plus files, artifacts, logs, backups and cache. It exposes a versioned HTTP API over interface-neutral Workspace application services and is launchd-managed on macOS. It projects Forge/EP truth through their versioned authenticated HTTP APIs; it does not take planning, execution, queue, lease, evidence or repository authority and never reads a peer database.
 
 Workspace Client is a separately installable frontend for client PCs. It discovers a candidate Workspace Server through LAN DNS-SD/mDNS or a configured/unicast/tailnet bootstrap endpoint, then authenticates and pairs as a Workspace user/session client. Pairing stores a pinned Workspace Server identity and trusted endpoint in client-owned secure storage; discovery is neither authorization nor a reason to silently change a binding. The client can be installed without an EP Project Agent.

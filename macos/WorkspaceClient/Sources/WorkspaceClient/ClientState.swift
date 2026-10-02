@@ -238,7 +238,7 @@ final class ClientState: ObservableObject {
                 canForgetBinding = false
                 snapshot = nil
                 phase = "UNCONFIGURED"
-                detail = "Server binding removed."
+                detail = "Current Server binding removed. Earlier pre-release pairings, if any, remain in Mac Keychain."
             } catch {
                 guard current == attempt else { return }
                 canForgetBinding = true

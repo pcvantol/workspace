@@ -190,6 +190,8 @@ struct SettingsView: View {
                     }.disabled(!client.canForgetBinding ||
                                ["SAVING", "FORGETTING"].contains(client.phase))
                 }
+                Text("Forget removes this app's current pairing only. Earlier pre-release pairings may still exist in Mac Keychain.")
+                    .font(.caption).foregroundStyle(.secondary)
                 Text(client.detail).font(.caption).foregroundStyle(.secondary)
             }
         }
