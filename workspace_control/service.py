@@ -22,12 +22,17 @@ def _private_root(root):
 
 
 def _regular_private(path):
-    info = path.lstat()
-    if not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o077:
-        raise ValueError("instance files must be private regular files")
-    if info.st_size > 1_000_000:
-        raise ValueError("instance file too large")
-    return path.read_text(encoding="utf-8")
+    descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    with os.fdopen(descriptor, "rb") as stream:
+        info = os.fstat(stream.fileno())
+        if not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o077:
+            raise ValueError("instance files must be private regular files")
+        if info.st_size > 1_000_000:
+            raise ValueError("instance file too large")
+        content = stream.read(1_000_001)
+        if len(content) > 1_000_000:
+            raise ValueError("instance file too large")
+        return content.decode("utf-8")
 
 
 def _unique_json_object(pairs):

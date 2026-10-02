@@ -17,7 +17,7 @@ from urllib.request import Request, urlopen
 
 from workspace_control.cli import main, client_main
 from workspace_control.http import ThreadingHTTPServer, handler_for, serve, ROUTES, OPERATIONS
-from workspace_control.service import Service, initialize
+from workspace_control.service import Service, _regular_private, initialize
 
 
 class ReadOnlyTests(unittest.TestCase):
@@ -441,6 +441,30 @@ class ReadOnlyTests(unittest.TestCase):
         token = self.root / "token"
         token.chmod(0o644)
         self.assertRaises(ValueError, Service, self.root)
+
+    def test_private_file_read_is_bound_to_one_descriptor(self):
+        source = self.root / "source"
+        other = self.root / "other"
+        source.write_text("original")
+        other.write_text("replacement")
+        source.chmod(0o600)
+        other.chmod(0o600)
+        real_open = os.open
+
+        def replace_after_open(path, flags):
+            descriptor = real_open(path, flags)
+            source.unlink()
+            source.symlink_to(other)
+            return descriptor
+
+        with patch("workspace_control.service.os.open", side_effect=replace_after_open):
+            self.assertEqual(_regular_private(source), "original")
+        self.assertRaises(OSError, _regular_private, source)
+
+    def test_nonregular_private_file_does_not_block(self):
+        fifo = self.root / "fifo"
+        os.mkfifo(fifo, 0o600)
+        self.assertRaises(ValueError, _regular_private, fifo)
 
     def test_invalid_instance_state_fails_closed_without_reset(self):
         identity = self.root / "instance.json"
