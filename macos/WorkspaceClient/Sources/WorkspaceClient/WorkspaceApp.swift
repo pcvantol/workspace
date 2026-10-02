@@ -25,7 +25,8 @@ struct ContentView: View {
     private let refresh = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 18) {
             HStack {
                 VStack(alignment: .leading) {
                     Text("Workspace").font(.largeTitle.bold())
@@ -58,6 +59,37 @@ struct ContentView: View {
                         LabeledContent("Read at", value: snapshot.observedAt.formatted(date: .abbreviated, time: .standard))
                         if client.phase != "CONNECTED" {
                             Text("Cached read — current Server state is unavailable").foregroundStyle(.orange)
+                        }
+                    }.frame(maxWidth: .infinity, alignment: .leading)
+                }
+                GroupBox("Forge read") {
+                    VStack(alignment: .leading, spacing: 8) {
+                        switch snapshot.forge {
+                        case .success(let forge):
+                            LabeledContent("State", value: forge.state)
+                            if forge.state == "OBSERVED" {
+                                LabeledContent("Forge version", value: forge.product_version ?? "Unknown")
+                                LabeledContent("Instance", value: forge.instance_id ?? "Unknown")
+                                LabeledContent("Repository", value: forge.repository_id ?? "Unknown")
+                                LabeledContent("Availability", value: forge.availability ?? "Unknown")
+                                LabeledContent("Freshness", value: forge.freshness ?? "UNKNOWN")
+                                LabeledContent("Source observed", value: forge.source_observed_at ?? "No source time")
+                                LabeledContent("Retrieved", value: forge.retrieved_at ?? "No retrieval time")
+                                if !forge.isCurrent {
+                                    Text("Forge has no current available observation")
+                                        .foregroundStyle(.orange)
+                                }
+                            } else {
+                                Text("No verified Forge observation")
+                                    .foregroundStyle(.orange)
+                            }
+                        case .failure(let error):
+                            Text("Forge read unavailable: \(error.localizedDescription)")
+                                .foregroundStyle(.orange)
+                        }
+                        if client.phase != "CONNECTED" {
+                            Text("Cached read — reconnect to check Forge again")
+                                .foregroundStyle(.orange)
                         }
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -100,6 +132,7 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             Spacer(minLength: 0)
+            }
         }
         .padding(24)
         .onAppear { client.reconnect() }

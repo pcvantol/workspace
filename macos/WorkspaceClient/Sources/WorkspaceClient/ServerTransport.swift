@@ -92,11 +92,48 @@ struct CapabilityInventory: Decodable, Sendable {
     let peer_operations_qualified: Bool
 }
 
+struct ForgeObservation: Decodable, Sendable {
+    let schema_version: Int
+    let state: String
+    let instance_id: String?
+    let repository_id: String?
+    let product_version: String?
+    let availability: String?
+    let freshness: String?
+    let source_observed_at: String?
+    let retrieved_at: String?
+
+    var isCurrent: Bool {
+        state == "OBSERVED" && availability == "AVAILABLE" && freshness == "CURRENT"
+    }
+
+    var isValid: Bool {
+        let errors = ["UNCONFIGURED", "INVALID_CONFIGURATION", "READ_SCOPE_UNVERIFIED",
+                      "WRONG_INSTANCE", "INVALID_RESPONSE", "UNAUTHORIZED", "DENIED",
+                      "UNAVAILABLE", "TLS_UNTRUSTED"]
+        guard schema_version == 1 else { return false }
+        if errors.contains(state) {
+            return availability == nil && freshness == nil && source_observed_at == nil &&
+                retrieved_at == nil && product_version == nil
+        }
+        guard state == "OBSERVED", let instance_id, !instance_id.isEmpty,
+              let repository_id, !repository_id.isEmpty,
+              let product_version,
+              product_version.range(of: "^[0-9]+\\.[0-9]+\\.[0-9]+$", options: .regularExpression) != nil,
+              let availability, ["AVAILABLE", "UNAVAILABLE"].contains(availability),
+              let freshness, ["CURRENT", "STALE", "UNKNOWN", "UNAVAILABLE"].contains(freshness),
+              let retrieved_at, !retrieved_at.isEmpty else { return false }
+        return !(["CURRENT", "STALE"].contains(freshness) && source_observed_at == nil) &&
+            !((availability == "UNAVAILABLE") != (freshness == "UNAVAILABLE"))
+    }
+}
+
 struct ServerSnapshot: Sendable {
     let identity: Identity
     let status: ServerStatus
     let projects: Result<ProjectCatalogue, ClientError>
     let capabilities: Result<CapabilityInventory, ClientError>
+    let forge: Result<ForgeObservation, ClientError>
     let observedAt: Date
 }
 
@@ -191,14 +228,20 @@ struct ServerTransport: Sendable {
                 inventory.product_version == status.version && !inventory.peer_operations_qualified &&
                 Set(inventory.operations.map(\.id)).count == inventory.operations.count
             })
+        async let forgeRead: Result<ForgeObservation, ClientError> = optionalRead(
+            ForgeObservation.self, endpoint: endpoint, path: "/v1/forge/status", token: token,
+            pin: identity.instance_id, validate: { $0.isValid })
         let projects = await projectRead
         let capabilities = await capabilityRead
+        let forge = await forgeRead
         if case .failure(.unauthorized) = projects { throw ClientError.unauthorized }
         if case .failure(.wrongInstance) = projects { throw ClientError.wrongInstance }
         if case .failure(.unauthorized) = capabilities { throw ClientError.unauthorized }
         if case .failure(.wrongInstance) = capabilities { throw ClientError.wrongInstance }
+        if case .failure(.unauthorized) = forge { throw ClientError.unauthorized }
+        if case .failure(.wrongInstance) = forge { throw ClientError.wrongInstance }
         return ServerSnapshot(identity: identity, status: status, projects: projects,
-                              capabilities: capabilities, observedAt: Date())
+                              capabilities: capabilities, forge: forge, observedAt: Date())
     }
 
     private func optionalRead<T: Decodable & Sendable>(_ type: T.Type, endpoint: ServerEndpoint,

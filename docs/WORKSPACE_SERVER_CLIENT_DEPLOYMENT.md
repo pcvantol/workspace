@@ -82,9 +82,9 @@ disposable test CA without interactive approval. The partial certificate item
 was removed and default certificate validation rejected the test Server.
 This is a concrete client trust `NOT_RUN` gate, not a remote app result.
 
-### First Forge read candidate
+### First Forge read — delivered Server subset and open native gate
 
-The Workspace Server 2.7.0 candidate exposes authenticated
+The Workspace Server 2.7.0, protected-delivered in #121, exposes authenticated
 `GET /v1/forge/status`. It reads only Forge Server v1 `GET /v1/instance` and
 `GET /v1/status` through a separately issued read bearer. The Forge endpoint,
 expected instance ID, expected repository ID and token live in one owner-held
@@ -109,9 +109,13 @@ observation into a fresh one. Missing/invalid binding, denied/revoked grant,
 wrong instance, unverified scope, TLS failure and unavailable producer are
 distinct states. The new route does not grant Client writes or Forge authority.
 
-This is a **candidate** until the exact Forge r23 producer contract is
-protected and an independently installed Workspace Server reads its installed
-Forge counterpart. The general Forge administrator bearer is never accepted
+Forge r23's exact producer contract was protected-delivered in Forge #231.
+A separately installed Python 3.14 Workspace Server read a separately installed
+Forge 2.7.59 process over HTTP, returning `OBSERVED` with the exact instance and
+repository scope, current source freshness and distinct retrieval time; grant
+revocation yielded `UNAUTHORIZED`. This closes the local installed two-Server
+subset. The packaged native Client's visible Forge read and remote two-Mac
+native read remain open. The general Forge administrator bearer is never accepted
 as an implicit Workspace read grant; the consumer requires the scoped response
 attestation. No Forge project/Mission membership is inferred.
 

@@ -12,6 +12,9 @@ Python is 3.14.x only. The sequence and open evidence gates are recorded in
 [WPK](docs/WORKSPACE_PYPI_DISTRIBUTION_V1_DAG.json) DAGs. First prove Finder
 launch and installed-Server HTTP readback; then qualify two-Mac host/trust/auth;
 then bind the first exact qualified Forge producer read via Workspace Server.
+The own Server route for the scoped Forge read is protected-delivered in #121;
+the current native Client milestone must still show that route's real response
+in its packaged window before its visible Forge gate closes.
 An unqualified remote gate remains `NOT_RUN`. The current first installer
 release and full Forge/EP canary do not gate this Client result.
 

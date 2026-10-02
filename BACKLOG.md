@@ -64,7 +64,7 @@ provisioned, instance/repository-bound read bearer in Forge #231/main
 `31e6b1c`, with `forge-workspace-status-read/v1` packaged schema SHA-256
 `2886c76fa24c772929e13c79fe0eb1ffdc2daa0fc61a045dfa0e95158a681f73`.
 Project index, roadmap and Mission detail are later candidates. The Workspace
-Server 2.7.0 candidate adds a separate owner-held read binding, authenticated
+Server 2.7.0, protected-delivered in Workspace #121/main `d2b85a8`, adds a separate owner-held read binding, authenticated
 `GET /v1/forge/status`, and fail-closed instance, repository scope, version and
 freshness checks. At Workspace candidate `6dae6c4`, a separately built and
 installed Python 3.14 Forge main wheel and Workspace wheel returned an actual
@@ -72,12 +72,20 @@ installed Python 3.14 Forge main wheel and Workspace wheel returned an actual
 instance and repository, a separate retrieval timestamp, no Forge database
 mutation from reads, and `UNAUTHORIZED` after grant revocation. The Forge
 schema and producer negative qualifier also passed on that installed wheel.
-This is a **local installed two-Server consumer PASS candidate**, pending
-Workspace protected delivery. It is not the packaged app's two-Mac readback,
+This is a **protected-delivered local installed two-Server consumer subset**.
+It is not the packaged app's Forge readback or two-Mac readback,
 remote HTTPS qualification, or full `WH-PEERS`/`WH-Q` parent completion.
 The MacBook's attempt to add an ephemeral test CA to its login trust settings
 was denied without interactive authorization. No trust item remains; the
 packaged app's remote readback remains `NOT_RUN`.
+
+The next selected r81 milestone is the native Client's visible Forge projection
+from that own Server route. The 2.8.0 source candidate reads
+`GET /v1/forge/status` through its pinned Workspace Server binding and keeps
+Forge availability, source freshness and retrieval time distinct. Swift tests
+and the locally packaged build pass. Finder-visible packaged app readback of
+the Forge response remains `NOT_RUN` until the app window and displayed data
+are observed; the earlier 2.5.0 Finder proof does not substitute for this gate.
 
 ## Historical first implementation — 1 October 2026
 
