@@ -161,6 +161,7 @@ document.getElementById('connect').addEventListener('click', async () => {
       if (inventory.schema_version === 1 && inventory.instance_id === identity.instance_id &&
           inventory.product_version === status.version &&
           inventory.peer_operations_qualified === false && Array.isArray(inventory.operations) &&
+          inventory.operations.length > 0 &&
           inventory.operations.every(operation => operation && typeof operation.id === 'string' &&
             operation.id.trim().length > 0 &&
             ['HTTP_EXPOSED', 'LOCAL_ONLY_ADMIN'].includes(operation.exposure)) &&

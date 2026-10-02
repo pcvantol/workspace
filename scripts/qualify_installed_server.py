@@ -551,6 +551,7 @@ def verify_browser_inventory_consistency(page, url, token, instance_id):
     inventory = json.loads(read(url + "/v1/capabilities", token=token, instance=instance_id)[1])
     invalid = (
         {**inventory, "product_version": "0.0.0"},
+        {**inventory, "operations": []},
         {**inventory, "operations": inventory["operations"] + [inventory["operations"][0]]},
         {**inventory, "operations": inventory["operations"] + [{"id": "", "exposure": "HTTP_EXPOSED"}]},
     )
