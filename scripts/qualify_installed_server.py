@@ -593,7 +593,11 @@ def _verify_project_malformed_readbacks(page, observed, expected_pin):
             route.fulfill(status=200, content_type="application/json",
                           body=invalid if isinstance(invalid, str) else json.dumps(invalid))
         page.route("**/v1/projects", malformed)
-        page.locator("#connect").click()
+        with page.expect_response(lambda response: response.url.endswith("/v1/projects") and
+                                  response.status == 200), page.expect_request_finished(
+                                      lambda request: request.url.endswith("/v1/projects")):
+            page.locator("#connect").click()
+        page.evaluate("() => new Promise(resolve => setTimeout(resolve, 0))")
         page.get_by_role("status").get_by_text("CONNECTED").wait_for()
         page.locator("#project-state").get_by_text("UNAVAILABLE").wait_for()
         assert page.locator("#capability-state").inner_text() == "AVAILABLE"
