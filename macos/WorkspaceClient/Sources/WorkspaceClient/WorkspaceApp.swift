@@ -41,7 +41,7 @@ struct ContentView: View {
                     Button("Cancel") { client.cancel() }
                 }
             }
-            GroupBox("Connection") {
+            SectionCard("Connection") {
                 VStack(alignment: .leading, spacing: 8) {
                     LabeledContent("State", value: client.phase)
                     LabeledContent("Server", value: client.savedEndpoint.isEmpty ? "Not paired" : client.savedEndpoint)
@@ -51,7 +51,7 @@ struct ContentView: View {
                 }.frame(maxWidth: .infinity, alignment: .leading)
             }
             if let snapshot = client.snapshot {
-                GroupBox("Server") {
+                SectionCard("Server") {
                     VStack(alignment: .leading) {
                         LabeledContent("Version", value: snapshot.status.version)
                         LabeledContent("State", value: snapshot.status.state)
@@ -62,7 +62,7 @@ struct ContentView: View {
                         }
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
-                GroupBox("Forge read") {
+                SectionCard("Forge read") {
                     VStack(alignment: .leading, spacing: 8) {
                         switch snapshot.forge {
                         case .success(let forge):
@@ -94,7 +94,7 @@ struct ContentView: View {
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
                 HStack(alignment: .top, spacing: 16) {
-                    GroupBox("Projects") {
+                    SectionCard("Projects") {
                         VStack(alignment: .leading, spacing: 8) {
                             switch snapshot.projects {
                             case .success(let catalogue):
@@ -111,7 +111,7 @@ struct ContentView: View {
                             }
                         }.frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    GroupBox("Capabilities") {
+                    SectionCard("Capabilities") {
                         VStack(alignment: .leading, spacing: 8) {
                             switch snapshot.capabilities {
                             case .success(let inventory):
@@ -138,6 +138,27 @@ struct ContentView: View {
         .onAppear { client.reconnect() }
         .onChange(of: scenePhase) { _, phase in if phase == .active { client.reconnect() } }
         .onReceive(refresh) { _ in client.reconnect() }
+    }
+}
+
+private struct SectionCard<Content: View>: View {
+    let title: String
+    @ViewBuilder let content: Content
+
+    init(_ title: String, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.content = content()
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(title).font(.headline)
+            content
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(nsColor: .controlBackgroundColor),
+                    in: RoundedRectangle(cornerRadius: 12))
     }
 }
 

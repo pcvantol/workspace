@@ -79,13 +79,20 @@ The MacBook's attempt to add an ephemeral test CA to its login trust settings
 was denied without interactive authorization. No trust item remains; the
 packaged app's remote readback remains `NOT_RUN`.
 
-The next selected r81 milestone is the native Client's visible Forge projection
-from that own Server route. The 2.8.0 source candidate reads
-`GET /v1/forge/status` through its pinned Workspace Server binding and keeps
-Forge availability, source freshness and retrieval time distinct. Swift tests
-and the locally packaged build pass. Finder-visible packaged app readback of
-the Forge response remains `NOT_RUN` until the app window and displayed data
-are observed; the earlier 2.5.0 Finder proof does not substitute for this gate.
+The 2.8.0 native Client candidate reads `GET /v1/forge/status` through its
+pinned Workspace Server binding and keeps Forge availability, source freshness
+and retrieval time distinct. Its packaged app was double-clicked in Finder,
+recovered its own saved binding and visibly displayed `CONNECTED`, Workspace
+Server 2.8.0 `READY`, and Forge 2.7.59 `OBSERVED` / `AVAILABLE` / `CURRENT`
+for the exact `repo-1` scope. Both servers ran from isolated Python 3.14.8
+installations outside the checkout; the app used only their HTTP routes.
+This closes the **local packaged Finder readback candidate gate** for the
+first Forge read. Protected PR delivery is pending. It does not close remote
+two-Mac, Developer ID signing, macOS system trust or full peer qualification.
+The pre-release Keychain service moved from `.v1` to `.v2` because a changed
+ad hoc signature left the old test item awaiting macOS access. The old item
+is retained, not silently rebound or deleted; this candidate needs explicit
+re-pairing once. Signed-candidate Keychain behavior is still `NOT_RUN`.
 
 ## Historical first implementation — 1 October 2026
 

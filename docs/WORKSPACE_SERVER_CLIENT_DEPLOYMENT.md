@@ -114,8 +114,19 @@ A separately installed Python 3.14 Workspace Server read a separately installed
 Forge 2.7.59 process over HTTP, returning `OBSERVED` with the exact instance and
 repository scope, current source freshness and distinct retrieval time; grant
 revocation yielded `UNAUTHORIZED`. This closes the local installed two-Server
-subset. The packaged native Client's visible Forge read and remote two-Mac
-native read remain open. The general Forge administrator bearer is never accepted
+subset. The 2.8.0 packaged native Client candidate was double-clicked in Finder
+and showed the installed Workspace Server's authenticated Forge `OBSERVED`
+response for `repo-1`, including Forge 2.7.59, `AVAILABLE` and `CURRENT`. It
+recovered the saved binding after quit and relaunch. The Workspace and Forge
+Servers were separately installed in Python 3.14.8 environments outside their
+checkouts; this is a local loopback candidate result awaiting protected PR
+delivery. A SwiftUI `GroupBox` in the connection panel prevented this
+candidate's main window from opening on the test Mac; the native panels now
+use an explicit SwiftUI card. A changed ad hoc signature also left the earlier
+pre-release `.v1` Keychain test item awaiting macOS access, so the candidate
+uses its own `.v2` Keychain service and requires one explicit re-pair. The old
+item was retained. Developer ID signed Keychain behavior and remote two-Mac
+native read remain `NOT_RUN`. The general Forge administrator bearer is never accepted
 as an implicit Workspace read grant; the consumer requires the scoped response
 attestation. No Forge project/Mission membership is inferred.
 

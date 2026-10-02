@@ -26,7 +26,8 @@ protocol CredentialStore: Sendable {
 }
 
 struct ClientKeychain: CredentialStore {
-    private let service = "com.pcvantol.workspace.native-client.v1"
+    // Pre-release v1 items remain intact; changed ad hoc signatures may need an explicit re-pair.
+    private let service = "com.pcvantol.workspace.native-client.v2"
 
     private func query(_ account: String) -> [CFString: Any] {
         [kSecClass: kSecClassGenericPassword, kSecAttrService: service,
