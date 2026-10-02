@@ -36,6 +36,18 @@ _ALLOWED = {
     "CLEANUP_PENDING": frozenset({"RELEASE_COMPLETE"}),
     "RELEASE_COMPLETE": frozenset(),
 }
+_REQUIRED_EVIDENCE = {
+    "PREPARED": (),
+    "QUALIFIED": ("qualification",),
+    "PUBLISHED": ("qualification", "publication_receipt"),
+    "CLEANUP_PENDING": ("qualification", "publication_receipt", "cleanup"),
+    "RELEASE_COMPLETE": ("qualification", "publication_receipt", "cleanup"),
+}
+_MISSING_EVIDENCE_ERROR = {
+    "qualification": "release operation is missing qualification evidence",
+    "publication_receipt": "published release operation is missing publication receipt",
+    "cleanup": "post-publication release operation is missing cleanup evidence",
+}
 
 
 class ReleaseOperationError(ValueError):
@@ -128,12 +140,9 @@ class ReleaseOperation:
             ):
                 raise ReleaseOperationError(f"release operation {key} is invalid")
             evidence[key] = candidate
-        if state in {"QUALIFIED", "PUBLISHED", "CLEANUP_PENDING", "RELEASE_COMPLETE"} and evidence["qualification"] is None:
-            raise ReleaseOperationError("release operation is missing qualification evidence")
-        if state in {"PUBLISHED", "CLEANUP_PENDING", "RELEASE_COMPLETE"} and evidence["publication_receipt"] is None:
-            raise ReleaseOperationError("published release operation is missing publication receipt")
-        if state in {"CLEANUP_PENDING", "RELEASE_COMPLETE"} and evidence["cleanup"] is None:
-            raise ReleaseOperationError("post-publication release operation is missing cleanup evidence")
+        for key in _REQUIRED_EVIDENCE[state]:
+            if evidence[key] is None:
+                raise ReleaseOperationError(_MISSING_EVIDENCE_ERROR[key])
         return cls(
             **{
                 **asdict(operation),
