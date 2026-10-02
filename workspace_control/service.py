@@ -22,6 +22,19 @@ def _private_root(root):
     return path
 
 
+def _open_private_root(root):
+    path = _private_root(root)
+    descriptor = os.open(path, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        info = os.fstat(descriptor)
+        if not stat.S_ISDIR(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o077:
+            raise ValueError("data root must be owned by this user and mode 0700")
+    except Exception:
+        os.close(descriptor)
+        raise
+    return path, descriptor
+
+
 def _regular_private(path, *, dir_fd=None):
     descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=dir_fd)
     with os.fdopen(descriptor, "rb") as stream:
@@ -89,38 +102,90 @@ def _validated_token(token_file):
     return token
 
 
+def _validated_identity(identity):
+    legacy_fields = {"instance_id", "created_at"}
+    fields = set(identity) if isinstance(identity, dict) else set()
+    if fields not in (legacy_fields, legacy_fields | {"init_protocol"}):
+        raise ValueError("invalid instance identity")
+    marker_required = "init_protocol" in fields
+    if marker_required and identity["init_protocol"] != "COMMIT_MARKER_V1":
+        raise ValueError("invalid instance identity")
+    instance_id = identity["instance_id"]
+    if not isinstance(instance_id, str) or re.fullmatch(r"[0-9a-f]{32}", instance_id) is None:
+        raise ValueError("invalid instance identity")
+    created = identity["created_at"]
+    if not isinstance(created, str):
+        raise ValueError("invalid instance creation time")
+    try:
+        timestamp = datetime.fromisoformat(created.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise ValueError("invalid instance creation time") from exc
+    if timestamp.tzinfo is None or timestamp.utcoffset() is None:
+        raise ValueError("invalid instance creation time")
+    return instance_id, marker_required
+
+
+def _validate_initialization_marker(root_fd, instance_id, marker_required):
+    try:
+        marker_info = os.stat("initialized", dir_fd=root_fd, follow_symlinks=False)
+    except FileNotFoundError:
+        if marker_required:
+            raise ValueError("instance initialization incomplete")
+        return  # Legacy roots were initialized before the completion marker.
+    if not marker_required:
+        raise ValueError("invalid legacy instance marker")
+    if not stat.S_ISREG(marker_info.st_mode) or stat.S_IMODE(marker_info.st_mode) != 0o600:
+        raise ValueError("instance initialization incomplete")
+    if _regular_private("initialized", dir_fd=root_fd) != instance_id + "\n":
+        raise ValueError("instance initialization incomplete")
+
+
 def initialize(root):
     """Create the single immutable local identity and secret in an explicit root."""
-    path = _private_root(root)
-    identity = path / "instance.json"
-    token = path / "token"
-    if identity.exists() or token.exists() or identity.is_symlink() or token.is_symlink():
-        raise ValueError("instance already initialized or partially initialized")
-    instance_id = secrets.token_hex(16)
-    created = datetime.now(timezone.utc).isoformat()
-    values = ((identity, json.dumps({"instance_id": instance_id, "created_at": created}) + "\n"),
-              (token, secrets.token_urlsafe(32) + "\n"))
-    created_paths = []
+    _, root_fd = _open_private_root(root)
+    marker_fd = None
     try:
-        for target, content in values:
-            fd = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
-            created_paths.append(target)
+        for name in ("instance.json", "token", "initialized"):
+            try:
+                os.stat(name, dir_fd=root_fd, follow_symlinks=False)
+            except FileNotFoundError:
+                continue
+            raise ValueError("instance already initialized or partially initialized")
+        instance_id = secrets.token_hex(16)
+        marker_fd = os.open("initialized", os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                            0o000, dir_fd=root_fd)
+        marker = (instance_id + "\n").encode("ascii")
+        if os.write(marker_fd, marker) != len(marker):
+            raise OSError("incomplete initialization marker")
+        os.fsync(marker_fd)
+        os.fsync(root_fd)
+        created = datetime.now(timezone.utc).isoformat()
+        values = (("instance.json", json.dumps({"instance_id": instance_id, "created_at": created,
+                                                  "init_protocol": "COMMIT_MARKER_V1"}) + "\n"),
+                  ("token", secrets.token_urlsafe(32) + "\n"))
+        for name, content in values:
+            fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                         0o600, dir_fd=root_fd)
             with os.fdopen(fd, "w", encoding="utf-8") as stream:
                 stream.write(content)
                 stream.flush()
                 os.fsync(stream.fileno())
-    except Exception:
-        for target in created_paths:
-            target.unlink(missing_ok=True)
-        raise
-    return instance_id
+        os.fsync(root_fd)
+        os.fchmod(marker_fd, 0o600)
+        return instance_id
+    finally:
+        for descriptor in (marker_fd, root_fd):
+            if descriptor is not None:
+                try:
+                    os.close(descriptor)
+                except OSError:
+                    pass  # No fallible step after the marker's final publication.
 
 
 class Service:
     def __init__(self, root):
-        self.root = _private_root(root)
         self._root_lock = threading.Lock()
-        self._root_fd = os.open(self.root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        self.root, self._root_fd = _open_private_root(root)
         try:
             self._load_instance()
         except Exception:
@@ -128,25 +193,10 @@ class Service:
             raise
 
     def _load_instance(self):
-        root_info = os.fstat(self._root_fd)
-        if not stat.S_ISDIR(root_info.st_mode) or root_info.st_uid != os.getuid() or root_info.st_mode & 0o077:
-            raise ValueError("data root must be owned by this user and mode 0700")
         self.identity = _private_json("instance.json", dir_fd=self._root_fd)
         self.token = _validated_token(_regular_private("token", dir_fd=self._root_fd))
-        if not isinstance(self.identity, dict) or set(self.identity) != {"instance_id", "created_at"}:
-            raise ValueError("invalid instance identity")
-        instance_id = self.identity["instance_id"]
-        if not isinstance(instance_id, str) or re.fullmatch(r"[0-9a-f]{32}", instance_id) is None:
-            raise ValueError("invalid instance identity")
-        created = self.identity["created_at"]
-        if not isinstance(created, str):
-            raise ValueError("invalid instance creation time")
-        try:
-            timestamp = datetime.fromisoformat(created.replace("Z", "+00:00"))
-        except ValueError as exc:
-            raise ValueError("invalid instance creation time") from exc
-        if timestamp.tzinfo is None or timestamp.utcoffset() is None:
-            raise ValueError("invalid instance creation time")
+        instance_id, marker_required = _validated_identity(self.identity)
+        _validate_initialization_marker(self._root_fd, instance_id, marker_required)
 
     def close(self):
         with self._root_lock:

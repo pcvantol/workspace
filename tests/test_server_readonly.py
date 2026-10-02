@@ -563,6 +563,103 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual(self.request("/v1/status", token=Service(second).token, instance=self.instance)[0], 401)
         self.assertEqual(main(["--root", str(second), "init"]), 2)
 
+    def test_init_keeps_identity_and_token_in_opened_root_after_path_swap(self):
+        fresh = Path(self.temp.name) / "fresh"
+        fresh.mkdir(mode=0o700)
+        other = Path(self.temp.name) / "other"
+        other.mkdir(mode=0o700)
+        other_id = initialize(other)
+        other_token = (other / "token").read_bytes()
+        moved = Path(self.temp.name) / "fresh-moved"
+        actual_open = os.open
+        def swap_on_token(path, flags, mode=0o777, *, dir_fd=None):
+            if path == "token" and flags & os.O_CREAT:
+                fresh.rename(moved)
+                fresh.symlink_to(other, target_is_directory=True)
+            return actual_open(path, flags, mode, dir_fd=dir_fd)
+        with patch("workspace_control.service.os.open", side_effect=swap_on_token):
+            created = initialize(fresh)
+        self.assertEqual(Service(moved).instance_id, created)
+        self.assertTrue((moved / "token").is_file())
+        self.assertEqual((moved / "initialized").read_text(), created + "\n")
+        self.assertEqual((moved / "initialized").stat().st_mode & 0o777, 0o600)
+        self.assertEqual(Service(other).instance_id, other_id)
+        self.assertEqual((other / "token").read_bytes(), other_token)
+
+    def test_init_failure_preserves_concurrent_replacement_in_opened_root(self):
+        fresh = Path(self.temp.name) / "fresh"
+        fresh.mkdir(mode=0o700)
+        other = Path(self.temp.name) / "other"
+        other.mkdir(mode=0o700)
+        other_id = initialize(other)
+        other_token = (other / "token").read_bytes()
+        moved = Path(self.temp.name) / "fresh-moved"
+        actual_fsync = os.fsync
+        calls = 0
+        def fail_second_sync(descriptor):
+            nonlocal calls
+            calls += 1
+            if calls == 4:
+                fresh.rename(moved)
+                fresh.symlink_to(other, target_is_directory=True)
+                (moved / "instance.json").rename(moved / "original-instance.json")
+                (moved / "instance.json").write_bytes(b"replacement")
+                raise OSError("sync failure")
+            return actual_fsync(descriptor)
+        with patch("workspace_control.service.os.fsync", side_effect=fail_second_sync):
+            with self.assertRaisesRegex(OSError, "sync failure"):
+                initialize(fresh)
+        self.assertEqual((moved / "instance.json").read_bytes(), b"replacement")
+        self.assertTrue((moved / "token").is_file())
+        self.assertEqual((moved / "initialized").stat().st_mode & 0o777, 0)
+        self.assertRaises(ValueError, initialize, moved)
+        self.assertRaises(ValueError, Service, moved)
+        self.assertEqual(Service(other).instance_id, other_id)
+        self.assertEqual((other / "token").read_bytes(), other_token)
+
+    def test_final_sync_failure_cannot_publish_new_instance(self):
+        fresh = Path(self.temp.name) / "fresh"
+        fresh.mkdir(mode=0o700)
+        actual_fsync = os.fsync
+        calls = 0
+        def fail_token_sync(descriptor):
+            nonlocal calls
+            calls += 1
+            if calls == 4:
+                raise OSError("token sync failure")
+            return actual_fsync(descriptor)
+        with patch("workspace_control.service.os.fsync", side_effect=fail_token_sync):
+            with self.assertRaisesRegex(OSError, "token sync failure"):
+                initialize(fresh)
+        self.assertTrue((fresh / "instance.json").is_file())
+        self.assertTrue((fresh / "token").is_file())
+        self.assertEqual((fresh / "initialized").stat().st_mode & 0o777, 0)
+        self.assertRaisesRegex(ValueError, "incomplete", Service, fresh)
+        (fresh / "initialized").unlink()
+        self.assertRaisesRegex(ValueError, "incomplete", Service, fresh)
+        self.assertRaises(ValueError, initialize, fresh)
+
+    def test_completed_new_identity_requires_marker_but_legacy_identity_loads(self):
+        fresh = Path(self.temp.name) / "fresh"
+        fresh.mkdir(mode=0o700)
+        created = initialize(fresh)
+        (fresh / "initialized").unlink()
+        self.assertRaisesRegex(ValueError, "incomplete", Service, fresh)
+        identity = fresh / "instance.json"
+        legacy = json.loads(identity.read_text())
+        legacy.pop("init_protocol")
+        identity.write_text(json.dumps(legacy))
+        self.assertEqual(Service(fresh).instance_id, created)
+
+    def test_marker_publication_failure_cannot_start_instance(self):
+        fresh = Path(self.temp.name) / "fresh"
+        fresh.mkdir(mode=0o700)
+        with patch("workspace_control.service.os.fchmod", side_effect=OSError("publish failure")):
+            with self.assertRaisesRegex(OSError, "publish failure"):
+                initialize(fresh)
+        self.assertEqual((fresh / "initialized").stat().st_mode & 0o777, 0)
+        self.assertRaisesRegex(ValueError, "incomplete", Service, fresh)
+
     def test_bad_roots_and_private_files(self):
         self.assertEqual(main(["--root", "relative", "init"]), 2)
         self.root.chmod(0o755)
@@ -656,24 +753,31 @@ class ReadOnlyTests(unittest.TestCase):
         fresh = Path(self.temp.name) / "racing"
         fresh.mkdir(mode=0o700)
         real_open = os.open
-        def race_at_identity(path, flags, mode):
-            if Path(path).name == "instance.json":
-                Path(path).write_text("winner")
+        def race_at_identity(path, flags, mode=0o777, *, dir_fd=None):
+            if path == "instance.json":
+                fd = real_open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600, dir_fd=dir_fd)
+                with os.fdopen(fd, "w") as stream:
+                    stream.write("winner")
                 raise FileExistsError("other initializer won")
-            return real_open(path, flags, mode)
+            return real_open(path, flags, mode, dir_fd=dir_fd)
         with patch("workspace_control.service.os.open", side_effect=race_at_identity):
             self.assertRaises(FileExistsError, initialize, fresh)
         self.assertEqual((fresh / "instance.json").read_text(), "winner")
-        (fresh / "instance.json").unlink()
-        def race_at_token(path, flags, mode):
-            if Path(path).name == "token":
-                Path(path).write_text("winner token")
+        self.assertEqual((fresh / "initialized").stat().st_mode & 0o777, 0)
+        second = Path(self.temp.name) / "racing-two"
+        second.mkdir(mode=0o700)
+        def race_at_token(path, flags, mode=0o777, *, dir_fd=None):
+            if path == "token":
+                fd = real_open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600, dir_fd=dir_fd)
+                with os.fdopen(fd, "w") as stream:
+                    stream.write("winner token")
                 raise FileExistsError("other initializer won")
-            return real_open(path, flags, mode)
+            return real_open(path, flags, mode, dir_fd=dir_fd)
         with patch("workspace_control.service.os.open", side_effect=race_at_token):
-            self.assertRaises(FileExistsError, initialize, fresh)
-        self.assertFalse((fresh / "instance.json").exists())
-        self.assertEqual((fresh / "token").read_text(), "winner token")
+            self.assertRaises(FileExistsError, initialize, second)
+        self.assertTrue((second / "instance.json").is_file())
+        self.assertEqual((second / "token").read_text(), "winner token")
+        self.assertEqual((second / "initialized").stat().st_mode & 0o777, 0)
 
     def test_cli_modes_and_server_lock(self):
         self.assertEqual(main(["--root", str(self.root), "serve", "--port", "0"]), 2)

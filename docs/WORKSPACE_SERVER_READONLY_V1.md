@@ -49,8 +49,21 @@ reading product state; missing or wrong single values retain their existing
 unauthorized/wrong-instance responses. Public Client assets and identity do not
 require either header.
 
-The own `instance.json` created by `init` has exactly `instance_id` (32
-lowercase hexadecimal characters) and a timezone-aware `created_at` timestamp.
+The own `instance.json` created by current `init` has exactly `instance_id`
+(32 lowercase hexadecimal characters), a timezone-aware `created_at` timestamp,
+and `init_protocol=COMMIT_MARKER_V1`. Earlier roots retain their two-field
+identity format.
+Initialization creates identity and token relative to one validated open private
+root directory. If the path is renamed or replaced during initialization, both
+files remain in that opened root. A failed initialization leaves any partial
+files for operator inspection rather than deleting a concurrent replacement;
+retry refuses a partial root.
+New roots receive a private `initialized` marker that remains unreadable until
+identity and token writes have synced. The final permission change publishes
+the marker; startup rejects an unfinished marker even if both data files look
+valid. The marker's directory entry is synced before the identity and token
+are created. A missing marker is accepted for the earlier two-field identity
+format; a new-format identity requires the completed marker.
 Startup rejects malformed, duplicate-key, missing/extra-field or ambiguous
 identity state. It does not reset or silently replace the identity/token; a
 valid restored file keeps the same browser pin across restart.
