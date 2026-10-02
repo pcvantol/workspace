@@ -215,8 +215,7 @@ def handler_for(service, *, public_host=None, scheme="http"):
     return Handler
 
 
-def listener_config(bind, server_name=None, cert_file=None, key_file=None):
-    """Reject accidental plaintext exposure and ambiguous TLS authority."""
+def _validate_bind(bind):
     try:
         address = ipaddress.IPv4Address(bind)
     except ipaddress.AddressValueError as exc:
@@ -224,6 +223,29 @@ def listener_config(bind, server_name=None, cert_file=None, key_file=None):
     if address.is_unspecified or address.is_multicast or address.is_reserved or (
             address.is_loopback and bind != "127.0.0.1"):
         raise ValueError("bind must name one concrete supported interface")
+
+
+def _validate_server_name(server_name):
+    if (not isinstance(server_name, str) or len(server_name) > 253 or
+            not all(1 <= len(label) <= 63 and
+                    re.fullmatch(r"[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?", label)
+                    for label in server_name.split("."))):
+        raise ValueError("server name must be one DNS name or IPv4 address")
+
+
+def _validate_tls_file(path, private):
+    if not os.path.isabs(path):
+        raise ValueError("TLS certificate and key paths must be absolute")
+    info = os.lstat(path)
+    if not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid():
+        raise ValueError("TLS files must be owner-held regular files, not symlinks")
+    if private and info.st_mode & 0o077:
+        raise ValueError("TLS private key must not be group/world accessible")
+
+
+def listener_config(bind, server_name=None, cert_file=None, key_file=None):
+    """Reject accidental plaintext exposure and ambiguous TLS authority."""
+    _validate_bind(bind)
     tls_values = (server_name, cert_file, key_file)
     if any(tls_values) and not all(tls_values):
         raise ValueError("TLS requires server name, certificate and private key together")
@@ -231,19 +253,9 @@ def listener_config(bind, server_name=None, cert_file=None, key_file=None):
         raise ValueError("nonloopback binding requires TLS")
     if not any(tls_values):
         return None
-    if (not isinstance(server_name, str) or len(server_name) > 253 or
-            not all(1 <= len(label) <= 63 and
-                    re.fullmatch(r"[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?", label)
-                    for label in server_name.split("."))):
-        raise ValueError("server name must be one DNS name or IPv4 address")
-    for path, private in ((cert_file, False), (key_file, True)):
-        if not os.path.isabs(path):
-            raise ValueError("TLS certificate and key paths must be absolute")
-        info = os.lstat(path)
-        if not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid():
-            raise ValueError("TLS files must be owner-held regular files, not symlinks")
-        if private and info.st_mode & 0o077:
-            raise ValueError("TLS private key must not be group/world accessible")
+    _validate_server_name(server_name)
+    _validate_tls_file(cert_file, private=False)
+    _validate_tls_file(key_file, private=True)
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     context.minimum_version = ssl.TLSVersion.TLSv1_2
     context.load_cert_chain(certfile=cert_file, keyfile=key_file)
