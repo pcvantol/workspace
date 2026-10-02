@@ -43,7 +43,7 @@ def main(argv=None):
             if not 1 <= args.port <= 65535:
                 raise ValueError("port out of range")
             serve(args.root, args.port)
-    except (OSError, ValueError) as exc:
+    except (OSError, ValueError, UnicodeError) as exc:
         print(f"workspace-server: {exc}", file=sys.stderr)
         return 2
     return 0
