@@ -16,7 +16,12 @@ gate is the two-Mac app readback with host, trust and authorization qualified.
 The own Server route for the scoped Forge read is protected-delivered in #121;
 the native Client has shown that route's real response in its Finder-launched
 packaged window, protected-delivered in Workspace #122. Remote native trust
-and signing remain open. The remote app gate remains `NOT_RUN`. The current first installer
+and signing remain open. The same r81 now prepares a Workspace-owned Developer
+ID/notarized candidate from exact protected source before the remote Mac is
+available. Signing awaits a concrete L1/L4 resource confirmation; signed `.v2`
+Keychain behavior, remote host reachability, normal HTTPS trust and packaged
+two-Mac readback retain separate `NOT_RUN` gates. The remote app gate remains
+`NOT_RUN`. The current first installer
 release and full Forge/EP canary do not gate this Client result.
 
 ## Live project roadmap consumer boundary

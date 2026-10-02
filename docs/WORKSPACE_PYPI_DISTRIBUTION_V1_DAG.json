@@ -31,6 +31,10 @@
     "native_client_requires_python_or_local_server": false,
     "native_client_finder_installed_server_gate": "LOCAL_PACKAGED_FINDER_READBACK_PROTECTED_DELIVERED",
     "native_client_signed_keychain_trust_gate": "NOT_RUN",
+    "native_client_candidate_source_route": "DEVELOPER_ID_BUILDER_CANDIDATE_REVIEW_PENDING",
+    "native_client_signing_join": "L1-L4-WORKSPACE-NATIVE-SIGNING-20261002_EPOCH_1_RESOURCE_CONFIRMATION_PENDING",
+    "native_client_signed_artifact_gate": "NOT_RUN",
+    "native_client_remote_https_gate": "NOT_RUN",
     "public_python_distribution_status": "PLANNED",
     "first_installer_release_dependency": false
   },
