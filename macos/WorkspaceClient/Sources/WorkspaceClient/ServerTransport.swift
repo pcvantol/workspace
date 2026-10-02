@@ -111,7 +111,7 @@ struct ForgeObservation: Decodable, Sendable {
         value.range(of: pattern, options: .regularExpression) != nil
     }
 
-    private func validTime(_ value: String) -> Bool {
+    private func validRetrievedTime(_ value: String) -> Bool {
         guard matches(value, "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?(Z|[+-][0-9]{2}:[0-9]{2})$") else {
             return false
         }
@@ -120,6 +120,32 @@ struct ForgeObservation: Decodable, Sendable {
         if formatter.date(from: value) != nil { return true }
         formatter.formatOptions = [.withInternetDateTime]
         return formatter.date(from: value) != nil
+    }
+
+    private func validSourceTime(_ value: String) -> Bool {
+        let date = "([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{8}|[0-9]{4}-W[0-9]{2}-[1-7])"
+        let time = "[0-9]{2}:?[0-9]{2}:?[0-9]{2}(\\.[0-9]{1,6})?"
+        let zone = "(Z|[+-][0-9]{2}(:?[0-9]{2})?)"
+        guard matches(value, "^\(date)[T ]\(time)\(zone)$") else { return false }
+        let dateFormats = ["yyyy-MM-dd", "yyyyMMdd", "YYYY-'W'ww-e"]
+        let zoneFormats = ["XXXXX", "XX", "X"]
+        for dateFormat in dateFormats {
+            let timeFormat = dateFormat == "yyyyMMdd" ? "HHmmss" : "HH:mm:ss"
+            for separator in ["'T'", " "] {
+                for zoneFormat in zoneFormats {
+                    for fraction in ["", ".SSSSSS"] {
+                        let formatter = DateFormatter()
+                        formatter.locale = Locale(identifier: "en_US_POSIX")
+                        formatter.calendar = Calendar(identifier: .iso8601)
+                        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+                        formatter.isLenient = false
+                        formatter.dateFormat = dateFormat + separator + timeFormat + fraction + zoneFormat
+                        if formatter.date(from: value) != nil { return true }
+                    }
+                }
+            }
+        }
+        return false
     }
 
     var isValid: Bool {
@@ -138,10 +164,10 @@ struct ForgeObservation: Decodable, Sendable {
               product_version.range(of: "^[0-9]+\\.[0-9]+\\.[0-9]+$", options: .regularExpression) != nil,
               let availability, ["AVAILABLE", "UNAVAILABLE"].contains(availability),
               let freshness, ["CURRENT", "STALE", "UNKNOWN", "UNAVAILABLE"].contains(freshness),
-              let retrieved_at, validTime(retrieved_at) else { return false }
+              let retrieved_at, validRetrievedTime(retrieved_at) else { return false }
         return !(["CURRENT", "STALE"].contains(freshness) && source_observed_at == nil) &&
             !((availability == "UNAVAILABLE") != (freshness == "UNAVAILABLE")) &&
-            (source_observed_at.map(validTime) ?? true)
+            (source_observed_at.map(validSourceTime) ?? true)
     }
 }
 

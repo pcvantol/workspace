@@ -206,6 +206,15 @@ final class ServerTransportTests: XCTestCase {
             source_observed_at: "2026-10-02T12:00:00+02:00",
             retrieved_at: "2026-10-02T14:21:59.672337Z")
         XCTAssertTrue(utcMicroseconds.isValid)
+        for sourceTime in ["2026-W40-5T12:00:00+02:00", "20261002T120000+0200",
+                           "2026-10-02T12:00:00+0200", "2026-10-02 12:00:00+02:00",
+                           "2026-10-02T12:00:00.123456+02:00"] {
+            let projected = ForgeObservation(schema_version: 1, state: "OBSERVED",
+                instance_id: current.instance_id, repository_id: current.repository_id,
+                product_version: "2.7.59", availability: "AVAILABLE", freshness: "CURRENT",
+                source_observed_at: sourceTime, retrieved_at: utcMicroseconds.retrieved_at)
+            XCTAssertTrue(projected.isValid, "Server-accepted source time rejected: \(sourceTime)")
+        }
     }
 
     func testOwnForgeRouteAuthorizationDenialRejectsConnection() async throws {
