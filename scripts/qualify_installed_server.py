@@ -4,6 +4,7 @@ import argparse
 from datetime import datetime, timezone
 import hashlib
 import http.client
+from functools import partial
 import json
 import os
 from pathlib import Path
@@ -55,6 +56,26 @@ def wait_ready(url, process):
     raise RuntimeError("server did not become ready")
 
 
+def _installed_tls_get(port, trusted, request_host, credential=None, pin=None,
+                       origin=None, context=None, path="/v1/status"):
+    connection = http.client.HTTPSConnection("localhost", port, timeout=2,
+                                             context=context or trusted)
+    try:
+        connection.putrequest("GET", path, skip_host=True)
+        connection.putheader("Host", request_host)
+        if credential is not None:
+            connection.putheader("Authorization", "Bearer " + credential)
+        if pin is not None:
+            connection.putheader("X-Workspace-Instance", pin)
+        if origin is not None:
+            connection.putheader("Origin", origin)
+        connection.endheaders()
+        response = connection.getresponse()
+        return response.status, json.loads(response.read())
+    finally:
+        connection.close()
+
+
 def verify_installed_tls(server_exe, root, env):
     """Verify installed HTTPS, explicit trust, Host, bearer and pin on loopback only."""
     tls_root = root / "tls-instance"
@@ -77,24 +98,7 @@ def verify_installed_tls(server_exe, root, env):
     host = f"localhost:{port}"
     instance_id = json.loads((tls_root / "instance.json").read_text())["instance_id"]
     token = (tls_root / "token").read_text().strip()
-
-    def get(request_host, credential=None, pin=None, origin=None, context=trusted,
-            path="/v1/status"):
-        connection = http.client.HTTPSConnection("localhost", port, timeout=2, context=context)
-        try:
-            connection.putrequest("GET", path, skip_host=True)
-            connection.putheader("Host", request_host)
-            if credential is not None:
-                connection.putheader("Authorization", "Bearer " + credential)
-            if pin is not None:
-                connection.putheader("X-Workspace-Instance", pin)
-            if origin is not None:
-                connection.putheader("Origin", origin)
-            connection.endheaders()
-            response = connection.getresponse()
-            return response.status, json.loads(response.read())
-        finally:
-            connection.close()
+    get = partial(_installed_tls_get, port, trusted)
 
     try:
         for _ in range(100):
