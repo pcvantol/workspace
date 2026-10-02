@@ -58,6 +58,13 @@ root directory. If the path is renamed or replaced during initialization, both
 files remain in that opened root. A failed initialization leaves any partial
 files for operator inspection rather than deleting a concurrent replacement;
 retry refuses a partial root.
+The owner-local `workspace-server --root ROOT inspect` reads the same pinned
+private root and validates identity, token and completion marker as startup.
+It reports `UNINITIALIZED` if all three are absent, `INCOMPLETE` if any present
+state cannot pass validation, and `READY` with the instance ID when validation
+passes (including an earlier valid two-field identity). It never prints the
+token or changes the root. `INCOMPLETE` is a diagnostic, not repair authority;
+`init` still refuses to overwrite partial state.
 New roots receive a private `initialized` marker that remains unreadable until
 identity and token writes have synced. The final permission change publishes
 the marker; startup rejects an unfinished marker even if both data files look
