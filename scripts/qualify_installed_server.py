@@ -382,6 +382,9 @@ def verify_browser_locales(browser, url, token):
             page.goto(url)
             assert page.evaluate("document.documentElement.lang") == language
             assert page.title() == title
+            for readback in ("#project-readback", "#capability-readback"):
+                assert page.locator(readback).get_attribute("aria-live") == "polite"
+                assert page.locator(readback).get_attribute("aria-atomic") == "true"
             assert page.locator("label[for=token]").inner_text() == token_label
             page.locator("#token").fill("wrong")
             page.locator("#connect").click()

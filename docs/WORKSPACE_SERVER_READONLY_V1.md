@@ -121,6 +121,9 @@ language and falls back to en. Static copy and the Client's own status, source,
 observation and capability labels use that language; product names, project
 names/IDs, operation IDs and the Server's API values remain unchanged. This
 local subset does not qualify the five-language role-aware/peer UI parent.
+Project observation and capability readbacks are polite, atomic live regions
+so their local reconnect, forget and error updates can be announced without
+moving keyboard focus. This does not attest a full screen-reader audit.
 The local `workspace-client --url` launcher exits nonzero with a clear error
 when the OS browser launcher reports failure or raises an OS/browser error.
 Its success exit means the browser accepted the open request; it does not
