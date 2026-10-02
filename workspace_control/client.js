@@ -1,5 +1,6 @@
 const translations = {
   en: {
+    title: 'Workspace Client',
     intro: 'Read-only Server status and project information', tokenLabel: 'Instance token',
     tokenPlaceholder: 'Paste the token from your private data root', connect: 'Connect',
     forget: 'Forget server binding', serverHeading: 'Server', projectsHeading: 'Projects',
@@ -14,6 +15,7 @@ const translations = {
       HTTP_EXPOSED: 'HTTP_EXPOSED', LOCAL_ONLY_ADMIN: 'LOCAL_ONLY_ADMIN'}
   },
   nl: {
+    title: 'Workspace-client',
     intro: 'Alleen-lezen serverstatus en projectinformatie', tokenLabel: 'Instantietoken',
     tokenPlaceholder: 'Plak het token uit uw privégegevensmap', connect: 'Verbinden',
     forget: 'Serverbinding vergeten', serverHeading: 'Server', projectsHeading: 'Projecten',
@@ -28,6 +30,7 @@ const translations = {
       HTTP_EXPOSED: 'VIA HTTP', LOCAL_ONLY_ADMIN: 'ALLEEN LOKAAL BEHEER'}
   },
   de: {
+    title: 'Workspace-Oberfläche',
     intro: 'Schreibgeschützter Serverstatus und Projektinformationen', tokenLabel: 'Instanztoken',
     tokenPlaceholder: 'Token aus dem privaten Datenverzeichnis einfügen', connect: 'Verbinden',
     forget: 'Serverbindung vergessen', serverHeading: 'Server', projectsHeading: 'Projekte',
@@ -42,6 +45,7 @@ const translations = {
       HTTP_EXPOSED: 'ÜBER HTTP', LOCAL_ONLY_ADMIN: 'NUR LOKALE VERWALTUNG'}
   },
   fr: {
+    title: 'Interface Workspace',
     intro: 'État du serveur et informations sur les projets en lecture seule', tokenLabel: 'Jeton d’instance',
     tokenPlaceholder: 'Collez le jeton de votre répertoire de données privé', connect: 'Se connecter',
     forget: 'Oublier la liaison au serveur', serverHeading: 'Serveur', projectsHeading: 'Projets',
@@ -56,6 +60,7 @@ const translations = {
       HTTP_EXPOSED: 'PAR HTTP', LOCAL_ONLY_ADMIN: 'ADMINISTRATION LOCALE UNIQUEMENT'}
   },
   es: {
+    title: 'Cliente de Workspace',
     intro: 'Estado del servidor e información de proyectos de solo lectura', tokenLabel: 'Token de instancia',
     tokenPlaceholder: 'Pegue el token de su directorio privado de datos', connect: 'Conectar',
     forget: 'Olvidar vínculo del servidor', serverHeading: 'Servidor', projectsHeading: 'Proyectos',
@@ -75,6 +80,7 @@ const language = Object.hasOwn(translations, locale) ? locale : 'en';
 const copy = translations[language];
 const label = value => copy.labels[value] || value;
 document.documentElement.lang = language;
+document.title = copy.title;
 for (const element of document.querySelectorAll('[data-i18n]')) {
   element.textContent = copy[element.dataset.i18n];
 }

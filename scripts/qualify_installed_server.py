@@ -362,25 +362,26 @@ def verify_browser_frame_denial(browser, url):
 def verify_browser_locales(browser, url, token):
     """Read the installed local shell in every selected browser language."""
     cases = (
-        ("en-US", "en", "Instance token", "UNAUTHORIZED", "CONNECTED", "AVAILABLE · DEMO",
+        ("en-US", "en", "Workspace Client", "Instance token", "UNAUTHORIZED", "CONNECTED", "AVAILABLE · DEMO",
          "Observed:", "Peer operations: UNQUALIFIED", "capabilities.read · HTTP_EXPOSED", " · DEMO"),
-        ("nl-NL", "nl", "Instantietoken", "GEEN TOEGANG", "VERBONDEN", "BESCHIKBAAR · DEMO",
+        ("nl-NL", "nl", "Workspace-client", "Instantietoken", "GEEN TOEGANG", "VERBONDEN", "BESCHIKBAAR · DEMO",
          "Waargenomen:", "Peeroperaties: NIET GEKWALIFICEERD", "capabilities.read · VIA HTTP", " · DEMO"),
-        ("de-DE", "de", "Instanztoken", "NICHT AUTORISIERT", "VERBUNDEN", "VERFÜGBAR · DEMO",
+        ("de-DE", "de", "Workspace-Oberfläche", "Instanztoken", "NICHT AUTORISIERT", "VERBUNDEN", "VERFÜGBAR · DEMO",
          "Beobachtet:", "Peer-Operationen: NICHT QUALIFIZIERT", "capabilities.read · ÜBER HTTP", " · DEMO"),
-        ("fr-FR", "fr", "Jeton d’instance", "NON AUTORISÉ", "CONNECTÉ", "DISPONIBLE · DÉMO",
+        ("fr-FR", "fr", "Interface Workspace", "Jeton d’instance", "NON AUTORISÉ", "CONNECTÉ", "DISPONIBLE · DÉMO",
          "Observé:", "Opérations des pairs: NON QUALIFIÉ", "capabilities.read · PAR HTTP", " · DÉMO"),
-        ("es-ES", "es", "Token de instancia", "NO AUTORIZADO", "CONECTADO", "DISPONIBLE · DEMO",
+        ("es-ES", "es", "Cliente de Workspace", "Token de instancia", "NO AUTORIZADO", "CONECTADO", "DISPONIBLE · DEMO",
          "Observado:", "Operaciones de pares: NO CALIFICADO", "capabilities.read · POR HTTP", " · DEMO"),
-        ("it-IT", "en", "Instance token", "UNAUTHORIZED", "CONNECTED", "AVAILABLE · DEMO",
+        ("it-IT", "en", "Workspace Client", "Instance token", "UNAUTHORIZED", "CONNECTED", "AVAILABLE · DEMO",
          "Observed:", "Peer operations: UNQUALIFIED", "capabilities.read · HTTP_EXPOSED", " · DEMO"),
     )
-    for locale, language, token_label, unauthorized, connected, project_state, observed, peer, capability, demo in cases:
+    for locale, language, title, token_label, unauthorized, connected, project_state, observed, peer, capability, demo in cases:
         context = browser.new_context(locale=locale)
         try:
             page = context.new_page()
             page.goto(url)
             assert page.evaluate("document.documentElement.lang") == language
+            assert page.title() == title
             assert page.locator("label[for=token]").inner_text() == token_label
             page.locator("#token").fill("wrong")
             page.locator("#connect").click()
