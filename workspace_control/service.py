@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 import secrets
 import stat
+import threading
 from datetime import datetime, timezone
 
 from . import __version__
@@ -21,8 +22,8 @@ def _private_root(root):
     return path
 
 
-def _regular_private(path):
-    descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+def _regular_private(path, *, dir_fd=None):
+    descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=dir_fd)
     with os.fdopen(descriptor, "rb") as stream:
         info = os.fstat(stream.fileno())
         if not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o077:
@@ -44,9 +45,9 @@ def _unique_json_object(pairs):
     return result
 
 
-def _private_json(path):
+def _private_json(path, *, dir_fd=None):
     try:
-        return json.loads(_regular_private(path), object_pairs_hook=_unique_json_object)
+        return json.loads(_regular_private(path, dir_fd=dir_fd), object_pairs_hook=_unique_json_object)
     except RecursionError as exc:
         raise ValueError("invalid private JSON nesting") from exc
 
@@ -76,6 +77,16 @@ def _validate_project_items(items):
         if item["id"] in project_ids:
             raise ValueError("duplicate project id")
         project_ids.add(item["id"])
+
+
+def _validated_token(token_file):
+    if re.fullmatch(r"[A-Za-z0-9_-]{43}\n", token_file) is None:
+        raise ValueError("invalid instance token")
+    token = token_file[:-1]
+    decoded = base64.urlsafe_b64decode(token + "=")
+    if len(decoded) != 32 or base64.urlsafe_b64encode(decoded).rstrip(b"=").decode("ascii") != token:
+        raise ValueError("invalid instance token")
+    return token
 
 
 def initialize(root):
@@ -108,15 +119,20 @@ def initialize(root):
 class Service:
     def __init__(self, root):
         self.root = _private_root(root)
-        self.identity = _private_json(self.root / "instance.json")
-        token_file = _regular_private(self.root / "token")
-        if re.fullmatch(r"[A-Za-z0-9_-]{43}\n", token_file) is None:
-            raise ValueError("invalid instance token")
-        token = token_file[:-1]
-        decoded = base64.urlsafe_b64decode(token + "=")
-        if len(decoded) != 32 or base64.urlsafe_b64encode(decoded).rstrip(b"=").decode("ascii") != token:
-            raise ValueError("invalid instance token")
-        self.token = token
+        self._root_lock = threading.Lock()
+        self._root_fd = os.open(self.root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        try:
+            self._load_instance()
+        except Exception:
+            self.close()
+            raise
+
+    def _load_instance(self):
+        root_info = os.fstat(self._root_fd)
+        if not stat.S_ISDIR(root_info.st_mode) or root_info.st_uid != os.getuid() or root_info.st_mode & 0o077:
+            raise ValueError("data root must be owned by this user and mode 0700")
+        self.identity = _private_json("instance.json", dir_fd=self._root_fd)
+        self.token = _validated_token(_regular_private("token", dir_fd=self._root_fd))
         if not isinstance(self.identity, dict) or set(self.identity) != {"instance_id", "created_at"}:
             raise ValueError("invalid instance identity")
         instance_id = self.identity["instance_id"]
@@ -132,6 +148,22 @@ class Service:
         if timestamp.tzinfo is None or timestamp.utcoffset() is None:
             raise ValueError("invalid instance creation time")
 
+    def close(self):
+        with self._root_lock:
+            if self._root_fd is not None:
+                os.close(self._root_fd)
+                self._root_fd = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, _exc_type, _exc_value, _traceback):
+        self.close()
+
+    def __del__(self):
+        if getattr(self, "_root_fd", None) is not None:
+            self.close()
+
     @property
     def instance_id(self):
         return self.identity["instance_id"]
@@ -145,11 +177,14 @@ class Service:
                 "state": "READY", "project_source": project_source}
 
     def projects(self):
-        catalogue = self.root / "projects.json"
-        if not catalogue.exists() and not catalogue.is_symlink():
-            return {"state": "UNCONFIGURED", "projects": [], "source": None,
-                    "partial": False, "stale": False}
-        raw = _private_json(catalogue)
+        with self._root_lock:
+            if self._root_fd is None:
+                raise ValueError("instance is closed")
+            try:
+                raw = _private_json("projects.json", dir_fd=self._root_fd)
+            except FileNotFoundError:
+                return {"state": "UNCONFIGURED", "projects": [], "source": None,
+                        "partial": False, "stale": False}
         items = _validated_catalogue_items(raw)
         stamp = raw.get("observed_at")
         if not isinstance(stamp, str):

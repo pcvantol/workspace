@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "pcvantol/forge#208-r68",
+  "determined_version": "2.4.59",
+  "event_lineage": "pcvantol/forge#208-r68",
+  "expected_source_revision": "e89de39dfc2d1d1a7fa254a1d6a4581aae032e01",
+  "expected_version": "2.4.58",
+  "operation_id": "L4-R68-PIN-PRIVATE-ROOT",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

@@ -82,6 +82,8 @@ def openapi_contract():
 
 def handler_for(service):
     class Handler(BaseHTTPRequestHandler):
+        timeout = 5
+
         def log_message(self, format, *args):
             # BaseHTTPRequestHandler would log the raw target, including rejected queries.
             return
@@ -179,19 +181,20 @@ def handler_for(service):
 
 
 def serve(root, port):
-    service = Service(root)
-    lock_file = service.root / "server.lock"
-    descriptor = os.open(lock_file, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
-    with os.fdopen(descriptor, "r+") as lock:
-        info = os.fstat(lock.fileno())
-        if not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o077:
-            raise ValueError("server lock must be a private regular file")
-        try:
-            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError as exc:
-            raise ValueError("instance already served") from exc
-        server = ThreadingHTTPServer(("127.0.0.1", port), handler_for(service))
-        try:
-            server.serve_forever(poll_interval=0.1)
-        finally:
-            server.server_close()
+    with Service(root) as service:
+        descriptor = os.open("server.lock", os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW,
+                             0o600, dir_fd=service._root_fd)
+        with os.fdopen(descriptor, "r+") as lock:
+            info = os.fstat(lock.fileno())
+            if not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o077:
+                raise ValueError("server lock must be a private regular file")
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError as exc:
+                raise ValueError("instance already served") from exc
+            server = ThreadingHTTPServer(("127.0.0.1", port), handler_for(service))
+            server.daemon_threads = False
+            try:
+                server.serve_forever(poll_interval=0.1)
+            finally:
+                server.server_close()

@@ -37,6 +37,7 @@ class ReadOnlyTests(unittest.TestCase):
         self.root.mkdir(mode=0o700)
         self.instance = initialize(self.root)
         self.service = Service(self.root)
+        self.addCleanup(self.service.close)
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), handler_for(self.service))
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
         self.thread.start()
@@ -407,6 +408,94 @@ class ReadOnlyTests(unittest.TestCase):
         target.unlink()
         target.symlink_to(self.root / "token")
         self.assertEqual(self.authorized("/v1/projects")[0], 503)
+
+    def test_running_instance_does_not_follow_replaced_root_path(self):
+        from datetime import datetime, timezone
+        stamp = datetime.now(timezone.utc).isoformat()
+        def catalogue(root, project_id):
+            target = root / "projects.json"
+            target.write_text(json.dumps({"source": "LOCAL", "observed_at": stamp,
+                                          "projects": [{"id": project_id, "name": project_id}]}))
+            target.chmod(0o600)
+        catalogue(self.root, "one")
+        other = Path(self.temp.name) / "two"
+        other.mkdir(mode=0o700)
+        other_id = initialize(other)
+        catalogue(other, "two")
+        moved = Path(self.temp.name) / "one-moved"
+        self.root.rename(moved)
+        self.root.symlink_to(other, target_is_directory=True)
+        self.assertEqual(Service(other).instance_id, other_id)
+        self.assertEqual(json.loads(self.authorized("/v1/status")[1])["instance_id"], self.instance)
+        self.assertEqual(json.loads(self.authorized("/v1/projects")[1])["projects"][0]["id"], "one")
+
+    def test_serve_lock_uses_opened_root_when_path_changes_before_lock(self):
+        other = Path(self.temp.name) / "two"
+        other.mkdir(mode=0o700)
+        initialize(other)
+        moved = Path(self.temp.name) / "one-moved"
+        actual_service = Service
+        def swap_after_open(root):
+            service = actual_service(root)
+            self.root.rename(moved)
+            self.root.symlink_to(other, target_is_directory=True)
+            return service
+        with patch("workspace_control.http.Service", side_effect=swap_after_open), \
+             patch("workspace_control.http.ThreadingHTTPServer") as server_class:
+            serve(self.root, 0)
+            server_class.return_value.serve_forever.assert_called_once_with(poll_interval=0.1)
+            self.assertIs(server_class.return_value.daemon_threads, False)
+        self.assertTrue((moved / "server.lock").is_file())
+        self.assertFalse((other / "server.lock").exists())
+
+    def test_closed_instance_never_reads_relative_catalogue(self):
+        from datetime import datetime, timezone
+        with tempfile.TemporaryDirectory() as cwd:
+            target = Path(cwd) / "projects.json"
+            target.write_text(json.dumps({"source": "LOCAL",
+                                          "observed_at": datetime.now(timezone.utc).isoformat(),
+                                          "projects": [{"id": "wrong", "name": "Wrong"}]}))
+            target.chmod(0o600)
+            service = Service(self.root)
+            service.close()
+            before = Path.cwd()
+            try:
+                os.chdir(cwd)
+                with self.assertRaisesRegex(ValueError, "closed"):
+                    service.projects()
+            finally:
+                os.chdir(before)
+
+    def test_close_waits_for_in_flight_catalogue_open(self):
+        from workspace_control.service import _private_json
+        service = Service(self.root)
+        entered, release, closed = threading.Event(), threading.Event(), threading.Event()
+        outcomes = []
+        def delayed_read(path, *, dir_fd=None):
+            if path == "projects.json":
+                entered.set()
+                release.wait(timeout=2)
+            return _private_json(path, dir_fd=dir_fd)
+        def read():
+            outcomes.append(service.projects()["state"])
+        def close():
+            service.close()
+            closed.set()
+        with patch("workspace_control.service._private_json", side_effect=delayed_read):
+            reader = threading.Thread(target=read)
+            closer = threading.Thread(target=close)
+            reader.start()
+            try:
+                self.assertTrue(entered.wait(timeout=2))
+                closer.start()
+                self.assertFalse(closed.wait(timeout=0.05))
+            finally:
+                release.set()
+                reader.join(timeout=2)
+                if closer.ident is not None:
+                    closer.join(timeout=2)
+        self.assertEqual(outcomes, ["UNCONFIGURED"])
+        self.assertTrue(closed.is_set())
 
     def test_catalogue_observed_at_schema_preserves_accepted_iso_week_spelling(self):
         from datetime import datetime, timezone
