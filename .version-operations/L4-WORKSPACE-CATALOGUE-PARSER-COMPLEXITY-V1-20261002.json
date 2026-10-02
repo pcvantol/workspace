@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "pcvantol/forge#208-r42",
+  "determined_version": "2.4.33",
+  "event_lineage": "pcvantol/forge#208-r42",
+  "expected_source_revision": "6c933e02663eb478e94bb8c307d4e66f8c059168",
+  "expected_version": "2.4.32",
+  "operation_id": "L4-WORKSPACE-CATALOGUE-PARSER-COMPLEXITY-V1-20261002",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

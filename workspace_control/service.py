@@ -39,6 +39,33 @@ def _unique_json_object(pairs):
     return result
 
 
+def _validated_catalogue_items(raw):
+    required = {"source", "observed_at", "projects"}
+    if not isinstance(raw, dict) or not required <= raw.keys() or raw.keys() - required - {"partial"}:
+        raise ValueError("invalid catalogue schema")
+    if raw["source"] not in ("LOCAL", "DEMO"):
+        raise ValueError("invalid catalogue source")
+    items = raw["projects"]
+    if not isinstance(items, list) or len(items) > 100:
+        raise ValueError("invalid project catalogue")
+    if not isinstance(raw.get("partial", False), bool):
+        raise ValueError("invalid partial flag")
+    _validate_project_items(items)
+    return items
+
+
+def _validate_project_items(items):
+    project_ids = set()
+    for item in items:
+        if not isinstance(item, dict) or set(item) != {"id", "name"}:
+            raise ValueError("invalid project item")
+        if any(not isinstance(item[k], str) or not 1 <= len(item[k]) <= 120 for k in ("id", "name")):
+            raise ValueError("invalid project item")
+        if item["id"] in project_ids:
+            raise ValueError("duplicate project id")
+        project_ids.add(item["id"])
+
+
 def initialize(root):
     """Create the single immutable local identity and secret in an explicit root."""
     path = _private_root(root)
@@ -112,25 +139,7 @@ class Service:
             return {"state": "UNCONFIGURED", "projects": [], "source": None,
                     "partial": False, "stale": False}
         raw = json.loads(_regular_private(catalogue), object_pairs_hook=_unique_json_object)
-        required = {"source", "observed_at", "projects"}
-        if not isinstance(raw, dict) or not required <= raw.keys() or raw.keys() - required - {"partial"}:
-            raise ValueError("invalid catalogue schema")
-        if raw["source"] not in ("LOCAL", "DEMO"):
-            raise ValueError("invalid catalogue source")
-        items = raw.get("projects")
-        if not isinstance(items, list) or len(items) > 100:
-            raise ValueError("invalid project catalogue")
-        if not isinstance(raw.get("partial", False), bool):
-            raise ValueError("invalid partial flag")
-        project_ids = set()
-        for item in items:
-            if not isinstance(item, dict) or set(item) != {"id", "name"}:
-                raise ValueError("invalid project item")
-            if any(not isinstance(item[k], str) or not 1 <= len(item[k]) <= 120 for k in ("id", "name")):
-                raise ValueError("invalid project item")
-            if item["id"] in project_ids:
-                raise ValueError("duplicate project id")
-            project_ids.add(item["id"])
+        items = _validated_catalogue_items(raw)
         stamp = raw.get("observed_at")
         if not isinstance(stamp, str):
             raise ValueError("missing observed_at")
