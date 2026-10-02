@@ -1,5 +1,20 @@
 # Workspace Roadmap
 
+## Current LANE_4 product priority — native macOS Client over Server HTTP
+
+The selected #208 r81 delivery is a standalone macOS `Workspace.app` with
+bundled local rendering and its own window, settings and lifecycle. It connects
+only through the versioned Workspace Server HTTP(S) API to a separately running
+Server. The app needs no Python or local Server on its Mac. Workspace-owned
+Python is 3.14.x only. The sequence and open evidence gates are recorded in
+[BACKLOG.md](BACKLOG.md) and the existing
+[WH](docs/WORKSPACE_HTTP_API_V1_DAG.json) and
+[WPK](docs/WORKSPACE_PYPI_DISTRIBUTION_V1_DAG.json) DAGs. First prove Finder
+launch and installed-Server HTTP readback; then qualify two-Mac host/trust/auth;
+then bind the first exact qualified Forge producer read via Workspace Server.
+An unqualified remote gate remains `NOT_RUN`. The current first installer
+release and full Forge/EP canary do not gate this Client result.
+
 ## Live project roadmap consumer boundary
 
 The [PRM-W-CONTRACT offline projection](docs/LIVE_PROJECT_ROADMAP_WC_CONTRACT_V1.md)
@@ -109,7 +124,8 @@ configured/unicast/tailnet bootstrap followed by authenticated pinned pairing;
 discovery never authorizes or silently changes an existing binding. Client
 trust, EP Agent trust and server-peer trust remain separate.
 
-This is a post-autonomy productization lane: the first Forge→EP→Forge canary
+The broader deployment lane is post-autonomy; the owner-selected native
+Client/HTTP delivery above proceeds independently. The first Forge→EP→Forge canary
 does not require Workspace UI, client distribution or universal installer
 completion. See [Workspace Server and Client deployment target](docs/WORKSPACE_SERVER_CLIENT_DEPLOYMENT.md).
 

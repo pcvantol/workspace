@@ -1,6 +1,7 @@
 """Build and install the declared wheel from source in disposable environments."""
 
 import configparser
+from email.parser import Parser
 import json
 import os
 from pathlib import Path
@@ -27,8 +28,12 @@ def inspect_wheel(wheel, expected_version):
         if not required <= names:
             raise ValueError(f"wheel lacks required files: {sorted(required - names)}")
         metadata = archive.read(prefix + "METADATA").decode("utf-8")
-        if f"Name: pcvantol-workspace-control\n" not in metadata or f"Version: {expected_version}\n" not in metadata:
+        fields = Parser().parsestr(metadata)
+        if fields.get("Name") != "pcvantol-workspace-control" or fields.get("Version") != expected_version:
             raise ValueError("wheel metadata does not match canonical product identity/version")
+        python_range = fields.get("Requires-Python", "")
+        if {clause.strip() for clause in python_range.split(",")} != {">=3.14", "<3.15"}:
+            raise ValueError("wheel metadata must require Workspace-owned Python 3.14.x only")
         entries = configparser.ConfigParser()
         entries.read_string(archive.read(prefix + "entry_points.txt").decode("utf-8"))
         expected = {"workspace-server": "workspace_control.cli:main",

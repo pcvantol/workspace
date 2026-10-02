@@ -21,6 +21,19 @@
     "public_publish_readback_consumer_gates_remain_open": true,
     "existing_dependency_and_external_evidence_gates_unchanged": true
   },
+  "active_product_priority": {
+    "assignment_id": "L4-WORKSPACE-NATIVE-CLIENT-HTTP-V1-20261002",
+    "register": "https://github.com/pcvantol/forge/issues/208",
+    "selection_date": "2026-10-02",
+    "python_server_support": ">=3.14,<3.15",
+    "wheel_metadata_gate": "NOT_RUN",
+    "native_client_artifact": "MACOS_WORKSPACE_APP_SEPARATE_FROM_PYPI_SERVER_ROLE",
+    "native_client_requires_python_or_local_server": false,
+    "native_client_finder_installed_server_gate": "NOT_RUN",
+    "native_client_signed_keychain_trust_gate": "NOT_RUN",
+    "public_python_distribution_status": "PLANNED",
+    "first_installer_release_dependency": false
+  },
   "first_slice_checkpoint": {
     "scope": "WPK-IDENTITY/WPK-PACKAGE local wheel and role entrypoints only",
     "source_status": "LOCAL_WHEEL_SUBSET_PROTECTED_DELIVERED",
@@ -35,6 +48,8 @@
   "architecture": "docs/WORKSPACE_SERVER_CLIENT_DEPLOYMENT.md",
   "roadmap": "docs/WORKSPACE_PYPI_DISTRIBUTION_V1.md",
   "canonical_installable_channel": "PyPI",
+  "canonical_installable_channel_scope": "PYTHON_SERVER_AND_LEGACY_PYTHON_ENTRYPOINT_ONLY",
+  "native_client_channel": "SEPARATELY_PACKAGED_MACOS_APP_SIGNING_AND_DISTRIBUTION_UNQUALIFIED",
   "github_release_role": "HISTORICAL_SOURCE_AND_EVIDENCE_NOT_SOFTWARE_FALLBACK",
   "nodes": [
     {

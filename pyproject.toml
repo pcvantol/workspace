@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "pcvantol-workspace-control"
 dynamic = ["version"]
 description = "Workspace Server and read-only browser Client"
-requires-python = ">=3.10"
+requires-python = ">=3.14,<3.15"
 license = "LicenseRef-Proprietary"
 
 [project.scripts]

@@ -20,6 +20,22 @@
     "peer_and_full_parent_qualification_remain_open": true,
     "existing_dependency_and_external_evidence_gates_unchanged": true
   },
+  "active_product_priority": {
+    "assignment_id": "L4-WORKSPACE-NATIVE-CLIENT-HTTP-V1-20261002",
+    "register": "https://github.com/pcvantol/forge/issues/208",
+    "selection_date": "2026-10-02",
+    "selected_delivery": "FINDER_LAUNCHED_NATIVE_MACOS_CLIENT_TO_SEPARATELY_INSTALLED_PYTHON314_SERVER_OVER_VERSIONED_HTTP",
+    "python_support_gate": ">=3.14,<3.15",
+    "client_requires_python_or_local_server": false,
+    "client_to_server_transport": "HTTP(S)_ONLY",
+    "nonloopback_requires_verified_https": true,
+    "installed_local_client_server_gate": "NOT_RUN",
+    "two_mac_host_trust_authorization_gate": "NOT_RUN",
+    "forge_read_gate": "NOT_RUN",
+    "qualified_forge_producer_contract_required": true,
+    "first_installer_release_dependency": false,
+    "full_forge_ep_canary_dependency": false
+  },
   "first_slice_checkpoint": {
     "scope": "WH-CONTRACT/WH-SERVICES/WH-HTTP/WH-CLI local read-only subset",
     "source_status": "LOCAL_READ_ONLY_SUBSET_PROTECTED_DELIVERED",

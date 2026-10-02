@@ -8,7 +8,7 @@ import unittest
 from zipfile import ZipFile
 
 from validate_runtime_coverage import summarize
-from validate_wheel import assert_equivalent_wheels, inspect_sdist, inspect_wheel
+from validate_wheel import PACKAGE_FILES, assert_equivalent_wheels, inspect_sdist, inspect_wheel
 
 
 class CIGateTests(unittest.TestCase):
@@ -44,6 +44,18 @@ class CIGateTests(unittest.TestCase):
             with ZipFile(wheel, "w") as archive:
                 archive.writestr("workspace_control/__init__.py", "")
             with self.assertRaisesRegex(ValueError, "wheel lacks required files"):
+                inspect_wheel(wheel, "2.4.0")
+
+    def test_wheel_wrong_python_support_fails(self):
+        with tempfile.TemporaryDirectory() as directory:
+            wheel = Path(directory) / "wrong-python.whl"
+            prefix = "pcvantol_workspace_control-2.4.0.dist-info/"
+            with ZipFile(wheel, "w") as archive:
+                for name in PACKAGE_FILES:
+                    archive.writestr(name, "")
+                archive.writestr(prefix + "METADATA", "Metadata-Version: 2.4\nName: pcvantol-workspace-control\nVersion: 2.4.0\nRequires-Python: >=3.10\n")
+                archive.writestr(prefix + "entry_points.txt", "[console_scripts]\nworkspace-server = workspace_control.cli:main\nworkspace-client = workspace_control.cli:client_main\n")
+            with self.assertRaisesRegex(ValueError, "Python 3.14.x only"):
                 inspect_wheel(wheel, "2.4.0")
 
     def test_sdist_missing_canonical_source_fails(self):

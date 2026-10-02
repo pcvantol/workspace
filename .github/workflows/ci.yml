@@ -15,24 +15,12 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - run: bash scripts/validate.sh
-  python-310:
-    name: Python 3.10 compatibility
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
-          python-version: '3.10'
-      - run: python3 --version
+          python-version: '3.14'
       - run: bash scripts/validate.sh
-      - run: python3 -m pip install 'build==1.6.1' 'playwright==1.63.0'
-      - run: python3 -m playwright install chromium --with-deps
-      - run: |
-          python3 -m build --wheel --outdir "$RUNNER_TEMP/workspace-wheel"
-          python3 scripts/qualify_installed_server.py "$RUNNER_TEMP"/workspace-wheel/*.whl
   python-314:
-    name: Python 3.14 installed compatibility
+    name: Python 3.14 installed Server
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
