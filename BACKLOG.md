@@ -63,6 +63,15 @@ The first Forge read is now bounded to Forge Server v1 `GET /v1/instance` and
 instance/repository-bound read-only bearer; Workspace consumption remains
 `NOT_RUN` until that exact producer contract and installed readback are
 qualified. Project index, roadmap and Mission detail are later candidates.
+The Workspace Server 2.7.0 candidate adds a separate owner-held read binding,
+the authenticated `GET /v1/forge/status` projection and fail-closed checks for
+Forge's instance, repository-scoped read grant, response version and freshness.
+Its local and isolated installed-wheel tests are candidate evidence only;
+the actual Forge read stays `NOT_RUN` until Forge r23 is protected, its exact
+installed producer contract is pinned, and Workspace independently reads it.
+The MacBook's attempt to add an ephemeral test CA to its login trust settings
+was denied without interactive authorization. No trust item remains; the
+packaged app's remote readback remains `NOT_RUN`.
 
 ## Historical first implementation — 1 October 2026
 

@@ -20,6 +20,14 @@ def main(argv=None):
     commands.add_parser("projects")
     commands.add_parser("capabilities")
     commands.add_parser("openapi")
+    forge_binding = commands.add_parser("forge-read-configure")
+    forge_binding.add_argument("--endpoint", required=True)
+    forge_binding.add_argument("--instance-id", required=True)
+    forge_binding.add_argument("--repository-id", required=True)
+    forge_binding.add_argument("--token-file", required=True,
+                               help="absolute owner-held file containing the scoped Forge read token")
+    forge_binding.add_argument("--expected-current-instance")
+    forge_binding.add_argument("--expected-current-repository")
     start = commands.add_parser("serve")
     start.add_argument("--port", type=int, default=8765)
     start.add_argument("--bind", default="127.0.0.1", help="explicit IPv4 listener interface")
@@ -42,6 +50,13 @@ def main(argv=None):
                     result = operation_inventory(service.instance_id)
                 else:
                     result = openapi_contract()
+            print(json.dumps(result, sort_keys=True))
+        elif args.command == "forge-read-configure":
+            with Service(args.root) as service:
+                result = service.configure_forge_read(
+                    args.endpoint, args.instance_id, args.repository_id, args.token_file,
+                    expected_instance_id=args.expected_current_instance,
+                    expected_repository_id=args.expected_current_repository)
             print(json.dumps(result, sort_keys=True))
         else:
             if not 1 <= args.port <= 65535:

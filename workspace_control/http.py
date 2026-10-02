@@ -31,10 +31,14 @@ OPERATIONS = {
     "capabilities.read": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/capabilities",
                          "auth": "BEARER_PINNED", "local_cli": "capabilities",
                          "summary": "own operation inventory"},
+    "forge.status.read": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/forge/status",
+                          "auth": "BEARER_PINNED", "summary": "scoped Forge observation"},
     "instance.init": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "init",
                       "auth": "PRIVATE_ROOT_OWNER", "summary": "initialize private instance"},
     "instance.inspect": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "inspect",
                          "auth": "PRIVATE_ROOT_OWNER", "summary": "inspect private initialization state"},
+    "forge.read.configure": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "forge-read-configure",
+                             "auth": "PRIVATE_ROOT_OWNER", "summary": "bind scoped Forge read token"},
     "server.serve": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "serve",
                      "auth": "PRIVATE_ROOT_OWNER", "summary": "serve private instance"},
 }
@@ -193,6 +197,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
                         port = self.server.server_port
                         authority = public_host if port == 443 else f"{public_host}:{port}"
                         result = openapi_contract(f"https://{authority}")
+                elif path == "/v1/forge/status":
+                    result = service.forge_status()
                 else:
                     result = operation_inventory(service.instance_id)
             except (ValueError, OSError, UnicodeError):

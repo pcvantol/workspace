@@ -525,7 +525,7 @@ def verify_installed_response_schemas(url, token, instance_id, api):
     """Resolve every own 200/error schema against real installed HTTP reads."""
     expected = {"/v1/identity": "Identity", "/v1/status": "Status",
                 "/v1/projects": "Projects", "/v1/openapi.json": "OpenAPIContract",
-                "/v1/capabilities": "Capabilities"}
+                "/v1/capabilities": "Capabilities", "/v1/forge/status": "ForgeStatus"}
     schemas = api["components"]["schemas"]
     for path, name in expected.items():
         responses = api["paths"][path]["get"]["responses"]
@@ -937,6 +937,8 @@ def _verify_browser_bindings(page, first_url, token, first_id, second_id, first)
     verify_browser_observation(page, "No observation")
     page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
     page.get_by_text("capabilities.read · HTTP_EXPOSED").wait_for()
+    page.get_by_text("forge.status.read · HTTP_EXPOSED").wait_for()
+    assert page.locator("#capabilities li").count() == 10
     assert page.evaluate("localStorage.getItem('workspace.instanceId')") == first_id
     page.route("**/v1/identity", lambda route: route.fulfill(
         status=200, content_type="application/json",

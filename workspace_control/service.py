@@ -324,3 +324,32 @@ class Service:
                                           ("EMPTY" if not items else "AVAILABLE"))
         return {"state": state, "projects": items, "source": raw["source"],
                 "observed_at": stamp, "partial": partial, "stale": stale}
+
+    def forge_status(self):
+        """Read a scoped Forge observation without borrowing peer authority."""
+        from .forge_peer import projection
+
+        with self._root_lock:
+            if self._root_fd is None:
+                raise ValueError("instance is closed")
+            descriptor = os.dup(self._root_fd)
+        try:
+            return projection(descriptor)
+        finally:
+            os.close(descriptor)
+
+    def configure_forge_read(self, endpoint, instance_id, repository_id, token_file,
+                             *, expected_instance_id=None, expected_repository_id=None):
+        """Local administration only; no peer business read through the CLI."""
+        from .forge_peer import configure
+
+        with self._root_lock:
+            if self._root_fd is None:
+                raise ValueError("instance is closed")
+            descriptor = os.dup(self._root_fd)
+        try:
+            return configure(descriptor, endpoint, instance_id, repository_id, token_file,
+                             expected_instance_id=expected_instance_id,
+                             expected_repository_id=expected_repository_id)
+        finally:
+            os.close(descriptor)

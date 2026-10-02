@@ -139,8 +139,10 @@ const ownOperations = {
   'projects.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/projects', local_cli: 'projects'},
   'openapi.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/openapi.json', local_cli: 'openapi'},
   'capabilities.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/capabilities', local_cli: 'capabilities'},
+  'forge.status.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/forge/status'},
   'instance.init': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'init'},
   'instance.inspect': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'inspect'},
+  'forge.read.configure': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'forge-read-configure'},
   'server.serve': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'serve'}
 };
 function validOwnOperation(operation) {
