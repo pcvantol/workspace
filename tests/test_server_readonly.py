@@ -590,6 +590,14 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertNotIn(self.service.token, error)
         self.assertEqual(target.read_bytes(), before)
         self.assertEqual(self.authorized("/v1/projects")[0], 503)
+        target.write_bytes(b"\xff")
+        code, output, error = cli_read()
+        self.assertEqual((code, output), (2, ""))
+        self.assertTrue(error.startswith("workspace-server:"))
+        self.assertNotIn("Traceback", error)
+        self.assertNotIn(self.service.token, error)
+        self.assertEqual(target.read_bytes(), b"\xff")
+        self.assertEqual(self.authorized("/v1/projects")[0], 503)
 
     def test_restart_isolation_and_cli(self):
         self.assertEqual(main(["--root", str(self.root), "status"]), 0)
@@ -887,6 +895,19 @@ class ReadOnlyTests(unittest.TestCase):
             with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
                 self.assertEqual(main(["--root", str(self.root), "projects"]), 2)
             self.assertEqual(closed.call_count, 1)
+
+    def test_cli_invalid_utf8_instance_secret_exits_without_traceback(self):
+        fresh = Path(self.temp.name) / "invalid-secret"
+        fresh.mkdir(mode=0o700)
+        initialize(fresh)
+        (fresh / "token").write_bytes(b"\xff")
+        stdout, stderr = io.StringIO(), io.StringIO()
+        with redirect_stdout(stdout), redirect_stderr(stderr):
+            code = main(["--root", str(fresh), "status"])
+        self.assertEqual((code, stdout.getvalue()), (2, ""))
+        self.assertTrue(stderr.getvalue().startswith("workspace-server:"))
+        self.assertNotIn("Traceback", stderr.getvalue())
+        self.assertEqual((fresh / "token").read_bytes(), b"\xff")
 
     def test_cli_modes_and_server_lock(self):
         self.assertEqual(main(["--root", str(self.root), "serve", "--port", "0"]), 2)

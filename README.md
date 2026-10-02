@@ -38,6 +38,7 @@ requires operator investigation; `init` refuses to overwrite it.
 `workspace-server --root /absolute/private/workspace-data projects` prints the
 same own catalogue projection as `GET /v1/projects`; invalid or unreadable
 catalogue data exits nonzero without printing project rows. This local command
+also reports invalid UTF-8 as a bounded command error without a traceback. It
 requires ownership of the private root and is not a Forge/EP transport.
 Authenticated `GET /v1/capabilities` lists own HTTP reads and local-only
 administration commands for the pinned instance. It makes no peer-availability

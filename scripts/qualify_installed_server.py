@@ -308,6 +308,12 @@ def verify_installed_cli_projects(server_exe, instance_root, cwd, env, url, inst
         result = cli()
         assert result.returncode == 2 and result.stdout == "" and token not in result.stderr
         assert read(url + "/v1/projects", token=token, instance=instance_id)[0] == 503
+        catalogue.write_bytes(b"\xff")
+        result = cli()
+        assert result.returncode == 2 and result.stdout == ""
+        assert result.stderr.startswith("workspace-server:") and "Traceback" not in result.stderr
+        assert token not in result.stderr and catalogue.read_bytes() == b"\xff"
+        assert read(url + "/v1/projects", token=token, instance=instance_id)[0] == 503
     finally:
         catalogue.write_text(original)
         catalogue.chmod(0o600)
