@@ -16,7 +16,7 @@ import threading
 import time
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -1256,6 +1256,31 @@ class ForgeReadTests(unittest.TestCase):
         self.configure(endpoint="http://example.test:8765/")
         self.assertEqual(self.read()["state"], "INVALID_CONFIGURATION")
         self.assertEqual(self.forge_calls, [])
+
+    def test_redirect_timeout_and_tls_trust_remain_non_observed(self):
+        self.configure()
+        self.forge_status = 302
+        self.assertEqual(self.read()["state"], "INVALID_RESPONSE")
+        self.forge_status = 200
+
+        connection = Mock()
+        connection.request.side_effect = TimeoutError
+        with patch.object(forge_peer.http.client, "HTTPConnection", return_value=connection):
+            with self.assertRaises(forge_peer.PeerReadError) as failure:
+                forge_peer._read("http", "127.0.0.1", self.forge.server_port,
+                                 "/v1/instance", self.forge_token)
+        self.assertEqual(failure.exception.state, "UNAVAILABLE")
+        self.assertTrue(connection.close.called)
+
+        self.configure(endpoint="https://forge.example.test/")
+        connection = Mock()
+        connection.request.side_effect = ssl.SSLCertVerificationError("untrusted test certificate")
+        with patch.object(forge_peer.http.client, "HTTPSConnection", return_value=connection):
+            with self.assertRaises(forge_peer.PeerReadError) as failure:
+                forge_peer._read("https", "forge.example.test", 443,
+                                 "/v1/instance", self.forge_token)
+        self.assertEqual(failure.exception.state, "TLS_UNTRUSTED")
+        self.assertTrue(connection.close.called)
 
     def test_local_admin_provisions_and_rotates_private_scoped_credential(self):
         source = Path(self.temp.name) / "issued-token"
