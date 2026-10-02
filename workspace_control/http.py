@@ -95,6 +95,9 @@ def handler_for(service):
             # status, but return the same private, non-embeddable response
             # shape as all other own HTTP errors.
             self.close_connection = True
+            # Python 3.10 can leave an invalid request at the HTTP/0.9
+            # default, which would suppress the status line and all headers.
+            self.request_version = "HTTP/1.0"
             self._reply(code, {"error": "REQUEST_REJECTED"})
 
         def _reply(self, code, value, content_type="application/json; charset=utf-8"):
