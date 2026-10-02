@@ -107,16 +107,18 @@ function clearCapabilities() {
 }
 function validProjectCatalogue(catalogue) {
   if (!catalogue || !Array.isArray(catalogue.projects)) return false;
-  if (!catalogue.projects.every(item => item && typeof item.id === 'string' && item.id.trim() &&
-      typeof item.name === 'string' && item.name.trim())) return false;
+  if (catalogue.projects.length > 100 || !catalogue.projects.every(item => item &&
+      typeof item.id === 'string' && item.id.length >= 1 && item.id.length <= 120 &&
+      typeof item.name === 'string' && item.name.length >= 1 && item.name.length <= 120)) return false;
   if (new Set(catalogue.projects.map(item => item.id)).size !== catalogue.projects.length) return false;
-  if (!['UNCONFIGURED', 'EMPTY', 'PARTIAL', 'STALE', 'AVAILABLE'].includes(catalogue.state)) return false;
   if (typeof catalogue.partial !== 'boolean' || typeof catalogue.stale !== 'boolean') return false;
   if (catalogue.state === 'UNCONFIGURED') {
     return catalogue.source === null && catalogue.projects.length === 0 &&
       !catalogue.partial && !catalogue.stale;
   }
-  return ['LOCAL', 'DEMO'].includes(catalogue.source) &&
+  const expectedState = catalogue.stale ? 'STALE' : catalogue.partial ? 'PARTIAL' :
+    catalogue.projects.length === 0 ? 'EMPTY' : 'AVAILABLE';
+  return catalogue.state === expectedState && ['LOCAL', 'DEMO'].includes(catalogue.source) &&
     typeof catalogue.observed_at === 'string' && catalogue.observed_at.length > 0;
 }
 document.getElementById('forget').addEventListener('click', () => {
