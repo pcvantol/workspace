@@ -1,0 +1,58 @@
+name: Workspace native macOS Client
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-client:
+    name: Native app build and transport tests
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.14'
+      - id: swift-tests
+        name: Swift transport and endpoint tests with separate Swift coverage
+        run: |
+          swift test --package-path macos/WorkspaceClient \
+            --scratch-path "$RUNNER_TEMP/workspace-client-swift" \
+            --enable-code-coverage
+          coverage="$(swift test --package-path macos/WorkspaceClient \
+            --scratch-path "$RUNNER_TEMP/workspace-client-swift" --show-codecov-path)"
+          test -s "$coverage"
+          echo "Swift coverage report: $coverage"
+          echo "coverage=$coverage" >> "$GITHUB_OUTPUT"
+      - name: Package and verify local test app
+        env:
+          WORKSPACE_SWIFT_SCRATCH: ${{ runner.temp }}/workspace-client-swift
+        run: |
+          bash scripts/build_macos_app.sh "$RUNNER_TEMP/Workspace.app"
+          test -x "$RUNNER_TEMP/Workspace.app/Contents/MacOS/WorkspaceClient"
+          test "$(plutil -extract CFBundleShortVersionString raw -o - "$RUNNER_TEMP/Workspace.app/Contents/Info.plist")" = \
+            "$(plutil -extract version raw -o - product-version.json)"
+          if otool -L "$RUNNER_TEMP/Workspace.app/Contents/MacOS/WorkspaceClient" | grep -i python; then
+            echo 'Native Client binary unexpectedly links Python.' >&2
+            exit 1
+          fi
+          codesign --verify --strict "$RUNNER_TEMP/Workspace.app"
+          ditto -c -k --keepParent "$RUNNER_TEMP/Workspace.app" "$RUNNER_TEMP/Workspace-local-test.app.zip"
+          shasum -a 256 "$RUNNER_TEMP/Workspace-local-test.app.zip"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: workspace-native-local-test-app
+          path: ${{ runner.temp }}/Workspace-local-test.app.zip
+          if-no-files-found: error
+          retention-days: 14
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: workspace-native-swift-coverage
+          path: ${{ steps.swift-tests.outputs.coverage }}
+          if-no-files-found: error
+          retention-days: 14

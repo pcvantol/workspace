@@ -47,4 +47,12 @@ python3 scripts/project_postman.py --check
 python3 scripts/validate_runtime_coverage.py
 python3 scripts/validate_wheel.py
 
+if [[ "$(uname -s)" == Darwin ]]; then
+  swift_scratch="${WORKSPACE_SWIFT_SCRATCH:-${TMPDIR:-/tmp}/workspace-client-swift-$(id -u)}"
+  swift test --package-path macos/WorkspaceClient --scratch-path "$swift_scratch" --enable-code-coverage
+  swift_coverage="$(swift test --package-path macos/WorkspaceClient --scratch-path "$swift_scratch" --show-codecov-path)"
+  test -s "$swift_coverage"
+  WORKSPACE_SWIFT_SCRATCH="$swift_scratch" bash scripts/build_macos_app.sh "${TMPDIR:-/tmp}/workspace-validation-$(id -u)/Workspace.app"
+fi
+
 echo 'Workspace validation passed.'

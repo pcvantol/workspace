@@ -1,0 +1,218 @@
+import Foundation
+
+struct ServerEndpoint: Equatable, Sendable {
+    let url: URL
+
+    init(_ input: String) throws {
+        let trimmed = input.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let components = URLComponents(string: trimmed),
+              let scheme = components.scheme?.lowercased(),
+              let host = components.host?.lowercased(), !host.isEmpty,
+              components.user == nil, components.password == nil,
+              components.query == nil, components.fragment == nil,
+              components.path.isEmpty || components.path == "/",
+              components.port == nil || (1...65535).contains(components.port!) else {
+            throw ClientError.invalidEndpoint
+        }
+        let loopback = host == "localhost" || host == "127.0.0.1" || host == "::1"
+        guard scheme == "https" || (scheme == "http" && loopback) else {
+            throw ClientError.insecureEndpoint
+        }
+        var canonical = URLComponents()
+        canonical.scheme = scheme
+        canonical.host = host
+        canonical.port = components.port
+        canonical.path = "/"
+        guard let url = canonical.url else { throw ClientError.invalidEndpoint }
+        self.url = url
+    }
+
+    func route(_ path: String) -> URL {
+        url.appending(path: String(path.dropFirst()))
+    }
+}
+
+enum ClientError: Error, LocalizedError, Equatable {
+    case invalidEndpoint, insecureEndpoint, wrongInstance, unauthorized
+    case invalidResponse, unavailable, server(Int), noToken, bindingChanged
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidEndpoint: "Enter a Server address without a path, query or credentials."
+        case .insecureEndpoint: "A Server outside this Mac requires HTTPS."
+        case .wrongInstance: "The Server identity differs from the saved binding. Forget it explicitly before pairing another Server."
+        case .unauthorized: "The Server rejected the token."
+        case .invalidResponse: "The Server returned an invalid or inconsistent response."
+        case .unavailable: "The Server is unavailable. The last successful observation remains labelled with its time."
+        case .server(let code): "The Server returned HTTP \(code)."
+        case .noToken: "Enter the Server token."
+        case .bindingChanged: "The Server address differs from the saved binding. Forget it explicitly before changing Server."
+        }
+    }
+}
+
+struct Identity: Decodable, Sendable {
+    let instance_id: String
+}
+
+struct ServerStatus: Decodable, Sendable {
+    let instance_id: String
+    let version: String
+    let state: String
+    let project_source: String
+}
+
+struct Project: Decodable, Identifiable, Sendable {
+    let id: String
+    let name: String
+}
+
+struct ProjectCatalogue: Decodable, Sendable {
+    let state: String
+    let projects: [Project]
+    let source: String?
+    let observed_at: String?
+    let partial: Bool
+    let stale: Bool
+}
+
+struct Capability: Decodable, Identifiable, Sendable {
+    let id: String
+    let exposure: String
+    let auth: String
+    let method: String?
+    let path: String?
+}
+
+struct CapabilityInventory: Decodable, Sendable {
+    let schema_version: Int
+    let product_version: String
+    let instance_id: String
+    let operations: [Capability]
+    let peer_operations_qualified: Bool
+}
+
+struct ServerSnapshot: Sendable {
+    let identity: Identity
+    let status: ServerStatus
+    let projects: Result<ProjectCatalogue, ClientError>
+    let capabilities: Result<CapabilityInventory, ClientError>
+    let observedAt: Date
+}
+
+final class RejectRedirects: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
+    func urlSession(_ session: URLSession, task: URLSessionTask,
+                    willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest,
+                    completionHandler: @escaping (URLRequest?) -> Void) {
+        completionHandler(nil)
+    }
+}
+
+struct ServerTransport: Sendable {
+    let session: URLSession
+
+    init(configuration supplied: URLSessionConfiguration? = nil) {
+        let configuration = supplied ?? URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = 8
+        configuration.timeoutIntervalForResource = 15
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        configuration.waitsForConnectivity = false
+        self.session = URLSession(configuration: configuration, delegate: RejectRedirects(), delegateQueue: nil)
+    }
+
+    private func read<T: Decodable>(_ type: T.Type, endpoint: ServerEndpoint, path: String,
+                                     token: String? = nil, pin: String? = nil) async throws -> T {
+        var request = URLRequest(url: endpoint.route(path))
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("no-store", forHTTPHeaderField: "Cache-Control")
+        if let token, let pin {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            request.setValue(pin, forHTTPHeaderField: "X-Workspace-Instance")
+        }
+        let (data, response): (Data, URLResponse)
+        do {
+            (data, response) = try await session.data(for: request)
+        } catch is CancellationError {
+            throw CancellationError()
+        } catch {
+            if Task.isCancelled || (error as? URLError)?.code == .cancelled {
+                throw CancellationError()
+            }
+            throw ClientError.unavailable
+        }
+        guard let http = response as? HTTPURLResponse else { throw ClientError.invalidResponse }
+        switch http.statusCode {
+        case 200: break
+        case 401: throw ClientError.unauthorized
+        case 409: throw ClientError.wrongInstance
+        default: throw ClientError.server(http.statusCode)
+        }
+        guard data.count <= 1_000_000,
+              http.value(forHTTPHeaderField: "Content-Type")?.lowercased().hasPrefix("application/json") == true,
+              let decoded = try? JSONDecoder().decode(T.self, from: data) else {
+            throw ClientError.invalidResponse
+        }
+        return decoded
+    }
+
+    func connect(endpoint: ServerEndpoint, token: String, pinnedInstance: String?) async throws -> ServerSnapshot {
+        guard !token.isEmpty else { throw ClientError.noToken }
+        let identity = try await read(Identity.self, endpoint: endpoint, path: "/v1/identity")
+        guard identity.instance_id.range(of: "^[0-9a-f]{32}$", options: .regularExpression) != nil else {
+            throw ClientError.invalidResponse
+        }
+        if let pinnedInstance, pinnedInstance != identity.instance_id { throw ClientError.wrongInstance }
+        let status = try await read(ServerStatus.self, endpoint: endpoint, path: "/v1/status",
+                                    token: token, pin: identity.instance_id)
+        guard status.instance_id == identity.instance_id, status.state == "READY",
+              status.version.range(of: "^[0-9]+\\.[0-9]+\\.[0-9]+$", options: .regularExpression) != nil,
+              ["UNCONFIGURED", "EMPTY", "PARTIAL", "STALE", "AVAILABLE", "SOURCE_UNAVAILABLE"].contains(status.project_source) else {
+            throw ClientError.invalidResponse
+        }
+        async let projectRead: Result<ProjectCatalogue, ClientError> = optionalRead(
+            ProjectCatalogue.self, endpoint: endpoint, path: "/v1/projects", token: token,
+            pin: identity.instance_id, validate: { catalogue in
+                guard catalogue.projects.count <= 100,
+                      Set(catalogue.projects.map(\.id)).count == catalogue.projects.count else { return false }
+                if catalogue.state == "UNCONFIGURED" {
+                    return catalogue.projects.isEmpty && catalogue.source == nil &&
+                        catalogue.observed_at == nil && !catalogue.partial && !catalogue.stale
+                }
+                let expected = catalogue.stale ? "STALE" : catalogue.partial ? "PARTIAL" :
+                    (catalogue.projects.isEmpty ? "EMPTY" : "AVAILABLE")
+                return catalogue.state == expected && ["LOCAL", "DEMO"].contains(catalogue.source ?? "") &&
+                    !(catalogue.observed_at ?? "").isEmpty
+            })
+        async let capabilityRead: Result<CapabilityInventory, ClientError> = optionalRead(
+            CapabilityInventory.self, endpoint: endpoint, path: "/v1/capabilities", token: token,
+            pin: identity.instance_id, validate: { inventory in
+                inventory.schema_version == 1 && inventory.instance_id == identity.instance_id &&
+                inventory.product_version == status.version && !inventory.peer_operations_qualified &&
+                Set(inventory.operations.map(\.id)).count == inventory.operations.count
+            })
+        let projects = await projectRead
+        let capabilities = await capabilityRead
+        if case .failure(.unauthorized) = projects { throw ClientError.unauthorized }
+        if case .failure(.wrongInstance) = projects { throw ClientError.wrongInstance }
+        if case .failure(.unauthorized) = capabilities { throw ClientError.unauthorized }
+        if case .failure(.wrongInstance) = capabilities { throw ClientError.wrongInstance }
+        return ServerSnapshot(identity: identity, status: status, projects: projects,
+                              capabilities: capabilities, observedAt: Date())
+    }
+
+    private func optionalRead<T: Decodable & Sendable>(_ type: T.Type, endpoint: ServerEndpoint,
+        path: String, token: String, pin: String, validate: @escaping @Sendable (T) -> Bool
+    ) async -> Result<T, ClientError> {
+        do {
+            let value = try await read(type, endpoint: endpoint, path: path, token: token, pin: pin)
+            return validate(value) ? .success(value) : .failure(.invalidResponse)
+        } catch is CancellationError {
+            return .failure(.unavailable)
+        } catch let error as ClientError {
+            return .failure(error)
+        } catch {
+            return .failure(.unavailable)
+        }
+    }
+}

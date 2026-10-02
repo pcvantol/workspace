@@ -12,6 +12,29 @@ validation. Finder launch against an installed Server is the first visible
 gate. A real two-Mac link, app signing/Keychain trust and qualified Forge reads
 remain distinct gates.
 
+### Native local candidate and installation boundary
+
+The native Client source lives in `macos/WorkspaceClient`. A macOS builder runs
+`bash scripts/validate.sh` and `bash scripts/build_macos_app.sh OUTPUT/Workspace.app`.
+The latter bundles the SwiftUI executable and macOS metadata as a `.app`;
+only system frameworks are linked. The builder's local ad hoc code signature
+permits a local launch but is not Developer ID signing, notarization or
+remote-Keychain qualification. The Client machine only receives the completed
+`.app`, not Python, a Server data root or the development checkout.
+
+In the 2 October local candidate check, a separately installed Python 3.14.8
+Server 2.5.0 ran from an isolated venv and private data root outside the
+checkout. Double-clicking the packaged Client 2.5.0 in Finder opened its own
+macOS window and read
+`/v1/identity`, `/v1/status`, `/v1/projects` and `/v1/capabilities` over
+loopback. The visible demo row, Server version/READY state and capability
+inventory came from those real responses. Server stop/restart produced an
+honest unavailable/cached state and then fresh readback; Client quit/relaunch
+recovered its pinned binding from its own Keychain namespace. This local
+candidate evidence awaits protected merge. The Server still binds only
+loopback; two-Mac HTTPS, trust, authorization and a Developer ID signed
+candidate remain `NOT_RUN`.
+
 Workspace Server is a headless installed, independently restartable service. It owns server-authoritative Workspace project/control/governance state in a Workspace central runtime-storage root outside Git/source checkouts, with its product-owned SQL database plus files, artifacts, logs, backups and cache. It exposes a versioned HTTP API over interface-neutral Workspace application services and is launchd-managed on macOS. It projects Forge/EP truth through their versioned authenticated HTTP APIs; it does not take planning, execution, queue, lease, evidence or repository authority and never reads a peer database.
 
 Workspace Client is a separately installable frontend for client PCs. It discovers a candidate Workspace Server through LAN DNS-SD/mDNS or a configured/unicast/tailnet bootstrap endpoint, then authenticates and pairs as a Workspace user/session client. Pairing stores a pinned Workspace Server identity and trusted endpoint in client-owned secure storage; discovery is neither authorization nor a reason to silently change a binding. The client can be installed without an EP Project Agent.
