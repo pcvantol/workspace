@@ -523,19 +523,8 @@ def verify_browser_reconnect_clears_readbacks(page, expected_pin, token):
     page.get_by_text("Demo project (demo) · DEMO").wait_for()
 
 
-def verify_browser_project_error_semantics(page, instance_root):
-    """Preserve a visible row across each injected project-read failure and recovery."""
-    catalogue = instance_root / "projects.json"
-    catalogue.write_text(json.dumps({"source": "LOCAL",
-                                     "observed_at": datetime.now(timezone.utc).isoformat(),
-                                     "projects": [{"id": "before-error", "name": "Before error"}]}))
-    catalogue.chmod(0o600)
-    page.locator("#connect").click()
-    page.get_by_text("Before error (before-error)").wait_for()
-    observed = json.loads(catalogue.read_text())["observed_at"]
-    verify_browser_observation(page, f"Observed: {observed}")
-    for code, label in ((401, "UNAUTHORIZED"), (409, "WRONG INSTANCE"),
-                        (400, "UNAVAILABLE")):
+def _verify_project_auth_errors(page, observed):
+    for code, label in ((401, "UNAUTHORIZED"), (409, "WRONG INSTANCE")):
         def handler(route):
             route.fulfill(status=code, body="{}")
         page.route("**/v1/projects", handler)
@@ -548,9 +537,34 @@ def verify_browser_project_error_semantics(page, instance_root):
         page.locator("#connect").click()
         page.get_by_text("Before error (before-error)").wait_for()
         verify_browser_observation(page, f"Observed: {observed}")
+
+
+def _verify_project_http_errors(page, observed, expected_pin):
+    for code in (400, 404, 500, 503):
+        def unavailable(route):
+            route.fulfill(status=code, body="{}")
+        page.route("**/v1/projects", unavailable)
+        with page.expect_response(lambda response: response.url.endswith("/v1/projects") and
+                                  response.status == code), page.expect_request_finished(
+                                      lambda request: request.url.endswith("/v1/projects")):
+            page.locator("#connect").click()
+        page.evaluate("() => new Promise(resolve => setTimeout(resolve, 0))")
+        page.get_by_role("status").get_by_text("CONNECTED").wait_for()
+        page.locator("#project-state").get_by_text("UNAVAILABLE").wait_for()
+        assert page.locator("#capability-state").inner_text() == "AVAILABLE"
+        assert page.locator("#capabilities li").count() > 0
+        assert page.locator("#projects li").count() == 0
+        assert page.evaluate("localStorage.getItem('workspace.instanceId')") == expected_pin
+        verify_browser_observation(page, "No observation")
+        page.unroute("**/v1/projects", unavailable)
+        page.locator("#connect").click()
+        page.get_by_text("Before error (before-error)").wait_for()
+        verify_browser_observation(page, f"Observed: {observed}")
+
+
+def _verify_project_malformed_readbacks(page, observed, expected_pin):
     valid = {"state": "AVAILABLE", "source": "LOCAL", "partial": False, "stale": False,
              "observed_at": observed, "projects": [{"id": "before-error", "name": "Before error"}]}
-    expected_pin = page.evaluate("localStorage.getItem('workspace.instanceId')")
     for invalid in ({key: value for key, value in valid.items() if key != "projects"},
                     {**valid, "projects": [{"id": "", "name": "Unnamed"}]},
                     {**valid, "projects": [{"id": "before-error", "name": 3}]},
@@ -573,6 +587,23 @@ def verify_browser_project_error_semantics(page, instance_root):
         page.unroute("**/v1/projects", malformed)
         page.locator("#connect").click()
         page.get_by_text("Before error (before-error)").wait_for()
+
+
+def verify_browser_project_error_semantics(page, instance_root):
+    """Preserve a visible row across each injected project-read failure and recovery."""
+    catalogue = instance_root / "projects.json"
+    catalogue.write_text(json.dumps({"source": "LOCAL",
+                                     "observed_at": datetime.now(timezone.utc).isoformat(),
+                                     "projects": [{"id": "before-error", "name": "Before error"}]}))
+    catalogue.chmod(0o600)
+    page.locator("#connect").click()
+    page.get_by_text("Before error (before-error)").wait_for()
+    observed = json.loads(catalogue.read_text())["observed_at"]
+    verify_browser_observation(page, f"Observed: {observed}")
+    _verify_project_auth_errors(page, observed)
+    expected_pin = page.evaluate("localStorage.getItem('workspace.instanceId')")
+    _verify_project_http_errors(page, observed, expected_pin)
+    _verify_project_malformed_readbacks(page, observed, expected_pin)
     catalogue.unlink()
     page.locator("#connect").click()
     page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()

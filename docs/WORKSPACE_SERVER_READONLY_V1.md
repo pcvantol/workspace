@@ -68,6 +68,9 @@ The local Client keeps its authenticated Server and own capability readbacks whe
 Likewise, malformed JSON or a null body in a successful own capability-inventory response leaves only own capabilities UNAVAILABLE, without operation rows. Authenticated Server status, project readback and instance pin continue; a foreign inventory instance ID or authorization/pin failure still invalidates the connection.
 
 After authenticated Server status succeeds, a network failure reading one optional Client feed is isolated to that feed: the failed capabilities or projects readback stays UNAVAILABLE while the other continues. A later connection attempt can recover. Explicit 401/409 responses retain their authority/instance handling.
+Likewise, a non-401/409 HTTP failure on the optional project read leaves the
+authenticated Server connection and capability readback intact, with projects
+UNAVAILABLE and no stale rows or observation. A later successful read recovers.
 
 The local Client marks an authenticated Server CONNECTED and stores its instance pin only after the status envelope names the same instance, a canonical three-part product version, READY state and a recognized own project-source state. A malformed or contradictory successful status leaves the connection UNAVAILABLE without readbacks or a new pin; a foreign instance remains WRONG_INSTANCE.
 
