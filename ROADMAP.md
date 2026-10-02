@@ -9,13 +9,14 @@ Server. The app needs no Python or local Server on its Mac. Workspace-owned
 Python is 3.14.x only. The sequence and open evidence gates are recorded in
 [BACKLOG.md](BACKLOG.md) and the existing
 [WH](docs/WORKSPACE_HTTP_API_V1_DAG.json) and
-[WPK](docs/WORKSPACE_PYPI_DISTRIBUTION_V1_DAG.json) DAGs. First prove Finder
-launch and installed-Server HTTP readback; then qualify two-Mac host/trust/auth;
-then bind the first exact qualified Forge producer read via Workspace Server.
+[WPK](docs/WORKSPACE_PYPI_DISTRIBUTION_V1_DAG.json) DAGs. Finder launch,
+installed-Server HTTP readback and the first exact qualified Forge producer
+read through Workspace Server have local protected evidence. The next native
+gate is the two-Mac app readback with host, trust and authorization qualified.
 The own Server route for the scoped Forge read is protected-delivered in #121;
-the current native Client candidate has shown that route's real response in
-its Finder-launched packaged window. Protected delivery remains pending.
-An unqualified remote gate remains `NOT_RUN`. The current first installer
+the native Client has shown that route's real response in its Finder-launched
+packaged window, protected-delivered in Workspace #122. Remote native trust
+and signing remain open. The remote app gate remains `NOT_RUN`. The current first installer
 release and full Forge/EP canary do not gate this Client result.
 
 ## Live project roadmap consumer boundary

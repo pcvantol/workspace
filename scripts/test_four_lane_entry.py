@@ -49,7 +49,7 @@ class FourLaneEntryTests(unittest.TestCase):
         self.assertEqual(remote['forge_read_gate'],
                          'LOCAL_INSTALLED_TWO_SERVER_HTTP_PROTECTED_DELIVERED_WORKSPACE_PR_121')
         self.assertEqual(remote['native_forge_visible_gate'],
-                         'LOCAL_PACKAGED_FINDER_READBACK_CANDIDATE_PASS_PR_122_PROTECTED_PENDING')
+                         'LOCAL_PACKAGED_FINDER_READBACK_PROTECTED_DELIVERED_PR_122_MAIN_CFFBA50')
         self.assertTrue(any('double-clicked in Finder' in item
                             for item in remote['native_forge_visible_evidence']))
         self.assertEqual(remote['forge_read_remote_https_native_app_gate'], 'NOT_RUN')
