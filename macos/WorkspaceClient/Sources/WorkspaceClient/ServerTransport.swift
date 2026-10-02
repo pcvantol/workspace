@@ -107,6 +107,21 @@ struct ForgeObservation: Decodable, Sendable {
         state == "OBSERVED" && availability == "AVAILABLE" && freshness == "CURRENT"
     }
 
+    private func matches(_ value: String, _ pattern: String) -> Bool {
+        value.range(of: pattern, options: .regularExpression) != nil
+    }
+
+    private func validTime(_ value: String) -> Bool {
+        guard matches(value, "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,6})?(Z|[+-][0-9]{2}:[0-9]{2})$") else {
+            return false
+        }
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if formatter.date(from: value) != nil { return true }
+        formatter.formatOptions = [.withInternetDateTime]
+        return formatter.date(from: value) != nil
+    }
+
     var isValid: Bool {
         let errors = ["UNCONFIGURED", "INVALID_CONFIGURATION", "READ_SCOPE_UNVERIFIED",
                       "WRONG_INSTANCE", "INVALID_RESPONSE", "UNAUTHORIZED", "DENIED",
@@ -116,15 +131,17 @@ struct ForgeObservation: Decodable, Sendable {
             return availability == nil && freshness == nil && source_observed_at == nil &&
                 retrieved_at == nil && product_version == nil
         }
-        guard state == "OBSERVED", let instance_id, !instance_id.isEmpty,
-              let repository_id, !repository_id.isEmpty,
+        guard state == "OBSERVED", let instance_id,
+              matches(instance_id, "^[A-Za-z0-9_-]{8,128}$"),
+              let repository_id, matches(repository_id, "^[A-Za-z0-9_.:-]{1,128}$"),
               let product_version,
               product_version.range(of: "^[0-9]+\\.[0-9]+\\.[0-9]+$", options: .regularExpression) != nil,
               let availability, ["AVAILABLE", "UNAVAILABLE"].contains(availability),
               let freshness, ["CURRENT", "STALE", "UNKNOWN", "UNAVAILABLE"].contains(freshness),
-              let retrieved_at, !retrieved_at.isEmpty else { return false }
+              let retrieved_at, validTime(retrieved_at) else { return false }
         return !(["CURRENT", "STALE"].contains(freshness) && source_observed_at == nil) &&
-            !((availability == "UNAVAILABLE") != (freshness == "UNAVAILABLE"))
+            !((availability == "UNAVAILABLE") != (freshness == "UNAVAILABLE")) &&
+            (source_observed_at.map(validTime) ?? true)
     }
 }
 

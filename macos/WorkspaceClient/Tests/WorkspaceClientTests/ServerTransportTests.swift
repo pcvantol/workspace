@@ -185,6 +185,27 @@ final class ServerTransportTests: XCTestCase {
             availability: "AVAILABLE", freshness: "CURRENT", source_observed_at: nil,
             retrieved_at: current.retrieved_at)
         XCTAssertFalse(invalid.isValid)
+        let blankScope = ForgeObservation(schema_version: 1, state: "OBSERVED", instance_id: "        ",
+            repository_id: " ", product_version: "2.7.59", availability: "AVAILABLE",
+            freshness: "CURRENT", source_observed_at: current.source_observed_at,
+            retrieved_at: current.retrieved_at)
+        XCTAssertFalse(blankScope.isValid)
+        let malformedSource = ForgeObservation(schema_version: 1, state: "OBSERVED",
+            instance_id: current.instance_id, repository_id: current.repository_id,
+            product_version: "2.7.59", availability: "AVAILABLE", freshness: "CURRENT",
+            source_observed_at: "not-a-time", retrieved_at: current.retrieved_at)
+        XCTAssertFalse(malformedSource.isValid)
+        let malformedRetrieval = ForgeObservation(schema_version: 1, state: "OBSERVED",
+            instance_id: current.instance_id, repository_id: current.repository_id,
+            product_version: "2.7.59", availability: "AVAILABLE", freshness: "CURRENT",
+            source_observed_at: current.source_observed_at, retrieved_at: "x")
+        XCTAssertFalse(malformedRetrieval.isValid)
+        let utcMicroseconds = ForgeObservation(schema_version: 1, state: "OBSERVED",
+            instance_id: current.instance_id, repository_id: current.repository_id,
+            product_version: "2.7.59", availability: "AVAILABLE", freshness: "CURRENT",
+            source_observed_at: "2026-10-02T12:00:00+02:00",
+            retrieved_at: "2026-10-02T14:21:59.672337Z")
+        XCTAssertTrue(utcMicroseconds.isValid)
     }
 
     func testOwnForgeRouteAuthorizationDenialRejectsConnection() async throws {
