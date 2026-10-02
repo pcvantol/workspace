@@ -71,6 +71,9 @@ SOURCE_UNAVAILABLE/HTTP 503 outcome, without an uncaught parser exception.
 The optional `projects.json` is a private regular file (mode 0600) in the data root. Its schema is `{"source":"LOCAL","observed_at":"2026-10-01T15:00:00Z","projects":[{"id":"project-1","name":"Project One"}],"partial":false}`. `source` is `LOCAL` or `DEMO`; the latter is visibly labelled. No file means UNCONFIGURED. A configured empty list means EMPTY. An explicitly incomplete catalogue is PARTIAL. Observations older than five minutes are STALE. Invalid or unreadable input returns SOURCE_UNAVAILABLE. This catalogue is Workspace-owned manual data, not a peer projection or live platform status.
 
 The local Client keeps its authenticated Server and own capability readbacks when a successful project HTTP response has malformed JSON or contradicts the Server's project response structure and state rules. It shows project UNAVAILABLE without rows or observation until a usable project response is read again. The Server remains responsible for parsing and validating the source timestamp, whose original spelling is preserved. Authorization and instance-pin errors still invalidate the connection.
+The Client accepts only the Server's declared catalogue keys and exact project
+`id`/`name` items. An unconfigured response has no observation field; extra
+provenance or item fields leave only the project readback UNAVAILABLE.
 
 Likewise, malformed JSON or a null body in a successful own capability-inventory response leaves only own capabilities UNAVAILABLE, without operation rows. Authenticated Server status, project readback and instance pin continue; a foreign inventory instance ID or authorization/pin failure still invalidates the connection.
 

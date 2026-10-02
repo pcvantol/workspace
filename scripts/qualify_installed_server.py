@@ -579,17 +579,25 @@ def _verify_project_malformed_readbacks(page, observed, expected_pin):
     valid = {"state": "AVAILABLE", "source": "LOCAL", "partial": False, "stale": False,
              "observed_at": observed, "projects": [{"id": "before-error", "name": "Before error"}]}
     for invalid in ({key: value for key, value in valid.items() if key != "projects"},
+                    {**valid, "peer_source": "FORGE"},
+                    {**valid, "projects": [{"id": "before-error", "name": "Before error", "owner": "FORGE"}]},
                     {**valid, "projects": [{"id": "", "name": "Unnamed"}]},
                     {**valid, "projects": [{"id": "before-error", "name": 3}]},
                     {**valid, "projects": []},
                     {**valid, "state": "EMPTY"},
                     {key: value for key, value in valid.items() if key != "observed_at"},
+                    {"state": "UNCONFIGURED", "source": None, "partial": False, "stale": False,
+                     "projects": [], "observed_at": observed},
                     {**valid, "state": "UNCONFIGURED"}, "{"):
         def malformed(route):
             route.fulfill(status=200, content_type="application/json",
                           body=invalid if isinstance(invalid, str) else json.dumps(invalid))
         page.route("**/v1/projects", malformed)
-        page.locator("#connect").click()
+        with page.expect_response(lambda response: response.url.endswith("/v1/projects") and
+                                  response.status == 200), page.expect_request_finished(
+                                      lambda request: request.url.endswith("/v1/projects")):
+            page.locator("#connect").click()
+        page.evaluate("() => new Promise(resolve => setTimeout(resolve, 0))")
         page.get_by_role("status").get_by_text("CONNECTED").wait_for()
         page.locator("#project-state").get_by_text("UNAVAILABLE").wait_for()
         assert page.locator("#capability-state").inner_text() == "AVAILABLE"
