@@ -262,6 +262,17 @@ def verify_catalogue_schema(url, instance_id, token, catalogue, page):
     catalogue.write_text(json.dumps({**valid, "observed_at": observed_at}))
     code, body = read(url + "/v1/projects", token=token, instance=instance_id)
     assert code == 200 and json.loads(body)["observed_at"] == observed_at
+    page.locator("#connect").click()
+    page.locator("#project-observed").get_by_text(f"Observed: {observed_at}").wait_for()
+    verify_browser_observation(page, f"Observed: {observed_at}")
+    for alternate in (now.strftime("%Y%m%dT%H%M%S+0000"),
+                      now.strftime("%Y-%m-%dT%H:%M:%S+00")):
+        catalogue.write_text(json.dumps({**valid, "observed_at": alternate}))
+        code, body = read(url + "/v1/projects", token=token, instance=instance_id)
+        assert code == 200 and json.loads(body)["observed_at"] == alternate
+        page.locator("#connect").click()
+        page.locator("#project-observed").get_by_text(f"Observed: {alternate}").wait_for()
+        verify_browser_observation(page, f"Observed: {alternate}")
     catalogue.write_text(json.dumps(valid))
     page.locator("#connect").click()
     page.locator("#project-state").get_by_text("AVAILABLE · DEMO").wait_for()
@@ -519,7 +530,6 @@ def verify_browser_project_error_semantics(page, instance_root):
                     {**valid, "projects": [{"id": "before-error", "name": 3}]},
                     {**valid, "projects": []},
                     {**valid, "state": "EMPTY"},
-                    {**valid, "observed_at": "x"},
                     {key: value for key, value in valid.items() if key != "observed_at"},
                     {**valid, "state": "UNCONFIGURED"}, "{"):
         def malformed(route):
