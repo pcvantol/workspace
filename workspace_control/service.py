@@ -120,8 +120,10 @@ def initialize(root):
         if os.write(marker_fd, marker) != len(marker):
             raise OSError("incomplete initialization marker")
         os.fsync(marker_fd)
+        os.fsync(root_fd)
         created = datetime.now(timezone.utc).isoformat()
-        values = (("instance.json", json.dumps({"instance_id": instance_id, "created_at": created}) + "\n"),
+        values = (("instance.json", json.dumps({"instance_id": instance_id, "created_at": created,
+                                                  "init_protocol": "COMMIT_MARKER_V1"}) + "\n"),
                   ("token", secrets.token_urlsafe(32) + "\n"))
         for name, content in values:
             fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
@@ -130,6 +132,7 @@ def initialize(root):
                 stream.write(content)
                 stream.flush()
                 os.fsync(stream.fileno())
+        os.fsync(root_fd)
         os.fchmod(marker_fd, 0o600)
         return instance_id
     finally:
@@ -154,7 +157,12 @@ class Service:
     def _load_instance(self):
         self.identity = _private_json("instance.json", dir_fd=self._root_fd)
         self.token = _validated_token(_regular_private("token", dir_fd=self._root_fd))
-        if not isinstance(self.identity, dict) or set(self.identity) != {"instance_id", "created_at"}:
+        legacy_fields = {"instance_id", "created_at"}
+        fields = set(self.identity) if isinstance(self.identity, dict) else set()
+        if fields not in (legacy_fields, legacy_fields | {"init_protocol"}):
+            raise ValueError("invalid instance identity")
+        marker_required = "init_protocol" in fields
+        if marker_required and self.identity["init_protocol"] != "COMMIT_MARKER_V1":
             raise ValueError("invalid instance identity")
         instance_id = self.identity["instance_id"]
         if not isinstance(instance_id, str) or re.fullmatch(r"[0-9a-f]{32}", instance_id) is None:
@@ -171,7 +179,11 @@ class Service:
         try:
             marker_info = os.stat("initialized", dir_fd=self._root_fd, follow_symlinks=False)
         except FileNotFoundError:
+            if marker_required:
+                raise ValueError("instance initialization incomplete")
             return  # Legacy roots were initialized before the completion marker.
+        if not marker_required:
+            raise ValueError("invalid legacy instance marker")
         if not stat.S_ISREG(marker_info.st_mode) or stat.S_IMODE(marker_info.st_mode) != 0o600:
             raise ValueError("instance initialization incomplete")
         if _regular_private("initialized", dir_fd=self._root_fd) != instance_id + "\n":
