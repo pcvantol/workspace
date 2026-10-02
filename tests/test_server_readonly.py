@@ -7,6 +7,7 @@ import io
 import os
 from pathlib import Path
 import re
+import socket
 import tempfile
 import threading
 import time
@@ -138,6 +139,23 @@ class ReadOnlyTests(unittest.TestCase):
                                               method="POST", hosts=(host,))[0], 405)
         self.assertNotIn(secret, output.getvalue())
         self.assertEqual(output.getvalue(), "")
+
+    def test_parser_errors_do_not_echo_request_targets(self):
+        secret = b"private-token-value-do-not-echo"
+        for request_line, status in (
+            (b"GET /v1/identity?token=" + secret + b" HTTP/1.1 EXTRA\r\n", b"400"),
+            (b"UNKNOWN /v1/identity?token=" + secret + b" HTTP/1.1\r\n", b"501"),
+        ):
+            with self.subTest(status=status), socket.create_connection(
+                ("127.0.0.1", self.server.server_port), timeout=2
+            ) as connection:
+                connection.sendall(request_line + b"Host: 127.0.0.1\r\n\r\n")
+                chunks = []
+                while chunk := connection.recv(4096):
+                    chunks.append(chunk)
+                response = b"".join(chunks)
+                self.assertIn(b" " + status + b" ", response.split(b"\r\n", 1)[0])
+                self.assertNotIn(secret, response)
 
     def test_ambiguous_auth_and_pin_headers_are_rejected(self):
         host = f"127.0.0.1:{self.server.server_port}"

@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "pcvantol/forge#208-r62",
+  "determined_version": "2.4.53",
+  "event_lineage": "pcvantol/forge#208-r62",
+  "expected_source_revision": "391c5aa64b1fe91d108825ea056e4d82c86c83cd",
+  "expected_version": "2.4.52",
+  "operation_id": "L4-R62-PARSER-ERROR-REDACTION",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}
