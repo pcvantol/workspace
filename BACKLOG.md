@@ -34,7 +34,7 @@ native app signing/distribution and remote host qualification remain separate
 evidence gates; do not infer them from a source build. Other quality and UI
 improvements remain candidates after this selected delivery.
 
-### Native Client local milestones and HTTPS Server candidate
+### Native Client and two-Mac transport milestones
 
 Protected PR #117 delivered the local 2.5.0 milestone. Its test bundle opens
 as a real macOS window and reads identity,
@@ -46,14 +46,23 @@ project became `STALE` after the Server's five-minute window. The Swift transpor
 suite and packaged binary/signature checks passed locally and in hosted macOS
 CI. This is local proof, not a public/signed distribution or two-Mac PASS. A
 fresh ad hoc build exposed a blocking Keychain read before the app window
-appeared when macOS awaited access for the changed signature. The active r81
-repair moves credential work off the UI thread, keeps a visible cancel path and
-tests pending-access startup; signed candidate Keychain behavior remains
-`NOT_RUN`. PR #118 protected-delivered the responsive Keychain lifecycle. The
-next same-assignment candidate adds an explicit-interface TLS listener to the
-installed Server, with loopback certificate/Host/auth/pin qualification. Real
-second-Mac trust/auth readback remains `NOT_RUN` until an actual host and
-trusted certificate are qualified; local TLS cannot close it.
+appeared when macOS awaited access for the changed signature. PR #118
+protected-delivered the responsive Keychain lifecycle with visible cancellation
+and pending-access tests. Signed candidate Keychain behavior remains `NOT_RUN`.
+PR #119 protected-delivered the explicit-interface HTTPS Server and an
+installed-wheel certificate/Host/auth/pin qualifier. A separate MacBook Pro
+then read this installed Server on the Mac mini over LAN HTTPS with explicit
+test-certificate trust: valid bearer and instance pin returned 200; untrusted
+certificate, missing bearer, wrong pin and foreign Host failed closed. This
+closes the disposable two-Mac HTTP transport gate, not the packaged app's
+system macOS trust or Developer ID/Keychain qualification. Those native gates
+remain `NOT_RUN` without an accepted trust chain and signer.
+
+The first Forge read is now bounded to Forge Server v1 `GET /v1/instance` and
+`GET /v1/status` only. Forge LANE_3 r23 is building a separately provisioned,
+instance/repository-bound read-only bearer; Workspace consumption remains
+`NOT_RUN` until that exact producer contract and installed readback are
+qualified. Project index, roadmap and Mission detail are later candidates.
 
 ## Historical first implementation — 1 October 2026
 
