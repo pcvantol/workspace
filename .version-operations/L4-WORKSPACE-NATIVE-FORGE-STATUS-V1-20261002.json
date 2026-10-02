@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "pcvantol/forge#208-r81",
+  "determined_version": "2.8.0",
+  "event_lineage": "pcvantol/forge#208-r81",
+  "expected_source_revision": "d2b85a865a265d8a1b8dc3ebc7968a32245b3db9",
+  "expected_version": "2.7.0",
+  "operation_id": "L4-WORKSPACE-NATIVE-FORGE-STATUS-V1-20261002",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "MINOR",
+  "requested": {
+    "bump": "minor"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

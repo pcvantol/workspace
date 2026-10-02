@@ -82,9 +82,9 @@ disposable test CA without interactive approval. The partial certificate item
 was removed and default certificate validation rejected the test Server.
 This is a concrete client trust `NOT_RUN` gate, not a remote app result.
 
-### First Forge read candidate
+### First Forge read — delivered Server subset and open native gate
 
-The Workspace Server 2.7.0 candidate exposes authenticated
+The Workspace Server 2.7.0, protected-delivered in #121, exposes authenticated
 `GET /v1/forge/status`. It reads only Forge Server v1 `GET /v1/instance` and
 `GET /v1/status` through a separately issued read bearer. The Forge endpoint,
 expected instance ID, expected repository ID and token live in one owner-held
@@ -109,11 +109,36 @@ observation into a fresh one. Missing/invalid binding, denied/revoked grant,
 wrong instance, unverified scope, TLS failure and unavailable producer are
 distinct states. The new route does not grant Client writes or Forge authority.
 
-This is a **candidate** until the exact Forge r23 producer contract is
-protected and an independently installed Workspace Server reads its installed
-Forge counterpart. The general Forge administrator bearer is never accepted
+Forge r23's exact producer contract was protected-delivered in Forge #231.
+A separately installed Python 3.14 Workspace Server read a separately installed
+Forge 2.7.59 process over HTTP, returning `OBSERVED` with the exact instance and
+repository scope, current source freshness and distinct retrieval time; grant
+revocation yielded `UNAUTHORIZED`. This closes the local installed two-Server
+subset. The 2.8.0 packaged native Client candidate was double-clicked in Finder
+and showed the installed Workspace Server's authenticated Forge `OBSERVED`
+response for `repo-1`, including Forge 2.7.59, `AVAILABLE` and `CURRENT`. It
+recovered the saved binding after quit and relaunch. The Workspace and Forge
+Servers were separately installed in Python 3.14.8 environments outside their
+checkouts; this is a local loopback candidate result awaiting protected PR
+delivery. A SwiftUI `GroupBox` in the connection panel prevented this
+candidate's main window from opening on the test Mac; the native panels now
+use an explicit SwiftUI card. A changed ad hoc signature also left the earlier
+pre-release `.v1` Keychain test item awaiting macOS access, so the candidate
+uses its own `.v2` Keychain service and requires one explicit re-pair. The old
+item was retained. Developer ID signed Keychain behavior and remote two-Mac
+native read remain `NOT_RUN`. The general Forge administrator bearer is never accepted
 as an implicit Workspace read grant; the consumer requires the scoped response
 attestation. No Forge project/Mission membership is inferred.
+
+`Forget Server` removes the current `.v2` binding and token only. It does not
+revoke a Server token or delete the retained pre-release `.v1` items. To remove
+the earlier Client test pairing, use macOS Keychain Access on that Mac, search
+the exact service `com.pcvantol.workspace.native-client.v1`, and review the
+`server-binding` and `server-token` account items before deleting those two
+items. This is an owner action for that earlier local pairing, not part of the
+current Client's automatic cleanup. A prior app with access to the `.v1`
+service can still use that retained token until it is removed or invalidated
+at its Server.
 
 Workspace Server is a headless installed, independently restartable service. It owns server-authoritative Workspace project/control/governance state in a Workspace central runtime-storage root outside Git/source checkouts, with its product-owned SQL database plus files, artifacts, logs, backups and cache. It exposes a versioned HTTP API over interface-neutral Workspace application services and is launchd-managed on macOS. It projects Forge/EP truth through their versioned authenticated HTTP APIs; it does not take planning, execution, queue, lease, evidence or repository authority and never reads a peer database.
 

@@ -147,6 +147,7 @@ final class ServerTransportTests: XCTestCase {
             case "/v1/status": return (200, Data("{\"instance_id\":\"\(instance)\",\"version\":\"2.4.67\",\"state\":\"READY\",\"project_source\":\"AVAILABLE\"}".utf8))
             case "/v1/projects": return (200, Data("{\"state\":\"AVAILABLE\",\"projects\":[{\"id\":\"one\",\"name\":\"One\"}],\"source\":\"LOCAL\",\"observed_at\":\"2026-10-02T10:00:00Z\",\"partial\":false,\"stale\":false}".utf8))
             case "/v1/capabilities": return (503, Data("{\"error\":\"SOURCE_UNAVAILABLE\"}".utf8))
+            case "/v1/forge/status": return (200, Data("{\"schema_version\":1,\"state\":\"OBSERVED\",\"instance_id\":\"forge-runtime-one\",\"repository_id\":\"repo-1\",\"product_version\":\"2.7.59\",\"availability\":\"AVAILABLE\",\"freshness\":\"CURRENT\",\"source_observed_at\":\"2026-10-02T10:00:00Z\",\"retrieved_at\":\"2026-10-02T10:00:01Z\"}".utf8))
             default: XCTFail("Unexpected route \(path)"); return (404, Data())
             }
         }
@@ -157,7 +158,95 @@ final class ServerTransportTests: XCTestCase {
             XCTAssertEqual(projects.projects.map(\.name), ["One"])
         } else { XCTFail("Project read failed") }
         if case .failure(.server(503)) = result.capabilities {} else { XCTFail("Capabilities should be unavailable") }
-        XCTAssertEqual(Set(paths), Set(["/v1/identity", "/v1/status", "/v1/projects", "/v1/capabilities"]))
+        if case .success(let forge) = result.forge {
+            XCTAssertEqual(forge.repository_id, "repo-1")
+            XCTAssertEqual(forge.freshness, "CURRENT")
+        } else { XCTFail("Forge read failed") }
+        XCTAssertEqual(Set(paths), Set(["/v1/identity", "/v1/status", "/v1/projects", "/v1/capabilities", "/v1/forge/status"]))
+    }
+
+    func testForgeProjectionKeepsSourceFreshnessDistinct() throws {
+        let current = try JSONDecoder().decode(ForgeObservation.self, from: Data("{\"schema_version\":1,\"state\":\"OBSERVED\",\"instance_id\":\"forge-runtime-one\",\"repository_id\":\"repo-1\",\"product_version\":\"2.7.59\",\"availability\":\"AVAILABLE\",\"freshness\":\"CURRENT\",\"source_observed_at\":\"2026-10-02T10:00:00Z\",\"retrieved_at\":\"2026-10-02T10:00:01Z\"}".utf8))
+        XCTAssertTrue(current.isValid)
+        XCTAssertTrue(current.isCurrent)
+        let stale = ForgeObservation(schema_version: 1, state: "OBSERVED", instance_id: current.instance_id,
+            repository_id: current.repository_id, product_version: current.product_version,
+            availability: "AVAILABLE", freshness: "STALE", source_observed_at: current.source_observed_at,
+            retrieved_at: current.retrieved_at)
+        XCTAssertTrue(stale.isValid)
+        XCTAssertFalse(stale.isCurrent)
+        let unverified = ForgeObservation(schema_version: 1, state: "READ_SCOPE_UNVERIFIED",
+            instance_id: current.instance_id, repository_id: current.repository_id, product_version: nil,
+            availability: nil, freshness: nil, source_observed_at: nil, retrieved_at: nil)
+        XCTAssertTrue(unverified.isValid)
+        XCTAssertFalse(unverified.isCurrent)
+        let invalid = ForgeObservation(schema_version: 1, state: "OBSERVED", instance_id: current.instance_id,
+            repository_id: current.repository_id, product_version: current.product_version,
+            availability: "AVAILABLE", freshness: "CURRENT", source_observed_at: nil,
+            retrieved_at: current.retrieved_at)
+        XCTAssertFalse(invalid.isValid)
+        let blankScope = ForgeObservation(schema_version: 1, state: "OBSERVED", instance_id: "        ",
+            repository_id: " ", product_version: "2.7.59", availability: "AVAILABLE",
+            freshness: "CURRENT", source_observed_at: current.source_observed_at,
+            retrieved_at: current.retrieved_at)
+        XCTAssertFalse(blankScope.isValid)
+        let malformedSource = ForgeObservation(schema_version: 1, state: "OBSERVED",
+            instance_id: current.instance_id, repository_id: current.repository_id,
+            product_version: "2.7.59", availability: "AVAILABLE", freshness: "CURRENT",
+            source_observed_at: "not-a-time", retrieved_at: current.retrieved_at)
+        XCTAssertFalse(malformedSource.isValid)
+        let malformedRetrieval = ForgeObservation(schema_version: 1, state: "OBSERVED",
+            instance_id: current.instance_id, repository_id: current.repository_id,
+            product_version: "2.7.59", availability: "AVAILABLE", freshness: "CURRENT",
+            source_observed_at: current.source_observed_at, retrieved_at: "x")
+        XCTAssertFalse(malformedRetrieval.isValid)
+        for badSource in ["2026-10-02T12.5Z", "2026-10-02T12:30.5Z"] {
+            let projected = ForgeObservation(schema_version: 1, state: "OBSERVED",
+                instance_id: current.instance_id, repository_id: current.repository_id,
+                product_version: "2.7.59", availability: "AVAILABLE", freshness: "CURRENT",
+                source_observed_at: badSource, retrieved_at: current.retrieved_at)
+            XCTAssertFalse(projected.isValid, "Server-rejected time accepted: \(badSource)")
+        }
+        let utcMicroseconds = ForgeObservation(schema_version: 1, state: "OBSERVED",
+            instance_id: current.instance_id, repository_id: current.repository_id,
+            product_version: "2.7.59", availability: "AVAILABLE", freshness: "CURRENT",
+            source_observed_at: "2026-10-02T12:00:00+02:00",
+            retrieved_at: "2026-10-02T14:21:59.672337Z")
+        XCTAssertTrue(utcMicroseconds.isValid)
+        for sourceTime in ["2026-W40-5T12:00:00+02:00", "20261002T120000+0200",
+                           "2026-10-02T12:00:00+0200", "2026-10-02 12:00:00+02:00",
+                           "2026-10-02T12:00:00.123456+02:00", "20261002T12:00:00+02:00",
+                           "2026-W40-5T120000+0200", "2026-10-02T12:00+02:00",
+                           "2026-10-02T12+02:00", "2026-10-02T12:30:40+02:00:00.5"] {
+            let projected = ForgeObservation(schema_version: 1, state: "OBSERVED",
+                instance_id: current.instance_id, repository_id: current.repository_id,
+                product_version: "2.7.59", availability: "AVAILABLE", freshness: "CURRENT",
+                source_observed_at: sourceTime, retrieved_at: utcMicroseconds.retrieved_at)
+            XCTAssertTrue(projected.isValid, "Server-accepted source time rejected: \(sourceTime)")
+        }
+    }
+
+    func testOwnForgeRouteAuthorizationDenialRejectsConnection() async throws {
+        let instance = self.instance
+        let client = transport { request in
+            switch request.url!.path {
+            case "/v1/identity":
+                return (200, Data("{\"instance_id\":\"\(instance)\"}".utf8))
+            case "/v1/status":
+                return (200, Data("{\"instance_id\":\"\(instance)\",\"version\":\"2.8.0\",\"state\":\"READY\",\"project_source\":\"UNCONFIGURED\"}".utf8))
+            case "/v1/forge/status":
+                return (401, Data("{\"error\":\"UNAUTHORIZED\"}".utf8))
+            default:
+                return (404, Data("{\"error\":\"NOT_FOUND\"}".utf8))
+            }
+        }
+        do {
+            _ = try await client.connect(endpoint: ServerEndpoint("http://127.0.0.1:8765"),
+                                         token: "denied", pinnedInstance: nil)
+            XCTFail("Forge route authorization denial became a connected state")
+        } catch let error as ClientError {
+            XCTAssertEqual(error, .unauthorized)
+        }
     }
 
     func testPinnedIdentityMismatchStopsBeforeCredentials() async throws {
@@ -292,6 +381,8 @@ final class ServerTransportTests: XCTestCase {
                 return (200, Data("{\"state\":\"UNCONFIGURED\",\"projects\":[],\"source\":null,\"observed_at\":null,\"partial\":false,\"stale\":false}".utf8))
             case "/v1/capabilities":
                 return (200, Data("{\"peer_operations_qualified\":false,\"operations\":[]}".utf8))
+            case "/v1/forge/status":
+                return (404, Data("{\"error\":\"NOT_FOUND\"}".utf8))
             default:
                 XCTFail("Unexpected route")
                 return (404, Data())

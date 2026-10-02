@@ -64,7 +64,7 @@ provisioned, instance/repository-bound read bearer in Forge #231/main
 `31e6b1c`, with `forge-workspace-status-read/v1` packaged schema SHA-256
 `2886c76fa24c772929e13c79fe0eb1ffdc2daa0fc61a045dfa0e95158a681f73`.
 Project index, roadmap and Mission detail are later candidates. The Workspace
-Server 2.7.0 candidate adds a separate owner-held read binding, authenticated
+Server 2.7.0, protected-delivered in Workspace #121/main `d2b85a8`, adds a separate owner-held read binding, authenticated
 `GET /v1/forge/status`, and fail-closed instance, repository scope, version and
 freshness checks. At Workspace candidate `6dae6c4`, a separately built and
 installed Python 3.14 Forge main wheel and Workspace wheel returned an actual
@@ -72,12 +72,29 @@ installed Python 3.14 Forge main wheel and Workspace wheel returned an actual
 instance and repository, a separate retrieval timestamp, no Forge database
 mutation from reads, and `UNAUTHORIZED` after grant revocation. The Forge
 schema and producer negative qualifier also passed on that installed wheel.
-This is a **local installed two-Server consumer PASS candidate**, pending
-Workspace protected delivery. It is not the packaged app's two-Mac readback,
+This is a **protected-delivered local installed two-Server consumer subset**.
+It is not the packaged app's Forge readback or two-Mac readback,
 remote HTTPS qualification, or full `WH-PEERS`/`WH-Q` parent completion.
 The MacBook's attempt to add an ephemeral test CA to its login trust settings
 was denied without interactive authorization. No trust item remains; the
 packaged app's remote readback remains `NOT_RUN`.
+
+The 2.8.0 native Client candidate reads `GET /v1/forge/status` through its
+pinned Workspace Server binding and keeps Forge availability, source freshness
+and retrieval time distinct. Its packaged app was double-clicked in Finder,
+recovered its own saved binding and visibly displayed `CONNECTED`, Workspace
+Server 2.8.0 `READY`, and Forge 2.7.59 `OBSERVED` / `AVAILABLE` / `CURRENT`
+for the exact `repo-1` scope. Both servers ran from isolated Python 3.14.8
+installations outside the checkout; the app used only their HTTP routes.
+This closes the **local packaged Finder readback candidate gate** for the
+first Forge read. Protected PR delivery is pending. It does not close remote
+two-Mac, Developer ID signing, macOS system trust or full peer qualification.
+The pre-release Keychain service moved from `.v1` to `.v2` because a changed
+ad hoc signature left the old test item awaiting macOS access. The old item
+is retained, not silently rebound or deleted; this candidate needs explicit
+re-pairing once. Signed-candidate Keychain behavior is still `NOT_RUN`.
+`Forget Server` removes only the current `.v2` pairing; the deployment guide
+records the exact manual cleanup boundary for retained pre-release `.v1` items.
 
 ## Historical first implementation — 1 October 2026
 
