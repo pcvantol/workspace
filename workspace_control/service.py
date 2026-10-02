@@ -85,6 +85,22 @@ def _validated_catalogue_items(raw):
     return items
 
 
+def _observed_datetime(stamp):
+    normalized = stamp.replace("Z", "+00:00")
+    if re.search(r"[+-][0-9]{2}$", normalized):
+        normalized += ":00"
+    try:
+        return datetime.fromisoformat(normalized)
+    except ValueError:
+        for pattern in ("%G-W%V-%uT%H:%M:%S%z", "%G-W%V-%uT%H:%M:%S.%f%z",
+                        "%Y%m%dT%H%M%S%z", "%Y%m%dT%H%M%S.%f%z"):
+            try:
+                return datetime.strptime(normalized, pattern)
+            except ValueError:
+                continue
+        raise ValueError("invalid observed_at") from None
+
+
 def _validate_project_items(items):
     project_ids = set()
     for item in items:
@@ -275,7 +291,7 @@ class Service:
         stamp = raw.get("observed_at")
         if not isinstance(stamp, str):
             raise ValueError("missing observed_at")
-        observed = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+        observed = _observed_datetime(stamp)
         if observed.tzinfo is None:
             raise ValueError("observed_at requires timezone")
         age = (datetime.now(timezone.utc) - observed).total_seconds()

@@ -540,13 +540,25 @@ class ReadOnlyTests(unittest.TestCase):
         from datetime import datetime, timezone
         now = datetime.now(timezone.utc)
         week = now.isocalendar()
-        observed_at = f"{week.year}-W{week.week:02d}-{week.weekday}T{now:%H:%M:%S}+00:00"
         target = self.root / "projects.json"
-        target.write_text(json.dumps({"source": "LOCAL", "observed_at": observed_at,
-                                      "projects": []}))
-        target.chmod(0o600)
-        result = json.loads(self.authorized("/v1/projects")[1])
-        self.assertEqual(result["observed_at"], observed_at)
+        spellings = (f"{week.year}-W{week.week:02d}-{week.weekday}T{now:%H:%M:%S}+00:00",
+                     now.strftime("%Y%m%dT%H%M%S+0000"),
+                     now.strftime("%Y-%m-%dT%H:%M:%S+00"))
+        for observed_at in spellings:
+            with self.subTest(observed_at=observed_at):
+                target.write_text(json.dumps({"source": "LOCAL", "observed_at": observed_at,
+                                              "projects": []}))
+                target.chmod(0o600)
+                code, body, _ = self.authorized("/v1/projects")
+                self.assertEqual(code, 200)
+                self.assertEqual(json.loads(body)["observed_at"], observed_at)
+        for observed_at in (f"{week.year}-W54-1T{now:%H:%M:%S}+00:00",
+                            now.strftime("%Y-%m-%dT%H:%M:%S+25")):
+            with self.subTest(invalid=observed_at):
+                target.write_text(json.dumps({"source": "LOCAL", "observed_at": observed_at,
+                                              "projects": []}))
+                target.chmod(0o600)
+                self.assertEqual(self.authorized("/v1/projects")[0], 503)
         api = json.loads(self.authorized("/v1/openapi.json")[1])
         schema = api["components"]["schemas"]["Projects"]["properties"]["observed_at"]
         self.assertEqual(schema["type"], "string")
