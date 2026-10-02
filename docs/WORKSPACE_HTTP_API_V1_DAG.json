@@ -36,8 +36,9 @@
       "visible project source became STALE after five minutes and Server outage displayed cached data before successful reconnect"
     ],
     "two_mac_host_trust_authorization_gate": "NOT_RUN",
-    "native_client_keychain_ui_lifecycle_gate": "CANDIDATE_REPAIR_PENDING_PROTECTED_DELIVERY",
-    "two_mac_missing": ["nonloopback Workspace Server HTTPS listener", "qualified second Mac host and certificate trust", "remote authorization readback"],
+    "native_client_keychain_ui_lifecycle_gate": "LOCAL_PACKAGED_UI_PROTECTED_DELIVERED",
+    "https_server_listener_gate": "CANDIDATE_LOCAL_TLS_TEST_PENDING_PROTECTED_DELIVERY",
+    "two_mac_missing": ["protected nonloopback Workspace Server HTTPS listener delivery", "qualified second Mac host and certificate trust", "remote authorization readback"],
     "forge_read_gate": "NOT_RUN",
     "qualified_forge_producer_contract_required": true,
     "first_installer_release_dependency": false,

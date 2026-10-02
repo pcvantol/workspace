@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "r81 first explicitly bound Workspace Server HTTPS capability for separate Mac Client",
+  "determined_version": "2.6.0",
+  "event_lineage": "pcvantol/forge#208-r81",
+  "expected_source_revision": "8412432fa1e80bf17d01b592163919fdd7b46223",
+  "expected_version": "2.5.1",
+  "operation_id": "L4-WORKSPACE-HTTPS-LISTENER-V1-20261002",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "MINOR",
+  "requested": {
+    "bump": "minor"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

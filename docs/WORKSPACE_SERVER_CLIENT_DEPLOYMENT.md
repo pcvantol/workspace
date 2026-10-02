@@ -30,10 +30,32 @@ macOS window and read
 loopback. The visible demo row, Server version/READY state and capability
 inventory came from those real responses. Server stop/restart produced an
 honest unavailable/cached state and then fresh readback; Client quit/relaunch
-recovered its pinned binding from its own Keychain namespace. This local
-candidate evidence awaits protected merge. The Server still binds only
-loopback; two-Mac HTTPS, trust, authorization and a Developer ID signed
-candidate remain `NOT_RUN`.
+recovered its pinned binding from its own Keychain namespace. This local app
+evidence was protected-delivered in #117 and its responsive Keychain UI repair
+in #118. The next Server candidate adds explicitly bound TLS; two-Mac HTTPS
+trust/authorization and a Developer ID signed candidate remain `NOT_RUN`.
+
+### Explicit HTTPS Server candidate
+
+The Workspace Server continues to default to `127.0.0.1` plaintext for local
+qualification. A separate-Mac deployment must name one concrete IPv4
+interface, one exact DNS/IP server name, and owner-held absolute certificate
+and private-key files:
+
+```
+workspace-server --root /private/workspace-root serve --port 8765 \
+  --bind 192.168.1.134 --tls-server-name server.example \
+  --tls-cert /private/tls/server-cert.pem --tls-key /private/tls/server-key.pem
+```
+
+The private key must be mode 0600, and the certificate name must match the
+Client's HTTPS endpoint under normal macOS certificate validation. The Server
+rejects wildcard interface exposure and nonloopback plaintext. Its HTTP Host
+and optional Origin must match the configured HTTPS name, while bearer token
+and instance pin remain required for versioned data routes. Source and
+installed-wheel local TLS tests use an ephemeral test certificate trusted only
+inside the test process; they do not install trust on either Mac. No production
+certificate or signer/Keychain resource is used by those tests.
 
 Workspace Server is a headless installed, independently restartable service. It owns server-authoritative Workspace project/control/governance state in a Workspace central runtime-storage root outside Git/source checkouts, with its product-owned SQL database plus files, artifacts, logs, backups and cache. It exposes a versioned HTTP API over interface-neutral Workspace application services and is launchd-managed on macOS. It projects Forge/EP truth through their versioned authenticated HTTP APIs; it does not take planning, execution, queue, lease, evidence or repository authority and never reads a peer database.
 

@@ -10,6 +10,7 @@ from pathlib import Path
 import re
 import signal
 import socket
+import ssl
 import subprocess
 import sys
 import tempfile
@@ -52,6 +53,74 @@ def wait_ready(url, process):
             pass
         time.sleep(0.05)
     raise RuntimeError("server did not become ready")
+
+
+def verify_installed_tls(server_exe, root, env):
+    """Verify installed HTTPS, explicit trust, Host, bearer and pin on loopback only."""
+    tls_root = root / "tls-instance"
+    tls_root.mkdir(mode=0o700)
+    subprocess.run([str(server_exe), "--root", str(tls_root), "init"], check=True,
+                   cwd=root, env=env, stdout=subprocess.DEVNULL)
+    cert, key = root / "tls-cert.pem", root / "tls-key.pem"
+    subprocess.run(["openssl", "req", "-x509", "-newkey", "rsa:2048", "-nodes",
+                    "-keyout", str(key), "-out", str(cert), "-days", "1",
+                    "-subj", "/CN=localhost", "-addext", "subjectAltName=DNS:localhost"],
+                   check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    key.chmod(0o600)
+    port = free_port()
+    process = subprocess.Popen([str(server_exe), "--root", str(tls_root), "serve",
+                                "--port", str(port), "--tls-server-name", "localhost",
+                                "--tls-cert", str(cert), "--tls-key", str(key)],
+                               cwd=root, env=env, stdout=subprocess.DEVNULL,
+                               stderr=subprocess.DEVNULL)
+    trusted = ssl.create_default_context(cafile=str(cert))
+    host = f"localhost:{port}"
+    instance_id = json.loads((tls_root / "instance.json").read_text())["instance_id"]
+    token = (tls_root / "token").read_text().strip()
+
+    def get(request_host, credential=None, pin=None, origin=None, context=trusted):
+        connection = http.client.HTTPSConnection("localhost", port, timeout=2, context=context)
+        try:
+            connection.putrequest("GET", "/v1/status", skip_host=True)
+            connection.putheader("Host", request_host)
+            if credential is not None:
+                connection.putheader("Authorization", "Bearer " + credential)
+            if pin is not None:
+                connection.putheader("X-Workspace-Instance", pin)
+            if origin is not None:
+                connection.putheader("Origin", origin)
+            connection.endheaders()
+            response = connection.getresponse()
+            return response.status, json.loads(response.read())
+        finally:
+            connection.close()
+
+    try:
+        for _ in range(100):
+            if process.poll() is not None:
+                raise RuntimeError(f"installed HTTPS Server exited: {process.returncode}")
+            try:
+                if get(host, token, instance_id)[0] == 200:
+                    break
+            except OSError:
+                time.sleep(0.05)
+        else:
+            raise RuntimeError("installed HTTPS Server did not become ready")
+        assert get(host, token, instance_id, f"https://{host}")[0] == 200
+        assert get("foreign.example:" + str(port), token, instance_id) == (403, {"error": "HOST_DENIED"})
+        assert get(host, token, instance_id, f"http://{host}") == (403, {"error": "ORIGIN_DENIED"})
+        assert get(host, "wrong", instance_id) == (401, {"error": "UNAUTHORIZED"})
+        assert get(host, token, "wrong") == (409, {"error": "WRONG_INSTANCE"})
+        try:
+            get(host, context=ssl.create_default_context())
+        except ssl.SSLCertVerificationError:
+            pass
+        else:
+            raise AssertionError("untrusted installed TLS certificate was accepted")
+    finally:
+        if process.poll() is None:
+            process.terminate()
+            process.wait(timeout=5)
 
 
 def verify_installed_client_launch(python, root, env):
@@ -976,6 +1045,7 @@ def main(wheel):
         assert first_id != second_id
         token = (first / "token").read_text().strip()
         other_token = (second / "token").read_text().strip()
+        verify_installed_tls(server_exe, root, env)
         first_port, second_port = free_port(), free_port()
         processes = []
         try:
@@ -1020,6 +1090,8 @@ def main(wheel):
                               "unique_catalogue_keys": "PASS",
                               "catalogue_schema": "PASS",
                               "loopback_host_origin_binding": "PASS",
+                              "installed_https_loopback_verified_trust": "PASS",
+                              "two_mac_remote_https": "NOT_RUN",
                               "unique_auth_pin_headers": "PASS",
                               "local_projects_cli_parity": "PASS",
                               "local_capabilities_cli_parity": "PASS",
