@@ -125,7 +125,7 @@ struct ForgeObservation: Decodable, Sendable {
     private func validSourceTime(_ value: String) -> Bool {
         guard value.count <= 128 else { return false }
         // The Server validates and preserves Python's ISO week, compact and reduced-time spellings.
-        let pattern = "^([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{8}|[0-9]{4}-W[0-9]{2}-[1-7]).([0-9]{2})(?::?([0-9]{2}))?(?::?([0-9]{2}))?(?:[.,][0-9]+)?(Z|[+-][0-9]{2}(?::?[0-9]{2})?(?::?[0-9]{2})?)$"
+        let pattern = "^([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{8}|[0-9]{4}-W[0-9]{2}-[1-7]).([0-9]{2})(?::?([0-9]{2})(?::?([0-9]{2})(?:[.,][0-9]+)?)?)?(Z|[+-][0-9]{2}(?::?[0-9]{2}(?::?[0-9]{2}(?:[.,][0-9]+)?)?)?)$"
         guard let regex = try? NSRegularExpression(pattern: pattern),
               let match = regex.firstMatch(in: value, range: NSRange(value.startIndex..., in: value)) else {
             return false
@@ -147,7 +147,8 @@ struct ForgeObservation: Decodable, Sendable {
             (date.contains("-") ? "yyyy-MM-dd" : "yyyyMMdd")
         guard formatter.date(from: date) != nil else { return false }
         if zone == "Z" { return true }
-        let offset = String(zone.dropFirst()).replacingOccurrences(of: ":", with: "")
+        let offset = String(zone.dropFirst().prefix { $0 != "." && $0 != "," })
+            .replacingOccurrences(of: ":", with: "")
         guard [2, 4, 6].contains(offset.count), let zoneHours = Int(offset.prefix(2)),
               zoneHours < 24 else { return false }
         if offset.count >= 4 && (Int(offset.dropFirst(2).prefix(2)) ?? 60) >= 60 { return false }

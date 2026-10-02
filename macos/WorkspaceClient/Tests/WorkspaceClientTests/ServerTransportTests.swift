@@ -200,6 +200,13 @@ final class ServerTransportTests: XCTestCase {
             product_version: "2.7.59", availability: "AVAILABLE", freshness: "CURRENT",
             source_observed_at: current.source_observed_at, retrieved_at: "x")
         XCTAssertFalse(malformedRetrieval.isValid)
+        for badSource in ["2026-10-02T12.5Z", "2026-10-02T12:30.5Z"] {
+            let projected = ForgeObservation(schema_version: 1, state: "OBSERVED",
+                instance_id: current.instance_id, repository_id: current.repository_id,
+                product_version: "2.7.59", availability: "AVAILABLE", freshness: "CURRENT",
+                source_observed_at: badSource, retrieved_at: current.retrieved_at)
+            XCTAssertFalse(projected.isValid, "Server-rejected time accepted: \(badSource)")
+        }
         let utcMicroseconds = ForgeObservation(schema_version: 1, state: "OBSERVED",
             instance_id: current.instance_id, repository_id: current.repository_id,
             product_version: "2.7.59", availability: "AVAILABLE", freshness: "CURRENT",
@@ -210,7 +217,7 @@ final class ServerTransportTests: XCTestCase {
                            "2026-10-02T12:00:00+0200", "2026-10-02 12:00:00+02:00",
                            "2026-10-02T12:00:00.123456+02:00", "20261002T12:00:00+02:00",
                            "2026-W40-5T120000+0200", "2026-10-02T12:00+02:00",
-                           "2026-10-02T12+02:00"] {
+                           "2026-10-02T12+02:00", "2026-10-02T12:30:40+02:00:00.5"] {
             let projected = ForgeObservation(schema_version: 1, state: "OBSERVED",
                 instance_id: current.instance_id, repository_id: current.repository_id,
                 product_version: "2.7.59", availability: "AVAILABLE", freshness: "CURRENT",
