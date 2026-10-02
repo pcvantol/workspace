@@ -35,6 +35,9 @@ The target must also omit query and fragment delimiters entirely. Even an
 empty trailing `?` or `#` is INVALID_PATH (400) rather than an alias for a
 declared read route. The Server rejects these before public or protected route
 dispatch, after checking Host and Origin.
+The local HTTP handler does not write raw request targets to stderr or access
+logs. Rejected queries and malformed requests may contain accidental token text;
+their response status is preserved without copying that text into logs.
 
 Protected reads require one unambiguous bearer Authorization header and one
 instance-pin header. Duplicate values, even if identical, are rejected before

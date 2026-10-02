@@ -83,6 +83,10 @@ def openapi_contract():
 
 def handler_for(service):
     class Handler(BaseHTTPRequestHandler):
+        def log_message(self, format, *args):
+            # BaseHTTPRequestHandler would log the raw target, including rejected queries.
+            return
+
         def _reply(self, code, value, content_type="application/json; charset=utf-8"):
             payload = value if isinstance(value, bytes) else json.dumps(value, sort_keys=True).encode()
             self.send_response(code)
