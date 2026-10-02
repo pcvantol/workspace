@@ -55,7 +55,7 @@ def client_main(argv=None):
         valid_port = False
     if (parsed.scheme != "http" or parsed.hostname not in ("127.0.0.1", "localhost") or
             not valid_port or parsed.username or parsed.password or parsed.path not in ("", "/") or
-            parsed.query or parsed.fragment):
+            "?" in args.url or "#" in args.url):
         parser.error("this first Client supports only a loopback Workspace Server")
     try:
         opened = webbrowser.open(args.url.rstrip("/") + "/")

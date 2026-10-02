@@ -150,6 +150,9 @@ The local `workspace-client --url` launcher exits nonzero with a clear error
 when the OS browser launcher reports failure or raises an OS/browser error.
 Its success exit means the browser accepted the open request; it does not
 assert that a Server connection or authenticated read completed.
+The launcher accepts only a bare loopback Server root (with an optional `/`).
+An explicit query or fragment delimiter, including an empty `?` or `#`, is
+rejected before invoking the browser so a malformed launch cannot report success.
 Before accepting a local binding, the Client requires a canonical own identity
 and checks that authenticated Server status names that same instance. An
 inconsistent status is WRONG INSTANCE; it clears displayed readbacks and cannot

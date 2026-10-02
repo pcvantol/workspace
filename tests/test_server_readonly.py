@@ -83,7 +83,7 @@ class ReadOnlyTests(unittest.TestCase):
             connection.endheaders()
             response = connection.getresponse()
             body = response.read()
-            return (response.status, json.loads(body) if body and path.startswith("/v1/") else None,
+            return (response.status, json.loads(body) if body and response.headers.get_content_type() == "application/json" else None,
                     response.headers, body)
         finally:
             connection.close()
@@ -519,9 +519,13 @@ class ReadOnlyTests(unittest.TestCase):
         with patch("workspace_control.cli.webbrowser.open", side_effect=OSError("unavailable")):
             self.assertEqual(client_main(["--url", "http://127.0.0.1:8767"]), 2)
         for url in ("https://127.0.0.1:8767", "http://127.0.0.1:8767@evil.example",
-                    "http://127.0.0.1:bad", "http://localhost:8767/v1/status"):
-            with self.assertRaises(SystemExit):
-                client_main(["--url", url])
+                    "http://127.0.0.1:bad", "http://localhost:8767/v1/status",
+                    "http://127.0.0.1:8767?", "http://127.0.0.1:8767#",
+                    "http://localhost:8767/?", "http://localhost:8767/#"):
+            with self.subTest(url=url), patch("workspace_control.cli.webbrowser.open") as open_browser:
+                with self.assertRaises(SystemExit):
+                    client_main(["--url", url])
+                open_browser.assert_not_called()
         lock = self.root / "server.lock"
         lock.symlink_to(self.root / "token")
         self.assertRaises(OSError, serve, self.root, 0)
