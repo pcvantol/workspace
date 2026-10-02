@@ -46,7 +46,9 @@ class FourLaneEntryTests(unittest.TestCase):
         self.assertEqual(remote['https_server_listener_gate'], 'PROTECTED_DELIVERED_WORKSPACE_PR_119')
         self.assertTrue(any('packaged Workspace.app remote readback' in item
                             for item in remote['two_mac_missing']))
-        self.assertEqual(remote['forge_read_gate'], 'NOT_RUN')
+        self.assertEqual(remote['forge_read_gate'],
+                         'LOCAL_INSTALLED_TWO_SERVER_HTTP_PASS_CANDIDATE_PR_121_PROTECTED_DELIVERY_PENDING')
+        self.assertEqual(remote['forge_read_remote_https_native_app_gate'], 'NOT_RUN')
         self.assertEqual(self.package['active_product_priority']['native_client_signed_keychain_trust_gate'], 'NOT_RUN')
 
     def test_http_dependencies_preserved(self):

@@ -77,6 +77,44 @@ HTTP transport subset only. Packaged `Workspace.app` remote readback under
 normal macOS system trust, Developer ID signing and Keychain/trust behavior
 remain `NOT_RUN`.
 
+An attempted native trust setup on the client Mac could not authorize the
+disposable test CA without interactive approval. The partial certificate item
+was removed and default certificate validation rejected the test Server.
+This is a concrete client trust `NOT_RUN` gate, not a remote app result.
+
+### First Forge read candidate
+
+The Workspace Server 2.7.0 candidate exposes authenticated
+`GET /v1/forge/status`. It reads only Forge Server v1 `GET /v1/instance` and
+`GET /v1/status` through a separately issued read bearer. The Forge endpoint,
+expected instance ID, expected repository ID and token live in one owner-held
+`forge-read-binding.json` record. The local `forge-read-configure`
+administration command copies a previously issued token from an absolute
+owner-only file into that Workspace data root without putting it in an
+argument or response. It publishes the whole record atomically under a
+private configuration lock, so a concurrent read cannot combine an endpoint
+with another generation's token. Replacing a binding requires both expected
+current identifiers and its revision, so concurrent stale replacements fail.
+This command only
+configures Workspace; it never reads Forge business data.
+
+The consumer permits HTTP only to `127.0.0.1`. Any other Forge endpoint uses
+HTTPS with default certificate and hostname verification, a three-second
+timeout per read, bounded JSON and no redirect following. Both responses must
+attest the read grant's exact instance/repository scope; their instance IDs
+and product versions must agree with the saved pin. Workspace reports its own
+retrieval time separately from Forge's source observation and preserves
+`CURRENT`, `STALE`, `UNKNOWN` or `UNAVAILABLE` without converting an old
+observation into a fresh one. Missing/invalid binding, denied/revoked grant,
+wrong instance, unverified scope, TLS failure and unavailable producer are
+distinct states. The new route does not grant Client writes or Forge authority.
+
+This is a **candidate** until the exact Forge r23 producer contract is
+protected and an independently installed Workspace Server reads its installed
+Forge counterpart. The general Forge administrator bearer is never accepted
+as an implicit Workspace read grant; the consumer requires the scoped response
+attestation. No Forge project/Mission membership is inferred.
+
 Workspace Server is a headless installed, independently restartable service. It owns server-authoritative Workspace project/control/governance state in a Workspace central runtime-storage root outside Git/source checkouts, with its product-owned SQL database plus files, artifacts, logs, backups and cache. It exposes a versioned HTTP API over interface-neutral Workspace application services and is launchd-managed on macOS. It projects Forge/EP truth through their versioned authenticated HTTP APIs; it does not take planning, execution, queue, lease, evidence or repository authority and never reads a peer database.
 
 Workspace Client is a separately installable frontend for client PCs. It discovers a candidate Workspace Server through LAN DNS-SD/mDNS or a configured/unicast/tailnet bootstrap endpoint, then authenticates and pairs as a Workspace user/session client. Pairing stores a pinned Workspace Server identity and trusted endpoint in client-owned secure storage; discovery is neither authorization nor a reason to silently change a binding. The client can be installed without an EP Project Agent.

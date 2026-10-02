@@ -50,6 +50,27 @@ OPENAPI_SCHEMAS = {
                        "operations": {"type": "array", "items": {"$ref": "#/components/schemas/Operation"}},
                        "peer_operations_qualified": {"type": "boolean", "enum": [False]}},
     },
+    "ForgeStatus": {
+        "type": "object", "additionalProperties": False,
+        "required": ["schema_version", "state", "instance_id", "repository_id",
+                     "product_version", "availability", "freshness", "source_observed_at",
+                     "retrieved_at"],
+        "properties": {
+            "schema_version": {"type": "integer", "enum": [1]},
+            "state": {"type": "string", "enum": ["UNCONFIGURED", "INVALID_CONFIGURATION",
+                         "TLS_UNTRUSTED", "UNAUTHORIZED", "DENIED", "UNAVAILABLE",
+                         "INVALID_RESPONSE", "WRONG_INSTANCE", "READ_SCOPE_UNVERIFIED",
+                         "OBSERVED"]},
+            "instance_id": {"type": "string", "nullable": True},
+            "repository_id": {"type": "string", "nullable": True},
+            "product_version": {"type": "string", "nullable": True},
+            "availability": {"type": "string", "nullable": True, "enum": ["AVAILABLE", "UNAVAILABLE", None]},
+            "freshness": {"type": "string", "nullable": True,
+                          "enum": ["CURRENT", "STALE", "UNKNOWN", "UNAVAILABLE", None]},
+            "source_observed_at": {"type": "string", "nullable": True},
+            "retrieved_at": {"type": "string", "nullable": True},
+        },
+    },
     "OpenAPIContract": {
         "type": "object", "required": ["openapi", "info", "servers", "components", "paths"],
         "properties": {"openapi": {"type": "string", "enum": ["3.0.3"]},
@@ -65,4 +86,5 @@ OPENAPI_SCHEMAS = {
 SUCCESS_SCHEMA = {
     "identity.read": "Identity", "status.read": "Status", "projects.read": "Projects",
     "openapi.read": "OpenAPIContract", "capabilities.read": "Capabilities",
+    "forge.status.read": "ForgeStatus",
 }

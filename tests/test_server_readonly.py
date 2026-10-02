@@ -2,6 +2,7 @@
 
 import json
 import http.client
+from http.server import BaseHTTPRequestHandler
 import importlib
 import io
 import os
@@ -15,13 +16,15 @@ import threading
 import time
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from workspace_control.cli import main, client_main
 from workspace_control.http import ThreadingHTTPServer, handler_for, listener_config, serve, ROUTES, OPERATIONS
 from workspace_control.service import Service, _regular_private, initialize, inspect
+from workspace_control.forge_peer import _binding, _endpoint
+import workspace_control.forge_peer as forge_peer
 
 
 class ReadOnlyTests(unittest.TestCase):
@@ -305,7 +308,7 @@ class ReadOnlyTests(unittest.TestCase):
                           if operation["exposure"] == "HTTP_EXPOSED"})
         self.assertEqual({operation["id"] for operation in operations.values()
                           if operation["exposure"] == "LOCAL_ONLY_ADMIN"},
-                         {"instance.init", "instance.inspect", "server.serve"})
+                         {"instance.init", "instance.inspect", "forge.read.configure", "server.serve"})
         self.assertTrue(all("path" not in operation for operation in operations.values()
                             if operation["exposure"] == "LOCAL_ONLY_ADMIN"))
         self.assertTrue(all(operation["auth"] == "BEARER_PINNED" for operation in operations.values()
@@ -1109,3 +1112,255 @@ class ReadOnlyTests(unittest.TestCase):
             target.write_text(json.dumps(value))
             target.chmod(0o600)
             self.assertEqual(self.authorized("/v1/projects")[0], 503)
+
+
+class ForgeReadTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name) / "instance"
+        self.root.mkdir(mode=0o700)
+        self.instance = initialize(self.root)
+        self.service = Service(self.root)
+        self.addCleanup(self.service.close)
+        self.own = ThreadingHTTPServer(("127.0.0.1", 0), handler_for(self.service))
+        self.own_thread = threading.Thread(target=self.own.serve_forever, daemon=True)
+        self.own_thread.start()
+        self.addCleanup(self.own.server_close)
+        self.addCleanup(self.own.shutdown)
+        self.forge_instance = "forge-instance-1234567890"
+        self.forge_token = "f" * 40
+        self.scope = {"contract_version": "forge-workspace-status-read/v1",
+                      "instance_id": self.forge_instance, "repository_id": "forge"}
+        self.forge_calls = []
+        self.forge_status = 200
+        self.forge_document = {
+            "api_version": "1", "contract_version": "1.0", "read_only": True,
+            "instance": {"instance_id": self.forge_instance, "product_version": "2.7.58"},
+            "workspace_read_scope": self.scope,
+        }
+        self.status_document = {
+            "api_version": "1", "read_only": True, "availability": "AVAILABLE",
+            "freshness": "CURRENT", "source_observed_at": "2026-10-02T12:00:00Z",
+            "runtime": {"instance_id": self.forge_instance, "product_version": "2.7.58"},
+            "workspace_read_scope": self.scope,
+        }
+        test = self
+
+        class FakeForge(BaseHTTPRequestHandler):
+            def log_message(self, *_args):
+                return
+
+            def do_GET(self):
+                test.forge_calls.append((self.path, self.headers.get("Authorization")))
+                if self.headers.get("Authorization") != "Bearer " + test.forge_token:
+                    self.send_response(401)
+                    self.end_headers()
+                    return
+                document = test.forge_document if self.path == "/v1/instance" else test.status_document
+                payload = json.dumps(document).encode()
+                self.send_response(test.forge_status)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(payload)))
+                self.end_headers()
+                self.wfile.write(payload)
+
+        self.forge = ThreadingHTTPServer(("127.0.0.1", 0), FakeForge)
+        self.forge_thread = threading.Thread(target=self.forge.serve_forever, daemon=True)
+        self.forge_thread.start()
+        self.addCleanup(self.forge.server_close)
+        self.addCleanup(self.forge.shutdown)
+
+    def configure(self, **changes):
+        binding = {"schema_version": 1, "revision": 1,
+                   "endpoint": f"http://127.0.0.1:{self.forge.server_port}/",
+                   "instance_id": self.forge_instance, "repository_id": "forge",
+                   "token": self.forge_token}
+        binding.update(changes)
+        path = self.root / "forge-read-binding.json"
+        path.write_text(json.dumps(binding))
+        path.chmod(0o600)
+
+    def read(self):
+        request = Request(f"http://127.0.0.1:{self.own.server_port}/v1/forge/status",
+                          headers={"Authorization": "Bearer " + self.service.token,
+                                   "X-Workspace-Instance": self.instance})
+        with urlopen(request, timeout=4) as response:
+            self.assertEqual(response.status, 200)
+            return json.loads(response.read())
+
+    def test_unconfigured_partial_and_private_binding(self):
+        self.assertEqual(self.read()["state"], "UNCONFIGURED")
+        self.assertEqual(self.forge_calls, [])
+        self.configure()
+        self.assertEqual(self.read()["state"], "OBSERVED")
+        self.configure(token="short")
+        self.assertEqual(self.read()["state"], "INVALID_CONFIGURATION")
+        self.configure()
+        (self.root / "forge-read-binding.json").chmod(0o644)
+        self.assertEqual(self.read()["state"], "INVALID_CONFIGURATION")
+        self.configure(schema_version=True)
+        self.assertEqual(self.read()["state"], "INVALID_CONFIGURATION")
+
+    def test_selected_reads_and_honest_freshness(self):
+        self.configure()
+        first = self.read()
+        self.assertEqual(first["state"], "OBSERVED")
+        self.assertEqual((first["availability"], first["freshness"]), ("AVAILABLE", "CURRENT"))
+        self.assertEqual((first["instance_id"], first["repository_id"]), (self.forge_instance, "forge"))
+        self.assertEqual(first["source_observed_at"], "2026-10-02T12:00:00Z")
+        self.assertIsNotNone(first["retrieved_at"])
+        self.assertEqual(self.forge_calls, [("/v1/instance", "Bearer " + self.forge_token),
+                                            ("/v1/status", "Bearer " + self.forge_token)])
+        self.status_document["freshness"] = "STALE"
+        self.assertEqual(self.read()["freshness"], "STALE")
+        self.status_document["freshness"] = "UNKNOWN"
+        self.status_document["source_observed_at"] = None
+        self.assertEqual(self.read()["freshness"], "UNKNOWN")
+        self.status_document["availability"] = "UNAVAILABLE"
+        self.status_document["freshness"] = "UNAVAILABLE"
+        self.assertEqual(self.read()["availability"], "UNAVAILABLE")
+
+    def test_fail_closed_on_identity_auth_and_schema(self):
+        self.configure()
+        scope = self.forge_document.pop("workspace_read_scope")
+        self.assertEqual(self.read()["state"], "READ_SCOPE_UNVERIFIED")
+        self.forge_document["workspace_read_scope"] = scope
+        self.status_document["workspace_read_scope"] = {**self.scope, "repository_id": "foreign"}
+        self.assertEqual(self.read()["state"], "READ_SCOPE_UNVERIFIED")
+        self.status_document["workspace_read_scope"] = self.scope
+        self.forge_document["instance"]["instance_id"] = "foreign-instance"
+        self.assertEqual(self.read()["state"], "WRONG_INSTANCE")
+        self.forge_document["instance"]["instance_id"] = self.forge_instance
+        self.status_document["runtime"]["instance_id"] = "foreign-instance"
+        self.assertEqual(self.read()["state"], "WRONG_INSTANCE")
+        self.status_document["runtime"]["instance_id"] = self.forge_instance
+        self.status_document["runtime"]["product_version"] = "2.7.59"
+        self.assertEqual(self.read()["state"], "INVALID_RESPONSE")
+        self.status_document["runtime"]["product_version"] = "2.7.58"
+        self.forge_token = "g" * 40
+        self.assertEqual(self.read()["state"], "UNAUTHORIZED")
+        self.forge_token = "f" * 40
+        self.forge_status = 503
+        self.assertEqual(self.read()["state"], "UNAVAILABLE")
+        self.forge_status = 200
+        self.status_document["freshness"] = "BOGUS"
+        self.assertEqual(self.read()["state"], "INVALID_RESPONSE")
+
+    def test_remote_plaintext_and_invalid_endpoint_rejected(self):
+        for value in ("http://example.test:8765/", "https://user:pass@example.test/",
+                      "https://example.test/path", "https://example.test:0/",
+                      "https://example.test/?x=1", "https://0.0.0.0/"):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                _endpoint(value)
+        self.configure(endpoint="http://example.test:8765/")
+        self.assertEqual(self.read()["state"], "INVALID_CONFIGURATION")
+        self.assertEqual(self.forge_calls, [])
+
+    def test_redirect_timeout_and_tls_trust_remain_non_observed(self):
+        self.configure()
+        self.forge_status = 302
+        self.assertEqual(self.read()["state"], "INVALID_RESPONSE")
+        self.forge_status = 200
+
+        connection = Mock()
+        connection.request.side_effect = TimeoutError
+        with patch.object(forge_peer.http.client, "HTTPConnection", return_value=connection):
+            with self.assertRaises(forge_peer.PeerReadError) as failure:
+                forge_peer._read("http", "127.0.0.1", self.forge.server_port,
+                                 "/v1/instance", self.forge_token)
+        self.assertEqual(failure.exception.state, "UNAVAILABLE")
+        self.assertTrue(connection.close.called)
+
+        self.configure(endpoint="https://forge.example.test/")
+        connection = Mock()
+        connection.request.side_effect = ssl.SSLCertVerificationError("untrusted test certificate")
+        with patch.object(forge_peer.http.client, "HTTPSConnection", return_value=connection):
+            with self.assertRaises(forge_peer.PeerReadError) as failure:
+                forge_peer._read("https", "forge.example.test", 443,
+                                 "/v1/instance", self.forge_token)
+        self.assertEqual(failure.exception.state, "TLS_UNTRUSTED")
+        self.assertTrue(connection.close.called)
+
+    def test_local_admin_provisions_and_rotates_private_scoped_credential(self):
+        source = Path(self.temp.name) / "issued-token"
+        source.write_text(self.forge_token + "\n")
+        source.chmod(0o600)
+        arguments = ["--root", str(self.root), "forge-read-configure", "--endpoint",
+                     f"http://127.0.0.1:{self.forge.server_port}/", "--instance-id",
+                     self.forge_instance, "--repository-id", "forge", "--token-file", str(source)]
+
+        def administer(extra=()):
+            output, error = io.StringIO(), io.StringIO()
+            with redirect_stdout(output), redirect_stderr(error):
+                code = main(arguments + list(extra))
+            return code, output.getvalue(), error.getvalue()
+
+        code, output, error = administer()
+        self.assertEqual((code, error), (0, ""))
+        self.assertNotIn(self.forge_token, output)
+        for name in ("forge-read-binding.json", ".forge-read-config.lock"):
+            self.assertEqual((self.root / name).stat().st_mode & 0o777, 0o600)
+        self.assertFalse((self.root / "forge-read-token").exists())
+        self.assertEqual(self.read()["state"], "OBSERVED")
+        self.assertEqual(administer()[0], 2)
+        self.assertEqual(administer(("--expected-current-instance", self.forge_instance,
+                                     "--expected-current-repository", "foreign",
+                                     "--expected-current-revision", "1"))[0], 2)
+        self.forge_token = "g" * 40
+        source.write_text(self.forge_token + "\n")
+        self.assertEqual(administer(("--expected-current-instance", self.forge_instance,
+                                     "--expected-current-repository", "forge",
+                                     "--expected-current-revision", "1"))[0], 0)
+        self.assertEqual(self.read()["state"], "OBSERVED")
+        self.assertEqual(administer(("--expected-current-instance", self.forge_instance,
+                                     "--expected-current-repository", "forge",
+                                     "--expected-current-revision", "1"))[0], 2)
+        source.chmod(0o644)
+        self.assertEqual(administer(("--expected-current-instance", self.forge_instance,
+                                     "--expected-current-repository", "forge",
+                                     "--expected-current-revision", "2"))[0], 2)
+
+    def test_replacement_publishes_endpoint_and_token_as_one_generation(self):
+        self.configure()
+        old, *_ = _binding(self.service._root_fd)
+        next_token = "h" * 40
+        next_endpoint = "http://127.0.0.1:8764/"
+        source = Path(self.temp.name) / "next-token"
+        source.write_text(next_token + "\n")
+        source.chmod(0o600)
+        entered, release = threading.Event(), threading.Event()
+        errors = []
+        original_publish = forge_peer._publish
+
+        def delayed_publish(temporary, descriptor):
+            entered.set()
+            if not release.wait(5):
+                raise RuntimeError("test publication pause timed out")
+            original_publish(temporary, descriptor)
+
+        def replace_binding():
+            try:
+                self.service.configure_forge_read(
+                    next_endpoint, self.forge_instance, "forge", str(source),
+                    expected_instance_id=self.forge_instance,
+                    expected_repository_id="forge", expected_revision=1)
+            except Exception as error:
+                errors.append(error)
+
+        with patch("workspace_control.forge_peer._publish", side_effect=delayed_publish):
+            worker = threading.Thread(target=replace_binding)
+            worker.start()
+            try:
+                self.assertTrue(entered.wait(5))
+                during, *_ = _binding(self.service._root_fd)
+                self.assertEqual((during["endpoint"], during["token"], during["revision"]),
+                                 (old["endpoint"], old["token"], 1))
+            finally:
+                release.set()
+                worker.join(timeout=5)
+        self.assertFalse(worker.is_alive())
+        self.assertEqual(errors, [])
+        after, *_ = _binding(self.service._root_fd)
+        self.assertEqual((after["endpoint"], after["token"], after["revision"]),
+                         (next_endpoint, next_token, 2))
