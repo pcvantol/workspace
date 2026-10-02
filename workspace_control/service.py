@@ -22,6 +22,19 @@ def _private_root(root):
     return path
 
 
+def _open_private_root(root):
+    path = _private_root(root)
+    descriptor = os.open(path, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        info = os.fstat(descriptor)
+        if not stat.S_ISDIR(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o077:
+            raise ValueError("data root must be owned by this user and mode 0700")
+    except Exception:
+        os.close(descriptor)
+        raise
+    return path, descriptor
+
+
 def _regular_private(path, *, dir_fd=None):
     descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=dir_fd)
     with os.fdopen(descriptor, "rb") as stream:
@@ -91,36 +104,44 @@ def _validated_token(token_file):
 
 def initialize(root):
     """Create the single immutable local identity and secret in an explicit root."""
-    path = _private_root(root)
-    identity = path / "instance.json"
-    token = path / "token"
-    if identity.exists() or token.exists() or identity.is_symlink() or token.is_symlink():
-        raise ValueError("instance already initialized or partially initialized")
-    instance_id = secrets.token_hex(16)
-    created = datetime.now(timezone.utc).isoformat()
-    values = ((identity, json.dumps({"instance_id": instance_id, "created_at": created}) + "\n"),
-              (token, secrets.token_urlsafe(32) + "\n"))
-    created_paths = []
+    _, root_fd = _open_private_root(root)
     try:
-        for target, content in values:
-            fd = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
-            created_paths.append(target)
-            with os.fdopen(fd, "w", encoding="utf-8") as stream:
-                stream.write(content)
-                stream.flush()
-                os.fsync(stream.fileno())
-    except Exception:
-        for target in created_paths:
-            target.unlink(missing_ok=True)
-        raise
-    return instance_id
+        for name in ("instance.json", "token"):
+            try:
+                os.stat(name, dir_fd=root_fd, follow_symlinks=False)
+            except FileNotFoundError:
+                continue
+            raise ValueError("instance already initialized or partially initialized")
+        instance_id = secrets.token_hex(16)
+        created = datetime.now(timezone.utc).isoformat()
+        values = (("instance.json", json.dumps({"instance_id": instance_id, "created_at": created}) + "\n"),
+                  ("token", secrets.token_urlsafe(32) + "\n"))
+        created_names = []
+        try:
+            for name, content in values:
+                fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                             0o600, dir_fd=root_fd)
+                created_names.append(name)
+                with os.fdopen(fd, "w", encoding="utf-8") as stream:
+                    stream.write(content)
+                    stream.flush()
+                    os.fsync(stream.fileno())
+        except Exception:
+            for name in created_names:
+                try:
+                    os.unlink(name, dir_fd=root_fd)
+                except FileNotFoundError:
+                    pass
+            raise
+        return instance_id
+    finally:
+        os.close(root_fd)
 
 
 class Service:
     def __init__(self, root):
-        self.root = _private_root(root)
         self._root_lock = threading.Lock()
-        self._root_fd = os.open(self.root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        self.root, self._root_fd = _open_private_root(root)
         try:
             self._load_instance()
         except Exception:
@@ -128,9 +149,6 @@ class Service:
             raise
 
     def _load_instance(self):
-        root_info = os.fstat(self._root_fd)
-        if not stat.S_ISDIR(root_info.st_mode) or root_info.st_uid != os.getuid() or root_info.st_mode & 0o077:
-            raise ValueError("data root must be owned by this user and mode 0700")
         self.identity = _private_json("instance.json", dir_fd=self._root_fd)
         self.token = _validated_token(_regular_private("token", dir_fd=self._root_fd))
         if not isinstance(self.identity, dict) or set(self.identity) != {"instance_id", "created_at"}:

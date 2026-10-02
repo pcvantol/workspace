@@ -563,6 +563,53 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual(self.request("/v1/status", token=Service(second).token, instance=self.instance)[0], 401)
         self.assertEqual(main(["--root", str(second), "init"]), 2)
 
+    def test_init_keeps_identity_and_token_in_opened_root_after_path_swap(self):
+        fresh = Path(self.temp.name) / "fresh"
+        fresh.mkdir(mode=0o700)
+        other = Path(self.temp.name) / "other"
+        other.mkdir(mode=0o700)
+        other_id = initialize(other)
+        other_token = (other / "token").read_bytes()
+        moved = Path(self.temp.name) / "fresh-moved"
+        actual_open = os.open
+        def swap_on_token(path, flags, mode=0o777, *, dir_fd=None):
+            if path == "token" and flags & os.O_CREAT:
+                fresh.rename(moved)
+                fresh.symlink_to(other, target_is_directory=True)
+            return actual_open(path, flags, mode, dir_fd=dir_fd)
+        with patch("workspace_control.service.os.open", side_effect=swap_on_token):
+            created = initialize(fresh)
+        self.assertEqual(Service(moved).instance_id, created)
+        self.assertTrue((moved / "token").is_file())
+        self.assertEqual(Service(other).instance_id, other_id)
+        self.assertEqual((other / "token").read_bytes(), other_token)
+
+    def test_init_failure_cleans_only_opened_root_after_path_swap(self):
+        fresh = Path(self.temp.name) / "fresh"
+        fresh.mkdir(mode=0o700)
+        other = Path(self.temp.name) / "other"
+        other.mkdir(mode=0o700)
+        other_id = initialize(other)
+        other_token = (other / "token").read_bytes()
+        moved = Path(self.temp.name) / "fresh-moved"
+        actual_fsync = os.fsync
+        calls = 0
+        def fail_second_sync(descriptor):
+            nonlocal calls
+            calls += 1
+            if calls == 2:
+                fresh.rename(moved)
+                fresh.symlink_to(other, target_is_directory=True)
+                raise OSError("sync failure")
+            return actual_fsync(descriptor)
+        with patch("workspace_control.service.os.fsync", side_effect=fail_second_sync):
+            with self.assertRaisesRegex(OSError, "sync failure"):
+                initialize(fresh)
+        self.assertFalse((moved / "instance.json").exists())
+        self.assertFalse((moved / "token").exists())
+        self.assertEqual(Service(other).instance_id, other_id)
+        self.assertEqual((other / "token").read_bytes(), other_token)
+
     def test_bad_roots_and_private_files(self):
         self.assertEqual(main(["--root", "relative", "init"]), 2)
         self.root.chmod(0o755)
