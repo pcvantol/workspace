@@ -105,11 +105,29 @@ function clearCapabilities() {
   peerState.textContent = `${copy.peerOperations}: ${label('UNQUALIFIED')}`;
   capabilities.replaceChildren();
 }
+function validObservedAt(value) {
+  if (typeof value !== 'string') return false;
+  let normalized = value;
+  const week = /^(\d{4})-W(\d{2})-([1-7])(?=T)/.exec(value);
+  if (week) {
+    const year = Number(week[1]);
+    const number = Number(week[2]);
+    if (number < 1 || number > 53) return false;
+    const jan4 = Date.UTC(year, 0, 4);
+    const monday = jan4 - ((new Date(jan4).getUTCDay() + 6) % 7) * 86400000;
+    normalized = new Date(monday + ((number - 1) * 7 + Number(week[3]) - 1) * 86400000)
+      .toISOString().slice(0, 10) + value.slice(week[0].length);
+  }
+  normalized = normalized.replace(/^(\d{4})(\d{2})(\d{2})(?=T)/, '$1-$2-$3');
+  if (!/(?:Z|[+-]\d{2}:\d{2})$/.test(normalized)) return false;
+  return Number.isFinite(Date.parse(normalized));
+}
 function validProjectCatalogue(catalogue) {
   if (!catalogue || !Array.isArray(catalogue.projects)) return false;
   if (catalogue.projects.length > 100 || !catalogue.projects.every(item => item &&
-      typeof item.id === 'string' && item.id.length >= 1 && item.id.length <= 120 &&
-      typeof item.name === 'string' && item.name.length >= 1 && item.name.length <= 120)) return false;
+      typeof item.id === 'string' && Array.from(item.id).length >= 1 && Array.from(item.id).length <= 120 &&
+      typeof item.name === 'string' && Array.from(item.name).length >= 1 &&
+      Array.from(item.name).length <= 120)) return false;
   if (new Set(catalogue.projects.map(item => item.id)).size !== catalogue.projects.length) return false;
   if (typeof catalogue.partial !== 'boolean' || typeof catalogue.stale !== 'boolean') return false;
   if (catalogue.state === 'UNCONFIGURED') {
@@ -119,7 +137,7 @@ function validProjectCatalogue(catalogue) {
   const expectedState = catalogue.stale ? 'STALE' : catalogue.partial ? 'PARTIAL' :
     catalogue.projects.length === 0 ? 'EMPTY' : 'AVAILABLE';
   return catalogue.state === expectedState && ['LOCAL', 'DEMO'].includes(catalogue.source) &&
-    typeof catalogue.observed_at === 'string' && catalogue.observed_at.length > 0;
+    validObservedAt(catalogue.observed_at);
 }
 document.getElementById('forget').addEventListener('click', () => {
   connectionAttempt += 1;

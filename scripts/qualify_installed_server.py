@@ -216,6 +216,11 @@ def verify_unique_project_ids(url, instance_id, token, catalogue, page):
     page.locator("#projects li").wait_for()
     assert page.locator("#project-state").inner_text() == "AVAILABLE · LOCAL"
     assert page.locator("#projects li").count() == 1
+    catalogue.write_text(json.dumps({"source": "LOCAL", "observed_at": stamp,
+                                     "projects": [{"id": "emoji", "name": "😀" * 120}]}))
+    assert read(url + "/v1/projects", token=token, instance=instance_id)[0] == 200
+    page.locator("#connect").click()
+    page.get_by_text("😀" * 120).wait_for()
     catalogue.write_text(json.dumps({"source": "DEMO", "observed_at": stamp,
                                      "projects": [{"id": "demo", "name": "Demo project"}]}))
 
@@ -514,6 +519,7 @@ def verify_browser_project_error_semantics(page, instance_root):
                     {**valid, "projects": [{"id": "before-error", "name": 3}]},
                     {**valid, "projects": []},
                     {**valid, "state": "EMPTY"},
+                    {**valid, "observed_at": "x"},
                     {key: value for key, value in valid.items() if key != "observed_at"},
                     {**valid, "state": "UNCONFIGURED"}, "{"):
         def malformed(route):
