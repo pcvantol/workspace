@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "r81 Workspace native Developer ID candidate packaging route",
+  "determined_version": "2.8.1",
+  "event_lineage": "r81 Workspace native Developer ID candidate packaging route",
+  "expected_source_revision": "55c039e5ed87779a59af553f81daba94eb4494ea",
+  "expected_version": "2.8.0",
+  "operation_id": "l4-r81-native-signing-20261002",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

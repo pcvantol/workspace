@@ -22,6 +22,42 @@ permits a local launch but is not Developer ID signing, notarization or
 remote-Keychain qualification. The Client machine only receives the completed
 `.app`, not Python, a Server data root or the development checkout.
 
+For a private Developer ID qualification candidate, the same builder accepts
+`--mode developer-id`, an exact protected-main source SHA, an existing
+`Developer ID Application` identity, its ten-character team ID and an existing
+notarytool Keychain profile. These values and the exclusive L1/L4 signing
+window must be confirmed before invoking it. The mode rejects a dirty or
+non-current source or noncanonical Workspace origin, missing identity/profile
+arguments, and occupied output paths. It requires an explicit output path in
+an owner-owned private directory and writes with a restrictive umask;
+each signed build also uses a fresh private Swift scratch directory, ignoring
+the shared development scratch override;
+the actual signer and notarization credentials are validated by signing and
+notarytool in the confirmed exclusive slot. It does not
+fall back to ad hoc signing. It signs with hardened runtime and a secure
+timestamp, checks the team and designated requirement, submits the archive to
+Apple notarization, staples the app, assesses it with Gatekeeper and emits a
+final ZIP and JSON manifest bound to source SHA, bundle ID, `.v2` Keychain
+service, team, notary submission, app CDHash and final ZIP SHA-256. The app is
+unsandboxed and needs no entitlements; no runtime exceptions are requested.
+`scripts/verify_macos_app_candidate.py` independently checks the retained ZIP
+and manifest, extracts the app, and repeats signature, designated requirement,
+staple, Gatekeeper, bundle/version and no-Python-link checks. Keep both files
+as one private qualification artifact pair; the manifest is not a public
+release receipt.
+The stable bundle ID is `com.pcvantol.workspace.native-client` and the current
+Keychain service is `com.pcvantol.workspace.native-client.v2`. Source/packaging
+checks are distinct from an actual Developer ID signature and from signed
+Keychain behavior. The latter needs real first pairing, cancellation,
+quit/relaunch and a correctly signed successor with the same team/bundle
+requirement. The retained `.v1` items are not automatically removed or changed.
+
+Host access and normal macOS HTTPS trust are independent of app signing.
+Only a Finder-launched copy of the exact signed artifact on the client Mac can
+qualify the native two-Mac path through the separately installed Server to the
+scoped Forge read. Explicit-CA curl remains transport evidence only. Public
+native software publication and the Python Server/PyPI lane stay separate.
+
 In the 2 October local candidate check, a separately installed Python 3.14.8
 Server 2.5.0 ran from an isolated venv and private data root outside the
 checkout. Double-clicking the packaged Client 2.5.0 in Finder opened its own

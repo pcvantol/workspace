@@ -34,6 +34,18 @@ native app signing/distribution and remote host qualification remain separate
 evidence gates; do not infer them from a source build. Other quality and UI
 improvements remain candidates after this selected delivery.
 
+The same r81 continues under the owner directive
+`L4-NATIVE-SIGNING-AND-REMOTE-UNBLOCK-V1-20261002`. The next independent
+Workspace-owned increment is the Developer ID candidate builder and its
+packaging/negative checks, from exact protected source. It does not wait for
+the MacBook. Actual signing/notarization requires the bounded, confirmed
+`L1-L4-WORKSPACE-NATIVE-SIGNING-20261002` resource slot; the #141 coordination
+request alone grants no slot. A signed candidate then needs its own `.v2`
+Keychain first-pair, cancellation, relaunch and correctly signed successor
+qualification. Host reachability, system HTTPS trust and native two-Mac Forge
+read remain separate `NOT_RUN` gates until observed. The ad hoc local app and
+explicit-CA curl results stay at their existing evidence levels.
+
 ### Native Client and two-Mac transport milestones
 
 Protected PR #117 delivered the local 2.5.0 milestone. Its test bundle opens
