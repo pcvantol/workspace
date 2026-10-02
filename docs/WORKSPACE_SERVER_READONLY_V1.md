@@ -53,7 +53,9 @@ The own `instance.json` created by `init` has exactly `instance_id` (32
 lowercase hexadecimal characters) and a timezone-aware `created_at` timestamp.
 Initialization creates identity and token relative to one validated open private
 root directory. If the path is renamed or replaced during initialization, both
-files and any failure cleanup remain in that opened root.
+files remain in that opened root. A failed initialization leaves any partial
+files for operator inspection rather than deleting a concurrent replacement;
+retry refuses a partial root.
 Startup rejects malformed, duplicate-key, missing/extra-field or ambiguous
 identity state. It does not reset or silently replace the identity/token; a
 valid restored file keeps the same browser pin across restart.

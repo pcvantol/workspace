@@ -116,23 +116,13 @@ def initialize(root):
         created = datetime.now(timezone.utc).isoformat()
         values = (("instance.json", json.dumps({"instance_id": instance_id, "created_at": created}) + "\n"),
                   ("token", secrets.token_urlsafe(32) + "\n"))
-        created_names = []
-        try:
-            for name, content in values:
-                fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
-                             0o600, dir_fd=root_fd)
-                created_names.append(name)
-                with os.fdopen(fd, "w", encoding="utf-8") as stream:
-                    stream.write(content)
-                    stream.flush()
-                    os.fsync(stream.fileno())
-        except Exception:
-            for name in created_names:
-                try:
-                    os.unlink(name, dir_fd=root_fd)
-                except FileNotFoundError:
-                    pass
-            raise
+        for name, content in values:
+            fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                         0o600, dir_fd=root_fd)
+            with os.fdopen(fd, "w", encoding="utf-8") as stream:
+                stream.write(content)
+                stream.flush()
+                os.fsync(stream.fileno())
         return instance_id
     finally:
         os.close(root_fd)

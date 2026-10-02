@@ -584,7 +584,7 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual(Service(other).instance_id, other_id)
         self.assertEqual((other / "token").read_bytes(), other_token)
 
-    def test_init_failure_cleans_only_opened_root_after_path_swap(self):
+    def test_init_failure_preserves_concurrent_replacement_in_opened_root(self):
         fresh = Path(self.temp.name) / "fresh"
         fresh.mkdir(mode=0o700)
         other = Path(self.temp.name) / "other"
@@ -600,13 +600,17 @@ class ReadOnlyTests(unittest.TestCase):
             if calls == 2:
                 fresh.rename(moved)
                 fresh.symlink_to(other, target_is_directory=True)
+                (moved / "instance.json").rename(moved / "original-instance.json")
+                (moved / "instance.json").write_bytes(b"replacement")
                 raise OSError("sync failure")
             return actual_fsync(descriptor)
         with patch("workspace_control.service.os.fsync", side_effect=fail_second_sync):
             with self.assertRaisesRegex(OSError, "sync failure"):
                 initialize(fresh)
-        self.assertFalse((moved / "instance.json").exists())
-        self.assertFalse((moved / "token").exists())
+        self.assertEqual((moved / "instance.json").read_bytes(), b"replacement")
+        self.assertTrue((moved / "token").is_file())
+        self.assertRaises(ValueError, initialize, moved)
+        self.assertRaises(ValueError, Service, moved)
         self.assertEqual(Service(other).instance_id, other_id)
         self.assertEqual((other / "token").read_bytes(), other_token)
 
