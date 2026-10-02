@@ -128,6 +128,17 @@ class ReadOnlyTests(unittest.TestCase):
                     self.assertEqual(self.raw_request(path, hosts=(host,), origins=origins)[0], 403)
         self.assertEqual(self.authorized("/v1/status")[0], 200)
 
+    def test_rejected_request_targets_are_not_logged(self):
+        host = f"127.0.0.1:{self.server.server_port}"
+        secret = "private-token-value-do-not-log"
+        output = io.StringIO()
+        with redirect_stderr(output):
+            self.assertEqual(self.raw_request(f"/v1/identity?token={secret}", hosts=(host,))[0], 400)
+            self.assertEqual(self.raw_request(f"/v1/identity?token={secret}",
+                                              method="POST", hosts=(host,))[0], 405)
+        self.assertNotIn(secret, output.getvalue())
+        self.assertEqual(output.getvalue(), "")
+
     def test_ambiguous_auth_and_pin_headers_are_rejected(self):
         host = f"127.0.0.1:{self.server.server_port}"
         valid_auth = "Bearer " + self.service.token
