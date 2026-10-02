@@ -29,6 +29,20 @@ class FourLaneEntryTests(unittest.TestCase):
             self.assertTrue((ROOT / entry['owning_scope']).is_file())
             self.assertFalse(graph['executable'])
 
+    def test_current_native_priority_preserves_historical_delivery(self):
+        assignment = 'L4-WORKSPACE-NATIVE-CLIENT-HTTP-V1-20261002'
+        for graph in (self.http, self.package):
+            active = graph['active_product_priority']
+            self.assertEqual(active['assignment_id'], assignment)
+            self.assertEqual(active['register'], 'https://github.com/pcvantol/forge/issues/208')
+            self.assertFalse(active['first_installer_release_dependency'])
+            self.assertFalse(active.get('client_requires_python_or_local_server',
+                                        active.get('native_client_requires_python_or_local_server')))
+            self.assertEqual(graph['status'], 'PLANNED')
+            self.assertFalse(graph['first_slice_checkpoint']['full_parent_qualified'])
+        self.assertEqual(self.http['active_product_priority']['two_mac_host_trust_authorization_gate'], 'NOT_RUN')
+        self.assertEqual(self.package['active_product_priority']['native_client_signed_keychain_trust_gate'], 'NOT_RUN')
+
     def test_http_dependencies_preserved(self):
         self.assertEqual({n['id']: n['depends_on'] for n in self.http['nodes']}, {
             'WH-CONTRACT': [], 'WH-SERVICES': ['WH-CONTRACT'],
@@ -59,6 +73,9 @@ class FourLaneEntryTests(unittest.TestCase):
         self.assertEqual(self.package['lane_allocation']['selected_node_subsets'],
                          ['WPK-IDENTITY','WPK-PACKAGE'])
         self.assertEqual(self.package['canonical_installable_channel'],'PyPI')
+        self.assertEqual(self.package['canonical_installable_channel_scope'],
+                         'PYTHON_SERVER_AND_LEGACY_PYTHON_ENTRYPOINT_ONLY')
+        self.assertIn('MACOS_APP', self.package['native_client_channel'])
         self.assertEqual(self.package['evidence_gates']['WPK-PACKAGE'],
                          ['OWNED_ROLE_ENTRYPOINT_AND_ASSET_SUBSET'])
         self.assertEqual(self.package['evidence_gates']['WPK-PUBLISH'],

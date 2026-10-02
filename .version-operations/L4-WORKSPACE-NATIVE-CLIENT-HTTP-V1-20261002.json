@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "r81 Python 3.14-only Server/package gate and native Client priority",
+  "determined_version": "2.4.67",
+  "event_lineage": "r81 Python 3.14-only Server/package gate and native Client priority",
+  "expected_source_revision": "aa1639b39e9718ab61a0da2e78db7df68942b367",
+  "expected_version": "2.4.66",
+  "operation_id": "L4-WORKSPACE-NATIVE-CLIENT-HTTP-V1-20261002",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

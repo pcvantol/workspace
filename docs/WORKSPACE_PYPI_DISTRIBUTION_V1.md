@@ -4,6 +4,17 @@
 **Recorded:** 13 September 2026. **Version effect:** NO_BUMP documentation only.
 [Delivery DAG](WORKSPACE_PYPI_DISTRIBUTION_V1_DAG.json).
 
+## Current role/channel decision — 2 October 2026
+
+For #208 r81, Workspace-owned Python is 3.14.x only. The Python distribution
+and its wheel/sdist metadata cover the Server and historical browser-launcher
+entrypoint; they do not constitute the final Client deliverable. The selected
+Client is a separately packaged native macOS `Workspace.app` requiring no
+Python, local Server or checkout. Its signing/distribution and actual Finder
+qualification are independent of the planned public PyPI Server gates. The
+legacy Python `workspace-client` entrypoint remains a compatibility artifact
+until a separately bounded removal; it is not evidence of the native Client.
+
 ## Baseline and owner decision
 
 At source `36d294836cb653361fda3972de38acce3d2970f8`, the
@@ -85,11 +96,11 @@ Platform installer completion and no first Forge autonomy-canary prerequisite.
 | WPK-T02 | Exact main/version/qualification checks; wrong publisher/environment/scope fails closed. |
 | WPK-T03 | Partial publication, acknowledgement loss, same-version conflict and idempotent operation resume. |
 | WPK-T04 | Download hashes, published-wheel install and retained cleanup failure/closure evidence. |
-| WPK-T05 | Composition consumes only qualified PyPI identities, including client-only; no GitHub software fallback. |
+| WPK-T05 | Composition consumes only exact qualified Python Server and native macOS Client artifacts for the roles actually selected; no GitHub source-bundle software fallback. |
 | WPK-T06 | Workflow projections retain canonical semantics and required controls without independent version allocation. |
 
 Reference for future adapter implementation: [PyPI Trusted Publishing](https://docs.pypi.org/trusted-publishers/)
 and [publisher configuration](https://docs.pypi.org/trusted-publishers/adding-a-publisher/).
-No workflow, package version, runtime, credentials, publisher, release, service
-or current Mission is changed here. Documentary tests are not packaging or
-publication qualification.
+This original design made no workflow, package version, runtime, credential,
+publisher, release, service or Mission change. The later selected #208 r81
+Python support change is separate from public publication qualification.

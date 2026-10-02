@@ -2,6 +2,16 @@
 
 **Status:** Canonical target architecture; implementation and qualification remain separately governed.
 
+The current selected #208 r81 implementation is a native macOS
+`Workspace.app` with local rendering and a separate Python 3.14.x Workspace
+Server. The desktop app requires no Python, Server data root or source checkout.
+Its configured endpoint, client-owned secure token and pinned Server identity
+must survive relaunch without silently rebinding. Loopback HTTP is permissible
+for local qualification; nonloopback requires HTTPS and ordinary certificate
+validation. Finder launch against an installed Server is the first visible
+gate. A real two-Mac link, app signing/Keychain trust and qualified Forge reads
+remain distinct gates.
+
 Workspace Server is a headless installed, independently restartable service. It owns server-authoritative Workspace project/control/governance state in a Workspace central runtime-storage root outside Git/source checkouts, with its product-owned SQL database plus files, artifacts, logs, backups and cache. It exposes a versioned HTTP API over interface-neutral Workspace application services and is launchd-managed on macOS. It projects Forge/EP truth through their versioned authenticated HTTP APIs; it does not take planning, execution, queue, lease, evidence or repository authority and never reads a peer database.
 
 Workspace Client is a separately installable frontend for client PCs. It discovers a candidate Workspace Server through LAN DNS-SD/mDNS or a configured/unicast/tailnet bootstrap endpoint, then authenticates and pairs as a Workspace user/session client. Pairing stores a pinned Workspace Server identity and trusted endpoint in client-owned secure storage; discovery is neither authorization nor a reason to silently change a binding. The client can be installed without an EP Project Agent.

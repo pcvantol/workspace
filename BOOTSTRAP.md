@@ -1,5 +1,23 @@
 # Workspace Bootstrap
 
+## Active owner priority — 2 October 2026
+
+LANE_4 #208 r81 selects `L4-WORKSPACE-NATIVE-CLIENT-HTTP-V1-20261002` as one
+vertical product delivery. The first gate is Workspace-owned Python 3.14.x
+only, including package metadata and validation/build/observe/release jobs.
+The next visible result is a Finder-launched, locally rendered macOS
+`Workspace.app` showing real HTTP responses from a separately installed
+Workspace Server. The app needs no Python, local Server, Server data root or
+checkout on the client Mac. The installed local Server/browser proof below is
+delivered groundwork, not a native or remote acceptance pass.
+
+Use the existing [backlog](BACKLOG.md), [roadmap](ROADMAP.md),
+[HTTP DAG](docs/WORKSPACE_HTTP_API_V1_DAG.json) and
+[distribution DAG](docs/WORKSPACE_PYPI_DISTRIBUTION_V1_DAG.json) for the
+selected sequence and open gates. Do not reopen the terminal r80/#115. Preserve
+the installer and peer boundaries and keep Workspace outside the current first
+installer release DoD.
+
 ## Active lane and selected scope — 1 October 2026
 
 Workspace now has its own LANE_4 / ARCHITECT_4 under the owner's four-product
@@ -10,7 +28,7 @@ The portfolio transition is proposed in
 [Forge #209](https://github.com/pcvantol/forge/pull/209); use its protected
 canonical four-lane plan and all four current registers before effects.
 
-Only `L4-WORKSPACE-SERVER-READONLY-V1-20261001` is selected: own Server
+At that historical checkpoint only `L4-WORKSPACE-SERVER-READONLY-V1-20261001` was selected: own Server
 identity/state, authenticated HTTP, thin CLI, minimal read-only browser surface
 and installed-wheel proof. Its owning HTTP/distribution DAGs retain every
 existing hard dependency and unqualified implementation status. This selection

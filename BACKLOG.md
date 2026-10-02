@@ -1,6 +1,40 @@
 # Workspace Backlog
 
-## Owner-selected first implementation — 1 October 2026
+## Selected product delivery — native Client over Server HTTP, 2 October 2026
+
+The owner selected #208 r81,
+`L4-WORKSPACE-NATIVE-CLIENT-HTTP-V1-20261002`, as the active LANE_4 delivery.
+It supersedes free selection of small local follow-ups. The existing installed
+read-only Server/browser/packaging evidence remains a delivered subset. This is
+one assignment with protected milestones, ending only when the independently
+installed Server and macOS app are qualified to their stated gates.
+
+1. **Python support gate:** Workspace-owned Python Server/package supports
+   `>=3.14,<3.15` only. Verify wheel metadata, isolated install and relevant
+   validation, build, observe and release jobs on 3.14; remove positive 3.10
+   maintenance. Preserve existing data and versioned API semantics.
+2. **First visible native gate:** package `Workspace.app` with its own window,
+   settings and lifecycle and bundled rendering. The client has its own
+   versioned HTTP transport, explicit endpoint, secure token storage and pinned
+   Server identity. Prove a Finder launch and actual responses from a separate
+   installed 3.14 Server. No Python, server/root, checkout or browser-launcher
+   requirement on the client Mac. Timeouts, cancellation, reconnection and
+   honest freshness/error display are acceptance criteria. Nonloopback traffic
+   uses HTTPS with normal certificate validation.
+3. **Two-Mac gate:** qualify actual client-Mac to server-Mac host, trust and
+   authorization. Record absent host, certificate trust or signing resources
+   as `NOT_RUN`; local readback is not remote proof. Test the packaged app and
+   use a signed candidate when macOS Keychain/trust behavior is qualified.
+4. **First Forge read:** connect real producer read information through
+   Workspace Server HTTP only, against exact qualified producer contracts.
+   No CLI/import/SQL/File-Inbox shortcut or whole Forge/EP canary dependency.
+
+The existing WH/WPK DAGs own dependencies. Public PyPI Server distribution,
+native app signing/distribution and remote host qualification remain separate
+evidence gates; do not infer them from a source build. Other quality and UI
+improvements remain candidates after this selected delivery.
+
+## Historical first implementation — 1 October 2026
 
 The owner selected independent Workspace development as LANE_4 alongside the
 ongoing Forge Platform installer. The bounded assignment is
