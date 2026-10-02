@@ -57,6 +57,9 @@ Identity, token and catalogue reads validate the same opened private regular
 file descriptor they consume. A replaced symlink cannot redirect a checked
 read, a FIFO cannot stall it, and reads remain bounded to the one-megabyte
 private-file limit even if the file changes after opening.
+Excessive JSON nesting in private identity or catalogue input is invalid
+source data. It produces the ordinary local startup error or catalogue
+SOURCE_UNAVAILABLE/HTTP 503 outcome, without an uncaught parser exception.
 
 The optional `projects.json` is a private regular file (mode 0600) in the data root. Its schema is `{"source":"LOCAL","observed_at":"2026-10-01T15:00:00Z","projects":[{"id":"project-1","name":"Project One"}],"partial":false}`. `source` is `LOCAL` or `DEMO`; the latter is visibly labelled. No file means UNCONFIGURED. A configured empty list means EMPTY. An explicitly incomplete catalogue is PARTIAL. Observations older than five minutes are STALE. Invalid or unreadable input returns SOURCE_UNAVAILABLE. This catalogue is Workspace-owned manual data, not a peer projection or live platform status.
 

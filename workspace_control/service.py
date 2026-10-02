@@ -44,6 +44,13 @@ def _unique_json_object(pairs):
     return result
 
 
+def _private_json(path):
+    try:
+        return json.loads(_regular_private(path), object_pairs_hook=_unique_json_object)
+    except RecursionError as exc:
+        raise ValueError("invalid private JSON nesting") from exc
+
+
 def _validated_catalogue_items(raw):
     required = {"source", "observed_at", "projects"}
     if not isinstance(raw, dict) or not required <= raw.keys() or raw.keys() - required - {"partial"}:
@@ -101,8 +108,7 @@ def initialize(root):
 class Service:
     def __init__(self, root):
         self.root = _private_root(root)
-        self.identity = json.loads(_regular_private(self.root / "instance.json"),
-                                   object_pairs_hook=_unique_json_object)
+        self.identity = _private_json(self.root / "instance.json")
         token_file = _regular_private(self.root / "token")
         if re.fullmatch(r"[A-Za-z0-9_-]{43}\n", token_file) is None:
             raise ValueError("invalid instance token")
@@ -143,7 +149,7 @@ class Service:
         if not catalogue.exists() and not catalogue.is_symlink():
             return {"state": "UNCONFIGURED", "projects": [], "source": None,
                     "partial": False, "stale": False}
-        raw = json.loads(_regular_private(catalogue), object_pairs_hook=_unique_json_object)
+        raw = _private_json(catalogue)
         items = _validated_catalogue_items(raw)
         stamp = raw.get("observed_at")
         if not isinstance(stamp, str):
