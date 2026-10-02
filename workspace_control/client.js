@@ -170,12 +170,13 @@ document.getElementById('connect').addEventListener('click', async () => {
     if (capabilityResponse.status === 401) throw new Error('UNAUTHORIZED');
     if (capabilityResponse.status === 409) throw new Error('WRONG_INSTANCE');
     if (capabilityResponse.ok) {
-      const inventory = await capabilityResponse.json();
+      const inventory = await capabilityResponse.json().catch(() => null);
       if (attempt !== connectionAttempt) return;
-      if (typeof inventory.instance_id === 'string' && inventory.instance_id !== identity.instance_id) {
+      if (inventory && typeof inventory.instance_id === 'string' &&
+          inventory.instance_id !== identity.instance_id) {
         throw new Error('WRONG_INSTANCE');
       }
-      if (inventory.schema_version === 1 && inventory.instance_id === identity.instance_id &&
+      if (inventory && inventory.schema_version === 1 && inventory.instance_id === identity.instance_id &&
           inventory.product_version === status.version &&
           inventory.peer_operations_qualified === false && Array.isArray(inventory.operations) &&
           inventory.operations.length > 0 &&

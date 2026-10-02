@@ -595,10 +595,13 @@ def verify_browser_inventory_consistency(page, url, token, instance_id):
         {**inventory, "operations": []},
         {**inventory, "operations": inventory["operations"] + [inventory["operations"][0]]},
         {**inventory, "operations": inventory["operations"] + [{"id": "", "exposure": "HTTP_EXPOSED"}]},
+        None,
+        "{",
     )
     for item in invalid:
         def altered(route):
-            route.fulfill(status=200, content_type="application/json", body=json.dumps(item))
+            route.fulfill(status=200, content_type="application/json",
+                          body=item if isinstance(item, str) else json.dumps(item))
         page.route("**/v1/capabilities", altered)
         try:
             page.locator("#connect").click()

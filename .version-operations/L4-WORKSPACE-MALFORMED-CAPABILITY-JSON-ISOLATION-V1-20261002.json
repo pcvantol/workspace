@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "pcvantol/forge#208-r49",
+  "determined_version": "2.4.40",
+  "event_lineage": "pcvantol/forge#208-r49",
+  "expected_source_revision": "42d0faab031f4a3017bd12cdaf299aa3da10296f",
+  "expected_version": "2.4.39",
+  "operation_id": "L4-WORKSPACE-MALFORMED-CAPABILITY-JSON-ISOLATION-V1-20261002",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

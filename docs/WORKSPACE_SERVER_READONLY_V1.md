@@ -58,6 +58,8 @@ The optional `projects.json` is a private regular file (mode 0600) in the data r
 
 The local Client keeps its authenticated Server and own capability readbacks when a successful project HTTP response has malformed JSON or contradicts the Server's project response structure and state rules. It shows project UNAVAILABLE without rows or observation until a usable project response is read again. The Server remains responsible for parsing and validating the source timestamp, whose original spelling is preserved. Authorization and instance-pin errors still invalidate the connection.
 
+Likewise, malformed JSON or a null body in a successful own capability-inventory response leaves only own capabilities UNAVAILABLE, without operation rows. Authenticated Server status, project readback and instance pin continue; a foreign inventory instance ID or authorization/pin failure still invalidates the connection.
+
 The top-level object requires exactly `source`, `observed_at`, and `projects`,
 with optional boolean `partial` (default false). Unknown or missing fields
 make the source unavailable; they cannot silently masquerade as live peer
