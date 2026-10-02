@@ -133,6 +133,23 @@ function validProjectCatalogue(catalogue) {
   return catalogue.state === expectedState && ['LOCAL', 'DEMO'].includes(catalogue.source) &&
     typeof catalogue.observed_at === 'string' && catalogue.observed_at.length > 0;
 }
+function validOwnOperation(operation) {
+  if (!operation || typeof operation.id !== 'string' || !operation.id.trim()) return false;
+  const keys = Object.keys(operation);
+  if (operation.exposure === 'HTTP_EXPOSED') {
+    const required = ['id', 'exposure', 'auth', 'method', 'path'];
+    return required.every(key => Object.hasOwn(operation, key)) &&
+      keys.every(key => [...required, 'local_cli'].includes(key)) &&
+      ['PUBLIC', 'BEARER_PINNED'].includes(operation.auth) && operation.method === 'GET' &&
+      typeof operation.path === 'string' && operation.path.startsWith('/') &&
+      (!Object.hasOwn(operation, 'local_cli') ||
+        (typeof operation.local_cli === 'string' && operation.local_cli.length > 0));
+  }
+  return operation.exposure === 'LOCAL_ONLY_ADMIN' &&
+    keys.length === 4 && ['id', 'exposure', 'auth', 'local_cli'].every(key => Object.hasOwn(operation, key)) &&
+    operation.auth === 'PRIVATE_ROOT_OWNER' &&
+    typeof operation.local_cli === 'string' && operation.local_cli.length > 0;
+}
 document.getElementById('forget').addEventListener('click', () => {
   connectionAttempt += 1;
   localStorage.removeItem('workspace.instanceId');
@@ -199,13 +216,14 @@ document.getElementById('connect').addEventListener('click', async () => {
           inventory.instance_id !== identity.instance_id) {
         throw new Error('WRONG_INSTANCE');
       }
-      if (inventory && inventory.schema_version === 1 && inventory.instance_id === identity.instance_id &&
+      if (inventory && Object.keys(inventory).length === 5 &&
+          ['schema_version', 'product_version', 'instance_id', 'operations', 'peer_operations_qualified']
+            .every(key => Object.hasOwn(inventory, key)) &&
+          inventory.schema_version === 1 && inventory.instance_id === identity.instance_id &&
           inventory.product_version === status.version &&
           inventory.peer_operations_qualified === false && Array.isArray(inventory.operations) &&
           inventory.operations.length > 0 &&
-          inventory.operations.every(operation => operation && typeof operation.id === 'string' &&
-            operation.id.trim().length > 0 &&
-            ['HTTP_EXPOSED', 'LOCAL_ONLY_ADMIN'].includes(operation.exposure)) &&
+          inventory.operations.every(validOwnOperation) &&
           new Set(inventory.operations.map(operation => operation.id)).size === inventory.operations.length) {
         capabilityState.textContent = label('AVAILABLE');
         for (const operation of inventory.operations) {
