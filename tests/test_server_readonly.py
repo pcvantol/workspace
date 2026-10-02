@@ -488,6 +488,21 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual(restored.instance_id, self.instance)
         self.assertEqual((self.root / "token").read_text(), secret)
 
+    def test_deep_private_json_fails_as_invalid_source(self):
+        deep = "[" * 200_000 + "0" + "]" * 200_000
+        identity = self.root / "instance.json"
+        original = identity.read_text()
+        identity.write_text(deep)
+        with redirect_stderr(io.StringIO()) as errors:
+            self.assertEqual(main(["--root", str(self.root), "status"]), 2)
+        self.assertIn("invalid private JSON nesting", errors.getvalue())
+        identity.write_text(original)
+        catalogue = self.root / "projects.json"
+        catalogue.write_text(deep)
+        catalogue.chmod(0o600)
+        self.assertEqual(json.loads(self.authorized("/v1/status")[1])["project_source"], "SOURCE_UNAVAILABLE")
+        self.assertEqual(self.authorized("/v1/projects")[0], 503)
+
     def test_invalid_token_state_fails_closed_without_disclosure(self):
         token_file = self.root / "token"
         original = token_file.read_text()
