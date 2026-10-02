@@ -552,7 +552,11 @@ def verify_browser_project_error_semantics(page, instance_root):
         def unavailable(route):
             route.fulfill(status=code, body="{}")
         page.route("**/v1/projects", unavailable)
-        page.locator("#connect").click()
+        with page.expect_response(lambda response: response.url.endswith("/v1/projects") and
+                                  response.status == code), page.expect_request_finished(
+                                      lambda request: request.url.endswith("/v1/projects")):
+            page.locator("#connect").click()
+        page.evaluate("() => new Promise(resolve => setTimeout(resolve, 0))")
         page.get_by_role("status").get_by_text("CONNECTED").wait_for()
         page.locator("#project-state").get_by_text("UNAVAILABLE").wait_for()
         assert page.locator("#capability-state").inner_text() == "AVAILABLE"
