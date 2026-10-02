@@ -359,6 +359,44 @@ def verify_browser_frame_denial(browser, url):
         page.close()
 
 
+def verify_browser_locales(browser, url, token):
+    """Read the installed local shell in every selected browser language."""
+    cases = (
+        ("en-US", "en", "Instance token", "UNAUTHORIZED", "CONNECTED", "AVAILABLE · DEMO",
+         "Observed:", "Peer operations: UNQUALIFIED", "capabilities.read · HTTP_EXPOSED", " · DEMO"),
+        ("nl-NL", "nl", "Instantietoken", "GEEN TOEGANG", "VERBONDEN", "BESCHIKBAAR · DEMO",
+         "Waargenomen:", "Peeroperaties: NIET GEKWALIFICEERD", "capabilities.read · VIA HTTP", " · DEMO"),
+        ("de-DE", "de", "Instanztoken", "NICHT AUTORISIERT", "VERBUNDEN", "VERFÜGBAR · DEMO",
+         "Beobachtet:", "Peer-Operationen: NICHT QUALIFIZIERT", "capabilities.read · ÜBER HTTP", " · DEMO"),
+        ("fr-FR", "fr", "Jeton d’instance", "NON AUTORISÉ", "CONNECTÉ", "DISPONIBLE · DÉMO",
+         "Observé:", "Opérations des pairs: NON QUALIFIÉ", "capabilities.read · PAR HTTP", " · DÉMO"),
+        ("es-ES", "es", "Token de instancia", "NO AUTORIZADO", "CONECTADO", "DISPONIBLE · DEMO",
+         "Observado:", "Operaciones de pares: NO CALIFICADO", "capabilities.read · POR HTTP", " · DEMO"),
+        ("it-IT", "en", "Instance token", "UNAUTHORIZED", "CONNECTED", "AVAILABLE · DEMO",
+         "Observed:", "Peer operations: UNQUALIFIED", "capabilities.read · HTTP_EXPOSED", " · DEMO"),
+    )
+    for locale, language, token_label, unauthorized, connected, project_state, observed, peer, capability, demo in cases:
+        context = browser.new_context(locale=locale)
+        try:
+            page = context.new_page()
+            page.goto(url)
+            assert page.evaluate("document.documentElement.lang") == language
+            assert page.locator("label[for=token]").inner_text() == token_label
+            page.locator("#token").fill("wrong")
+            page.locator("#connect").click()
+            page.locator("#state").get_by_text(unauthorized).wait_for()
+            page.locator("#token").fill(token)
+            page.locator("#connect").click()
+            page.locator("#state").get_by_text(connected).wait_for()
+            page.locator("#project-state").get_by_text(project_state).wait_for()
+            assert page.locator("#project-observed").inner_text().startswith(observed)
+            assert page.locator("#peer-state").inner_text() == peer
+            assert capability in page.locator("#capabilities li").all_text_contents()
+            assert page.locator("#projects li").inner_text().endswith(demo)
+        finally:
+            context.close()
+
+
 def verify_browser_reconnect_clears_readbacks(page, expected_pin, token):
     """A pending reconnect must not retain the previous visible snapshot."""
     assert expected_pin in page.locator("#server").inner_text()
@@ -505,7 +543,7 @@ def main(wheel):
             with sync_playwright() as playwright:
                 browser = playwright.chromium.launch(headless=True, executable_path="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
                 verify_browser_frame_denial(browser, first_url)
-                page = browser.new_page()
+                page = browser.new_page(locale="en-US")
                 page.goto(first_url)
                 page.locator("#token").fill("wrong")
                 page.locator("#connect").click()
@@ -564,6 +602,7 @@ def main(wheel):
                 page.get_by_text("Demo project (demo) · DEMO").wait_for()
                 observed = json.loads(catalogue.read_text())["observed_at"]
                 verify_browser_observation(page, f"Observed: {observed}")
+                verify_browser_locales(browser, first_url, token)
                 verify_browser_reconnect_clears_readbacks(page, first_id, token)
                 verify_browser_inventory_identity_mismatch(page, second_id, first_id)
                 page.locator("#connect").click()
@@ -616,6 +655,7 @@ def main(wheel):
                               "browser_catalogue_observation_provenance": "PASS",
                               "browser_reconnect_readback_clear": "PASS",
                               "browser_frame_denial": "PASS",
+                              "browser_locales": "PASS",
                               "browser_forget_token": "PASS",
                               "browser_identity_consistency": "PASS",
                               "browser_inventory_identity_consistency": "PASS",
