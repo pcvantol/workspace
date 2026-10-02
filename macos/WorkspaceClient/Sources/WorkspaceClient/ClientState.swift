@@ -18,7 +18,7 @@ enum CredentialError: Error, LocalizedError {
     }
 }
 
-protocol CredentialStore {
+protocol CredentialStore: Sendable {
     func binding() throws -> ServerBinding?
     func token() throws -> String?
     func save(binding: ServerBinding, token: String) throws
@@ -89,6 +89,27 @@ struct ClientKeychain: CredentialStore {
     }
 }
 
+private struct StoredCredentials: Sendable {
+    let binding: ServerBinding?
+    let token: String?
+}
+
+private actor CredentialWorker {
+    let store: any CredentialStore
+
+    init(store: any CredentialStore) { self.store = store }
+
+    func load() throws -> StoredCredentials {
+        StoredCredentials(binding: try store.binding(), token: try store.token())
+    }
+
+    func save(binding: ServerBinding, token: String) throws {
+        try store.save(binding: binding, token: token)
+    }
+
+    func forget() throws { try store.forget() }
+}
+
 @MainActor
 final class ClientState: ObservableObject {
     @Published private(set) var phase = "UNCONFIGURED"
@@ -98,104 +119,131 @@ final class ClientState: ObservableObject {
     @Published private(set) var savedInstance = ""
     @Published private(set) var canForgetBinding = false
 
-    private let keychain: any CredentialStore
-    private let transport = ServerTransport()
+    private let credentials: CredentialWorker
+    private let transport: ServerTransport
     private var activeTask: Task<Void, Never>?
     private var attempt = 0
 
-    init(keychain: any CredentialStore = ClientKeychain()) {
-        self.keychain = keychain
-        do {
-            if let binding = try keychain.binding() {
-                savedEndpoint = binding.endpoint
-                savedInstance = binding.instanceID
-                canForgetBinding = true
-                phase = "DISCONNECTED"
-                detail = "Saved Server binding; reconnect to read current data."
-            } else if try keychain.token() != nil {
+    init(keychain: any CredentialStore = ClientKeychain(), transport: ServerTransport = ServerTransport()) {
+        credentials = CredentialWorker(store: keychain)
+        self.transport = transport
+        phase = "LOADING"
+        detail = "Checking the saved Server binding."
+        Task {
+            do {
+                let stored = try await credentials.load()
+                guard attempt == 0 else { return }
+                if let binding = stored.binding {
+                    savedEndpoint = binding.endpoint
+                    savedInstance = binding.instanceID
+                    canForgetBinding = true
+                    phase = "DISCONNECTED"
+                    detail = "Saved Server binding; reconnect to read current data."
+                    connect(address: binding.endpoint)
+                } else if stored.token != nil {
+                    canForgetBinding = true
+                    phase = "UNAVAILABLE"
+                    detail = CredentialError.incompleteBinding.localizedDescription
+                } else {
+                    phase = "UNCONFIGURED"
+                    detail = "Set a Server address and token in Settings."
+                }
+            } catch {
+                guard attempt == 0 else { return }
                 canForgetBinding = true
                 phase = "UNAVAILABLE"
-                detail = CredentialError.incompleteBinding.localizedDescription
+                detail = error.localizedDescription
             }
-        } catch {
-            canForgetBinding = true
-            phase = "UNAVAILABLE"
-            detail = error.localizedDescription
         }
     }
 
     func connect(address: String, enteredToken: String = "") {
+        guard phase != "FORGETTING", phase != "SAVING" else { return }
         activeTask?.cancel()
         attempt += 1
         let current = attempt
-        do {
-            let endpoint = try ServerEndpoint(address)
-            let binding = try keychain.binding()
-            let storedToken = try keychain.token()
-            if binding == nil && storedToken != nil {
-                throw CredentialError.incompleteBinding
-            }
-            if let binding, binding.endpoint != endpoint.url.absoluteString {
-                throw ClientError.bindingChanged
-            }
-            let token = enteredToken.isEmpty ? storedToken ?? "" : enteredToken
-            guard !token.isEmpty else { throw ClientError.noToken }
-            phase = "CONNECTING"
-            detail = "Reading the Server identity and current status."
-            activeTask = Task {
-                do {
-                    let result = try await transport.connect(endpoint: endpoint, token: token,
-                                                             pinnedInstance: binding?.instanceID)
-                    guard !Task.isCancelled, current == attempt else { return }
-                    let newBinding = ServerBinding(endpoint: endpoint.url.absoluteString,
-                                                   instanceID: result.identity.instance_id)
-                    try keychain.save(binding: newBinding, token: token)
-                    savedEndpoint = newBinding.endpoint
-                    savedInstance = newBinding.instanceID
-                    canForgetBinding = true
-                    snapshot = result
-                    phase = "CONNECTED"
-                    detail = "Fresh Server read at \(result.observedAt.formatted(date: .abbreviated, time: .standard))."
-                } catch {
-                    guard !Task.isCancelled, current == attempt else { return }
-                    if error is CredentialError { canForgetBinding = true }
-                    phase = "UNAVAILABLE"
-                    let prior = snapshot.map { " Last successful read: \($0.observedAt.formatted(date: .abbreviated, time: .standard)); displayed data is cached." } ?? ""
-                    detail = error.localizedDescription + prior
+        phase = "CONNECTING"
+        detail = "Checking credentials and reading the Server."
+        activeTask = Task {
+            do {
+                let endpoint = try ServerEndpoint(address)
+                let stored = try await credentials.load()
+                guard !Task.isCancelled, current == attempt else { return }
+                if stored.binding == nil && stored.token != nil {
+                    throw CredentialError.incompleteBinding
                 }
+                if let binding = stored.binding, binding.endpoint != endpoint.url.absoluteString {
+                    throw ClientError.bindingChanged
+                }
+                let token = enteredToken.isEmpty ? stored.token ?? "" : enteredToken
+                guard !token.isEmpty else { throw ClientError.noToken }
+                let result = try await transport.connect(endpoint: endpoint, token: token,
+                                                         pinnedInstance: stored.binding?.instanceID)
+                guard !Task.isCancelled, current == attempt else { return }
+                let newBinding = ServerBinding(endpoint: endpoint.url.absoluteString,
+                                               instanceID: result.identity.instance_id)
+                phase = "SAVING"
+                detail = "Saving the verified Server binding in Mac Keychain."
+                try await credentials.save(binding: newBinding, token: token)
+                savedEndpoint = newBinding.endpoint
+                savedInstance = newBinding.instanceID
+                canForgetBinding = true
+                snapshot = result
+                phase = "CONNECTED"
+                detail = "Fresh Server read at \(result.observedAt.formatted(date: .abbreviated, time: .standard))."
+            } catch {
+                guard !Task.isCancelled, current == attempt else { return }
+                if error is CredentialError { canForgetBinding = true }
+                phase = "UNAVAILABLE"
+                let prior = snapshot.map { " Last successful read: \($0.observedAt.formatted(date: .abbreviated, time: .standard)); displayed data is cached." } ?? ""
+                detail = error.localizedDescription + prior
             }
-        } catch {
-            phase = "UNAVAILABLE"
-            detail = error.localizedDescription
         }
     }
 
     func reconnect() {
-        guard !savedEndpoint.isEmpty, phase != "CONNECTING" else { return }
+        guard !savedEndpoint.isEmpty,
+              phase != "LOADING", phase != "CONNECTING", phase != "SAVING",
+              phase != "FORGETTING" else { return }
         connect(address: savedEndpoint)
     }
 
     func cancel() {
+        guard phase != "SAVING", phase != "FORGETTING" else { return }
         activeTask?.cancel()
         attempt += 1
-        phase = "DISCONNECTED"
-        detail = "Connection cancelled. Previous data, if shown, is cached."
+        if phase == "LOADING" {
+            phase = "UNAVAILABLE"
+            detail = "Saved credential check cancelled. A pending Mac Keychain request may need to finish before retry."
+        } else {
+            phase = "DISCONNECTED"
+            detail = "Connection cancelled. Previous data, if shown, is cached."
+        }
     }
 
     func forget() {
+        guard phase != "SAVING", phase != "FORGETTING" else { return }
         activeTask?.cancel()
         attempt += 1
-        do {
-            try keychain.forget()
-            savedEndpoint = ""
-            savedInstance = ""
-            canForgetBinding = false
-            snapshot = nil
-            phase = "UNCONFIGURED"
-            detail = "Server binding removed."
-        } catch {
-            phase = "UNAVAILABLE"
-            detail = error.localizedDescription
+        let current = attempt
+        phase = "FORGETTING"
+        detail = "Removing the saved Server binding."
+        activeTask = Task {
+            do {
+                try await credentials.forget()
+                guard current == attempt else { return }
+                savedEndpoint = ""
+                savedInstance = ""
+                canForgetBinding = false
+                snapshot = nil
+                phase = "UNCONFIGURED"
+                detail = "Server binding removed."
+            } catch {
+                guard current == attempt else { return }
+                canForgetBinding = true
+                phase = "UNAVAILABLE"
+                detail = error.localizedDescription
+            }
         }
     }
 }

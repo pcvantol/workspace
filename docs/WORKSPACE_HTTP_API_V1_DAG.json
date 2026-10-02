@@ -29,13 +29,14 @@
     "client_requires_python_or_local_server": false,
     "client_to_server_transport": "HTTP(S)_ONLY",
     "nonloopback_requires_verified_https": true,
-    "installed_local_client_server_gate": "CANDIDATE_LOCAL_PASS_PENDING_PROTECTED_DELIVERY",
+    "installed_local_client_server_gate": "LOCAL_PACKAGED_FINDER_READBACK_PROTECTED_DELIVERED",
     "installed_local_client_server_evidence": [
       "SwiftUI Workspace.app 2.5.0 launched by double-clicking the packaged bundle in Finder",
       "separate Python 3.14.8 installed Workspace Server 2.5.0 at loopback HTTP served identity/status/projects/capabilities",
       "visible project source became STALE after five minutes and Server outage displayed cached data before successful reconnect"
     ],
     "two_mac_host_trust_authorization_gate": "NOT_RUN",
+    "native_client_keychain_ui_lifecycle_gate": "CANDIDATE_REPAIR_PENDING_PROTECTED_DELIVERY",
     "two_mac_missing": ["nonloopback Workspace Server HTTPS listener", "qualified second Mac host and certificate trust", "remote authorization readback"],
     "forge_read_gate": "NOT_RUN",
     "qualified_forge_producer_contract_required": true,
