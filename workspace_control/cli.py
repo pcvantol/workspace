@@ -2,8 +2,8 @@
 
 import argparse
 import json
+import re
 import sys
-from urllib.parse import urlsplit
 import webbrowser
 
 from .http import openapi_contract, operation_inventory, serve
@@ -48,14 +48,8 @@ def client_main(argv=None):
     parser = argparse.ArgumentParser(prog="workspace-client")
     parser.add_argument("--url", required=True)
     args = parser.parse_args(argv)
-    parsed = urlsplit(args.url)
-    try:
-        valid_port = parsed.port is not None and 1 <= parsed.port <= 65535
-    except ValueError:
-        valid_port = False
-    if (parsed.scheme != "http" or parsed.hostname not in ("127.0.0.1", "localhost") or
-            not valid_port or parsed.username or parsed.password or parsed.path not in ("", "/") or
-            "?" in args.url or "#" in args.url):
+    url = re.fullmatch(r"http://(?:127\.0\.0\.1|localhost):([1-9][0-9]{0,4})/?", args.url)
+    if url is None or int(url.group(1)) > 65535:
         parser.error("this first Client supports only a loopback Workspace Server")
     try:
         opened = webbrowser.open(args.url.rstrip("/") + "/")

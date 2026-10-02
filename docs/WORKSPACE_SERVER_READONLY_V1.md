@@ -160,6 +160,9 @@ assert that a Server connection or authenticated read completed.
 The launcher accepts only a bare loopback Server root (with an optional `/`).
 An explicit query or fragment delimiter, including an empty `?` or `#`, is
 rejected before invoking the browser so a malformed launch cannot report success.
+Its authority spelling is canonical: lowercase `localhost` or `127.0.0.1`
+with a decimal port from 1 to 65535 and no leading zero. Malformed IPv6
+authorities and other spellings fail as CLI usage errors before browser launch.
 Before accepting a local binding, the Client requires a canonical own identity
 and checks that authenticated Server status names that same instance. An
 inconsistent status is WRONG INSTANCE; it clears displayed readbacks and cannot

@@ -553,6 +553,9 @@ class ReadOnlyTests(unittest.TestCase):
         with patch("workspace_control.cli.webbrowser.open", return_value=True) as open_browser:
             self.assertEqual(client_main(["--url", "http://127.0.0.1:8767"]), 0)
             open_browser.assert_called_once_with("http://127.0.0.1:8767/")
+        with patch("workspace_control.cli.webbrowser.open", return_value=True) as open_browser:
+            self.assertEqual(client_main(["--url", "http://localhost:8767/"]), 0)
+            open_browser.assert_called_once_with("http://localhost:8767/")
         with patch("workspace_control.cli.webbrowser.open", return_value=False):
             self.assertEqual(client_main(["--url", "http://127.0.0.1:8767"]), 2)
         with patch("workspace_control.cli.webbrowser.open", side_effect=OSError("unavailable")):
@@ -560,7 +563,10 @@ class ReadOnlyTests(unittest.TestCase):
         for url in ("https://127.0.0.1:8767", "http://127.0.0.1:8767@evil.example",
                     "http://127.0.0.1:bad", "http://localhost:8767/v1/status",
                     "http://127.0.0.1:8767?", "http://127.0.0.1:8767#",
-                    "http://localhost:8767/?", "http://localhost:8767/#"):
+                    "http://localhost:8767/?", "http://localhost:8767/#",
+                    "http://[::1:8767", "http://[x]:8767", "http://LOCALHOST:8767",
+                    "http://127.0.0.1:08767", "http://127.0.0.1:0",
+                    "http://localhost:65536"):
             with self.subTest(url=url), patch("workspace_control.cli.webbrowser.open") as open_browser:
                 with self.assertRaises(SystemExit):
                     client_main(["--url", url])
