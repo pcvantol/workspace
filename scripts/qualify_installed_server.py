@@ -423,6 +423,53 @@ def verify_browser_frame_denial(browser, url):
         page.close()
 
 
+def _verify_locale_shell(page, language, title, token_label):
+    assert page.evaluate("document.documentElement.lang") == language
+    assert page.title() == title
+    assert page.locator("#server").get_attribute("aria-live") == "polite"
+    assert page.locator("#server").get_attribute("aria-atomic") == "true"
+    for readback in ("#project-readback", "#capability-readback"):
+        assert page.locator(readback).get_attribute("aria-live") == "polite"
+        assert page.locator(readback).get_attribute("aria-atomic") == "true"
+    assert page.locator("#project-readback #projects").count() == 1
+    assert page.locator("#capability-readback #capabilities").count() == 1
+    assert page.locator("label[for=token]").inner_text() == token_label
+
+
+def _verify_locale_auth(page, locale, token, unauthorized, connected):
+    page.locator("#token").fill("wrong")
+    if locale == "en-US":
+        identity_requests = []
+        def observe_identity(route):
+            identity_requests.append(route.request.url)
+            route.continue_()
+        page.route("**/v1/identity", observe_identity)
+        page.locator("#token").focus()
+        page.keyboard.down("Enter")
+        page.keyboard.down("Enter")
+        page.keyboard.up("Enter")
+        page.locator("#state").get_by_text(unauthorized).wait_for()
+        assert len(identity_requests) == 1
+        page.unroute("**/v1/identity", observe_identity)
+    else:
+        page.locator("#token").press("Enter")
+    page.locator("#state").get_by_text(unauthorized).wait_for()
+    page.locator("#token").fill(token)
+    page.locator("#token").press("Enter")
+    page.locator("#state").get_by_text(connected).wait_for()
+
+
+def _verify_locale_readback(page, url, project_state, observed, peer, capability, demo):
+    assert page.request.get(url + "/v1/identity").json()["instance_id"] in page.locator("#server").inner_text()
+    page.locator("#project-state").get_by_text(project_state).wait_for()
+    assert page.locator("#project-observed").inner_text().startswith(observed)
+    assert page.locator("#peer-state").inner_text() == peer
+    assert capability in page.locator("#capabilities li").all_text_contents()
+    assert capability in page.locator("#capability-readback").inner_text()
+    assert page.locator("#projects li").inner_text().endswith(demo)
+    assert page.locator("#projects li").inner_text() in page.locator("#project-readback").inner_text()
+
+
 def verify_browser_locales(browser, url, token):
     """Read the installed local shell in every selected browser language."""
     cases = (
@@ -444,44 +491,9 @@ def verify_browser_locales(browser, url, token):
         try:
             page = context.new_page()
             page.goto(url)
-            assert page.evaluate("document.documentElement.lang") == language
-            assert page.title() == title
-            assert page.locator("#server").get_attribute("aria-live") == "polite"
-            assert page.locator("#server").get_attribute("aria-atomic") == "true"
-            for readback in ("#project-readback", "#capability-readback"):
-                assert page.locator(readback).get_attribute("aria-live") == "polite"
-                assert page.locator(readback).get_attribute("aria-atomic") == "true"
-            assert page.locator("#project-readback #projects").count() == 1
-            assert page.locator("#capability-readback #capabilities").count() == 1
-            assert page.locator("label[for=token]").inner_text() == token_label
-            page.locator("#token").fill("wrong")
-            if locale == "en-US":
-                identity_requests = []
-                def observe_identity(route):
-                    identity_requests.append(route.request.url)
-                    route.continue_()
-                page.route("**/v1/identity", observe_identity)
-                page.locator("#token").focus()
-                page.keyboard.down("Enter")
-                page.keyboard.down("Enter")
-                page.keyboard.up("Enter")
-                page.locator("#state").get_by_text(unauthorized).wait_for()
-                assert len(identity_requests) == 1
-                page.unroute("**/v1/identity", observe_identity)
-            else:
-                page.locator("#token").press("Enter")
-            page.locator("#state").get_by_text(unauthorized).wait_for()
-            page.locator("#token").fill(token)
-            page.locator("#token").press("Enter")
-            page.locator("#state").get_by_text(connected).wait_for()
-            assert page.request.get(url + "/v1/identity").json()["instance_id"] in page.locator("#server").inner_text()
-            page.locator("#project-state").get_by_text(project_state).wait_for()
-            assert page.locator("#project-observed").inner_text().startswith(observed)
-            assert page.locator("#peer-state").inner_text() == peer
-            assert capability in page.locator("#capabilities li").all_text_contents()
-            assert capability in page.locator("#capability-readback").inner_text()
-            assert page.locator("#projects li").inner_text().endswith(demo)
-            assert page.locator("#projects li").inner_text() in page.locator("#project-readback").inner_text()
+            _verify_locale_shell(page, language, title, token_label)
+            _verify_locale_auth(page, locale, token, unauthorized, connected)
+            _verify_locale_readback(page, url, project_state, observed, peer, capability, demo)
         finally:
             context.close()
 
