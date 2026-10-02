@@ -26,3 +26,8 @@ jobs:
           python-version: '3.10'
       - run: python3 --version
       - run: bash scripts/validate.sh
+      - run: python3 -m pip install 'build==1.6.1' 'playwright==1.63.0'
+      - run: python3 -m playwright install chromium --with-deps
+      - run: |
+          python3 -m build --wheel --outdir "$RUNNER_TEMP/workspace-wheel"
+          python3 scripts/qualify_installed_server.py "$RUNNER_TEMP"/workspace-wheel/*.whl
