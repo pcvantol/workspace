@@ -540,6 +540,19 @@ class ReadOnlyTests(unittest.TestCase):
 
         host = f"localhost:{secure.server_port}"
         self.assertEqual(request(host, f"https://{host}", self.service.token, self.instance)[0], 200)
+        connection = http.client.HTTPSConnection("localhost", secure.server_port,
+                                                 timeout=2, context=trusted)
+        try:
+            connection.request("GET", "/v1/openapi.json", headers={
+                "Authorization": "Bearer " + self.service.token,
+                "X-Workspace-Instance": self.instance,
+            })
+            response = connection.getresponse()
+            self.assertEqual(response.status, 200)
+            self.assertEqual(json.loads(response.read())["servers"],
+                             [{"url": f"https://{host}"}])
+        finally:
+            connection.close()
         self.assertEqual(request("evil.example:" + str(secure.server_port),
                                  token=self.service.token, pin=self.instance),
                          (403, {"error": "HOST_DENIED"}))

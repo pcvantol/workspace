@@ -63,7 +63,7 @@ def operation_inventory(instance_id):
             "peer_operations_qualified": False}
 
 
-def openapi_contract():
+def openapi_contract(server_url=None):
     paths = {}
     for operation_id, details in OPERATIONS.items():
         if details["exposure"] != "HTTP_EXPOSED":
@@ -87,8 +87,10 @@ def openapi_contract():
             response["content"] = {"application/json": {
                 "schema": {"$ref": f"#/components/schemas/{schema}"}}}
         paths[route] = {"get": operation}
+    servers = ([{"url": server_url}] if server_url else
+               [{"url": "http://127.0.0.1:{port}", "variables": {"port": {"default": "8765"}}}])
     return {"openapi": "3.0.3", "info": {"title": "Workspace read-only V1", "version": "1"},
-            "servers": [{"url": "http://127.0.0.1:{port}", "variables": {"port": {"default": "8765"}}}],
+            "servers": servers,
             "components": {"securitySchemes": {"bearerAuth": {"type": "http", "scheme": "bearer"}},
                            "schemas": OPENAPI_SCHEMAS},
             "paths": paths}
@@ -185,7 +187,12 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 elif path == "/v1/projects":
                     result = service.projects()
                 elif path == "/v1/openapi.json":
-                    result = openapi_contract()
+                    if public_host is None:
+                        result = openapi_contract()
+                    else:
+                        port = self.server.server_port
+                        authority = public_host if port == 443 else f"{public_host}:{port}"
+                        result = openapi_contract(f"https://{authority}")
                 else:
                     result = operation_inventory(service.instance_id)
             except (ValueError, OSError, UnicodeError):

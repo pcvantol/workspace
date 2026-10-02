@@ -56,6 +56,10 @@ and instance pin remain required for versioned data routes. Source and
 installed-wheel local TLS tests use an ephemeral test certificate trusted only
 inside the test process; they do not install trust on either Mac. No production
 certificate or signer/Keychain resource is used by those tests.
+The authenticated OpenAPI document from an HTTPS listener advertises the
+configured HTTPS authority and actual port; it never advertises a plaintext
+loopback address to a remote HTTPS Client. CLI OpenAPI remains the historical
+local template because it has no active listener context.
 
 Workspace Server is a headless installed, independently restartable service. It owns server-authoritative Workspace project/control/governance state in a Workspace central runtime-storage root outside Git/source checkouts, with its product-owned SQL database plus files, artifacts, logs, backups and cache. It exposes a versioned HTTP API over interface-neutral Workspace application services and is launchd-managed on macOS. It projects Forge/EP truth through their versioned authenticated HTTP APIs; it does not take planning, execution, queue, lease, evidence or repository authority and never reads a peer database.
 

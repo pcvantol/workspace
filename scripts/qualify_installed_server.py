@@ -78,10 +78,11 @@ def verify_installed_tls(server_exe, root, env):
     instance_id = json.loads((tls_root / "instance.json").read_text())["instance_id"]
     token = (tls_root / "token").read_text().strip()
 
-    def get(request_host, credential=None, pin=None, origin=None, context=trusted):
+    def get(request_host, credential=None, pin=None, origin=None, context=trusted,
+            path="/v1/status"):
         connection = http.client.HTTPSConnection("localhost", port, timeout=2, context=context)
         try:
-            connection.putrequest("GET", "/v1/status", skip_host=True)
+            connection.putrequest("GET", path, skip_host=True)
             connection.putheader("Host", request_host)
             if credential is not None:
                 connection.putheader("Authorization", "Bearer " + credential)
@@ -107,6 +108,9 @@ def verify_installed_tls(server_exe, root, env):
         else:
             raise RuntimeError("installed HTTPS Server did not become ready")
         assert get(host, token, instance_id, f"https://{host}")[0] == 200
+        openapi_status, openapi = get(host, token, instance_id, path="/v1/openapi.json")
+        assert openapi_status == 200 and openapi["servers"] == [
+            {"url": f"https://{host}"}]
         assert get("foreign.example:" + str(port), token, instance_id) == (403, {"error": "HOST_DENIED"})
         assert get(host, token, instance_id, f"http://{host}") == (403, {"error": "ORIGIN_DENIED"})
         assert get(host, "wrong", instance_id) == (401, {"error": "UNAUTHORIZED"})
