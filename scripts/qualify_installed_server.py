@@ -7,6 +7,7 @@ import http.client
 import json
 import os
 from pathlib import Path
+import re
 import signal
 import socket
 import subprocess
@@ -399,6 +400,10 @@ def verify_installed_response_schemas(url, token, instance_id, api):
     for field in ("id", "name"):
         assert schemas["Project"]["properties"][field]["minLength"] == 1
         assert schemas["Project"]["properties"][field]["maxLength"] == 120
+    status_version = schemas["Status"]["properties"]["version"]["pattern"]
+    assert status_version == schemas["Capabilities"]["properties"]["product_version"]["pattern"]
+    assert re.fullmatch(status_version, json.loads(read(url + "/v1/status", token=token,
+                                                     instance=instance_id)[1])["version"])
 
 
 def verify_browser_observation(page, expected):

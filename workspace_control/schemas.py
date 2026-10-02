@@ -1,6 +1,7 @@
 """Response shapes for the implemented own read-only HTTP contract."""
 
 INSTANCE_ID = {"type": "string", "pattern": "^[0-9a-f]{32}$"}
+PRODUCT_VERSION = {"type": "string", "pattern": r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$"}
 PROJECT_STATES = ["UNCONFIGURED", "EMPTY", "PARTIAL", "STALE", "AVAILABLE"]
 
 OPENAPI_SCHEMAS = {
@@ -11,7 +12,7 @@ OPENAPI_SCHEMAS = {
     "Status": {
         "type": "object", "additionalProperties": False,
         "required": ["instance_id", "version", "state", "project_source"],
-        "properties": {"instance_id": INSTANCE_ID, "version": {"type": "string"},
+        "properties": {"instance_id": INSTANCE_ID, "version": PRODUCT_VERSION,
                        "state": {"type": "string", "enum": ["READY"]},
                        "project_source": {"type": "string", "enum": PROJECT_STATES + ["SOURCE_UNAVAILABLE"]}},
     },
@@ -45,7 +46,7 @@ OPENAPI_SCHEMAS = {
         "required": ["schema_version", "product_version", "instance_id", "operations",
                      "peer_operations_qualified"],
         "properties": {"schema_version": {"type": "integer", "enum": [1]},
-                       "product_version": {"type": "string"}, "instance_id": INSTANCE_ID,
+                       "product_version": PRODUCT_VERSION, "instance_id": INSTANCE_ID,
                        "operations": {"type": "array", "items": {"$ref": "#/components/schemas/Operation"}},
                        "peer_operations_qualified": {"type": "boolean", "enum": [False]}},
     },

@@ -6,6 +6,7 @@ import importlib
 import io
 import os
 from pathlib import Path
+import re
 import tempfile
 import threading
 import time
@@ -224,6 +225,12 @@ class ReadOnlyTests(unittest.TestCase):
         for field in ("id", "name"):
             self.assertEqual(schemas["Project"]["properties"][field]["minLength"], 1)
             self.assertEqual(schemas["Project"]["properties"][field]["maxLength"], 120)
+        status_version = schemas["Status"]["properties"]["version"]["pattern"]
+        inventory_version = schemas["Capabilities"]["properties"]["product_version"]["pattern"]
+        self.assertEqual(status_version, inventory_version)
+        self.assertIsNotNone(re.fullmatch(status_version, self.service.status()["version"]))
+        for invalid_version in ("2.4", "02.4.50", "2.4.50-rc1", "2.4.50.1"):
+            self.assertIsNone(re.fullmatch(status_version, invalid_version))
         self.assertTrue(all(api["paths"][path]["get"]["responses"]["403"]["description"] ==
                             "Host or Origin denied" for path in ROUTES))
         public = api["paths"]["/v1/identity"]["get"]
