@@ -105,6 +105,20 @@ function clearCapabilities() {
   peerState.textContent = `${copy.peerOperations}: ${label('UNQUALIFIED')}`;
   capabilities.replaceChildren();
 }
+function validProjectCatalogue(catalogue) {
+  if (!catalogue || !Array.isArray(catalogue.projects)) return false;
+  if (!catalogue.projects.every(item => item && typeof item.id === 'string' && item.id.trim() &&
+      typeof item.name === 'string' && item.name.trim())) return false;
+  if (new Set(catalogue.projects.map(item => item.id)).size !== catalogue.projects.length) return false;
+  if (!['UNCONFIGURED', 'EMPTY', 'PARTIAL', 'STALE', 'AVAILABLE'].includes(catalogue.state)) return false;
+  if (typeof catalogue.partial !== 'boolean' || typeof catalogue.stale !== 'boolean') return false;
+  if (catalogue.state === 'UNCONFIGURED') {
+    return catalogue.source === null && catalogue.projects.length === 0 &&
+      !catalogue.partial && !catalogue.stale;
+  }
+  return ['LOCAL', 'DEMO'].includes(catalogue.source) &&
+    typeof catalogue.observed_at === 'string' && catalogue.observed_at.length > 0;
+}
 document.getElementById('forget').addEventListener('click', () => {
   connectionAttempt += 1;
   localStorage.removeItem('workspace.instanceId');
@@ -183,12 +197,9 @@ document.getElementById('connect').addEventListener('click', async () => {
     if (projectResponse.status === 401) throw new Error('UNAUTHORIZED');
     if (projectResponse.status === 409) throw new Error('WRONG_INSTANCE');
     if (!projectResponse.ok) throw new Error('UNAVAILABLE');
-    const catalogue = await projectResponse.json();
+    const catalogue = await projectResponse.json().catch(() => null);
     if (attempt !== connectionAttempt) return;
-    if (catalogue.state !== 'UNCONFIGURED' &&
-        (typeof catalogue.observed_at !== 'string' || catalogue.observed_at.length === 0)) {
-      throw new Error('UNAVAILABLE');
-    }
+    if (!validProjectCatalogue(catalogue)) return;
     const labels = [catalogue.state];
     if (catalogue.stale && catalogue.partial) labels.push('PARTIAL');
     if (catalogue.projects.length === 0 && !['EMPTY', 'UNCONFIGURED'].includes(catalogue.state)) labels.push('EMPTY');

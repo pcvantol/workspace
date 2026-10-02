@@ -499,17 +499,29 @@ def verify_browser_project_error_semantics(page, instance_root):
         page.locator("#connect").click()
         page.get_by_text("Before error (before-error)").wait_for()
         verify_browser_observation(page, f"Observed: {observed}")
-    def missing_observation(route):
-        route.fulfill(status=200, content_type="application/json",
-                      body=json.dumps({"state": "AVAILABLE", "source": "LOCAL",
-                                       "partial": False, "stale": False,
-                                       "projects": [{"id": "incomplete", "name": "Incomplete"}]}))
-    page.route("**/v1/projects", missing_observation)
-    page.locator("#connect").click()
-    page.get_by_role("status").get_by_text("UNAVAILABLE").wait_for()
-    assert page.locator("#projects li").count() == 0
-    verify_browser_observation(page, "No observation")
-    page.unroute("**/v1/projects", missing_observation)
+    valid = {"state": "AVAILABLE", "source": "LOCAL", "partial": False, "stale": False,
+             "observed_at": observed, "projects": [{"id": "before-error", "name": "Before error"}]}
+    expected_pin = page.evaluate("localStorage.getItem('workspace.instanceId')")
+    for invalid in ({key: value for key, value in valid.items() if key != "projects"},
+                    {**valid, "projects": [{"id": "", "name": "Unnamed"}]},
+                    {**valid, "projects": [{"id": "before-error", "name": 3}]},
+                    {key: value for key, value in valid.items() if key != "observed_at"},
+                    {**valid, "state": "UNCONFIGURED"}, "{"):
+        def malformed(route):
+            route.fulfill(status=200, content_type="application/json",
+                          body=invalid if isinstance(invalid, str) else json.dumps(invalid))
+        page.route("**/v1/projects", malformed)
+        page.locator("#connect").click()
+        page.get_by_role("status").get_by_text("CONNECTED").wait_for()
+        page.locator("#project-state").get_by_text("UNAVAILABLE").wait_for()
+        assert page.locator("#capability-state").inner_text() == "AVAILABLE"
+        assert page.locator("#capabilities li").count() > 0
+        assert page.evaluate("localStorage.getItem('workspace.instanceId')") == expected_pin
+        assert page.locator("#projects li").count() == 0
+        verify_browser_observation(page, "No observation")
+        page.unroute("**/v1/projects", malformed)
+        page.locator("#connect").click()
+        page.get_by_text("Before error (before-error)").wait_for()
     catalogue.unlink()
     page.locator("#connect").click()
     page.locator("#project-state").get_by_text("UNCONFIGURED").wait_for()
