@@ -966,7 +966,11 @@ def main(wheel):
             assert b"fetch('/v1/capabilities'" in read(first_url + "/client.js")[1]
             from playwright.sync_api import sync_playwright
             with sync_playwright() as playwright:
-                browser = playwright.chromium.launch(headless=True, executable_path="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
+                chrome = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
+                launch_options = {"headless": True}
+                if chrome.is_file():
+                    launch_options["executable_path"] = str(chrome)
+                browser = playwright.chromium.launch(**launch_options)
                 verify_browser_frame_denial(browser, first_url)
                 page = browser.new_page(locale="en-US")
                 _verify_browser_bindings(page, first_url, token, first_id, second_id, first)
