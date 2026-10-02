@@ -428,6 +428,7 @@ def verify_browser_locales(browser, url, token):
             for readback in ("#project-readback", "#capability-readback"):
                 assert page.locator(readback).get_attribute("aria-live") == "polite"
                 assert page.locator(readback).get_attribute("aria-atomic") == "true"
+            assert page.locator("#project-readback #projects").count() == 1
             assert page.locator("#capability-readback #capabilities").count() == 1
             assert page.locator("label[for=token]").inner_text() == token_label
             page.locator("#token").fill("wrong")
@@ -443,6 +444,7 @@ def verify_browser_locales(browser, url, token):
             assert capability in page.locator("#capabilities li").all_text_contents()
             assert capability in page.locator("#capability-readback").inner_text()
             assert page.locator("#projects li").inner_text().endswith(demo)
+            assert page.locator("#projects li").inner_text() in page.locator("#project-readback").inner_text()
         finally:
             context.close()
 
