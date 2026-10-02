@@ -544,8 +544,10 @@ class ReadOnlyTests(unittest.TestCase):
         target = self.root / "projects.json"
         spellings = (f"{week.year}-W{week.week:02d}-{week.weekday}T{now:%H:%M:%S}+00:00",
                      f"{week.year}-W{week.week:02d}-{week.weekday}T{now:%H:%M}+00:00",
+                     f"{week.year}-W{week.week:02d}-{week.weekday}T{now:%H:%M}+0000",
                      now.strftime("%Y%m%dT%H%M%S+0000"),
                      now.strftime("%Y%m%dT%H%M+0000"),
+                     now.strftime("%Y%m%dT%H:%M+00:00"),
                      now.strftime("%Y-%m-%dT%H:%M:%S+00"))
         for observed_at in spellings:
             with self.subTest(observed_at=observed_at):
@@ -556,7 +558,7 @@ class ReadOnlyTests(unittest.TestCase):
                 self.assertEqual(code, 200)
                 self.assertEqual(json.loads(body)["observed_at"], observed_at)
                 expected = now.replace(second=0, microsecond=0) if observed_at in (
-                    spellings[1], spellings[3]) else now.replace(microsecond=0)
+                    spellings[1], spellings[2], spellings[4], spellings[5]) else now.replace(microsecond=0)
                 self.assertEqual(_observed_datetime(observed_at), expected)
         for observed_at in (f"{week.year}-W54-1T{now:%H:%M:%S}+00:00",
                             now.strftime("%Y-%m-%dT%H:%M:%S+25"),
