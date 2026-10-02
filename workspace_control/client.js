@@ -133,6 +133,21 @@ function validProjectCatalogue(catalogue) {
   return catalogue.state === expectedState && ['LOCAL', 'DEMO'].includes(catalogue.source) &&
     typeof catalogue.observed_at === 'string' && catalogue.observed_at.length > 0;
 }
+const ownOperations = {
+  'identity.read': {exposure: 'HTTP_EXPOSED', auth: 'PUBLIC', method: 'GET', path: '/v1/identity'},
+  'status.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/status', local_cli: 'status'},
+  'projects.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/projects', local_cli: 'projects'},
+  'openapi.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/openapi.json', local_cli: 'openapi'},
+  'capabilities.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/capabilities', local_cli: 'capabilities'},
+  'instance.init': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'init'},
+  'server.serve': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'serve'}
+};
+function validOwnOperation(operation) {
+  if (!operation || !Object.hasOwn(ownOperations, operation.id)) return false;
+  const expected = ownOperations[operation.id];
+  return Object.keys(operation).length === Object.keys(expected).length + 1 &&
+    Object.entries(expected).every(([key, value]) => operation[key] === value);
+}
 document.getElementById('forget').addEventListener('click', () => {
   connectionAttempt += 1;
   localStorage.removeItem('workspace.instanceId');
@@ -199,13 +214,14 @@ document.getElementById('connect').addEventListener('click', async () => {
           inventory.instance_id !== identity.instance_id) {
         throw new Error('WRONG_INSTANCE');
       }
-      if (inventory && inventory.schema_version === 1 && inventory.instance_id === identity.instance_id &&
+      if (inventory && Object.keys(inventory).length === 5 &&
+          ['schema_version', 'product_version', 'instance_id', 'operations', 'peer_operations_qualified']
+            .every(key => Object.hasOwn(inventory, key)) &&
+          inventory.schema_version === 1 && inventory.instance_id === identity.instance_id &&
           inventory.product_version === status.version &&
           inventory.peer_operations_qualified === false && Array.isArray(inventory.operations) &&
-          inventory.operations.length > 0 &&
-          inventory.operations.every(operation => operation && typeof operation.id === 'string' &&
-            operation.id.trim().length > 0 &&
-            ['HTTP_EXPOSED', 'LOCAL_ONLY_ADMIN'].includes(operation.exposure)) &&
+          inventory.operations.length === Object.keys(ownOperations).length &&
+          inventory.operations.every(validOwnOperation) &&
           new Set(inventory.operations.map(operation => operation.id)).size === inventory.operations.length) {
         capabilityState.textContent = label('AVAILABLE');
         for (const operation of inventory.operations) {

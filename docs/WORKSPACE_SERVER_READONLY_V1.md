@@ -161,6 +161,11 @@ the Client adds no operation or peer authority.
 The Client displays the own operation inventory only when its product version
 matches the authenticated status and the inventory has nonempty, unique
 operation IDs and at least one operation.
+It also requires the own five-field inventory envelope and the complete
+version-matched set of own operation IDs with their exact HTTP paths, methods,
+auth modes and local CLI bindings. Undeclared peer-authority fields, missing
+operation auth and route/method contradictions leave only own capabilities
+UNAVAILABLE.
 An inconsistent inventory remains visibly UNAVAILABLE without claiming peer
 qualification; project readback and the instance pin remain independent.
 The first-slice browser shell chooses en, nl, de, fr or es from the browser's

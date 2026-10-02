@@ -691,11 +691,31 @@ def verify_browser_inventory_identity_mismatch(page, other_id, expected_pin):
         page.unroute("**/v1/capabilities", foreign_inventory)
 
 
+def _alter_inventory_operation(inventory, operation_id, changes=None, drop=None):
+    operations = []
+    for operation in inventory["operations"]:
+        item = operation.copy()
+        if item["id"] == operation_id:
+            item.update(changes or {})
+            if drop:
+                item.pop(drop, None)
+        operations.append(item)
+    return {**inventory, "operations": operations}
+
+
 def verify_browser_inventory_consistency(page, url, token, instance_id):
     """A contradictory own inventory must not appear as available operations."""
     inventory = json.loads(read(url + "/v1/capabilities", token=token, instance=instance_id)[1])
     invalid = (
         {**inventory, "product_version": "0.0.0"},
+        {**inventory, "peer_authority": True},
+        _alter_inventory_operation(inventory, "status.read", {"peer_qualified": True}),
+        _alter_inventory_operation(inventory, "status.read", drop="auth"),
+        _alter_inventory_operation(inventory, "status.read", {"method": "POST"}),
+        _alter_inventory_operation(inventory, "status.read", {"auth": "PUBLIC"}),
+        _alter_inventory_operation(inventory, "status.read", {"path": "//evil.example/v1/status"}),
+        _alter_inventory_operation(inventory, "status.read", {"path": "/v1/status?token=x"}),
+        {**inventory, "operations": inventory["operations"][:-1]},
         {**inventory, "operations": []},
         {**inventory, "operations": inventory["operations"] + [inventory["operations"][0]]},
         {**inventory, "operations": inventory["operations"] + [{"id": "", "exposure": "HTTP_EXPOSED"}]},
