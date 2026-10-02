@@ -29,6 +29,8 @@ OPERATIONS = {
                          "summary": "own operation inventory"},
     "instance.init": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "init",
                       "auth": "PRIVATE_ROOT_OWNER", "summary": "initialize private instance"},
+    "instance.inspect": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "inspect",
+                         "auth": "PRIVATE_ROOT_OWNER", "summary": "inspect private initialization state"},
     "server.serve": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "serve",
                      "auth": "PRIVATE_ROOT_OWNER", "summary": "serve private instance"},
 }

@@ -19,7 +19,7 @@ from urllib.request import Request, urlopen
 
 from workspace_control.cli import main, client_main
 from workspace_control.http import ThreadingHTTPServer, handler_for, serve, ROUTES, OPERATIONS
-from workspace_control.service import Service, _regular_private, initialize
+from workspace_control.service import Service, _regular_private, initialize, inspect
 
 
 class ReadOnlyTests(unittest.TestCase):
@@ -291,7 +291,7 @@ class ReadOnlyTests(unittest.TestCase):
                           if operation["exposure"] == "HTTP_EXPOSED"})
         self.assertEqual({operation["id"] for operation in operations.values()
                           if operation["exposure"] == "LOCAL_ONLY_ADMIN"},
-                         {"instance.init", "server.serve"})
+                         {"instance.init", "instance.inspect", "server.serve"})
         self.assertTrue(all("path" not in operation for operation in operations.values()
                             if operation["exposure"] == "LOCAL_ONLY_ADMIN"))
         self.assertTrue(all(operation["auth"] == "BEARER_PINNED" for operation in operations.values()
@@ -689,6 +689,37 @@ class ReadOnlyTests(unittest.TestCase):
         legacy.pop("init_protocol")
         identity.write_text(json.dumps(legacy))
         self.assertEqual(Service(fresh).instance_id, created)
+
+    def test_inspect_reports_private_init_state_without_secret_or_writes(self):
+        fresh = Path(self.temp.name) / "fresh"
+        fresh.mkdir(mode=0o700)
+        self.assertEqual(inspect(fresh), {"state": "UNINITIALIZED"})
+        self.assertEqual(inspect(self.root), {"state": "READY", "instance_id": self.instance})
+        token = (self.root / "token").read_text().strip()
+        output = io.StringIO()
+        with redirect_stdout(output):
+            self.assertEqual(main(["--root", str(self.root), "inspect"]), 0)
+        self.assertEqual(json.loads(output.getvalue()), {"state": "READY", "instance_id": self.instance})
+        self.assertNotIn(token, output.getvalue())
+        (fresh / "initialized").write_text(self.instance + "\n")
+        (fresh / "initialized").chmod(0)
+        self.assertEqual(inspect(fresh), {"state": "INCOMPLETE"})
+        self.assertEqual((fresh / "initialized").stat().st_mode & 0o777, 0)
+        self.assertRaises(ValueError, initialize, fresh)
+        (fresh / "initialized").unlink()
+        created = initialize(fresh)
+        self.assertEqual(inspect(fresh), {"state": "READY", "instance_id": created})
+        (fresh / "initialized").unlink()
+        self.assertEqual(inspect(fresh), {"state": "INCOMPLETE"})
+        identity = fresh / "instance.json"
+        legacy = json.loads(identity.read_text())
+        legacy.pop("init_protocol")
+        identity.write_text(json.dumps(legacy))
+        self.assertEqual(inspect(fresh), {"state": "READY", "instance_id": created})
+        (fresh / "token").chmod(0o644)
+        self.assertEqual(inspect(fresh), {"state": "INCOMPLETE"})
+        fresh.chmod(0o755)
+        self.assertRaises(ValueError, inspect, fresh)
 
     def test_marker_publication_failure_cannot_start_instance(self):
         fresh = Path(self.temp.name) / "fresh"

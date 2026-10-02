@@ -145,6 +145,37 @@ def _validate_initialization_marker(root_fd, instance_id, marker_required):
         raise ValueError("instance initialization incomplete")
 
 
+def _load_instance(root_fd):
+    identity = _private_json("instance.json", dir_fd=root_fd)
+    token = _validated_token(_regular_private("token", dir_fd=root_fd))
+    instance_id, marker_required = _validated_identity(identity)
+    _validate_initialization_marker(root_fd, instance_id, marker_required)
+    return identity, token
+
+
+def inspect(root):
+    """Classify private initialization state without exposing or changing it."""
+    _, root_fd = _open_private_root(root)
+    try:
+        present = {}
+        for name in ("instance.json", "token", "initialized"):
+            try:
+                os.stat(name, dir_fd=root_fd, follow_symlinks=False)
+            except FileNotFoundError:
+                present[name] = False
+            else:
+                present[name] = True
+        if not any(present.values()):
+            return {"state": "UNINITIALIZED"}
+        try:
+            identity, _ = _load_instance(root_fd)
+        except (OSError, ValueError, UnicodeError):
+            return {"state": "INCOMPLETE"}
+        return {"state": "READY", "instance_id": identity["instance_id"]}
+    finally:
+        os.close(root_fd)
+
+
 def initialize(root):
     """Create the single immutable local identity and secret in an explicit root."""
     _, root_fd = _open_private_root(root)
@@ -198,10 +229,7 @@ class Service:
             raise
 
     def _load_instance(self):
-        self.identity = _private_json("instance.json", dir_fd=self._root_fd)
-        self.token = _validated_token(_regular_private("token", dir_fd=self._root_fd))
-        instance_id, marker_required = _validated_identity(self.identity)
-        _validate_initialization_marker(self._root_fd, instance_id, marker_required)
+        self.identity, self.token = _load_instance(self._root_fd)
 
     def close(self):
         with self._root_lock:

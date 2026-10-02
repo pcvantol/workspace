@@ -7,7 +7,7 @@ import sys
 import webbrowser
 
 from .http import openapi_contract, operation_inventory, serve
-from .service import Service, initialize
+from .service import Service, initialize, inspect
 
 
 def main(argv=None):
@@ -15,6 +15,7 @@ def main(argv=None):
     parser.add_argument("--root", required=True, help="existing private absolute data root")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("init")
+    commands.add_parser("inspect")
     commands.add_parser("status")
     commands.add_parser("projects")
     commands.add_parser("capabilities")
@@ -25,6 +26,8 @@ def main(argv=None):
     try:
         if args.command == "init":
             print(json.dumps({"instance_id": initialize(args.root)}))
+        elif args.command == "inspect":
+            print(json.dumps(inspect(args.root), sort_keys=True))
         elif args.command == "status":
             print(json.dumps(Service(args.root).status(), sort_keys=True))
         elif args.command == "projects":

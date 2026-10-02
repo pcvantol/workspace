@@ -329,6 +329,13 @@ def verify_installed_capabilities(server_exe, instance_root, cwd, env, url,
     assert inventory["openapi.read"]["local_cli"] == "openapi"
     assert inventory["instance.init"]["exposure"] == "LOCAL_ONLY_ADMIN"
     assert "path" not in inventory["instance.init"]
+    assert inventory["instance.inspect"]["local_cli"] == "inspect"
+    assert "path" not in inventory["instance.inspect"]
+    inspected = subprocess.run([str(server_exe), "--root", str(instance_root), "inspect"],
+                               cwd=cwd, env=env, capture_output=True, text=True)
+    assert inspected.returncode == 0 and inspected.stderr == ""
+    assert json.loads(inspected.stdout) == {"state": "READY", "instance_id": instance_id}
+    assert token not in inspected.stdout
 
 
 def _verify_capabilities_cli(server_exe, instance_root, cwd, env, url,
