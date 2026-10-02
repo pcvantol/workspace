@@ -66,7 +66,8 @@ local template because it has no active listener context.
 After PR #119 merged, an installed Python 3.14 Server 2.6.0 on `macmini-m6`
 listened at `192.168.1.134:8766` using a disposable one-day certificate with
 that IP in its SAN. The separate `MBP-van-Peter` Mac reached it over LAN. Curl
-on the client Mac validated the supplied temporary certificate (`TLS_VERIFY=0`)
+on the client Mac validated the supplied temporary certificate with
+`--cacert` (`curl ssl_verify_result=0`, meaning verification succeeded)
 and an authenticated, instance-pinned `GET /v1/status` returned HTTP 200 and
 the Server's real READY/UNCONFIGURED response. Without the test CA, TLS failed
 before HTTP; with CA, missing bearer returned 401, wrong pin 409 and foreign
