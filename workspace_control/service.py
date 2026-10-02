@@ -172,7 +172,9 @@ def inspect(root):
             identity, _ = _load_instance(root_fd)
         except (OSError, ValueError, UnicodeError):
             return {"state": "INCOMPLETE", "files": present}
-        return {"state": "READY", "files": present, "instance_id": identity["instance_id"]}
+        validated = {"identity": True, "token": True,
+                     "marker": "init_protocol" in identity}
+        return {"state": "READY", "files": validated, "instance_id": identity["instance_id"]}
     finally:
         os.close(root_fd)
 

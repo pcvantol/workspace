@@ -728,6 +728,22 @@ class ReadOnlyTests(unittest.TestCase):
         fresh.chmod(0o755)
         self.assertRaises(ValueError, inspect, fresh)
 
+    def test_inspect_ready_flags_follow_validated_state_after_stale_presence_scan(self):
+        real_stat = os.stat
+        missed = {"instance.json", "token"}
+
+        def stale_first_scan(path, *args, **kwargs):
+            if path in missed and kwargs.get("dir_fd") is not None:
+                missed.remove(path)
+                raise FileNotFoundError(path)
+            return real_stat(path, *args, **kwargs)
+
+        with patch("workspace_control.service.os.stat", side_effect=stale_first_scan):
+            result = inspect(self.root)
+        self.assertEqual(result, {"state": "READY", "instance_id": self.instance,
+                                  "files": {"identity": True, "token": True, "marker": True}})
+        self.assertFalse(missed)
+
     def test_marker_publication_failure_cannot_start_instance(self):
         fresh = Path(self.temp.name) / "fresh"
         fresh.mkdir(mode=0o700)
