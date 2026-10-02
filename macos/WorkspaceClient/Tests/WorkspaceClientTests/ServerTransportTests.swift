@@ -208,7 +208,9 @@ final class ServerTransportTests: XCTestCase {
         XCTAssertTrue(utcMicroseconds.isValid)
         for sourceTime in ["2026-W40-5T12:00:00+02:00", "20261002T120000+0200",
                            "2026-10-02T12:00:00+0200", "2026-10-02 12:00:00+02:00",
-                           "2026-10-02T12:00:00.123456+02:00"] {
+                           "2026-10-02T12:00:00.123456+02:00", "20261002T12:00:00+02:00",
+                           "2026-W40-5T120000+0200", "2026-10-02T12:00+02:00",
+                           "2026-10-02T12+02:00"] {
             let projected = ForgeObservation(schema_version: 1, state: "OBSERVED",
                 instance_id: current.instance_id, repository_id: current.repository_id,
                 product_version: "2.7.59", availability: "AVAILABLE", freshness: "CURRENT",

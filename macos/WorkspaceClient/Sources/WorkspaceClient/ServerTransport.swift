@@ -123,29 +123,36 @@ struct ForgeObservation: Decodable, Sendable {
     }
 
     private func validSourceTime(_ value: String) -> Bool {
-        let date = "([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{8}|[0-9]{4}-W[0-9]{2}-[1-7])"
-        let time = "[0-9]{2}:?[0-9]{2}:?[0-9]{2}(\\.[0-9]{1,6})?"
-        let zone = "(Z|[+-][0-9]{2}(:?[0-9]{2})?)"
-        guard matches(value, "^\(date)[T ]\(time)\(zone)$") else { return false }
-        let dateFormats = ["yyyy-MM-dd", "yyyyMMdd", "YYYY-'W'ww-e"]
-        let zoneFormats = ["XXXXX", "XX", "X"]
-        for dateFormat in dateFormats {
-            let timeFormat = dateFormat == "yyyyMMdd" ? "HHmmss" : "HH:mm:ss"
-            for separator in ["'T'", " "] {
-                for zoneFormat in zoneFormats {
-                    for fraction in ["", ".SSSSSS"] {
-                        let formatter = DateFormatter()
-                        formatter.locale = Locale(identifier: "en_US_POSIX")
-                        formatter.calendar = Calendar(identifier: .iso8601)
-                        formatter.timeZone = TimeZone(secondsFromGMT: 0)
-                        formatter.isLenient = false
-                        formatter.dateFormat = dateFormat + separator + timeFormat + fraction + zoneFormat
-                        if formatter.date(from: value) != nil { return true }
-                    }
-                }
-            }
+        guard value.count <= 128 else { return false }
+        // The Server validates and preserves Python's ISO week, compact and reduced-time spellings.
+        let pattern = "^([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{8}|[0-9]{4}-W[0-9]{2}-[1-7]).([0-9]{2})(?::?([0-9]{2}))?(?::?([0-9]{2}))?(?:[.,][0-9]+)?(Z|[+-][0-9]{2}(?::?[0-9]{2})?(?::?[0-9]{2})?)$"
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: value, range: NSRange(value.startIndex..., in: value)) else {
+            return false
         }
-        return false
+        func part(_ index: Int) -> String? {
+            guard let range = Range(match.range(at: index), in: value) else { return nil }
+            return String(value[range])
+        }
+        guard let date = part(1), let hour = part(2), let zone = part(5),
+              let h = Int(hour), h < 24,
+              part(3).flatMap(Int.init).map({ $0 < 60 }) ?? true,
+              part(4).flatMap(Int.init).map({ $0 < 60 }) ?? true else { return false }
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.calendar = Calendar(identifier: .iso8601)
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.isLenient = false
+        formatter.dateFormat = date.contains("W") ? "YYYY-'W'ww-e" :
+            (date.contains("-") ? "yyyy-MM-dd" : "yyyyMMdd")
+        guard formatter.date(from: date) != nil else { return false }
+        if zone == "Z" { return true }
+        let offset = String(zone.dropFirst()).replacingOccurrences(of: ":", with: "")
+        guard [2, 4, 6].contains(offset.count), let zoneHours = Int(offset.prefix(2)),
+              zoneHours < 24 else { return false }
+        if offset.count >= 4 && (Int(offset.dropFirst(2).prefix(2)) ?? 60) >= 60 { return false }
+        if offset.count == 6 && (Int(offset.suffix(2)) ?? 60) >= 60 { return false }
+        return true
     }
 
     var isValid: Bool {
