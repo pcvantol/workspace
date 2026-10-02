@@ -31,6 +31,8 @@ GET and HEAD accept only origin-form targets beginning with one `/`. An
 absolute-form URI or `//` authority target is INVALID_PATH (400), even with a
 valid loopback Host header; its embedded authority cannot be ignored while
 serving a public or authenticated route.
+Malformed bracketed authorities receive the same 400 response rather than
+aborting the connection during URL parsing.
 The target must also omit query and fragment delimiters entirely. Even an
 empty trailing `?` or `#` is INVALID_PATH (400) rather than an alias for a
 declared read route. The Server rejects these before public or protected route

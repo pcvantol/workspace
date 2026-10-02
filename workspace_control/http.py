@@ -7,7 +7,6 @@ import json
 import os
 import secrets
 import stat
-from urllib.parse import urlsplit
 
 from . import __version__
 from .schemas import OPENAPI_SCHEMAS, SUCCESS_SCHEMA
@@ -121,11 +120,12 @@ def handler_for(service):
             if not self._trusted_origin():
                 return
             target = self.requestline.split()[1]
-            parsed = urlsplit(target)
-            path = parsed.path
-            if (not target.startswith("/") or target.startswith("//") or parsed.scheme or parsed.netloc or
-                    "?" in target or "#" in target or "%" in path or ".." in path):
+            # Only literal origin-form paths are accepted; URL parsing can raise
+            # on malformed authority targets before they reach the 400 response.
+            if (not target.startswith("/") or target.startswith("//") or
+                    "?" in target or "#" in target or "%" in target or ".." in target):
                 return self._reply(400, {"error": "INVALID_PATH"})
+            path = target
             if path == "/":
                 html = importlib.resources.files("workspace_control").joinpath("client.html").read_bytes()
                 return self._reply(200, html, "text/html; charset=utf-8")
