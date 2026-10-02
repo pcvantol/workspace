@@ -220,6 +220,10 @@ class ReadOnlyTests(unittest.TestCase):
                 self.assertTrue(set(body) <= set(schema["properties"]))
         self.assertEqual(schemas["Projects"]["properties"]["projects"]["items"]["$ref"],
                          "#/components/schemas/Project")
+        self.assertEqual(schemas["Projects"]["properties"]["projects"]["maxItems"], 100)
+        for field in ("id", "name"):
+            self.assertEqual(schemas["Project"]["properties"][field]["minLength"], 1)
+            self.assertEqual(schemas["Project"]["properties"][field]["maxLength"], 120)
         self.assertTrue(all(api["paths"][path]["get"]["responses"]["403"]["description"] ==
                             "Host or Origin denied" for path in ROUTES))
         public = api["paths"]["/v1/identity"]["get"]
@@ -591,6 +595,12 @@ class ReadOnlyTests(unittest.TestCase):
                  {"source": "LOCAL", "projects": [], "observed_at": "2026-10-01T00:00:00"},
                  {"source": "LOCAL", "projects": [], "observed_at": "2999-01-01T00:00:00Z"}]
         cases.append({"source": "LOCAL", "projects": [], "partial": "yes", "observed_at": "2026-10-01T00:00:00Z"})
+        cases.extend(({"source": "LOCAL", "observed_at": "2026-10-01T00:00:00Z",
+                       "projects": [{"id": "x" * 121, "name": "Name"}]},
+                      {"source": "LOCAL", "observed_at": "2026-10-01T00:00:00Z",
+                       "projects": [{"id": "id", "name": "N" * 121}]},
+                      {"source": "LOCAL", "observed_at": "2026-10-01T00:00:00Z",
+                       "projects": [{"id": str(i), "name": "Name"} for i in range(101)]}))
         for value in cases:
             target.write_text(json.dumps(value))
             target.chmod(0o600)

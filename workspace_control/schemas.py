@@ -17,13 +17,15 @@ OPENAPI_SCHEMAS = {
     },
     "Project": {
         "type": "object", "additionalProperties": False, "required": ["id", "name"],
-        "properties": {"id": {"type": "string"}, "name": {"type": "string"}},
+        "properties": {"id": {"type": "string", "minLength": 1, "maxLength": 120},
+                       "name": {"type": "string", "minLength": 1, "maxLength": 120}},
     },
     "Projects": {
         "type": "object", "additionalProperties": False,
         "required": ["state", "projects", "source", "partial", "stale"],
         "properties": {"state": {"type": "string", "enum": PROJECT_STATES},
-                       "projects": {"type": "array", "items": {"$ref": "#/components/schemas/Project"}},
+                       "projects": {"type": "array", "maxItems": 100,
+                                    "items": {"$ref": "#/components/schemas/Project"}},
                        "source": {"type": "string", "nullable": True, "enum": ["LOCAL", "DEMO", None]},
                        "observed_at": {"type": "string",
                                        "description": "Timezone-aware ISO 8601 source timestamp; original spelling preserved"},
