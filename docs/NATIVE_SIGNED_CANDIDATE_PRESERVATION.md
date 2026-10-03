@@ -8,6 +8,10 @@ independently authorized L1/L4 resource window, after the signed builder and
 
 Choose a **new** candidate directory beneath an existing owner-owned mode
 `0700` directory in the user's home, outside the checkout and outside `/tmp`.
+At preservation time the source revision must exactly match the canonical
+Workspace origin's live protected `main` head; the receipt records that
+observation. Reopen can then verify the saved receipt and signed bytes without
+requiring network access after a restart.
 The tool copies the ZIP and its signed candidate manifest to a mode `0700`
 staging directory with mode `0600` files, checks both copied SHA-256 digests,
 then atomically publishes the directory with an exclusive no-replace rename.

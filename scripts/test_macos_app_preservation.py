@@ -29,6 +29,7 @@ BUILDER = hashlib.sha256(subprocess.run(
 EXPECTED = {
     "source_revision": REVISION, "source_tree": TREE, "builder_sha256": BUILDER,
     "version": "2.8.2", "team_id": "ABCDEFGHIJ", "leaf_sha1": "A" * 40,
+    "protected_main_at_preservation": REVISION,
 }
 MANIFEST = {
     "bundle_identifier": "com.pcvantol.workspace.native-client",
@@ -81,6 +82,29 @@ class PreservationTests(unittest.TestCase):
             candidate.source_binding(REVISION, TREE, "0" * 64)
         with self.assertRaisesRegex(ValueError, "malformed"):
             candidate.source_binding("../../main", TREE, BUILDER)
+        with patch.object(candidate, "protected_main_head", return_value="0" * 40):
+            with self.assertRaisesRegex(ValueError, "not current protected"):
+                candidate.source_binding(REVISION, TREE, BUILDER, require_remote_main=True)
+        with patch.object(candidate, "protected_main_head", return_value=REVISION):
+            candidate.source_binding(REVISION, TREE, BUILDER, require_remote_main=True)
+
+    def test_protected_main_requires_canonical_origin_and_exact_remote_ref(self) -> None:
+        def response(stdout: str):
+            return argparse.Namespace(stdout=stdout)
+
+        with patch.object(candidate.subprocess, "run", side_effect=[
+            response("https://github.com/pcvantol/workspace.git\n"),
+            response(REVISION + "\trefs/heads/main\n"),
+        ]):
+            self.assertEqual(candidate.protected_main_head(), REVISION)
+        with patch.object(candidate.subprocess, "run", return_value=response("https://elsewhere.invalid/repo.git\n")):
+            with self.assertRaisesRegex(ValueError, "noncanonical"):
+                candidate.protected_main_head()
+        with patch.object(candidate.subprocess, "run", side_effect=[
+            response("https://github.com/pcvantol/workspace.git\n"), response(""),
+        ]):
+            with self.assertRaisesRegex(ValueError, "unavailable"):
+                candidate.protected_main_head()
 
     def test_destination_is_owner_private_and_nonreplaceable(self) -> None:
         candidate.private_parent(self.destination)
@@ -206,15 +230,17 @@ class PreservationTests(unittest.TestCase):
     def test_preserve_rejects_ad_hoc_and_does_not_publish(self) -> None:
         args = argparse.Namespace(archive=self.archive, manifest=self.manifest,
                                   destination=self.destination, **EXPECTED)
-        with self.assertRaises((ValueError, OSError)):
-            candidate.preserve(args)
+        with patch.object(candidate, "protected_main_head", return_value=REVISION):
+            with self.assertRaisesRegex(ValueError, "candidate manifest schema or mode mismatch"):
+                candidate.preserve(args)
         self.assertFalse(self.destination.exists())
 
     def test_mock_signed_flow_publishes_and_checks_receipt(self) -> None:
         args = argparse.Namespace(archive=self.archive, manifest=self.manifest,
                                   destination=self.destination, **EXPECTED)
         with patch.object(candidate, "check_signed", return_value=MANIFEST), \
-                patch.object(candidate, "readback", return_value=self.handoff()) as reopen:
+                patch.object(candidate, "readback", return_value=self.handoff()) as reopen, \
+                patch.object(candidate, "protected_main_head", return_value=REVISION):
             receipt = candidate.preserve(args)
         self.assertEqual(receipt, candidate.sha256_file(self.destination / "handoff.json"))
         reopen.assert_called_once_with(self.destination, EXPECTED, receipt)

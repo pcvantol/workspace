@@ -50,7 +50,25 @@ def unique_json(path: Path) -> dict:
     return value
 
 
-def source_binding(revision: str, tree: str, builder: str) -> None:
+def protected_main_head() -> str:
+    origin = subprocess.run(
+        ["git", "remote", "get-url", "origin"], cwd=ROOT,
+        check=True, capture_output=True, text=True,
+    ).stdout.strip()
+    if origin != "https://github.com/pcvantol/workspace.git":
+        raise ValueError("noncanonical Workspace origin")
+    remote = subprocess.run(
+        ["git", "ls-remote", "origin", "refs/heads/main"], cwd=ROOT,
+        check=True, capture_output=True, text=True,
+    ).stdout.strip()
+    match = re.fullmatch(r"([0-9a-f]{40})\trefs/heads/main", remote)
+    if match is None:
+        raise ValueError("protected Workspace main is unavailable or ambiguous")
+    return match.group(1)
+
+
+def source_binding(revision: str, tree: str, builder: str,
+                   *, require_remote_main: bool = False) -> None:
     if not SOURCE.fullmatch(revision) or not SOURCE.fullmatch(tree) or not DIGEST.fullmatch(builder):
         raise ValueError("malformed source, tree, or builder digest")
     actual_tree = subprocess.run(
@@ -63,6 +81,8 @@ def source_binding(revision: str, tree: str, builder: str) -> None:
     ).stdout
     if actual_tree != tree or hashlib.sha256(script).hexdigest() != builder:
         raise ValueError("source tree or protected builder mismatch")
+    if require_remote_main and revision != protected_main_head():
+        raise ValueError("candidate source is not current protected Workspace main")
 
 
 def private_parent(destination: Path, *, require_absent: bool = True) -> None:
@@ -159,16 +179,18 @@ def signed_leaf(archive: Path) -> str:
         return hashlib.sha1(Path(str(prefix) + "0").read_bytes()).hexdigest().upper()
 
 
-def expected_fields(args: argparse.Namespace) -> dict:
+def expected_fields(args: argparse.Namespace, *, require_remote_main: bool = False) -> dict:
     if not TEAM.fullmatch(args.team_id) or not LEAF.fullmatch(args.leaf_sha1):
         raise ValueError("malformed Team or Developer ID leaf SHA-1")
-    source_binding(args.source_revision, args.source_tree, args.builder_sha256)
+    source_binding(args.source_revision, args.source_tree, args.builder_sha256,
+                   require_remote_main=require_remote_main)
     if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", args.version):
         raise ValueError("malformed app version")
     return {
         "source_revision": args.source_revision, "source_tree": args.source_tree,
         "builder_sha256": args.builder_sha256, "version": args.version,
         "team_id": args.team_id, "leaf_sha1": args.leaf_sha1,
+        "protected_main_at_preservation": args.source_revision,
     }
 
 
@@ -228,7 +250,7 @@ def readback(destination: Path, expected: dict, receipt_sha256: str) -> dict:
 
 
 def preserve(args: argparse.Namespace) -> str:
-    expected = expected_fields(args)
+    expected = expected_fields(args, require_remote_main=True)
     manifest = check_signed(args.archive, args.manifest, expected)
     handoff = {
         "schema_version": 1, "qualification": "SIGNED_CANDIDATE_VERIFIED",
