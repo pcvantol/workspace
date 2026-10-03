@@ -11,6 +11,8 @@ python3 scripts/test_product_version_operations.py
 python3 scripts/test_release_operation.py
 python3 scripts/test_release_workflow_contract.py
 python3 scripts/test_macos_app_packaging.py
+python3 scripts/test_macos_app_preservation.py
+python3 scripts/validate_macos_preservation_coverage.py
 
 python3 docs/ai-development/validate_projection.py \
   --profile workspace \
