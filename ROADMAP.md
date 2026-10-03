@@ -24,11 +24,18 @@ the Mac mini, signed `.v2` Keychain first pairing and same-signed-bytes relaunch
 and a scoped Forge `OBSERVED` / `AVAILABLE` / **`STALE`** response through
 Workspace Server. Exact artifact and UI/readback evidence is in
 [#208](https://github.com/pcvantol/forge/issues/208#issuecomment-5966912860).
-The temporary test listeners are stopped and the exclusive L1/L4 signer slot
-was released. A genuinely new signed successor, `CURRENT` Forge source
-observation, durable deployment trust and public native release remain
-`NOT_RUN`; the broader WH/WPK parents remain planned. The current first
-installer release and full Forge/EP canary do not gate this Client result.
+The temporary test listeners are stopped. Protected 2.8.2 source on main
+`5910824dbbc4a79f2152603dc6e516c02bc99971` produced a separate private
+Developer ID signed, notarized, stapled and Gatekeeper-accepted candidate ZIP,
+SHA-256 `72cd7d3d37cfc54d43d57e82e030530f0e6de49ed42cd128da2340db2b325e07`.
+Its exact L1/L4 signer slot was released after independent final-ZIP readback;
+[#208 records the receipt](https://github.com/pcvantol/forge/issues/208#issuecomment-5970356007).
+The new signed bytes still need real `.v2` first pairing/cancellation/relaunch
+and 2.8.1→2.8.2 successor behavior, native two-Mac HTTPS/Forge read,
+`CURRENT` Forge source observation and durable deployment trust. Public native
+release remains `NOT_RUN`; the broader WH/WPK parents remain planned. The
+current first installer release and full Forge/EP canary do not gate this
+Client result.
 
 ## Live project roadmap consumer boundary
 
