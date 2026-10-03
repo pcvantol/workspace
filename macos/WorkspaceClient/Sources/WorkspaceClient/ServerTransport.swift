@@ -34,7 +34,8 @@ struct ServerEndpoint: Equatable, Sendable {
 
 enum ClientError: Error, LocalizedError, Equatable {
     case invalidEndpoint, insecureEndpoint, wrongInstance, unauthorized
-    case invalidResponse, unavailable, server(Int), noToken, bindingChanged
+    case invalidResponse, unavailable, tlsUntrusted, tlsFailed, timedOut
+    case server(Int), noToken, bindingChanged
 
     var errorDescription: String? {
         switch self {
@@ -44,9 +45,29 @@ enum ClientError: Error, LocalizedError, Equatable {
         case .unauthorized: "The Server rejected the token."
         case .invalidResponse: "The Server returned an invalid or inconsistent response."
         case .unavailable: "The Server is unavailable. The last successful observation remains labelled with its time."
+        case .tlsUntrusted: "This Mac does not trust the Server's HTTPS certificate or its name. Check the Server address and certificate in macOS."
+        case .tlsFailed: "The secure connection to the Server failed. Check its HTTPS configuration and try again."
+        case .timedOut: "The Server did not respond before the connection timed out. Check the Server and try again."
         case .server(let code): "The Server returned HTTP \(code)."
         case .noToken: "Enter the Server token."
         case .bindingChanged: "The Server address differs from the saved binding. Forget it explicitly before changing Server."
+        }
+    }
+}
+
+private extension ClientError {
+    static func networkFailure(_ error: Error) -> ClientError {
+        guard let urlError = error as? URLError else { return .unavailable }
+        switch urlError.code {
+        case .serverCertificateUntrusted, .serverCertificateHasUnknownRoot,
+             .serverCertificateHasBadDate, .serverCertificateNotYetValid:
+            return .tlsUntrusted
+        case .secureConnectionFailed:
+            return .tlsFailed
+        case .timedOut:
+            return .timedOut
+        default:
+            return .unavailable
         }
     }
 }
@@ -227,7 +248,7 @@ struct ServerTransport: Sendable {
             if Task.isCancelled || (error as? URLError)?.code == .cancelled {
                 throw CancellationError()
             }
-            throw ClientError.unavailable
+            throw ClientError.networkFailure(error)
         }
         guard let http = response as? HTTPURLResponse else { throw ClientError.invalidResponse }
         switch http.statusCode {
