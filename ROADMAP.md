@@ -11,18 +11,24 @@ Python is 3.14.x only. The sequence and open evidence gates are recorded in
 [WH](docs/WORKSPACE_HTTP_API_V1_DAG.json) and
 [WPK](docs/WORKSPACE_PYPI_DISTRIBUTION_V1_DAG.json) DAGs. Finder launch,
 installed-Server HTTP readback and the first exact qualified Forge producer
-read through Workspace Server have local protected evidence. The next native
-gate is the two-Mac app readback with host, trust and authorization qualified.
-The own Server route for the scoped Forge read is protected-delivered in #121;
-the native Client has shown that route's real response in its Finder-launched
-packaged window, protected-delivered in Workspace #122. Remote native trust
-and signing remain open. The same r81 now prepares a Workspace-owned Developer
-ID/notarized candidate from exact protected source before the remote Mac is
-available. Signing awaits a concrete L1/L4 resource confirmation; signed `.v2`
-Keychain behavior, remote host reachability, normal HTTPS trust and packaged
-two-Mac readback retain separate `NOT_RUN` gates. The remote app gate remains
-`NOT_RUN`. The current first installer
-release and full Forge/EP canary do not gate this Client result.
+read through Workspace Server have local protected evidence. The own scoped
+Server route is protected-delivered in #121; the Finder-launched native Client
+showed its real response in #122. Protected main
+`f7ea37e90c28a993c4055805f7d3e699e658e519` also includes the Developer
+ID builder and subsequent native fixes (#124–#126).
+
+The private Workspace 2.8.1 candidate is Developer ID signed, notarized,
+stapled and Gatekeeper accepted. Owner-operated Finder readback on the MacBook
+qualified normal-trust HTTPS to a separately installed Python 3.14 Server on
+the Mac mini, signed `.v2` Keychain first pairing and same-signed-bytes relaunch,
+and a scoped Forge `OBSERVED` / `AVAILABLE` / **`STALE`** response through
+Workspace Server. Exact artifact and UI/readback evidence is in
+[#208](https://github.com/pcvantol/forge/issues/208#issuecomment-5966912860).
+The temporary test listeners are stopped and the exclusive L1/L4 signer slot
+was released. A genuinely new signed successor, `CURRENT` Forge source
+observation, durable deployment trust and public native release remain
+`NOT_RUN`; the broader WH/WPK parents remain planned. The current first
+installer release and full Forge/EP canary do not gate this Client result.
 
 ## Live project roadmap consumer boundary
 

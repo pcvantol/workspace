@@ -42,9 +42,9 @@ class FourLaneEntryTests(unittest.TestCase):
             self.assertFalse(graph['first_slice_checkpoint']['full_parent_qualified'])
         remote = self.http['active_product_priority']
         self.assertEqual(remote['two_mac_host_trust_authorization_gate'],
-                         'INSTALLED_SERVER_REMOTE_HTTPS_HTTP_TRANSPORT_PASS_NATIVE_APP_NOT_RUN')
+                         'SIGNED_NATIVE_APP_NORMAL_TRUST_PASS_TEMPORARY_LEAF')
         self.assertEqual(remote['https_server_listener_gate'], 'PROTECTED_DELIVERED_WORKSPACE_PR_119')
-        self.assertTrue(any('packaged Workspace.app remote readback' in item
+        self.assertTrue(any('durable deployment certificate' in item
                             for item in remote['two_mac_missing']))
         self.assertEqual(remote['forge_read_gate'],
                          'LOCAL_INSTALLED_TWO_SERVER_HTTP_PROTECTED_DELIVERED_WORKSPACE_PR_121')
@@ -52,8 +52,18 @@ class FourLaneEntryTests(unittest.TestCase):
                          'LOCAL_PACKAGED_FINDER_READBACK_PROTECTED_DELIVERED_PR_122_MAIN_CFFBA50')
         self.assertTrue(any('double-clicked in Finder' in item
                             for item in remote['native_forge_visible_evidence']))
-        self.assertEqual(remote['forge_read_remote_https_native_app_gate'], 'NOT_RUN')
-        self.assertEqual(self.package['active_product_priority']['native_client_signed_keychain_trust_gate'], 'NOT_RUN')
+        self.assertEqual(remote['forge_read_remote_https_native_app_gate'],
+                         'PASS_SCOPED_FORGE_2_7_59_AVAILABLE_STALE')
+        self.assertEqual(remote['native_candidate_signed_artifact_gate'],
+                         'PRIVATE_DEVELOPER_ID_NOTARIZED_STAPLED_GATEKEEPER_PASS')
+        self.assertEqual(remote['native_signed_keychain_evidence']['new_signed_successor'], 'NOT_RUN')
+        self.assertEqual(remote['native_current_forge_source_gate'], 'NOT_RUN')
+        self.assertEqual(remote['native_public_release_gate'], 'NOT_RUN')
+        self.assertFalse(remote['native_private_candidate_is_public_release'])
+        package_native = self.package['active_product_priority']
+        self.assertEqual(package_native['native_client_signed_keychain_trust_gate'],
+                         'PARTIAL_PASS_NEW_SIGNED_SUCCESSOR_NOT_RUN')
+        self.assertEqual(package_native['native_client_public_release_gate'], 'NOT_RUN')
 
     def test_http_dependencies_preserved(self):
         self.assertEqual({n['id']: n['depends_on'] for n in self.http['nodes']}, {
