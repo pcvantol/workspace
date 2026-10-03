@@ -183,9 +183,11 @@ final class ClientState: ObservableObject {
                 guard !Task.isCancelled, current == attempt else { return }
                 let newBinding = ServerBinding(endpoint: endpoint.url.absoluteString,
                                                instanceID: result.identity.instance_id)
-                phase = "SAVING"
-                detail = "Saving the verified Server binding in Mac Keychain."
-                try await credentials.save(binding: newBinding, token: token)
+                if stored.binding != newBinding || stored.token != token {
+                    phase = "SAVING"
+                    detail = "Saving the verified Server binding in Mac Keychain."
+                    try await credentials.save(binding: newBinding, token: token)
+                }
                 savedEndpoint = newBinding.endpoint
                 savedInstance = newBinding.instanceID
                 canForgetBinding = true

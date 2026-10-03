@@ -97,6 +97,31 @@ final class PendingSaveCredentials: CredentialStore, @unchecked Sendable {
     }
 }
 
+final class CountingCredentials: CredentialStore, @unchecked Sendable {
+    private let lock = NSLock()
+    private var storedBinding: ServerBinding?
+    private var storedToken: String?
+    private var writes = 0
+
+    func binding() throws -> ServerBinding? { lock.withLock { storedBinding } }
+    func token() throws -> String? { lock.withLock { storedToken } }
+    func save(binding: ServerBinding, token: String) throws {
+        lock.withLock {
+            storedBinding = binding
+            storedToken = token
+            writes += 1
+        }
+    }
+    func forget() throws {
+        lock.withLock {
+            storedBinding = nil
+            storedToken = nil
+        }
+    }
+    var saveCount: Int { lock.withLock { writes } }
+    var savedToken: String? { lock.withLock { storedToken } }
+}
+
 final class ServerTransportTests: XCTestCase {
     let instance = "0123456789abcdef0123456789abcdef"
 
@@ -297,6 +322,43 @@ final class ServerTransportTests: XCTestCase {
             XCTAssertNil(state.snapshot)
             XCTAssertFalse(state.canForgetBinding)
         }
+    }
+
+    func testReconnectDoesNotRewriteUnchangedCredentials() async {
+        let instance = self.instance
+        let credentials = CountingCredentials()
+        let client = transport { request in
+            switch request.url!.path {
+            case "/v1/identity":
+                return (200, Data("{\"instance_id\":\"\(instance)\"}".utf8))
+            case "/v1/status":
+                return (200, Data("{\"instance_id\":\"\(instance)\",\"version\":\"2.8.1\",\"state\":\"READY\",\"project_source\":\"UNCONFIGURED\"}".utf8))
+            case "/v1/projects", "/v1/capabilities", "/v1/forge/status":
+                return (503, Data("{\"error\":\"UNAVAILABLE\"}".utf8))
+            default:
+                XCTFail("Unexpected route \(request.url!.path)")
+                return (404, Data())
+            }
+        }
+        let state = await MainActor.run { ClientState(keychain: credentials, transport: client) }
+        await Self.waitUntil { state.phase == "UNCONFIGURED" }
+
+        await MainActor.run { state.connect(address: "https://server.example", enteredToken: "first") }
+        await Self.waitUntil { state.phase == "CONNECTED" }
+        XCTAssertEqual(credentials.saveCount, 1)
+
+        await MainActor.run { state.reconnect() }
+        await Self.waitUntil { state.phase == "CONNECTED" }
+        XCTAssertEqual(credentials.saveCount, 1, "Timer/activation reconnect must not rewrite unchanged Keychain items")
+
+        await MainActor.run { state.connect(address: "https://server.example", enteredToken: "first") }
+        await Self.waitUntil { state.phase == "CONNECTED" }
+        XCTAssertEqual(credentials.saveCount, 1, "Re-entering the same token must not rewrite it")
+
+        await MainActor.run { state.connect(address: "https://server.example", enteredToken: "second") }
+        await Self.waitUntil { state.phase == "CONNECTED" }
+        XCTAssertEqual(credentials.saveCount, 2)
+        XCTAssertEqual(credentials.savedToken, "second")
     }
 
     func testTimeoutAndSecureConnectionFailuresStayDistinct() async throws {
