@@ -8,9 +8,10 @@ Server. The desktop app requires no Python, Server data root or source checkout.
 Its configured endpoint, client-owned secure token and pinned Server identity
 must survive relaunch without silently rebinding. Loopback HTTP is permissible
 for local qualification; nonloopback requires HTTPS and ordinary certificate
-validation. Finder launch against an installed Server is the first visible
-gate. A real two-Mac link, app signing/Keychain trust and qualified Forge reads
-remain distinct gates.
+validation. Finder launch against an installed Server was the first visible
+gate. The private signed two-Mac and scoped Forge-read gates now have distinct
+evidence below; durable deployment trust, signed successor behavior and public
+distribution remain separate open gates.
 
 ### Native local candidate and installation boundary
 
@@ -68,8 +69,42 @@ inventory came from those real responses. Server stop/restart produced an
 honest unavailable/cached state and then fresh readback; Client quit/relaunch
 recovered its pinned binding from its own Keychain namespace. This local app
 evidence was protected-delivered in #117 and its responsive Keychain UI repair
-in #118. PR #119 delivered explicitly bound TLS. The native app's two-Mac
-system trust and a Developer ID signed candidate remain `NOT_RUN`.
+in #118. PR #119 delivered explicitly bound TLS. At that local checkpoint the
+native app's two-Mac system trust and a Developer ID signed candidate were
+`NOT_RUN`.
+
+### Private signed 2.8.1 candidate and two-Mac qualification — 3 October
+
+From exact protected Workspace main
+`f7ea37e90c28a993c4055805f7d3e699e658e519`, the confirmed and since
+released L1/L4 slot produced one private Developer ID signed, Apple notarized,
+stapled, Gatekeeper-accepted Workspace 2.8.1 ZIP. Its SHA-256 is
+`eef134edad1fe8d2f3ddc8eeff3cd04d4310525dacc388a182ff71f83f1a6312`.
+The copied MacBook ZIP had identical bytes and passed strict signature, staple
+and Gatekeeper checks. The owner launched that exact app in Finder; it used no
+Python, local Server, Server data root or checkout on the MacBook. The
+independent installed Workspace and Forge servers used Python 3.14.8 on the
+Mac mini. [The candidate receipt](https://github.com/pcvantol/forge/issues/208#issuecomment-5966704367)
+retains the exact build/signing evidence; it is not a public release receipt.
+
+For this temporary private qualification, the owner trusted the exact
+`192.168.1.134` leaf in the MacBook Login Keychain for SSL only. The
+certificate has `CA:FALSE`; the app used normal macOS certificate and hostname
+validation, with an independent MacBook default-trust curl returning HTTP 200
+and `ssl_verify_result=0`. The signed app showed `CONNECTED` to its pinned
+Workspace Server 2.8.1 instance and `Forge read OBSERVED` for the exact
+Forge 2.7.59 / `repo-1` read scope. Availability was `AVAILABLE`, while source
+freshness remained honestly **`STALE`**. After the owner quit and reopened the
+same signed app, a fresh process recovered the saved `.v2` Keychain binding and
+reconnected. One interim `UNAUTHORIZED` Forge card was caused by a disposable
+Forge process started through its generic operations API, which does not admit
+the scoped Workspace read bearer; restarting the same installed Forge instance
+through its normal Server route restored `OBSERVED` without changing any token,
+grant or trust setting. [The MacBook readback](https://github.com/pcvantol/forge/issues/208#issuecomment-5966912860)
+records the owner-supplied screenshot observations and exact scopes. The
+temporary listeners are stopped. A newly signed successor version, `CURRENT`
+Forge source observation,
+durable host trust and public native release remain `NOT_RUN`.
 
 ### Explicit HTTPS Server
 
@@ -109,16 +144,19 @@ the Server's real READY/UNCONFIGURED response. Without the test CA, TLS failed
 before HTTP; with CA, missing bearer returned 401, wrong pin 409 and foreign
 Host 403. The test did not disable certificate validation or install trust in
 macOS. Test state and listener were removed. This closes the two-Mac Server
-HTTP transport subset only. Packaged `Workspace.app` remote readback under
-normal macOS system trust, Developer ID signing and Keychain/trust behavior
-remain `NOT_RUN`.
+HTTP transport subset only. At this #119 checkpoint, packaged `Workspace.app`
+remote readback under normal macOS system trust, Developer ID signing and
+Keychain/trust behavior were still `NOT_RUN`; the later private native
+qualification is recorded above.
 
 An attempted native trust setup on the client Mac could not authorize the
 disposable test CA without interactive approval. The partial certificate item
 was removed and default certificate validation rejected the test Server.
-This is a concrete client trust `NOT_RUN` gate, not a remote app result.
+At that earlier checkpoint this was a concrete client trust `NOT_RUN` gate,
+not a remote app result. The owner later trusted a different exact temporary
+leaf for SSL as recorded above.
 
-### First Forge read — delivered Server subset and open native gate
+### First Forge read — delivered Server subset and later native qualification
 
 The Workspace Server 2.7.0, protected-delivered in #121, exposes authenticated
 `GET /v1/forge/status`. It reads only Forge Server v1 `GET /v1/instance` and
@@ -163,9 +201,10 @@ use an explicit SwiftUI card. A changed ad hoc signature also left the earlier
 pre-release `.v1` Keychain test item awaiting macOS access, so the candidate
 uses its own `.v2` Keychain service and requires one explicit re-pair. The old
 item was retained. Developer ID signed Keychain behavior and remote two-Mac
-native read remain `NOT_RUN`. The general Forge administrator bearer is never accepted
-as an implicit Workspace read grant; the consumer requires the scoped response
-attestation. No Forge project/Mission membership is inferred.
+native read were `NOT_RUN` at this #122 checkpoint; their later private
+qualification is recorded above. The general Forge administrator bearer is
+never accepted as an implicit Workspace read grant; the consumer requires the
+scoped response attestation. No Forge project/Mission membership is inferred.
 
 `Forget Server` removes the current `.v2` binding and token only. It does not
 revoke a Server token or delete the retained pre-release `.v1` items. To remove

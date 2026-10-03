@@ -29,22 +29,37 @@ installed Server and macOS app are qualified to their stated gates.
    Workspace Server HTTP only, against exact qualified producer contracts.
    No CLI/import/SQL/File-Inbox shortcut or whole Forge/EP canary dependency.
 
-The existing WH/WPK DAGs own dependencies. Public PyPI Server distribution,
-native app signing/distribution and remote host qualification remain separate
-evidence gates; do not infer them from a source build. Other quality and UI
-improvements remain candidates after this selected delivery.
+The existing WH/WPK DAGs own dependencies. Public PyPI Server distribution and
+public native app distribution remain separate evidence gates; do not infer
+either from a source build or a private qualification candidate. Other quality
+and UI improvements remain candidates after this selected delivery.
 
 The same r81 continues under the owner directive
-`L4-NATIVE-SIGNING-AND-REMOTE-UNBLOCK-V1-20261002`. The next independent
-Workspace-owned increment is the Developer ID candidate builder and its
-packaging/negative checks, from exact protected source. It does not wait for
-the MacBook. Actual signing/notarization requires the bounded, confirmed
-`L1-L4-WORKSPACE-NATIVE-SIGNING-20261002` resource slot; the #141 coordination
-request alone grants no slot. A signed candidate then needs its own `.v2`
-Keychain first-pair, cancellation, relaunch and correctly signed successor
-qualification. Host reachability, system HTTPS trust and native two-Mac Forge
-read remain separate `NOT_RUN` gates until observed. The ad hoc local app and
-explicit-CA curl results stay at their existing evidence levels.
+`L4-NATIVE-SIGNING-AND-REMOTE-UNBLOCK-V1-20261002`. As of 3 October, the
+Python 3.14-only gate (#116), local Finder app/installed-Server/Forge read
+(#122), native safety gates (#123), Developer ID builder (#124) and subsequent
+native fixes (#125/#126) are protected-delivered. An exclusive, now released
+L1/L4 slot produced one **private** Workspace 2.8.1 Developer ID signed,
+notarized, stapled and Gatekeeper-accepted candidate from exact main
+`f7ea37e90c28a993c4055805f7d3e699e658e519`. Its ZIP SHA-256 is
+`eef134edad1fe8d2f3ddc8eeff3cd04d4310525dacc388a182ff71f83f1a6312`;
+independent local and MacBook byte/signature readbacks are in
+[#208](https://github.com/pcvantol/forge/issues/208#issuecomment-5966704367).
+
+The owner opened those signed bytes in Finder on the MacBook. The app used
+normal macOS HTTPS trust for the explicitly trusted temporary leaf at
+`192.168.1.134`, its saved `.v2` Keychain token and pinned Workspace Server
+instance, and displayed Server 2.8.1 `READY` plus scoped Forge 2.7.59
+`OBSERVED` / `AVAILABLE` / **`STALE`** via the separately installed Python
+3.14 Server. After quit and Finder relaunch, the same signed app automatically
+reconnected; a corrected disposable Forge Server route restored the same
+scoped read without re-pairing. These are private native two-Mac, first-pair
+and same-signed-bytes relaunch passes, recorded in
+[#208](https://github.com/pcvantol/forge/issues/208#issuecomment-5966912860).
+The temporary listeners are stopped. A genuinely new signed successor,
+`CURRENT` Forge source observation, durable deployment trust and public native
+release remain `NOT_RUN`; none follows from the private candidate. The Mac-mini
+signer/Keychain slot was released, so any new use needs a fresh exact ACK.
 
 ### Native Client and two-Mac transport milestones
 
@@ -56,19 +71,21 @@ Client's own Keychain namespace. An interrupted Server showed `UNAVAILABLE`
 with the prior observation visibly cached; reconnect recovered, and the sample
 project became `STALE` after the Server's five-minute window. The Swift transport
 suite and packaged binary/signature checks passed locally and in hosted macOS
-CI. This is local proof, not a public/signed distribution or two-Mac PASS. A
+CI. At this 2.5.0 checkpoint it was local proof, not a public/signed
+distribution or two-Mac PASS. A
 fresh ad hoc build exposed a blocking Keychain read before the app window
 appeared when macOS awaited access for the changed signature. PR #118
 protected-delivered the responsive Keychain lifecycle with visible cancellation
-and pending-access tests. Signed candidate Keychain behavior remains `NOT_RUN`.
+and pending-access tests. Signed candidate Keychain behavior was then `NOT_RUN`.
 PR #119 protected-delivered the explicit-interface HTTPS Server and an
 installed-wheel certificate/Host/auth/pin qualifier. A separate MacBook Pro
 then read this installed Server on the Mac mini over LAN HTTPS with explicit
 test-certificate trust: valid bearer and instance pin returned 200; untrusted
 certificate, missing bearer, wrong pin and foreign Host failed closed. This
-closes the disposable two-Mac HTTP transport gate, not the packaged app's
+closed the disposable two-Mac HTTP transport gate, not the packaged app's
 system macOS trust or Developer ID/Keychain qualification. Those native gates
-remain `NOT_RUN` without an accepted trust chain and signer.
+were `NOT_RUN` at that checkpoint; the later private qualification is recorded
+above.
 
 The first Forge read is bounded to Forge Server v1 `GET /v1/instance` and
 `GET /v1/status` only. Forge LANE_3 r23 protected-delivered the separately
@@ -85,11 +102,12 @@ instance and repository, a separate retrieval timestamp, no Forge database
 mutation from reads, and `UNAUTHORIZED` after grant revocation. The Forge
 schema and producer negative qualifier also passed on that installed wheel.
 This is a **protected-delivered local installed two-Server consumer subset**.
-It is not the packaged app's Forge readback or two-Mac readback,
-remote HTTPS qualification, or full `WH-PEERS`/`WH-Q` parent completion.
-The MacBook's attempt to add an ephemeral test CA to its login trust settings
-was denied without interactive authorization. No trust item remains; the
-packaged app's remote readback remains `NOT_RUN`.
+At that checkpoint it was not the packaged app's Forge readback or two-Mac
+readback, remote HTTPS qualification, or full `WH-PEERS`/`WH-Q` parent
+completion. An earlier MacBook attempt to add an ephemeral test CA was denied
+without interactive authorization and that partial item was removed. The
+owner later trusted the exact temporary leaf for SSL and qualified the signed
+native route as recorded above; full parent completion remains open.
 
 The 2.8.0 native Client candidate reads `GET /v1/forge/status` through its
 pinned Workspace Server binding and keeps Forge availability, source freshness
@@ -99,14 +117,15 @@ Server 2.8.0 `READY`, and Forge 2.7.59 `OBSERVED` / `AVAILABLE` / `CURRENT`
 for the exact `repo-1` scope. Both servers ran from isolated Python 3.14.8
 installations outside the checkout; the app used only their HTTP routes.
 Workspace PR #122 protected-delivered this **local packaged Finder readback
-gate** on main `cffba509e0a5786f55544ad61fcd9cab5a78d2bf`. The next
-native gate is the two-Mac app readback under normal macOS HTTPS trust. This
-local result does not close Developer ID signing, signed Keychain behavior
-or full peer qualification.
+gate** on main `cffba509e0a5786f55544ad61fcd9cab5a78d2bf`. At that
+checkpoint the next native gate was the two-Mac app readback under normal
+macOS HTTPS trust. That local result alone did not close Developer ID signing,
+signed Keychain behavior or full peer qualification.
 The pre-release Keychain service moved from `.v1` to `.v2` because a changed
 ad hoc signature left the old test item awaiting macOS access. The old item
-is retained, not silently rebound or deleted; this candidate needs explicit
-re-pairing once. Signed-candidate Keychain behavior is still `NOT_RUN`.
+is retained, not silently rebound or deleted; that candidate needed explicit
+re-pairing once. Signed-candidate Keychain behavior was then `NOT_RUN`; the
+later same-signed-bytes first pairing and relaunch are recorded above.
 `Forget Server` removes only the current `.v2` pairing; the deployment guide
 records the exact manual cleanup boundary for retained pre-release `.v1` items.
 
