@@ -282,6 +282,39 @@ final class ServerTransportTests: XCTestCase {
         }
     }
 
+    func testCertificateFailureShowsTrustProblemWithoutConnecting() async {
+        let client = transport { _ in throw URLError(.serverCertificateUntrusted) }
+        let state = await MainActor.run {
+            ClientState(keychain: PendingSaveCredentials(), transport: client)
+        }
+        await Self.waitUntil { state.phase == "UNCONFIGURED" }
+        await MainActor.run {
+            state.connect(address: "https://server.example", enteredToken: "secret")
+        }
+        await Self.waitUntil { state.phase == "UNAVAILABLE" }
+        await MainActor.run {
+            XCTAssertTrue(state.detail.contains("does not trust"))
+            XCTAssertNil(state.snapshot)
+            XCTAssertFalse(state.canForgetBinding)
+        }
+    }
+
+    func testTimeoutAndSecureConnectionFailuresStayDistinct() async throws {
+        for (code, expected) in [(URLError.timedOut, ClientError.timedOut),
+                                 (.secureConnectionFailed, .tlsFailed)] {
+            let client = transport { _ in throw URLError(code) }
+            do {
+                _ = try await client.connect(endpoint: ServerEndpoint("https://server.example"),
+                                             token: "secret", pinnedInstance: nil)
+                XCTFail("Network failure became a connection")
+            } catch let error as ClientError {
+                XCTAssertEqual(error, expected)
+            } catch {
+                XCTFail("Unexpected error: \(error)")
+            }
+        }
+    }
+
     func testCancellingPendingIdentityReadStopsConnection() async throws {
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [HangingProtocol.self]
