@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "r81 owner-directed signed-successor source qualification after private 2.8.1 pairing and relaunch",
+  "determined_version": "2.8.2",
+  "event_lineage": "r81 owner-directed signed-successor source qualification after private 2.8.1 pairing and relaunch",
+  "expected_source_revision": "7fc1c692734c5314b028928d3cff319066259170",
+  "expected_version": "2.8.1",
+  "operation_id": "l4-r81-native-successor-20261003",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}
