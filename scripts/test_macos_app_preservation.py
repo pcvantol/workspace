@@ -84,6 +84,9 @@ class PreservationTests(unittest.TestCase):
 
     def test_destination_is_owner_private_and_nonreplaceable(self) -> None:
         candidate.private_parent(self.destination)
+        with patch.object(candidate, "ROOT", self.home):
+            with self.assertRaisesRegex(ValueError, "outside the checkout"):
+                candidate.private_parent(self.destination)
         self.parent.chmod(0o755)
         with self.assertRaisesRegex(ValueError, "owner-private"):
             candidate.private_parent(self.destination)
@@ -125,6 +128,24 @@ class PreservationTests(unittest.TestCase):
         self.assertEqual(candidate.sha256_file(self.destination / "handoff.json"), receipt)
         with self.assertRaisesRegex(ValueError, "already exists"):
             self.store()
+
+    def test_publish_race_never_replaces_existing_directory(self) -> None:
+        original_copy = candidate.copy_private
+        created = False
+
+        def race(source: Path, target: Path) -> None:
+            nonlocal created
+            original_copy(source, target)
+            if not created:
+                self.destination.mkdir(mode=0o700)
+                (self.destination / "other-owner-work").write_text("keep")
+                created = True
+
+        with patch.object(candidate, "copy_private", side_effect=race):
+            with self.assertRaises(FileExistsError):
+                self.store()
+        self.assertEqual((self.destination / "other-owner-work").read_text(), "keep")
+        self.assertEqual([p.name for p in self.parent.iterdir()], ["candidate"])
 
     def test_verified_reopen_rechecks_native_and_detects_tampering(self) -> None:
         receipt = self.store()

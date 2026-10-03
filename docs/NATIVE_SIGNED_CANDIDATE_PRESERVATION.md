@@ -10,8 +10,9 @@ Choose a **new** candidate directory beneath an existing owner-owned mode
 `0700` directory in the user's home, outside the checkout and outside `/tmp`.
 The tool copies the ZIP and its signed candidate manifest to a mode `0700`
 staging directory with mode `0600` files, checks both copied SHA-256 digests,
-then atomically publishes the directory. A failed staging copy is removed;
-an existing destination is never deliberately reused. Preserve the printed
+then atomically publishes the directory with an exclusive no-replace rename.
+A failed staging copy is removed; an existing destination is never reused.
+The tool rejects destinations inside the checkout. Preserve the printed
 `handoff_sha256` separately as the expected receipt digest.
 
 ```sh

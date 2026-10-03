@@ -7,6 +7,8 @@ No certificate, notary profile, token, or other credential is stored here.
 from __future__ import annotations
 
 import argparse
+import ctypes
+import errno
 import hashlib
 import json
 import os
@@ -70,6 +72,8 @@ def private_parent(destination: Path, *, require_absent: bool = True) -> None:
     parent = destination.parent
     if parent.resolve(strict=True) != parent or not parent.is_relative_to(home):
         raise ValueError("destination parent must be a real path under the user home")
+    if parent.is_relative_to(ROOT):
+        raise ValueError("candidate destination must be outside the checkout")
     if require_absent and (destination.exists() or destination.is_symlink()):
         raise ValueError("candidate destination already exists")
     info = parent.stat()
@@ -86,6 +90,27 @@ def copy_private(source: Path, target: Path) -> None:
             os.fsync(writer.fileno())
     if sha256_file(source) != sha256_file(target):
         raise ValueError("copied candidate bytes mismatch")
+
+
+def publish_exclusive(staging: Path, destination: Path) -> None:
+    """Atomically publish a directory only if the destination is absent."""
+    libc = ctypes.CDLL(None, use_errno=True)
+    source = os.fsencode(staging)
+    target = os.fsencode(destination)
+    if sys.platform == "darwin":
+        operation = libc.renamex_np
+        operation.argtypes = (ctypes.c_char_p, ctypes.c_char_p, ctypes.c_uint)
+        result = operation(source, target, 0x00000004)  # macOS RENAME_EXCL
+    elif sys.platform.startswith("linux"):
+        operation = libc.renameat2
+        operation.argtypes = (ctypes.c_int, ctypes.c_char_p, ctypes.c_int,
+                              ctypes.c_char_p, ctypes.c_uint)
+        result = operation(-100, source, -100, target, 1)  # AT_FDCWD, RENAME_NOREPLACE
+    else:
+        raise OSError(errno.ENOTSUP, "atomic no-replace directory rename is unavailable")
+    if result != 0:
+        code = ctypes.get_errno()
+        raise OSError(code, os.strerror(code), str(destination))
 
 
 def atomic_store(archive: Path, manifest: Path, destination: Path, handoff: dict) -> str:
@@ -109,9 +134,7 @@ def atomic_store(archive: Path, manifest: Path, destination: Path, handoff: dict
             os.fsync(dir_fd)
         finally:
             os.close(dir_fd)
-        if destination.exists() or destination.is_symlink():
-            raise ValueError("candidate destination appeared during staging")
-        os.rename(staging, destination)
+        publish_exclusive(staging, destination)
         dir_fd = os.open(parent, os.O_RDONLY)
         try:
             os.fsync(dir_fd)
