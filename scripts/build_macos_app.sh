@@ -162,7 +162,8 @@ codesign --force --sign "$identity" --options runtime --timestamp "$output"
 codesign --verify --deep --strict --verbose=2 "$output"
 requirement="identifier \"$bundle_id\" and anchor apple generic and certificate leaf[subject.OU] = \"$team_id\""
 codesign --verify --strict -R="$requirement" "$output"
-codesign -d --extract-certificates "$signed_scratch/signing-cert" "$output"
+# The prefix is an option value; a separate word is parsed as another code path.
+codesign -d --extract-certificates="$signed_scratch/signing-cert" "$output"
 python3 - "$signed_scratch/signing-cert0" "$identity" <<'PY'
 import hashlib
 import pathlib
