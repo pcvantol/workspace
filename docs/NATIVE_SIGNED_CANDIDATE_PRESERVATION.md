@@ -12,6 +12,9 @@ At preservation time the source revision must exactly match the canonical
 Workspace origin's live protected `main` head; the receipt records that
 observation. Reopen can then verify the saved receipt and signed bytes without
 requiring network access after a restart.
+Supply the exact notary submission UUID from the independent Apple Accepted
+receipt, rather than deriving it from the candidate manifest. The tool
+compares that UUID to the manifest before publication and on every reopen.
 The tool copies the ZIP and its signed candidate manifest to a mode `0700`
 staging directory with mode `0600` files, checks both copied SHA-256 digests,
 then atomically publishes the directory with an exclusive no-replace rename.
@@ -27,7 +30,8 @@ python3 scripts/preserve_macos_app_candidate.py preserve \
   --source-revision EXACT_PROTECTED_REVISION \
   --source-tree EXACT_PROTECTED_TREE \
   --builder-sha256 EXACT_BUILDER_SHA256 \
-  --version 2.8.2 --team-id EXACT_TEAM_ID --leaf-sha1 EXACT_CERTIFICATE_SHA1
+  --version 2.8.2 --team-id EXACT_TEAM_ID --leaf-sha1 EXACT_CERTIFICATE_SHA1 \
+  --notary-submission-id EXACT_APPLE_ACCEPTED_SUBMISSION_UUID
 ```
 
 After a process restart or host restart, run `verify` with the same source,

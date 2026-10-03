@@ -26,6 +26,7 @@ SOURCE = re.compile(r"[0-9a-f]{40}\Z")
 DIGEST = re.compile(r"[0-9a-f]{64}\Z")
 LEAF = re.compile(r"[A-F0-9]{40}\Z")
 TEAM = re.compile(r"[A-Z0-9]{10}\Z")
+NOTARY_ID = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\Z")
 FILES = {"Workspace.app.zip", "candidate-manifest.json", "handoff.json"}
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -133,7 +134,8 @@ def publish_exclusive(staging: Path, destination: Path) -> None:
         raise OSError(code, os.strerror(code), str(destination))
 
 
-def atomic_store(archive: Path, manifest: Path, destination: Path, handoff: dict) -> str:
+def atomic_store(archive: Path, manifest: Path, destination: Path, handoff: dict,
+                 *, protected_revision: str | None = None) -> str:
     """Publish a complete private directory; failure leaves no reusable receipt."""
     private_parent(destination)
     parent = destination.parent
@@ -154,6 +156,8 @@ def atomic_store(archive: Path, manifest: Path, destination: Path, handoff: dict
             os.fsync(dir_fd)
         finally:
             os.close(dir_fd)
+        if protected_revision is not None and protected_main_head() != protected_revision:
+            raise ValueError("candidate source ceased to be current protected main")
         publish_exclusive(staging, destination)
         dir_fd = os.open(parent, os.O_RDONLY)
         try:
@@ -182,6 +186,8 @@ def signed_leaf(archive: Path) -> str:
 def expected_fields(args: argparse.Namespace, *, require_remote_main: bool = False) -> dict:
     if not TEAM.fullmatch(args.team_id) or not LEAF.fullmatch(args.leaf_sha1):
         raise ValueError("malformed Team or Developer ID leaf SHA-1")
+    if not NOTARY_ID.fullmatch(args.notary_submission_id):
+        raise ValueError("malformed independent notary submission ID")
     source_binding(args.source_revision, args.source_tree, args.builder_sha256,
                    require_remote_main=require_remote_main)
     if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", args.version):
@@ -190,6 +196,7 @@ def expected_fields(args: argparse.Namespace, *, require_remote_main: bool = Fal
         "source_revision": args.source_revision, "source_tree": args.source_tree,
         "builder_sha256": args.builder_sha256, "version": args.version,
         "team_id": args.team_id, "leaf_sha1": args.leaf_sha1,
+        "notary_submission_id": args.notary_submission_id,
         "protected_main_at_preservation": args.source_revision,
     }
 
@@ -198,10 +205,8 @@ def check_signed(archive: Path, manifest_path: Path, expected: dict) -> dict:
     manifest = check_archive(
         archive, manifest_path, expected["source_revision"], expected["team_id"],
     )
-    if manifest["version"] != expected["version"] or not re.fullmatch(
-        r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
-        manifest["notary_submission_id"],
-    ):
+    if (manifest["version"] != expected["version"] or
+            manifest["notary_submission_id"] != expected["notary_submission_id"]):
         raise ValueError("candidate version or notary submission identity mismatch")
     verify_native(archive, manifest)
     if signed_leaf(archive) != expected["leaf_sha1"]:
@@ -257,12 +262,12 @@ def preserve(args: argparse.Namespace) -> str:
         **expected, "bundle_identifier": manifest["bundle_identifier"],
         "keychain_service": manifest["keychain_service"],
         "app_cdhash": manifest["app_cdhash"],
-        "notary_submission_id": manifest["notary_submission_id"],
         "staple": "validated", "gatekeeper": "accepted",
         "archive_sha256": sha256_file(args.archive),
         "candidate_manifest_sha256": sha256_file(args.manifest),
     }
-    receipt = atomic_store(args.archive, args.manifest, args.destination, handoff)
+    receipt = atomic_store(args.archive, args.manifest, args.destination, handoff,
+                           protected_revision=args.source_revision)
     readback(args.destination, expected, receipt)
     return receipt
 
@@ -279,6 +284,7 @@ def main() -> None:
         command.add_argument("--version", required=True)
         command.add_argument("--team-id", required=True)
         command.add_argument("--leaf-sha1", required=True)
+        command.add_argument("--notary-submission-id", required=True)
         if action == "preserve":
             command.add_argument("--archive", required=True, type=Path)
             command.add_argument("--manifest", required=True, type=Path)

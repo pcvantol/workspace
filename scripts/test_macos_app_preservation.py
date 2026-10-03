@@ -30,6 +30,7 @@ EXPECTED = {
     "source_revision": REVISION, "source_tree": TREE, "builder_sha256": BUILDER,
     "version": "2.8.2", "team_id": "ABCDEFGHIJ", "leaf_sha1": "A" * 40,
     "protected_main_at_preservation": REVISION,
+    "notary_submission_id": "11111111-2222-3333-4444-555555555555",
 }
 MANIFEST = {
     "bundle_identifier": "com.pcvantol.workspace.native-client",
@@ -153,6 +154,13 @@ class PreservationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "already exists"):
             self.store()
 
+    def test_publication_rechecks_live_protected_main_and_cleans_staging(self) -> None:
+        with patch.object(candidate, "protected_main_head", return_value="0" * 40):
+            with self.assertRaisesRegex(ValueError, "ceased to be current"):
+                candidate.atomic_store(self.archive, self.manifest, self.destination,
+                                       self.handoff(), protected_revision=REVISION)
+        self.assertEqual(list(self.parent.iterdir()), [])
+
     def test_publish_race_never_replaces_existing_directory(self) -> None:
         original_copy = candidate.copy_private
         created = False
@@ -226,6 +234,9 @@ class PreservationTests(unittest.TestCase):
                 candidate.check_signed(self.archive, self.manifest, dict(EXPECTED, leaf_sha1="B" * 40))
             with self.assertRaisesRegex(ValueError, "version or notary"):
                 candidate.check_signed(self.archive, self.manifest, dict(EXPECTED, version="2.8.3"))
+            with self.assertRaisesRegex(ValueError, "version or notary"):
+                candidate.check_signed(self.archive, self.manifest,
+                                       dict(EXPECTED, notary_submission_id="2" * 8 + "-2222-3333-4444-555555555555"))
 
     def test_preserve_rejects_ad_hoc_and_does_not_publish(self) -> None:
         args = argparse.Namespace(archive=self.archive, manifest=self.manifest,
