@@ -9,9 +9,10 @@ Its configured endpoint, client-owned secure token and pinned Server identity
 must survive relaunch without silently rebinding. Loopback HTTP is permissible
 for local qualification; nonloopback requires HTTPS and ordinary certificate
 validation. Finder launch against an installed Server was the first visible
-gate. The private signed two-Mac and scoped Forge-read gates now have distinct
-evidence below; durable deployment trust, signed successor behavior and public
-distribution remain separate open gates.
+gate. The private signed 2.8.1 two-Mac and scoped Forge-read gates, plus the
+separate signed 2.8.2 candidate artifact gate, have distinct evidence below;
+durable deployment trust, signed successor behavior and public distribution
+remain separate open gates.
 
 ### Native local candidate and installation boundary
 
@@ -104,9 +105,32 @@ the scoped Workspace read bearer; restarting the same installed Forge instance
 through its normal Server route restored `OBSERVED` without changing any token,
 grant or trust setting. [The MacBook readback](https://github.com/pcvantol/forge/issues/208#issuecomment-5966912860)
 records the owner-supplied screenshot observations and exact scopes. The
-temporary listeners are stopped. A newly signed successor version, `CURRENT`
-Forge source observation,
+temporary listeners are stopped. A newly signed successor version had not yet
+been qualified at that checkpoint. `CURRENT` Forge source observation,
 durable host trust and public native release remain `NOT_RUN`.
+
+### Private signed 2.8.2 candidate artifact — 3 October
+
+Protected Workspace main `5910824dbbc4a79f2152603dc6e516c02bc99971`
+contains the 2.8.2 successor source, exact Developer ID SHA-1 selection and
+correct signed-certificate extraction. One fresh, exclusive L1/L4 epoch-5 slot
+produced a separate private Developer ID signed, Apple notarized, stapled and
+Gatekeeper-accepted 2.8.2 ZIP. Its SHA-256 is
+`72cd7d3d37cfc54d43d57e82e030530f0e6de49ed42cd128da2340db2b325e07`.
+Independent extraction yielded byte-identical app contents. Strict/deep
+signature, bundle/team requirement, authorized DER leaf SHA-1, secure
+timestamp, hardened runtime, no unexpected entitlements, Apple Accepted
+submission, staple validation and Gatekeeper all passed on the extracted app.
+The [private artifact receipt](https://github.com/pcvantol/forge/issues/208#issuecomment-5970356007)
+binds the ZIP, manifest, source, builder and app hashes. The exclusive lock
+was released and L1's shared signer/Keychain resource returned after terminal
+readback.
+
+This qualifies the **signed artifact** only. No 2.8.2 Finder launch, live
+`.v2` Keychain first pairing/cancellation/relaunch, 2.8.1→2.8.2 successor
+preservation, normal-trust native two-Mac HTTPS/Forge read, durable host trust
+or public release was exercised by the signing slot. Those gates remain
+`NOT_RUN`; the earlier MacBook evidence applies to 2.8.1 only.
 
 ### Explicit HTTPS Server
 

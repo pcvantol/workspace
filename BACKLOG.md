@@ -58,8 +58,20 @@ and same-signed-bytes relaunch passes, recorded in
 [#208](https://github.com/pcvantol/forge/issues/208#issuecomment-5966912860).
 The temporary listeners are stopped. A genuinely new signed successor,
 `CURRENT` Forge source observation, durable deployment trust and public native
-release remain `NOT_RUN`; none follows from the private candidate. The Mac-mini
-signer/Keychain slot was released, so any new use needs a fresh exact ACK.
+release remained `NOT_RUN` at that 2.8.1 checkpoint.
+
+Protected 2.8.2 source on main
+`5910824dbbc4a79f2152603dc6e516c02bc99971` now has a separate private
+Developer ID signed, notarized, stapled and Gatekeeper-accepted ZIP, SHA-256
+`72cd7d3d37cfc54d43d57e82e030530f0e6de49ed42cd128da2340db2b325e07`.
+The exact epoch-5 L1/L4 slot was activated, used once, independently read back
+and released; [#208 records the artifact and gate evidence](https://github.com/pcvantol/forge/issues/208#issuecomment-5970356007).
+This closes the **signed 2.8.2 candidate artifact** gate. Running those new
+signed bytes, `.v2` first pairing/cancellation/relaunch and preservation across
+the 2.8.1→2.8.2 successor, native two-Mac HTTPS/Forge read on 2.8.2,
+`CURRENT` Forge source, durable deployment trust and public native release are
+separate `NOT_RUN` gates. The shared signer/Keychain resource was returned to
+LANE_1; any further live use needs a new exact ACK.
 
 ### Native Client and two-Mac transport milestones
 
