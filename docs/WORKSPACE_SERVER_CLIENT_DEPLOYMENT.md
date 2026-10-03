@@ -24,11 +24,12 @@ remote-Keychain qualification. The Client machine only receives the completed
 `.app`, not Python, a Server data root or the development checkout.
 
 For a private Developer ID qualification candidate, the same builder accepts
-`--mode developer-id`, an exact protected-main source SHA, an existing
-`Developer ID Application` identity, its ten-character team ID and an existing
+`--mode developer-id`, an exact protected-main source SHA, the SHA-1 of an
+existing `Developer ID Application` identity, its ten-character team ID and an existing
 notarytool Keychain profile. These values and the exclusive L1/L4 signing
 window must be confirmed before invoking it. The mode rejects a dirty or
-non-current source or noncanonical Workspace origin, missing identity/profile
+non-current source or noncanonical Workspace origin, a certificate name in place
+of the exact SHA-1, missing identity/profile
 arguments, and occupied output paths. It requires an explicit output path in
 an owner-owned private directory and writes with a restrictive umask;
 each signed build also uses a fresh private Swift scratch directory, ignoring
@@ -36,7 +37,8 @@ the shared development scratch override;
 the actual signer and notarization credentials are validated by signing and
 notarytool in the confirmed exclusive slot. It does not
 fall back to ad hoc signing. It signs with hardened runtime and a secure
-timestamp, checks the team and designated requirement, submits the archive to
+timestamp, checks the signed leaf against the requested SHA-1 as well as the team
+and designated requirement, submits the archive to
 Apple notarization, staples the app, assesses it with Gatekeeper and emits a
 final ZIP and JSON manifest bound to source SHA, bundle ID, `.v2` Keychain
 service, team, notary submission, app CDHash and final ZIP SHA-256. The app is

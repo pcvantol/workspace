@@ -8,7 +8,7 @@ if [[ "$(uname -s)" != Darwin ]]; then
 fi
 
 usage() {
-  echo 'Usage: build_macos_app.sh [--mode ad-hoc|developer-id] [--identity NAME --team-id ID --notary-profile NAME --source-revision SHA] [OUTPUT/Workspace.app]' >&2
+  echo 'Usage: build_macos_app.sh [--mode ad-hoc|developer-id] [--identity DEVELOPER_ID_SHA1 --team-id ID --notary-profile NAME --source-revision SHA] [OUTPUT/Workspace.app]' >&2
   exit 2
 }
 
@@ -67,12 +67,18 @@ if [[ "$mode" == developer-id ]]; then
     exit 2
   }
   umask 077
-  [[ "$identity" == 'Developer ID Application: '* && -n "$notary_profile" &&
+  [[ "$identity" =~ ^[A-F0-9]{40}$ && -n "$notary_profile" &&
      "$team_id" =~ ^[A-Z0-9]{10}$ && "$source_revision" =~ ^[0-9a-f]{40}$ ]] || {
-    echo 'Developer ID mode requires an application identity, team ID, notary profile and exact source SHA.' >&2
+    echo 'Developer ID mode requires an application identity SHA-1, team ID, notary profile and exact source SHA.' >&2
     exit 2
   }
   check_protected_source
+  identity_matches="$(security find-identity -v -p codesigning | awk -v sha="$identity" -v team="$team_id" \
+    '$2 == sha && index($0, "\"Developer ID Application: ") && index($0, "(" team ")\"") { print }')"
+  [[ -n "$identity_matches" && "$identity_matches" != *$'\n'* ]] || {
+    echo 'The exact Developer ID Application SHA-1 and team must identify one valid signing certificate.' >&2
+    exit 2
+  }
   resolved_output="$(python3 - "$output" <<'PY'
 import pathlib
 import sys
@@ -156,6 +162,16 @@ codesign --force --sign "$identity" --options runtime --timestamp "$output"
 codesign --verify --deep --strict --verbose=2 "$output"
 requirement="identifier \"$bundle_id\" and anchor apple generic and certificate leaf[subject.OU] = \"$team_id\""
 codesign --verify --strict -R="$requirement" "$output"
+codesign -d --extract-certificates "$signed_scratch/signing-cert" "$output"
+python3 - "$signed_scratch/signing-cert0" "$identity" <<'PY'
+import hashlib
+import pathlib
+import sys
+
+leaf = pathlib.Path(sys.argv[1]).read_bytes()
+if hashlib.sha1(leaf).hexdigest().upper() != sys.argv[2]:
+    raise SystemExit('Signed leaf certificate does not match the authorized SHA-1.')
+PY
 signature_details="$(codesign -dv --verbose=4 "$output" 2>&1)"
 [[ "$signature_details" == *"Authority=Developer ID Application:"* &&
    "$signature_details" == *"TeamIdentifier=$team_id"* &&

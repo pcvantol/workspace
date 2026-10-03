@@ -17,6 +17,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 BUILDER = ROOT / "scripts" / "build_macos_app.sh"
 BUNDLE_ID = "com.pcvantol.workspace.native-client"
 KEYCHAIN_SERVICE = BUNDLE_ID + ".v2"
+TEST_IDENTITY_SHA1 = "A" * 40
 sys.path.insert(0, str(ROOT / "scripts"))
 from verify_macos_app_candidate import check_archive  # noqa: E402
 
@@ -81,12 +82,22 @@ class MacOSPackagingTests(unittest.TestCase):
 
     def test_signed_mode_rejects_unprotected_source_before_build(self) -> None:
         result = self.run_builder(
-            "--mode", "developer-id", "--identity", "Developer ID Application: Test (ABCDEFGHIJ)",
+            "--mode", "developer-id", "--identity", TEST_IDENTITY_SHA1,
             "--team-id", "ABCDEFGHIJ", "--notary-profile", "test-profile",
             "--source-revision", "0" * 40, "/tmp/Workspace.app",
         )
         self.assertEqual(result.returncode, 2)
         self.assertIn("clean, exact current protected main", result.stderr)
+        self.assertNotIn("Compiling", result.stdout + result.stderr)
+
+    def test_signed_mode_rejects_ambiguous_certificate_name_before_build(self) -> None:
+        result = self.run_builder(
+            "--mode", "developer-id", "--identity", "Developer ID Application: Test (ABCDEFGHIJ)",
+            "--team-id", "ABCDEFGHIJ", "--notary-profile", "test-profile",
+            "--source-revision", "0" * 40, "/tmp/Workspace.app",
+        )
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("identity SHA-1", result.stderr)
         self.assertNotIn("Compiling", result.stdout + result.stderr)
 
     def test_local_mode_cannot_accept_distribution_parameters(self) -> None:
@@ -127,18 +138,36 @@ class MacOSPackagingTests(unittest.TestCase):
             )
             fake_git.chmod(0o755)
             fake_swift.chmod(0o755)
+            fake_security = fake_bin / "security"
+            fake_security.write_text(
+                '#!/bin/sh\n'
+                'printf "  1) %s \\\"Developer ID Application: Test (ABCDEFGHIJ)\\\"\\n" "$MOCK_IDENTITY_SHA1"\n'
+            )
+            fake_security.chmod(0o755)
             env = os.environ.copy()
             env.update({
                 "PATH": str(fake_bin) + os.pathsep + env["PATH"],
                 "MOCK_SOURCE_REVISION": revision,
+                "MOCK_IDENTITY_SHA1": TEST_IDENTITY_SHA1,
                 "MOCK_ORIGIN_URL": "https://github.com/pcvantol/workspace.git",
                 "MOCK_SENTINEL": str(sentinel),
                 "MOCK_BIN_DIR": str(root),
                 "MOCK_SCRATCH_LOG": str(root / "scratch-log"),
                 "WORKSPACE_SWIFT_SCRATCH": str(root / "shared-scratch"),
             })
+            env["MOCK_IDENTITY_SHA1"] = "B" * 40
             result = self.run_builder(
-                "--mode", "developer-id", "--identity", "Developer ID Application: Test (ABCDEFGHIJ)",
+                "--mode", "developer-id", "--identity", TEST_IDENTITY_SHA1,
+                "--team-id", "ABCDEFGHIJ", "--notary-profile", "test-profile",
+                "--source-revision", revision, str(root / "Workspace.app"), env=env,
+            )
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("exact Developer ID Application SHA-1", result.stderr)
+            self.assertFalse((root / "scratch-log").exists())
+
+            env["MOCK_IDENTITY_SHA1"] = TEST_IDENTITY_SHA1
+            result = self.run_builder(
+                "--mode", "developer-id", "--identity", TEST_IDENTITY_SHA1,
                 "--team-id", "ABCDEFGHIJ", "--notary-profile", "test-profile",
                 "--source-revision", revision, str(root / "Workspace.app"), env=env,
             )
@@ -155,7 +184,7 @@ class MacOSPackagingTests(unittest.TestCase):
             sentinel.unlink()
             env["MOCK_ORIGIN_URL"] = "https://github.com/example/unprotected.git"
             result = self.run_builder(
-                "--mode", "developer-id", "--identity", "Developer ID Application: Test (ABCDEFGHIJ)",
+                "--mode", "developer-id", "--identity", TEST_IDENTITY_SHA1,
                 "--team-id", "ABCDEFGHIJ", "--notary-profile", "test-profile",
                 "--source-revision", revision, str(root / "Workspace.app"), env=env,
             )
@@ -165,7 +194,7 @@ class MacOSPackagingTests(unittest.TestCase):
 
             env["MOCK_ORIGIN_URL"] = "https://github.com/pcvantol/workspace.git"
             result = self.run_builder(
-                "--mode", "developer-id", "--identity", "Developer ID Application: Test (ABCDEFGHIJ)",
+                "--mode", "developer-id", "--identity", TEST_IDENTITY_SHA1,
                 "--team-id", "ABCDEFGHIJ", "--notary-profile", "test-profile",
                 "--source-revision", revision, str(pathlib.Path("/tmp").resolve() / "Workspace.app"), env=env,
             )
