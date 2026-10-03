@@ -17,9 +17,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import preserve_macos_app_candidate as candidate
 
 
-REVISION = "ba801e02f6eb34fcf5ca3219b41769f020715f95"
-TREE = "9e0f015b7f5d6c7ac36fc395a8cd462f9db3fed1"
-BUILDER = "1405a8561d17350b1346fb4bd101ff3d7b54d78465311556f134fc1fb2216e88"
+ROOT = Path(__file__).resolve().parent.parent
+REVISION = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT,
+                          capture_output=True, text=True, check=True).stdout.strip()
+TREE = subprocess.run(["git", "rev-parse", "HEAD^{tree}"], cwd=ROOT,
+                      capture_output=True, text=True, check=True).stdout.strip()
+BUILDER = hashlib.sha256(subprocess.run(
+    ["git", "show", "HEAD:scripts/build_macos_app.sh"], cwd=ROOT,
+    capture_output=True, check=True,
+).stdout).hexdigest()
 EXPECTED = {
     "source_revision": REVISION, "source_tree": TREE, "builder_sha256": BUILDER,
     "version": "2.8.2", "team_id": "ABCDEFGHIJ", "leaf_sha1": "A" * 40,
