@@ -1,5 +1,24 @@
 # Workspace Roadmap
 
+## Selected night milestone — Workspace-owned conversation drafts
+
+Under the existing LANE_4 r81 assignment, the owner selected the
+Business/Architect native conversation draft flow on 4 October. Product
+2.8.3 contributes the Workspace-owned presentation and draft-storage subset
+of RC-WC/RC-WS: one project conversation, explicit advice mode, private
+title/focus/unsent draft storage through the own authenticated Server, local
+unsaved-text recovery, revision and availability states, and five-language
+native copy. The [narrow HTTP contract](docs/WORKSPACE_CONVERSATION_DRAFT_HTTP_V1.md)
+and [owning conversation plan](docs/ROLE_AWARE_CONVERSATIONS_V1_ROADMAP.md)
+define the supported scope. The milestone reaches delivery only after
+protected merge and isolated installed Server/native ad-hoc GUI readback.
+
+Forge conversation/session producer capabilities remain unqualified; live
+advisor turns, canonical history, proposals, apply and Mission handoff stay
+unavailable. The existing 2.8.2 signed candidate is separate historical
+evidence. Signing, live Keychain successor, two-Mac trust and public release
+remain open r81 gates, outside this night milestone.
+
 ## Current LANE_4 product priority — native macOS Client over Server HTTP
 
 The selected #208 r81 delivery is a standalone macOS `Workspace.app` with
@@ -58,7 +77,8 @@ UX Advisor adds advice, not a new mandatory Mission approval stage.
 
 `RC-WC -> RC-WS -> RC-WP -> RC-WQ` consumes the corresponding qualified Forge
 contract/session/proposal/service subsets RC-FC/FS/FP/FQ under existing F6.
-All runtime nodes remain PLANNED. Contract-first work is parallel non-blocking;
+Full runtime nodes remain PLANNED beyond the narrow own draft subset above.
+Contract-first work is parallel non-blocking;
 full Workspace delivery is POST_AUTONOMY. No edge is added to the first live
 canary, and neither full policy UI nor the universal installer is a prerequisite.
 Twenty shared scenario families distinguish future runtime/Playwright proof

@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "L4 r81 Workspace-owned native conversation drafts and GUI patch delivery; no signed release",
+  "determined_version": "2.8.3",
+  "event_lineage": "L4 r81 Workspace-owned native conversation drafts and GUI patch delivery; no signed release",
+  "expected_source_revision": "889afd88625903c3c9fe19b31d6176d9a721a5da",
+  "expected_version": "2.8.2",
+  "operation_id": "l4-r81-conversations-20261004",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

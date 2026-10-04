@@ -264,6 +264,8 @@ class Service:
         self.root, self._root_fd = _open_private_root(root)
         try:
             self._load_instance()
+            from .conversations import ConversationStore
+            self.conversations = ConversationStore(self.root, self._root_fd)
         except Exception:
             self.close()
             raise
@@ -324,6 +326,26 @@ class Service:
                                           ("EMPTY" if not items else "AVAILABLE"))
         return {"state": state, "projects": items, "source": raw["source"],
                 "observed_at": stamp, "partial": partial, "stale": stale}
+
+    def conversation_scope(self, grant_token):
+        """Bind an explicit draft grant to a currently listed own project."""
+        scope = self.conversations.scope(grant_token)
+        catalogue = self.projects()
+        if catalogue["state"] not in ("AVAILABLE", "PARTIAL"):
+            raise ValueError("project source unavailable for conversations")
+        if scope[1] not in {project["id"] for project in catalogue["projects"]}:
+            raise PermissionError("conversation project denied")
+        return scope
+
+    def issue_conversation_grant(self, actor_id, project_id):
+        catalogue = self.projects()
+        if catalogue["state"] not in ("AVAILABLE", "PARTIAL") or project_id not in {
+                project["id"] for project in catalogue["projects"]}:
+            raise ValueError("current project required for conversation grant")
+        return self.conversations.issue_grant(actor_id, project_id)
+
+    def revoke_conversation_grants(self, actor_id, project_id):
+        return self.conversations.revoke_grants(actor_id, project_id)
 
     def forge_status(self):
         """Read a scoped Forge observation without borrowing peer authority."""

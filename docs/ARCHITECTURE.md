@@ -29,9 +29,11 @@ onboarding choices and authority split are recorded in
 [Repository onboarding and qualification](REPOSITORY_ONBOARDING.md).
 
 The first bounded local read-only Server/Client slice uses a Python standard
-library HTTP Server with an installed wheel and browser assets. This does not
-select the later remote deployment, native Client or peer adapter stack. Its
-[scope and acceptance contract](WORKSPACE_SERVER_READONLY_V1.md) is explicit.
+library HTTP Server with an installed wheel and browser assets. Its
+[scope and acceptance contract](WORKSPACE_SERVER_READONLY_V1.md) remains
+unchanged. The later native Client uses the separately installed Server's
+HTTP(S) API. Product 2.8.3 adds the [own conversation draft API](WORKSPACE_CONVERSATION_DRAFT_HTTP_V1.md)
+without changing the read bearer into write authority.
 
 ## Role-aware conversations
 
@@ -44,8 +46,10 @@ proposal, decision and engineering authorization remain distinct.
 
 The [owning roadmap](ROLE_AWARE_CONVERSATIONS_V1_ROADMAP.md) and
 [documentary DAG](ROLE_AWARE_CONVERSATIONS_V1_DAG.json) refine existing role-aware
-governance without choosing a UI stack or implementing a second planner. All
-runtime work remains PLANNED and the full UI is not a first-canary prerequisite.
+governance without implementing a second planner. The selected 2.8.3
+Workspace-owned native navigation and unsent-draft subset uses the existing
+SwiftUI Client and Python Server. Full RC-WC/RC-WS and Forge conversation
+producer qualification remain PLANNED; the full UI is not a first-canary prerequisite.
 Forge Server Console remains instance administration, not this project interface.
 
 ## External boundaries

@@ -1,6 +1,8 @@
 """Real HTTP and state qualification for the own read-only slice."""
 
 import json
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timedelta, timezone
 import http.client
 from http.server import BaseHTTPRequestHandler
 import importlib
@@ -15,7 +17,7 @@ import tempfile
 import threading
 import time
 import unittest
-from contextlib import redirect_stderr, redirect_stdout
+from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from unittest.mock import Mock, patch
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -23,6 +25,7 @@ from urllib.request import Request, urlopen
 from workspace_control.cli import main, client_main
 from workspace_control.http import ThreadingHTTPServer, handler_for, listener_config, serve, ROUTES, OPERATIONS
 from workspace_control.service import Service, _regular_private, initialize, inspect
+from workspace_control.conversations import ConversationConflict, ConversationStore
 from workspace_control.forge_peer import _binding, _endpoint
 import workspace_control.forge_peer as forge_peer
 
@@ -298,20 +301,24 @@ class ReadOnlyTests(unittest.TestCase):
         operations = {operation["id"]: operation for operation in inventory["operations"]}
         self.assertEqual(set(operations), set(OPERATIONS))
         http_routes = {operation["path"] for operation in operations.values()
-                       if operation["exposure"] == "HTTP_EXPOSED"}
+                       if operation["exposure"] == "HTTP_EXPOSED" and
+                       not operation["id"].startswith("conversations.")}
         self.assertEqual(http_routes, set(ROUTES))
         self.assertEqual(operations["projects.read"]["local_cli"], "projects")
         self.assertEqual(operations["capabilities.read"]["local_cli"], "capabilities")
         self.assertEqual(operations["openapi.read"]["local_cli"], "openapi")
         self.assertEqual({api["paths"][path]["get"]["operationId"] for path in http_routes},
                          {operation["id"] for operation in operations.values()
-                          if operation["exposure"] == "HTTP_EXPOSED"})
+                          if operation["exposure"] == "HTTP_EXPOSED" and
+                          not operation["id"].startswith("conversations.")})
         self.assertEqual({operation["id"] for operation in operations.values()
                           if operation["exposure"] == "LOCAL_ONLY_ADMIN"},
-                         {"instance.init", "instance.inspect", "forge.read.configure", "server.serve"})
+                         {"instance.init", "instance.inspect", "forge.read.configure", "server.serve",
+                          "conversations.grant.issue", "conversations.grant.revoke"})
         self.assertTrue(all("path" not in operation for operation in operations.values()
                             if operation["exposure"] == "LOCAL_ONLY_ADMIN"))
-        self.assertTrue(all(operation["auth"] == "BEARER_PINNED" for operation in operations.values()
+        self.assertTrue(all(operation["auth"] in {"BEARER_PINNED", "BEARER_PINNED_AND_DRAFT_GRANT"}
+                            for operation in operations.values()
                             if operation.get("path") not in (None, "/v1/identity")))
         for item in collection["item"]:
             self.assertEqual(item["request"]["method"], "GET")
@@ -1364,3 +1371,276 @@ class ForgeReadTests(unittest.TestCase):
         after, *_ = _binding(self.service._root_fd)
         self.assertEqual((after["endpoint"], after["token"], after["revision"]),
                          (next_endpoint, next_token, 2))
+
+
+class ConversationDraftTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name) / "server"
+        self.root.mkdir(mode=0o700)
+        self.instance = initialize(self.root)
+        self._catalogue()
+        self.service = Service(self.root)
+        self.addCleanup(self.service.close)
+        self.server = ThreadingHTTPServer(("127.0.0.1", 0), handler_for(self.service))
+        self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
+        self.thread.start()
+        self.addCleanup(self.server.server_close)
+        self.addCleanup(self.server.shutdown)
+        self.url = f"http://127.0.0.1:{self.server.server_port}"
+        self.grant = self.service.issue_conversation_grant("alice", "project-a")
+
+    def _catalogue(self, *, age=0, projects=None):
+        document = {"source": "LOCAL", "observed_at":
+                    (datetime.now(timezone.utc) - timedelta(seconds=age)).isoformat(),
+                    "projects": projects if projects is not None else
+                    [{"id": "project-a", "name": "Project A"}, {"id": "project-b", "name": "Project B"}]}
+        path = self.root / "projects.json"
+        path.write_text(json.dumps(document), encoding="utf-8")
+        path.chmod(0o600)
+
+    def request(self, path, *, method="GET", grant=None, token=None, pin=None, body=None, origin=None):
+        headers = {"Authorization": "Bearer " + (self.service.token if token is None else token),
+                   "X-Workspace-Instance": self.instance if pin is None else pin}
+        if grant is not False:
+            headers["X-Workspace-Draft-Grant"] = self.grant if grant is None else grant
+        if origin is not None:
+            headers["Origin"] = origin
+        if body is not None:
+            headers["Content-Type"] = "application/json"
+            body = json.dumps(body).encode()
+        request = Request(self.url + path, method=method, headers=headers, data=body)
+        try:
+            with urlopen(request, timeout=2) as response:
+                return response.status, json.loads(response.read())
+        except HTTPError as error:
+            try:
+                return error.code, json.loads(error.read())
+            finally:
+                error.close()
+
+    @staticmethod
+    def fields(**overrides):
+        return {"title": "Discuss the outcome", "focus": "Vision", "mode": "BUSINESS",
+                "draft": "What would help users?", "request_id": "a" * 32, **overrides}
+
+    @classmethod
+    def update_fields(cls, **overrides):
+        fields = cls.fields(**overrides)
+        fields.pop("request_id")
+        return fields
+
+    def test_explicit_grant_durable_drafts_and_revision_conflict(self):
+        self.assertEqual(self.request("/v1/conversations")[1]["conversations"], [])
+        self.assertFalse((self.root / "conversations.sqlite3").exists())
+        status, created = self.request("/v1/conversations", method="POST", body=self.fields())
+        self.assertEqual(status, 201)
+        self.assertEqual(created["state"], "DRAFT_ONLY")
+        self.assertEqual(created["history"], [])
+        self.assertEqual(created["history_availability"], "UNQUALIFIED_FORGE")
+        self.assertEqual((created["actor_id"], created["project_id"], created["revision"]),
+                         ("alice", "project-a", 1))
+        identity = created["id"]
+        self.assertEqual(self.request("/v1/conversations", method="POST", body=self.fields()),
+                         (201, created))
+        self.assertEqual(self.request("/v1/conversations", method="POST",
+                                      body=self.fields(title="Changed request")),
+                         (409, {"error": "DRAFT_CONFLICT"}))
+        self.assertEqual(self.request("/v1/conversations")[1]["conversations"][0]["id"], identity)
+        self.assertEqual(self.request("/v1/conversations/" + identity)[1]["draft"],
+                         "What would help users?")
+        changed = {**self.update_fields(mode="ARCHITECTURE", draft="Check the current boundary"),
+                   "expected_revision": 1}
+        self.assertEqual(self.request("/v1/conversations/" + identity,
+                                      method="PATCH", body=changed)[1]["revision"], 2)
+        replay = self.request("/v1/conversations", method="POST", body=self.fields())
+        self.assertEqual((replay[0], replay[1]["id"], replay[1]["revision"]), (201, identity, 2))
+        self.assertEqual(self.request("/v1/conversations/" + identity,
+                                      method="PATCH", body=changed),
+                         (409, {"error": "DRAFT_CONFLICT"}))
+        with Service(self.root) as reopened:
+            record = reopened.conversations.get(("alice", "project-a"), identity)
+        self.assertEqual((record["draft"], record["mode"], record["revision"]),
+                         ("Check the current boundary", "ARCHITECTURE", 2))
+        self.assertEqual((self.root / "conversation-grants.json").stat().st_mode & 0o777, 0o600)
+        self.assertEqual((self.root / "conversations.sqlite3").stat().st_mode & 0o777, 0o600)
+
+    def test_draft_contract_and_revision_preserve_navigation(self):
+        status, contract = self.request("/v1/conversations/openapi.json", grant=False)
+        self.assertEqual(status, 200)
+        self.assertEqual(set(contract["paths"]["/v1/conversations"]), {"get", "post"})
+        self.assertEqual(set(contract["paths"]["/v1/conversations/{id}"]), {"get", "patch"})
+        self.assertNotIn("send", json.dumps(contract).lower())
+        self.assertEqual(self.request("/v1/conversations/openapi.json", token="wrong")[0], 401)
+        _, created = self.request("/v1/conversations", method="POST", body=self.fields())
+        changed = {**self.update_fields(title="Renamed", mode="ARCHITECTURE"),
+                   "expected_revision": 1}
+        status, updated = self.request("/v1/conversations/" + created["id"], method="PATCH", body=changed)
+        self.assertEqual(status, 200)
+        self.assertEqual((updated["title"], updated["mode"], updated["history"]),
+                         ("Renamed", "ARCHITECTURE", []))
+        self.assertEqual(self.request("/v1/conversations")[1]["conversations"][0]["title"], "Renamed")
+
+    def test_read_token_alone_cannot_write_or_read_actor_drafts(self):
+        path = "/v1/conversations"
+        self.assertEqual(self.request(path, grant=False), (403, {"error": "DRAFT_GRANT_REQUIRED"}))
+        self.assertEqual(self.request(path, method="POST", grant=False, body=self.fields()),
+                         (403, {"error": "DRAFT_GRANT_REQUIRED"}))
+        self.assertEqual(self.request(path, grant="invalid"), (403, {"error": "DRAFT_GRANT_DENIED"}))
+        self.assertEqual(self.request(path, token="wrong"), (401, {"error": "UNAUTHORIZED"}))
+        self.assertEqual(self.request(path, pin="wrong"), (409, {"error": "WRONG_INSTANCE"}))
+        self.assertEqual(self.request(path, method="POST", body=self.fields(),
+                                      origin="https://other.example"), (403, {"error": "ORIGIN_DENIED"}))
+        self.assertEqual(self.request(path, method="PUT", body=self.fields())[0], 405)
+        self.assertEqual(self.request(path, method="DELETE", body=self.fields())[0], 405)
+        _, created = self.request(path, method="POST", body=self.fields())
+        bob_grant = self.service.issue_conversation_grant("bob", "project-a")
+        other_project = self.service.issue_conversation_grant("alice", "project-b")
+        for grant in (bob_grant, other_project):
+            self.assertEqual(self.request(path, grant=grant)[1]["conversations"], [])
+            self.assertEqual(self.request(path + "/" + created["id"], grant=grant),
+                             (404, {"error": "NOT_FOUND"}))
+            self.assertEqual(self.request(path + "/" + created["id"], method="PATCH",
+                                          grant=grant, body={**self.update_fields(), "expected_revision": 1}),
+                             (404, {"error": "NOT_FOUND"}))
+
+    def test_invalid_requests_and_project_freshness_fail_closed(self):
+        path = "/v1/conversations"
+        for fields in (self.fields(mode="UNKNOWN"), self.fields(title=" "),
+                       self.fields(draft="a" * 10001), self.fields(extra="value")):
+            self.assertEqual(self.request(path, method="POST", body=fields),
+                             (400, {"error": "INVALID_BODY"}))
+        _, created = self.request(path, method="POST", body=self.fields())
+        for revision in (True, 0, "1"):
+            self.assertEqual(self.request(path + "/" + created["id"], method="PATCH",
+                                          body={**self.update_fields(), "expected_revision": revision}),
+                             (400, {"error": "INVALID_BODY"}))
+        self._catalogue(age=301)
+        self.assertEqual(self.request(path), (503, {"error": "PROJECT_SOURCE_UNAVAILABLE"}))
+        self._catalogue(projects=[{"id": "project-b", "name": "Project B"}])
+        self.assertEqual(self.request(path), (403, {"error": "DRAFT_GRANT_DENIED"}))
+        with self.assertRaises(ValueError):
+            self.service.issue_conversation_grant("bob", "project-a")
+        with self.assertRaises(ValueError):
+            self.service.issue_conversation_grant("bad actor", "project-b")
+
+    def test_duplicate_json_keys_and_oversized_body_fail_closed(self):
+        port = self.server.server_port
+        headers = {"Authorization": "Bearer " + self.service.token,
+                   "X-Workspace-Instance": self.instance,
+                   "X-Workspace-Draft-Grant": self.grant,
+                   "Content-Type": "application/json"}
+        for body in (b'{"title":"one","title":"two"}', b"x" * 48_001):
+            connection = http.client.HTTPConnection("127.0.0.1", port, timeout=2)
+            try:
+                connection.request("POST", "/v1/conversations", body=body, headers=headers)
+                response = connection.getresponse()
+                self.assertEqual(response.status, 400)
+                self.assertEqual(json.loads(response.read()), {"error": "INVALID_BODY"})
+            finally:
+                connection.close()
+        self.assertEqual(self.request("/v1/conversations")[1]["conversations"], [])
+
+    def test_grant_store_validation_and_direct_conflict(self):
+        scope = self.service.conversation_scope(self.grant)
+        record = self.service.conversations.create(scope, self.fields())
+        with self.assertRaises(ConversationConflict):
+            self.service.conversations.update(scope, record["id"],
+                                              {**self.update_fields(), "expected_revision": 9})
+        with self.assertRaises(FileNotFoundError):
+            self.service.conversations.get(scope, "missing")
+        grant_path = self.root / "conversation-grants.json"
+        grant_path.write_text('{"grants": [{"digest": "bad"}]}', encoding="utf-8")
+        with self.assertRaises(ValueError):
+            self.service.conversations.scope(self.grant)
+
+    def test_grant_revocation_removes_only_exact_actor_project(self):
+        other = self.service.issue_conversation_grant("alice", "project-b")
+        self.assertEqual(self.service.revoke_conversation_grants("alice", "project-a"), 1)
+        self.assertEqual(self.request("/v1/conversations"), (403, {"error": "DRAFT_GRANT_DENIED"}))
+        self.assertEqual(self.request("/v1/conversations", grant=other)[0], 200)
+        self.assertEqual(self.service.revoke_conversation_grants("alice", "project-a"), 0)
+
+    def test_concurrent_grant_issue_cannot_restore_revoked_scope(self):
+        issuer = ConversationStore(self.root, self.service._root_fd)
+        revoker = ConversationStore(self.root, self.service._root_fd)
+        read_complete = threading.Event()
+        allow_issue = threading.Event()
+        revoke_started = threading.Event()
+        original_read = issuer._grants
+        original_lock = revoker._grant_write_lock
+
+        def paused_read():
+            grants = original_read()
+            read_complete.set()
+            self.assertTrue(allow_issue.wait(5))
+            return grants
+
+        issuer._grants = paused_read
+
+        @contextmanager
+        def announced_lock():
+            revoke_started.set()
+            with original_lock():
+                yield
+
+        revoker._grant_write_lock = announced_lock
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            issued = pool.submit(issuer.issue_grant, "bob", "project-a")
+            self.assertTrue(read_complete.wait(5))
+            revoked = pool.submit(revoker.revoke_grants, "alice", "project-a")
+            self.assertTrue(revoke_started.wait(5))
+            with self.assertRaises(TimeoutError):
+                revoked.result(timeout=0.1)
+            allow_issue.set()
+            bob = issued.result(timeout=5)
+            self.assertEqual(revoked.result(timeout=5), 1)
+        with self.assertRaises(PermissionError):
+            issuer.scope(self.grant)
+        self.assertEqual(revoker.scope(bob), ("bob", "project-a"))
+
+    def test_local_admin_grant_cli_and_revoke(self):
+        issued = io.StringIO()
+        with redirect_stdout(issued):
+            self.assertEqual(main(["--root", str(self.root), "conversation-grant-issue",
+                                   "--actor", "carol", "--project", "project-b"]), 0)
+        token = json.loads(issued.getvalue())["draft_grant_token"]
+        self.assertEqual(self.request("/v1/conversations", grant=token)[1]["actor_id"], "carol")
+        revoked = io.StringIO()
+        with redirect_stdout(revoked):
+            self.assertEqual(main(["--root", str(self.root), "conversation-grant-revoke",
+                                   "--actor", "carol", "--project", "project-b"]), 0)
+        self.assertEqual(json.loads(revoked.getvalue())["revoked"], 1)
+        self.assertEqual(self.request("/v1/conversations", grant=token)[0], 403)
+
+    def test_concurrent_duplicate_create_and_stale_update(self):
+        barrier = threading.Barrier(2)
+        def create():
+            with Service(self.root) as client:
+                barrier.wait(timeout=3)
+                return client.conversations.create(client.conversation_scope(self.grant), self.fields())
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            first, second = list(pool.map(lambda _: create(), range(2)))
+        self.assertEqual(first["id"], second["id"])
+        self.assertEqual(len(self.request("/v1/conversations")[1]["conversations"]), 1)
+        barrier = threading.Barrier(2)
+        def update(title):
+            with Service(self.root) as client:
+                barrier.wait(timeout=3)
+                try:
+                    return client.conversations.update(client.conversation_scope(self.grant), first["id"],
+                        {**self.update_fields(title=title), "expected_revision": 1})["revision"]
+                except ConversationConflict:
+                    return "CONFLICT"
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            results = list(pool.map(update, ("One", "Two")))
+        self.assertEqual(sorted(map(str, results)), ["2", "CONFLICT"])
+
+    def test_draft_navigation_has_no_forge_provider_call(self):
+        with patch.object(forge_peer, "projection", side_effect=AssertionError("unexpected Forge call")):
+            _, created = self.request("/v1/conversations", method="POST", body=self.fields())
+            self.assertEqual(self.request("/v1/conversations")[0], 200)
+            self.assertEqual(self.request("/v1/conversations/" + created["id"])[0], 200)
+            self.assertEqual(self.request("/v1/conversations/" + created["id"], method="PATCH",
+                body={**self.update_fields(mode="UX"), "expected_revision": 1})[0], 200)

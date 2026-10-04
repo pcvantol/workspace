@@ -8,13 +8,15 @@ import json
 import os
 import re
 import secrets
+import sqlite3
 import ssl
 import stat
 import sys
 
 from . import __version__
 from .schemas import OPENAPI_SCHEMAS, SUCCESS_SCHEMA
-from .service import Service
+from .service import Service, _unique_json_object
+from .conversations import ConversationConflict
 
 
 OPERATIONS = {
@@ -33,6 +35,21 @@ OPERATIONS = {
                          "summary": "own operation inventory"},
     "forge.status.read": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/forge/status",
                           "auth": "BEARER_PINNED", "summary": "scoped Forge observation"},
+    "conversations.contract.read": {"exposure": "HTTP_EXPOSED", "method": "GET",
+                                    "path": "/v1/conversations/openapi.json", "auth": "BEARER_PINNED",
+                                    "contract": "draft", "summary": "own draft API contract"},
+    "conversations.list": {"exposure": "HTTP_EXPOSED", "method": "GET",
+                           "path": "/v1/conversations", "auth": "BEARER_PINNED_AND_DRAFT_GRANT",
+                           "contract": "draft", "summary": "own conversation drafts"},
+    "conversations.create": {"exposure": "HTTP_EXPOSED", "method": "POST",
+                             "path": "/v1/conversations", "auth": "BEARER_PINNED_AND_DRAFT_GRANT",
+                             "contract": "draft", "summary": "create own conversation draft"},
+    "conversations.get": {"exposure": "HTTP_EXPOSED", "method": "GET",
+                          "path": "/v1/conversations/{id}", "auth": "BEARER_PINNED_AND_DRAFT_GRANT",
+                          "contract": "draft", "summary": "read one own conversation draft"},
+    "conversations.update": {"exposure": "HTTP_EXPOSED", "method": "PATCH",
+                             "path": "/v1/conversations/{id}", "auth": "BEARER_PINNED_AND_DRAFT_GRANT",
+                             "contract": "draft", "summary": "replace own conversation draft at revision"},
     "instance.init": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "init",
                       "auth": "PRIVATE_ROOT_OWNER", "summary": "initialize private instance"},
     "instance.inspect": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "inspect",
@@ -41,9 +58,13 @@ OPERATIONS = {
                              "auth": "PRIVATE_ROOT_OWNER", "summary": "bind scoped Forge read token"},
     "server.serve": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "serve",
                      "auth": "PRIVATE_ROOT_OWNER", "summary": "serve private instance"},
+    "conversations.grant.issue": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "conversation-grant-issue",
+                                  "auth": "PRIVATE_ROOT_OWNER", "summary": "issue project and actor draft grant"},
+    "conversations.grant.revoke": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "conversation-grant-revoke",
+                                   "auth": "PRIVATE_ROOT_OWNER", "summary": "revoke project and actor draft grants"},
 }
 ROUTES = {details["path"]: details["summary"] for details in OPERATIONS.values()
-          if details["exposure"] == "HTTP_EXPOSED"}
+          if details["exposure"] == "HTTP_EXPOSED" and details.get("contract", "read") == "read"}
 
 
 class ThreadingHTTPServer(BaseThreadingHTTPServer):
@@ -70,7 +91,7 @@ def operation_inventory(instance_id):
 def openapi_contract(server_url=None):
     paths = {}
     for operation_id, details in OPERATIONS.items():
-        if details["exposure"] != "HTTP_EXPOSED":
+        if details["exposure"] != "HTTP_EXPOSED" or details.get("contract", "read") != "read":
             continue
         route = details["path"]
         responses = {"200": {"description": "Read result"},
@@ -98,6 +119,70 @@ def openapi_contract(server_url=None):
             "components": {"securitySchemes": {"bearerAuth": {"type": "http", "scheme": "bearer"}},
                            "schemas": OPENAPI_SCHEMAS},
             "paths": paths}
+
+
+def draft_openapi_contract():
+    """Document only Workspace-owned draft storage; no Forge/AI send operation."""
+    fields = {"title": {"type": "string", "minLength": 1, "maxLength": 120},
+              "focus": {"type": "string", "maxLength": 240},
+              "mode": {"type": "string", "enum": ["BUSINESS", "ARCHITECTURE", "UX"]},
+              "draft": {"type": "string", "maxLength": 10000}}
+    create = {"type": "object", "additionalProperties": False,
+              "required": [*fields, "request_id"],
+              "properties": {**fields, "request_id": {"type": "string", "pattern": "^[0-9a-f]{32}$"}}}
+    update = {"type": "object", "additionalProperties": False,
+              "required": [*fields, "expected_revision"],
+              "properties": {**fields, "expected_revision": {"type": "integer", "minimum": 1}}}
+    record = {"type": "object", "additionalProperties": False,
+              "required": ["id", "actor_id", "project_id", *fields, "revision", "created_at",
+                           "updated_at", "history", "history_availability", "state"],
+              "properties": {"id": {"type": "string", "pattern": "^[0-9a-f]{32}$"},
+                             "actor_id": {"type": "string"}, "project_id": {"type": "string"},
+                             **fields, "revision": {"type": "integer", "minimum": 1},
+                             "created_at": {"type": "string"}, "updated_at": {"type": "string"},
+                             "history": {"type": "array", "maxItems": 0},
+                             "history_availability": {"type": "string", "enum": ["UNQUALIFIED_FORGE"]},
+                             "state": {"type": "string", "enum": ["DRAFT_ONLY"]}}}
+    listing = {"type": "object", "additionalProperties": False,
+               "required": ["actor_id", "project_id", "conversations", "history_availability"],
+               "properties": {"actor_id": {"type": "string"}, "project_id": {"type": "string"},
+                              "conversations": {"type": "array", "maxItems": 500,
+                                                "items": {"$ref": "#/components/schemas/Conversation"}},
+                              "history_availability": {"type": "string", "enum": ["UNQUALIFIED_FORGE"]}}}
+    def operation(operation_id, success, *, request=None, item=False):
+        result = {"operationId": operation_id,
+                  "security": [{"bearerAuth": [], "draftGrant": []}],
+                  "parameters": [{"name": "X-Workspace-Instance", "in": "header", "required": True,
+                                  "schema": {"type": "string"}}],
+                  "responses": {str(success): {"description": "Workspace-owned draft"},
+                                "400": {"description": "Invalid request"},
+                                "401": {"description": "Read token denied"},
+                                "403": {"description": "Draft grant denied"},
+                                "409": {"description": "Wrong instance or draft revision conflict"},
+                                "503": {"description": "Workspace source unavailable"}}}
+        if item:
+            result["parameters"].append({"name": "id", "in": "path", "required": True,
+                                         "schema": {"type": "string", "pattern": "^[0-9a-f]{32}$"}})
+            result["responses"]["404"] = {"description": "Draft not found in this actor/project"}
+        if request:
+            result["requestBody"] = {"required": True, "content": {"application/json": {
+                "schema": {"$ref": f"#/components/schemas/{request}"}}}}
+        result["responses"][str(success)]["content"] = {"application/json": {
+            "schema": {"$ref": "#/components/schemas/" +
+                       ("ConversationList" if operation_id == "conversations.list" else "Conversation")}}}
+        return result
+    return {"openapi": "3.0.3", "info": {"title": "Workspace conversation drafts V1", "version": "1"},
+            "components": {"securitySchemes": {
+                "bearerAuth": {"type": "http", "scheme": "bearer"},
+                "draftGrant": {"type": "apiKey", "in": "header", "name": "X-Workspace-Draft-Grant"}},
+                "schemas": {"DraftCreate": create, "DraftUpdate": update,
+                            "Conversation": record, "ConversationList": listing}},
+            "paths": {"/v1/conversations": {
+                "get": operation("conversations.list", 200),
+                "post": operation("conversations.create", 201, request="DraftCreate")},
+                "/v1/conversations/{id}": {
+                    "get": operation("conversations.get", 200, item=True),
+                    "patch": operation("conversations.update", 200, request="DraftUpdate", item=True)}}}
 
 
 def handler_for(service, *, public_host=None, scheme="http"):
@@ -152,6 +237,80 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return False
             return True
 
+        def _pinned_auth(self):
+            authorizations = self.headers.get_all("Authorization", [])
+            pins = self.headers.get_all("X-Workspace-Instance", [])
+            if len(authorizations) > 1 or len(pins) > 1:
+                self._reply(400, {"error": "AMBIGUOUS_CREDENTIALS"})
+                return False
+            auth = authorizations[0] if authorizations else ""
+            provided = auth[7:] if auth.startswith("Bearer ") else ""
+            if not secrets.compare_digest(provided, service.token):
+                self._reply(401, {"error": "UNAUTHORIZED"})
+                return False
+            if (pins[0] if pins else None) != service.instance_id:
+                self._reply(409, {"error": "WRONG_INSTANCE"})
+                return False
+            return True
+
+        def _conversation_scope(self):
+            grants = self.headers.get_all("X-Workspace-Draft-Grant", [])
+            if len(grants) != 1:
+                self._reply(403, {"error": "DRAFT_GRANT_REQUIRED"})
+                return None
+            try:
+                return service.conversation_scope(grants[0])
+            except PermissionError:
+                self._reply(403, {"error": "DRAFT_GRANT_DENIED"})
+            except (ValueError, OSError, UnicodeError):
+                self._reply(503, {"error": "PROJECT_SOURCE_UNAVAILABLE"})
+            return None
+
+        def _conversation_get(self, path):
+            scope = self._conversation_scope()
+            if scope is None:
+                return
+            try:
+                result = (service.conversations.list(scope) if path == "/v1/conversations" else
+                          service.conversations.get(scope, path.rsplit("/", 1)[1]))
+            except FileNotFoundError:
+                return self._reply(404, {"error": "NOT_FOUND"})
+            except (ValueError, OSError, sqlite3.Error):
+                return self._reply(503, {"error": "CONVERSATIONS_UNAVAILABLE"})
+            self._reply(200, result)
+
+        def _conversation_write(self, path):
+            if not self._pinned_auth():
+                return
+            scope = self._conversation_scope()
+            if scope is None:
+                return
+            lengths = self.headers.get_all("Content-Length", [])
+            if (len(lengths) != 1 or not lengths[0].isdecimal() or
+                    not 1 <= int(lengths[0]) <= 48_000 or self.headers.get("Transfer-Encoding") or
+                    self.headers.get("Content-Type", "").split(";", 1)[0].lower() != "application/json"):
+                return self._reply(400, {"error": "INVALID_BODY"})
+            try:
+                body = json.loads(self.rfile.read(int(lengths[0])), object_pairs_hook=_unique_json_object)
+            except (ValueError, UnicodeError, RecursionError):
+                return self._reply(400, {"error": "INVALID_BODY"})
+            try:
+                if self.command == "POST":
+                    result = service.conversations.create(scope, body)
+                    code = 201
+                else:
+                    result = service.conversations.update(scope, path.rsplit("/", 1)[1], body)
+                    code = 200
+            except ConversationConflict:
+                return self._reply(409, {"error": "DRAFT_CONFLICT"})
+            except FileNotFoundError:
+                return self._reply(404, {"error": "NOT_FOUND"})
+            except ValueError:
+                return self._reply(400, {"error": "INVALID_BODY"})
+            except (OSError, sqlite3.Error):
+                return self._reply(503, {"error": "CONVERSATIONS_UNAVAILABLE"})
+            self._reply(code, result)
+
         def do_GET(self):
             if not self._trusted_origin():
                 return
@@ -173,18 +332,17 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return self._reply(200, style, "text/css; charset=utf-8")
             if path == "/v1/identity":
                 return self._reply(200, {"instance_id": service.instance_id})
-            if path not in ROUTES:
+            if path == "/v1/conversations/openapi.json":
+                if self._pinned_auth():
+                    return self._reply(200, draft_openapi_contract())
+                return
+            conversation = path == "/v1/conversations" or re.fullmatch(r"/v1/conversations/[0-9a-f]{32}", path)
+            if path not in ROUTES and not conversation:
                 return self._reply(404, {"error": "NOT_FOUND"})
-            authorizations = self.headers.get_all("Authorization", [])
-            pins = self.headers.get_all("X-Workspace-Instance", [])
-            if len(authorizations) > 1 or len(pins) > 1:
-                return self._reply(400, {"error": "AMBIGUOUS_CREDENTIALS"})
-            auth = authorizations[0] if authorizations else ""
-            provided = auth[7:] if auth.startswith("Bearer ") else ""
-            if not secrets.compare_digest(provided, service.token):
-                return self._reply(401, {"error": "UNAUTHORIZED"})
-            if (pins[0] if pins else None) != service.instance_id:
-                return self._reply(409, {"error": "WRONG_INSTANCE"})
+            if not self._pinned_auth():
+                return
+            if conversation:
+                return self._conversation_get(path)
             try:
                 if path == "/v1/status":
                     result = service.status()
@@ -208,15 +366,27 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_POST(self):
             if not self._trusted_origin():
                 return
+            if self.path == "/v1/conversations":
+                return self._conversation_write(self.path)
             self._reply(405, {"error": "READ_ONLY"})
 
-        do_PUT = do_POST
-        do_PATCH = do_POST
-        do_DELETE = do_POST
+        def _read_only_method(self):
+            if not self._trusted_origin():
+                return
+            self._reply(405, {"error": "READ_ONLY"})
+
+        do_PUT = _read_only_method
+        def do_PATCH(self):
+            if not self._trusted_origin():
+                return
+            if re.fullmatch(r"/v1/conversations/[0-9a-f]{32}", self.path):
+                return self._conversation_write(self.path)
+            self._reply(405, {"error": "READ_ONLY"})
+        do_DELETE = _read_only_method
         do_HEAD = do_GET
-        do_OPTIONS = do_POST
-        do_TRACE = do_POST
-        do_CONNECT = do_POST
+        do_OPTIONS = _read_only_method
+        do_TRACE = _read_only_method
+        do_CONNECT = _read_only_method
 
     return Handler
 

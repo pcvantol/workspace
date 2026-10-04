@@ -20,6 +20,12 @@ def main(argv=None):
     commands.add_parser("projects")
     commands.add_parser("capabilities")
     commands.add_parser("openapi")
+    conversation_grant = commands.add_parser("conversation-grant-issue")
+    conversation_grant.add_argument("--actor", required=True)
+    conversation_grant.add_argument("--project", required=True)
+    conversation_revoke = commands.add_parser("conversation-grant-revoke")
+    conversation_revoke.add_argument("--actor", required=True)
+    conversation_revoke.add_argument("--project", required=True)
     forge_binding = commands.add_parser("forge-read-configure")
     forge_binding.add_argument("--endpoint", required=True)
     forge_binding.add_argument("--instance-id", required=True)
@@ -60,6 +66,16 @@ def main(argv=None):
                     expected_repository_id=args.expected_current_repository,
                     expected_revision=args.expected_current_revision)
             print(json.dumps(result, sort_keys=True))
+        elif args.command == "conversation-grant-issue":
+            with Service(args.root) as service:
+                token = service.issue_conversation_grant(args.actor, args.project)
+            print(json.dumps({"actor_id": args.actor, "project_id": args.project,
+                              "draft_grant_token": token}, sort_keys=True))
+        elif args.command == "conversation-grant-revoke":
+            with Service(args.root) as service:
+                revoked = service.revoke_conversation_grants(args.actor, args.project)
+            print(json.dumps({"actor_id": args.actor, "project_id": args.project,
+                              "revoked": revoked}, sort_keys=True))
         else:
             if not 1 <= args.port <= 65535:
                 raise ValueError("port out of range")
