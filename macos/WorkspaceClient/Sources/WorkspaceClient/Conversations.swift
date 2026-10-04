@@ -1,7 +1,7 @@
 import Foundation
 import Security
 
-struct DraftAccess: Codable, Sendable {
+struct DraftAccess: Codable, Sendable, Equatable {
     let endpoint: String
     let instanceID: String
     let projectID: String

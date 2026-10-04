@@ -4,6 +4,8 @@ No Forge session, provider request, proposal or decision is stored here.
 """
 
 from datetime import datetime, timezone
+from contextlib import contextmanager
+import fcntl
 import hashlib
 import json
 import os
@@ -43,6 +45,21 @@ class ConversationStore:
         self.root_fd = root_fd
         self.lock = threading.RLock()
 
+    @contextmanager
+    def _grant_write_lock(self):
+        """Serialize grant read/modify/write across CLI and Server processes."""
+        descriptor = os.open("conversation-grants.lock", os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW,
+                             0o600, dir_fd=self.root_fd)
+        try:
+            info = os.fstat(descriptor)
+            if not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o077:
+                raise ValueError("invalid conversation grant lock")
+            fcntl.flock(descriptor, fcntl.LOCK_EX)
+            yield
+        finally:
+            fcntl.flock(descriptor, fcntl.LOCK_UN)
+            os.close(descriptor)
+
     def _grants(self):
         try:
             document = _private_json("conversation-grants.json", dir_fd=self.root_fd)
@@ -68,7 +85,7 @@ class ConversationStore:
             raise ValueError("invalid actor")
         if not isinstance(project_id, str) or not 1 <= len(project_id) <= 120:
             raise ValueError("invalid project")
-        with self.lock:
+        with self.lock, self._grant_write_lock():
             grants = self._grants()
             if len(grants) >= 100:
                 raise ValueError("conversation grant limit reached")
@@ -102,7 +119,7 @@ class ConversationStore:
             raise ValueError("invalid actor")
         if not isinstance(project_id, str) or not 1 <= len(project_id) <= 120:
             raise ValueError("invalid project")
-        with self.lock:
+        with self.lock, self._grant_write_lock():
             existing = self._grants()
             remaining = [grant for grant in existing if (grant["actor_id"], grant["project_id"]) !=
                          (actor_id, project_id)]

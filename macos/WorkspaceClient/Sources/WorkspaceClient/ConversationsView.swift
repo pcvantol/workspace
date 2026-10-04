@@ -33,7 +33,9 @@ enum ConversationCopy {
             "saving": ["Saving draft", "Concept opslaan", "Entwurf wird gespeichert", "Enregistrement du brouillon", "Guardando borrador"],
             "offline": ["Offline: local text stays here until you save it after reconnecting.", "Offline: lokale tekst blijft hier tot je die na herverbinden opslaat.", "Offline: Lokaler Text bleibt hier, bis er nach dem Verbinden gespeichert wird.", "Hors ligne : le texte local reste ici jusqu'à son enregistrement après reconnexion.", "Sin conexión: el texto local permanece aquí hasta que lo guardes al reconectar."],
             "forbidden": ["No access to this project's drafts.", "Geen toegang tot de concepten van dit project.", "Kein Zugriff auf die Entwürfe dieses Projekts.", "Pas d'accès aux brouillons de ce projet.", "Sin acceso a los borradores de este proyecto."],
-            "conflict": ["A newer version exists. Keep your local text, review the change and reload before saving.", "Er bestaat een nieuwere versie. Bewaar je lokale tekst, bekijk de wijziging en laad opnieuw vóór opslaan.", "Eine neuere Version liegt vor. Lokalen Text behalten, Änderung prüfen und vor dem Speichern neu laden.", "Une version plus récente existe. Gardez votre texte, vérifiez le changement puis rechargez avant d'enregistrer.", "Existe una versión más reciente. Conserva tu texto, revisa el cambio y recarga antes de guardar."],
+            "conflict": ["A newer Server draft exists. Compare it with your local text before choosing a version.", "Er staat een nieuwer concept op de Server. Vergelijk het met je lokale tekst voordat je een versie kiest.", "Ein neuerer Entwurf liegt auf dem Server. Vor der Auswahl mit dem lokalen Text vergleichen.", "Un brouillon plus récent est sur le serveur. Comparez-le à votre texte local avant de choisir.", "Hay un borrador más reciente en el servidor. Compáralo con tu texto local antes de elegir."],
+            "serverVersion": ["Newer Server version", "Nieuwere Serverversie", "Neuere Serverversion", "Version plus récente du serveur", "Versión más reciente del servidor"],
+            "keepLocal": ["Keep my text after review", "Mijn tekst behouden na controle", "Meinen Text nach Prüfung behalten", "Conserver mon texte après examen", "Conservar mi texto tras revisar"],
             "pending": ["Save or discard local changes before switching.", "Sla lokale wijzigingen op of verwerp ze vóór het wisselen.", "Lokale Änderungen vor dem Wechsel speichern oder verwerfen.", "Enregistrez ou annulez les modifications locales avant de changer.", "Guarda o descarta los cambios locales antes de cambiar."],
             "unavailable": ["Drafts are unavailable right now.", "Concepten zijn nu niet beschikbaar.", "Entwürfe sind derzeit nicht verfügbar.", "Les brouillons sont indisponibles pour le moment.", "Los borradores no están disponibles ahora."],
             "stale": ["The project source is outdated. Refresh the Server before saving.", "De projectbron is verouderd. Vernieuw de Server vóór opslaan.", "Die Projektquelle ist veraltet. Server vor dem Speichern aktualisieren.", "La source du projet est périmée. Actualisez le serveur avant d'enregistrer.", "La fuente del proyecto está desactualizada. Actualiza el servidor antes de guardar."],
@@ -139,6 +141,19 @@ struct ConversationsView: View {
                             .foregroundStyle(.orange)
                     } else if state.savedRevision != nil {
                         Label(ConversationCopy.text("saved"), systemImage: "checkmark.circle")
+                    }
+                    if let newer = state.serverConflict {
+                        GroupBox(ConversationCopy.text("serverVersion")) {
+                            VStack(alignment: .leading, spacing: 8) {
+                                LabeledContent(ConversationCopy.text("title"), value: newer.title)
+                                LabeledContent(ConversationCopy.text("focus"), value: newer.focus)
+                                LabeledContent(ConversationCopy.text("mode"), value: modeLabel(newer.mode))
+                                Text(newer.draft).textSelection(.enabled)
+                                    .accessibilityLabel(ConversationCopy.text("serverVersion"))
+                                Button(ConversationCopy.text("keepLocal")) { state.keepLocalAfterReview() }
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
                     }
                     if state.state == "GRANT_REQUIRED" || state.state == "UNAUTHORIZED" {
                         VStack(alignment: .leading) {

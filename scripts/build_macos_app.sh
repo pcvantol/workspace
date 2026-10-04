@@ -137,7 +137,11 @@ else
   [[ -z "$identity$team_id$notary_profile$source_revision" ]] || usage
 fi
 
-swift build --package-path "$package" --scratch-path "$scratch" -c release --product WorkspaceClient "${swift_flags[@]}"
+if ((isolated_test_adapter == 1)); then
+  swift build --package-path "$package" --scratch-path "$scratch" -c release --product WorkspaceClient "${swift_flags[@]}"
+else
+  swift build --package-path "$package" --scratch-path "$scratch" -c release --product WorkspaceClient
+fi
 binary_dir="$(swift build --package-path "$package" --scratch-path "$scratch" -c release --show-bin-path)"
 if [[ "$mode" == developer-id ]]; then
   # The built bytes must still correspond to the protected tree admitted above.

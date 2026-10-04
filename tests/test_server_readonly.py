@@ -17,7 +17,7 @@ import tempfile
 import threading
 import time
 import unittest
-from contextlib import redirect_stderr, redirect_stdout
+from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from unittest.mock import Mock, patch
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -1561,6 +1561,44 @@ class ConversationDraftTests(unittest.TestCase):
         self.assertEqual(self.request("/v1/conversations"), (403, {"error": "DRAFT_GRANT_DENIED"}))
         self.assertEqual(self.request("/v1/conversations", grant=other)[0], 200)
         self.assertEqual(self.service.revoke_conversation_grants("alice", "project-a"), 0)
+
+    def test_concurrent_grant_issue_cannot_restore_revoked_scope(self):
+        issuer = ConversationStore(self.root, self.service._root_fd)
+        revoker = ConversationStore(self.root, self.service._root_fd)
+        read_complete = threading.Event()
+        allow_issue = threading.Event()
+        revoke_started = threading.Event()
+        original_read = issuer._grants
+        original_lock = revoker._grant_write_lock
+
+        def paused_read():
+            grants = original_read()
+            read_complete.set()
+            self.assertTrue(allow_issue.wait(5))
+            return grants
+
+        issuer._grants = paused_read
+
+        @contextmanager
+        def announced_lock():
+            revoke_started.set()
+            with original_lock():
+                yield
+
+        revoker._grant_write_lock = announced_lock
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            issued = pool.submit(issuer.issue_grant, "bob", "project-a")
+            self.assertTrue(read_complete.wait(5))
+            revoked = pool.submit(revoker.revoke_grants, "alice", "project-a")
+            self.assertTrue(revoke_started.wait(5))
+            with self.assertRaises(TimeoutError):
+                revoked.result(timeout=0.1)
+            allow_issue.set()
+            bob = issued.result(timeout=5)
+            self.assertEqual(revoked.result(timeout=5), 1)
+        with self.assertRaises(PermissionError):
+            issuer.scope(self.grant)
+        self.assertEqual(revoker.scope(bob), ("bob", "project-a"))
 
     def test_local_admin_grant_cli_and_revoke(self):
         issued = io.StringIO()

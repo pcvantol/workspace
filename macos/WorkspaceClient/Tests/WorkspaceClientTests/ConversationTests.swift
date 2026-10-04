@@ -360,6 +360,9 @@ final class ConversationTests: XCTestCase {
         XCTAssertEqual((attributes[.posixPermissions] as? Int) ?? -1, 0o600)
         try FileManager.default.setAttributes([.posixPermissions: 0o644], ofItemAtPath: file.path)
         XCTAssertThrowsError(try cache.load(scopeHash: key))
+        try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: file.path)
+        try Data(repeating: 0x41, count: 48_001).write(to: file)
+        XCTAssertThrowsError(try cache.load(scopeHash: key))
     }
 
     @MainActor
@@ -419,6 +422,10 @@ final class ConversationTests: XCTestCase {
         XCTAssertEqual(state.state, "UNAUTHORIZED")
         XCTAssertEqual(state.draft, "Keep locally")
         state.forgetGrant()
+        XCTAssertEqual(state.state, "PENDING")
+        XCTAssertNotNil(try grants.load())
+        state.discardChanges()
+        state.forgetGrant()
         for _ in 0..<100 where state.state != "GRANT_REQUIRED" {
             try? await Task.sleep(for: .milliseconds(10))
         }
@@ -428,6 +435,52 @@ final class ConversationTests: XCTestCase {
         await state.saveGrant(client: client)
         XCTAssertEqual(state.state, "UNAUTHORIZED")
         XCTAssertNil(try grants.load())
+    }
+
+    @MainActor
+    func testChangingActorGrantKeepsUnsavedTextAndClearsPriorActorOnSwitch() async throws {
+        let instance = self.instance
+        let aliceRecord = self.record
+        let bobToken = String(repeating: "y", count: 43)
+        StubProtocol.handler = { request in
+            switch request.url!.path {
+            case "/v1/identity": return (200, Data("{\"instance_id\":\"\(instance)\"}".utf8))
+            case "/v1/status": return (200, Data("{\"instance_id\":\"\(instance)\",\"version\":\"2.8.3\",\"state\":\"READY\",\"project_source\":\"AVAILABLE\"}".utf8))
+            case "/v1/projects": return (200, Data("{\"state\":\"AVAILABLE\",\"projects\":[{\"id\":\"project-a\",\"name\":\"Project A\"}],\"source\":\"LOCAL\",\"observed_at\":\"2026-10-04T20:00:00Z\",\"partial\":false,\"stale\":false}".utf8))
+            case "/v1/capabilities", "/v1/forge/status": return (503, Data("{}".utf8))
+            case "/v1/conversations":
+                let bob = request.value(forHTTPHeaderField: "X-Workspace-Draft-Grant") == bobToken
+                return (200, Data("{\"actor_id\":\"\(bob ? "bob" : "alice")\",\"project_id\":\"project-a\",\"conversations\":[\(bob ? "" : aliceRecord)],\"history_availability\":\"UNQUALIFIED_FORGE\"}".utf8))
+            default: XCTFail("Unexpected route"); return (404, Data("{}".utf8))
+            }
+        }
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [StubProtocol.self]
+        let client = ClientState(keychain: MemoryServerCredentials(endpoint: access.endpoint,
+            instance: instance, token: "read-only"), transport: ServerTransport(configuration: configuration))
+        for _ in 0..<100 where client.phase != "CONNECTED" {
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        XCTAssertEqual(client.phase, "CONNECTED")
+        let grants = MemoryDraftGrant(access)
+        let state = ConversationState(grants: grants, localDrafts: MemoryLocalDrafts(),
+            transport: ConversationTransport(configuration: configuration))
+        await state.prepare(client: client)
+        XCTAssertEqual(state.title, "Direction")
+        state.draft = "Alice's unsaved text"
+        state.grantEntry = bobToken
+        await state.saveGrant(client: client)
+        XCTAssertEqual(state.state, "PENDING")
+        XCTAssertEqual(state.draft, "Alice's unsaved text")
+        XCTAssertEqual(try grants.load(), access)
+        state.discardChanges()
+        await state.saveGrant(client: client)
+        XCTAssertEqual(state.state, "AVAILABLE")
+        XCTAssertEqual(try grants.load()?.token, bobToken)
+        XCTAssertTrue(state.conversations.isEmpty)
+        XCTAssertNil(state.selectedID)
+        XCTAssertEqual(state.title, "")
+        XCTAssertEqual(state.draft, "")
     }
 
     @MainActor
@@ -467,12 +520,14 @@ final class ConversationTests: XCTestCase {
                 XCTAssertEqual(request.httpMethod, "PATCH")
                 if conflictNext {
                     conflictNext = false
+                    records = [serverRecord("Other writer", "ARCHITECTURE", "Newer Server text", 3)]
                     return (409, Data("{\"error\":\"DRAFT_CONFLICT\"}".utf8))
                 }
                 let body = try self.body(request)
-                XCTAssertEqual(body["expected_revision"] as? Int, 1)
+                let latestRevision = records.first?["revision"] as? Int ?? 1
+                XCTAssertEqual(body["expected_revision"] as? Int, latestRevision)
                 let record = serverRecord(body["title"] as! String, body["mode"] as! String,
-                                          body["draft"] as! String, 2)
+                                          body["draft"] as! String, latestRevision + 1)
                 records = [record]
                 return (200, try JSONSerialization.data(withJSONObject: record))
             default:
@@ -527,15 +582,21 @@ final class ConversationTests: XCTestCase {
         await state.save(client: client)
         XCTAssertEqual(state.state, "CONFLICT")
         XCTAssertEqual(state.title, "Conflict edit")
-        state.discardChanges()
+        XCTAssertEqual(state.serverConflict?.title, "Other writer")
+        XCTAssertEqual(state.serverConflict?.draft, "Newer Server text")
+        state.keepLocalAfterReview()
+        XCTAssertEqual(state.title, "Conflict edit")
+        XCTAssertEqual(state.savedRevision, 3)
+        await state.save(client: client)
+        XCTAssertEqual(state.savedRevision, 4)
         let reopened = ConversationState(grants: MemoryDraftGrant(access), localDrafts: local,
             transport: ConversationTransport(configuration: configuration))
         await reopened.prepare(client: client)
-        XCTAssertEqual(reopened.conversations[0].title, "Architecture direction")
+        XCTAssertEqual(reopened.conversations[0].title, "Conflict edit")
         XCTAssertEqual(reopened.conversations[0].mode, "ARCHITECTURE")
         XCTAssertEqual(reopened.selectedID, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
         XCTAssertEqual(reopened.draft, "What should we prioritize?")
-        XCTAssertEqual(draftMethods, ["GET", "POST", "PATCH", "PATCH", "GET"])
+        XCTAssertEqual(draftMethods, ["GET", "POST", "PATCH", "PATCH", "GET", "PATCH", "GET"])
         render(ConversationsView(client: client, state: state))
         render(ServerOverviewView(client: client))
         render(SettingsView(client: client))

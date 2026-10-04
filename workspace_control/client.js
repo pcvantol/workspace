@@ -140,10 +140,17 @@ const ownOperations = {
   'openapi.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/openapi.json', local_cli: 'openapi'},
   'capabilities.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/capabilities', local_cli: 'capabilities'},
   'forge.status.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/forge/status'},
+  'conversations.contract.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/conversations/openapi.json', contract: 'draft'},
+  'conversations.list': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'GET', path: '/v1/conversations', contract: 'draft'},
+  'conversations.create': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'POST', path: '/v1/conversations', contract: 'draft'},
+  'conversations.get': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'GET', path: '/v1/conversations/{id}', contract: 'draft'},
+  'conversations.update': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'PATCH', path: '/v1/conversations/{id}', contract: 'draft'},
   'instance.init': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'init'},
   'instance.inspect': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'inspect'},
   'forge.read.configure': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'forge-read-configure'},
-  'server.serve': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'serve'}
+  'server.serve': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'serve'},
+  'conversations.grant.issue': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'conversation-grant-issue'},
+  'conversations.grant.revoke': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'conversation-grant-revoke'}
 };
 function validOwnOperation(operation) {
   if (!operation || !Object.hasOwn(ownOperations, operation.id)) return false;

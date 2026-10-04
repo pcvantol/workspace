@@ -68,8 +68,17 @@ struct PrivateLocalDraftCache: LocalDraftStore {
     func load(scopeHash: String) throws -> LocalDraftSnapshot? {
         try checkRoot()
         let url = try file(scopeHash)
-        guard try checkFile(url) else { return nil }
-        let data = try Data(contentsOf: url)
+        let descriptor = Darwin.open(url.path, O_RDONLY | O_NOFOLLOW)
+        if descriptor < 0 && errno == ENOENT { return nil }
+        guard descriptor >= 0 else { throw ConversationError.unavailable }
+        let handle = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true)
+        defer { try? handle.close() }
+        var info = stat()
+        guard Darwin.fstat(descriptor, &info) == 0,
+              info.st_mode & mode_t(S_IFMT) == mode_t(S_IFREG),
+              info.st_uid == getuid(), info.st_mode & 0o077 == 0,
+              info.st_size <= 48_000 else { throw ConversationError.unavailable }
+        let data = try handle.read(upToCount: 48_001) ?? Data()
         guard data.count <= 48_000,
               let snapshot = try? JSONDecoder().decode(LocalDraftSnapshot.self, from: data),
               snapshot.scopeHash == scopeHash,
