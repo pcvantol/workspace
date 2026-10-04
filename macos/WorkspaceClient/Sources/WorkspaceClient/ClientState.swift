@@ -28,6 +28,9 @@ protocol CredentialStore: Sendable {
 struct ClientKeychain: CredentialStore {
     // Pre-release v1 items remain intact; changed ad hoc signatures may need an explicit re-pair.
     private let service = "com.pcvantol.workspace.native-client.v2"
+    private let operations: DraftKeychainOperations
+
+    init(operations: DraftKeychainOperations = .live) { self.operations = operations }
 
     private func query(_ account: String) -> [CFString: Any] {
         [kSecClass: kSecClassGenericPassword, kSecAttrService: service,
@@ -38,10 +41,9 @@ struct ClientKeychain: CredentialStore {
         var request = query(account)
         request[kSecReturnData] = true
         request[kSecMatchLimit] = kSecMatchLimitOne
-        var result: CFTypeRef?
-        let status = SecItemCopyMatching(request as CFDictionary, &result)
+        let (status, data) = operations.copy(request as CFDictionary)
         if status == errSecItemNotFound { return nil }
-        guard status == errSecSuccess, let data = result as? Data else {
+        guard status == errSecSuccess, let data else {
             throw CredentialError.keychain(status)
         }
         return data
@@ -49,13 +51,13 @@ struct ClientKeychain: CredentialStore {
 
     private func save(_ data: Data, account: String) throws {
         let attributes: [CFString: Any] = [kSecValueData: data]
-        let status = SecItemUpdate(query(account) as CFDictionary, attributes as CFDictionary)
+        let status = operations.update(query(account) as CFDictionary, attributes as CFDictionary)
         if status == errSecSuccess { return }
         guard status == errSecItemNotFound else { throw CredentialError.keychain(status) }
         var item = query(account)
         item[kSecValueData] = data
         item[kSecAttrAccessible] = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
-        let added = SecItemAdd(item as CFDictionary, nil)
+        let added = operations.add(item as CFDictionary)
         guard added == errSecSuccess else { throw CredentialError.keychain(added) }
     }
 
@@ -82,7 +84,7 @@ struct ClientKeychain: CredentialStore {
 
     func forget() throws {
         for account in ["server-binding", "server-token"] {
-            let status = SecItemDelete(query(account) as CFDictionary)
+            let status = operations.delete(query(account) as CFDictionary)
             guard status == errSecSuccess || status == errSecItemNotFound else {
                 throw CredentialError.keychain(status)
             }
@@ -209,6 +211,15 @@ final class ClientState: ObservableObject {
               phase != "LOADING", phase != "CONNECTING", phase != "SAVING",
               phase != "FORGETTING" else { return }
         connect(address: savedEndpoint)
+    }
+
+    func draftReadToken() async throws -> String {
+        guard phase == "CONNECTED", snapshot != nil else { throw ConversationError.unavailable }
+        let stored = try await credentials.load()
+        guard stored.binding?.endpoint == savedEndpoint,
+              stored.binding?.instanceID == savedInstance,
+              let token = stored.token, !token.isEmpty else { throw ConversationError.unavailable }
+        return token
     }
 
     func cancel() {

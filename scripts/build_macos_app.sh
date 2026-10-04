@@ -8,7 +8,7 @@ if [[ "$(uname -s)" != Darwin ]]; then
 fi
 
 usage() {
-  echo 'Usage: build_macos_app.sh [--mode ad-hoc|developer-id] [--identity DEVELOPER_ID_SHA1 --team-id ID --notary-profile NAME --source-revision SHA] [OUTPUT/Workspace.app]' >&2
+  echo 'Usage: build_macos_app.sh [--mode ad-hoc|developer-id] [--isolated-test-adapter] [--identity DEVELOPER_ID_SHA1 --team-id ID --notary-profile NAME --source-revision SHA] [OUTPUT/Workspace.app]' >&2
   exit 2
 }
 
@@ -19,6 +19,7 @@ notary_profile=
 source_revision=
 output=
 output_supplied=0
+isolated_test_adapter=0
 while (($#)); do
   case "$1" in
     --mode|--identity|--team-id|--notary-profile|--source-revision)
@@ -31,6 +32,7 @@ while (($#)); do
         --source-revision) source_revision="$2" ;;
       esac
       shift 2 ;;
+    --isolated-test-adapter) isolated_test_adapter=1; shift ;;
     --*) usage ;;
     *) [[ -z "$output" ]] || usage; output="$1"; output_supplied=1; shift ;;
   esac
@@ -38,11 +40,20 @@ done
 output="${output:-${TMPDIR:-/tmp}/workspace-client-dist/Workspace.app}"
 [[ "$(basename "$output")" == Workspace.app && ! -L "$output" ]] || usage
 [[ "$mode" == ad-hoc || "$mode" == developer-id ]] || usage
+if ((isolated_test_adapter == 1)) && [[ "$mode" != ad-hoc ]]; then
+  echo 'The isolated credential adapter is available only for ad-hoc test bundles.' >&2
+  exit 2
+fi
 
 bundle_id=com.pcvantol.workspace.native-client
 keychain_service=com.pcvantol.workspace.native-client.v2
 package="$PWD/macos/WorkspaceClient"
 scratch="${WORKSPACE_SWIFT_SCRATCH:-${TMPDIR:-/tmp}/workspace-client-swift-$(id -u)}"
+swift_flags=()
+if ((isolated_test_adapter == 1)); then
+  scratch="${scratch}-isolated-conversations"
+  swift_flags=(-Xswiftc -DWORKSPACE_ISOLATED_TEST)
+fi
 version="$(plutil -extract version raw -o - product-version.json)"
 [[ "$(plutil -extract CFBundleIdentifier raw -o - "$package/Resources/Info.plist")" == "$bundle_id" ]] || {
   echo 'Unexpected Workspace bundle identifier.' >&2; exit 2;
@@ -126,7 +137,7 @@ else
   [[ -z "$identity$team_id$notary_profile$source_revision" ]] || usage
 fi
 
-swift build --package-path "$package" --scratch-path "$scratch" -c release --product WorkspaceClient
+swift build --package-path "$package" --scratch-path "$scratch" -c release --product WorkspaceClient "${swift_flags[@]}"
 binary_dir="$(swift build --package-path "$package" --scratch-path "$scratch" -c release --show-bin-path)"
 if [[ "$mode" == developer-id ]]; then
   # The built bytes must still correspond to the protected tree admitted above.
@@ -140,6 +151,10 @@ mkdir -p "$output/Contents/MacOS"
 cp "$binary_dir/WorkspaceClient" "$output/Contents/MacOS/WorkspaceClient"
 cp "$package/Resources/Info.plist" "$output/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $version" "$output/Contents/Info.plist"
+if ((isolated_test_adapter == 1)); then
+  /usr/libexec/PlistBuddy -c 'Set :CFBundleIdentifier com.pcvantol.workspace.native-client.isolated-test' "$output/Contents/Info.plist"
+  /usr/libexec/PlistBuddy -c 'Add :WorkspaceIsolatedTestAdapter bool true' "$output/Contents/Info.plist"
+fi
 chmod 755 "$output/Contents/MacOS/WorkspaceClient"
 plutil -lint "$output/Contents/Info.plist"
 if otool -L "$output/Contents/MacOS/WorkspaceClient" | grep -qi python; then
@@ -151,7 +166,11 @@ if [[ "$mode" == ad-hoc ]]; then
   # Local test only: no distribution signature, notarization or signed-Keychain proof.
   codesign --force --sign - --timestamp=none "$output"
   codesign --verify --strict --verbose=2 "$output"
-  echo "Built local ad-hoc test bundle: $output"
+  if ((isolated_test_adapter == 1)); then
+    echo "Built isolated-adapter ad-hoc test bundle: $output"
+  else
+    echo "Built local ad-hoc test bundle: $output"
+  fi
   exit 0
 fi
 

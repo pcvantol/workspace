@@ -1,5 +1,31 @@
 # Workspace Backlog
 
+## r81 plan revision 82 — own conversation drafts and native GUI
+
+The 4 October owner directive in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-5983751078)
+prioritizes a complete Workspace-owned Business/Architect conversation draft
+slice in the **existing** r81 assignment. Product 2.8.3 adds one native
+“Gesprekken” flow over Workspace Server HTTP: project-scoped conversation
+navigation, editable title and focus, Business/Architecture choice with UX
+retained as an optional mode, explicit draft save, revision conflicts, local
+unsaved-text recovery and status/context disclosure. The Server holds own
+project/actor-isolated records in private SQLite; its existing read bearer
+requires a separate explicit draft grant for both draft reads and writes.
+Request IDs make create retries idempotent. The [draft HTTP contract](docs/WORKSPACE_CONVERSATION_DRAFT_HTTP_V1.md)
+describes routes and authority. The existing read-only routes and Forge read
+keep their meanings.
+
+This is a **Workspace-owned RC-WC/RC-WS subset**. No qualified Forge
+conversation producer exists for live advice, canonical history, proposals,
+apply or Mission handoff, so those remain unavailable. The source change
+requires protected PR, exact-head Quality/Security review, full validation,
+then isolated installed-wheel/native ad-hoc GUI HTTP readback. Those gates
+must be reported separately; source presence alone does not qualify the
+installed subset. The private 2.8.2 candidate and its exact bytes/binding
+remain historical and must not be relabelled as the 2.8.3 GUI app. New
+Developer ID signing, signed `.v2` successor, live Keychain, two-Mac HTTPS,
+durable trust and public release remain `NOT_RUN` until their own evidence.
+
 ## Selected product delivery — native Client over Server HTTP, 2 October 2026
 
 The owner selected #208 r81,

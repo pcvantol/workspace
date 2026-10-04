@@ -12,7 +12,10 @@ does not own Workspace source, architecture, roadmap, governance, or releases.
 
 This repository was established on 2026-09-01 after an evidence-based search
 found no prior independent Workspace implementation history. The selected
-LANE_4 slice now supplies an own read-only Server, thin CLI and browser Client.
+LANE_4 slice now supplies an own read-only Server, thin CLI and browser Client,
+plus a native macOS Client. Product 2.8.3 adds a bounded
+[conversation draft flow](docs/WORKSPACE_CONVERSATION_DRAFT_HTTP_V1.md) to that
+Client and Server; Forge advisor replies and canonical sessions remain unavailable.
 It does not implement an Engineering Platform adapter or execution runtime.
 
 ## Local read-only Server
@@ -40,7 +43,7 @@ same own catalogue projection as `GET /v1/projects`; invalid or unreadable
 catalogue data exits nonzero without printing project rows. This local command
 also reports invalid UTF-8 as a bounded command error without a traceback. It
 requires ownership of the private root and is not a Forge/EP transport.
-Authenticated `GET /v1/capabilities` lists own HTTP reads and local-only
+Authenticated `GET /v1/capabilities` lists own HTTP operations and local-only
 administration commands for the pinned instance. It makes no peer-availability
 claim.
 `workspace-server --root /absolute/private/workspace-data capabilities` reads
@@ -54,6 +57,7 @@ installed package and private-root ownership; it does not start a Server.
 ## Entry points
 
 - [Architecture](docs/ARCHITECTURE.md)
+- [Workspace conversation draft HTTP V1](docs/WORKSPACE_CONVERSATION_DRAFT_HTTP_V1.md)
 - [Proposed repository onboarding and qualification](docs/REPOSITORY_ONBOARDING.md)
 - [Roadmap](ROADMAP.md)
 - [Backlog](BACKLOG.md)

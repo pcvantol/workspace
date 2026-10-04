@@ -6,12 +6,26 @@ linked from the existing [roadmap](../ROADMAP.md) and
 See [functional design](ROLE_AWARE_CONVERSATIONS_V1.md),
 [documentary DAG](ROLE_AWARE_CONVERSATIONS_V1_DAG.json) and the
 [Forge plan](https://github.com/pcvantol/forge/blob/main/docs/roadmap/ROLE_AWARE_CONVERSATIONS_V1.md).
-Design is canonical after owning protected merge; all runtime nodes are PLANNED.
+Design is canonical after owning protected merge. The full runtime nodes remain
+PLANNED; the 4 October r81 revision selects only a Workspace-owned RC-WC/RC-WS
+presentation and unsent-draft subset for product 2.8.3.
 
 The [RC-WC Workspace consumer contract](ROLE_AWARE_CONVERSATIONS_WC_CONTRACT_V1.md)
 now supplies offline target projections, capability negotiation and negative
 interaction fixtures. Forge RC-FC binding and live UI/API qualification are
 still unqualified/planned.
+
+The selected own subset uses [Workspace conversation draft HTTP V1](WORKSPACE_CONVERSATION_DRAFT_HTTP_V1.md):
+native project/conversation navigation, own titles/focus/mode/draft, explicit
+project/actor draft grants beyond the read bearer, idempotent create and
+revision-guarded updates. The native app may cache only unsaved local text in
+its private owner-held directory; confirmed drafts and navigation belong to
+Workspace Server. This does not make Forge session history or AI advice
+available. Business and Architect are modes of one conversation; UX remains
+an optional contract mode. No load, search, reconnect or mode change invokes
+a provider. Source validation, exact-head independent review, protected
+merge, isolated installed-wheel/Server and ad-hoc native GUI HTTP readback
+are separate delivery evidence gates.
 
 This refines ROLE_AWARE_GOVERNANCE_V1 and ROADMAP_DAG_GOVERNANCE_V1, rather than
 adding an independent planner, approval authority or roadmap. UX is an advice

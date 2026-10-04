@@ -1,13 +1,54 @@
 import Combine
 import SwiftUI
+#if WORKSPACE_ISOLATED_TEST
+import AppKit
+
+private enum IsolatedWindowEvidence {
+    static func capture(in directory: String) {
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(2))
+            guard let window = NSApp.windows.first(where: { $0.title == "Workspace" }),
+                  let image = CGWindowListCreateImage(.null, .optionIncludingWindow,
+                                                      CGWindowID(window.windowNumber),
+                                                      [.boundsIgnoreFraming, .bestResolution]) else { return }
+            let bitmap = NSBitmapImageRep(cgImage: image)
+            guard let png = bitmap.representation(using: .png, properties: [:]) else { return }
+            let root = URL(fileURLWithPath: directory, isDirectory: true)
+            try? FileManager.default.createDirectory(at: root, withIntermediateDirectories: true,
+                                                     attributes: [.posixPermissions: 0o700])
+            let target = root.appendingPathComponent("conversation-window.png")
+            guard !FileManager.default.fileExists(atPath: target.path) else { return }
+            _ = FileManager.default.createFile(atPath: target.path, contents: png,
+                                               attributes: [.posixPermissions: 0o600])
+        }
+    }
+}
+#endif
 
 @main
 struct WorkspaceApp: App {
-    @StateObject private var client = ClientState()
+    @StateObject private var client: ClientState
+    @StateObject private var conversations: ConversationState
+
+    init() {
+        #if WORKSPACE_ISOLATED_TEST
+        guard let document = try? IsolatedTestDocument.load() else {
+            fatalError("Isolated test credential file is absent or invalid")
+        }
+        _client = StateObject(wrappedValue: ClientState(keychain: IsolatedServerCredentials(document)))
+        _conversations = StateObject(wrappedValue: ConversationState(
+            grants: IsolatedDraftGrant(document),
+            localDrafts: PrivateLocalDraftCache(root: URL(fileURLWithPath: document.local_root))))
+        IsolatedWindowEvidence.capture(in: document.local_root)
+        #else
+        _client = StateObject(wrappedValue: ClientState())
+        _conversations = StateObject(wrappedValue: ConversationState())
+        #endif
+    }
 
     var body: some Scene {
         WindowGroup("Workspace") {
-            ContentView(client: client)
+            ContentView(client: client, conversations: conversations)
                 .frame(minWidth: 640, minHeight: 520)
         }
         .defaultSize(width: 900, height: 650)
@@ -20,6 +61,25 @@ struct WorkspaceApp: App {
 }
 
 struct ContentView: View {
+    @ObservedObject var client: ClientState
+    @StateObject private var conversations: ConversationState
+
+    init(client: ClientState, conversations: ConversationState = ConversationState()) {
+        self.client = client
+        _conversations = StateObject(wrappedValue: conversations)
+    }
+
+    var body: some View {
+        TabView {
+            ConversationsView(client: client, state: conversations)
+                .tabItem { Label(ConversationCopy.text("nav"), systemImage: "bubble.left.and.bubble.right") }
+            ServerOverviewView(client: client)
+                .tabItem { Label("Server", systemImage: "server.rack") }
+        }
+    }
+}
+
+struct ServerOverviewView: View {
     @ObservedObject var client: ClientState
     @Environment(\.scenePhase) private var scenePhase
     private let refresh = Timer.publish(every: 30, on: .main, in: .common).autoconnect()

@@ -1,5 +1,20 @@
 # Workspace Bootstrap
 
+## Active owner priority — 4 October 2026, r81 plan revision 82
+
+The owner selected a Workspace-owned Business/Architect conversation and native
+GUI subset under the **same** `L4-WORKSPACE-NATIVE-CLIENT-HTTP-V1-20261002`
+assignment ([#208 directive](https://github.com/pcvantol/forge/issues/208#issuecomment-5983751078)).
+Implement own project/actor-scoped navigation, titles, advice-mode choice and
+unsent drafts through authenticated Workspace Server HTTP, with local offline
+editor preservation and honest unavailable Forge state. This source milestone
+uses product version 2.8.3. Full Forge advice, canonical sessions, proposals,
+apply and Mission handoff remain unqualified. The milestone's delivery boundary
+is protected Workspace main plus an isolated installed Server wheel and native
+ad-hoc app readback. Signing, live Keychain successor, two-Mac trust and public
+release remain separate r81 gates. See [the narrow contract](docs/WORKSPACE_CONVERSATION_DRAFT_HTTP_V1.md)
+and [owning plan](docs/ROLE_AWARE_CONVERSATIONS_V1_ROADMAP.md).
+
 ## Active owner priority — 2 October 2026
 
 LANE_4 #208 r81 selects `L4-WORKSPACE-NATIVE-CLIENT-HTTP-V1-20261002` as one

@@ -37,8 +37,9 @@ OPENAPI_SCHEMAS = {
         "required": ["id", "exposure", "auth"],
         "properties": {"id": {"type": "string"},
                        "exposure": {"type": "string", "enum": ["HTTP_EXPOSED", "LOCAL_ONLY_ADMIN"]},
-                       "auth": {"type": "string", "enum": ["PUBLIC", "BEARER_PINNED", "PRIVATE_ROOT_OWNER"]},
-                       "method": {"type": "string", "enum": ["GET"]},
+                       "auth": {"type": "string", "enum": ["PUBLIC", "BEARER_PINNED",
+                                                        "BEARER_PINNED_AND_DRAFT_GRANT", "PRIVATE_ROOT_OWNER"]},
+                       "method": {"type": "string", "enum": ["GET", "POST", "PATCH"]},
                        "path": {"type": "string"}, "local_cli": {"type": "string"}},
     },
     "Capabilities": {
