@@ -217,6 +217,7 @@ struct ConversationsView: View {
                 .padding(.vertical, 10)
             }
         }
+        .disabled(state.isBusy || state.loadingGrant)
         .task { await state.prepare(client: client) }
         .onChange(of: client.phase) { _, phase in
             if phase == "CONNECTED" { Task { await state.prepare(client: client) } }

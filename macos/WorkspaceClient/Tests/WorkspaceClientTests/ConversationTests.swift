@@ -80,6 +80,12 @@ private final class MemoryLocalDrafts: LocalDraftStore, @unchecked Sendable {
     }
 }
 
+private final class RequestCounter: @unchecked Sendable {
+    private let lock = NSLock()
+    private var value = 0
+    func next() -> Int { lock.withLock { value += 1; return value } }
+}
+
 final class ConversationTests: XCTestCase {
     let instance = "0123456789abcdef0123456789abcdef"
     let grant = String(repeating: "x", count: 43)
@@ -481,6 +487,80 @@ final class ConversationTests: XCTestCase {
         XCTAssertNil(state.selectedID)
         XCTAssertEqual(state.title, "")
         XCTAssertEqual(state.draft, "")
+    }
+
+    @MainActor
+    func testLaterEditorTextSurvivesDelayedSaveResponse() async throws {
+        let instance = self.instance
+        let savedRecord = self.record
+        let postStarted = expectation(description: "Server received draft")
+        let oldListStarted = expectation(description: "Old actor list started")
+        let releasePost = DispatchSemaphore(value: 0)
+        let releaseOldList = DispatchSemaphore(value: 0)
+        let listCount = RequestCounter()
+        defer { releasePost.signal(); releaseOldList.signal() }
+        StubProtocol.handler = { request in
+            switch request.url!.path {
+            case "/v1/identity": return (200, Data("{\"instance_id\":\"\(instance)\"}".utf8))
+            case "/v1/status": return (200, Data("{\"instance_id\":\"\(instance)\",\"version\":\"2.8.3\",\"state\":\"READY\",\"project_source\":\"AVAILABLE\"}".utf8))
+            case "/v1/projects": return (200, Data("{\"state\":\"AVAILABLE\",\"projects\":[{\"id\":\"project-a\",\"name\":\"Project A\"}],\"source\":\"LOCAL\",\"observed_at\":\"2026-10-04T20:00:00Z\",\"partial\":false,\"stale\":false}".utf8))
+            case "/v1/capabilities", "/v1/forge/status": return (503, Data("{}".utf8))
+            case "/v1/conversations":
+                if request.httpMethod == "POST" {
+                    postStarted.fulfill()
+                    XCTAssertEqual(releasePost.wait(timeout: .now() + 5), .success)
+                    return (201, Data(savedRecord.utf8))
+                }
+                let count = listCount.next()
+                if count == 2 {
+                    oldListStarted.fulfill()
+                    XCTAssertEqual(releaseOldList.wait(timeout: .now() + 5), .success)
+                    return (200, Data("{\"actor_id\":\"alice\",\"project_id\":\"project-a\",\"conversations\":[\(savedRecord)],\"history_availability\":\"UNQUALIFIED_FORGE\"}".utf8))
+                }
+                return (200, Data("{\"actor_id\":\"alice\",\"project_id\":\"project-a\",\"conversations\":[],\"history_availability\":\"UNQUALIFIED_FORGE\"}".utf8))
+            default: XCTFail("Unexpected route"); return (404, Data("{}".utf8))
+            }
+        }
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [StubProtocol.self]
+        let client = ClientState(keychain: MemoryServerCredentials(endpoint: access.endpoint,
+            instance: instance, token: "read-only"), transport: ServerTransport(configuration: configuration))
+        for _ in 0..<100 where client.phase != "CONNECTED" {
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        XCTAssertEqual(client.phase, "CONNECTED")
+        let local = MemoryLocalDrafts()
+        let state = ConversationState(grants: MemoryDraftGrant(access), localDrafts: local,
+            transport: ConversationTransport(configuration: configuration))
+        await state.prepare(client: client)
+        state.title = "Direction"
+        state.focus = "Roadmap"
+        state.draft = "First draft"
+        let saving = Task { await state.save(client: client) }
+        await fulfillment(of: [postStarted], timeout: 5)
+        XCTAssertTrue(state.isBusy)
+        XCTAssertFalse(state.canEdit)
+        state.draft = "Later local edit"
+        releasePost.signal()
+        await saving.value
+        XCTAssertEqual(state.draft, "Later local edit")
+        XCTAssertEqual(state.savedRevision, 1)
+        XCTAssertTrue(state.dirty)
+        XCTAssertEqual(state.state, "PENDING")
+        await state.flushLocal()
+        XCTAssertEqual(try local.load(scopeHash: PrivateLocalDraftCache.scopeHash(access))?.draft,
+                       "Later local edit")
+        state.discardChanges()
+        let loading = Task { await state.load(client: client) }
+        await fulfillment(of: [oldListStarted], timeout: 5)
+        state.selectProject("project-b")
+        releaseOldList.signal()
+        await loading.value
+        XCTAssertEqual(state.projectID, "project-b")
+        XCTAssertTrue(state.conversations.isEmpty)
+        XCTAssertNil(state.selectedID)
+        XCTAssertEqual(state.title, "")
+        XCTAssertEqual(state.state, "GRANT_REQUIRED")
     }
 
     @MainActor

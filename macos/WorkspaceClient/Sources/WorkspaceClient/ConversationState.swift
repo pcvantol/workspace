@@ -42,12 +42,15 @@ final class ConversationState: ObservableObject {
     @Published private(set) var savedRevision: Int?
     @Published private(set) var savedFields: DraftFields?
     @Published private(set) var serverConflict: Conversation?
+    @Published private(set) var isBusy = false
+    @Published private(set) var loadingGrant = false
 
     private let grants: DraftGrantWorker
     private let localDrafts: LocalDraftWorker
     private let transport: ConversationTransport
     private var access: DraftAccess?
-    private var loadingGrant = false
+    private var scopeEpoch = 0
+    private var loadAttempt = 0
     private var requestID = UUID().uuidString.replacingOccurrences(of: "-", with: "").lowercased()
     private var localTask: Task<Void, Never>?
     private var localVersion = 0
@@ -67,7 +70,7 @@ final class ConversationState: ObservableObject {
         }
     }
 
-    var canEdit: Bool { access?.projectID == projectID }
+    var canEdit: Bool { access?.projectID == projectID && !isBusy && !loadingGrant }
 
     var dirty: Bool {
         guard let savedFields else { return !title.isEmpty || !focus.isEmpty || !draft.isEmpty }
@@ -76,11 +79,13 @@ final class ConversationState: ObservableObject {
     }
 
     func prepare(client: ClientState) async {
-        guard !loadingGrant else { return }
+        guard !loadingGrant, !isBusy else { return }
+        let epoch = scopeEpoch
         loadingGrant = true
         defer { loadingGrant = false }
         do {
             let stored = try await grants.load()
+            guard epoch == scopeEpoch else { return }
             if let stored, stored.endpoint == client.savedEndpoint,
                stored.instanceID == client.savedInstance {
                 if (access != stored || projectID != stored.projectID) && dirty {
@@ -104,12 +109,14 @@ final class ConversationState: ObservableObject {
                 detail = "Enter this project's separate draft grant."
             }
         } catch {
+            guard epoch == scopeEpoch else { return }
             state = "UNAVAILABLE"
             detail = error.localizedDescription
         }
     }
 
     func saveGrant(client: ClientState) async {
+        guard !loadingGrant, !isBusy else { return }
         let grant = grantEntry.trimmingCharacters(in: .whitespacesAndNewlines)
         guard grant.range(of: "^[A-Za-z0-9_-]{43}$", options: .regularExpression) != nil,
               !projectID.isEmpty, client.phase == "CONNECTED", !client.savedInstance.isEmpty else {
@@ -124,6 +131,10 @@ final class ConversationState: ObservableObject {
             detail = "Save or discard local changes before switching draft access."
             return
         }
+        isBusy = true
+        scopeEpoch += 1
+        let epoch = scopeEpoch
+        defer { isBusy = false }
         do {
             guard let snapshot = client.snapshot,
                   case .success(let catalogue) = snapshot.projects, !catalogue.stale,
@@ -133,18 +144,22 @@ final class ConversationState: ObservableObject {
             }
             let endpoint = try ServerEndpoint(proposed.endpoint)
             let readToken = try await client.draftReadToken()
+            guard epoch == scopeEpoch else { return }
             _ = try await transport.list(endpoint: endpoint, readToken: readToken, access: proposed)
+            guard epoch == scopeEpoch else { return }
             guard proposed.projectID == projectID, !(access != proposed && dirty) else {
                 state = "PENDING"
                 detail = "Save or discard local changes before switching draft access."
                 return
             }
             try await grants.save(proposed)
+            guard epoch == scopeEpoch else { return }
             if access != proposed { clearScope() }
             access = proposed
             grantEntry = ""
             if await restoreLocal(proposed) { await load(client: client) }
         } catch {
+            guard epoch == scopeEpoch else { return }
             state = [ConversationError.forbidden, .unauthorized].contains(error as? ConversationError ?? .unavailable) ?
                 "UNAUTHORIZED" : "UNAVAILABLE"
             detail = error.localizedDescription
@@ -152,23 +167,31 @@ final class ConversationState: ObservableObject {
     }
 
     func forgetGrant() {
+        guard !loadingGrant, !isBusy else { return }
         guard !dirty else {
             state = "PENDING"
             detail = "Save or discard local changes before forgetting draft access."
             return
         }
+        isBusy = true
+        scopeEpoch += 1
+        let epoch = scopeEpoch
         Task {
+          defer { isBusy = false }
           do {
             if let access {
                 localVersion += 1
                 try await localDrafts.remove(PrivateLocalDraftCache.scopeHash(access), version: localVersion)
+                guard epoch == scopeEpoch else { return }
             }
             try await grants.forget()
+            guard epoch == scopeEpoch else { return }
             access = nil
             clearScope()
             state = "GRANT_REQUIRED"
             detail = "Draft grant removed from this Mac. Existing Server drafts remain."
           } catch {
+            guard epoch == scopeEpoch else { return }
             state = "UNAVAILABLE"
             detail = error.localizedDescription
           }
@@ -176,16 +199,15 @@ final class ConversationState: ObservableObject {
     }
 
     func selectProject(_ id: String) {
+        guard !loadingGrant, !isBusy else { return }
         if id == projectID { return }
         guard !dirty else {
             state = "PENDING"
             detail = "Save or discard local changes before switching projects."
             return
         }
+        clearScope()
         projectID = id
-        selectedID = nil
-        conversations = []
-        clearEditor()
         if access?.projectID != id {
             state = "GRANT_REQUIRED"
             detail = "Enter this project's separate draft grant."
@@ -199,6 +221,9 @@ final class ConversationState: ObservableObject {
             detail = "Enter this project's separate draft grant."
             return
         }
+        let epoch = scopeEpoch
+        loadAttempt += 1
+        let attempt = loadAttempt
         guard client.phase == "CONNECTED" else {
             state = "OFFLINE"
             detail = "Server offline. The text in this window has not been submitted."
@@ -214,7 +239,11 @@ final class ConversationState: ObservableObject {
         do {
             let endpoint = try ServerEndpoint(access.endpoint)
             let token = try await client.draftReadToken()
+            guard epoch == scopeEpoch, attempt == loadAttempt, self.access == access,
+                  projectID == access.projectID else { return }
             let list = try await transport.list(endpoint: endpoint, readToken: token, access: access)
+            guard epoch == scopeEpoch, attempt == loadAttempt, self.access == access,
+                  projectID == access.projectID else { return }
             conversations = list.conversations
             if dirty, let selectedID, let latest = conversations.first(where: { $0.id == selectedID }),
                latest.revision != savedRevision {
@@ -233,6 +262,7 @@ final class ConversationState: ObservableObject {
             state = "AVAILABLE"
             detail = "Workspace drafts. Advisor history and replies are unavailable."
         } catch {
+            guard epoch == scopeEpoch, attempt == loadAttempt, self.access == access else { return }
             state = [ConversationError.forbidden, .unauthorized].contains(error as? ConversationError ?? .unavailable) ?
                 "UNAUTHORIZED" : "UNAVAILABLE"
             detail = error.localizedDescription
@@ -240,6 +270,7 @@ final class ConversationState: ObservableObject {
     }
 
     func newDraft() {
+        guard !loadingGrant, !isBusy else { return }
         guard !dirty else {
             state = "PENDING"
             detail = "Save or discard local changes before starting another conversation."
@@ -251,6 +282,7 @@ final class ConversationState: ObservableObject {
     }
 
     func select(_ conversation: Conversation) {
+        guard !loadingGrant, !isBusy else { return }
         guard !dirty else {
             state = "PENDING"
             detail = "Save or discard the current changes before opening another conversation."
@@ -260,6 +292,7 @@ final class ConversationState: ObservableObject {
     }
 
     func discardChanges() {
+        guard !loadingGrant, !isBusy else { return }
         if let selectedID, let existing = conversations.first(where: { $0.id == selectedID }) {
             use(existing)
         } else {
@@ -271,6 +304,7 @@ final class ConversationState: ObservableObject {
     }
 
     func keepLocalAfterReview() {
+        guard !loadingGrant, !isBusy else { return }
         guard let latest = serverConflict, latest.id == selectedID,
               latest.project_id == projectID else { return }
         savedRevision = latest.revision
@@ -284,6 +318,7 @@ final class ConversationState: ObservableObject {
     }
 
     func save(client: ClientState) async {
+        guard !loadingGrant, !isBusy else { return }
         guard serverConflict == nil else {
             state = "CONFLICT"
             return
@@ -314,10 +349,16 @@ final class ConversationState: ObservableObject {
         let fields = DraftFields(title: title, focus: focus, mode: mode, draft: draft,
                                  expected_revision: savedRevision,
                                  request_id: selectedID == nil ? requestID : nil)
+        let startingID = selectedID
+        isBusy = true
+        scopeEpoch += 1
+        let epoch = scopeEpoch
+        defer { isBusy = false }
         state = "SAVING"
         do {
             let endpoint = try ServerEndpoint(access.endpoint)
             let token = try await client.draftReadToken()
+            guard epoch == scopeEpoch, self.access == access else { return }
             let result: Conversation
             if let selectedID {
                 result = try await transport.update(endpoint: endpoint, readToken: token,
@@ -326,16 +367,37 @@ final class ConversationState: ObservableObject {
                 result = try await transport.create(endpoint: endpoint, readToken: token,
                                                     access: access, fields: fields)
             }
+            guard epoch == scopeEpoch, self.access == access,
+                  selectedID == startingID else { return }
             guard result.project_id == projectID else { throw ConversationError.invalidResponse }
             conversations.removeAll(where: { $0.id == result.id })
             conversations.insert(result, at: 0)
+            if title != fields.title || focus != fields.focus || mode != fields.mode || draft != fields.draft {
+                selectedID = result.id
+                savedRevision = result.revision
+                savedFields = DraftFields(title: result.title, focus: result.focus,
+                                          mode: result.mode, draft: result.draft,
+                                          expected_revision: result.revision, request_id: nil)
+                state = "PENDING"
+                detail = "Earlier text saved; newer local edits remain unsaved."
+                persistLocal()
+                return
+            }
             use(result)
             localTask?.cancel()
             localVersion += 1
             try await localDrafts.remove(PrivateLocalDraftCache.scopeHash(access), version: localVersion)
+            guard epoch == scopeEpoch, self.access == access else { return }
+            if title != result.title || focus != result.focus || mode != result.mode || draft != result.draft {
+                state = "PENDING"
+                detail = "Newer local edits remain unsaved."
+                persistLocal()
+                return
+            }
             state = "AVAILABLE"
             detail = "Draft saved to this Workspace Server. No advisor turn was sent."
         } catch {
+            guard epoch == scopeEpoch, self.access == access else { return }
             if let reason = error as? ConversationError {
                 state = reason == .conflict ? "CONFLICT" :
                     ([.unauthorized, .forbidden].contains(reason) ? "UNAUTHORIZED" : "UNAVAILABLE")
@@ -374,6 +436,7 @@ final class ConversationState: ObservableObject {
     }
 
     private func clearScope() {
+        scopeEpoch += 1
         localTask?.cancel()
         localVersion += 1
         conversations = []
