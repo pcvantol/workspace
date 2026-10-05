@@ -11,7 +11,6 @@ import io
 import os
 from pathlib import Path
 import re
-import runpy
 import socket
 import sqlite3
 import ssl
@@ -40,8 +39,8 @@ class ReadOnlyTests(unittest.TestCase):
         expected = json.loads((root / "product-version.json").read_text())["version"]
         self.assertEqual(importlib.reload(workspace_control).__version__, expected)
         with patch("pathlib.Path.read_text", side_effect=FileNotFoundError), patch("importlib.metadata.version", return_value=expected):
-            projected = runpy.run_path(str(root / "workspace_control" / "__init__.py"))
-        self.assertEqual(projected["__version__"], expected)
+            self.assertEqual(importlib.reload(workspace_control).__version__, expected)
+        self.assertEqual(importlib.reload(workspace_control).__version__, expected)
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -241,6 +240,8 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual(code, 200)
         self.assertIn(b"fetch('/v1/projects'", script)
         self.assertIn(b"fetch('/v1/capabilities'", script)
+        self.assertIn(b"'conversations.archive'", script)
+        self.assertIn(b"'conversations.restore'", script)
         self.assertIn(b'id="capabilities"', html)
         self.assertIn(b'id="project-observed"', html)
         self.assertIn(b'catalogue.observed_at', script)
