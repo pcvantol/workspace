@@ -53,7 +53,7 @@ struct WorkspaceApp: App {
         }
         .defaultSize(width: 900, height: 650)
         Settings {
-            SettingsView(client: client)
+            SettingsView(client: client, conversations: conversations)
                 .frame(width: 490)
                 .padding(24)
         }
@@ -224,6 +224,7 @@ private struct SectionCard<Content: View>: View {
 
 struct SettingsView: View {
     @ObservedObject var client: ClientState
+    @ObservedObject var conversations: ConversationState
     @State private var address = ""
     @State private var token = ""
 
@@ -244,9 +245,12 @@ struct SettingsView: View {
                         token = ""
                     }.disabled(["LOADING", "SAVING", "FORGETTING"].contains(client.phase))
                     Button("Forget Server") {
-                        client.forget()
-                        address = ""
-                        token = ""
+                        Task {
+                            guard await conversations.prepareForServerForget() else { return }
+                            client.forget()
+                            address = ""
+                            token = ""
+                        }
                     }.disabled(!client.canForgetBinding ||
                                ["SAVING", "FORGETTING"].contains(client.phase))
                 }

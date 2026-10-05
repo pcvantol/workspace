@@ -351,30 +351,55 @@ final class ConversationState: ObservableObject {
         guard ["DISCONNECTED", "UNAVAILABLE", "UNCONFIGURED"].contains(phase) else { return }
         loadAttempt += 1
         guard phase != "UNCONFIGURED" else {
-            scopeEpoch += 1
-            let retainLocalText = dirty
-            authorizationSuspended = true
-            conversations = []
-            selectedID = nil
-            serverConflict = nil
-            if retainLocalText {
-                savedRevision = nil
-                savedFields = nil
-                creatingNewDraft = true
-                await flushLocal()
-            } else {
-                creatingNewDraft = false
-                clearEditor()
-            }
-            state = "GRANT_REQUIRED"
-            detail = retainLocalText ?
-                "Reconnect and enter this project's draft grant. Unsaved local text is retained." :
-                "Reconnect and enter this project's draft grant."
+            _ = await prepareForServerForget()
             return
         }
         guard access?.projectID == projectID else { return }
         state = "OFFLINE"
         detail = "Server offline. Local text and the last authorized list remain in this window."
+    }
+
+    func prepareForServerForget() async -> Bool {
+        if authorizationSuspended { return true }
+        scopeEpoch += 1
+        loadAttempt += 1
+        let epoch = scopeEpoch
+        let retainLocalText = dirty
+        let priorConversations = conversations
+        let priorSelectedID = selectedID
+        let priorConflict = serverConflict
+        let priorSavedRevision = savedRevision
+        let priorSavedFields = savedFields
+        let priorCreatingNewDraft = creatingNewDraft
+        authorizationSuspended = true
+        conversations = []
+        selectedID = nil
+        serverConflict = nil
+        if retainLocalText {
+            savedRevision = nil
+            savedFields = nil
+            creatingNewDraft = true
+            guard await flushLocal() else {
+                guard epoch == scopeEpoch else { return false }
+                authorizationSuspended = false
+                conversations = priorConversations
+                selectedID = priorSelectedID
+                serverConflict = priorConflict
+                savedRevision = priorSavedRevision
+                savedFields = priorSavedFields
+                creatingNewDraft = priorCreatingNewDraft
+                return false
+            }
+            guard epoch == scopeEpoch, authorizationSuspended else { return true }
+        } else {
+            creatingNewDraft = false
+            clearEditor()
+        }
+        state = "GRANT_REQUIRED"
+        detail = retainLocalText ?
+            "Reconnect and enter this project's draft grant. Unsaved local text is retained." :
+            "Reconnect and enter this project's draft grant."
+        return true
     }
 
     func discardChanges() {
@@ -579,8 +604,9 @@ final class ConversationState: ObservableObject {
         }
     }
 
-    func flushLocal() async {
-        guard let access, access.projectID == projectID else { return }
+    @discardableResult
+    func flushLocal() async -> Bool {
+        guard let access, access.projectID == projectID else { return !dirty }
         localVersion += 1
         let version = localVersion
         let key = PrivateLocalDraftCache.scopeHash(access)
@@ -593,9 +619,11 @@ final class ConversationState: ObservableObject {
             } else {
                 try await localDrafts.remove(key, version: version)
             }
+            return true
         } catch {
             state = "UNAVAILABLE"
             detail = "The private local draft could not be stored."
+            return false
         }
     }
 }

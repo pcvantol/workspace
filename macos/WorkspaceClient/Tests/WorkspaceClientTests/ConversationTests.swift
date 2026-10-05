@@ -71,13 +71,20 @@ private final class MemoryServerCredentials: CredentialStore, @unchecked Sendabl
 private final class MemoryLocalDrafts: LocalDraftStore, @unchecked Sendable {
     private let lock = NSLock()
     private var stored: LocalDraftSnapshot?
+    private var rejectsWrites = false
     func load(scopeHash: String) throws -> LocalDraftSnapshot? {
         lock.withLock { stored?.scopeHash == scopeHash ? stored : nil }
     }
-    func save(_ snapshot: LocalDraftSnapshot) throws { lock.withLock { stored = snapshot } }
+    func save(_ snapshot: LocalDraftSnapshot) throws {
+        try lock.withLock {
+            if rejectsWrites { throw CocoaError(.fileWriteUnknown) }
+            stored = snapshot
+        }
+    }
     func remove(scopeHash: String) throws {
         lock.withLock { if stored?.scopeHash == scopeHash { stored = nil } }
     }
+    func rejectWrites() { lock.withLock { rejectsWrites = true } }
 }
 
 private final class RequestCounter: @unchecked Sendable {
@@ -267,7 +274,8 @@ final class ConversationTests: XCTestCase {
         XCTAssertEqual(state.state, "OFFLINE")
         XCTAssertEqual(state.listMessageKey, "offline")
         state.draft = "Keep this private local edit"
-        await state.handleClientPhase("UNCONFIGURED")
+        let prepared = await state.prepareForServerForget()
+        XCTAssertTrue(prepared)
         XCTAssertEqual(state.state, "GRANT_REQUIRED")
         XCTAssertEqual(state.listMessageKey, "forbidden")
         XCTAssertTrue(state.conversations.isEmpty)
@@ -283,6 +291,21 @@ final class ConversationTests: XCTestCase {
         XCTAssertNil(reopened.selectedID)
         XCTAssertEqual(reopened.draft, "Keep this private local edit")
         XCTAssertTrue(reopened.dirty)
+        let failing = MemoryLocalDrafts()
+        let failedState = ConversationState(grants: grants, localDrafts: failing,
+            transport: ConversationTransport(configuration: configuration))
+        await failedState.prepare(client: client)
+        failedState.draft = "Must not claim durable recovery"
+        failing.rejectWrites()
+        let failedPreparation = await failedState.prepareForServerForget()
+        XCTAssertFalse(failedPreparation)
+        XCTAssertEqual(failedState.state, "UNAVAILABLE")
+        XCTAssertEqual(failedState.detail, "The private local draft could not be stored.")
+        XCTAssertEqual(failedState.conversations.count, 1)
+        XCTAssertNotNil(failedState.selectedID)
+        XCTAssertTrue(failedState.canEdit)
+        let failedRetry = await failedState.prepareForServerForget()
+        XCTAssertFalse(failedRetry)
     }
 
     @MainActor
@@ -903,7 +926,7 @@ final class ConversationTests: XCTestCase {
         XCTAssertEqual(draftMethods, ["GET", "POST", "PATCH", "PATCH", "GET", "PATCH", "GET"])
         render(ConversationsView(client: client, state: state))
         render(ServerOverviewView(client: client))
-        render(SettingsView(client: client))
+        render(SettingsView(client: client, conversations: state))
     }
 
     @MainActor
