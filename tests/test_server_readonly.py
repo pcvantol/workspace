@@ -1,6 +1,7 @@
 """Real HTTP and state qualification for the own read-only slice."""
 
 import json
+import hashlib
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 import http.client
@@ -1435,6 +1436,12 @@ class ConversationDraftTests(unittest.TestCase):
         fields.pop("request_id")
         return fields
 
+    @staticmethod
+    def operation_id(identity, archived, revision, suffix="0" * 16):
+        action = "ARCHIVE" if archived else "RESTORE"
+        binding = hashlib.sha256(f"{identity}:{action}:{revision}".encode()).hexdigest()[:16]
+        return binding + suffix[:16]
+
     def test_explicit_grant_durable_drafts_and_revision_conflict(self):
         self.assertEqual(self.request("/v1/conversations")[1]["conversations"], [])
         self.assertFalse((self.root / "conversations.sqlite3").exists())
@@ -1493,7 +1500,8 @@ class ConversationDraftTests(unittest.TestCase):
     def test_archive_restore_is_durable_idempotent_and_preserves_draft(self):
         _, created = self.request("/v1/conversations", method="POST", body=self.fields())
         identity = created["id"]
-        archive = {"expected_revision": 1, "operation_id": "b" * 32}
+        archive = {"expected_revision": 1,
+                   "operation_id": self.operation_id(identity, True, 1, "b" * 16)}
         status, archived = self.request(f"/v1/conversations/{identity}/archive",
                                         method="POST", body=archive)
         self.assertEqual(status, 200)
@@ -1502,7 +1510,8 @@ class ConversationDraftTests(unittest.TestCase):
                          (identity, True, 2, "What would help users?", "BUSINESS"))
         self.assertEqual(self.request(f"/v1/conversations/{identity}/archive",
                                       method="POST", body=archive), (200, archived))
-        restore = {"expected_revision": 2, "operation_id": "c" * 32}
+        restore = {"expected_revision": 2,
+                   "operation_id": self.operation_id(identity, False, 2, "c" * 16)}
         status, restored = self.request(f"/v1/conversations/{identity}/restore",
                                         method="POST", body=restore)
         self.assertEqual(status, 200)
@@ -1521,7 +1530,8 @@ class ConversationDraftTests(unittest.TestCase):
         _, created = self.request("/v1/conversations", method="POST", body=self.fields())
         identity = created["id"]
         path = f"/v1/conversations/{identity}/archive"
-        command = {"expected_revision": 1, "operation_id": "d" * 32}
+        command = {"expected_revision": 1,
+                   "operation_id": self.operation_id(identity, True, 1, "d" * 16)}
         bob = self.service.issue_conversation_grant("bob", "project-a")
         other = self.service.issue_conversation_grant("alice", "project-b")
         for grant in (bob, other):
@@ -1537,11 +1547,14 @@ class ConversationDraftTests(unittest.TestCase):
         self.assertEqual((renamed["title"], renamed["archived"], renamed["revision"]),
                          ("Archived rename", True, 3))
         self.assertEqual(self.request(path, method="POST",
-                                      body={"expected_revision": 3, "operation_id": "d" * 32}),
+                                      body={"expected_revision": 3,
+                                            "operation_id": command["operation_id"]}),
                          (409, {"error": "DRAFT_CONFLICT"}))
         self.service.revoke_conversation_grants("alice", "project-a")
         self.assertEqual(self.request(f"/v1/conversations/{identity}/restore", method="POST",
-                                      body={"expected_revision": 3, "operation_id": "e" * 32}),
+                                      body={"expected_revision": 3,
+                                            "operation_id": self.operation_id(
+                                                identity, False, 3, "e" * 16)}),
                          (403, {"error": "DRAFT_GRANT_DENIED"}))
 
     def test_existing_store_migrates_records_to_active(self):
@@ -1567,41 +1580,43 @@ class ConversationDraftTests(unittest.TestCase):
         self.assertEqual((listing["conversations"][0]["id"],
                           listing["conversations"][0]["archived"]), ("f" * 32, False))
         restored = self.request(f"/v1/conversations/{'f' * 32}/restore", method="POST",
-                                body={"expected_revision": 4, "operation_id": "3" * 32})[1]
+                                body={"expected_revision": 4,
+                                      "operation_id": self.operation_id(
+                                          "f" * 32, False, 4, "3" * 16)})[1]
         self.assertEqual((restored["archived"], restored["revision"]), (False, 4))
 
     def test_archive_operation_receipts_are_bounded_without_reapplying_old_command(self):
         _, created = self.request("/v1/conversations", method="POST", body=self.fields())
         identity = created["id"]
         self.service.conversations.OPERATION_RECEIPT_LIMIT = 3
-        for digit in "123":
+        commands = []
+        for digit in "12345":
+            command = {"expected_revision": 1,
+                       "operation_id": self.operation_id(identity, False, 1, digit * 16)}
+            commands.append(command)
             status, restored = self.request(
                 f"/v1/conversations/{identity}/restore", method="POST",
-                body={"expected_revision": 1, "operation_id": digit * 32})
+                body=command)
             self.assertEqual((status, restored["archived"], restored["revision"]),
                              (200, False, 1))
-        self.assertEqual(self.request(
-            f"/v1/conversations/{identity}/restore", method="POST",
-            body={"expected_revision": 1, "operation_id": "4" * 32}),
-            (409, {"error": "DRAFT_CONFLICT"}))
-        self.assertEqual(self.request(
-            f"/v1/conversations/{identity}/archive", method="POST",
-            body={"expected_revision": 1, "operation_id": "1" * 32}),
-            (409, {"error": "DRAFT_CONFLICT"}))
+        status, replay = self.request(
+            f"/v1/conversations/{identity}/restore", method="POST", body=commands[0])
+        self.assertEqual((status, replay["archived"], replay["revision"]), (200, False, 1))
         self.assertEqual(self.request(
             f"/v1/conversations/{identity}/archive", method="POST",
-            body={"expected_revision": 1, "operation_id": "5" * 32}),
+            body=commands[0]),
             (409, {"error": "DRAFT_CONFLICT"}))
+        status, archived = self.request(
+            f"/v1/conversations/{identity}/archive", method="POST",
+            body={"expected_revision": 1,
+                  "operation_id": self.operation_id(identity, True, 1, "a" * 16)})
+        self.assertEqual((status, archived["archived"], archived["revision"]), (200, True, 2))
         connection = sqlite3.connect(self.root / "conversations.sqlite3")
         try:
             count = connection.execute("SELECT COUNT(*) FROM conversation_operations").fetchone()[0]
         finally:
             connection.close()
-        self.assertEqual(count, 3)
-        status, replay = self.request(
-            f"/v1/conversations/{identity}/restore", method="POST",
-            body={"expected_revision": 1, "operation_id": "1" * 32})
-        self.assertEqual((status, replay["archived"], replay["revision"]), (200, False, 1))
+        self.assertLessEqual(count, 3)
 
     def test_read_token_alone_cannot_write_or_read_actor_drafts(self):
         path = "/v1/conversations"

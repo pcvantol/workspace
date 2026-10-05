@@ -65,7 +65,9 @@ PATCH never changes `archived`, so a pre-2.8.5 client cannot accidentally
 restore an archived record.
 
 Archive and restore accept exactly `expected_revision` and a client-generated
-lowercase 32-hex `operation_id`. The transition increments the record revision.
+lowercase 32-hex `operation_id`. Its first 16 hex characters are the SHA-256
+prefix of `conversation_id:ACTION:expected_revision`; its final 16 are a fresh
+client nonce. The transition increments the record revision.
 Repeating the same operation ID with the same command returns current record
 truth without a second transition. Reusing an operation ID for a different
 command returns `DRAFT_CONFLICT`. A replayed old archive after a later restore
@@ -73,10 +75,11 @@ cannot restore old state. A stale expected revision, including a concurrent
 text edit or opposite transition, returns `DRAFT_CONFLICT`. The record and its
 operation receipt commit in one SQLite transaction and survive Server restart.
 Existing stores gain `archived=false` during compatible schema migration.
-The Server retains a bounded durable operation-receipt budget per actor/project.
-Known operation IDs remain replayable and cannot be rebound. Once the budget is
-full, new operation IDs fail closed with `DRAFT_CONFLICT`; the database cannot
-grow without bound and no forgotten ID can be reused for another command.
+The Server retains a bounded recent operation-receipt window per actor/project.
+Known recent operation IDs remain replayable and cannot be rebound. A pruned
+transition is stale and fails closed; a pruned no-op remains a no-op. The
+command binding prevents any pruned ID from validating for another record,
+action or revision while the database remains bounded.
 All IDs are lowercase 32-hex. JSON must be one bounded object without
 duplicate keys; request bodies are limited to 48,000 bytes. The Server never
 interprets HTML or Markdown and never logs tokens or draft content.

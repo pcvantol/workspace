@@ -522,6 +522,9 @@ final class ConversationTests: XCTestCase {
         let instance = self.instance
         let grant = self.grant
         let record = self.record
+        let archiveCommand = ArchiveCommand.make(
+            conversationID: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", archived: true,
+            expectedRevision: 1)
         let client = transport { request in
             XCTAssertEqual(request.value(forHTTPHeaderField: "Authorization"), "Bearer read-only")
             XCTAssertEqual(request.value(forHTTPHeaderField: "X-Workspace-Instance"), instance)
@@ -543,7 +546,7 @@ final class ConversationTests: XCTestCase {
             case ("POST", "/v1/conversations/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/archive"):
                 let body = try self.body(request)
                 XCTAssertEqual(body["expected_revision"] as? Int, 1)
-                XCTAssertEqual(body["operation_id"] as? String, String(repeating: "c", count: 32))
+                XCTAssertEqual(body["operation_id"] as? String, archiveCommand.operation_id)
                 let archived = record.replacingOccurrences(
                     of: "\"revision\":1", with: "\"archived\":true,\"revision\":2")
                 return (200, Data(archived.utf8))
@@ -570,10 +573,25 @@ final class ConversationTests: XCTestCase {
         let archived = try await client.setArchived(
             endpoint: endpoint, readToken: "read-only", access: access,
             id: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", archived: true,
-            command: ArchiveCommand(expected_revision: 1,
-                                    operation_id: String(repeating: "c", count: 32)))
+            command: archiveCommand)
         XCTAssertTrue(archived.archived)
         XCTAssertEqual(archived.revision, 2)
+    }
+
+    func testArchiveCommandBindsConversationActionAndRevision() {
+        let identity = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        let archive = ArchiveCommand.make(conversationID: identity, archived: true,
+                                          expectedRevision: 1)
+        let restore = ArchiveCommand.make(conversationID: identity, archived: false,
+                                          expectedRevision: 1)
+        let later = ArchiveCommand.make(conversationID: identity, archived: true,
+                                        expectedRevision: 2)
+        XCTAssertNotEqual(archive.operation_id.prefix(16), restore.operation_id.prefix(16))
+        XCTAssertNotEqual(archive.operation_id.prefix(16), later.operation_id.prefix(16))
+        XCTAssertNotEqual(archive.operation_id, ArchiveCommand.make(
+            conversationID: identity, archived: true, expectedRevision: 1).operation_id)
+        XCTAssertNotNil(archive.operation_id.range(
+            of: "^[0-9a-f]{32}$", options: .regularExpression))
     }
 
     func testTransportRejectsWrongScopeAndGrantDenial() async throws {

@@ -1,4 +1,5 @@
 import Foundation
+import CryptoKit
 import Security
 
 struct DraftAccess: Codable, Sendable, Equatable {
@@ -164,6 +165,18 @@ struct DraftFields: Encodable, Sendable {
 struct ArchiveCommand: Encodable, Sendable, Equatable {
     let expected_revision: Int
     let operation_id: String
+
+    static func make(conversationID: String, archived: Bool,
+                     expectedRevision: Int) -> ArchiveCommand {
+        let action = archived ? "ARCHIVE" : "RESTORE"
+        let command = Data("\(conversationID):\(action):\(expectedRevision)".utf8)
+        let binding = SHA256.hash(data: command).prefix(8)
+            .map { String(format: "%02x", $0) }.joined()
+        let nonce = UUID().uuidString.replacingOccurrences(of: "-", with: "")
+            .lowercased().prefix(16)
+        return ArchiveCommand(expected_revision: expectedRevision,
+                              operation_id: binding + nonce)
+    }
 }
 
 enum ConversationError: Error, LocalizedError, Equatable {

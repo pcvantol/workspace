@@ -505,10 +505,13 @@ final class ConversationState: ObservableObject {
            pendingArchiveOperation.expectedRevision == selectedConversation.revision {
             operation = pendingArchiveOperation
         } else {
+            let command = ArchiveCommand.make(
+                conversationID: selectedConversation.id, archived: archived,
+                expectedRevision: selectedConversation.revision)
             operation = PendingArchiveOperation(
                 conversationID: selectedConversation.id, archived: archived,
                 expectedRevision: selectedConversation.revision,
-                operationID: UUID().uuidString.replacingOccurrences(of: "-", with: "").lowercased())
+                operationID: command.operation_id)
             pendingArchiveOperation = operation
         }
         isBusy = true
