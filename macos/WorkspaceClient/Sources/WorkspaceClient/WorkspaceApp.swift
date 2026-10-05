@@ -242,9 +242,11 @@ struct SettingsView: View {
                 LabeledContent("Pinned instance", value: client.savedInstance.isEmpty ? "None" : client.savedInstance)
                 HStack {
                     Button("Connect") {
+                        guard !forgettingServer, !conversations.preparingServerForget else { return }
                         client.connect(address: address, enteredToken: token)
                         token = ""
-                    }.disabled(["LOADING", "SAVING", "FORGETTING"].contains(client.phase))
+                    }.disabled(forgettingServer || conversations.preparingServerForget ||
+                               ["LOADING", "SAVING", "FORGETTING"].contains(client.phase))
                     Button("Forget Server") {
                         guard !forgettingServer else { return }
                         forgettingServer = true
