@@ -157,16 +157,29 @@ class ConversationStore:
                 request_id TEXT NOT NULL, request_digest TEXT NOT NULL,
                 title TEXT NOT NULL, focus TEXT NOT NULL, mode TEXT NOT NULL,
                 draft TEXT NOT NULL, revision INTEGER NOT NULL,
-                created_at TEXT NOT NULL, updated_at TEXT NOT NULL)""")
+                created_at TEXT NOT NULL, updated_at TEXT NOT NULL,
+                archived INTEGER NOT NULL DEFAULT 0 CHECK (archived IN (0, 1)))""")
             connection.execute("""CREATE UNIQUE INDEX IF NOT EXISTS conversation_request
                 ON conversations(actor_id, project_id, request_id)""")
+        columns = {row[1] for row in connection.execute("PRAGMA table_info(conversations)")}
+        if "archived" not in columns:
+            connection.execute("ALTER TABLE conversations ADD COLUMN archived INTEGER NOT NULL DEFAULT 0")
+        connection.execute("""CREATE TABLE IF NOT EXISTS conversation_operations (
+            actor_id TEXT NOT NULL, project_id TEXT NOT NULL, operation_id TEXT NOT NULL,
+            conversation_id TEXT NOT NULL, request_digest TEXT NOT NULL,
+            action TEXT NOT NULL, completed_revision INTEGER NOT NULL,
+            created_at TEXT NOT NULL,
+            PRIMARY KEY (actor_id, project_id, operation_id))""")
+        connection.commit()
         return connection
 
     @staticmethod
     def _record(row):
-        return {key: value for key, value in dict(row).items() if key not in ("request_id", "request_digest")} | {
-                "history": [], "history_availability": "UNQUALIFIED_FORGE",
-                "state": "DRAFT_ONLY"}
+        record = {key: value for key, value in dict(row).items()
+                  if key not in ("request_id", "request_digest")}
+        record["archived"] = bool(record["archived"])
+        return record | {"history": [], "history_availability": "UNQUALIFIED_FORGE",
+                         "state": "DRAFT_ONLY"}
 
     def list(self, scope):
         actor, project = scope
@@ -238,9 +251,12 @@ class ConversationStore:
                                                    (actor, project)).fetchone()[0]
                         if count >= 500:
                             raise ValueError("conversation limit reached")
-                        connection.execute("INSERT INTO conversations VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
-                                           (identity, actor, project, request_id, request_digest,
-                                            title, focus, mode, draft, 1, stamp, stamp))
+                        connection.execute("""INSERT INTO conversations
+                            (id, actor_id, project_id, request_id, request_digest, title, focus,
+                             mode, draft, revision, created_at, updated_at, archived)
+                            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,0)""",
+                            (identity, actor, project, request_id, request_digest,
+                             title, focus, mode, draft, 1, stamp, stamp))
             finally:
                 connection.close()
             if replay is not None:
@@ -273,3 +289,68 @@ class ConversationStore:
             finally:
                 connection.close()
         return self.get(scope, conversation_id)
+
+    def set_archived(self, scope, conversation_id, fields, *, archived):
+        """Apply one durable, replay-safe presentation-state command."""
+        if (not isinstance(fields, dict) or set(fields) != {"expected_revision", "operation_id"}
+                or type(fields["expected_revision"]) is not int or fields["expected_revision"] < 1
+                or not isinstance(fields["operation_id"], str)
+                or re.fullmatch(r"[0-9a-f]{32}", fields["operation_id"]) is None):
+            raise ValueError("invalid conversation operation")
+        if re.fullmatch(r"[0-9a-f]{32}", conversation_id) is None:
+            raise FileNotFoundError("conversation not found")
+        actor, project = scope
+        action = "ARCHIVE" if archived else "RESTORE"
+        request_digest = hashlib.sha256(json.dumps({
+            "action": action, "conversation_id": conversation_id,
+            "expected_revision": fields["expected_revision"]
+        }, sort_keys=True).encode()).hexdigest()
+        with self.lock:
+            connection = self._connect()
+            result = None
+            try:
+                with connection:
+                    connection.execute("BEGIN IMMEDIATE")
+                    prior = connection.execute("""SELECT request_digest FROM conversation_operations
+                        WHERE actor_id=? AND project_id=? AND operation_id=?""",
+                        (actor, project, fields["operation_id"])).fetchone()
+                    if prior is not None:
+                        if prior["request_digest"] != request_digest:
+                            raise ConversationConflict("operation ID reused for different command")
+                        row = connection.execute("""SELECT * FROM conversations
+                            WHERE id=? AND actor_id=? AND project_id=?""",
+                            (conversation_id, actor, project)).fetchone()
+                        if row is None:
+                            raise FileNotFoundError("conversation not found")
+                        result = self._record(row)
+                    else:
+                        row = connection.execute("""SELECT * FROM conversations
+                            WHERE id=? AND actor_id=? AND project_id=?""",
+                            (conversation_id, actor, project)).fetchone()
+                        if row is None:
+                            raise FileNotFoundError("conversation not found")
+                        if row["revision"] != fields["expected_revision"]:
+                            raise ConversationConflict("draft revision changed")
+                        completed_revision = row["revision"]
+                        if bool(row["archived"]) != archived:
+                            completed_revision += 1
+                            cursor = connection.execute("""UPDATE conversations
+                                SET archived=?, revision=?, updated_at=?
+                                WHERE id=? AND actor_id=? AND project_id=? AND revision=?""",
+                                (int(archived), completed_revision, _now(), conversation_id,
+                                 actor, project, fields["expected_revision"]))
+                            if cursor.rowcount != 1:
+                                raise ConversationConflict("draft revision changed")
+                        connection.execute("""INSERT INTO conversation_operations
+                            (actor_id, project_id, operation_id, conversation_id, request_digest,
+                             action, completed_revision, created_at)
+                            VALUES (?,?,?,?,?,?,?,?)""",
+                            (actor, project, fields["operation_id"], conversation_id,
+                             request_digest, action, completed_revision, _now()))
+                        row = connection.execute("""SELECT * FROM conversations
+                            WHERE id=? AND actor_id=? AND project_id=?""",
+                            (conversation_id, actor, project)).fetchone()
+                        result = self._record(row)
+            finally:
+                connection.close()
+        return result

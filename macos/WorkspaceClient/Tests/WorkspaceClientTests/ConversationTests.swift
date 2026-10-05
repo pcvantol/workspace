@@ -137,9 +137,9 @@ final class ConversationTests: XCTestCase {
     }
 
     private func discoveryRecord(_ id: String, title: String, focus: String, mode: String,
-                                 updated: String) -> Conversation {
+                                 updated: String, archived: Bool = false) -> Conversation {
         Conversation(id: id, actor_id: "alice", project_id: "project-a", title: title,
-                     focus: focus, mode: mode, draft: "Unsent", revision: 1,
+                     focus: focus, mode: mode, draft: "Unsent", archived: archived, revision: 1,
                      created_at: "2026-10-04T20:00:00+00:00", updated_at: updated,
                      history: [], history_availability: "UNQUALIFIED_FORGE", state: "DRAFT_ONLY")
     }
@@ -151,13 +151,21 @@ final class ConversationTests: XCTestCase {
                                    updated: "2026-10-05T08:00:00+00:00")
         let newest = discoveryRecord("c", title: "Beta", focus: "Roadmap", mode: "ARCHITECTURE",
                                      updated: "2026-10-05T08:00:00.5+00:00")
-        let records = [tied, newest, alpha]
+        let archived = discoveryRecord("d", title: "Retired", focus: "Roadmap", mode: "BUSINESS",
+                                       updated: "2026-10-05T09:00:00+00:00", archived: true)
+        let records = [tied, newest, alpha, archived]
         XCTAssertEqual(ConversationDiscovery.visible(records, search: "", mode: .all,
                                                      sort: .recentlyChanged).map(\.id),
                        ["c", "a", "b"])
         XCTAssertEqual(ConversationDiscovery.visible(records, search: "", mode: .all,
                                                      sort: .title).map(\.id),
                        ["a", "b", "c"])
+        XCTAssertEqual(ConversationDiscovery.visible(records, search: "", mode: .all,
+                                                     archive: .archived,
+                                                     sort: .recentlyChanged).map(\.id), ["d"])
+        XCTAssertEqual(ConversationDiscovery.visible(records, search: "roadmap", mode: .business,
+                                                     archive: .all,
+                                                     sort: .title).map(\.id), ["a", "d"])
         XCTAssertEqual(ConversationDiscovery.visible(records, search: " ROADMAP ", mode: .all,
                                                      sort: .recentlyChanged).map(\.id), ["c", "a"])
         XCTAssertEqual(ConversationDiscovery.visible(records, search: "roadmap", mode: .business,
@@ -532,6 +540,13 @@ final class ConversationTests: XCTestCase {
                 XCTAssertEqual(body["expected_revision"] as? Int, 1)
                 XCTAssertNil(body["request_id"])
                 return (200, Data(record.replacingOccurrences(of: "\"revision\":1", with: "\"revision\":2").utf8))
+            case ("POST", "/v1/conversations/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/archive"):
+                let body = try self.body(request)
+                XCTAssertEqual(body["expected_revision"] as? Int, 1)
+                XCTAssertEqual(body["operation_id"] as? String, String(repeating: "c", count: 32))
+                let archived = record.replacingOccurrences(
+                    of: "\"revision\":1", with: "\"archived\":true,\"revision\":2")
+                return (200, Data(archived.utf8))
             default:
                 XCTFail("Unexpected route")
                 return (404, Data("{}".utf8))
@@ -552,6 +567,13 @@ final class ConversationTests: XCTestCase {
                                               access: access, id: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
                                               fields: update)
         XCTAssertEqual(updated.revision, 2)
+        let archived = try await client.setArchived(
+            endpoint: endpoint, readToken: "read-only", access: access,
+            id: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", archived: true,
+            command: ArchiveCommand(expected_revision: 1,
+                                    operation_id: String(repeating: "c", count: 32)))
+        XCTAssertTrue(archived.archived)
+        XCTAssertEqual(archived.revision, 2)
     }
 
     func testTransportRejectsWrongScopeAndGrantDenial() async throws {
@@ -847,9 +869,12 @@ final class ConversationTests: XCTestCase {
         var records = [[String: Any]]()
         var draftMethods = [String]()
         var conflictNext = false
+        var failArchiveOnce = true
+        var archiveOperationIDs = [String]()
         let serverRecord: (String, String, String, Int) -> [String: Any] = { title, mode, draft, revision in
             ["id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "actor_id": "alice", "project_id": "project-a",
-             "title": title, "focus": "Roadmap", "mode": mode, "draft": draft, "revision": revision,
+             "title": title, "focus": "Roadmap", "mode": mode, "draft": draft,
+             "archived": false, "revision": revision,
              "created_at": "2026-10-04T20:00:00Z", "updated_at": "2026-10-04T20:00:00Z",
              "history": [], "history_availability": "UNQUALIFIED_FORGE", "state": "DRAFT_ONLY"]
         }
@@ -886,6 +911,25 @@ final class ConversationTests: XCTestCase {
                 XCTAssertEqual(body["expected_revision"] as? Int, latestRevision)
                 let record = serverRecord(body["title"] as! String, body["mode"] as! String,
                                           body["draft"] as! String, latestRevision + 1)
+                records = [record]
+                return (200, try JSONSerialization.data(withJSONObject: record))
+            case "/v1/conversations/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/archive",
+                 "/v1/conversations/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/restore":
+                let archive = request.url!.path.hasSuffix("/archive")
+                draftMethods.append(archive ? "ARCHIVE" : "RESTORE")
+                let body = try self.body(request)
+                let operationID = body["operation_id"] as! String
+                XCTAssertEqual(operationID.count, 32)
+                if archive { archiveOperationIDs.append(operationID) }
+                let latestRevision = records.first?["revision"] as? Int ?? 1
+                XCTAssertEqual(body["expected_revision"] as? Int, latestRevision)
+                if archive && failArchiveOnce {
+                    failArchiveOnce = false
+                    return (503, Data("{}".utf8))
+                }
+                var record = records[0]
+                record["archived"] = archive
+                record["revision"] = latestRevision + 1
                 records = [record]
                 return (200, try JSONSerialization.data(withJSONObject: record))
             default:
@@ -947,6 +991,29 @@ final class ConversationTests: XCTestCase {
         XCTAssertEqual(state.savedRevision, 3)
         await state.save(client: client)
         XCTAssertEqual(state.savedRevision, 4)
+        state.draft = "Unsaved archive note"
+        await state.requestArchive(true, client: client)
+        XCTAssertEqual(state.archiveConfirmation, true)
+        XCTAssertEqual(state.draft, "Unsaved archive note")
+        state.cancelArchive()
+        XCTAssertNil(state.archiveConfirmation)
+        XCTAssertEqual(state.draft, "Unsaved archive note")
+        await state.requestArchive(true, client: client)
+        await state.discardAndContinueArchive(true, client: client)
+        XCTAssertEqual(state.state, "UNAVAILABLE")
+        XCTAssertFalse(state.dirty)
+        await state.requestArchive(true, client: client)
+        XCTAssertEqual(state.state, "AVAILABLE")
+        XCTAssertTrue(state.selectedConversation?.archived == true)
+        XCTAssertFalse(state.canEdit)
+        XCTAssertEqual(archiveOperationIDs.count, 2)
+        XCTAssertEqual(archiveOperationIDs[0], archiveOperationIDs[1])
+        state.archiveFilter = .archived
+        XCTAssertEqual(state.visibleConversations.map(\.id), ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"])
+        await state.requestArchive(false, client: client)
+        XCTAssertEqual(state.state, "AVAILABLE")
+        XCTAssertFalse(state.selectedConversation?.archived == true)
+        XCTAssertTrue(state.canEdit)
         let reopened = ConversationState(grants: MemoryDraftGrant(access), localDrafts: local,
             transport: ConversationTransport(configuration: configuration))
         await reopened.prepare(client: client)
@@ -954,7 +1021,9 @@ final class ConversationTests: XCTestCase {
         XCTAssertEqual(reopened.conversations[0].mode, "ARCHITECTURE")
         XCTAssertEqual(reopened.selectedID, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
         XCTAssertEqual(reopened.draft, "What should we prioritize?")
-        XCTAssertEqual(draftMethods, ["GET", "POST", "PATCH", "PATCH", "GET", "PATCH", "GET"])
+        XCTAssertEqual(draftMethods,
+                       ["GET", "POST", "PATCH", "PATCH", "GET", "PATCH",
+                        "ARCHIVE", "ARCHIVE", "RESTORE", "GET"])
         render(ConversationsView(client: client, state: state))
         render(ServerOverviewView(client: client))
         render(SettingsView(client: client, conversations: state))
@@ -963,10 +1032,13 @@ final class ConversationTests: XCTestCase {
     @MainActor
     func testConversationCopyAndViewRenderWithCredentialAdapters() async throws {
         for language in ["en", "nl", "de", "fr", "es"] {
-            for key in ["nav", "project", "new", "search", "find", "filter", "all", "sort",
+            for key in ["nav", "project", "new", "search", "find", "filter", "all", "archiveFilter",
+                        "active", "archived", "allArchive", "sort",
                         "recent", "titleSort", "activeFilters", "resetFilters", "noConversations",
-                        "noResults", "selectedHidden", "selected", "title", "focus", "mode", "draft",
-                        "save", "context", "sources", "ai", "saved", "offline", "conflict"] {
+                        "noResults", "noActive", "noArchived", "selectedHidden", "selected", "title",
+                        "focus", "mode", "draft", "save", "archive", "restore", "archiveConfirm",
+                        "archiveConfirmMessage", "saveContinue", "discardContinue", "cancel", "archiving",
+                        "unsupportedArchive", "context", "sources", "ai", "saved", "offline", "conflict"] {
                 XCTAssertNotEqual(ConversationCopy.text(key, language: language), key)
             }
         }

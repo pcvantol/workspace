@@ -12,12 +12,20 @@ enum ConversationSortOrder: String, CaseIterable {
     case title = "TITLE"
 }
 
+enum ConversationArchiveFilter: String, CaseIterable {
+    case active = "ACTIVE"
+    case archived = "ARCHIVED"
+    case all = "ALL"
+}
+
 enum ConversationDiscovery {
     static func visible(_ conversations: [Conversation], search: String,
-                        mode: ConversationModeFilter, sort: ConversationSortOrder) -> [Conversation] {
+                        mode: ConversationModeFilter, archive: ConversationArchiveFilter = .active,
+                        sort: ConversationSortOrder) -> [Conversation] {
         let query = search.trimmingCharacters(in: .whitespacesAndNewlines)
         let filtered = conversations.filter { conversation in
-            (mode == .all || conversation.mode == mode.rawValue) &&
+            (archive == .all || conversation.archived == (archive == .archived)) &&
+                (mode == .all || conversation.mode == mode.rawValue) &&
                 (query.isEmpty || conversation.title.localizedCaseInsensitiveContains(query) ||
                  conversation.focus.localizedCaseInsensitiveContains(query))
         }

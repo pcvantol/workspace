@@ -1,6 +1,20 @@
 # Workspace Bootstrap
 
-## Active owner priority — 5 October 2026, r81 plan revision 83
+## Active owner priority — 5 October 2026, r81 plan revision 84
+
+The owner selected reversible conversation archive/restore under the same
+LANE_4 assignment in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-6001515742).
+Product 2.8.5 adds Workspace-owned archive state to the existing private draft
+record, with Active/Archived/All filtering, explicit restore of the same ID,
+revision and operation-ID guards, migration of existing records to active, and
+safe save/discard/cancel handling for unsaved text. Archive/filter/reconnect
+never invokes a provider or changes Forge/Mission state. Delivery requires the
+normal protected merge, independent exact-head review, strict per-file coverage,
+installed Server/native HTTP readback and real packaged archive/restore clicks.
+Signing, Keychain successor, two-Mac trust and release remain separate L1-gated
+work. Revision 83 below is delivered history.
+
+## Delivered owner priority — 5 October 2026, r81 plan revision 83
 
 Under the same LANE_4 assignment, the owner selected a native conversation-list
 continuation in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-5989057256).

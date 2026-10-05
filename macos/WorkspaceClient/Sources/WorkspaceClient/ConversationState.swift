@@ -28,6 +28,12 @@ private actor LocalDraftWorker {
 
 @MainActor
 final class ConversationState: ObservableObject {
+    private struct PendingArchiveOperation: Equatable {
+        let conversationID: String
+        let archived: Bool
+        let expectedRevision: Int
+        let operationID: String
+    }
     @Published var projectID = ""
     @Published var selectedID: String?
     @Published var title = ""
@@ -36,6 +42,7 @@ final class ConversationState: ObservableObject {
     @Published var draft = ""
     @Published var search = ""
     @Published var modeFilter: ConversationModeFilter = .all
+    @Published var archiveFilter: ConversationArchiveFilter = .active
     @Published var sortOrder: ConversationSortOrder = .recentlyChanged
     @Published var grantEntry = ""
     @Published private(set) var conversations: [Conversation] = []
@@ -47,6 +54,7 @@ final class ConversationState: ObservableObject {
     @Published private(set) var isBusy = false
     @Published private(set) var loadingGrant = false
     @Published private(set) var preparingServerForget = false
+    @Published private(set) var archiveConfirmation: Bool?
 
     private let grants: DraftGrantWorker
     private let localDrafts: LocalDraftWorker
@@ -59,6 +67,7 @@ final class ConversationState: ObservableObject {
     private var localVersion = 0
     private var creatingNewDraft = false
     private var authorizationSuspended = false
+    private var pendingArchiveOperation: PendingArchiveOperation?
 
     init(grants: any DraftGrantStore = DraftGrantKeychain(),
          localDrafts: any LocalDraftStore = PrivateLocalDraftCache(),
@@ -69,12 +78,13 @@ final class ConversationState: ObservableObject {
     }
 
     var visibleConversations: [Conversation] {
-        ConversationDiscovery.visible(conversations, search: search, mode: modeFilter, sort: sortOrder)
+        ConversationDiscovery.visible(conversations, search: search, mode: modeFilter,
+                                      archive: archiveFilter, sort: sortOrder)
     }
 
     var hasActiveDiscovery: Bool {
         !search.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
-            modeFilter != .all || sortOrder != .recentlyChanged
+            modeFilter != .all || archiveFilter != .active || sortOrder != .recentlyChanged
     }
 
     var selectedIsHidden: Bool {
@@ -88,6 +98,10 @@ final class ConversationState: ObservableObject {
         case "OFFLINE": "offline"
         case "STALE": "stale"
         case "AVAILABLE" where conversations.isEmpty: "noConversations"
+        case "AVAILABLE" where visibleConversations.isEmpty && archiveFilter == .active &&
+            conversations.allSatisfy(\.archived): "noActive"
+        case "AVAILABLE" where visibleConversations.isEmpty && archiveFilter == .archived &&
+            conversations.allSatisfy({ !$0.archived }): "noArchived"
         case "AVAILABLE" where visibleConversations.isEmpty: "noResults"
         default: nil
         }
@@ -96,11 +110,23 @@ final class ConversationState: ObservableObject {
     func resetDiscovery() {
         search = ""
         modeFilter = .all
+        archiveFilter = .active
         sortOrder = .recentlyChanged
     }
 
     var canEdit: Bool {
-        access?.projectID == projectID && !authorizationSuspended && !isBusy && !loadingGrant
+        access?.projectID == projectID && selectedConversation?.archived != true &&
+            !authorizationSuspended && !isBusy && !loadingGrant
+    }
+
+    var selectedConversation: Conversation? {
+        guard let selectedID else { return nil }
+        return conversations.first(where: { $0.id == selectedID })
+    }
+
+    var canChangeArchive: Bool {
+        selectedConversation != nil && access?.projectID == projectID && !authorizationSuspended &&
+            !isBusy && !loadingGrant && serverConflict == nil
     }
 
     var dirty: Bool {
@@ -306,6 +332,12 @@ final class ConversationState: ObservableObject {
                     detail = "Review the newer Server draft beside your local text before choosing a version."
                     return
                 }
+                if let pendingArchiveOperation,
+                   pendingArchiveOperation.conversationID == latest.id,
+                   pendingArchiveOperation.archived == latest.archived,
+                   latest.revision >= pendingArchiveOperation.expectedRevision {
+                    self.pendingArchiveOperation = nil
+                }
                 if !dirty { use(latest) }
             } else if !dirty, !creatingNewDraft, let first = conversations.first {
                 use(first)
@@ -416,6 +448,106 @@ final class ConversationState: ObservableObject {
         state = authorizationSuspended ? "GRANT_REQUIRED" : "AVAILABLE"
         detail = "Unsaved changes discarded."
         persistLocal()
+    }
+
+    func requestArchive(_ archived: Bool, client: ClientState) async {
+        guard canChangeArchive, let selectedConversation,
+              selectedConversation.archived != archived else { return }
+        if dirty {
+            archiveConfirmation = archived
+            state = "PENDING"
+            detail = archived ?
+                "Save or discard local changes before archiving this conversation." :
+                "Save or discard local changes before restoring this conversation."
+            return
+        }
+        await applyArchive(archived, client: client)
+    }
+
+    func cancelArchive() {
+        archiveConfirmation = nil
+        state = authorizationSuspended ? "GRANT_REQUIRED" : "AVAILABLE"
+        detail = "Conversation was not changed. Local text remains open."
+    }
+
+    func discardAndContinueArchive(_ archived: Bool, client: ClientState) async {
+        archiveConfirmation = nil
+        discardChanges()
+        await applyArchive(archived, client: client)
+    }
+
+    func saveAndContinueArchive(_ archived: Bool, client: ClientState) async {
+        archiveConfirmation = nil
+        await save(client: client)
+        guard !dirty, state == "AVAILABLE" else { return }
+        await applyArchive(archived, client: client)
+    }
+
+    private func applyArchive(_ archived: Bool, client: ClientState) async {
+        guard !loadingGrant, !isBusy, !authorizationSuspended,
+              let access, access.projectID == projectID,
+              access.endpoint == client.savedEndpoint, access.instanceID == client.savedInstance,
+              let selectedConversation, selectedConversation.archived != archived else { return }
+        guard client.phase == "CONNECTED" else {
+            state = "OFFLINE"
+            detail = "Server offline. The conversation and local text were not changed."
+            return
+        }
+        let operation: PendingArchiveOperation
+        if let pendingArchiveOperation,
+           pendingArchiveOperation.conversationID == selectedConversation.id,
+           pendingArchiveOperation.archived == archived,
+           pendingArchiveOperation.expectedRevision == selectedConversation.revision {
+            operation = pendingArchiveOperation
+        } else {
+            operation = PendingArchiveOperation(
+                conversationID: selectedConversation.id, archived: archived,
+                expectedRevision: selectedConversation.revision,
+                operationID: UUID().uuidString.replacingOccurrences(of: "-", with: "").lowercased())
+            pendingArchiveOperation = operation
+        }
+        isBusy = true
+        scopeEpoch += 1
+        let epoch = scopeEpoch
+        defer { isBusy = false }
+        state = "ARCHIVING"
+        do {
+            let endpoint = try ServerEndpoint(access.endpoint)
+            let token = try await client.draftReadToken()
+            guard epoch == scopeEpoch, self.access == access,
+                  selectedID == operation.conversationID else { return }
+            let result = try await transport.setArchived(
+                endpoint: endpoint, readToken: token, access: access,
+                id: operation.conversationID, archived: archived,
+                command: ArchiveCommand(expected_revision: operation.expectedRevision,
+                                        operation_id: operation.operationID))
+            guard epoch == scopeEpoch, self.access == access,
+                  selectedID == operation.conversationID else { return }
+            conversations.removeAll(where: { $0.id == result.id })
+            conversations.insert(result, at: 0)
+            pendingArchiveOperation = nil
+            use(result)
+            state = "AVAILABLE"
+            detail = archived ?
+                "Conversation archived. Its draft and identity remain available." :
+                "Conversation restored. Continue editing the original draft."
+        } catch {
+            guard epoch == scopeEpoch, self.access == access else { return }
+            if let reason = error as? ConversationError {
+                if reason == .conflict {
+                    pendingArchiveOperation = nil
+                    state = "CONFLICT"
+                    await load(client: client)
+                    return
+                }
+                if reason == .unsupported { pendingArchiveOperation = nil }
+                state = [.unauthorized, .forbidden].contains(reason) ? "UNAUTHORIZED" :
+                    (reason == .unsupported ? "UNSUPPORTED" : "UNAVAILABLE")
+            } else {
+                state = "UNAVAILABLE"
+            }
+            detail = error.localizedDescription
+        }
     }
 
     func keepLocalAfterReview() {
@@ -569,6 +701,8 @@ final class ConversationState: ObservableObject {
         selectedID = nil
         creatingNewDraft = false
         authorizationSuspended = false
+        archiveConfirmation = nil
+        pendingArchiveOperation = nil
         resetDiscovery()
         clearEditor()
     }

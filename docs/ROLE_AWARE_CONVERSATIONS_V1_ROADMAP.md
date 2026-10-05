@@ -10,6 +10,15 @@ Design is canonical after owning protected merge. The full runtime nodes remain
 PLANNED; the 4 October r81 revision selects only a Workspace-owned RC-WC/RC-WS
 presentation and unsent-draft subset for product 2.8.3.
 
+The 5 October r81 plan revision 84 selects reversible archive/restore on product
+2.8.5. Archive state belongs to the Workspace presentation record and preserves
+the same conversation identity and unsent text. Active/Archived/All combines
+with delivered discovery controls. Archive and restore require expected revision
+and a durable operation ID; retries, concurrent writes, revoked grants and scope
+changes fail without a second effect or text loss. Existing records migrate to
+active and older text updates preserve archive state. This adds no provider,
+Forge session, Mission, approval or AI-send behavior.
+
 The 5 October r81 plan revision 83 selects one continuation on product 2.8.4:
 find and resume already authorized drafts through local search, mode filtering
 and stable sorting, without changing draft authority or invoking a provider.

@@ -88,12 +88,56 @@ struct Conversation: Codable, Identifiable, Sendable, Equatable {
     var focus: String
     var mode: String
     var draft: String
+    let archived: Bool
     let revision: Int
     let created_at: String
     let updated_at: String
     let history: [String]
     let history_availability: String
     let state: String
+
+    init(id: String, actor_id: String, project_id: String, title: String, focus: String,
+         mode: String, draft: String, archived: Bool = false, revision: Int,
+         created_at: String, updated_at: String, history: [String],
+         history_availability: String, state: String) {
+        self.id = id
+        self.actor_id = actor_id
+        self.project_id = project_id
+        self.title = title
+        self.focus = focus
+        self.mode = mode
+        self.draft = draft
+        self.archived = archived
+        self.revision = revision
+        self.created_at = created_at
+        self.updated_at = updated_at
+        self.history = history
+        self.history_availability = history_availability
+        self.state = state
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, actor_id, project_id, title, focus, mode, draft, archived, revision
+        case created_at, updated_at, history, history_availability, state
+    }
+
+    init(from decoder: any Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        id = try values.decode(String.self, forKey: .id)
+        actor_id = try values.decode(String.self, forKey: .actor_id)
+        project_id = try values.decode(String.self, forKey: .project_id)
+        title = try values.decode(String.self, forKey: .title)
+        focus = try values.decode(String.self, forKey: .focus)
+        mode = try values.decode(String.self, forKey: .mode)
+        draft = try values.decode(String.self, forKey: .draft)
+        archived = try values.decodeIfPresent(Bool.self, forKey: .archived) ?? false
+        revision = try values.decode(Int.self, forKey: .revision)
+        created_at = try values.decode(String.self, forKey: .created_at)
+        updated_at = try values.decode(String.self, forKey: .updated_at)
+        history = try values.decode([String].self, forKey: .history)
+        history_availability = try values.decode(String.self, forKey: .history_availability)
+        state = try values.decode(String.self, forKey: .state)
+    }
 
     var isOwnDraft: Bool {
         state == "DRAFT_ONLY" && history.isEmpty && history_availability == "UNQUALIFIED_FORGE" &&
@@ -117,8 +161,13 @@ struct DraftFields: Encodable, Sendable {
     let request_id: String?
 }
 
+struct ArchiveCommand: Encodable, Sendable, Equatable {
+    let expected_revision: Int
+    let operation_id: String
+}
+
 enum ConversationError: Error, LocalizedError, Equatable {
-    case unavailable, unauthorized, forbidden, conflict, invalidResponse, invalidDraft
+    case unavailable, unauthorized, forbidden, conflict, unsupported, invalidResponse, invalidDraft
 
     var errorDescription: String? {
         switch self {
@@ -126,6 +175,7 @@ enum ConversationError: Error, LocalizedError, Equatable {
         case .unauthorized: "The Server read token was rejected. Reconnect in Settings."
         case .forbidden: "This project needs its own draft grant."
         case .conflict: "A newer draft exists. Reload it before saving again."
+        case .unsupported: "This Workspace Server does not support conversation archiving."
         case .invalidResponse: "The Server returned an inconsistent draft response."
         case .invalidDraft: "Enter a title and keep the draft within the field limits."
         }
@@ -145,7 +195,7 @@ struct ConversationTransport: Sendable {
     }
 
     private func request<T: Decodable>(_ type: T.Type, endpoint: ServerEndpoint, readToken: String,
-        instance: String, grant: String, path: String, method: String = "GET", body: DraftFields? = nil,
+        instance: String, grant: String, path: String, method: String = "GET", body: Data? = nil,
         expectedStatus: Int = 200) async throws -> T {
         var request = URLRequest(url: endpoint.route(path))
         request.httpMethod = method
@@ -155,7 +205,7 @@ struct ConversationTransport: Sendable {
         request.setValue(instance, forHTTPHeaderField: "X-Workspace-Instance")
         request.setValue(grant, forHTTPHeaderField: "X-Workspace-Draft-Grant")
         if let body {
-            request.httpBody = try JSONEncoder().encode(body)
+            request.httpBody = body
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         }
         let data: Data
@@ -168,6 +218,7 @@ struct ConversationTransport: Sendable {
         case 401: throw ConversationError.unauthorized
         case 403: throw ConversationError.forbidden
         case 409: throw ConversationError.conflict
+        case 405: throw ConversationError.unsupported
         default: throw ConversationError.unavailable
         }
         guard data.count <= 1_000_000,
@@ -195,7 +246,8 @@ struct ConversationTransport: Sendable {
                 fields: DraftFields) async throws -> Conversation {
         let value = try await request(Conversation.self, endpoint: endpoint, readToken: readToken,
                                       instance: access.instanceID, grant: access.token,
-                                      path: "/v1/conversations", method: "POST", body: fields,
+                                      path: "/v1/conversations", method: "POST",
+                                      body: try JSONEncoder().encode(fields),
                                       expectedStatus: 201)
         guard value.project_id == access.projectID && value.isOwnDraft else {
             throw ConversationError.invalidResponse
@@ -210,9 +262,29 @@ struct ConversationTransport: Sendable {
         }
         let value = try await request(Conversation.self, endpoint: endpoint, readToken: readToken,
                                       instance: access.instanceID, grant: access.token,
-                                      path: "/v1/conversations/\(id)", method: "PATCH", body: fields)
+                                      path: "/v1/conversations/\(id)", method: "PATCH",
+                                      body: try JSONEncoder().encode(fields))
         guard value.id == id && value.project_id == access.projectID && value.isOwnDraft,
               value.revision == (fields.expected_revision ?? -1) + 1 else {
+            throw ConversationError.invalidResponse
+        }
+        return value
+    }
+
+    func setArchived(endpoint: ServerEndpoint, readToken: String, access: DraftAccess,
+                     id: String, archived: Bool, command: ArchiveCommand) async throws -> Conversation {
+        guard id.range(of: "^[0-9a-f]{32}$", options: .regularExpression) != nil,
+              command.operation_id.range(of: "^[0-9a-f]{32}$", options: .regularExpression) != nil else {
+            throw ConversationError.invalidResponse
+        }
+        let action = archived ? "archive" : "restore"
+        let value = try await request(Conversation.self, endpoint: endpoint, readToken: readToken,
+                                      instance: access.instanceID, grant: access.token,
+                                      path: "/v1/conversations/\(id)/\(action)", method: "POST",
+                                      body: try JSONEncoder().encode(command))
+        guard value.id == id && value.project_id == access.projectID && value.isOwnDraft,
+              value.archived == archived,
+              value.revision >= command.expected_revision else {
             throw ConversationError.invalidResponse
         }
         return value

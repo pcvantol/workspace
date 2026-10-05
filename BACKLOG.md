@@ -1,6 +1,26 @@
 # Workspace Backlog
 
-## r81 plan revision 83 — find and resume own conversations
+## r81 plan revision 84 — archive and restore own conversations
+
+The 5 October continuation in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-6001515742)
+keeps the existing r81 assignment and one Workspace sourcewriter. Product 2.8.5
+adds reversible archive state to the own actor/project-scoped draft record.
+Archive hides a conversation from the active list while retaining its ID,
+title, focus, mode and draft; restore returns that same record. Active,
+Archived and All combine locally with the delivered search/mode/sort controls.
+
+Archive/restore uses the existing read bearer, instance pin and separate draft
+grant plus exact conversation ID, expected revision and durable operation ID.
+The Server applies a repeated command once, prevents an old archive retry from
+overwriting a later restore, preserves archive state during old-client PATCH,
+and migrates existing records to active. Unsaved text requires explicit
+save/discard/cancel; failures retain the selection and text. Delivery requires
+strict per-changed-source coverage above 80.2%, independent exact-head review,
+protected merge, installed Server/native HTTP proof and real packaged clicks.
+No provider, EP, signing, live Keychain, trust or public-release effect is in
+this source milestone.
+
+## Delivered r81 plan revision 83 — find and resume own conversations
 
 The 5 October owner continuation in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-5989057256)
 keeps the existing r81 assignment and one Workspace sourcewriter. Product 2.8.4

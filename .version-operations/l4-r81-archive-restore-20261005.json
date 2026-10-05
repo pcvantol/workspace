@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "L4 GUI archive and restore continuation under Forge #208/6001515742",
+  "determined_version": "2.8.5",
+  "event_lineage": "L4 GUI archive and restore continuation under Forge #208/6001515742",
+  "expected_source_revision": "7c8ab493ff6b9b92a0e37c3c61bf9157a12e5b41",
+  "expected_version": "2.8.4",
+  "operation_id": "l4-r81-archive-restore-20261005",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}
