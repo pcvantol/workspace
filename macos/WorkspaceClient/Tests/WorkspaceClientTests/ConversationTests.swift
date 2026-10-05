@@ -323,6 +323,9 @@ final class ConversationTests: XCTestCase {
         let overlappingPreparation = await failedState.prepareForServerForget()
         XCTAssertFalse(overlappingPreparation)
         XCTAssertTrue(failedState.preparingServerForget)
+        await failedState.prepare(client: client)
+        XCTAssertTrue(failedState.preparingServerForget)
+        XCTAssertFalse(failedState.canEdit)
         releaseSave.signal()
         let failedPreparation = await firstPreparation.value
         XCTAssertFalse(failedPreparation)

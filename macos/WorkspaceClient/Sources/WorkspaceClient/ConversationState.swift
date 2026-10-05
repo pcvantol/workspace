@@ -112,7 +112,7 @@ final class ConversationState: ObservableObject {
     }
 
     func prepare(client: ClientState) async {
-        guard !loadingGrant, !isBusy else { return }
+        guard !preparingServerForget, !loadingGrant, !isBusy else { return }
         let epoch = scopeEpoch
         loadingGrant = true
         defer { loadingGrant = false }
@@ -394,7 +394,7 @@ final class ConversationState: ObservableObject {
                 creatingNewDraft = priorCreatingNewDraft
                 return false
             }
-            guard epoch == scopeEpoch, authorizationSuspended else { return true }
+            guard epoch == scopeEpoch, authorizationSuspended else { return false }
         } else {
             creatingNewDraft = false
             clearEditor()
