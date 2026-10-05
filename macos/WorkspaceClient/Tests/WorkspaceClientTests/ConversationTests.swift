@@ -922,11 +922,23 @@ final class ConversationTests: XCTestCase {
                 XCTAssertEqual(operationID.count, 32)
                 if archive { archiveOperationIDs.append(operationID) }
                 let latestRevision = records.first?["revision"] as? Int ?? 1
-                XCTAssertEqual(body["expected_revision"] as? Int, latestRevision)
                 if archive && failArchiveOnce {
                     failArchiveOnce = false
+                    XCTAssertEqual(body["expected_revision"] as? Int, latestRevision)
+                    var changed = records[0]
+                    changed["archived"] = true
+                    changed["revision"] = latestRevision + 1
+                    records = [changed]
+                    changed["archived"] = false
+                    changed["revision"] = latestRevision + 2
+                    records = [changed]
                     return (503, Data("{}".utf8))
                 }
+                if archive && archiveOperationIDs.count == 2 &&
+                    archiveOperationIDs[0] == archiveOperationIDs[1] {
+                    return (200, try JSONSerialization.data(withJSONObject: records[0]))
+                }
+                XCTAssertEqual(body["expected_revision"] as? Int, latestRevision)
                 var record = records[0]
                 record["archived"] = archive
                 record["revision"] = latestRevision + 1
@@ -1001,13 +1013,22 @@ final class ConversationTests: XCTestCase {
         await state.requestArchive(true, client: client)
         await state.discardAndContinueArchive(true, client: client)
         XCTAssertEqual(state.state, "UNAVAILABLE")
-        XCTAssertFalse(state.dirty)
+        XCTAssertTrue(state.dirty)
+        XCTAssertEqual(state.draft, "Unsaved archive note")
+        await state.requestArchive(true, client: client)
+        XCTAssertEqual(state.archiveConfirmation, true)
+        await state.discardAndContinueArchive(true, client: client)
+        XCTAssertEqual(state.state, "STATUS_CONFLICT")
+        XCTAssertFalse(state.selectedConversation?.archived == true)
+        XCTAssertEqual(state.draft, "What should we prioritize?")
         await state.requestArchive(true, client: client)
         XCTAssertEqual(state.state, "AVAILABLE")
         XCTAssertTrue(state.selectedConversation?.archived == true)
         XCTAssertFalse(state.canEdit)
-        XCTAssertEqual(archiveOperationIDs.count, 2)
+        XCTAssertTrue(state.canCreate)
+        XCTAssertEqual(archiveOperationIDs.count, 3)
         XCTAssertEqual(archiveOperationIDs[0], archiveOperationIDs[1])
+        XCTAssertNotEqual(archiveOperationIDs[1], archiveOperationIDs[2])
         state.archiveFilter = .archived
         XCTAssertEqual(state.visibleConversations.map(\.id), ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"])
         await state.requestArchive(false, client: client)
@@ -1023,7 +1044,7 @@ final class ConversationTests: XCTestCase {
         XCTAssertEqual(reopened.draft, "What should we prioritize?")
         XCTAssertEqual(draftMethods,
                        ["GET", "POST", "PATCH", "PATCH", "GET", "PATCH",
-                        "ARCHIVE", "ARCHIVE", "RESTORE", "GET"])
+                        "ARCHIVE", "ARCHIVE", "ARCHIVE", "RESTORE", "GET"])
         render(ConversationsView(client: client, state: state))
         render(ServerOverviewView(client: client))
         render(SettingsView(client: client, conversations: state))
@@ -1038,7 +1059,8 @@ final class ConversationTests: XCTestCase {
                         "noResults", "noActive", "noArchived", "selectedHidden", "selected", "title",
                         "focus", "mode", "draft", "save", "archive", "restore", "archiveConfirm",
                         "archiveConfirmMessage", "saveContinue", "discardContinue", "cancel", "archiving",
-                        "unsupportedArchive", "context", "sources", "ai", "saved", "offline", "conflict"] {
+                        "unsupportedArchive", "statusConflict", "context", "sources", "ai", "saved",
+                        "offline", "conflict"] {
                 XCTAssertNotEqual(ConversationCopy.text(key, language: language), key)
             }
         }

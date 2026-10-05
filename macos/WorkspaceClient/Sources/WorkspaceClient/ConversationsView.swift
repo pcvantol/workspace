@@ -61,6 +61,7 @@ enum ConversationCopy {
             "offline": ["Offline: local text stays here until you save it after reconnecting.", "Offline: lokale tekst blijft hier tot je die na herverbinden opslaat.", "Offline: Lokaler Text bleibt hier, bis er nach dem Verbinden gespeichert wird.", "Hors ligne : le texte local reste ici jusqu'à son enregistrement après reconnexion.", "Sin conexión: el texto local permanece aquí hasta que lo guardes al reconectar."],
             "forbidden": ["No access to this project's drafts.", "Geen toegang tot de concepten van dit project.", "Kein Zugriff auf die Entwürfe dieses Projekts.", "Pas d'accès aux brouillons de ce projet.", "Sin acceso a los borradores de este proyecto."],
             "conflict": ["A newer Server draft exists. Compare it with your local text before choosing a version.", "Er staat een nieuwer concept op de Server. Vergelijk het met je lokale tekst voordat je een versie kiest.", "Ein neuerer Entwurf liegt auf dem Server. Vor der Auswahl mit dem lokalen Text vergleichen.", "Un brouillon plus récent est sur le serveur. Comparez-le à votre texte local avant de choisir.", "Hay un borrador más reciente en el servidor. Compáralo con tu texto local antes de elegir."],
+            "statusConflict": ["Conversation status changed on the Server. Current status is shown.", "De gespreksstatus is op de Server gewijzigd. De actuele status wordt getoond.", "Der Gesprächsstatus wurde auf dem Server geändert. Der aktuelle Status wird angezeigt.", "L'état de la conversation a changé sur le serveur. L'état actuel est affiché.", "El estado de la conversación cambió en el servidor. Se muestra el estado actual."],
             "serverVersion": ["Newer Server version", "Nieuwere Serverversie", "Neuere Serverversion", "Version plus récente du serveur", "Versión más reciente del servidor"],
             "keepLocal": ["Keep my text after review", "Mijn tekst behouden na controle", "Meinen Text nach Prüfung behalten", "Conserver mon texte après examen", "Conservar mi texto tras revisar"],
             "pending": ["Save or discard local changes before switching.", "Sla lokale wijzigingen op of verwerp ze vóór het wisselen.", "Lokale Änderungen vor dem Wechsel speichern oder verwerfen.", "Enregistrez ou annulez les modifications locales avant de changer.", "Guarda o descarta los cambios locales antes de cambiar."],
@@ -95,6 +96,7 @@ struct ConversationsView: View {
         case "OFFLINE": ConversationCopy.text("offline")
         case "UNAUTHORIZED": ConversationCopy.text("forbidden")
         case "CONFLICT": ConversationCopy.text("conflict")
+        case "STATUS_CONFLICT": ConversationCopy.text("statusConflict")
         case "PENDING": ConversationCopy.text("pending")
         case "STALE": ConversationCopy.text("stale")
         case "INVALID": ConversationCopy.text("invalid")
@@ -141,7 +143,7 @@ struct ConversationsView: View {
                     Button { state.newDraft(); editorFocused = true } label: {
                         Label(ConversationCopy.text("new"), systemImage: "plus")
                     }.accessibilityLabel(ConversationCopy.text("new"))
-                        .disabled(!state.canEdit)
+                        .disabled(!state.canCreate)
                 }
                 HStack {
                     TextField(ConversationCopy.text("search"), text: $state.search)

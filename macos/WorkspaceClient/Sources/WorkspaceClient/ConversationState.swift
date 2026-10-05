@@ -119,6 +119,10 @@ final class ConversationState: ObservableObject {
             !authorizationSuspended && !isBusy && !loadingGrant
     }
 
+    var canCreate: Bool {
+        access?.projectID == projectID && !authorizationSuspended && !isBusy && !loadingGrant
+    }
+
     var selectedConversation: Conversation? {
         guard let selectedID else { return nil }
         return conversations.first(where: { $0.id == selectedID })
@@ -472,7 +476,8 @@ final class ConversationState: ObservableObject {
 
     func discardAndContinueArchive(_ archived: Bool, client: ClientState) async {
         archiveConfirmation = nil
-        discardChanges()
+        // Keep local text until the Server transition commits. `use(result)` below is the
+        // actual discard point; offline, denial, timeout and lost-response paths retain it.
         await applyArchive(archived, client: client)
     }
 
@@ -527,6 +532,11 @@ final class ConversationState: ObservableObject {
             conversations.insert(result, at: 0)
             pendingArchiveOperation = nil
             use(result)
+            if result.archived != archived {
+                state = "STATUS_CONFLICT"
+                detail = "Conversation status changed on the Server. Current status is shown; text was preserved."
+                return
+            }
             state = "AVAILABLE"
             detail = archived ?
                 "Conversation archived. Its draft and identity remain available." :

@@ -1570,6 +1570,27 @@ class ConversationDraftTests(unittest.TestCase):
                                 body={"expected_revision": 4, "operation_id": "3" * 32})[1]
         self.assertEqual((restored["archived"], restored["revision"]), (False, 4))
 
+    def test_archive_operation_receipts_are_bounded_without_reapplying_old_command(self):
+        _, created = self.request("/v1/conversations", method="POST", body=self.fields())
+        identity = created["id"]
+        self.service.conversations.OPERATION_RECEIPT_LIMIT = 3
+        for digit in "12345":
+            status, restored = self.request(
+                f"/v1/conversations/{identity}/restore", method="POST",
+                body={"expected_revision": 1, "operation_id": digit * 32})
+            self.assertEqual((status, restored["archived"], restored["revision"]),
+                             (200, False, 1))
+        connection = sqlite3.connect(self.root / "conversations.sqlite3")
+        try:
+            count = connection.execute("SELECT COUNT(*) FROM conversation_operations").fetchone()[0]
+        finally:
+            connection.close()
+        self.assertEqual(count, 3)
+        status, replay = self.request(
+            f"/v1/conversations/{identity}/restore", method="POST",
+            body={"expected_revision": 1, "operation_id": "1" * 32})
+        self.assertEqual((status, replay["archived"], replay["revision"]), (200, False, 1))
+
     def test_read_token_alone_cannot_write_or_read_actor_drafts(self):
         path = "/v1/conversations"
         self.assertEqual(self.request(path, grant=False), (403, {"error": "DRAFT_GRANT_REQUIRED"}))

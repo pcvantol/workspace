@@ -40,6 +40,8 @@ def _now():
 
 
 class ConversationStore:
+    OPERATION_RECEIPT_LIMIT = 4096
+
     def __init__(self, root: Path, root_fd: int):
         self.root = root
         self.root_fd = root_fd
@@ -347,6 +349,13 @@ class ConversationStore:
                             VALUES (?,?,?,?,?,?,?,?)""",
                             (actor, project, fields["operation_id"], conversation_id,
                              request_digest, action, completed_revision, _now()))
+                        connection.execute("""DELETE FROM conversation_operations
+                            WHERE rowid IN (
+                                SELECT rowid FROM conversation_operations
+                                WHERE actor_id=? AND project_id=?
+                                ORDER BY created_at DESC, rowid DESC
+                                LIMIT -1 OFFSET ?
+                            )""", (actor, project, self.OPERATION_RECEIPT_LIMIT))
                         row = connection.execute("""SELECT * FROM conversations
                             WHERE id=? AND actor_id=? AND project_id=?""",
                             (conversation_id, actor, project)).fetchone()

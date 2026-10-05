@@ -283,7 +283,6 @@ struct ConversationTransport: Sendable {
                                       path: "/v1/conversations/\(id)/\(action)", method: "POST",
                                       body: try JSONEncoder().encode(command))
         guard value.id == id && value.project_id == access.projectID && value.isOwnDraft,
-              value.archived == archived,
               value.revision >= command.expected_revision else {
             throw ConversationError.invalidResponse
         }

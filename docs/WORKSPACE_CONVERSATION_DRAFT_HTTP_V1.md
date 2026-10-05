@@ -73,6 +73,9 @@ cannot restore old state. A stale expected revision, including a concurrent
 text edit or opposite transition, returns `DRAFT_CONFLICT`. The record and its
 operation receipt commit in one SQLite transaction and survive Server restart.
 Existing stores gain `archived=false` during compatible schema migration.
+The Server retains a bounded recent operation-receipt window per actor/project.
+After compaction, a replayed transition with an old expected revision still
+fails closed, while a replayed no-op remains a no-op; neither can reapply state.
 All IDs are lowercase 32-hex. JSON must be one bounded object without
 duplicate keys; request bodies are limited to 48,000 bytes. The Server never
 interprets HTML or Markdown and never logs tokens or draft content.
