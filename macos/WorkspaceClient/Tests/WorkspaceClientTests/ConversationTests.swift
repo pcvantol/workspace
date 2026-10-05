@@ -71,12 +71,37 @@ private final class MemoryServerCredentials: CredentialStore, @unchecked Sendabl
 private final class MemoryLocalDrafts: LocalDraftStore, @unchecked Sendable {
     private let lock = NSLock()
     private var stored: LocalDraftSnapshot?
+    private var rejectsWrites = false
+    private var saveStarted: XCTestExpectation?
+    private var releaseSave: DispatchSemaphore?
     func load(scopeHash: String) throws -> LocalDraftSnapshot? {
         lock.withLock { stored?.scopeHash == scopeHash ? stored : nil }
     }
-    func save(_ snapshot: LocalDraftSnapshot) throws { lock.withLock { stored = snapshot } }
+    func save(_ snapshot: LocalDraftSnapshot) throws {
+        let blocking = lock.withLock {
+            let pending = (saveStarted, releaseSave)
+            saveStarted = nil
+            releaseSave = nil
+            return pending
+        }
+        blocking.0?.fulfill()
+        if let release = blocking.1 {
+            XCTAssertEqual(release.wait(timeout: .now() + 5), .success)
+        }
+        try lock.withLock {
+            if rejectsWrites { throw CocoaError(.fileWriteUnknown) }
+            stored = snapshot
+        }
+    }
     func remove(scopeHash: String) throws {
         lock.withLock { if stored?.scopeHash == scopeHash { stored = nil } }
+    }
+    func rejectWrites() { lock.withLock { rejectsWrites = true } }
+    func blockSave(started: XCTestExpectation, release: DispatchSemaphore) {
+        lock.withLock {
+            saveStarted = started
+            releaseSave = release
+        }
     }
 }
 
@@ -109,6 +134,257 @@ final class ConversationTests: XCTestCase {
         "revision":1,"created_at":"2026-10-04T20:00:00Z","updated_at":"2026-10-04T20:00:00Z",\
         "history":[],"history_availability":"UNQUALIFIED_FORGE","state":"DRAFT_ONLY"}
         """
+    }
+
+    private func discoveryRecord(_ id: String, title: String, focus: String, mode: String,
+                                 updated: String) -> Conversation {
+        Conversation(id: id, actor_id: "alice", project_id: "project-a", title: title,
+                     focus: focus, mode: mode, draft: "Unsent", revision: 1,
+                     created_at: "2026-10-04T20:00:00+00:00", updated_at: updated,
+                     history: [], history_availability: "UNQUALIFIED_FORGE", state: "DRAFT_ONLY")
+    }
+
+    func testDiscoveryCombinesSearchModeAndStableSortWithoutNetwork() {
+        let alpha = discoveryRecord("a", title: "Álpha", focus: "Roadmap", mode: "BUSINESS",
+                                    updated: "2026-10-05T08:00:00+00:00")
+        let tied = discoveryRecord("b", title: "alpha", focus: "Design", mode: "UX",
+                                   updated: "2026-10-05T08:00:00+00:00")
+        let newest = discoveryRecord("c", title: "Beta", focus: "Roadmap", mode: "ARCHITECTURE",
+                                     updated: "2026-10-05T08:00:00.5+00:00")
+        let records = [tied, newest, alpha]
+        XCTAssertEqual(ConversationDiscovery.visible(records, search: "", mode: .all,
+                                                     sort: .recentlyChanged).map(\.id),
+                       ["c", "a", "b"])
+        XCTAssertEqual(ConversationDiscovery.visible(records, search: "", mode: .all,
+                                                     sort: .title).map(\.id),
+                       ["a", "b", "c"])
+        XCTAssertEqual(ConversationDiscovery.visible(records, search: " ROADMAP ", mode: .all,
+                                                     sort: .recentlyChanged).map(\.id), ["c", "a"])
+        XCTAssertEqual(ConversationDiscovery.visible(records, search: "roadmap", mode: .business,
+                                                     sort: .title).map(\.id), ["a"])
+        XCTAssertTrue(ConversationDiscovery.visible(records, search: "missing", mode: .ux,
+                                                    sort: .title).isEmpty)
+    }
+
+    @MainActor
+    func testDiscoveryKeepsSelectedUnsavedDraftAndMakesNoExtraRequests() async throws {
+        let instance = self.instance
+        let first = record
+        let second = record.replacingOccurrences(of: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                                                 with: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+            .replacingOccurrences(of: "Direction", with: "Design")
+            .replacingOccurrences(of: "BUSINESS", with: "UX")
+        var draftRequests = 0
+        StubProtocol.handler = { request in
+            switch request.url!.path {
+            case "/v1/identity": return (200, Data("{\"instance_id\":\"\(instance)\"}".utf8))
+            case "/v1/status": return (200, Data("{\"instance_id\":\"\(instance)\",\"version\":\"2.8.3\",\"state\":\"READY\",\"project_source\":\"AVAILABLE\"}".utf8))
+            case "/v1/projects": return (200, Data("{\"state\":\"AVAILABLE\",\"projects\":[{\"id\":\"project-a\",\"name\":\"Project A\"}],\"source\":\"LOCAL\",\"observed_at\":\"2026-10-04T20:00:00Z\",\"partial\":false,\"stale\":false}".utf8))
+            case "/v1/capabilities", "/v1/forge/status": return (503, Data("{}".utf8))
+            case "/v1/conversations":
+                draftRequests += 1
+                XCTAssertEqual(request.httpMethod, "GET")
+                return (200, Data("{\"actor_id\":\"alice\",\"project_id\":\"project-a\",\"conversations\":[\(first),\(second)],\"history_availability\":\"UNQUALIFIED_FORGE\"}".utf8))
+            default: XCTFail("Unexpected route"); return (404, Data("{}".utf8))
+            }
+        }
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [StubProtocol.self]
+        let client = ClientState(keychain: MemoryServerCredentials(endpoint: access.endpoint,
+            instance: instance, token: "read-only"), transport: ServerTransport(configuration: configuration))
+        for _ in 0..<100 where client.phase != "CONNECTED" {
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        XCTAssertEqual(client.phase, "CONNECTED")
+        let state = ConversationState(grants: MemoryDraftGrant(access), localDrafts: MemoryLocalDrafts(),
+            transport: ConversationTransport(configuration: configuration))
+        await state.prepare(client: client)
+        XCTAssertEqual(state.conversations.count, 2)
+        XCTAssertEqual(state.selectedID, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        XCTAssertNil(state.listMessageKey)
+        state.newDraft()
+        await state.load(client: client)
+        XCTAssertNil(state.selectedID)
+        XCTAssertEqual(state.title, "")
+        let staleSecond = discoveryRecord("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", title: "Stale title",
+                                          focus: "Stale focus", mode: "BUSINESS",
+                                          updated: "2026-10-01T00:00:00Z")
+        state.select(staleSecond)
+        XCTAssertEqual(state.title, "Design")
+        XCTAssertEqual(state.mode, "UX")
+        state.select(state.conversations[0])
+        state.draft = "Keep this local text"
+        let selected = state.selectedID
+        let requestsBefore = draftRequests
+        state.search = "Design"
+        state.modeFilter = .ux
+        state.sortOrder = .title
+        XCTAssertEqual(state.visibleConversations.map(\.title), ["Design"])
+        XCTAssertTrue(state.selectedIsHidden)
+        XCTAssertEqual(state.selectedID, selected)
+        XCTAssertEqual(state.draft, "Keep this local text")
+        state.search = "no matching title"
+        XCTAssertEqual(state.listMessageKey, "noResults")
+        state.search = "Design"
+        state.select(state.visibleConversations[0])
+        XCTAssertEqual(state.state, "PENDING")
+        XCTAssertEqual(state.selectedID, selected)
+        XCTAssertEqual(state.draft, "Keep this local text")
+        state.resetDiscovery()
+        XCTAssertFalse(state.selectedIsHidden)
+        XCTAssertFalse(state.hasActiveDiscovery)
+        XCTAssertNil(state.listMessageKey)
+        await state.handleClientPhase("UNAVAILABLE")
+        XCTAssertEqual(state.state, "OFFLINE")
+        XCTAssertEqual(state.listMessageKey, "offline")
+        XCTAssertEqual(state.draft, "Keep this local text")
+        XCTAssertEqual(draftRequests, requestsBefore)
+    }
+
+    @MainActor
+    func testDisconnectInvalidatesInFlightListAndForgetHidesAuthorizedScope() async throws {
+        let instance = self.instance
+        let currentRecord = self.record
+        let secondListStarted = expectation(description: "Delayed conversation list started")
+        let releaseSecondList = DispatchSemaphore(value: 0)
+        let listCount = RequestCounter()
+        defer { releaseSecondList.signal() }
+        StubProtocol.handler = { request in
+            switch request.url!.path {
+            case "/v1/identity":
+                return (200, Data("{\"instance_id\":\"\(instance)\"}".utf8))
+            case "/v1/status":
+                return (200, Data("{\"instance_id\":\"\(instance)\",\"version\":\"2.8.4\",\"state\":\"READY\",\"project_source\":\"AVAILABLE\"}".utf8))
+            case "/v1/projects":
+                return (200, Data("{\"state\":\"AVAILABLE\",\"projects\":[{\"id\":\"project-a\",\"name\":\"Project A\"}],\"source\":\"LOCAL\",\"observed_at\":\"2026-10-05T08:00:00Z\",\"partial\":false,\"stale\":false}".utf8))
+            case "/v1/capabilities", "/v1/forge/status":
+                return (503, Data("{}".utf8))
+            case "/v1/conversations":
+                if listCount.next() == 2 {
+                    secondListStarted.fulfill()
+                    XCTAssertEqual(releaseSecondList.wait(timeout: .now() + 5), .success)
+                }
+                return (200, Data("{\"actor_id\":\"alice\",\"project_id\":\"project-a\",\"conversations\":[\(currentRecord)],\"history_availability\":\"UNQUALIFIED_FORGE\"}".utf8))
+            default:
+                XCTFail("Unexpected route")
+                return (404, Data("{}".utf8))
+            }
+        }
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [StubProtocol.self]
+        let client = ClientState(keychain: MemoryServerCredentials(endpoint: access.endpoint,
+            instance: instance, token: "read-only"), transport: ServerTransport(configuration: configuration))
+        for _ in 0..<100 where client.phase != "CONNECTED" {
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        XCTAssertEqual(client.phase, "CONNECTED")
+        let local = MemoryLocalDrafts()
+        let grants = MemoryDraftGrant(access)
+        let state = ConversationState(grants: grants, localDrafts: local,
+            transport: ConversationTransport(configuration: configuration))
+        await state.prepare(client: client)
+        XCTAssertEqual(state.conversations.count, 1)
+        let loading = Task { await state.load(client: client) }
+        await fulfillment(of: [secondListStarted], timeout: 5)
+        await state.handleClientPhase("UNAVAILABLE")
+        releaseSecondList.signal()
+        await loading.value
+        XCTAssertEqual(state.state, "OFFLINE")
+        XCTAssertEqual(state.listMessageKey, "offline")
+        state.draft = "Keep this private local edit"
+        let prepared = await state.prepareForServerForget()
+        XCTAssertTrue(prepared)
+        XCTAssertEqual(state.state, "GRANT_REQUIRED")
+        XCTAssertEqual(state.listMessageKey, "forbidden")
+        XCTAssertTrue(state.conversations.isEmpty)
+        XCTAssertNil(state.selectedID)
+        XCTAssertEqual(state.draft, "Keep this private local edit")
+        XCTAssertTrue(state.dirty)
+        XCTAssertFalse(state.canEdit)
+        XCTAssertEqual(try local.load(scopeHash: PrivateLocalDraftCache.scopeHash(access))?.draft,
+                       "Keep this private local edit")
+        let reopened = ConversationState(grants: grants, localDrafts: local,
+            transport: ConversationTransport(configuration: configuration))
+        await reopened.prepare(client: client)
+        XCTAssertNil(reopened.selectedID)
+        XCTAssertEqual(reopened.draft, "Keep this private local edit")
+        XCTAssertTrue(reopened.dirty)
+        let failing = MemoryLocalDrafts()
+        let failedState = ConversationState(grants: grants, localDrafts: failing,
+            transport: ConversationTransport(configuration: configuration))
+        await failedState.prepare(client: client)
+        failedState.draft = "Must not claim durable recovery"
+        failing.rejectWrites()
+        let saveStarted = expectation(description: "private draft save started")
+        let releaseSave = DispatchSemaphore(value: 0)
+        failing.blockSave(started: saveStarted, release: releaseSave)
+        let firstPreparation = Task { await failedState.prepareForServerForget() }
+        await fulfillment(of: [saveStarted], timeout: 5)
+        let overlappingPreparation = await failedState.prepareForServerForget()
+        XCTAssertFalse(overlappingPreparation)
+        XCTAssertTrue(failedState.preparingServerForget)
+        await failedState.prepare(client: client)
+        XCTAssertTrue(failedState.preparingServerForget)
+        XCTAssertFalse(failedState.canEdit)
+        releaseSave.signal()
+        let failedPreparation = await firstPreparation.value
+        XCTAssertFalse(failedPreparation)
+        XCTAssertFalse(failedState.preparingServerForget)
+        XCTAssertEqual(failedState.state, "UNAVAILABLE")
+        XCTAssertEqual(failedState.detail, "The private local draft could not be stored.")
+        XCTAssertEqual(failedState.conversations.count, 1)
+        XCTAssertNotNil(failedState.selectedID)
+        XCTAssertTrue(failedState.canEdit)
+        let failedRetry = await failedState.prepareForServerForget()
+        XCTAssertFalse(failedRetry)
+    }
+
+    @MainActor
+    func testForgetServerInvalidatesInFlightGrantSave() async throws {
+        let instance = self.instance
+        let grantListStarted = expectation(description: "Grant verification list started")
+        let releaseGrantList = DispatchSemaphore(value: 0)
+        defer { releaseGrantList.signal() }
+        StubProtocol.handler = { request in
+            switch request.url!.path {
+            case "/v1/identity":
+                return (200, Data("{\"instance_id\":\"\(instance)\"}".utf8))
+            case "/v1/status":
+                return (200, Data("{\"instance_id\":\"\(instance)\",\"version\":\"2.8.4\",\"state\":\"READY\",\"project_source\":\"AVAILABLE\"}".utf8))
+            case "/v1/projects":
+                return (200, Data("{\"state\":\"AVAILABLE\",\"projects\":[{\"id\":\"project-a\",\"name\":\"Project A\"}],\"source\":\"LOCAL\",\"observed_at\":\"2026-10-05T08:00:00Z\",\"partial\":false,\"stale\":false}".utf8))
+            case "/v1/capabilities", "/v1/forge/status":
+                return (503, Data("{}".utf8))
+            case "/v1/conversations":
+                grantListStarted.fulfill()
+                XCTAssertEqual(releaseGrantList.wait(timeout: .now() + 5), .success)
+                return (200, Data("{\"actor_id\":\"alice\",\"project_id\":\"project-a\",\"conversations\":[],\"history_availability\":\"UNQUALIFIED_FORGE\"}".utf8))
+            default:
+                XCTFail("Unexpected route")
+                return (404, Data("{}".utf8))
+            }
+        }
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [StubProtocol.self]
+        let client = ClientState(keychain: MemoryServerCredentials(endpoint: access.endpoint,
+            instance: instance, token: "read-only"), transport: ServerTransport(configuration: configuration))
+        for _ in 0..<100 where client.phase != "CONNECTED" {
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        XCTAssertEqual(client.phase, "CONNECTED")
+        let grants = MemoryDraftGrant()
+        let state = ConversationState(grants: grants, localDrafts: MemoryLocalDrafts(),
+            transport: ConversationTransport(configuration: configuration))
+        state.selectProject("project-a")
+        state.grantEntry = grant
+        let saving = Task { await state.saveGrant(client: client) }
+        await fulfillment(of: [grantListStarted], timeout: 5)
+        await state.handleClientPhase("UNCONFIGURED")
+        releaseGrantList.signal()
+        await saving.value
+        XCTAssertNil(try grants.load())
+        XCTAssertEqual(state.state, "GRANT_REQUIRED")
+        XCTAssertFalse(state.canEdit)
     }
 
     #if WORKSPACE_ISOLATED_TEST
@@ -403,12 +679,14 @@ final class ConversationTests: XCTestCase {
         state.selectProject("project-a")
         await state.prepare(client: client)
         XCTAssertEqual(state.state, "GRANT_REQUIRED")
+        XCTAssertEqual(state.listMessageKey, "forbidden")
         state.grantEntry = "bad"
         await state.saveGrant(client: client)
         XCTAssertEqual(state.state, "GRANT_REQUIRED")
         state.grantEntry = grant
         await state.saveGrant(client: client)
         XCTAssertEqual(state.state, "AVAILABLE")
+        XCTAssertEqual(state.listMessageKey, "noConversations")
         XCTAssertEqual(try grants.load()?.projectID, "project-a")
         XCTAssertEqual(draftMethods, ["GET", "GET"])
         state.search = "missing"
@@ -679,13 +957,15 @@ final class ConversationTests: XCTestCase {
         XCTAssertEqual(draftMethods, ["GET", "POST", "PATCH", "PATCH", "GET", "PATCH", "GET"])
         render(ConversationsView(client: client, state: state))
         render(ServerOverviewView(client: client))
-        render(SettingsView(client: client))
+        render(SettingsView(client: client, conversations: state))
     }
 
     @MainActor
     func testConversationCopyAndViewRenderWithCredentialAdapters() async throws {
         for language in ["en", "nl", "de", "fr", "es"] {
-            for key in ["nav", "project", "new", "search", "title", "focus", "mode", "draft",
+            for key in ["nav", "project", "new", "search", "find", "filter", "all", "sort",
+                        "recent", "titleSort", "activeFilters", "resetFilters", "noConversations",
+                        "noResults", "selectedHidden", "selected", "title", "focus", "mode", "draft",
                         "save", "context", "sources", "ai", "saved", "offline", "conflict"] {
                 XCTAssertNotEqual(ConversationCopy.text(key, language: language), key)
             }

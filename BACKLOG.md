@@ -1,5 +1,26 @@
 # Workspace Backlog
 
+## r81 plan revision 83 — find and resume own conversations
+
+The 5 October owner continuation in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-5989057256)
+keeps the existing r81 assignment and one Workspace sourcewriter. Product 2.8.4
+adds a local All/Business/Architect/UX filter and deterministic title/`updated_at`
+sort to the delivered text search. The sidebar distinguishes no drafts, no
+matches, missing draft access, offline and stale data; it exposes current list
+choices and a reset. Changing list choices never changes the selected draft,
+sends a provider request, saves text or widens project/actor grants. An editor
+hidden by the list remains identifiable; unsaved text and explicit
+save/discard/conflict handling remain intact. Native keyboard focus and all
+five existing languages are in scope.
+
+Delivery requires strict per-changed-source Swift coverage above 80.2%, full
+validation, independent exact-head Quality/Security, protected PR/merge,
+exact-main installed Server and native ad-hoc HTTP readback, sanitized GUI
+screenshots and a real packaged create/rename click attempt through a permitted
+UI route. A UI attachment or consent failure is recorded as unqualified, never
+converted into a pass from state/HTTP tests. Signing, live Keychain, two-Mac
+trust and public release remain separate L1-gated r81 acceptance.
+
 ## r81 plan revision 82 — own conversation drafts and native GUI
 
 The 4 October owner directive in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-5983751078)

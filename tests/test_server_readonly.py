@@ -10,6 +10,7 @@ import io
 import os
 from pathlib import Path
 import re
+import runpy
 import socket
 import ssl
 import subprocess
@@ -33,10 +34,12 @@ import workspace_control.forge_peer as forge_peer
 class ReadOnlyTests(unittest.TestCase):
     def test_version_projection_uses_package_and_source(self):
         import workspace_control
-        expected = json.loads((Path(__file__).resolve().parents[1] / "product-version.json").read_text())["version"]
+        root = Path(__file__).resolve().parents[1]
+        expected = json.loads((root / "product-version.json").read_text())["version"]
         self.assertEqual(importlib.reload(workspace_control).__version__, expected)
         with patch("pathlib.Path.read_text", side_effect=FileNotFoundError), patch("importlib.metadata.version", return_value=expected):
-            self.assertEqual(importlib.reload(workspace_control).__version__, expected)
+            projected = runpy.run_path(str(root / "workspace_control" / "__init__.py"))
+        self.assertEqual(projected["__version__"], expected)
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()

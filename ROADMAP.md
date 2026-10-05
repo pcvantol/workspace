@@ -1,5 +1,15 @@
 # Workspace Roadmap
 
+## Selected GUI continuation — find and resume conversations
+
+The 5 October owner decision in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-5989057256)
+selects one next Workspace-owned r81 GUI milestone on product 2.8.4. Existing
+text search gains a mode filter, deterministic title/last-changed ordering,
+clear empty/access/offline states and a reset. List changes preserve the open
+conversation and unsaved text. The [owning plan](docs/ROLE_AWARE_CONVERSATIONS_V1_ROADMAP.md)
+and [backlog](BACKLOG.md) keep the qualification and L1 effect boundaries.
+This selection adds no Forge advice, approval, Mission or peer-source work.
+
 ## Selected night milestone — Workspace-owned conversation drafts
 
 Under the existing LANE_4 r81 assignment, the owner selected the

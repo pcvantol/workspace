@@ -53,7 +53,7 @@ struct WorkspaceApp: App {
         }
         .defaultSize(width: 900, height: 650)
         Settings {
-            SettingsView(client: client)
+            SettingsView(client: client, conversations: conversations)
                 .frame(width: 490)
                 .padding(24)
         }
@@ -224,8 +224,10 @@ private struct SectionCard<Content: View>: View {
 
 struct SettingsView: View {
     @ObservedObject var client: ClientState
+    @ObservedObject var conversations: ConversationState
     @State private var address = ""
     @State private var token = ""
+    @State private var forgettingServer = false
 
     var body: some View {
         Form {
@@ -240,14 +242,26 @@ struct SettingsView: View {
                 LabeledContent("Pinned instance", value: client.savedInstance.isEmpty ? "None" : client.savedInstance)
                 HStack {
                     Button("Connect") {
+                        guard !forgettingServer, !conversations.preparingServerForget else { return }
                         client.connect(address: address, enteredToken: token)
                         token = ""
-                    }.disabled(["LOADING", "SAVING", "FORGETTING"].contains(client.phase))
+                    }.disabled(forgettingServer || conversations.preparingServerForget ||
+                               ["LOADING", "SAVING", "FORGETTING"].contains(client.phase))
                     Button("Forget Server") {
-                        client.forget()
-                        address = ""
-                        token = ""
+                        guard !forgettingServer else { return }
+                        forgettingServer = true
+                        Task {
+                            guard await conversations.prepareForServerForget() else {
+                                forgettingServer = false
+                                return
+                            }
+                            client.forget()
+                            address = ""
+                            token = ""
+                            forgettingServer = false
+                        }
                     }.disabled(!client.canForgetBinding ||
+                               forgettingServer || conversations.preparingServerForget ||
                                ["SAVING", "FORGETTING"].contains(client.phase))
                 }
                 Text("Forget removes this app's current pairing only. Earlier pre-release pairings may still exist in Mac Keychain.")

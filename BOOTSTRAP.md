@@ -1,5 +1,20 @@
 # Workspace Bootstrap
 
+## Active owner priority — 5 October 2026, r81 plan revision 83
+
+Under the same LANE_4 assignment, the owner selected a native conversation-list
+continuation in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-5989057256).
+Product 2.8.4 combines existing local text search with an All/Business/Architect/UX
+filter and deterministic title/last-changed sorting. The selected conversation
+and unsaved editor text must survive list changes, with explicit empty, no-match,
+access, offline and stale states in five languages. This is a Workspace-only
+GUI/source milestone over the existing authenticated draft route. Qualify the
+actual packaged create/rename clicks separately from Swift state and HTTP tests;
+record any native UI attachment limitation honestly. Protected merge, exact-main
+installed Server/native ad-hoc readback and independent review are its delivery
+gates. Signing, Keychain successor, two-Mac trust and release remain separate
+L1-gated work. The previous 2.8.3 milestone below is delivered history.
+
 ## Active owner priority — 4 October 2026, r81 plan revision 82
 
 The owner selected a Workspace-owned Business/Architect conversation and native
