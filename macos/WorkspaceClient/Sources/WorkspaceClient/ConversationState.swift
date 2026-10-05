@@ -56,6 +56,7 @@ final class ConversationState: ObservableObject {
     private var requestID = UUID().uuidString.replacingOccurrences(of: "-", with: "").lowercased()
     private var localTask: Task<Void, Never>?
     private var localVersion = 0
+    private var creatingNewDraft = false
 
     init(grants: any DraftGrantStore = DraftGrantKeychain(),
          localDrafts: any LocalDraftStore = PrivateLocalDraftCache(),
@@ -99,7 +100,9 @@ final class ConversationState: ObservableObject {
     var canEdit: Bool { access?.projectID == projectID && !isBusy && !loadingGrant }
 
     var dirty: Bool {
-        guard let savedFields else { return !title.isEmpty || !focus.isEmpty || !draft.isEmpty }
+        guard let savedFields else {
+            return !title.isEmpty || !focus.isEmpty || mode != "BUSINESS" || !draft.isEmpty
+        }
         return savedFields.title != title || savedFields.focus != focus ||
             savedFields.mode != mode || savedFields.draft != draft
     }
@@ -292,7 +295,7 @@ final class ConversationState: ObservableObject {
                     return
                 }
                 if !dirty { use(latest) }
-            } else if !dirty, let first = conversations.first {
+            } else if !dirty, !creatingNewDraft, let first = conversations.first {
                 use(first)
             }
             serverConflict = nil
@@ -315,19 +318,29 @@ final class ConversationState: ObservableObject {
         }
         selectedID = nil
         clearEditor()
+        creatingNewDraft = true
         state = access?.projectID == projectID ? "AVAILABLE" : "GRANT_REQUIRED"
     }
 
     func select(_ conversation: Conversation) {
         guard !loadingGrant, !isBusy else { return }
-        guard conversations.contains(where: { $0.id == conversation.id && $0.project_id == projectID }) else { return }
+        guard let current = conversations.first(where: {
+            $0.id == conversation.id && $0.project_id == projectID
+        }) else { return }
         if selectedID == conversation.id { return }
         guard !dirty else {
             state = "PENDING"
             detail = "Save or discard the current changes before opening another conversation."
             return
         }
-        use(conversation)
+        use(current)
+    }
+
+    func handleClientPhase(_ phase: String) {
+        guard access?.projectID == projectID,
+              ["DISCONNECTED", "UNAVAILABLE", "UNCONFIGURED"].contains(phase) else { return }
+        state = "OFFLINE"
+        detail = "Server offline. Local text and the last authorized list remain in this window."
     }
 
     func discardChanges() {
@@ -458,6 +471,7 @@ final class ConversationState: ObservableObject {
 
     private func use(_ conversation: Conversation) {
         serverConflict = nil
+        creatingNewDraft = false
         selectedID = conversation.id
         title = conversation.title
         focus = conversation.focus
@@ -485,6 +499,7 @@ final class ConversationState: ObservableObject {
         localVersion += 1
         conversations = []
         selectedID = nil
+        creatingNewDraft = false
         resetDiscovery()
         clearEditor()
     }
@@ -501,6 +516,9 @@ final class ConversationState: ObservableObject {
                 savedRevision = snapshot.savedRevision
                 requestID = snapshot.requestID
                 savedFields = nil
+                creatingNewDraft = snapshot.selectedID == nil &&
+                    (!snapshot.title.isEmpty || !snapshot.focus.isEmpty ||
+                     snapshot.mode != "BUSINESS" || !snapshot.draft.isEmpty)
             }
             return true
         } catch {

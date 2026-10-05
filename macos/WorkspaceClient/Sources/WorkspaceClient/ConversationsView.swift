@@ -288,7 +288,11 @@ struct ConversationsView: View {
         .disabled(state.isBusy || state.loadingGrant)
         .task { await state.prepare(client: client) }
         .onChange(of: client.phase) { _, phase in
-            if phase == "CONNECTED" { Task { await state.prepare(client: client) } }
+            if phase == "CONNECTED" {
+                Task { await state.prepare(client: client) }
+            } else {
+                state.handleClientPhase(phase)
+            }
         }
         .onChange(of: [state.title, state.focus, state.mode, state.draft]) { _, _ in
             state.persistLocal()

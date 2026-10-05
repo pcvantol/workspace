@@ -177,6 +177,16 @@ final class ConversationTests: XCTestCase {
         XCTAssertEqual(state.conversations.count, 2)
         XCTAssertEqual(state.selectedID, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
         XCTAssertNil(state.listMessageKey)
+        state.newDraft()
+        await state.load(client: client)
+        XCTAssertNil(state.selectedID)
+        XCTAssertEqual(state.title, "")
+        let staleSecond = discoveryRecord("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", title: "Stale title",
+                                          focus: "Stale focus", mode: "BUSINESS",
+                                          updated: "2026-10-01T00:00:00Z")
+        state.select(staleSecond)
+        XCTAssertEqual(state.title, "Design")
+        XCTAssertEqual(state.mode, "UX")
         state.select(state.conversations[0])
         state.draft = "Keep this local text"
         let selected = state.selectedID
@@ -199,6 +209,10 @@ final class ConversationTests: XCTestCase {
         XCTAssertFalse(state.selectedIsHidden)
         XCTAssertFalse(state.hasActiveDiscovery)
         XCTAssertNil(state.listMessageKey)
+        state.handleClientPhase("UNAVAILABLE")
+        XCTAssertEqual(state.state, "OFFLINE")
+        XCTAssertEqual(state.listMessageKey, "offline")
+        XCTAssertEqual(state.draft, "Keep this local text")
         XCTAssertEqual(draftRequests, requestsBefore)
     }
 
