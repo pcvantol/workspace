@@ -216,6 +216,65 @@ final class ConversationTests: XCTestCase {
         XCTAssertEqual(draftRequests, requestsBefore)
     }
 
+    @MainActor
+    func testDisconnectInvalidatesInFlightListAndForgetHidesAuthorizedScope() async throws {
+        let instance = self.instance
+        let currentRecord = self.record
+        let secondListStarted = expectation(description: "Delayed conversation list started")
+        let releaseSecondList = DispatchSemaphore(value: 0)
+        let listCount = RequestCounter()
+        defer { releaseSecondList.signal() }
+        StubProtocol.handler = { request in
+            switch request.url!.path {
+            case "/v1/identity":
+                return (200, Data("{\"instance_id\":\"\(instance)\"}".utf8))
+            case "/v1/status":
+                return (200, Data("{\"instance_id\":\"\(instance)\",\"version\":\"2.8.4\",\"state\":\"READY\",\"project_source\":\"AVAILABLE\"}".utf8))
+            case "/v1/projects":
+                return (200, Data("{\"state\":\"AVAILABLE\",\"projects\":[{\"id\":\"project-a\",\"name\":\"Project A\"}],\"source\":\"LOCAL\",\"observed_at\":\"2026-10-05T08:00:00Z\",\"partial\":false,\"stale\":false}".utf8))
+            case "/v1/capabilities", "/v1/forge/status":
+                return (503, Data("{}".utf8))
+            case "/v1/conversations":
+                if listCount.next() == 2 {
+                    secondListStarted.fulfill()
+                    XCTAssertEqual(releaseSecondList.wait(timeout: .now() + 5), .success)
+                }
+                return (200, Data("{\"actor_id\":\"alice\",\"project_id\":\"project-a\",\"conversations\":[\(currentRecord)],\"history_availability\":\"UNQUALIFIED_FORGE\"}".utf8))
+            default:
+                XCTFail("Unexpected route")
+                return (404, Data("{}".utf8))
+            }
+        }
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [StubProtocol.self]
+        let client = ClientState(keychain: MemoryServerCredentials(endpoint: access.endpoint,
+            instance: instance, token: "read-only"), transport: ServerTransport(configuration: configuration))
+        for _ in 0..<100 where client.phase != "CONNECTED" {
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        XCTAssertEqual(client.phase, "CONNECTED")
+        let state = ConversationState(grants: MemoryDraftGrant(access), localDrafts: MemoryLocalDrafts(),
+            transport: ConversationTransport(configuration: configuration))
+        await state.prepare(client: client)
+        XCTAssertEqual(state.conversations.count, 1)
+        let loading = Task { await state.load(client: client) }
+        await fulfillment(of: [secondListStarted], timeout: 5)
+        state.handleClientPhase("UNAVAILABLE")
+        releaseSecondList.signal()
+        await loading.value
+        XCTAssertEqual(state.state, "OFFLINE")
+        XCTAssertEqual(state.listMessageKey, "offline")
+        state.draft = "Keep this private local edit"
+        state.handleClientPhase("UNCONFIGURED")
+        XCTAssertEqual(state.state, "GRANT_REQUIRED")
+        XCTAssertEqual(state.listMessageKey, "forbidden")
+        XCTAssertTrue(state.conversations.isEmpty)
+        XCTAssertNil(state.selectedID)
+        XCTAssertEqual(state.draft, "Keep this private local edit")
+        XCTAssertTrue(state.dirty)
+        XCTAssertFalse(state.canEdit)
+    }
+
     #if WORKSPACE_ISOLATED_TEST
     func testIsolatedCredentialDocumentAndMemoryStores() throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)

@@ -339,6 +339,27 @@ final class ConversationState: ObservableObject {
     func handleClientPhase(_ phase: String) {
         guard access?.projectID == projectID,
               ["DISCONNECTED", "UNAVAILABLE", "UNCONFIGURED"].contains(phase) else { return }
+        loadAttempt += 1
+        guard phase != "UNCONFIGURED" else {
+            let retainLocalText = dirty
+            access = nil
+            conversations = []
+            selectedID = nil
+            serverConflict = nil
+            if retainLocalText {
+                savedRevision = nil
+                savedFields = nil
+                creatingNewDraft = true
+            } else {
+                creatingNewDraft = false
+                clearEditor()
+            }
+            state = "GRANT_REQUIRED"
+            detail = retainLocalText ?
+                "Reconnect and enter this project's draft grant. Unsaved local text is retained." :
+                "Reconnect and enter this project's draft grant."
+            return
+        }
         state = "OFFLINE"
         detail = "Server offline. Local text and the last authorized list remain in this window."
     }
