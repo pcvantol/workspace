@@ -9,6 +9,18 @@ enum ConversationCopy {
             "project": ["Project", "Project", "Projekt", "Projet", "Proyecto"],
             "new": ["New conversation", "Nieuw gesprek", "Neues Gespräch", "Nouvelle conversation", "Nueva conversación"],
             "search": ["Find a conversation", "Zoek een gesprek", "Gespräch suchen", "Rechercher une conversation", "Buscar conversación"],
+            "find": ["Focus search", "Zoekveld openen", "Suche öffnen", "Ouvrir la recherche", "Abrir la búsqueda"],
+            "filter": ["Filter by mode", "Filter op modus", "Nach Modus filtern", "Filtrer par mode", "Filtrar por modo"],
+            "all": ["All modes", "Alle modi", "Alle Modi", "Tous les modes", "Todos los modos"],
+            "sort": ["Sort conversations", "Gesprekken sorteren", "Gespräche sortieren", "Trier les conversations", "Ordenar conversaciones"],
+            "recent": ["Recently changed", "Laatst gewijzigd", "Zuletzt geändert", "Modifiés récemment", "Modificados recientemente"],
+            "titleSort": ["Title A–Z", "Titel A–Z", "Titel A–Z", "Titre A–Z", "Título A–Z"],
+            "activeFilters": ["Current list choices", "Huidige lijstkeuzes", "Aktuelle Listenauswahl", "Choix actuels de liste", "Opciones actuales de la lista"],
+            "resetFilters": ["Reset list", "Lijst herstellen", "Liste zurücksetzen", "Réinitialiser la liste", "Restablecer lista"],
+            "noConversations": ["No conversations yet. Create one to start an unsent draft.", "Nog geen gesprekken. Maak er een om een niet-verzonden concept te beginnen.", "Noch keine Gespräche. Erstellen Sie eines für einen ungesendeten Entwurf.", "Aucune conversation. Créez-en une pour commencer un brouillon non envoyé.", "Aún no hay conversaciones. Crea una para comenzar un borrador sin enviar."],
+            "noResults": ["No conversations match these list choices.", "Geen gesprekken passen bij deze lijstkeuzes.", "Keine Gespräche passen zu dieser Listenauswahl.", "Aucune conversation ne correspond à ces choix.", "Ninguna conversación coincide con estas opciones."],
+            "selectedHidden": ["The open conversation is hidden by the list choices. Its text is still open here.", "Het geopende gesprek is verborgen door de lijstkeuzes. De tekst staat hier nog open.", "Das geöffnete Gespräch ist durch die Listenauswahl ausgeblendet. Sein Text bleibt hier geöffnet.", "La conversation ouverte est masquée par les choix de liste. Son texte reste ouvert ici.", "La conversación abierta está oculta por las opciones de lista. Su texto sigue abierto aquí."],
+            "selected": ["Selected", "Geselecteerd", "Ausgewählt", "Sélectionné", "Seleccionado"],
             "title": ["Title", "Titel", "Titel", "Titre", "Título"],
             "focus": ["Focus", "Focus", "Fokus", "Objet", "Enfoque"],
             "mode": ["Advice mode", "Adviesmodus", "Beratungsmodus", "Mode de conseil", "Modo de asesoría"],
@@ -51,6 +63,7 @@ struct ConversationsView: View {
     @ObservedObject var state: ConversationState
     @Environment(\.scenePhase) private var scenePhase
     @FocusState private var editorFocused: Bool
+    @FocusState private var searchFocused: Bool
 
     private var projects: [Project] {
         guard let snapshot = client.snapshot, case .success(let catalogue) = snapshot.projects,
@@ -83,6 +96,15 @@ struct ConversationsView: View {
         }
     }
 
+    private var listChoices: String {
+        var choices: [String] = []
+        let query = state.search.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !query.isEmpty { choices.append("\(ConversationCopy.text("search")): \(query)") }
+        if state.modeFilter != .all { choices.append(modeLabel(state.modeFilter.rawValue)) }
+        if state.sortOrder != .recentlyChanged { choices.append(ConversationCopy.text("titleSort")) }
+        return choices.joined(separator: " · ")
+    }
+
     var body: some View {
         NavigationSplitView {
             VStack(alignment: .leading, spacing: 12) {
@@ -99,26 +121,66 @@ struct ConversationsView: View {
                     }.accessibilityLabel(ConversationCopy.text("new"))
                         .disabled(!state.canEdit)
                 }
-                TextField(ConversationCopy.text("search"), text: $state.search)
-                    .accessibilityLabel(ConversationCopy.text("search"))
-                List {
-                    ForEach(state.visibleConversations) { conversation in
-                        Button {
-                            state.select(conversation)
-                            editorFocused = true
-                        } label: {
-                            VStack(alignment: .leading) {
-                                Text(conversation.title).font(.body.bold())
-                                Text("\(modeLabel(conversation.mode)) · \(ConversationCopy.text("saved"))")
-                                    .font(.caption).foregroundStyle(.secondary)
-                            }
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel("\(conversation.title), \(modeLabel(conversation.mode))")
+                HStack {
+                    TextField(ConversationCopy.text("search"), text: $state.search)
+                        .focused($searchFocused)
+                        .accessibilityLabel(ConversationCopy.text("search"))
+                    Button { searchFocused = true } label: {
+                        Image(systemName: "magnifyingglass")
+                    }
+                    .keyboardShortcut("f", modifiers: .command)
+                    .accessibilityLabel(ConversationCopy.text("find"))
+                }
+                Picker(ConversationCopy.text("filter"), selection: $state.modeFilter) {
+                    Text(ConversationCopy.text("all")).tag(ConversationModeFilter.all)
+                    Text(ConversationCopy.text("business")).tag(ConversationModeFilter.business)
+                    Text(ConversationCopy.text("architect")).tag(ConversationModeFilter.architecture)
+                    Text(ConversationCopy.text("ux")).tag(ConversationModeFilter.ux)
+                }
+                .pickerStyle(.menu)
+                Picker(ConversationCopy.text("sort"), selection: $state.sortOrder) {
+                    Text(ConversationCopy.text("recent")).tag(ConversationSortOrder.recentlyChanged)
+                    Text(ConversationCopy.text("titleSort")).tag(ConversationSortOrder.title)
+                }
+                .pickerStyle(.menu)
+                if state.hasActiveDiscovery {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("\(ConversationCopy.text("activeFilters")): \(listChoices)")
+                            .font(.caption).foregroundStyle(.secondary)
+                        Button(ConversationCopy.text("resetFilters")) { state.resetDiscovery() }
                     }
                 }
-                if state.visibleConversations.isEmpty {
-                    Text(ConversationCopy.text("empty")).font(.caption).foregroundStyle(.secondary)
+                if state.state == "GRANT_REQUIRED" || state.state == "UNAUTHORIZED" {
+                    if let key = state.listMessageKey {
+                        Text(ConversationCopy.text(key)).font(.caption).foregroundStyle(.secondary)
+                    }
+                } else {
+                    List {
+                        ForEach(state.visibleConversations) { conversation in
+                            Button {
+                                state.select(conversation)
+                                if state.selectedID == conversation.id { editorFocused = true }
+                            } label: {
+                                HStack {
+                                    VStack(alignment: .leading) {
+                                        Text(conversation.title).font(.body.bold())
+                                        Text("\(modeLabel(conversation.mode)) · \(ConversationCopy.text("saved"))")
+                                            .font(.caption).foregroundStyle(.secondary)
+                                    }
+                                    Spacer()
+                                    if state.selectedID == conversation.id {
+                                        Image(systemName: "checkmark.circle.fill").accessibilityHidden(true)
+                                    }
+                                }
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("\(conversation.title), \(modeLabel(conversation.mode))")
+                            .accessibilityValue(state.selectedID == conversation.id ? ConversationCopy.text("selected") : "")
+                        }
+                    }
+                    if let key = state.listMessageKey {
+                        Text(ConversationCopy.text(key)).font(.caption).foregroundStyle(.secondary)
+                    }
                 }
             }
             .padding(12)
@@ -136,6 +198,12 @@ struct ConversationsView: View {
                     }
                     Label(stateLabel, systemImage: state.state == "AVAILABLE" ? "checkmark.circle" : "exclamationmark.circle")
                         .accessibilityLabel(stateLabel)
+                    if state.selectedIsHidden {
+                        HStack {
+                            Text(ConversationCopy.text("selectedHidden"))
+                            Button(ConversationCopy.text("resetFilters")) { state.resetDiscovery() }
+                        }
+                    }
                     if state.dirty {
                         Label(ConversationCopy.text("unsaved"), systemImage: "pencil.circle")
                             .foregroundStyle(.orange)

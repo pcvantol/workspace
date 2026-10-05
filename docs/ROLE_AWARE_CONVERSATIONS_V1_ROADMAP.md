@@ -10,6 +10,15 @@ Design is canonical after owning protected merge. The full runtime nodes remain
 PLANNED; the 4 October r81 revision selects only a Workspace-owned RC-WC/RC-WS
 presentation and unsent-draft subset for product 2.8.3.
 
+The 5 October r81 plan revision 83 selects one continuation on product 2.8.4:
+find and resume already authorized drafts through local search, mode filtering
+and stable sorting, without changing draft authority or invoking a provider.
+An open conversation and unsaved editor text survive list changes. Distinct
+empty, no-match, missing-access, offline and stale states, list reset, keyboard
+focus and five-language copy are included. Real packaged create/rename clicks
+remain a separate UI acceptance check alongside state and installed HTTP tests.
+The signed successor and two-Mac gates remain separate L1-dependent work.
+
 The [RC-WC Workspace consumer contract](ROLE_AWARE_CONVERSATIONS_WC_CONTRACT_V1.md)
 now supplies offline target projections, capability negotiation and negative
 interaction fixtures. Forge RC-FC binding and live UI/API qualification are

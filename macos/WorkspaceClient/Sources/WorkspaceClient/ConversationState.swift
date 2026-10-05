@@ -35,6 +35,8 @@ final class ConversationState: ObservableObject {
     @Published var mode = "BUSINESS"
     @Published var draft = ""
     @Published var search = ""
+    @Published var modeFilter: ConversationModeFilter = .all
+    @Published var sortOrder: ConversationSortOrder = .recentlyChanged
     @Published var grantEntry = ""
     @Published private(set) var conversations: [Conversation] = []
     @Published private(set) var state = "UNAVAILABLE"
@@ -64,10 +66,34 @@ final class ConversationState: ObservableObject {
     }
 
     var visibleConversations: [Conversation] {
-        let query = search.trimmingCharacters(in: .whitespacesAndNewlines)
-        return query.isEmpty ? conversations : conversations.filter {
-            $0.title.localizedCaseInsensitiveContains(query) || $0.focus.localizedCaseInsensitiveContains(query)
+        ConversationDiscovery.visible(conversations, search: search, mode: modeFilter, sort: sortOrder)
+    }
+
+    var hasActiveDiscovery: Bool {
+        !search.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+            modeFilter != .all || sortOrder != .recentlyChanged
+    }
+
+    var selectedIsHidden: Bool {
+        guard let selectedID, conversations.contains(where: { $0.id == selectedID }) else { return false }
+        return !visibleConversations.contains(where: { $0.id == selectedID })
+    }
+
+    var listMessageKey: String? {
+        switch state {
+        case "GRANT_REQUIRED", "UNAUTHORIZED": "forbidden"
+        case "OFFLINE": "offline"
+        case "STALE": "stale"
+        case "AVAILABLE" where conversations.isEmpty: "noConversations"
+        case "AVAILABLE" where visibleConversations.isEmpty: "noResults"
+        default: nil
         }
+    }
+
+    func resetDiscovery() {
+        search = ""
+        modeFilter = .all
+        sortOrder = .recentlyChanged
     }
 
     var canEdit: Bool { access?.projectID == projectID && !isBusy && !loadingGrant }
@@ -245,20 +271,31 @@ final class ConversationState: ObservableObject {
             guard epoch == scopeEpoch, attempt == loadAttempt, self.access == access,
                   projectID == access.projectID else { return }
             conversations = list.conversations
-            if dirty, let selectedID, let latest = conversations.first(where: { $0.id == selectedID }),
-               latest.revision != savedRevision {
-                serverConflict = latest
-                state = "CONFLICT"
-                detail = "Review the newer Server draft beside your local text before choosing a version."
-                return
+            if let selectedID {
+                guard let latest = conversations.first(where: { $0.id == selectedID }) else {
+                    serverConflict = nil
+                    if dirty {
+                        state = "PENDING"
+                        detail = "The selected draft is no longer in your authorized list. Local text is retained."
+                    } else {
+                        self.selectedID = nil
+                        clearEditor()
+                        state = "AVAILABLE"
+                        detail = "The selected draft is no longer available. Choose another conversation."
+                    }
+                    return
+                }
+                if dirty && latest.revision != savedRevision {
+                    serverConflict = latest
+                    state = "CONFLICT"
+                    detail = "Review the newer Server draft beside your local text before choosing a version."
+                    return
+                }
+                if !dirty { use(latest) }
+            } else if !dirty, let first = conversations.first {
+                use(first)
             }
             serverConflict = nil
-            if !dirty, let latest = conversations.first(where: { $0.id == selectedID }) ?? conversations.first {
-                use(latest)
-            } else if !dirty {
-                selectedID = nil
-                clearEditor()
-            }
             state = "AVAILABLE"
             detail = "Workspace drafts. Advisor history and replies are unavailable."
         } catch {
@@ -283,6 +320,8 @@ final class ConversationState: ObservableObject {
 
     func select(_ conversation: Conversation) {
         guard !loadingGrant, !isBusy else { return }
+        guard conversations.contains(where: { $0.id == conversation.id && $0.project_id == projectID }) else { return }
+        if selectedID == conversation.id { return }
         guard !dirty else {
             state = "PENDING"
             detail = "Save or discard the current changes before opening another conversation."
@@ -327,6 +366,11 @@ final class ConversationState: ObservableObject {
               access.endpoint == client.savedEndpoint, access.instanceID == client.savedInstance else {
             state = "GRANT_REQUIRED"
             detail = "Enter this project's separate draft grant."
+            return
+        }
+        if let selectedID, !conversations.contains(where: { $0.id == selectedID }) {
+            state = "PENDING"
+            detail = "The selected draft is no longer in your authorized list. Keep the local text or discard it."
             return
         }
         guard client.phase == "CONNECTED" else {
@@ -441,7 +485,7 @@ final class ConversationState: ObservableObject {
         localVersion += 1
         conversations = []
         selectedID = nil
-        search = ""
+        resetDiscovery()
         clearEditor()
     }
 

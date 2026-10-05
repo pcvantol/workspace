@@ -111,6 +111,97 @@ final class ConversationTests: XCTestCase {
         """
     }
 
+    private func discoveryRecord(_ id: String, title: String, focus: String, mode: String,
+                                 updated: String) -> Conversation {
+        Conversation(id: id, actor_id: "alice", project_id: "project-a", title: title,
+                     focus: focus, mode: mode, draft: "Unsent", revision: 1,
+                     created_at: "2026-10-04T20:00:00+00:00", updated_at: updated,
+                     history: [], history_availability: "UNQUALIFIED_FORGE", state: "DRAFT_ONLY")
+    }
+
+    func testDiscoveryCombinesSearchModeAndStableSortWithoutNetwork() {
+        let alpha = discoveryRecord("a", title: "Álpha", focus: "Roadmap", mode: "BUSINESS",
+                                    updated: "2026-10-05T08:00:00+00:00")
+        let tied = discoveryRecord("b", title: "alpha", focus: "Design", mode: "UX",
+                                   updated: "2026-10-05T08:00:00+00:00")
+        let newest = discoveryRecord("c", title: "Beta", focus: "Roadmap", mode: "ARCHITECTURE",
+                                     updated: "2026-10-05T08:00:00.5+00:00")
+        let records = [tied, newest, alpha]
+        XCTAssertEqual(ConversationDiscovery.visible(records, search: "", mode: .all,
+                                                     sort: .recentlyChanged).map(\.id),
+                       ["c", "a", "b"])
+        XCTAssertEqual(ConversationDiscovery.visible(records, search: "", mode: .all,
+                                                     sort: .title).map(\.id),
+                       ["a", "b", "c"])
+        XCTAssertEqual(ConversationDiscovery.visible(records, search: " ROADMAP ", mode: .all,
+                                                     sort: .recentlyChanged).map(\.id), ["c", "a"])
+        XCTAssertEqual(ConversationDiscovery.visible(records, search: "roadmap", mode: .business,
+                                                     sort: .title).map(\.id), ["a"])
+        XCTAssertTrue(ConversationDiscovery.visible(records, search: "missing", mode: .ux,
+                                                    sort: .title).isEmpty)
+    }
+
+    @MainActor
+    func testDiscoveryKeepsSelectedUnsavedDraftAndMakesNoExtraRequests() async throws {
+        let instance = self.instance
+        let first = record
+        let second = record.replacingOccurrences(of: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                                                 with: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+            .replacingOccurrences(of: "Direction", with: "Design")
+            .replacingOccurrences(of: "BUSINESS", with: "UX")
+        var draftRequests = 0
+        StubProtocol.handler = { request in
+            switch request.url!.path {
+            case "/v1/identity": return (200, Data("{\"instance_id\":\"\(instance)\"}".utf8))
+            case "/v1/status": return (200, Data("{\"instance_id\":\"\(instance)\",\"version\":\"2.8.3\",\"state\":\"READY\",\"project_source\":\"AVAILABLE\"}".utf8))
+            case "/v1/projects": return (200, Data("{\"state\":\"AVAILABLE\",\"projects\":[{\"id\":\"project-a\",\"name\":\"Project A\"}],\"source\":\"LOCAL\",\"observed_at\":\"2026-10-04T20:00:00Z\",\"partial\":false,\"stale\":false}".utf8))
+            case "/v1/capabilities", "/v1/forge/status": return (503, Data("{}".utf8))
+            case "/v1/conversations":
+                draftRequests += 1
+                XCTAssertEqual(request.httpMethod, "GET")
+                return (200, Data("{\"actor_id\":\"alice\",\"project_id\":\"project-a\",\"conversations\":[\(first),\(second)],\"history_availability\":\"UNQUALIFIED_FORGE\"}".utf8))
+            default: XCTFail("Unexpected route"); return (404, Data("{}".utf8))
+            }
+        }
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [StubProtocol.self]
+        let client = ClientState(keychain: MemoryServerCredentials(endpoint: access.endpoint,
+            instance: instance, token: "read-only"), transport: ServerTransport(configuration: configuration))
+        for _ in 0..<100 where client.phase != "CONNECTED" {
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        XCTAssertEqual(client.phase, "CONNECTED")
+        let state = ConversationState(grants: MemoryDraftGrant(access), localDrafts: MemoryLocalDrafts(),
+            transport: ConversationTransport(configuration: configuration))
+        await state.prepare(client: client)
+        XCTAssertEqual(state.conversations.count, 2)
+        XCTAssertEqual(state.selectedID, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        XCTAssertNil(state.listMessageKey)
+        state.select(state.conversations[0])
+        state.draft = "Keep this local text"
+        let selected = state.selectedID
+        let requestsBefore = draftRequests
+        state.search = "Design"
+        state.modeFilter = .ux
+        state.sortOrder = .title
+        XCTAssertEqual(state.visibleConversations.map(\.title), ["Design"])
+        XCTAssertTrue(state.selectedIsHidden)
+        XCTAssertEqual(state.selectedID, selected)
+        XCTAssertEqual(state.draft, "Keep this local text")
+        state.search = "no matching title"
+        XCTAssertEqual(state.listMessageKey, "noResults")
+        state.search = "Design"
+        state.select(state.visibleConversations[0])
+        XCTAssertEqual(state.state, "PENDING")
+        XCTAssertEqual(state.selectedID, selected)
+        XCTAssertEqual(state.draft, "Keep this local text")
+        state.resetDiscovery()
+        XCTAssertFalse(state.selectedIsHidden)
+        XCTAssertFalse(state.hasActiveDiscovery)
+        XCTAssertNil(state.listMessageKey)
+        XCTAssertEqual(draftRequests, requestsBefore)
+    }
+
     #if WORKSPACE_ISOLATED_TEST
     func testIsolatedCredentialDocumentAndMemoryStores() throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
@@ -403,12 +494,14 @@ final class ConversationTests: XCTestCase {
         state.selectProject("project-a")
         await state.prepare(client: client)
         XCTAssertEqual(state.state, "GRANT_REQUIRED")
+        XCTAssertEqual(state.listMessageKey, "forbidden")
         state.grantEntry = "bad"
         await state.saveGrant(client: client)
         XCTAssertEqual(state.state, "GRANT_REQUIRED")
         state.grantEntry = grant
         await state.saveGrant(client: client)
         XCTAssertEqual(state.state, "AVAILABLE")
+        XCTAssertEqual(state.listMessageKey, "noConversations")
         XCTAssertEqual(try grants.load()?.projectID, "project-a")
         XCTAssertEqual(draftMethods, ["GET", "GET"])
         state.search = "missing"
@@ -685,7 +778,9 @@ final class ConversationTests: XCTestCase {
     @MainActor
     func testConversationCopyAndViewRenderWithCredentialAdapters() async throws {
         for language in ["en", "nl", "de", "fr", "es"] {
-            for key in ["nav", "project", "new", "search", "title", "focus", "mode", "draft",
+            for key in ["nav", "project", "new", "search", "find", "filter", "all", "sort",
+                        "recent", "titleSort", "activeFilters", "resetFilters", "noConversations",
+                        "noResults", "selectedHidden", "selected", "title", "focus", "mode", "draft",
                         "save", "context", "sources", "ai", "saved", "offline", "conflict"] {
                 XCTAssertNotEqual(ConversationCopy.text(key, language: language), key)
             }
