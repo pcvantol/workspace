@@ -72,10 +72,22 @@ private final class MemoryLocalDrafts: LocalDraftStore, @unchecked Sendable {
     private let lock = NSLock()
     private var stored: LocalDraftSnapshot?
     private var rejectsWrites = false
+    private var saveStarted: XCTestExpectation?
+    private var releaseSave: DispatchSemaphore?
     func load(scopeHash: String) throws -> LocalDraftSnapshot? {
         lock.withLock { stored?.scopeHash == scopeHash ? stored : nil }
     }
     func save(_ snapshot: LocalDraftSnapshot) throws {
+        let blocking = lock.withLock {
+            let pending = (saveStarted, releaseSave)
+            saveStarted = nil
+            releaseSave = nil
+            return pending
+        }
+        blocking.0?.fulfill()
+        if let release = blocking.1 {
+            XCTAssertEqual(release.wait(timeout: .now() + 5), .success)
+        }
         try lock.withLock {
             if rejectsWrites { throw CocoaError(.fileWriteUnknown) }
             stored = snapshot
@@ -85,6 +97,12 @@ private final class MemoryLocalDrafts: LocalDraftStore, @unchecked Sendable {
         lock.withLock { if stored?.scopeHash == scopeHash { stored = nil } }
     }
     func rejectWrites() { lock.withLock { rejectsWrites = true } }
+    func blockSave(started: XCTestExpectation, release: DispatchSemaphore) {
+        lock.withLock {
+            saveStarted = started
+            releaseSave = release
+        }
+    }
 }
 
 private final class RequestCounter: @unchecked Sendable {
@@ -297,8 +315,18 @@ final class ConversationTests: XCTestCase {
         await failedState.prepare(client: client)
         failedState.draft = "Must not claim durable recovery"
         failing.rejectWrites()
-        let failedPreparation = await failedState.prepareForServerForget()
+        let saveStarted = expectation(description: "private draft save started")
+        let releaseSave = DispatchSemaphore(value: 0)
+        failing.blockSave(started: saveStarted, release: releaseSave)
+        let firstPreparation = Task { await failedState.prepareForServerForget() }
+        await fulfillment(of: [saveStarted], timeout: 5)
+        let overlappingPreparation = await failedState.prepareForServerForget()
+        XCTAssertFalse(overlappingPreparation)
+        XCTAssertTrue(failedState.preparingServerForget)
+        releaseSave.signal()
+        let failedPreparation = await firstPreparation.value
         XCTAssertFalse(failedPreparation)
+        XCTAssertFalse(failedState.preparingServerForget)
         XCTAssertEqual(failedState.state, "UNAVAILABLE")
         XCTAssertEqual(failedState.detail, "The private local draft could not be stored.")
         XCTAssertEqual(failedState.conversations.count, 1)

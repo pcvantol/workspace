@@ -227,6 +227,7 @@ struct SettingsView: View {
     @ObservedObject var conversations: ConversationState
     @State private var address = ""
     @State private var token = ""
+    @State private var forgettingServer = false
 
     var body: some View {
         Form {
@@ -245,13 +246,20 @@ struct SettingsView: View {
                         token = ""
                     }.disabled(["LOADING", "SAVING", "FORGETTING"].contains(client.phase))
                     Button("Forget Server") {
+                        guard !forgettingServer else { return }
+                        forgettingServer = true
                         Task {
-                            guard await conversations.prepareForServerForget() else { return }
+                            guard await conversations.prepareForServerForget() else {
+                                forgettingServer = false
+                                return
+                            }
                             client.forget()
                             address = ""
                             token = ""
+                            forgettingServer = false
                         }
                     }.disabled(!client.canForgetBinding ||
+                               forgettingServer || conversations.preparingServerForget ||
                                ["SAVING", "FORGETTING"].contains(client.phase))
                 }
                 Text("Forget removes this app's current pairing only. Earlier pre-release pairings may still exist in Mac Keychain.")

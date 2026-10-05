@@ -46,6 +46,7 @@ final class ConversationState: ObservableObject {
     @Published private(set) var serverConflict: Conversation?
     @Published private(set) var isBusy = false
     @Published private(set) var loadingGrant = false
+    @Published private(set) var preparingServerForget = false
 
     private let grants: DraftGrantWorker
     private let localDrafts: LocalDraftWorker
@@ -360,7 +361,10 @@ final class ConversationState: ObservableObject {
     }
 
     func prepareForServerForget() async -> Bool {
+        guard !preparingServerForget else { return false }
         if authorizationSuspended { return true }
+        preparingServerForget = true
+        defer { preparingServerForget = false }
         scopeEpoch += 1
         loadAttempt += 1
         let epoch = scopeEpoch
