@@ -57,6 +57,7 @@ final class ConversationState: ObservableObject {
     private var localTask: Task<Void, Never>?
     private var localVersion = 0
     private var creatingNewDraft = false
+    private var authorizationSuspended = false
 
     init(grants: any DraftGrantStore = DraftGrantKeychain(),
          localDrafts: any LocalDraftStore = PrivateLocalDraftCache(),
@@ -97,7 +98,9 @@ final class ConversationState: ObservableObject {
         sortOrder = .recentlyChanged
     }
 
-    var canEdit: Bool { access?.projectID == projectID && !isBusy && !loadingGrant }
+    var canEdit: Bool {
+        access?.projectID == projectID && !authorizationSuspended && !isBusy && !loadingGrant
+    }
 
     var dirty: Bool {
         guard let savedFields else {
@@ -125,6 +128,7 @@ final class ConversationState: ObservableObject {
                 if access != stored || projectID != stored.projectID { clearScope() }
                 access = stored
                 projectID = stored.projectID
+                authorizationSuspended = false
                 if await restoreLocal(stored) { await load(client: client) }
             } else {
                 if dirty {
@@ -181,10 +185,17 @@ final class ConversationState: ObservableObject {
                 detail = "Save or discard local changes before switching draft access."
                 return
             }
+            guard client.phase == "CONNECTED", proposed.endpoint == client.savedEndpoint,
+                  proposed.instanceID == client.savedInstance else {
+                state = "GRANT_REQUIRED"
+                detail = "Reconnect and enter this project's draft grant."
+                return
+            }
             try await grants.save(proposed)
             guard epoch == scopeEpoch else { return }
             if access != proposed { clearScope() }
             access = proposed
+            authorizationSuspended = false
             grantEntry = ""
             if await restoreLocal(proposed) { await load(client: client) }
         } catch {
@@ -244,7 +255,7 @@ final class ConversationState: ObservableObject {
     }
 
     func load(client: ClientState) async {
-        guard let access, access.projectID == projectID,
+        guard !authorizationSuspended, let access, access.projectID == projectID,
               access.endpoint == client.savedEndpoint, access.instanceID == client.savedInstance else {
             state = "GRANT_REQUIRED"
             detail = "Enter this project's separate draft grant."
@@ -337,12 +348,12 @@ final class ConversationState: ObservableObject {
     }
 
     func handleClientPhase(_ phase: String) {
-        guard access?.projectID == projectID,
-              ["DISCONNECTED", "UNAVAILABLE", "UNCONFIGURED"].contains(phase) else { return }
+        guard ["DISCONNECTED", "UNAVAILABLE", "UNCONFIGURED"].contains(phase) else { return }
         loadAttempt += 1
         guard phase != "UNCONFIGURED" else {
+            scopeEpoch += 1
             let retainLocalText = dirty
-            access = nil
+            authorizationSuspended = true
             conversations = []
             selectedID = nil
             serverConflict = nil
@@ -350,6 +361,7 @@ final class ConversationState: ObservableObject {
                 savedRevision = nil
                 savedFields = nil
                 creatingNewDraft = true
+                persistLocalImmediately()
             } else {
                 creatingNewDraft = false
                 clearEditor()
@@ -360,6 +372,7 @@ final class ConversationState: ObservableObject {
                 "Reconnect and enter this project's draft grant."
             return
         }
+        guard access?.projectID == projectID else { return }
         state = "OFFLINE"
         detail = "Server offline. Local text and the last authorized list remain in this window."
     }
@@ -371,7 +384,7 @@ final class ConversationState: ObservableObject {
         } else {
             clearEditor()
         }
-        state = "AVAILABLE"
+        state = authorizationSuspended ? "GRANT_REQUIRED" : "AVAILABLE"
         detail = "Unsaved changes discarded."
         persistLocal()
     }
@@ -392,6 +405,11 @@ final class ConversationState: ObservableObject {
 
     func save(client: ClientState) async {
         guard !loadingGrant, !isBusy else { return }
+        guard !authorizationSuspended else {
+            state = "GRANT_REQUIRED"
+            detail = "Reconnect and enter this project's draft grant. Unsaved local text is retained."
+            return
+        }
         guard serverConflict == nil else {
             state = "CONFLICT"
             return
@@ -521,6 +539,7 @@ final class ConversationState: ObservableObject {
         conversations = []
         selectedID = nil
         creatingNewDraft = false
+        authorizationSuspended = false
         resetDiscovery()
         clearEditor()
     }
@@ -558,6 +577,11 @@ final class ConversationState: ObservableObject {
             guard !Task.isCancelled, version == localVersion else { return }
             await flushLocal()
         }
+    }
+
+    private func persistLocalImmediately() {
+        localTask?.cancel()
+        localTask = Task { await flushLocal() }
     }
 
     func flushLocal() async {
