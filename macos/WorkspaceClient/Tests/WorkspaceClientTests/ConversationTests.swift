@@ -209,7 +209,7 @@ final class ConversationTests: XCTestCase {
         XCTAssertFalse(state.selectedIsHidden)
         XCTAssertFalse(state.hasActiveDiscovery)
         XCTAssertNil(state.listMessageKey)
-        state.handleClientPhase("UNAVAILABLE")
+        await state.handleClientPhase("UNAVAILABLE")
         XCTAssertEqual(state.state, "OFFLINE")
         XCTAssertEqual(state.listMessageKey, "offline")
         XCTAssertEqual(state.draft, "Keep this local text")
@@ -261,13 +261,13 @@ final class ConversationTests: XCTestCase {
         XCTAssertEqual(state.conversations.count, 1)
         let loading = Task { await state.load(client: client) }
         await fulfillment(of: [secondListStarted], timeout: 5)
-        state.handleClientPhase("UNAVAILABLE")
+        await state.handleClientPhase("UNAVAILABLE")
         releaseSecondList.signal()
         await loading.value
         XCTAssertEqual(state.state, "OFFLINE")
         XCTAssertEqual(state.listMessageKey, "offline")
         state.draft = "Keep this private local edit"
-        state.handleClientPhase("UNCONFIGURED")
+        await state.handleClientPhase("UNCONFIGURED")
         XCTAssertEqual(state.state, "GRANT_REQUIRED")
         XCTAssertEqual(state.listMessageKey, "forbidden")
         XCTAssertTrue(state.conversations.isEmpty)
@@ -275,7 +275,6 @@ final class ConversationTests: XCTestCase {
         XCTAssertEqual(state.draft, "Keep this private local edit")
         XCTAssertTrue(state.dirty)
         XCTAssertFalse(state.canEdit)
-        await state.flushLocal()
         XCTAssertEqual(try local.load(scopeHash: PrivateLocalDraftCache.scopeHash(access))?.draft,
                        "Keep this private local edit")
         let reopened = ConversationState(grants: grants, localDrafts: local,
@@ -326,7 +325,7 @@ final class ConversationTests: XCTestCase {
         state.grantEntry = grant
         let saving = Task { await state.saveGrant(client: client) }
         await fulfillment(of: [grantListStarted], timeout: 5)
-        state.handleClientPhase("UNCONFIGURED")
+        await state.handleClientPhase("UNCONFIGURED")
         releaseGrantList.signal()
         await saving.value
         XCTAssertNil(try grants.load())

@@ -347,7 +347,7 @@ final class ConversationState: ObservableObject {
         use(current)
     }
 
-    func handleClientPhase(_ phase: String) {
+    func handleClientPhase(_ phase: String) async {
         guard ["DISCONNECTED", "UNAVAILABLE", "UNCONFIGURED"].contains(phase) else { return }
         loadAttempt += 1
         guard phase != "UNCONFIGURED" else {
@@ -361,7 +361,7 @@ final class ConversationState: ObservableObject {
                 savedRevision = nil
                 savedFields = nil
                 creatingNewDraft = true
-                persistLocalImmediately()
+                await flushLocal()
             } else {
                 creatingNewDraft = false
                 clearEditor()
@@ -577,11 +577,6 @@ final class ConversationState: ObservableObject {
             guard !Task.isCancelled, version == localVersion else { return }
             await flushLocal()
         }
-    }
-
-    private func persistLocalImmediately() {
-        localTask?.cancel()
-        localTask = Task { await flushLocal() }
     }
 
     func flushLocal() async {

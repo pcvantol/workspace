@@ -291,7 +291,7 @@ struct ConversationsView: View {
             if phase == "CONNECTED" {
                 Task { await state.prepare(client: client) }
             } else {
-                state.handleClientPhase(phase)
+                Task { await state.handleClientPhase(phase) }
             }
         }
         .onChange(of: [state.title, state.focus, state.mode, state.draft]) { _, _ in
