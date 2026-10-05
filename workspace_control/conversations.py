@@ -334,6 +334,12 @@ class ConversationStore:
                         if row["revision"] != fields["expected_revision"]:
                             raise ConversationConflict("draft revision changed")
                         completed_revision = row["revision"]
+                        receipt_count = connection.execute("""SELECT COUNT(*)
+                            FROM conversation_operations
+                            WHERE actor_id=? AND project_id=?""",
+                            (actor, project)).fetchone()[0]
+                        if receipt_count >= self.OPERATION_RECEIPT_LIMIT:
+                            raise ConversationConflict("operation receipt budget exhausted")
                         if bool(row["archived"]) != archived:
                             completed_revision += 1
                             cursor = connection.execute("""UPDATE conversations
@@ -349,13 +355,6 @@ class ConversationStore:
                             VALUES (?,?,?,?,?,?,?,?)""",
                             (actor, project, fields["operation_id"], conversation_id,
                              request_digest, action, completed_revision, _now()))
-                        connection.execute("""DELETE FROM conversation_operations
-                            WHERE rowid IN (
-                                SELECT rowid FROM conversation_operations
-                                WHERE actor_id=? AND project_id=?
-                                ORDER BY created_at DESC, rowid DESC
-                                LIMIT -1 OFFSET ?
-                            )""", (actor, project, self.OPERATION_RECEIPT_LIMIT))
                         row = connection.execute("""SELECT * FROM conversations
                             WHERE id=? AND actor_id=? AND project_id=?""",
                             (conversation_id, actor, project)).fetchone()

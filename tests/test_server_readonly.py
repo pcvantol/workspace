@@ -1574,12 +1574,24 @@ class ConversationDraftTests(unittest.TestCase):
         _, created = self.request("/v1/conversations", method="POST", body=self.fields())
         identity = created["id"]
         self.service.conversations.OPERATION_RECEIPT_LIMIT = 3
-        for digit in "12345":
+        for digit in "123":
             status, restored = self.request(
                 f"/v1/conversations/{identity}/restore", method="POST",
                 body={"expected_revision": 1, "operation_id": digit * 32})
             self.assertEqual((status, restored["archived"], restored["revision"]),
                              (200, False, 1))
+        self.assertEqual(self.request(
+            f"/v1/conversations/{identity}/restore", method="POST",
+            body={"expected_revision": 1, "operation_id": "4" * 32}),
+            (409, {"error": "DRAFT_CONFLICT"}))
+        self.assertEqual(self.request(
+            f"/v1/conversations/{identity}/archive", method="POST",
+            body={"expected_revision": 1, "operation_id": "1" * 32}),
+            (409, {"error": "DRAFT_CONFLICT"}))
+        self.assertEqual(self.request(
+            f"/v1/conversations/{identity}/archive", method="POST",
+            body={"expected_revision": 1, "operation_id": "5" * 32}),
+            (409, {"error": "DRAFT_CONFLICT"}))
         connection = sqlite3.connect(self.root / "conversations.sqlite3")
         try:
             count = connection.execute("SELECT COUNT(*) FROM conversation_operations").fetchone()[0]

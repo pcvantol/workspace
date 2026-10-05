@@ -531,12 +531,12 @@ final class ConversationState: ObservableObject {
             conversations.removeAll(where: { $0.id == result.id })
             conversations.insert(result, at: 0)
             pendingArchiveOperation = nil
-            use(result)
             if result.archived != archived {
                 state = "STATUS_CONFLICT"
                 detail = "Conversation status changed on the Server. Current status is shown; text was preserved."
                 return
             }
+            use(result)
             state = "AVAILABLE"
             detail = archived ?
                 "Conversation archived. Its draft and identity remain available." :
