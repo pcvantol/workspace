@@ -12,10 +12,13 @@ does not own Workspace source, architecture, roadmap, governance, or releases.
 
 This repository was established on 2026-09-01 after an evidence-based search
 found no prior independent Workspace implementation history. The selected
-LANE_4 slice now supplies an own read-only Server, thin CLI and browser Client,
-plus a native macOS Client. Product 2.8.3 adds a bounded
-[conversation draft flow](docs/WORKSPACE_CONVERSATION_DRAFT_HTTP_V1.md) to that
-Client and Server; Forge advisor replies and canonical sessions remain unavailable.
+LANE_4 slice now supplies an own Server, thin CLI and browser Client,
+plus a native macOS Client. The current conversation flow includes private
+drafts and reversible archive/restore. Product 2.8.6 adds a bounded
+[native Mission review transport](docs/WORKSPACE_MISSION_REVIEW_INBOX_V1.md)
+through an actor-scoped Forge capability. Forge owns review authority and
+canonical decisions. Forge advisor replies and canonical conversation sessions
+remain unavailable.
 It does not implement an Engineering Platform adapter or execution runtime.
 
 ## Local read-only Server
@@ -58,6 +61,7 @@ installed package and private-root ownership; it does not start a Server.
 
 - [Architecture](docs/ARCHITECTURE.md)
 - [Workspace conversation draft HTTP V1](docs/WORKSPACE_CONVERSATION_DRAFT_HTTP_V1.md)
+- [Native Mission review consumer V1](docs/WORKSPACE_MISSION_REVIEW_INBOX_V1.md)
 - [Proposed repository onboarding and qualification](docs/REPOSITORY_ONBOARDING.md)
 - [Roadmap](ROADMAP.md)
 - [Backlog](BACKLOG.md)

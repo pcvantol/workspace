@@ -10,13 +10,15 @@ the local serial GP-WC/GP-W review subset; it does not claim full GP, project
 roadmap, policy management or external delivery-gate support. Product 2.8.5
 archive/restore is complete and is not reopened.
 
-The existing Forge status grant permits only `/v1/instance` and `/v1/status`.
-Forge's current progression read and decision routes are admin-only, so a
-versioned, actor- and scope-bound review consumer capability with exact
-readback/replay remains an external L3 dependency. Workspace may prepare its
-own native state, presentation and safety tests, but cannot report an inbox or
-decision flow as installed-qualified until the real installed Forge producer,
-authorization and receipt/readback have passed. Protected merge, independent
+The existing Forge status grant still permits only `/v1/instance` and
+`/v1/status`. L3 delivered a separate actor- and Mission-scoped review
+capability on protected Forge main `f4d3b269d54fd302a586cd8f41421c4d15e8c4d5`,
+with an exact-main installed-wheel receipt in
+[#207](https://github.com/pcvantol/forge/issues/207#issuecomment-6016125785).
+Workspace 2.8.6 now owns a separate review grant binding, strict Server
+transport, native list/detail/decision state and same-operation readback.
+Workspace cannot report its inbox or decision flow as installed-qualified until
+its own installed two-product authorization and GUI readback pass. Protected merge, independent
 exact-head Quality/Security, per-changed-file coverage above 80.2%, packaged
 GUI clicks and exact-main installed readback remain the delivery gates. Prior
 signing/Keychain/two-Mac/public-release gates remain separate.

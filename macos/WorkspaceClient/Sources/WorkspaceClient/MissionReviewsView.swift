@@ -1,3 +1,4 @@
+import Combine
 import SwiftUI
 
 enum MissionReviewCopy {
@@ -24,6 +25,9 @@ enum MissionReviewCopy {
             "requirement": ["Review requirement", "Reviewvereiste", "Prüfungsanforderung", "Exigence de revue", "Requisito de revisión"],
             "subject": ["Exact subject", "Exact onderwerp", "Genauer Gegenstand", "Sujet exact", "Objeto exacto"],
             "revision": ["Subject revision", "Onderwerprevisie", "Gegenstandsrevision", "Révision du sujet", "Revisión del objeto"],
+            "subjectDigest": ["Subject digest", "Onderwerpdigest", "Gegenstands-Digest", "Empreinte du sujet", "Huella del objeto"],
+            "missionRevision": ["Mission state revision", "Missionstatusrevisie", "Missionsstatusrevision", "Révision d'état de mission", "Revisión del estado de misión"],
+            "evidenceDigest": ["Evidence digest", "Bewijsdigest", "Nachweis-Digest", "Empreinte de preuve", "Huella de prueba"],
             "project": ["Verified project", "Geverifieerd project", "Verifiziertes Projekt", "Projet vérifié", "Proyecto verificado"],
             "action": ["Action result", "Action-resultaat", "Action-Ergebnis", "Résultat de l'Action", "Resultado de la Action"],
             "reason": ["Why it waits", "Waarom het wacht", "Grund des Wartens", "Raison de l'attente", "Motivo de espera"],
@@ -35,12 +39,18 @@ enum MissionReviewCopy {
             "freshness": ["Freshness", "Versheid", "Aktualität", "Actualité", "Vigencia"],
             "authority": ["Review authority", "Reviewbevoegdheid", "Prüfungszuständigkeit", "Autorité de revue", "Autoridad de revisión"],
             "phase": ["State", "Status", "Status", "État", "Estado"],
+            "lifecycle": ["Forge lifecycle", "Forge-levenscyclus", "Forge-Lebenszyklus", "Cycle de vie Forge", "Ciclo de vida Forge"],
+            "decisionID": ["Decision receipt", "Beslissingsreceipt", "Entscheidungsbeleg", "Reçu de décision", "Recibo de decisión"],
+            "decisionDigest": ["Decision digest", "Beslissingsdigest", "Entscheidungs-Digest", "Empreinte de décision", "Huella de decisión"],
+            "decisionOutcome": ["Recorded outcome", "Vastgelegde uitkomst", "Erfasstes Ergebnis", "Résultat enregistré", "Resultado registrado"],
             "unknown": ["Unknown", "Onbekend", "Unbekannt", "Inconnu", "Desconocido"],
             "noEvidence": ["No verified evidence references available.", "Geen geverifieerde bewijsverwijzingen beschikbaar.", "Keine verifizierten Nachweisreferenzen verfügbar.", "Aucune référence de preuve vérifiée disponible.", "No hay referencias de pruebas verificadas disponibles."],
             "decisionUnavailable": ["Decisions require a qualified Forge review connection and current authority readback.", "Beslissingen vereisen een gekwalificeerde Forge-reviewverbinding en actuele bevoegdheidscontrole.", "Entscheidungen erfordern eine qualifizierte Forge-Verbindung und aktuelle Berechtigungsprüfung.", "Les décisions exigent une connexion Forge qualifiée et une vérification actuelle des droits.", "Las decisiones requieren una conexión Forge calificada y una verificación actual de permisos."],
             "waitingForReview": ["Waiting for review", "Wacht op review", "Wartet auf Prüfung", "En attente de revue", "En espera de revisión"],
             "decisionRecorded": ["Decision recorded", "Beslissing vastgelegd", "Entscheidung erfasst", "Décision enregistrée", "Decisión registrada"],
             "engineeringResult": ["Engineering result", "Engineeringresultaat", "Engineering-Ergebnis", "Résultat d'ingénierie", "Resultado de ingeniería"],
+            "noReview": ["No current review", "Geen actuele review", "Keine aktuelle Prüfung", "Aucune revue actuelle", "Sin revisión actual"],
+            "externalGate": ["External gate", "Externe poort", "Externes Gate", "Contrôle externe", "Puerta externa"],
             "finalAcceptance": ["Final acceptance", "Finale acceptatie", "Endabnahme", "Acceptation finale", "Aceptación final"],
             "forge": ["Forge", "Forge", "Forge", "Forge", "Forge"],
             "external": ["External owner", "Externe eigenaar", "Externer Eigentümer", "Responsable externe", "Responsable externo"],
@@ -50,6 +60,29 @@ enum MissionReviewCopy {
             "actionResultRef": ["Action result", "Action-resultaat", "Action-Ergebnis", "Résultat d'Action", "Resultado de Action"],
             "forgeReceipt": ["Forge receipt", "Forge-receipt", "Forge-Beleg", "Reçu Forge", "Recibo de Forge"],
             "sourceRevision": ["Source revision", "Bronrevisie", "Quellrevision", "Révision source", "Revisión de origen"],
+            "grantRequired": ["Enter your separate review access token.", "Voer je aparte reviewtoegang in.", "Gesonderten Prüfungszugang eingeben.", "Saisissez votre accès distinct aux revues.", "Introduce tu acceso independiente a las revisiones."],
+            "reviewGrant": ["Review access token", "Reviewtoegang", "Prüfungszugang", "Accès aux revues", "Acceso a revisiones"],
+            "saveGrant": ["Save review access", "Reviewtoegang bewaren", "Prüfungszugang speichern", "Enregistrer l'accès aux revues", "Guardar acceso a revisiones"],
+            "forgetGrant": ["Forget review access", "Reviewtoegang vergeten", "Prüfungszugang vergessen", "Oublier l'accès aux revues", "Olvidar acceso a revisiones"],
+            "refresh": ["Refresh reviews", "Reviews verversen", "Prüfungen aktualisieren", "Actualiser les revues", "Actualizar revisiones"],
+            "loading": ["Reading current Forge review state…", "Actuele Forge-reviewstatus lezen…", "Aktuellen Forge-Prüfungsstand lesen…", "Lecture de l'état actuel des revues Forge…", "Leyendo el estado actual de las revisiones Forge…"],
+            "available": ["Current authorized Mission scope", "Actuele bevoegde Missions", "Aktuell autorisierte Missionen", "Missions actuellement autorisées", "Misiones autorizadas actuales"],
+            "pending": ["Decision status is uncertain. Read the same operation again.", "Beslissingsstatus is onzeker. Lees dezelfde operatie opnieuw.", "Entscheidungsstatus ungewiss. Dieselbe Operation erneut lesen.", "Statut de décision incertain. Relisez la même opération.", "Estado de decisión incierto. Lee de nuevo la misma operación."],
+            "pendingMissing": ["No Forge receipt yet. You may retry the same operation and reason.", "Nog geen Forge-receipt. Je kunt dezelfde operatie en reden opnieuw proberen.", "Noch kein Forge-Beleg. Dieselbe Operation und Begründung kann erneut versucht werden.", "Pas encore de reçu Forge. Vous pouvez réessayer la même opération et raison.", "Aún no hay recibo Forge. Puedes reintentar la misma operación y razón."],
+            "recordedNotice": ["Forge recorded this decision; the current Mission state was read again.", "Forge heeft dit besluit vastgelegd; de actuele Missionstatus is opnieuw gelezen.", "Forge hat diese Entscheidung erfasst; der aktuelle Missionsstatus wurde erneut gelesen.", "Forge a enregistré cette décision ; l'état actuel de la mission a été relu.", "Forge registró esta decisión; se volvió a leer el estado actual de la misión."],
+            "decisionConflict": ["The review changed or this operation conflicts. Refresh the exact requirement.", "De review is gewijzigd of deze operatie conflicteert. Ververs het exacte vereiste.", "Die Prüfung hat sich geändert oder die Operation steht im Konflikt. Genaue Anforderung aktualisieren.", "La revue a changé ou cette opération est en conflit. Actualisez l'exigence exacte.", "La revisión cambió o la operación entra en conflicto. Actualiza el requisito exacto."],
+            "readPending": ["Read decision receipt", "Beslissingsreceipt lezen", "Entscheidungsbeleg lesen", "Lire le reçu de décision", "Leer recibo de decisión"],
+            "retrySame": ["Retry same operation", "Dezelfde operatie opnieuw proberen", "Dieselbe Operation erneut versuchen", "Réessayer la même opération", "Reintentar la misma operación"],
+            "confirmTitle": ["Confirm one Forge decision", "Bevestig één Forge-besluit", "Eine Forge-Entscheidung bestätigen", "Confirmer une décision Forge", "Confirmar una decisión Forge"],
+            "confirmBody": ["Forge will check your current authority and exact evidence before recording.", "Forge controleert je actuele bevoegdheid en exact bewijs voordat het vastlegt.", "Forge prüft Berechtigung und genaue Nachweise vor dem Erfassen.", "Forge vérifiera vos droits actuels et les preuves exactes avant d'enregistrer.", "Forge comprobará tus permisos y pruebas exactas antes de registrar."],
+            "decisionReason": ["Reason for this decision", "Reden voor dit besluit", "Begründung der Entscheidung", "Motif de cette décision", "Motivo de esta decisión"],
+            "confirmDecision": ["Confirm decision", "Besluit bevestigen", "Entscheidung bestätigen", "Confirmer la décision", "Confirmar decisión"],
+            "cancelDecision": ["Cancel", "Annuleren", "Abbrechen", "Annuler", "Cancelar"],
+            "approveDecision": ["Approve", "Goedkeuren", "Genehmigen", "Approuver", "Aprobar"],
+            "rejectDecision": ["Reject", "Afwijzen", "Ablehnen", "Rejeter", "Rechazar"],
+            "amendDecision": ["Request amendment", "Aanpassing vragen", "Änderung anfordern", "Demander une modification", "Solicitar modificación"],
+            "deferDecision": ["Defer", "Uitstellen", "Zurückstellen", "Différer", "Aplazar"],
+            "finalSeparate": ["Final Mission acceptance is a separate owner decision.", "Finale Missionacceptatie is een apart eigenaarsbesluit.", "Die endgültige Missionsabnahme ist eine separate Eigentümerentscheidung.", "L'acceptation finale de la mission relève d'une décision distincte du propriétaire.", "La aceptación final de la misión es una decisión separada del responsable."],
         ]
         return lines[key]?[index] ?? key
     }
@@ -58,6 +91,8 @@ enum MissionReviewCopy {
 struct MissionReviewsView: View {
     let items: [MissionReviewItem]
     let access: MissionReviewListAccess
+    let onDecision: ((MissionReviewItem, MissionReviewOutcome) -> Void)?
+    let decisionsBusy: Bool
     @Environment(\.locale) private var locale
     @State private var search = ""
     @State private var filter: MissionReviewFilter = .all
@@ -66,9 +101,13 @@ struct MissionReviewsView: View {
 
     init(items: [MissionReviewItem] = [], access: MissionReviewListAccess = .unavailable,
          selected: MissionReviewKey? = nil, search: String = "",
-         filter: MissionReviewFilter = .all) {
+         filter: MissionReviewFilter = .all,
+         decisionsBusy: Bool = false,
+         onDecision: ((MissionReviewItem, MissionReviewOutcome) -> Void)? = nil) {
         self.items = items
         self.access = access
+        self.onDecision = onDecision
+        self.decisionsBusy = decisionsBusy
         _selectedKey = State(initialValue: selected)
         _search = State(initialValue: search)
         _filter = State(initialValue: filter)
@@ -153,6 +192,10 @@ struct MissionReviewsView: View {
             LabeledContent(copy("requirement"), value: item.key.requirementID)
             LabeledContent(copy("subject"), value: item.subjectID)
             LabeledContent(copy("revision"), value: item.subjectRevision)
+            LabeledContent(copy("subjectDigest"), value: item.subjectDigest.isEmpty ? copy("unknown") : item.subjectDigest)
+            LabeledContent(copy("missionRevision"), value: item.currentMissionRevision > 0 ?
+                           String(item.currentMissionRevision) : copy("unknown"))
+            LabeledContent(copy("evidenceDigest"), value: item.evidenceDigest.isEmpty ? copy("unknown") : item.evidenceDigest)
             if let projectID = item.projectID { LabeledContent(copy("project"), value: projectID) }
             LabeledContent(copy("action"), value: item.actionResult ?? copy("unknown"))
             LabeledContent(copy("reason"), value: item.waitingReason ?? copy("unknown"))
@@ -164,6 +207,20 @@ struct MissionReviewsView: View {
                                                            "freshUnavailable" : item.freshness.rawValue))
             LabeledContent(copy("authority"), value: copy(item.authority.rawValue))
             LabeledContent(copy("phase"), value: copy(item.phase.rawValue))
+            LabeledContent(copy("lifecycle"), value: item.lifecycleState.isEmpty ? copy("unknown") : item.lifecycleState)
+            if let outcome = item.decisionOutcome {
+                let label = switch outcome {
+                case .approve: "approveDecision"
+                case .reject: "rejectDecision"
+                case .amend: "amendDecision"
+                case .deferred: "deferDecision"
+                }
+                LabeledContent(copy("decisionOutcome"), value: copy(label))
+            }
+            if let decisionID = item.decisionID { LabeledContent(copy("decisionID"), value: decisionID) }
+            if let decisionDigest = item.decisionDigest {
+                LabeledContent(copy("decisionDigest"), value: decisionDigest)
+            }
             Text(copy("evidence")).font(.headline)
             if item.evidence.isEmpty {
                 Text(copy("noEvidence")).foregroundStyle(.secondary)
@@ -174,11 +231,156 @@ struct MissionReviewsView: View {
                         .textSelection(.enabled)
                 }
             }
-            Text(copy("decisionUnavailable")).foregroundStyle(.orange)
+            if item.phase == .finalAcceptance {
+                Text(copy("finalSeparate")).foregroundStyle(.secondary)
+            } else if let onDecision, !item.allowedOutcomes.isEmpty {
+                ViewThatFits(in: .horizontal) {
+                    decisionButtons(item, onDecision: onDecision)
+                    VStack(alignment: .leading) {
+                        ForEach(MissionReviewOutcome.allCases, id: \.rawValue) { outcome in
+                            if item.mayOffer(outcome) {
+                                Button(copy(decisionLabel(outcome))) { onDecision(item, outcome) }
+                                    .disabled(decisionsBusy)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text(copy("decisionUnavailable")).foregroundStyle(.orange)
+            }
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 12))
         .textSelection(.enabled)
+    }
+
+    private func decisionButtons(_ item: MissionReviewItem,
+                                 onDecision: @escaping (MissionReviewItem, MissionReviewOutcome) -> Void) -> some View {
+        HStack {
+            ForEach(MissionReviewOutcome.allCases, id: \.rawValue) { outcome in
+                if item.mayOffer(outcome) {
+                    Button(copy(decisionLabel(outcome))) { onDecision(item, outcome) }
+                        .disabled(decisionsBusy)
+                }
+            }
+        }
+    }
+
+    private func decisionLabel(_ outcome: MissionReviewOutcome) -> String {
+        switch outcome {
+        case .approve: "approveDecision"
+        case .reject: "rejectDecision"
+        case .amend: "amendDecision"
+        case .deferred: "deferDecision"
+        }
+    }
+}
+
+struct LiveMissionReviewsView: View {
+    @ObservedObject var client: ClientState
+    @StateObject private var state: MissionReviewState
+    @Environment(\.locale) private var locale
+    @State private var grantToken = ""
+    @State private var proposedItem: MissionReviewItem?
+    @State private var proposedOutcome: MissionReviewOutcome?
+    @State private var reason = ""
+    @FocusState private var reasonFocused: Bool
+    private let refreshTimer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
+
+    init(client: ClientState, state: MissionReviewState = MissionReviewState()) {
+        self.client = client
+        _state = StateObject(wrappedValue: state)
+    }
+
+    private func copy(_ key: String) -> String {
+        MissionReviewCopy.text(key, language: locale.language.languageCode?.identifier)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text(copy(state.statusKey)).foregroundStyle(state.statusKey == "recordedNotice" ? .primary : .secondary)
+                Spacer()
+                if !state.actorID.isEmpty { Text(state.actorID).font(.caption).foregroundStyle(.secondary) }
+                Button(copy("refresh")) { Task { await state.refresh(client: client) } }
+                    .disabled(state.isBusy)
+            }.padding(.horizontal, 20).padding(.top, 12)
+            if state.access == .unavailable || state.access == .denied {
+                HStack {
+                    SecureField(copy("reviewGrant"), text: $grantToken)
+                        .textFieldStyle(.roundedBorder)
+                        .accessibilityLabel(copy("reviewGrant"))
+                    Button(copy("saveGrant")) {
+                        let submitted = grantToken
+                        grantToken = ""
+                        Task { await state.saveGrant(submitted, client: client) }
+                    }.disabled(state.isBusy || grantToken.isEmpty || client.phase != "CONNECTED")
+                }.padding(.horizontal, 20)
+            } else if state.pendingIntent == nil {
+                Button(copy("forgetGrant")) { state.forgetGrant() }
+                    .disabled(state.isBusy)
+                    .padding(.horizontal, 20)
+            }
+            if state.pendingIntent != nil {
+                HStack {
+                    Button(copy("readPending")) { Task { await state.readPending(client: client) } }
+                        .disabled(state.isBusy)
+                    if state.canRetrySameOperation {
+                        Button(copy("retrySame")) { Task { await state.retrySameOperation(client: client) } }
+                            .disabled(state.isBusy)
+                    }
+                }.padding(.horizontal, 20)
+            }
+            MissionReviewsView(items: state.items, access: state.access,
+                               decisionsBusy: state.isBusy || state.pendingIntent != nil,
+                               onDecision: state.pendingIntent == nil ? { item, outcome in
+                proposedItem = item
+                proposedOutcome = outcome
+                reason = ""
+            } : nil)
+        }
+        .onAppear { Task { await state.refresh(client: client) } }
+        .onChange(of: client.phase) { _, phase in
+            if phase == "CONNECTED" { Task { await state.refresh(client: client) } }
+        }
+        .onReceive(refreshTimer) { _ in
+            if client.phase == "CONNECTED" { Task { await state.refresh(client: client) } }
+        }
+        .sheet(isPresented: Binding(
+            get: { proposedItem != nil && proposedOutcome != nil },
+            set: { if !$0 { proposedItem = nil; proposedOutcome = nil } })) {
+            VStack(alignment: .leading, spacing: 14) {
+                Text(copy("confirmTitle")).font(.title2.bold())
+                if let item = proposedItem {
+                    Text("\(item.key.missionID) · \(item.key.requirementID)")
+                        .font(.caption).textSelection(.enabled)
+                }
+                Text(copy("confirmBody")).foregroundStyle(.secondary)
+                TextField(copy("decisionReason"), text: $reason)
+                    .focused($reasonFocused)
+                    .accessibilityLabel(copy("decisionReason"))
+                HStack {
+                    Button(copy("cancelDecision")) {
+                        proposedItem = nil
+                        proposedOutcome = nil
+                    }
+                    Spacer()
+                    Button(copy("confirmDecision")) {
+                        guard let item = proposedItem, let outcome = proposedOutcome else { return }
+                        let submittedReason = reason
+                        proposedItem = nil
+                        proposedOutcome = nil
+                        Task { await state.decide(item, outcome: outcome,
+                                                  reason: submittedReason, client: client) }
+                    }
+                    .disabled(reason.isEmpty || reason.count > 512 || state.isBusy)
+                    .keyboardShortcut(.defaultAction)
+                }
+            }
+            .frame(width: 440)
+            .padding(22)
+            .onAppear { reasonFocused = true }
+        }
     }
 }

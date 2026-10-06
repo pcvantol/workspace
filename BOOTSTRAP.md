@@ -9,9 +9,13 @@ The [owning consumer boundary](docs/WORKSPACE_MISSION_REVIEW_INBOX_V1.md)
 defines the local GP-WC/GP-W serial review subset, acceptance and exact Forge
 producer dependency. Workspace presents authorized Mission/review facts and
 transports one explicit decision; Forge remains the review authority. The
-existing Forge `WORKSPACE_READ` grant cannot access progression, and no
-qualified review producer binding has been delivered. Preserve that gap as an
-open dependency while implementing independent Workspace source and tests.
+existing Forge `WORKSPACE_READ` grant cannot access progression. L3 delivered
+the separate review producer on protected Forge main
+`f4d3b269d54fd302a586cd8f41421c4d15e8c4d5` with exact installed-wheel
+qualification in [#207](https://github.com/pcvantol/forge/issues/207#issuecomment-6016125785).
+Workspace 2.8.6 consumes only that actor- and Mission-scoped seam through its
+own Server and native Client. Workspace's own installed two-product and GUI
+qualification, exact-head review and protected merge remain delivery gates.
 Archive/restore in 2.8.5 and its receipt below remain delivered history.
 
 ## Delivered owner priority — 5 October 2026, r81 plan revision 84

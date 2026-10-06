@@ -4,22 +4,28 @@ import XCTest
 final class MissionReviewDecisionStateTests: XCTestCase {
     private let operation = UUID(uuidString: "dff33888-f15e-43fa-b15b-3a486b7494cd")!
 
-    private func item(revision: String = "r7", freshness: MissionReviewFreshness = .current,
+    private func item(revision: String = "r7", currentMissionRevision: Int = 7,
+                      freshness: MissionReviewFreshness = .current,
                       authority: MissionReviewAuthority = .forge) -> MissionReviewItem {
         MissionReviewItem(
             key: MissionReviewKey(missionID: "mission-1", requirementID: "review-1"),
             subjectID: "action-1", subjectRevision: revision, projectID: nil,
             title: "Review delivered Action", actionResult: "Delivered", waitingReason: "Review fence",
             phase: .waitingForReview, authority: authority, freshness: freshness,
-            allowedOutcomes: [.approve, .reject, .amend, .deferred])
+            allowedOutcomes: [.approve, .reject, .amend, .deferred],
+            forgeInstanceID: "forge-1", actorID: "reviewer-1",
+            subjectDigest: "sha256:" + String(repeating: "a", count: 64),
+            missionStateRevision: 7, currentMissionRevision: currentMissionRevision,
+            evidenceDigest: "sha256:" + String(repeating: "b", count: 64), policyRevision: "policy-r1")
     }
 
     private func readback(for intent: MissionReviewIntent,
-                          receipt: String = "receipt-1", currentRevision: String = "r7") -> MissionReviewOwnerReadback {
+                          receipt: String = "receipt-1", currentRevision: Int = 7) -> MissionReviewOwnerReadback {
         MissionReviewOwnerReadback(operationID: intent.operationID, key: intent.key,
                                    subjectID: intent.subjectID, subjectRevision: intent.subjectRevision,
                                    outcome: intent.outcome, receiptID: receipt,
-                                   currentSubjectRevision: currentRevision, fenceState: .released)
+                                   forgeInstanceID: intent.forgeInstanceID, actorID: intent.actorID,
+                                   currentMissionRevision: currentRevision, fenceState: .released)
     }
 
     func testExplicitConfirmAndDurableIntentPrecedeOneSubmission() throws {
@@ -69,33 +75,37 @@ final class MissionReviewDecisionStateTests: XCTestCase {
         state.submissionAcknowledged()
         var wrong = readback(for: intent, receipt: "")
         XCTAssertFalse(state.applyOwnerReadback(wrong, current: item()))
-        wrong = readback(for: intent, currentRevision: "r8")
+        wrong = readback(for: intent, currentRevision: 8)
         XCTAssertFalse(state.applyOwnerReadback(wrong, current: item()))
         XCTAssertFalse(state.applyOwnerReadback(readback(for: intent), current: item(freshness: .stale)))
-        XCTAssertFalse(state.applyOwnerReadback(readback(for: intent), current: item(revision: "r8")))
+        XCTAssertFalse(state.applyOwnerReadback(readback(for: intent), current: item(currentMissionRevision: 8)))
         let foreign = MissionReviewOwnerReadback(operationID: UUID(), key: intent.key,
                                                  subjectID: intent.subjectID, subjectRevision: intent.subjectRevision,
                                                  outcome: intent.outcome, receiptID: "receipt-1",
-                                                 currentSubjectRevision: "r7", fenceState: .released)
+                                                 forgeInstanceID: intent.forgeInstanceID, actorID: intent.actorID,
+                                                 currentMissionRevision: 7, fenceState: .released)
         XCTAssertFalse(state.applyOwnerReadback(foreign, current: item()))
         let wrongRequirement = MissionReviewOwnerReadback(
             operationID: intent.operationID,
             key: MissionReviewKey(missionID: intent.key.missionID, requirementID: "review-elsewhere"),
             subjectID: intent.subjectID, subjectRevision: intent.subjectRevision,
             outcome: intent.outcome, receiptID: "receipt-1",
-            currentSubjectRevision: "r7", fenceState: .released)
+            forgeInstanceID: intent.forgeInstanceID, actorID: intent.actorID,
+            currentMissionRevision: 7, fenceState: .released)
         XCTAssertFalse(state.applyOwnerReadback(wrongRequirement, current: item()))
         let wrongSubject = MissionReviewOwnerReadback(
             operationID: intent.operationID, key: intent.key,
             subjectID: "action-elsewhere", subjectRevision: intent.subjectRevision,
             outcome: intent.outcome, receiptID: "receipt-1",
-            currentSubjectRevision: "r7", fenceState: .released)
+            forgeInstanceID: intent.forgeInstanceID, actorID: intent.actorID,
+            currentMissionRevision: 7, fenceState: .released)
         XCTAssertFalse(state.applyOwnerReadback(wrongSubject, current: item()))
         let wrongOutcome = MissionReviewOwnerReadback(
             operationID: intent.operationID, key: intent.key,
             subjectID: intent.subjectID, subjectRevision: intent.subjectRevision,
             outcome: .approve, receiptID: "receipt-1",
-            currentSubjectRevision: "r7", fenceState: .released)
+            forgeInstanceID: intent.forgeInstanceID, actorID: intent.actorID,
+            currentMissionRevision: 7, fenceState: .released)
         XCTAssertFalse(state.applyOwnerReadback(wrongOutcome, current: item()))
         XCTAssertEqual(state.phase, .awaitingOwnerReadback(intent))
         XCTAssertTrue(state.applyOwnerReadback(readback(for: intent), current: item()))

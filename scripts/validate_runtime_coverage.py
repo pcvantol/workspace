@@ -39,7 +39,7 @@ def main():
         cover_dir = Path(directory)
         command = [sys.executable, "-m", "trace", "--count", "--missing", "--summary",
                    "--coverdir", str(cover_dir), "--module", "unittest", "discover",
-                   "-s", "tests", "-p", "test_server_readonly.py"]
+                   "-s", "tests", "-p", "test_*.py"]
         run = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
         if run.returncode:
             print(run.stdout[-4000:], file=sys.stderr)

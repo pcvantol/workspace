@@ -55,6 +55,7 @@ if [[ "$(uname -s)" == Darwin ]]; then
   swift test --package-path macos/WorkspaceClient --scratch-path "$swift_scratch" --enable-code-coverage
   swift_coverage="$(swift test --package-path macos/WorkspaceClient --scratch-path "$swift_scratch" --show-codecov-path)"
   test -s "$swift_coverage"
+  python3 scripts/validate_swift_review_coverage.py "$swift_coverage"
   WORKSPACE_SWIFT_SCRATCH="$swift_scratch" bash scripts/build_macos_app.sh "${TMPDIR:-/tmp}/workspace-validation-$(id -u)/Workspace.app"
 fi
 

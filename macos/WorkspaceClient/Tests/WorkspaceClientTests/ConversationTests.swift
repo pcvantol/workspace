@@ -404,10 +404,13 @@ final class ConversationTests: XCTestCase {
             try? FileManager.default.removeItem(at: root)
         }
         let file = root.appendingPathComponent("credentials.json")
-        let document: [String: String] = [
+        let document: [String: Any] = [
             "endpoint": "http://127.0.0.1:18765/", "instance_id": instance,
             "read_token": "read-only", "project_id": "project-a", "draft_grant": grant,
-            "local_root": root.appendingPathComponent("drafts").path
+            "local_root": root.appendingPathComponent("drafts").path,
+            "review_grant": String(repeating: "R", count: 43),
+            "review_actor": "reviewer-a", "review_forge_instance": "forge-a",
+            "review_mission_ids": ["mission-a"]
         ]
         try JSONSerialization.data(withJSONObject: document).write(to: file)
         try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: file.path)
@@ -428,11 +431,20 @@ final class ConversationTests: XCTestCase {
         XCTAssertEqual(try grants.load()?.projectID, "project-b")
         try grants.forget()
         XCTAssertNil(try grants.load())
+        let reviews = IsolatedReviewGrant(loaded)
+        XCTAssertEqual(try reviews.loadAccess()?.actorID, "reviewer-a")
+        XCTAssertEqual(try reviews.loadAccess()?.missionIDs, ["mission-a"])
+        try reviews.forgetAccess()
+        XCTAssertNil(try reviews.loadAccess())
         try FileManager.default.setAttributes([.posixPermissions: 0o644], ofItemAtPath: file.path)
         XCTAssertThrowsError(try IsolatedTestDocument.load())
         try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: file.path)
         var invalid = document
         invalid["endpoint"] = "https://example.com/"
+        try JSONSerialization.data(withJSONObject: invalid).write(to: file)
+        XCTAssertThrowsError(try IsolatedTestDocument.load())
+        invalid = document
+        invalid["review_mission_ids"] = ["mission-a", "mission-a"]
         try JSONSerialization.data(withJSONObject: invalid).write(to: file)
         XCTAssertThrowsError(try IsolatedTestDocument.load())
         unsetenv("WORKSPACE_ISOLATED_CREDENTIALS_FILE")

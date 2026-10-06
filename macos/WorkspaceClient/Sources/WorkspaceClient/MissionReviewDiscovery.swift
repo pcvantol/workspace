@@ -6,7 +6,8 @@ enum MissionReviewFilter: String, CaseIterable {
 }
 
 enum MissionReviewPhase: String {
-    case waitingForReview, decisionRecorded, engineeringResult, finalAcceptance, unknown
+    case waitingForReview, decisionRecorded, engineeringResult, finalAcceptance
+    case noReview, externalGate, unknown
 }
 
 enum MissionReviewAuthority: String {
@@ -37,9 +38,20 @@ struct MissionEvidenceReference: Equatable {
 }
 
 struct MissionReviewItem: Equatable {
+    let forgeInstanceID: String
+    let actorID: String
     let key: MissionReviewKey
     let subjectID: String
     let subjectRevision: String
+    let subjectDigest: String
+    let missionStateRevision: Int
+    let currentMissionRevision: Int
+    let evidenceDigest: String
+    let policyRevision: String
+    let lifecycleState: String
+    let decisionID: String?
+    let decisionDigest: String?
+    let decisionOutcome: MissionReviewOutcome?
     let projectID: String?
     let title: String?
     let actionResult: String?
@@ -60,10 +72,26 @@ struct MissionReviewItem: Equatable {
          freshness: MissionReviewFreshness, allowedOutcomes: Set<MissionReviewOutcome>,
          requiredRole: String? = nil, blockingScope: String? = nil,
          policySource: String? = nil, evidence: [MissionEvidenceReference] = [],
-         observedAt: String? = nil) {
+         observedAt: String? = nil, forgeInstanceID: String = "", actorID: String = "",
+         subjectDigest: String = "", missionStateRevision: Int = 0,
+         currentMissionRevision: Int = 0,
+         evidenceDigest: String = "", policyRevision: String = "",
+         lifecycleState: String = "", decisionID: String? = nil,
+         decisionDigest: String? = nil, decisionOutcome: MissionReviewOutcome? = nil) {
+        self.forgeInstanceID = forgeInstanceID
+        self.actorID = actorID
         self.key = key
         self.subjectID = subjectID
         self.subjectRevision = subjectRevision
+        self.subjectDigest = subjectDigest
+        self.missionStateRevision = missionStateRevision
+        self.currentMissionRevision = currentMissionRevision
+        self.evidenceDigest = evidenceDigest
+        self.policyRevision = policyRevision
+        self.lifecycleState = lifecycleState
+        self.decisionID = decisionID
+        self.decisionDigest = decisionDigest
+        self.decisionOutcome = decisionOutcome
         self.projectID = projectID
         self.title = title
         self.actionResult = actionResult
@@ -83,7 +111,8 @@ struct MissionReviewItem: Equatable {
     func mayOffer(_ outcome: MissionReviewOutcome) -> Bool {
         phase == .waitingForReview && authority == .forge && freshness == .current &&
         !key.missionID.isEmpty && !key.requirementID.isEmpty &&
-        !subjectID.isEmpty && !subjectRevision.isEmpty && allowedOutcomes.contains(outcome)
+        !forgeInstanceID.isEmpty && !actorID.isEmpty && !subjectDigest.isEmpty && missionStateRevision > 0 &&
+        !evidenceDigest.isEmpty && !policyRevision.isEmpty && allowedOutcomes.contains(outcome)
     }
 }
 
@@ -120,7 +149,7 @@ enum MissionReviewDiscovery {
 
     static func selected(_ key: MissionReviewKey?, in items: [MissionReviewItem]) -> MissionReviewItem? {
         guard let key else { return nil }
-        return items.first { $0.key == key }
+        return items.first { $0.key == key } ?? items.first { $0.key.missionID == key.missionID }
     }
 
     static func emptyState(access: MissionReviewListAccess, all: [MissionReviewItem],

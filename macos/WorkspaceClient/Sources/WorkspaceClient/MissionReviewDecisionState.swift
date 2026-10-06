@@ -6,8 +6,33 @@ struct MissionReviewIntent: Codable, Equatable {
     let key: MissionReviewKey
     let subjectID: String
     let subjectRevision: String
+    let forgeInstanceID: String
+    let actorID: String
+    let subjectDigest: String
+    let missionStateRevision: Int
+    let evidenceDigest: String
+    let policyRevision: String
     let outcome: MissionReviewOutcome
     let comment: String
+
+    init(operationID: UUID, key: MissionReviewKey, subjectID: String, subjectRevision: String,
+         outcome: MissionReviewOutcome, comment: String, forgeInstanceID: String = "",
+         actorID: String = "",
+         subjectDigest: String = "", missionStateRevision: Int = 0,
+         evidenceDigest: String = "", policyRevision: String = "") {
+        self.operationID = operationID
+        self.key = key
+        self.subjectID = subjectID
+        self.subjectRevision = subjectRevision
+        self.forgeInstanceID = forgeInstanceID
+        self.actorID = actorID
+        self.subjectDigest = subjectDigest
+        self.missionStateRevision = missionStateRevision
+        self.evidenceDigest = evidenceDigest
+        self.policyRevision = policyRevision
+        self.outcome = outcome
+        self.comment = comment
+    }
 }
 
 struct MissionReviewOwnerReadback: Equatable {
@@ -17,8 +42,26 @@ struct MissionReviewOwnerReadback: Equatable {
     let subjectRevision: String
     let outcome: MissionReviewOutcome
     let receiptID: String
-    let currentSubjectRevision: String
+    let forgeInstanceID: String
+    let actorID: String
+    let currentMissionRevision: Int
     let fenceState: MissionReviewFenceState
+
+    init(operationID: UUID, key: MissionReviewKey, subjectID: String,
+         subjectRevision: String, outcome: MissionReviewOutcome, receiptID: String,
+         forgeInstanceID: String = "", actorID: String = "", currentMissionRevision: Int = 0,
+         fenceState: MissionReviewFenceState) {
+        self.operationID = operationID
+        self.key = key
+        self.subjectID = subjectID
+        self.subjectRevision = subjectRevision
+        self.outcome = outcome
+        self.receiptID = receiptID
+        self.forgeInstanceID = forgeInstanceID
+        self.actorID = actorID
+        self.currentMissionRevision = currentMissionRevision
+        self.fenceState = fenceState
+    }
 }
 
 enum MissionReviewFenceState: Equatable {
@@ -42,10 +85,16 @@ struct MissionReviewDecisionState {
 
     mutating func prepare(item: MissionReviewItem, outcome: MissionReviewOutcome,
                           comment: String, operationID: UUID = UUID()) -> Bool {
-        guard phase == .idle, item.mayOffer(outcome), comment.utf8.count <= 2_000 else { return false }
+        guard phase == .idle, item.mayOffer(outcome),
+              !comment.isEmpty, comment.count <= 512,
+              !comment.unicodeScalars.contains(where: { $0.value < 32 }) else { return false }
         phase = .confirming(MissionReviewIntent(
             operationID: operationID, key: item.key, subjectID: item.subjectID,
-            subjectRevision: item.subjectRevision, outcome: outcome, comment: comment))
+            subjectRevision: item.subjectRevision, outcome: outcome, comment: comment,
+            forgeInstanceID: item.forgeInstanceID, actorID: item.actorID,
+            subjectDigest: item.subjectDigest,
+            missionStateRevision: item.missionStateRevision,
+            evidenceDigest: item.evidenceDigest, policyRevision: item.policyRevision))
         return true
     }
 
@@ -102,9 +151,13 @@ struct MissionReviewDecisionState {
               readback.subjectRevision == intent.subjectRevision,
               readback.outcome == intent.outcome,
               !readback.receiptID.isEmpty,
-              current.key == intent.key,
-              current.subjectID == intent.subjectID,
-              current.subjectRevision == readback.currentSubjectRevision,
+              readback.forgeInstanceID == intent.forgeInstanceID,
+              readback.actorID == intent.actorID,
+              current.key.missionID == intent.key.missionID,
+              current.forgeInstanceID == intent.forgeInstanceID,
+              current.actorID == intent.actorID,
+              readback.currentMissionRevision == current.currentMissionRevision,
+              current.currentMissionRevision >= intent.missionStateRevision,
               current.freshness == .current else { return false }
         phase = .recorded(intent, receiptID: readback.receiptID, fenceState: readback.fenceState)
         return true
@@ -115,6 +168,13 @@ struct MissionReviewDecisionState {
     mutating func cancelBeforeSubmission() {
         switch phase {
         case .confirming, .awaitingPersistence: phase = .idle
+        default: break
+        }
+    }
+
+    mutating func resetAfterRecorded() {
+        switch phase {
+        case .recorded, .denied, .stale: phase = .idle
         default: break
         }
     }

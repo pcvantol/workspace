@@ -35,6 +35,16 @@ unchanged. The later native Client uses the separately installed Server's
 HTTP(S) API. Product 2.8.3 adds the [own conversation draft API](WORKSPACE_CONVERSATION_DRAFT_HTTP_V1.md)
 without changing the read bearer into write authority.
 
+Product 2.8.6 adds the [native Missions & reviews consumer](WORKSPACE_MISSION_REVIEW_INBOX_V1.md).
+The Workspace Server requires its pinned read bearer plus a separately
+owner-provisioned actor review token, then transports only the exact scoped
+Forge review HTTP contract. The native Client stores its Workspace review
+credential and pending operation separately. Forge remains the Mission and
+decision authority; Workspace records only transport intent before POST and
+accepts success after the same operation receipt and current fence readback.
+The existing Forge status grant and Workspace conversation grant retain their
+own meanings. No project affiliation is inferred from a Mission title.
+
 ## Role-aware conversations
 
 [Business, Architect and UX conversations](ROLE_AWARE_CONVERSATIONS_V1.md)

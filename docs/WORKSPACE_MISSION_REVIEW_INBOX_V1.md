@@ -46,45 +46,42 @@ not proof. Forge rechecks role, revocation, expiry, policy, subject and evidence
 revision when recording a decision. Workspace stores at most transport intent
 for recovery; it creates no second approval record or Mission store.
 
-The review consumer capability is **not present on the pinned Forge main**
-`aec9c5c678209f216cdf2a62c5a2fdc0b76d196d` (2.7.65). On that source,
-`WORKSPACE_READ` accepts only `GET /v1/instance` and `GET /v1/status`.
-`GET /v1/missions/{mission_id}/progression` and
-`POST /v1/missions/{mission_id}/progression-decisions` use the ADMIN route and
-an admin principal. Their existence does not authorize Workspace use. No
-admin token, broad proxy, actor-name substitution, SQL/CLI fallback or
-project-attribution guess may bridge this gap.
+The earlier Forge `WORKSPACE_READ` grant still accepts only status reads. The
+separate [Forge review producer contract](https://github.com/pcvantol/forge/blob/f4d3b269d54fd302a586cd8f41421c4d15e8c4d5/docs/architecture/FORGE_WORKSPACE_MISSION_REVIEW_HTTP_V1.md)
+was protected-merged at `f4d3b269d54fd302a586cd8f41421c4d15e8c4d5`.
+The [installed producer receipt](https://github.com/pcvantol/forge/issues/207#issuecomment-6016125785)
+reports 14/14 real HTTP cases on the exact-main Forge wheel, two isolated
+actors/scopes, replay and negatives. L3's FCI task remains separate.
 
-### Exact producer join required from L3
+### Exact producer join consumed by Workspace 2.8.6
 
-L3's sole Forge writer owns the smallest versioned consumer seam, without
-interrupting its selected FCI work or changing the existing status grant:
+Forge's owner provisions a private, revocable `forge-workspace-review-grant`
+for one installed instance, authenticated actor, 1–32 existing Mission IDs and
+expiry. Workspace's owner binds that Forge bearer to the same actor and Forge
+instance with `workspace-server review-bind-issue`. The command probes the
+actual Forge inbox, checks its exact actor/instance/Mission scope, writes a
+separate private Workspace review token and stores the Forge token only under
+the private Server root. The native app stores the Workspace token in its own
+review Keychain account. The normal pinned Server read bearer is required as
+well. Forge revocation is authoritative on every subsequent request.
 
-1. An owner-provisioned, revocable capability/principal bound to Forge
-   instance, authenticated actor, explicit Mission set or verified project
-   scope, role and expiry; independent actors/scopes cannot borrow one another's
-   reviews. An allowed empty subset is distinguishable from a global empty set.
-2. A bounded read of authorized Mission identity and current review
-   requirements, exact Action/result and subject/evidence/policy revisions,
-   blocker/fence scope, supported outcomes, status and safe typed evidence
-   references. Unknown facts remain unknown. The producer identifies the
-   review authority and distinguishes final Mission acceptance and external
-   gates; external gates never gain a local Approve control.
-3. One decision command bound to actual authenticated principal, capability,
-   Forge instance, Mission/requirement/subject, expected revisions, outcome
-   and durable operation ID. The owning service rechecks these at mutation
-   time, returns a receipt, and makes an identical operation safely replayable.
-4. A readback by that same operation ID and a current requirement/fence read
-   after lost response or restart. A conflicting payload for an existing
-   operation fails closed; Workspace never sends a fresh decision identity as
-   a blind retry. Supported owner provisioning/revocation and negative HTTP
-   examples are part of the handoff.
+| Method | Workspace Server route | Forge contract |
+| --- | --- | --- |
+| `GET` | `/v1/reviews` | `forge-workspace-review-inbox/v1`, exact scoped list |
+| `GET` | `/v1/reviews/missions/{mission_id}` | Exact current item and fence |
+| `POST` | `/v1/reviews/missions/{mission_id}/decisions` | `forge-workspace-review-decision/v1`, exact revisions and durable operation ID |
+| `GET` | `/v1/reviews/missions/{mission_id}/decisions/{operation_id}` | `forge-workspace-review-operation/v1`, same-principal receipt |
 
-The exact wire schema, route names, producer source pin and qualification
-receipt must come from L3. Workspace will map only that qualified contract;
-this document does not assert a Forge endpoint or grant already exists. The
-separate coordinator post to Forge #207 has not been published at this
-checkpoint; this Workspace record does not claim L3 acknowledgement.
+Workspace Server requires both its pinned read bearer and the separate
+`X-Workspace-Review-Grant` header. It validates every returned actor, Mission,
+instance, requirement and operation digest, and stores only the outbound
+transport intent in a private SQLite record before POST. The Client also saves
+the exact intent before POST. After a lost response or restart it reads the
+same operation ID and current Mission item. A 404 offers only an explicit retry
+of the same operation and reason; a 409 reads back first and never turns a
+conflict into optimistic success. Forge alone records the review decision and
+releases any successor. Final acceptance and external gates never gain a local
+Approve action.
 
 ## Workspace acceptance and evidence
 
@@ -104,9 +101,9 @@ alter progression policy, perform EP submission or trigger a provider.
 
 ## Current qualification state
 
-`PRODUCER_BINDING=UNQUALIFIED` and `INTEGRATED_DELIVERY=NOT_RUN` at selection.
-Independent Workspace implementation/tests may proceed. The first native tab
-shows an honest unavailable state until a qualified Server/Forge binding exists;
-its isolated presentation tests do not supply real Mission records or decisions.
-A fixture-only view, disabled decision controls or source tests are not evidence
-of the installed vertical result.
+`PRODUCER_BINDING=QUALIFIED_FORGE_MAIN_F4D3B26` and
+`WORKSPACE_INTEGRATED_DELIVERY=IN_PROGRESS`. The Workspace source tests cover
+the native and Server safety states, but source tests and a fixture-only view
+are not the installed vertical result. Exact-main two-product and real packaged
+GUI qualification, exact-head independent review, protected merge and TDE
+observation are recorded separately in the Workspace PR.

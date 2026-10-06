@@ -13,7 +13,11 @@ final class MissionReviewsViewTests: XCTestCase {
             phase: phase, authority: .forge, freshness: .current,
             allowedOutcomes: [.approve], requiredRole: "ARCHITECT",
             blockingScope: "MISSION", policySource: "assignment-r2",
-            evidence: evidence, observedAt: "2026-10-06T08:00:00Z")
+            evidence: evidence, observedAt: "2026-10-06T08:00:00Z",
+            forgeInstanceID: "forge-1", actorID: "reviewer-1",
+            subjectDigest: "sha256:" + String(repeating: "a", count: 64),
+            missionStateRevision: 7, currentMissionRevision: 7,
+            evidenceDigest: "sha256:" + String(repeating: "b", count: 64), policyRevision: "policy-r1")
     }
 
     @MainActor
@@ -21,7 +25,7 @@ final class MissionReviewsViewTests: XCTestCase {
         let application = NSApplication.shared
         application.setActivationPolicy(.prohibited)
         let hosting = NSHostingView(rootView: view.environment(\.locale, Locale(identifier: language)))
-        hosting.frame = NSRect(x: 0, y: 0, width: width, height: 650)
+        hosting.frame = NSRect(x: 0, y: 0, width: width, height: 1800)
         hosting.layoutSubtreeIfNeeded()
         XCTAssertEqual(hosting.frame.width, width)
     }
@@ -57,12 +61,17 @@ final class MissionReviewsViewTests: XCTestCase {
             render(MissionReviewsView(items: [row], access: .available, selected: row.key),
                    language: language, width: 520)
             render(MissionReviewsView(items: [row], access: .available, selected: row.key,
+                                      onDecision: { _, _ in }), language: language, width: 520)
+            render(MissionReviewsView(items: [row], access: .available, selected: row.key,
                                       search: "no match", filter: .waiting),
                    language: language, width: 900)
             render(MissionReviewsView(items: [item(phase: .decisionRecorded)], access: .available,
                                       selected: row.key, filter: .recorded),
                    language: language, width: 900)
             render(MissionReviewsView(items: [item()], access: .available, selected: row.key),
+                   language: language, width: 900)
+            render(MissionReviewsView(items: [item(phase: .finalAcceptance)], access: .available,
+                                      selected: row.key, onDecision: { _, _ in }),
                    language: language, width: 900)
         }
     }

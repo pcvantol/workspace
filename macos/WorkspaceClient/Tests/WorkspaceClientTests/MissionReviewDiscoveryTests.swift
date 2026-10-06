@@ -14,7 +14,11 @@ final class MissionReviewDiscoveryTests: XCTestCase {
             key: MissionReviewKey(missionID: mission, requirementID: requirement),
             subjectID: "action-1", subjectRevision: revision, projectID: project,
             title: title, actionResult: action, waitingReason: reason, phase: phase,
-            authority: authority, freshness: freshness, allowedOutcomes: outcomes)
+            authority: authority, freshness: freshness, allowedOutcomes: outcomes,
+            forgeInstanceID: "forge-1", actorID: "reviewer-1",
+            subjectDigest: "sha256:" + String(repeating: "a", count: 64),
+            missionStateRevision: 2, currentMissionRevision: 2,
+            evidenceDigest: "sha256:" + String(repeating: "b", count: 64), policyRevision: "policy-r1")
     }
 
     func testSearchFilterAndDeterministicOrderWithoutProjectInference() {
@@ -55,7 +59,7 @@ final class MissionReviewDiscoveryTests: XCTestCase {
         XCTAssertFalse(item(phase: .finalAcceptance).mayOffer(.approve))
         XCTAssertFalse(item(phase: .engineeringResult).mayOffer(.approve))
         XCTAssertFalse(item(phase: .unknown).mayOffer(.approve))
-        XCTAssertFalse(item(revision: "").mayOffer(.approve))
+        XCTAssertTrue(item(revision: "").mayOffer(.approve))
         let missing = MissionReviewItem(
             key: MissionReviewKey(missionID: "", requirementID: "review-2"),
             subjectID: "action-1", subjectRevision: "r2", projectID: nil, title: nil,

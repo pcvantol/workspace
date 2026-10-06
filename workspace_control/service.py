@@ -265,7 +265,9 @@ class Service:
         try:
             self._load_instance()
             from .conversations import ConversationStore
+            from .review_peer import ReviewTransport
             self.conversations = ConversationStore(self.root, self._root_fd)
+            self.reviews = ReviewTransport(self.root, self._root_fd)
         except Exception:
             self.close()
             raise
@@ -346,6 +348,15 @@ class Service:
 
     def revoke_conversation_grants(self, actor_id, project_id):
         return self.conversations.revoke_grants(actor_id, project_id)
+
+    def provision_review(self, actor_id, endpoint, forge_instance_id,
+                         forge_token_file, client_token_file):
+        """Owner-held pairing of one authenticated actor to a scoped Forge grant."""
+        return self.reviews.provision(actor_id, endpoint, forge_instance_id,
+                                      forge_token_file, client_token_file)
+
+    def revoke_review(self, binding_id):
+        return self.reviews.revoke(binding_id)
 
     def forge_status(self):
         """Read a scoped Forge observation without borrowing peer authority."""

@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "L4 native Mission review inbox under Forge #208/6012171755 and producer #207/6016125785",
+  "determined_version": "2.8.6",
+  "event_lineage": "L4 native Mission review inbox under Forge #208/6012171755 and producer #207/6016125785",
+  "expected_source_revision": "195d760e8043faa2ff2520c8a473a6ea463cb24e",
+  "expected_version": "2.8.5",
+  "operation_id": "l4-r81-mission-reviews-20261006",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

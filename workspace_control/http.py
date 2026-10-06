@@ -17,6 +17,7 @@ from . import __version__
 from .schemas import OPENAPI_SCHEMAS, SUCCESS_SCHEMA
 from .service import Service, _unique_json_object
 from .conversations import ConversationConflict
+from .review_peer import ReviewError
 
 
 OPERATIONS = {
@@ -58,6 +59,24 @@ OPERATIONS = {
                               "path": "/v1/conversations/{id}/restore",
                               "auth": "BEARER_PINNED_AND_DRAFT_GRANT", "contract": "draft",
                               "summary": "restore own conversation navigation at revision"},
+    "reviews.contract.read": {"exposure": "HTTP_EXPOSED", "method": "GET",
+                              "path": "/v1/reviews/openapi.json", "auth": "BEARER_PINNED",
+                              "contract": "review", "summary": "own review transport contract"},
+    "reviews.list": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/reviews",
+                     "auth": "BEARER_PINNED_AND_REVIEW_GRANT", "contract": "review",
+                     "summary": "actor-scoped Forge Mission reviews"},
+    "reviews.get": {"exposure": "HTTP_EXPOSED", "method": "GET",
+                    "path": "/v1/reviews/missions/{mission_id}",
+                    "auth": "BEARER_PINNED_AND_REVIEW_GRANT", "contract": "review",
+                    "summary": "one authorized Mission review"},
+    "reviews.submit": {"exposure": "HTTP_EXPOSED", "method": "POST",
+                       "path": "/v1/reviews/missions/{mission_id}/decisions",
+                       "auth": "BEARER_PINNED_AND_REVIEW_GRANT", "contract": "review",
+                       "summary": "one exact Forge review decision"},
+    "reviews.operation": {"exposure": "HTTP_EXPOSED", "method": "GET",
+                          "path": "/v1/reviews/missions/{mission_id}/decisions/{operation_id}",
+                          "auth": "BEARER_PINNED_AND_REVIEW_GRANT", "contract": "review",
+                          "summary": "same actor Forge decision readback"},
     "instance.init": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "init",
                       "auth": "PRIVATE_ROOT_OWNER", "summary": "initialize private instance"},
     "instance.inspect": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "inspect",
@@ -70,6 +89,10 @@ OPERATIONS = {
                                   "auth": "PRIVATE_ROOT_OWNER", "summary": "issue project and actor draft grant"},
     "conversations.grant.revoke": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "conversation-grant-revoke",
                                    "auth": "PRIVATE_ROOT_OWNER", "summary": "revoke project and actor draft grants"},
+    "reviews.bind.issue": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "review-bind-issue",
+                           "auth": "PRIVATE_ROOT_OWNER", "summary": "bind actor and scoped Forge review grant"},
+    "reviews.bind.revoke": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "review-bind-revoke",
+                            "auth": "PRIVATE_ROOT_OWNER", "summary": "revoke Workspace actor review binding"},
 }
 ROUTES = {details["path"]: details["summary"] for details in OPERATIONS.values()
           if details["exposure"] == "HTTP_EXPOSED" and details.get("contract", "read") == "read"}
@@ -201,6 +224,51 @@ def draft_openapi_contract():
                     "post": operation("conversations.archive", 200, request="ArchiveCommand", item=True)},
                 "/v1/conversations/{id}/restore": {
                     "post": operation("conversations.restore", 200, request="ArchiveCommand", item=True)}}}
+
+
+def review_openapi_contract():
+    """Describe the own actor transport; Forge's pinned schema remains authoritative."""
+    schema = {"type": "object", "additionalProperties": False,
+              "required": ["contract_version", "operation_id", "requirement_id", "subject_digest",
+                           "mission_state_revision", "evidence_digest", "policy_revision",
+                           "decision", "reason"],
+              "properties": {"contract_version": {"const": "forge-workspace-review-decision/v1"},
+                             "operation_id": {"type": "string", "maxLength": 128},
+                             "requirement_id": {"type": "string", "maxLength": 128},
+                             "subject_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+                             "mission_state_revision": {"type": "integer", "minimum": 1},
+                             "evidence_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+                             "policy_revision": {"type": "string", "minLength": 1, "maxLength": 128},
+                             "decision": {"enum": ["approve", "reject", "amend", "defer"]},
+                             "reason": {"type": "string", "minLength": 1, "maxLength": 512}}}
+    def operation(name, *, request=False):
+        result = {"operationId": name,
+                  "security": [{"bearerAuth": [], "reviewGrant": []}],
+                  "parameters": [{"name": "X-Workspace-Instance", "in": "header", "required": True,
+                                  "schema": {"type": "string"}}],
+                  "responses": {"200": {"description": "Validated Forge readback"},
+                                "400": {"description": "Invalid request"},
+                                "401": {"description": "Workspace or Forge bearer denied"},
+                                "403": {"description": "Actor or Mission denied"},
+                                "404": {"description": "Operation not found for actor"},
+                                "409": {"description": "Wrong instance or conflicting intent"},
+                                "503": {"description": "Forge or local transport unavailable"}}}
+        if request:
+            result["requestBody"] = {"required": True, "content": {"application/json": {"schema": schema}}}
+            result["responses"]["201"] = {"description": "Canonical Forge decision recorded"}
+        return result
+    return {"openapi": "3.0.3",
+            "info": {"title": "Workspace actor-bound Mission review transport V1", "version": "1",
+                     "description": "Forge producer pinned to f4d3b269d54fd302a586cd8f41421c4d15e8c4d5"},
+            "components": {"securitySchemes": {
+                "bearerAuth": {"type": "http", "scheme": "bearer"},
+                "reviewGrant": {"type": "apiKey", "in": "header", "name": "X-Workspace-Review-Grant"}}},
+            "paths": {"/v1/reviews": {"get": operation("reviews.list")},
+                      "/v1/reviews/missions/{mission_id}": {"get": operation("reviews.get")},
+                      "/v1/reviews/missions/{mission_id}/decisions": {
+                          "post": operation("reviews.submit", request=True)},
+                      "/v1/reviews/missions/{mission_id}/decisions/{operation_id}": {
+                          "get": operation("reviews.operation")}}}
 
 
 def handler_for(service, *, public_host=None, scheme="http"):
@@ -335,6 +403,73 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return self._reply(503, {"error": "CONVERSATIONS_UNAVAILABLE"})
             self._reply(code, result)
 
+        def _review_binding(self):
+            grants = self.headers.get_all("X-Workspace-Review-Grant", [])
+            if len(grants) != 1:
+                self._reply(403, {"error": "REVIEW_GRANT_REQUIRED"})
+                return None
+            try:
+                return service.reviews.access(grants[0])
+            except ReviewError as exc:
+                self._review_error(exc)
+                return None
+            except (OSError, UnicodeError):
+                self._reply(503, {"error": "REVIEW_UNAVAILABLE"})
+                return None
+
+        def _review_error(self, exc):
+            code = {"INVALID_REQUEST": 400, "UNAUTHORIZED": 401, "DENIED": 403,
+                    "NOT_FOUND": 404, "CONFLICT": 409}.get(exc.state, 503)
+            self._reply(code, {"error": "REVIEW_" + exc.state})
+
+        def _review_get(self, path):
+            binding = self._review_binding()
+            if binding is None:
+                return
+            mission = re.fullmatch(r"/v1/reviews/missions/([A-Za-z0-9][A-Za-z0-9._:-]{0,127})", path)
+            operation = re.fullmatch(
+                r"/v1/reviews/missions/([A-Za-z0-9][A-Za-z0-9._:-]{0,127})/decisions/"
+                r"([A-Za-z0-9][A-Za-z0-9._:-]{0,127})", path)
+            try:
+                if path == "/v1/reviews":
+                    result = service.reviews.inbox(binding)
+                elif mission:
+                    result = service.reviews.item(binding, mission[1])
+                else:
+                    result = service.reviews.readback(binding, operation[1], operation[2])
+            except ReviewError as exc:
+                return self._review_error(exc)
+            except (OSError, sqlite3.Error, UnicodeError):
+                return self._reply(503, {"error": "REVIEW_UNAVAILABLE"})
+            self._reply(200, result)
+
+        def _review_write(self, path):
+            if not self._pinned_auth():
+                return
+            binding = self._review_binding()
+            if binding is None:
+                return
+            mission = re.fullmatch(
+                r"/v1/reviews/missions/([A-Za-z0-9][A-Za-z0-9._:-]{0,127})/decisions", path)
+            if mission[1] not in binding["mission_ids"]:
+                return self._reply(403, {"error": "REVIEW_DENIED"})
+            lengths = self.headers.get_all("Content-Length", [])
+            if (len(lengths) != 1 or not lengths[0].isdecimal() or
+                    not 1 <= int(lengths[0]) <= 4096 or self.headers.get("Transfer-Encoding") or
+                    self.headers.get("Content-Type", "").split(";", 1)[0].lower() != "application/json"):
+                return self._reply(400, {"error": "INVALID_BODY"})
+            try:
+                body = json.loads(self.rfile.read(int(lengths[0])), object_pairs_hook=_unique_json_object)
+            except (ValueError, UnicodeError, RecursionError):
+                return self._reply(400, {"error": "INVALID_BODY"})
+            try:
+                code, result = service.reviews.submit(binding, mission[1], body)
+            except ReviewError as exc:
+                return self._review_error(exc)
+            except (OSError, sqlite3.Error, UnicodeError):
+                return self._reply(503, {"error": "REVIEW_UNAVAILABLE"})
+            self._reply(code, result)
+
         def do_GET(self):
             if not self._trusted_origin():
                 return
@@ -360,13 +495,23 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 if self._pinned_auth():
                     return self._reply(200, draft_openapi_contract())
                 return
+            if path == "/v1/reviews/openapi.json":
+                if self._pinned_auth():
+                    return self._reply(200, review_openapi_contract())
+                return
             conversation = path == "/v1/conversations" or re.fullmatch(r"/v1/conversations/[0-9a-f]{32}", path)
-            if path not in ROUTES and not conversation:
+            review = (path == "/v1/reviews" or
+                      re.fullmatch(r"/v1/reviews/missions/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}", path) or
+                      re.fullmatch(r"/v1/reviews/missions/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/decisions/"
+                                   r"[A-Za-z0-9][A-Za-z0-9._:-]{0,127}", path))
+            if path not in ROUTES and not conversation and not review:
                 return self._reply(404, {"error": "NOT_FOUND"})
             if not self._pinned_auth():
                 return
             if conversation:
                 return self._conversation_get(path)
+            if review:
+                return self._review_get(path)
             try:
                 if path == "/v1/status":
                     result = service.status()
@@ -390,6 +535,9 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_POST(self):
             if not self._trusted_origin():
                 return
+            if re.fullmatch(r"/v1/reviews/missions/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/decisions",
+                            self.path):
+                return self._review_write(self.path)
             if (self.path == "/v1/conversations" or
                     re.fullmatch(r"/v1/conversations/[0-9a-f]{32}/(?:archive|restore)", self.path)):
                 return self._conversation_write(self.path)
