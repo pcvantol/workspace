@@ -47,6 +47,7 @@ python3 scripts/test_four_lane_entry.py
 python3 scripts/test_ci_gates.py
 python3 scripts/test_postman_projection.py
 python3 scripts/project_postman.py --check
+python3 scripts/test_runtime_coverage.py
 python3 scripts/validate_runtime_coverage.py
 python3 scripts/validate_wheel.py
 
@@ -55,6 +56,7 @@ if [[ "$(uname -s)" == Darwin ]]; then
   swift test --package-path macos/WorkspaceClient --scratch-path "$swift_scratch" --enable-code-coverage
   swift_coverage="$(swift test --package-path macos/WorkspaceClient --scratch-path "$swift_scratch" --show-codecov-path)"
   test -s "$swift_coverage"
+  python3 scripts/validate_swift_review_coverage.py "$swift_coverage"
   WORKSPACE_SWIFT_SCRATCH="$swift_scratch" bash scripts/build_macos_app.sh "${TMPDIR:-/tmp}/workspace-validation-$(id -u)/Workspace.app"
 fi
 

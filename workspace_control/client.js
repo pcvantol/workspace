@@ -147,12 +147,19 @@ const ownOperations = {
   'conversations.update': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'PATCH', path: '/v1/conversations/{id}'},
   'conversations.archive': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'POST', path: '/v1/conversations/{id}/archive'},
   'conversations.restore': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'POST', path: '/v1/conversations/{id}/restore'},
+  'reviews.contract.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/reviews/openapi.json'},
+  'reviews.list': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_REVIEW_GRANT', method: 'GET', path: '/v1/reviews'},
+  'reviews.get': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_REVIEW_GRANT', method: 'GET', path: '/v1/reviews/missions/{mission_id}'},
+  'reviews.submit': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_REVIEW_GRANT', method: 'POST', path: '/v1/reviews/missions/{mission_id}/decisions'},
+  'reviews.operation': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_REVIEW_GRANT', method: 'GET', path: '/v1/reviews/missions/{mission_id}/decisions/{operation_id}'},
   'instance.init': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'init'},
   'instance.inspect': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'inspect'},
   'forge.read.configure': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'forge-read-configure'},
   'server.serve': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'serve'},
   'conversations.grant.issue': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'conversation-grant-issue'},
-  'conversations.grant.revoke': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'conversation-grant-revoke'}
+  'conversations.grant.revoke': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'conversation-grant-revoke'},
+  'reviews.bind.issue': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'review-bind-issue'},
+  'reviews.bind.revoke': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'review-bind-revoke'}
 };
 function validOwnOperation(operation) {
   if (!operation || !Object.hasOwn(ownOperations, operation.id)) return false;

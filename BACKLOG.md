@@ -1,6 +1,29 @@
 # Workspace Backlog
 
-## r81 plan revision 84 — archive and restore own conversations
+## r81 plan revision 85 — native Missions and reviews
+
+The 6 October selection in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-6012171755)
+continues `L4-WORKSPACE-NATIVE-CLIENT-HTTP-V1-20261002` with one Workspace
+source writer. [The bounded consumer contract](docs/WORKSPACE_MISSION_REVIEW_INBOX_V1.md)
+sets the targets, acceptance and producer join before implementation. This is
+the local serial GP-WC/GP-W review subset; it does not claim full GP, project
+roadmap, policy management or external delivery-gate support. Product 2.8.5
+archive/restore is complete and is not reopened.
+
+The existing Forge status grant still permits only `/v1/instance` and
+`/v1/status`. L3 delivered a separate actor- and Mission-scoped review
+capability on protected Forge main `f4d3b269d54fd302a586cd8f41421c4d15e8c4d5`,
+with an exact-main installed-wheel receipt in
+[#207](https://github.com/pcvantol/forge/issues/207#issuecomment-6016125785).
+Workspace 2.8.6 now owns a separate review grant binding, strict Server
+transport, native list/detail/decision state and same-operation readback.
+Workspace cannot report its inbox or decision flow as installed-qualified until
+its own installed two-product authorization and GUI readback pass. Protected merge, independent
+exact-head Quality/Security, per-changed-file coverage above 80.2%, packaged
+GUI clicks and exact-main installed readback remain the delivery gates. Prior
+signing/Keychain/two-Mac/public-release gates remain separate.
+
+## Delivered r81 plan revision 84 — archive and restore own conversations
 
 The 5 October continuation in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-6001515742)
 keeps the existing r81 assignment and one Workspace sourcewriter. Product 2.8.5

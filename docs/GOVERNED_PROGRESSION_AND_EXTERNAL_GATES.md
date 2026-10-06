@@ -132,5 +132,8 @@ project/target; no external Approve control; separate business/SRE decisions;
 request permission distinct from approve; actual owner result before UI success;
 changed artifact invalidates decision; denied/unavailable producer; localized
 and accessible local/external gate views; no credential/SQL/authority leakage.
-All UI/consumer implementation remains PLANNED. Full Workspace UI is not a new
-prerequisite for the first serial Forge Mission canary.
+At this documentary checkpoint all UI/consumer implementation was PLANNED.
+The later selected local serial review subset is tracked in
+[the Mission review inbox boundary](WORKSPACE_MISSION_REVIEW_INBOX_V1.md);
+full Workspace UI and external delivery-gate support remain unqualified and
+are not prerequisites for the first serial Forge Mission canary.

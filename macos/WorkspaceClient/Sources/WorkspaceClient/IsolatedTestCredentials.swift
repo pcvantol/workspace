@@ -9,6 +9,10 @@ struct IsolatedTestDocument: Decodable {
     let project_id: String
     let draft_grant: String
     let local_root: String
+    let review_grant: String?
+    let review_actor: String?
+    let review_forge_instance: String?
+    let review_mission_ids: [String]?
 
     static func load() throws -> IsolatedTestDocument {
         guard let path = ProcessInfo.processInfo.environment["WORKSPACE_ISOLATED_CREDENTIALS_FILE"],
@@ -35,6 +39,23 @@ struct IsolatedTestDocument: Decodable {
               !document.project_id.isEmpty, document.project_id.count <= 120,
               document.local_root.hasPrefix("/"), !document.local_root.contains("/../") else {
             throw ConversationError.invalidResponse
+        }
+        let reviewFields = [document.review_grant != nil, document.review_actor != nil,
+                            document.review_forge_instance != nil, document.review_mission_ids != nil]
+        if reviewFields.contains(true) {
+            guard reviewFields.allSatisfy({ $0 }),
+                  document.review_grant?.range(of: "^[A-Za-z0-9_-]{43}$",
+                                               options: .regularExpression) != nil,
+                  document.review_actor?.range(of: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+                                               options: .regularExpression) != nil,
+                  document.review_forge_instance?.range(of: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+                                                        options: .regularExpression) != nil,
+                  let missions = document.review_mission_ids, (1...32).contains(missions.count),
+                  Set(missions).count == missions.count,
+                  missions.allSatisfy({ $0.range(of: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+                                                  options: .regularExpression) != nil }) else {
+                throw ConversationError.invalidResponse
+            }
         }
         return document
     }
@@ -68,5 +89,30 @@ final class IsolatedDraftGrant: DraftGrantStore, @unchecked Sendable {
     func load() throws -> DraftAccess? { lock.withLock { stored } }
     func save(_ access: DraftAccess) throws { lock.withLock { stored = access } }
     func forget() throws { lock.withLock { stored = nil } }
+}
+
+final class IsolatedReviewGrant: ReviewCredentialStore, @unchecked Sendable {
+    private let lock = NSLock()
+    private var access: ReviewAccess?
+    private var intent: MissionReviewIntent?
+
+    init(_ document: IsolatedTestDocument) {
+        if let token = document.review_grant,
+           let actor = document.review_actor,
+           let forge = document.review_forge_instance,
+           let missions = document.review_mission_ids {
+            access = ReviewAccess(endpoint: document.endpoint,
+                                  workspaceInstanceID: document.instance_id,
+                                  forgeInstanceID: forge, actorID: actor,
+                                  missionIDs: missions, token: token)
+        }
+    }
+
+    func loadAccess() throws -> ReviewAccess? { lock.withLock { access } }
+    func saveAccess(_ value: ReviewAccess) throws { lock.withLock { access = value } }
+    func forgetAccess() throws { lock.withLock { access = nil } }
+    func loadIntent() throws -> MissionReviewIntent? { lock.withLock { intent } }
+    func saveIntent(_ value: MissionReviewIntent) throws { lock.withLock { intent = value } }
+    func forgetIntent() throws { lock.withLock { intent = nil } }
 }
 #endif

@@ -1,6 +1,23 @@
 # Workspace Roadmap
 
-## Selected GUI continuation — archive and restore conversations
+## Selected GUI continuation — native Missions and reviews
+
+The 6 October owner decision in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-6012171755)
+selects r81 plan revision 85 under the same LANE_4 assignment. The
+[Missions & reviews consumer boundary](docs/WORKSPACE_MISSION_REVIEW_INBOX_V1.md)
+covers only a local serial GP-WC/GP-W review subset and the Mission facts needed
+to navigate it. The native Client must display actual authorized review
+requirements and evidence, then show a decision as recorded only after a Forge
+receipt and current readback. The Forge review consumer grant and readback
+contract are qualified on protected producer main
+`f4d3b269d54fd302a586cd8f41421c4d15e8c4d5` with an installed receipt in
+[#207](https://github.com/pcvantol/forge/issues/207#issuecomment-6016125785).
+Workspace 2.8.6 consumes that exact seam. Its own installed two-product and
+packaged GUI qualification, exact-head review and protected merge remain open.
+Signing, live Keychain successor, two-Mac
+trust and public release retain their separate r81 gates.
+
+## Delivered GUI continuation — archive and restore conversations
 
 The 5 October owner decision in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-6001515742)
 selects r81 plan revision 84 on product 2.8.5. Workspace conversation drafts gain

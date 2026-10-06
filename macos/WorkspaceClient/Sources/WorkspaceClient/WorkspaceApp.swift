@@ -29,6 +29,7 @@ private enum IsolatedWindowEvidence {
 struct WorkspaceApp: App {
     @StateObject private var client: ClientState
     @StateObject private var conversations: ConversationState
+    @StateObject private var reviews: MissionReviewState
 
     init() {
         #if WORKSPACE_ISOLATED_TEST
@@ -39,16 +40,18 @@ struct WorkspaceApp: App {
         _conversations = StateObject(wrappedValue: ConversationState(
             grants: IsolatedDraftGrant(document),
             localDrafts: PrivateLocalDraftCache(root: URL(fileURLWithPath: document.local_root))))
+        _reviews = StateObject(wrappedValue: MissionReviewState(credentials: IsolatedReviewGrant(document)))
         IsolatedWindowEvidence.capture(in: document.local_root)
         #else
         _client = StateObject(wrappedValue: ClientState())
         _conversations = StateObject(wrappedValue: ConversationState())
+        _reviews = StateObject(wrappedValue: MissionReviewState())
         #endif
     }
 
     var body: some Scene {
         WindowGroup("Workspace") {
-            ContentView(client: client, conversations: conversations)
+            ContentView(client: client, conversations: conversations, reviews: reviews)
                 .frame(minWidth: 640, minHeight: 520)
         }
         .defaultSize(width: 900, height: 650)
@@ -63,16 +66,21 @@ struct WorkspaceApp: App {
 struct ContentView: View {
     @ObservedObject var client: ClientState
     @StateObject private var conversations: ConversationState
+    @StateObject private var reviews: MissionReviewState
 
-    init(client: ClientState, conversations: ConversationState = ConversationState()) {
+    init(client: ClientState, conversations: ConversationState = ConversationState(),
+         reviews: MissionReviewState = MissionReviewState()) {
         self.client = client
         _conversations = StateObject(wrappedValue: conversations)
+        _reviews = StateObject(wrappedValue: reviews)
     }
 
     var body: some View {
         TabView {
             ConversationsView(client: client, state: conversations)
                 .tabItem { Label(ConversationCopy.text("nav"), systemImage: "bubble.left.and.bubble.right") }
+            LiveMissionReviewsView(client: client, state: reviews)
+                .tabItem { Label(MissionReviewCopy.text("nav"), systemImage: "checkmark.seal") }
             ServerOverviewView(client: client)
                 .tabItem { Label("Server", systemImage: "server.rack") }
         }

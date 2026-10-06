@@ -938,7 +938,12 @@ def _verify_browser_bindings(page, first_url, token, first_id, second_id, first)
     page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
     page.get_by_text("capabilities.read · HTTP_EXPOSED").wait_for()
     page.get_by_text("forge.status.read · HTTP_EXPOSED").wait_for()
-    assert page.locator("#capabilities li").count() == 19
+    operations = json.loads(read(first_url + "/v1/capabilities", token=token,
+                                 instance=first_id)[1])["operations"]
+    assert page.locator("#capabilities li").all_text_contents() == [
+        f"{operation['id']} · {operation['exposure']}" for operation in operations]
+    page.get_by_text("reviews.submit · HTTP_EXPOSED").wait_for()
+    page.get_by_text("reviews.bind.issue · LOCAL_ONLY_ADMIN").wait_for()
     assert page.evaluate("localStorage.getItem('workspace.instanceId')") == first_id
     page.route("**/v1/identity", lambda route: route.fulfill(
         status=200, content_type="application/json",
