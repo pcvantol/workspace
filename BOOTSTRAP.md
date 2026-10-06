@@ -14,7 +14,7 @@ qualified review producer binding has been delivered. Preserve that gap as an
 open dependency while implementing independent Workspace source and tests.
 Archive/restore in 2.8.5 and its receipt below remain delivered history.
 
-## Active owner priority — 5 October 2026, r81 plan revision 84
+## Delivered owner priority — 5 October 2026, r81 plan revision 84
 
 The owner selected reversible conversation archive/restore under the same
 LANE_4 assignment in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-6001515742).

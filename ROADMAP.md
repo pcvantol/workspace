@@ -14,7 +14,7 @@ implement its own source and tests independently; installed integrated delivery
 waits for that exact producer seam. Signing, live Keychain successor, two-Mac
 trust and public release retain their separate r81 gates.
 
-## Selected GUI continuation — archive and restore conversations
+## Delivered GUI continuation — archive and restore conversations
 
 The 5 October owner decision in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-6001515742)
 selects r81 plan revision 84 on product 2.8.5. Workspace conversation drafts gain

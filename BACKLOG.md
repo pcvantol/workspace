@@ -21,7 +21,7 @@ exact-head Quality/Security, per-changed-file coverage above 80.2%, packaged
 GUI clicks and exact-main installed readback remain the delivery gates. Prior
 signing/Keychain/two-Mac/public-release gates remain separate.
 
-## r81 plan revision 84 — archive and restore own conversations
+## Delivered r81 plan revision 84 — archive and restore own conversations
 
 The 5 October continuation in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-6001515742)
 keeps the existing r81 assignment and one Workspace sourcewriter. Product 2.8.5

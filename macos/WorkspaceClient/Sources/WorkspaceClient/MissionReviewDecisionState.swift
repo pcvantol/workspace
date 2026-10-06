@@ -18,7 +18,11 @@ struct MissionReviewOwnerReadback: Equatable {
     let outcome: MissionReviewOutcome
     let receiptID: String
     let currentSubjectRevision: String
-    let fenceState: String
+    let fenceState: MissionReviewFenceState
+}
+
+enum MissionReviewFenceState: Equatable {
+    case blocked, released
 }
 
 enum MissionReviewDecisionPhase: Equatable {
@@ -26,8 +30,9 @@ enum MissionReviewDecisionPhase: Equatable {
     case confirming(MissionReviewIntent)
     case awaitingPersistence(MissionReviewIntent)
     case submitting(MissionReviewIntent)
+    case awaitingOwnerReadback(MissionReviewIntent)
     case uncertain(MissionReviewIntent)
-    case recorded(MissionReviewIntent, receiptID: String, fenceState: String)
+    case recorded(MissionReviewIntent, receiptID: String, fenceState: MissionReviewFenceState)
     case denied
     case stale
 }
@@ -58,8 +63,18 @@ struct MissionReviewDecisionState {
     }
 
     mutating func uncertainAfterTransport() {
-        guard case .submitting(let intent) = phase else { return }
+        let intent: MissionReviewIntent
+        switch phase {
+        case .submitting(let pending), .awaitingOwnerReadback(let pending): intent = pending
+        default: return
+        }
         phase = .uncertain(intent)
+    }
+
+    // A POST acknowledgement is pending evidence, never a recorded decision.
+    mutating func submissionAcknowledged() {
+        guard case .submitting(let intent) = phase else { return }
+        phase = .awaitingOwnerReadback(intent)
     }
 
     // On restart, the same operation must be read back. This never emits a POST.
@@ -68,15 +83,17 @@ struct MissionReviewDecisionState {
     }
 
     func operationToReadBack() -> MissionReviewIntent? {
-        guard case .uncertain(let intent) = phase else { return nil }
-        return intent
+        switch phase {
+        case .uncertain(let intent), .awaitingOwnerReadback(let intent): return intent
+        default: return nil
+        }
     }
 
     mutating func applyOwnerReadback(_ readback: MissionReviewOwnerReadback,
                                      current: MissionReviewItem) -> Bool {
         let intent: MissionReviewIntent
         switch phase {
-        case .submitting(let pending), .uncertain(let pending): intent = pending
+        case .awaitingOwnerReadback(let pending), .uncertain(let pending): intent = pending
         default: return false
         }
         guard readback.operationID == intent.operationID,
@@ -84,7 +101,7 @@ struct MissionReviewDecisionState {
               readback.subjectID == intent.subjectID,
               readback.subjectRevision == intent.subjectRevision,
               readback.outcome == intent.outcome,
-              !readback.receiptID.isEmpty, !readback.fenceState.isEmpty,
+              !readback.receiptID.isEmpty,
               current.key == intent.key,
               current.subjectID == intent.subjectID,
               current.subjectRevision == readback.currentSubjectRevision,

@@ -4,8 +4,8 @@ Scoped under [Workspace Roadmap](../ROADMAP.md) and the existing policy/governan
 surfaces. Increment: `GOVERNED_PROGRESSION_AND_DELIVERY_AUTHORITY_V1`.
 Design: [governed progression and external gates](GOVERNED_PROGRESSION_AND_EXTERNAL_GATES.md).
 The [GP-WC consumer contract](GOVERNED_PROGRESSION_WC_CONTRACT_V1.md) now
-defines offline review/gate projections and negative command fixtures; live
-producer binding and GP-W UI remain planned.
+defines offline review/gate projections and negative command fixtures; the
+full live producer binding and GP-W UI remain planned.
 
 The owner selected a **local serial review subset** on 6 October 2026 under
 the existing LANE_4 assignment; see the
