@@ -17,12 +17,12 @@ enum MissionReviewFreshness: String {
     case current, stale, unavailable
 }
 
-enum MissionReviewOutcome: String, CaseIterable {
+enum MissionReviewOutcome: String, CaseIterable, Codable {
     case approve, reject, amend
     case deferred = "defer"
 }
 
-struct MissionReviewKey: Hashable {
+struct MissionReviewKey: Hashable, Codable {
     let missionID: String
     let requirementID: String
 }
