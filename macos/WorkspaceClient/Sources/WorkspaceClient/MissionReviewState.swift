@@ -224,10 +224,12 @@ final class MissionReviewState: ObservableObject {
                 forgeInstanceID: saved.forgeInstanceID, actorID: saved.actorID,
                 currentMissionRevision: current.currentMissionRevision,
                 fenceState: current.phase == .waitingForReview ? .blocked : .released)
-            guard decision.applyOwnerReadback(readback, current: current) else {
+            var recordedDecision = decision
+            guard recordedDecision.applyOwnerReadback(readback, current: current) else {
                 throw ReviewTransportError.invalidResponse
             }
             try credentials.forgetIntent()
+            decision = recordedDecision
             pendingIntent = nil
             canRetrySameOperation = false
             items.removeAll { $0.key.missionID == current.key.missionID }

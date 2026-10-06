@@ -196,6 +196,7 @@ private final class ReviewMemoryStore: ReviewCredentialStore, @unchecked Sendabl
     private var access: ReviewAccess?
     private var intent: MissionReviewIntent?
     var failIntentSave = false
+    var failNextIntentDelete = false
 
     func loadAccess() throws -> ReviewAccess? { lock.withLock { access } }
     func saveAccess(_ value: ReviewAccess) throws { lock.withLock { access = value } }
@@ -205,7 +206,13 @@ private final class ReviewMemoryStore: ReviewCredentialStore, @unchecked Sendabl
         if failIntentSave { throw CredentialError.corruptBinding }
         lock.withLock { intent = value }
     }
-    func forgetIntent() throws { lock.withLock { intent = nil } }
+    func forgetIntent() throws {
+        if failNextIntentDelete {
+            failNextIntentDelete = false
+            throw CredentialError.corruptBinding
+        }
+        lock.withLock { intent = nil }
+    }
 }
 
 private final class ReviewKeychainBackend: @unchecked Sendable {
@@ -436,6 +443,29 @@ final class MissionReviewTransportTests: XCTestCase {
         XCTAssertNil(try memory.loadIntent())
         await state.refresh(client: client)
         XCTAssertEqual(state.items.first?.phase, .decisionRecorded)
+    }
+
+    @MainActor
+    func testIntentCleanupFailureRecoversWithoutRestartOrSecondPost() async throws {
+        let backend = ReviewWireBackend()
+        let config = configuration(backend)
+        let client = await client(backend, configuration: config)
+        let memory = ReviewMemoryStore()
+        let state = MissionReviewState(credentials: memory,
+                                       transport: MissionReviewTransport(configuration: config))
+        await state.saveGrant(backend.reviewToken, client: client)
+        let row = try XCTUnwrap(state.items.first)
+        memory.failNextIntentDelete = true
+        await state.decide(row, outcome: .deferred, reason: "Review later", client: client)
+        let intent = try XCTUnwrap(state.pendingIntent)
+        XCTAssertEqual(try memory.loadIntent()?.operationID, intent.operationID)
+        XCTAssertEqual(backend.postCount, 1)
+        XCTAssertEqual(state.statusKey, "pending")
+        await state.readPending(client: client)
+        XCTAssertNil(state.pendingIntent)
+        XCTAssertNil(try memory.loadIntent())
+        XCTAssertEqual(backend.postCount, 1)
+        XCTAssertEqual(state.statusKey, "recordedNotice")
     }
 
     @MainActor
