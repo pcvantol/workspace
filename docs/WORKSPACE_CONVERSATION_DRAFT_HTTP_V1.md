@@ -2,13 +2,17 @@
 
 ## Authority and boundary
 
-Product 2.8.3 adds a Workspace-owned draft and navigation subset to the existing
+Product 2.8.3 added a Workspace-owned draft and navigation subset to the existing
 native Client and separately installed Workspace Server. The Server owns
 conversation ID, actor/project scope, title, focus, advice-mode selection and
 **unsent** draft text. This is not a Forge session transcript. The response
 always returns `state=DRAFT_ONLY`, `history=[]` and
 `history_availability=UNQUALIFIED_FORGE`. The Client renders those fields as
 plain text. It has no send, proposal, apply or Mission endpoint.
+
+Product 2.8.5 adds one reversible `archived` presentation flag. It changes only
+Workspace navigation. The conversation ID, editable fields, `DRAFT_ONLY` state
+and absence of Forge history remain unchanged.
 
 Every draft read and write requires the existing read bearer and pinned
 `X-Workspace-Instance` **plus** an independent
@@ -44,6 +48,8 @@ The draft-specific machine-readable contract is at
 | POST | `/v1/conversations` | Create one unsent draft, HTTP 201. |
 | GET | `/v1/conversations/{id}` | Read one own record. |
 | PATCH | `/v1/conversations/{id}` | Replace editable fields at an expected revision. |
+| POST | `/v1/conversations/{id}/archive` | Hide one own record from the active list. |
+| POST | `/v1/conversations/{id}/restore` | Restore the same own record. |
 
 Create accepts exactly `title` (1–120 characters), `focus` (0–240), `mode`
 (`BUSINESS`, `ARCHITECTURE` or `UX`), `draft` (0–10,000) and a client-generated
@@ -55,6 +61,25 @@ PATCH accepts the same four editable fields and `expected_revision`, an
 integer at least 1. It increments the revision only if the expected one is
 current. A stale revision returns HTTP 409 `DRAFT_CONFLICT`; the native editor
 retains local text for review rather than overwriting the newer Server record.
+PATCH never changes `archived`, so a pre-2.8.5 client cannot accidentally
+restore an archived record.
+
+Archive and restore accept exactly `expected_revision` and a client-generated
+lowercase 32-hex `operation_id`. Its first 16 hex characters are the SHA-256
+prefix of `conversation_id:ACTION:expected_revision`; its final 16 are a fresh
+client nonce. The transition increments the record revision.
+Repeating the same operation ID with the same command returns current record
+truth without a second transition. Reusing an operation ID for a different
+command returns `DRAFT_CONFLICT`. A replayed old archive after a later restore
+cannot restore old state. A stale expected revision, including a concurrent
+text edit or opposite transition, returns `DRAFT_CONFLICT`. The record and its
+operation receipt commit in one SQLite transaction and survive Server restart.
+Existing stores gain `archived=false` during compatible schema migration.
+The Server retains a bounded recent operation-receipt window per actor/project.
+Known recent operation IDs remain replayable and cannot be rebound. A pruned
+transition is stale and fails closed; a pruned no-op remains a no-op. The
+command binding prevents any pruned ID from validating for another record,
+action or revision while the database remains bounded.
 All IDs are lowercase 32-hex. JSON must be one bounded object without
 duplicate keys; request bodies are limited to 48,000 bytes. The Server never
 interprets HTML or Markdown and never logs tokens or draft content.

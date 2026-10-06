@@ -938,7 +938,7 @@ def _verify_browser_bindings(page, first_url, token, first_id, second_id, first)
     page.locator("#capability-state").get_by_text("AVAILABLE").wait_for()
     page.get_by_text("capabilities.read · HTTP_EXPOSED").wait_for()
     page.get_by_text("forge.status.read · HTTP_EXPOSED").wait_for()
-    assert page.locator("#capabilities li").count() == 17
+    assert page.locator("#capabilities li").count() == 19
     assert page.evaluate("localStorage.getItem('workspace.instanceId')") == first_id
     page.route("**/v1/identity", lambda route: route.fulfill(
         status=200, content_type="application/json",

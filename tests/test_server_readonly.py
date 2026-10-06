@@ -1,6 +1,7 @@
 """Real HTTP and state qualification for the own read-only slice."""
 
 import json
+import hashlib
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 import http.client
@@ -10,8 +11,8 @@ import io
 import os
 from pathlib import Path
 import re
-import runpy
 import socket
+import sqlite3
 import ssl
 import subprocess
 import tempfile
@@ -38,8 +39,8 @@ class ReadOnlyTests(unittest.TestCase):
         expected = json.loads((root / "product-version.json").read_text())["version"]
         self.assertEqual(importlib.reload(workspace_control).__version__, expected)
         with patch("pathlib.Path.read_text", side_effect=FileNotFoundError), patch("importlib.metadata.version", return_value=expected):
-            projected = runpy.run_path(str(root / "workspace_control" / "__init__.py"))
-        self.assertEqual(projected["__version__"], expected)
+            self.assertEqual(importlib.reload(workspace_control).__version__, expected)
+        self.assertEqual(importlib.reload(workspace_control).__version__, expected)
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -239,6 +240,8 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual(code, 200)
         self.assertIn(b"fetch('/v1/projects'", script)
         self.assertIn(b"fetch('/v1/capabilities'", script)
+        self.assertIn(b"'conversations.archive'", script)
+        self.assertIn(b"'conversations.restore'", script)
         self.assertIn(b'id="capabilities"', html)
         self.assertIn(b'id="project-observed"', html)
         self.assertIn(b'catalogue.observed_at', script)
@@ -1434,6 +1437,12 @@ class ConversationDraftTests(unittest.TestCase):
         fields.pop("request_id")
         return fields
 
+    @staticmethod
+    def operation_id(identity, archived, revision, suffix="0" * 16):
+        action = "ARCHIVE" if archived else "RESTORE"
+        binding = hashlib.sha256(f"{identity}:{action}:{revision}".encode()).hexdigest()[:16]
+        return binding + suffix[:16]
+
     def test_explicit_grant_durable_drafts_and_revision_conflict(self):
         self.assertEqual(self.request("/v1/conversations")[1]["conversations"], [])
         self.assertFalse((self.root / "conversations.sqlite3").exists())
@@ -1444,6 +1453,7 @@ class ConversationDraftTests(unittest.TestCase):
         self.assertEqual(created["history_availability"], "UNQUALIFIED_FORGE")
         self.assertEqual((created["actor_id"], created["project_id"], created["revision"]),
                          ("alice", "project-a", 1))
+        self.assertFalse(created["archived"])
         identity = created["id"]
         self.assertEqual(self.request("/v1/conversations", method="POST", body=self.fields()),
                          (201, created))
@@ -1474,6 +1484,9 @@ class ConversationDraftTests(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertEqual(set(contract["paths"]["/v1/conversations"]), {"get", "post"})
         self.assertEqual(set(contract["paths"]["/v1/conversations/{id}"]), {"get", "patch"})
+        self.assertEqual(set(contract["paths"]["/v1/conversations/{id}/archive"]), {"post"})
+        self.assertEqual(set(contract["paths"]["/v1/conversations/{id}/restore"]), {"post"})
+        self.assertIn("archived", contract["components"]["schemas"]["Conversation"]["required"])
         self.assertNotIn("send", json.dumps(contract).lower())
         self.assertEqual(self.request("/v1/conversations/openapi.json", token="wrong")[0], 401)
         _, created = self.request("/v1/conversations", method="POST", body=self.fields())
@@ -1484,6 +1497,127 @@ class ConversationDraftTests(unittest.TestCase):
         self.assertEqual((updated["title"], updated["mode"], updated["history"]),
                          ("Renamed", "ARCHITECTURE", []))
         self.assertEqual(self.request("/v1/conversations")[1]["conversations"][0]["title"], "Renamed")
+
+    def test_archive_restore_is_durable_idempotent_and_preserves_draft(self):
+        _, created = self.request("/v1/conversations", method="POST", body=self.fields())
+        identity = created["id"]
+        archive = {"expected_revision": 1,
+                   "operation_id": self.operation_id(identity, True, 1, "b" * 16)}
+        status, archived = self.request(f"/v1/conversations/{identity}/archive",
+                                        method="POST", body=archive)
+        self.assertEqual(status, 200)
+        self.assertEqual((archived["id"], archived["archived"], archived["revision"],
+                          archived["draft"], archived["mode"]),
+                         (identity, True, 2, "What would help users?", "BUSINESS"))
+        self.assertEqual(self.request(f"/v1/conversations/{identity}/archive",
+                                      method="POST", body=archive), (200, archived))
+        restore = {"expected_revision": 2,
+                   "operation_id": self.operation_id(identity, False, 2, "c" * 16)}
+        status, restored = self.request(f"/v1/conversations/{identity}/restore",
+                                        method="POST", body=restore)
+        self.assertEqual(status, 200)
+        self.assertEqual((restored["id"], restored["archived"], restored["revision"],
+                          restored["draft"]), (identity, False, 3, "What would help users?"))
+        replay_status, old_replay = self.request(f"/v1/conversations/{identity}/archive",
+                                                 method="POST", body=archive)
+        self.assertEqual((replay_status, old_replay["archived"], old_replay["revision"]),
+                         (200, False, 3))
+        with Service(self.root) as reopened:
+            record = reopened.conversations.get(("alice", "project-a"), identity)
+        self.assertEqual((record["archived"], record["revision"], record["draft"]),
+                         (False, 3, "What would help users?"))
+
+    def test_archive_conflicts_scope_and_old_client_patch_preserves_state(self):
+        _, created = self.request("/v1/conversations", method="POST", body=self.fields())
+        identity = created["id"]
+        path = f"/v1/conversations/{identity}/archive"
+        command = {"expected_revision": 1,
+                   "operation_id": self.operation_id(identity, True, 1, "d" * 16)}
+        bob = self.service.issue_conversation_grant("bob", "project-a")
+        other = self.service.issue_conversation_grant("alice", "project-b")
+        for grant in (bob, other):
+            self.assertEqual(self.request(path, method="POST", grant=grant, body=command),
+                             (404, {"error": "NOT_FOUND"}))
+        self.assertEqual(self.request(path, method="POST", body=command)[1]["revision"], 2)
+        stale_patch = {**self.update_fields(title="Old client rename"), "expected_revision": 1}
+        self.assertEqual(self.request(f"/v1/conversations/{identity}", method="PATCH",
+                                      body=stale_patch), (409, {"error": "DRAFT_CONFLICT"}))
+        current_patch = {**self.update_fields(title="Archived rename"), "expected_revision": 2}
+        renamed = self.request(f"/v1/conversations/{identity}", method="PATCH",
+                               body=current_patch)[1]
+        self.assertEqual((renamed["title"], renamed["archived"], renamed["revision"]),
+                         ("Archived rename", True, 3))
+        self.assertEqual(self.request(path, method="POST",
+                                      body={"expected_revision": 3,
+                                            "operation_id": command["operation_id"]}),
+                         (409, {"error": "DRAFT_CONFLICT"}))
+        self.service.revoke_conversation_grants("alice", "project-a")
+        self.assertEqual(self.request(f"/v1/conversations/{identity}/restore", method="POST",
+                                      body={"expected_revision": 3,
+                                            "operation_id": self.operation_id(
+                                                identity, False, 3, "e" * 16)}),
+                         (403, {"error": "DRAFT_GRANT_DENIED"}))
+
+    def test_existing_store_migrates_records_to_active(self):
+        database = self.root / "conversations.sqlite3"
+        connection = sqlite3.connect(database)
+        try:
+            connection.execute("""CREATE TABLE conversations (
+                id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, project_id TEXT NOT NULL,
+                request_id TEXT NOT NULL, request_digest TEXT NOT NULL,
+                title TEXT NOT NULL, focus TEXT NOT NULL, mode TEXT NOT NULL,
+                draft TEXT NOT NULL, revision INTEGER NOT NULL,
+                created_at TEXT NOT NULL, updated_at TEXT NOT NULL)""")
+            connection.execute("""INSERT INTO conversations VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",
+                ("f" * 32, "alice", "project-a", "1" * 32, "2" * 64,
+                 "Existing", "Vision", "UX", "Keep this", 4,
+                 "2026-10-05T00:00:00+00:00", "2026-10-05T00:00:00+00:00"))
+            connection.commit()
+        finally:
+            connection.close()
+        database.chmod(0o600)
+        status, listing = self.request("/v1/conversations")
+        self.assertEqual(status, 200)
+        self.assertEqual((listing["conversations"][0]["id"],
+                          listing["conversations"][0]["archived"]), ("f" * 32, False))
+        restored = self.request(f"/v1/conversations/{'f' * 32}/restore", method="POST",
+                                body={"expected_revision": 4,
+                                      "operation_id": self.operation_id(
+                                          "f" * 32, False, 4, "3" * 16)})[1]
+        self.assertEqual((restored["archived"], restored["revision"]), (False, 4))
+
+    def test_archive_operation_receipts_are_bounded_without_reapplying_old_command(self):
+        _, created = self.request("/v1/conversations", method="POST", body=self.fields())
+        identity = created["id"]
+        self.service.conversations.OPERATION_RECEIPT_LIMIT = 3
+        commands = []
+        for digit in "12345":
+            command = {"expected_revision": 1,
+                       "operation_id": self.operation_id(identity, False, 1, digit * 16)}
+            commands.append(command)
+            status, restored = self.request(
+                f"/v1/conversations/{identity}/restore", method="POST",
+                body=command)
+            self.assertEqual((status, restored["archived"], restored["revision"]),
+                             (200, False, 1))
+        status, replay = self.request(
+            f"/v1/conversations/{identity}/restore", method="POST", body=commands[0])
+        self.assertEqual((status, replay["archived"], replay["revision"]), (200, False, 1))
+        self.assertEqual(self.request(
+            f"/v1/conversations/{identity}/archive", method="POST",
+            body=commands[0]),
+            (409, {"error": "DRAFT_CONFLICT"}))
+        status, archived = self.request(
+            f"/v1/conversations/{identity}/archive", method="POST",
+            body={"expected_revision": 1,
+                  "operation_id": self.operation_id(identity, True, 1, "a" * 16)})
+        self.assertEqual((status, archived["archived"], archived["revision"]), (200, True, 2))
+        connection = sqlite3.connect(self.root / "conversations.sqlite3")
+        try:
+            count = connection.execute("SELECT COUNT(*) FROM conversation_operations").fetchone()[0]
+        finally:
+            connection.close()
+        self.assertLessEqual(count, 3)
 
     def test_read_token_alone_cannot_write_or_read_actor_drafts(self):
         path = "/v1/conversations"

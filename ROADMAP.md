@@ -1,6 +1,17 @@
 # Workspace Roadmap
 
-## Selected GUI continuation — find and resume conversations
+## Selected GUI continuation — archive and restore conversations
+
+The 5 October owner decision in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-6001515742)
+selects r81 plan revision 84 on product 2.8.5. Workspace conversation drafts gain
+reversible archive state, Active/Archived/All filtering and restore of the same
+record. Revision and idempotency guards make retries and concurrent edits fail
+safely; existing records migrate to active and older text updates preserve the
+new state. The [draft HTTP contract](docs/WORKSPACE_CONVERSATION_DRAFT_HTTP_V1.md),
+[owning plan](docs/ROLE_AWARE_CONVERSATIONS_V1_ROADMAP.md) and
+[backlog](BACKLOG.md) define the bounded delivery and unchanged L1 gates.
+
+## Delivered GUI continuation — find and resume conversations
 
 The 5 October owner decision in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-5989057256)
 selects one next Workspace-owned r81 GUI milestone on product 2.8.4. Existing

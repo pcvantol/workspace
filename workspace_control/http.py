@@ -50,6 +50,14 @@ OPERATIONS = {
     "conversations.update": {"exposure": "HTTP_EXPOSED", "method": "PATCH",
                              "path": "/v1/conversations/{id}", "auth": "BEARER_PINNED_AND_DRAFT_GRANT",
                              "contract": "draft", "summary": "replace own conversation draft at revision"},
+    "conversations.archive": {"exposure": "HTTP_EXPOSED", "method": "POST",
+                              "path": "/v1/conversations/{id}/archive",
+                              "auth": "BEARER_PINNED_AND_DRAFT_GRANT", "contract": "draft",
+                              "summary": "archive own conversation navigation at revision"},
+    "conversations.restore": {"exposure": "HTTP_EXPOSED", "method": "POST",
+                              "path": "/v1/conversations/{id}/restore",
+                              "auth": "BEARER_PINNED_AND_DRAFT_GRANT", "contract": "draft",
+                              "summary": "restore own conversation navigation at revision"},
     "instance.init": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "init",
                       "auth": "PRIVATE_ROOT_OWNER", "summary": "initialize private instance"},
     "instance.inspect": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "inspect",
@@ -133,12 +141,17 @@ def draft_openapi_contract():
     update = {"type": "object", "additionalProperties": False,
               "required": [*fields, "expected_revision"],
               "properties": {**fields, "expected_revision": {"type": "integer", "minimum": 1}}}
+    archive = {"type": "object", "additionalProperties": False,
+               "required": ["expected_revision", "operation_id"],
+               "properties": {"expected_revision": {"type": "integer", "minimum": 1},
+                              "operation_id": {"type": "string", "pattern": "^[0-9a-f]{32}$"}}}
     record = {"type": "object", "additionalProperties": False,
-              "required": ["id", "actor_id", "project_id", *fields, "revision", "created_at",
+              "required": ["id", "actor_id", "project_id", *fields, "archived", "revision", "created_at",
                            "updated_at", "history", "history_availability", "state"],
               "properties": {"id": {"type": "string", "pattern": "^[0-9a-f]{32}$"},
                              "actor_id": {"type": "string"}, "project_id": {"type": "string"},
-                             **fields, "revision": {"type": "integer", "minimum": 1},
+                             **fields, "archived": {"type": "boolean"},
+                             "revision": {"type": "integer", "minimum": 1},
                              "created_at": {"type": "string"}, "updated_at": {"type": "string"},
                              "history": {"type": "array", "maxItems": 0},
                              "history_availability": {"type": "string", "enum": ["UNQUALIFIED_FORGE"]},
@@ -176,13 +189,18 @@ def draft_openapi_contract():
                 "bearerAuth": {"type": "http", "scheme": "bearer"},
                 "draftGrant": {"type": "apiKey", "in": "header", "name": "X-Workspace-Draft-Grant"}},
                 "schemas": {"DraftCreate": create, "DraftUpdate": update,
+                            "ArchiveCommand": archive,
                             "Conversation": record, "ConversationList": listing}},
             "paths": {"/v1/conversations": {
                 "get": operation("conversations.list", 200),
                 "post": operation("conversations.create", 201, request="DraftCreate")},
                 "/v1/conversations/{id}": {
                     "get": operation("conversations.get", 200, item=True),
-                    "patch": operation("conversations.update", 200, request="DraftUpdate", item=True)}}}
+                    "patch": operation("conversations.update", 200, request="DraftUpdate", item=True)},
+                "/v1/conversations/{id}/archive": {
+                    "post": operation("conversations.archive", 200, request="ArchiveCommand", item=True)},
+                "/v1/conversations/{id}/restore": {
+                    "post": operation("conversations.restore", 200, request="ArchiveCommand", item=True)}}}
 
 
 def handler_for(service, *, public_host=None, scheme="http"):
@@ -296,8 +314,14 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return self._reply(400, {"error": "INVALID_BODY"})
             try:
                 if self.command == "POST":
-                    result = service.conversations.create(scope, body)
-                    code = 201
+                    match = re.fullmatch(r"/v1/conversations/([0-9a-f]{32})/(archive|restore)", path)
+                    if match:
+                        result = service.conversations.set_archived(
+                            scope, match[1], body, archived=match[2] == "archive")
+                        code = 200
+                    else:
+                        result = service.conversations.create(scope, body)
+                        code = 201
                 else:
                     result = service.conversations.update(scope, path.rsplit("/", 1)[1], body)
                     code = 200
@@ -366,7 +390,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_POST(self):
             if not self._trusted_origin():
                 return
-            if self.path == "/v1/conversations":
+            if (self.path == "/v1/conversations" or
+                    re.fullmatch(r"/v1/conversations/[0-9a-f]{32}/(?:archive|restore)", self.path)):
                 return self._conversation_write(self.path)
             self._reply(405, {"error": "READ_ONLY"})
 

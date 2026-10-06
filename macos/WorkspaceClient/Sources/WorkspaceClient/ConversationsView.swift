@@ -12,6 +12,10 @@ enum ConversationCopy {
             "find": ["Focus search", "Zoekveld openen", "Suche öffnen", "Ouvrir la recherche", "Abrir la búsqueda"],
             "filter": ["Filter by mode", "Filter op modus", "Nach Modus filtern", "Filtrer par mode", "Filtrar por modo"],
             "all": ["All modes", "Alle modi", "Alle Modi", "Tous les modes", "Todos los modos"],
+            "archiveFilter": ["Filter by status", "Filter op status", "Nach Status filtern", "Filtrer par état", "Filtrar por estado"],
+            "active": ["Active", "Actief", "Aktiv", "Actives", "Activas"],
+            "archived": ["Archived", "Gearchiveerd", "Archiviert", "Archivées", "Archivadas"],
+            "allArchive": ["Active and archived", "Actief en gearchiveerd", "Aktiv und archiviert", "Actives et archivées", "Activas y archivadas"],
             "sort": ["Sort conversations", "Gesprekken sorteren", "Gespräche sortieren", "Trier les conversations", "Ordenar conversaciones"],
             "recent": ["Recently changed", "Laatst gewijzigd", "Zuletzt geändert", "Modifiés récemment", "Modificados recientemente"],
             "titleSort": ["Title A–Z", "Titel A–Z", "Titel A–Z", "Titre A–Z", "Título A–Z"],
@@ -19,6 +23,8 @@ enum ConversationCopy {
             "resetFilters": ["Reset list", "Lijst herstellen", "Liste zurücksetzen", "Réinitialiser la liste", "Restablecer lista"],
             "noConversations": ["No conversations yet. Create one to start an unsent draft.", "Nog geen gesprekken. Maak er een om een niet-verzonden concept te beginnen.", "Noch keine Gespräche. Erstellen Sie eines für einen ungesendeten Entwurf.", "Aucune conversation. Créez-en une pour commencer un brouillon non envoyé.", "Aún no hay conversaciones. Crea una para comenzar un borrador sin enviar."],
             "noResults": ["No conversations match these list choices.", "Geen gesprekken passen bij deze lijstkeuzes.", "Keine Gespräche passen zu dieser Listenauswahl.", "Aucune conversation ne correspond à ces choix.", "Ninguna conversación coincide con estas opciones."],
+            "noActive": ["No active conversations. Show Archived to restore one.", "Geen actieve gesprekken. Toon Gearchiveerd om er een terug te zetten.", "Keine aktiven Gespräche. Unter Archiviert können Sie eines wiederherstellen.", "Aucune conversation active. Affichez les archivées pour en restaurer une.", "No hay conversaciones activas. Muestra Archivadas para restaurar una."],
+            "noArchived": ["No archived conversations.", "Geen gearchiveerde gesprekken.", "Keine archivierten Gespräche.", "Aucune conversation archivée.", "No hay conversaciones archivadas."],
             "selectedHidden": ["The open conversation is hidden by the list choices. Its text is still open here.", "Het geopende gesprek is verborgen door de lijstkeuzes. De tekst staat hier nog open.", "Das geöffnete Gespräch ist durch die Listenauswahl ausgeblendet. Sein Text bleibt hier geöffnet.", "La conversation ouverte est masquée par les choix de liste. Son texte reste ouvert ici.", "La conversación abierta está oculta por las opciones de lista. Su texto sigue abierto aquí."],
             "selected": ["Selected", "Geselecteerd", "Ausgewählt", "Sélectionné", "Seleccionado"],
             "title": ["Title", "Titel", "Titel", "Titre", "Título"],
@@ -30,6 +36,13 @@ enum ConversationCopy {
             "draft": ["Unsent draft", "Niet-verzonden concept", "Ungesendeter Entwurf", "Brouillon non envoyé", "Borrador sin enviar"],
             "save": ["Save draft", "Concept opslaan", "Entwurf speichern", "Enregistrer le brouillon", "Guardar borrador"],
             "discard": ["Discard local changes", "Lokale wijzigingen verwerpen", "Lokale Änderungen verwerfen", "Annuler les modifications locales", "Descartar cambios locales"],
+            "archive": ["Archive conversation", "Gesprek archiveren", "Gespräch archivieren", "Archiver la conversation", "Archivar conversación"],
+            "restore": ["Restore conversation", "Gesprek terugzetten", "Gespräch wiederherstellen", "Restaurer la conversation", "Restaurar conversación"],
+            "archiveConfirm": ["Unsaved text", "Niet-opgeslagen tekst", "Ungespeicherter Text", "Texte non enregistré", "Texto sin guardar"],
+            "archiveConfirmMessage": ["Save or discard your changes before changing this conversation's status.", "Sla je wijzigingen op of verwerp ze voordat je de status van dit gesprek wijzigt.", "Speichern oder verwerfen Sie Ihre Änderungen, bevor Sie den Status dieses Gesprächs ändern.", "Enregistrez ou annulez vos modifications avant de changer l'état de cette conversation.", "Guarda o descarta los cambios antes de cambiar el estado de esta conversación."],
+            "saveContinue": ["Save and continue", "Opslaan en doorgaan", "Speichern und fortfahren", "Enregistrer et continuer", "Guardar y continuar"],
+            "discardContinue": ["Discard and continue", "Verwerpen en doorgaan", "Verwerfen und fortfahren", "Annuler et continuer", "Descartar y continuar"],
+            "cancel": ["Cancel", "Annuleren", "Abbrechen", "Annuler", "Cancelar"],
             "reload": ["Reload drafts", "Concepten opnieuw laden", "Entwürfe neu laden", "Recharger les brouillons", "Recargar borradores"],
             "grant": ["Project draft grant", "Concepttoegang voor project", "Projekt-Entwurfsberechtigung", "Accès aux brouillons du projet", "Permiso de borradores del proyecto"],
             "setGrant": ["Save grant", "Toegang bewaren", "Berechtigung speichern", "Enregistrer l'accès", "Guardar permiso"],
@@ -43,9 +56,12 @@ enum ConversationCopy {
             "available": ["Ready for drafts", "Klaar voor concepten", "Bereit für Entwürfe", "Prêt pour les brouillons", "Listo para borradores"],
             "loading": ["Loading drafts", "Concepten laden", "Entwürfe laden", "Chargement des brouillons", "Cargando borradores"],
             "saving": ["Saving draft", "Concept opslaan", "Entwurf wird gespeichert", "Enregistrement du brouillon", "Guardando borrador"],
+            "archiving": ["Changing conversation status", "Gespreksstatus wijzigen", "Gesprächsstatus wird geändert", "Modification de l'état de la conversation", "Cambiando el estado de la conversación"],
+            "unsupportedArchive": ["This Server does not support conversation archiving.", "Deze Server ondersteunt het archiveren van gesprekken niet.", "Dieser Server unterstützt das Archivieren von Gesprächen nicht.", "Ce serveur ne prend pas en charge l'archivage des conversations.", "Este servidor no admite el archivado de conversaciones."],
             "offline": ["Offline: local text stays here until you save it after reconnecting.", "Offline: lokale tekst blijft hier tot je die na herverbinden opslaat.", "Offline: Lokaler Text bleibt hier, bis er nach dem Verbinden gespeichert wird.", "Hors ligne : le texte local reste ici jusqu'à son enregistrement après reconnexion.", "Sin conexión: el texto local permanece aquí hasta que lo guardes al reconectar."],
             "forbidden": ["No access to this project's drafts.", "Geen toegang tot de concepten van dit project.", "Kein Zugriff auf die Entwürfe dieses Projekts.", "Pas d'accès aux brouillons de ce projet.", "Sin acceso a los borradores de este proyecto."],
             "conflict": ["A newer Server draft exists. Compare it with your local text before choosing a version.", "Er staat een nieuwer concept op de Server. Vergelijk het met je lokale tekst voordat je een versie kiest.", "Ein neuerer Entwurf liegt auf dem Server. Vor der Auswahl mit dem lokalen Text vergleichen.", "Un brouillon plus récent est sur le serveur. Comparez-le à votre texte local avant de choisir.", "Hay un borrador más reciente en el servidor. Compáralo con tu texto local antes de elegir."],
+            "statusConflict": ["Conversation status changed on the Server. Current status is shown.", "De gespreksstatus is op de Server gewijzigd. De actuele status wordt getoond.", "Der Gesprächsstatus wurde auf dem Server geändert. Der aktuelle Status wird angezeigt.", "L'état de la conversation a changé sur le serveur. L'état actuel est affiché.", "El estado de la conversación cambió en el servidor. Se muestra el estado actual."],
             "serverVersion": ["Newer Server version", "Nieuwere Serverversie", "Neuere Serverversion", "Version plus récente du serveur", "Versión más reciente del servidor"],
             "keepLocal": ["Keep my text after review", "Mijn tekst behouden na controle", "Meinen Text nach Prüfung behalten", "Conserver mon texte après examen", "Conservar mi texto tras revisar"],
             "pending": ["Save or discard local changes before switching.", "Sla lokale wijzigingen op of verwerp ze vóór het wisselen.", "Lokale Änderungen vor dem Wechsel speichern oder verwerfen.", "Enregistrez ou annulez les modifications locales avant de changer.", "Guarda o descarta los cambios locales antes de cambiar."],
@@ -76,13 +92,16 @@ struct ConversationsView: View {
         case "AVAILABLE": ConversationCopy.text("available")
         case "LOADING": ConversationCopy.text("loading")
         case "SAVING": ConversationCopy.text("saving")
+        case "ARCHIVING": ConversationCopy.text("archiving")
         case "OFFLINE": ConversationCopy.text("offline")
         case "UNAUTHORIZED": ConversationCopy.text("forbidden")
         case "CONFLICT": ConversationCopy.text("conflict")
+        case "STATUS_CONFLICT": ConversationCopy.text("statusConflict")
         case "PENDING": ConversationCopy.text("pending")
         case "STALE": ConversationCopy.text("stale")
         case "INVALID": ConversationCopy.text("invalid")
         case "GRANT_REQUIRED": ConversationCopy.text("grantRequired")
+        case "UNSUPPORTED": ConversationCopy.text("unsupportedArchive")
         default: ConversationCopy.text("unavailable")
         }
     }
@@ -101,6 +120,11 @@ struct ConversationsView: View {
         let query = state.search.trimmingCharacters(in: .whitespacesAndNewlines)
         if !query.isEmpty { choices.append("\(ConversationCopy.text("search")): \(query)") }
         if state.modeFilter != .all { choices.append(modeLabel(state.modeFilter.rawValue)) }
+        switch state.archiveFilter {
+        case .active: break
+        case .archived: choices.append(ConversationCopy.text("archived"))
+        case .all: choices.append(ConversationCopy.text("allArchive"))
+        }
         if state.sortOrder != .recentlyChanged { choices.append(ConversationCopy.text("titleSort")) }
         return choices.joined(separator: " · ")
     }
@@ -119,7 +143,7 @@ struct ConversationsView: View {
                     Button { state.newDraft(); editorFocused = true } label: {
                         Label(ConversationCopy.text("new"), systemImage: "plus")
                     }.accessibilityLabel(ConversationCopy.text("new"))
-                        .disabled(!state.canEdit)
+                        .disabled(!state.canCreate)
                 }
                 HStack {
                     TextField(ConversationCopy.text("search"), text: $state.search)
@@ -138,6 +162,12 @@ struct ConversationsView: View {
                     Text(ConversationCopy.text("ux")).tag(ConversationModeFilter.ux)
                 }
                 .pickerStyle(.menu)
+                Picker(ConversationCopy.text("archiveFilter"), selection: $state.archiveFilter) {
+                    Text(ConversationCopy.text("active")).tag(ConversationArchiveFilter.active)
+                    Text(ConversationCopy.text("archived")).tag(ConversationArchiveFilter.archived)
+                    Text(ConversationCopy.text("allArchive")).tag(ConversationArchiveFilter.all)
+                }
+                .pickerStyle(.segmented)
                 Picker(ConversationCopy.text("sort"), selection: $state.sortOrder) {
                     Text(ConversationCopy.text("recent")).tag(ConversationSortOrder.recentlyChanged)
                     Text(ConversationCopy.text("titleSort")).tag(ConversationSortOrder.title)
@@ -166,6 +196,10 @@ struct ConversationsView: View {
                                         Text(conversation.title).font(.body.bold())
                                         Text("\(modeLabel(conversation.mode)) · \(ConversationCopy.text("saved"))")
                                             .font(.caption).foregroundStyle(.secondary)
+                                        if conversation.archived {
+                                            Label(ConversationCopy.text("archived"), systemImage: "archivebox")
+                                                .font(.caption).foregroundStyle(.secondary)
+                                        }
                                     }
                                     Spacer()
                                     if state.selectedID == conversation.id {
@@ -174,7 +208,8 @@ struct ConversationsView: View {
                                 }
                             }
                             .buttonStyle(.plain)
-                            .accessibilityLabel("\(conversation.title), \(modeLabel(conversation.mode))")
+                            .accessibilityLabel("\(conversation.title), \(modeLabel(conversation.mode))" +
+                                (conversation.archived ? ", \(ConversationCopy.text("archived"))" : ""))
                             .accessibilityValue(state.selectedID == conversation.id ? ConversationCopy.text("selected") : "")
                         }
                     }
@@ -279,6 +314,13 @@ struct ConversationsView: View {
                     .disabled(!state.canEdit || !state.dirty || state.state == "SAVING")
                     Button(ConversationCopy.text("discard")) { state.discardChanges() }
                         .disabled(!state.dirty)
+                    if let selected = state.selectedConversation {
+                        Button(selected.archived ? ConversationCopy.text("restore") : ConversationCopy.text("archive")) {
+                            Task { await state.requestArchive(!selected.archived, client: client) }
+                        }
+                        .keyboardShortcut("a", modifiers: [.command, .shift])
+                        .disabled(!state.canChangeArchive)
+                    }
                     Spacer()
                 }
                 .padding(.horizontal, 20)
@@ -286,6 +328,27 @@ struct ConversationsView: View {
             }
         }
         .disabled(state.isBusy || state.loadingGrant)
+        .confirmationDialog(ConversationCopy.text("archiveConfirm"),
+                            isPresented: Binding(
+                                get: { state.archiveConfirmation != nil },
+                                set: { if !$0 { state.cancelArchive() } }),
+                            titleVisibility: .visible) {
+            Button(ConversationCopy.text("saveContinue")) {
+                let archived = state.archiveConfirmation
+                Task {
+                    if let archived { await state.saveAndContinueArchive(archived, client: client) }
+                }
+            }
+            Button(ConversationCopy.text("discardContinue"), role: .destructive) {
+                let archived = state.archiveConfirmation
+                Task {
+                    if let archived { await state.discardAndContinueArchive(archived, client: client) }
+                }
+            }
+            Button(ConversationCopy.text("cancel"), role: .cancel) { state.cancelArchive() }
+        } message: {
+            Text(ConversationCopy.text("archiveConfirmMessage"))
+        }
         .task { await state.prepare(client: client) }
         .onChange(of: client.phase) { _, phase in
             if phase == "CONNECTED" {
