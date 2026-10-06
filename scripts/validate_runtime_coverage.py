@@ -10,6 +10,23 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 PRODUCT = ROOT / "workspace_control"
 HIT = re.compile(r"^\s*\d+: ")
+TEST_RUNNER = """
+import os
+import sys
+import trace
+import unittest
+
+sys.path[0] = os.getcwd()
+
+def run_tests():
+    suite = unittest.defaultTestLoader.discover(sys.argv[2], pattern="test_*.py")
+    return unittest.TextTestRunner().run(suite)
+
+tracer = trace.Trace(count=True, trace=False)
+tracer.runctx("result = run_tests()", globals(), globals())
+tracer.results().write_results(show_missing=True, summary=True, coverdir=sys.argv[1])
+sys.exit(0 if result.wasSuccessful() else 1)
+"""
 
 
 def summarize(cover_dir, sources, product_root=PRODUCT):
@@ -37,9 +54,7 @@ def main():
         raise ValueError("no Workspace product modules found")
     with tempfile.TemporaryDirectory(prefix="workspace-coverage-") as directory:
         cover_dir = Path(directory)
-        command = [sys.executable, "-m", "trace", "--count", "--missing", "--summary",
-                   "--coverdir", str(cover_dir), "--module", "unittest", "discover",
-                   "-s", "tests", "-p", "test_*.py"]
+        command = [sys.executable, "-c", TEST_RUNNER, str(cover_dir), "tests"]
         run = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
         if run.returncode:
             print(run.stdout[-4000:], file=sys.stderr)

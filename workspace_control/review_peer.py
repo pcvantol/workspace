@@ -205,7 +205,9 @@ def _inbox(value, binding):
     if (scope["kind"] != "EXPLICIT_MISSION_SET" or scope["principal_id"] != binding["actor_id"]
             or scope["complete_within_scope"] is not True
             or not isinstance(scope["mission_ids"], list)
+            or not 1 <= len(scope["mission_ids"]) <= 32
             or any(not _id(mission) for mission in scope["mission_ids"])
+            or len(set(scope["mission_ids"])) != len(scope["mission_ids"])
             or set(scope["mission_ids"]) != set(binding["mission_ids"])
             or len(scope["mission_ids"]) != len(binding["mission_ids"])):
         raise ReviewError("INVALID_RESPONSE")

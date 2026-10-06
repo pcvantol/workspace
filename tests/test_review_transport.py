@@ -93,6 +93,12 @@ class FakeForge:
                         value["scope"]["principal_id"] = "foreign-actor"
                     elif "authority" in value:
                         value["authority"]["principal_id"] = "foreign-actor"
+                if owner.tamper in ("duplicate_scope", "empty_scope") and code == 200 and "scope" in value:
+                    value = json.loads(json.dumps(value))
+                    value["scope"]["mission_ids"] = ([MISSION, MISSION]
+                                                    if owner.tamper == "duplicate_scope" else [])
+                    value["items"] = ([item(owner.actor), item(owner.actor)]
+                                      if owner.tamper == "duplicate_scope" else [])
                 if owner.tamper == "digest" and code == 200 and "operation" in value:
                     value = json.loads(json.dumps(value))
                     value["operation"]["request_digest"] = "sha256:" + "0" * 64
@@ -324,6 +330,17 @@ class ReviewTransportTests(unittest.TestCase):
             self.assertEqual(main(["--root", str(self.root), "review-bind-revoke",
                                    "--binding-id", receipt["binding_id"]]), 0)
         self.assertEqual(json.loads(output.getvalue())["state"], "REVOKED")
+
+    def test_invalid_producer_scope_is_rejected_before_binding_is_issued(self):
+        for tamper in ("duplicate_scope", "empty_scope"):
+            with self.subTest(tamper=tamper):
+                self.forge.tamper = tamper
+                with self.assertRaisesRegex(ReviewError, "INVALID_RESPONSE"):
+                    self.service.provision_review("reviewer-alice", self.forge_endpoint,
+                                                  FORGE_INSTANCE, str(self.forge_file),
+                                                  str(self.client_file))
+                self.assertFalse(self.client_file.exists())
+                self.assertFalse((self.root / "review-bindings.json").exists())
 
 
 if __name__ == "__main__":

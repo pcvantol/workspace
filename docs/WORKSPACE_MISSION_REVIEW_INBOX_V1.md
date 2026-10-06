@@ -1,11 +1,11 @@
 # Native Missions & reviews — selected consumer boundary
 
-`DIRECTIVE_ID=L4-MISSION-REVIEW-INBOX-V1-20261006`  
-`ASSIGNMENT=L4-WORKSPACE-NATIVE-CLIENT-HTTP-V1-20261002`  
-`OWNER_REGISTER=pcvantol/forge#208`  
-`R81_PLAN_REVISION=85`  
-`NODE_SUBSET=GP-WC/GP-W_LOCAL_SERIAL_REVIEW`  
-`PRODUCER_JOIN=L4-L3-GP-REVIEW-INBOX-V1-20261006`
+- `DIRECTIVE_ID=L4-MISSION-REVIEW-INBOX-V1-20261006`
+- `ASSIGNMENT=L4-WORKSPACE-NATIVE-CLIENT-HTTP-V1-20261002`
+- `OWNER_REGISTER=pcvantol/forge#208`
+- `R81_PLAN_REVISION=85`
+- `NODE_SUBSET=GP-WC/GP-W_LOCAL_SERIAL_REVIEW`
+- `PRODUCER_JOIN=L4-L3-GP-REVIEW-INBOX-V1-20261006`
 
 The owner selected this next result in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-6012171755).
 Workspace owns the native presentation and authenticated Server transport.

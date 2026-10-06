@@ -11,6 +11,7 @@ from http.client import HTTPConnection
 import json
 import os
 from pathlib import Path
+import shutil
 import sqlite3
 import subprocess
 import sys
@@ -131,6 +132,7 @@ def main():
     service = None
     count = 0
     gui_operation = None
+    created_gui_credentials = False
     try:
         # The installed Solo Runtime permits only one selected nonterminal
         # Mission. Each invocation therefore qualifies one outcome in isolation.
@@ -274,6 +276,7 @@ def main():
                     "review_mission_ids": alice_missions,
                 }
                 with args.gui_credentials.open("x", encoding="utf-8") as stream:
+                    created_gui_credentials = True
                     os.fchmod(stream.fileno(), 0o600)
                     json.dump(credentials, stream)
                     stream.write("\n")
@@ -301,11 +304,16 @@ def main():
                 args.receipt.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
                 print(json.dumps({"gui_result": receipt["gui_result"]}), flush=True)
     finally:
-        if workspace_listener is not None:
-            _close(workspace_listener, workspace_worker)
-        if service is not None:
-            service.close()
-        qualifier.doCleanups()
+        try:
+            if workspace_listener is not None:
+                _close(workspace_listener, workspace_worker)
+            if service is not None:
+                service.close()
+            qualifier.doCleanups()
+        finally:
+            if created_gui_credentials:
+                args.gui_credentials.unlink(missing_ok=True)
+            shutil.rmtree(workspace_root)
 
 
 if __name__ == "__main__":
