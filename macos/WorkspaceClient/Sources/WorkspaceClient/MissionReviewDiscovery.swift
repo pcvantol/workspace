@@ -27,6 +27,15 @@ struct MissionReviewKey: Hashable, Codable {
     let requirementID: String
 }
 
+enum MissionEvidenceKind: String {
+    case actionResult, forgeReceipt, sourceRevision
+}
+
+struct MissionEvidenceReference: Equatable {
+    let kind: MissionEvidenceKind
+    let identifier: String
+}
+
 struct MissionReviewItem: Equatable {
     let key: MissionReviewKey
     let subjectID: String
@@ -35,10 +44,40 @@ struct MissionReviewItem: Equatable {
     let title: String?
     let actionResult: String?
     let waitingReason: String?
+    let requiredRole: String?
+    let blockingScope: String?
+    let policySource: String?
+    let evidence: [MissionEvidenceReference]
+    let observedAt: String?
     let phase: MissionReviewPhase
     let authority: MissionReviewAuthority
     let freshness: MissionReviewFreshness
     let allowedOutcomes: Set<MissionReviewOutcome>
+
+    init(key: MissionReviewKey, subjectID: String, subjectRevision: String,
+         projectID: String?, title: String?, actionResult: String?, waitingReason: String?,
+         phase: MissionReviewPhase, authority: MissionReviewAuthority,
+         freshness: MissionReviewFreshness, allowedOutcomes: Set<MissionReviewOutcome>,
+         requiredRole: String? = nil, blockingScope: String? = nil,
+         policySource: String? = nil, evidence: [MissionEvidenceReference] = [],
+         observedAt: String? = nil) {
+        self.key = key
+        self.subjectID = subjectID
+        self.subjectRevision = subjectRevision
+        self.projectID = projectID
+        self.title = title
+        self.actionResult = actionResult
+        self.waitingReason = waitingReason
+        self.requiredRole = requiredRole
+        self.blockingScope = blockingScope
+        self.policySource = policySource
+        self.evidence = evidence
+        self.observedAt = observedAt
+        self.phase = phase
+        self.authority = authority
+        self.freshness = freshness
+        self.allowedOutcomes = allowedOutcomes
+    }
 
     // UI eligibility is a second guard, never evidence of Forge authorization.
     func mayOffer(_ outcome: MissionReviewOutcome) -> Bool {

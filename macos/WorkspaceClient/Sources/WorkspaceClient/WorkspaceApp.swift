@@ -73,6 +73,8 @@ struct ContentView: View {
         TabView {
             ConversationsView(client: client, state: conversations)
                 .tabItem { Label(ConversationCopy.text("nav"), systemImage: "bubble.left.and.bubble.right") }
+            MissionReviewsView()
+                .tabItem { Label(MissionReviewCopy.text("nav"), systemImage: "checkmark.seal") }
             ServerOverviewView(client: client)
                 .tabItem { Label("Server", systemImage: "server.rack") }
         }

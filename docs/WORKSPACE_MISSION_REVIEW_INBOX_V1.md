@@ -105,6 +105,8 @@ alter progression policy, perform EP submission or trigger a provider.
 ## Current qualification state
 
 `PRODUCER_BINDING=UNQUALIFIED` and `INTEGRATED_DELIVERY=NOT_RUN` at selection.
-Independent Workspace implementation/tests may proceed. A fixture-only view,
-disabled decision controls or source tests are not evidence of the installed
-vertical result.
+Independent Workspace implementation/tests may proceed. The first native tab
+shows an honest unavailable state until a qualified Server/Forge binding exists;
+its isolated presentation tests do not supply real Mission records or decisions.
+A fixture-only view, disabled decision controls or source tests are not evidence
+of the installed vertical result.
