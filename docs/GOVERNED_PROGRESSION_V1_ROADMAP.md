@@ -6,6 +6,13 @@ Design: [governed progression and external gates](GOVERNED_PROGRESSION_AND_EXTER
 The [GP-WC consumer contract](GOVERNED_PROGRESSION_WC_CONTRACT_V1.md) now
 defines offline review/gate projections and negative command fixtures; live
 producer binding and GP-W UI remain planned.
+
+The owner selected a **local serial review subset** on 6 October 2026 under
+the existing LANE_4 assignment; see the
+[Mission review inbox boundary](WORKSPACE_MISSION_REVIEW_INBOX_V1.md). This
+supersedes the earlier exclusion of review UI only for that subset. It does not
+qualify the Forge producer binding, the full GP-WC/GP-W nodes or external GP-X
+gates.
 The shared documentary DAG is
 `pcvantol/forge:docs/roadmap/governed-progression-v1.json`.
 
