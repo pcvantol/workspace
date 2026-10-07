@@ -167,8 +167,9 @@ successful mocked contract, producer source change or SQL fallback. Owned
 synthetic runtime roots/processes are removed after each successful run.
 
 [PR137](https://github.com/pcvantol/workspace/pull/137) and the current owning
-[#208 register](https://github.com/pcvantol/forge/issues/208) are the authoritative
-protected merge/exact-main receipt and terminal-disposition readback. A final
+[#208 register](https://github.com/pcvantol/forge/issues/208) are designated for eventual
+protected merge/exact-main receipts and terminal-disposition readback. Protected
+merge, final exact-main qualification and terminal disposition remain pending. A final
 register decision closes only this subset; no new family follows automatically.
 TDE1090f25 observe workflow succeeded, but actual assessment/qualification
 exits2/2 and policyFAIL: preserved product maximum complexity80 in unchanged

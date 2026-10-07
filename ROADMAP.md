@@ -10,8 +10,9 @@ blocker explanations with existing review detail navigation. The
 and the direct L3/L4 JOIN. Protected Forge2.7.67/da57b7b readproducer and
 Workspace2.8.7 installed/native candidate are qualified.
 [PR137](https://github.com/pcvantol/workspace/pull/137) and the current owning
-[#208 register](https://github.com/pcvantol/forge/issues/208) record protected
-merge and exact-main final acceptance. Full PRM management/decision/sync/Q and
+[#208 register](https://github.com/pcvantol/forge/issues/208) will record protected
+merge and exact-main final acceptance; those gates and terminal disposition
+remain pending. Full PRM management/decision/sync/Q and
 signing/trust/release remain separate. Local selection never grants activation.
 
 ## Delivered GUI continuation — native Missions and reviews

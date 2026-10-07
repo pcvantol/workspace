@@ -11,7 +11,8 @@ L3 writer owns the separate producer under
 `L3-L4-APPROVED-WORKLIST-READ-V1-20261007`. Coordinate the exact schema early;
 status/review grants gain no authority. The protected Forge2.7.67 read pin is
 qualified under the JOIN. Workspace2.8.7 source and installed candidate are qualified;
-protected merge and final exact-main readback are recorded in
+protected merge, final exact-main qualification and terminal disposition
+remain pending. Their eventual receipts belong in
 [PR137](https://github.com/pcvantol/workspace/pull/137) and the current owning
 [#208 register](https://github.com/pcvantol/forge/issues/208). Read its terminal
 decision before resuming; do not reopen a finalized subset. Preserve the completed review delivery and the
