@@ -181,3 +181,30 @@ Preserve historical candidates, user data and consumed budgets. Signing,
 notarization, live personal Keychain, two-Mac trust, public release and production
 activation remain separate r81 gates. No live EP, paid provider, real target
 write, production Mission/grant, machine service or next roadmap selection.
+
+## Selected dependency-graph continuation — plan87
+
+## Selected native dependency graph — 7 October 2026, r81 plan revision 87
+
+[Coordinator mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6044025195)
+selects `L4-WORKLIST-DEPENDENCY-GRAPH-V1-20261007` under the same native HTTP
+assignment and Work session. [Pickup plan87](https://github.com/pcvantol/forge/issues/208#issuecomment-6044087280)
+binds clean base `cc98b0d726b0884617fe84d87b8df06a638cc3c8` and branch
+`codex/r81-worklist-dependency-graph`. The primary iCloud checkout is preserved.
+PR137 /2.8.7 is completed history, closed by its
+[terminal receipt](https://github.com/pcvantol/forge/issues/208#issuecomment-6043502128).
+Its earlier 2.7.67 qualification remains intact.
+
+Product2.8.8 adds a read-only Dependencies alternative to the existing list,
+with shared scoped selection/detail, exact edges, deterministic bounded geometry,
+zoom/scroll-pan/fit/focus and five-language accessible native controls. It reuses
+existing storage, grants, whole-snapshot validation, refresh and review navigation.
+The graph never computes eligibility or dispatch; committed position stays separate.
+New consumer acceptance explicitly targets Forge2.7.68 protected
+`47c9f406323cbecd1c36227696f7f01b6a7b1c11`, wheelSHA256
+`f5eed947d2844568e11ebfd610998dff76067ed3f4ba8b966a43e8ef3fc5a6c1`.
+Implementation/tests/review/protected merge/exact-main installed and GUI
+qualification are pending; equal schema does not prove this combination.
+Signing/trust/release/full PRM families retain their separate gates.
+
+Graph nodes are exact snapshot members. Directed edges use only explicit dependencies, never adjacent committed positions. The entire authorized context remains visible when filtered, with a textual filtered-context marker. PARTIAL missing predecessor references get an unavailable-observation note and no invented node/edge. Invalid/cyclic/forward/foreign complete references fail closed. A fixed-size bounded layout uses committed-order tie breaking and stable dependency columns; identical snapshots do not reshuffle. Native scrollbars/trackpad pan, zoom/fit, focus and previous/next controls supplement tab/space node navigation and the usable list alternative. All observed state/facts/reasons retain existing detail semantics; denial/pairing forget clears the source cache used by both views. No additional polling, authority or dependency store.

@@ -3,6 +3,20 @@ import SwiftUI
 enum WorklistCopy {
     private static let languages = ["en", "nl", "de", "fr", "es"]
     private static let values: [String: [String]] = [
+        "list": ["List", "Lijst", "Liste", "Liste", "Lista"],
+        "graph": ["Dependencies", "Afhankelijkheden", "Abhängigkeiten", "Dépendances", "Dependencias"],
+        "graphLegend": ["Arrows show verified dependencies. Committed position is separate; execution remains serial.", "Pijlen tonen geverifieerde afhankelijkheden. Positie staat apart; uitvoering blijft serieel.", "Pfeile zeigen verifizierte Abhängigkeiten. Position ist separat; Ausführung bleibt seriell.", "Les flèches montrent les dépendances vérifiées. Position distincte ; exécution sérielle.", "Las flechas muestran dependencias verificadas. Posición separada; ejecución serial."],
+        "graphContext": ["Filtered members remain as authorized context.", "Gefilterde items blijven als geautoriseerde context.", "Gefilterte Einträge bleiben als autorisierter Kontext.", "Les membres filtrés restent comme contexte autorisé.", "Los miembros filtrados siguen como contexto autorizado."],
+        "graphMissing": ["Partial: predecessor observation unavailable; no node inferred", "Gedeeltelijk: voorgangerobservatie ontbreekt; geen knooppunt afgeleid", "Teilweise: Vorgängerbeobachtung fehlt; kein Knoten abgeleitet", "Partiel : observation du prédécesseur absente ; aucun nœud déduit", "Parcial: observación del predecesor ausente; ningún nodo inferido"],
+        "graphFiltered": ["Filtered context", "Gefilterde context", "Gefilterter Kontext", "Contexte filtré", "Contexto filtrado"],
+        "graphZoom": ["Zoom", "Zoom", "Zoom", "Zoom", "Zoom"],
+        "graphZoomIn": ["Zoom in", "Inzoomen", "Vergrößern", "Agrandir", "Acercar"],
+        "graphZoomOut": ["Zoom out", "Uitzoomen", "Verkleinern", "Réduire", "Alejar"],
+        "graphFit": ["Fit to window", "Passend in venster", "An Fenster anpassen", "Adapter à la fenêtre", "Ajustar a ventana"],
+        "graphPrevious": ["Previous member", "Vorig item", "Vorheriger Eintrag", "Membre précédent", "Miembro anterior"],
+        "graphNext": ["Next member", "Volgend item", "Nächster Eintrag", "Membre suivant", "Miembro siguiente"],
+        "graphFocus": ["Focus selection", "Focus op selectie", "Auswahl fokussieren", "Centrer la sélection", "Centrar selección"],
+        "graphPan": ["Pan with scrollbars or trackpad; Tab selects controls and nodes.", "Verschuif met schuifbalken of trackpad; Tab selecteert bediening en knooppunten.", "Mit Scrollleisten oder Trackpad verschieben; Tab wählt Steuerelemente und Knoten.", "Déplacer avec les barres ou le pavé tactile ; Tab sélectionne commandes et nœuds.", "Desplazar con barras o panel táctil; Tab selecciona controles y nodos."],
         "nav": ["Approved worklist", "Goedgekeurde werklijst", "Genehmigte Arbeitsliste", "Liste de travail approuvée", "Lista de trabajo aprobada"],
         "subtitle": ["Committed order and verified reasons for waiting", "Vastgelegde volgorde en geverifieerde wachtredenen", "Festgelegte Reihenfolge und verifizierte Wartegründe", "Ordre fixé et raisons d’attente vérifiées", "Orden establecido y motivos de espera verificados"],
         "workset": ["Authorized workset", "Geautoriseerde werkset", "Autorisierter Arbeitssatz", "Ensemble de travail autorisé", "Conjunto de trabajo autorizado"],
@@ -105,6 +119,7 @@ struct ApprovedWorklistView: View {
     let onOpenReviews: ((ApprovedWorklistItem) -> Void)?
     @Environment(\.locale) private var locale
     @Environment(\.nativeTabCommandsActive) private var commandsActive
+    @State private var graphMode: Bool
     @State private var selectedKey: ApprovedWorklistKey?
     @State private var search: String
     @State private var filter: WorklistFilter
@@ -113,8 +128,9 @@ struct ApprovedWorklistView: View {
 
     init(cache: WorklistObservationCache = WorklistObservationCache(),
          selected: ApprovedWorklistKey? = nil, search: String = "",
-         filter: WorklistFilter = .all, sort: WorklistSort = .committed,
+         filter: WorklistFilter = .all, sort: WorklistSort = .committed, graphMode: Bool = false,
          onOpenReviews: ((ApprovedWorklistItem) -> Void)? = nil) {
+        _graphMode = State(initialValue: graphMode)
         self.cache = cache
         self.onOpenReviews = onOpenReviews
         _selectedKey = State(initialValue: selected)
@@ -172,6 +188,16 @@ struct ApprovedWorklistView: View {
                     }
                 }
                 emptyMessage
+                if let snapshot = cache.snapshot {
+                    Picker(copy("graph"), selection: $graphMode) {
+                        Text(copy("list")).tag(false)
+                        Text(copy("graph")).tag(true)
+                    }.pickerStyle(.segmented).accessibilityIdentifier("worklist.display-mode")
+                    if graphMode {
+                        WorklistDependencyGraph(snapshot: snapshot, matching: Set(visible.map(\.key)), selection: $selectedKey)
+                    }
+                }
+                if !graphMode {
                 ForEach(visible, id: \.key) { item in
                     Button { selectedKey = item.key } label: {
                         VStack(alignment: .leading, spacing: 4) {
@@ -188,6 +214,7 @@ struct ApprovedWorklistView: View {
                     .accessibilityIdentifier("worklist.member.\(item.key.memberID)")
                     .overlay(RoundedRectangle(cornerRadius: 10).stroke(
                         selectedKey == item.key ? Color.accentColor : Color.clear, lineWidth: 2))
+                }
                 }
                 if let item = ApprovedWorklistPresentation.selected(selectedKey, in: cache.snapshot) {
                     Divider()

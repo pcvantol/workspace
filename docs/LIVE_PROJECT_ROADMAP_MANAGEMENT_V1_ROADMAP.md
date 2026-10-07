@@ -141,3 +141,7 @@ policy separate. Shared source pins are historical observations, not current
 service status. Use normal protected source delivery; separately authorize live
 activation/configuration. Never reset a failed lineage or move parked unrelated
 work into this design's scope.
+
+## Selected workset-only graph continuation, 7 October 2026
+
+The [plan87 selection](https://github.com/pcvantol/forge/issues/208#issuecomment-6044025195) selects only the authorized-workset dependency graph in PRM-W-VIEW over the existing list/snapshot. Full project-DAG management/decision/sync/Q nodes remain unqualified. Consumer acceptance against exact Forge2.7.68 is pending and requires its own installed/native receipts; PR137 remains completed with its distinct2.7.67 evidence.
