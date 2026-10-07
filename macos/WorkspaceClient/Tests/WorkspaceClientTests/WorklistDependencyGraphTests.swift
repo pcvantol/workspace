@@ -106,6 +106,7 @@ final class WorklistDependencyGraphTests: XCTestCase {
         XCTAssertTrue(graph.route(.init(predecessor: "foreign", dependent: "c"), index: 0).isEmpty)
     }
 
+    @MainActor
     func testFilteredContextIsExplicitInFiveLanguageAccessibleNodeLabels() {
         let row = item("a", 0, dependencies: ["predecessor"])
         for language in ["en", "nl", "de", "fr", "es"] {
