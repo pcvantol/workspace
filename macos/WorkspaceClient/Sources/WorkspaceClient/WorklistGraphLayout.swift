@@ -23,7 +23,8 @@ struct WorklistGraphLayout: Equatable {
     static let rowStride = 214.0
 
     var width: Double { Double((nodes.map(\.column).max() ?? 0)) * Self.columnStride + Self.nodeWidth + 32 }
-    var height: Double { Double((nodes.map(\.row).max() ?? 0)) * Self.rowStride + Self.nodeHeight + 32 }
+    var topInset: Double { Double(edges.count) * 8 + 24 }
+    var height: Double { Double((nodes.map(\.row).max() ?? 0)) * Self.rowStride + Self.nodeHeight + topInset + 16 }
 
     static func make(snapshot: ApprovedWorklistSnapshot, matching: Set<ApprovedWorklistKey>) -> Self? {
         guard snapshot.isCoherent(for: snapshot.scope), snapshot.items.count <= 64 else { return nil }
@@ -56,6 +57,18 @@ struct WorklistGraphLayout: Equatable {
         return Self(nodes: nodes, edges: edges, unresolvedDependencies: unresolved.sorted())
     }
 
+    func route(_ edge: WorklistGraphEdge, index: Int) -> [CGPoint] {
+        guard let from = nodes.first(where: { $0.item.key.memberID == edge.predecessor }),
+              let to = nodes.first(where: { $0.item.key.memberID == edge.dependent }) else { return [] }
+        let start = CGPoint(x: 16 + Double(from.column) * Self.columnStride + Self.nodeWidth,
+                            y: topInset + Double(from.row) * Self.rowStride + Self.nodeHeight / 2)
+        let end = CGPoint(x: 16 + Double(to.column) * Self.columnStride,
+                          y: topInset + Double(to.row) * Self.rowStride + Self.nodeHeight / 2)
+        let lane = topInset - 16 - Double(index) * 8
+        return [start, CGPoint(x: start.x + 12, y: start.y), CGPoint(x: start.x + 12, y: lane),
+                CGPoint(x: end.x - 12, y: lane), CGPoint(x: end.x - 12, y: end.y), end]
+    }
+
     func adjacent(to key: ApprovedWorklistKey?, direction: Int) -> ApprovedWorklistKey? {
         guard !nodes.isEmpty else { return nil }
         guard let index = nodes.firstIndex(where: { $0.item.key == key }) else { return nodes.first?.item.key }
@@ -67,10 +80,10 @@ struct WorklistGraphViewport {
     private(set) var zoom = 1.0
     mutating func magnify(_ factor: Double) {
         guard factor.isFinite, factor > 0 else { return }
-        zoom = min(max(zoom * factor, 0.2), 2.0)
+        zoom = min(max(zoom * factor, 0.001), 2.0)
     }
     mutating func fit(layout: WorklistGraphLayout, width: Double, height: Double) {
         guard width.isFinite, height.isFinite, width > 0, height > 0 else { return }
-        zoom = min(max(min(width / layout.width, height / layout.height), 0.2), 1.0)
+        zoom = min(width / layout.width, height / layout.height, 1.0)
     }
 }

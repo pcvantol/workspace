@@ -38,7 +38,7 @@ struct WorklistDependencyGraph: View {
                                 ForEach(layout.nodes, id: \.item.key) { node in
                                     nodeButton(node)
                                         .frame(width: WorklistGraphLayout.nodeWidth, height: WorklistGraphLayout.nodeHeight)
-                                        .position(x: x(node), y: y(node))
+                                        .position(x: x(node), y: y(node, layout: layout))
                                         .id(node.item.key)
                                 }
                             }
@@ -117,21 +117,19 @@ struct WorklistDependencyGraph: View {
     }
 
     private func x(_ node: WorklistGraphNode) -> Double { 16 + Double(node.column) * WorklistGraphLayout.columnStride + WorklistGraphLayout.nodeWidth / 2 }
-    private func y(_ node: WorklistGraphNode) -> Double { 16 + Double(node.row) * WorklistGraphLayout.rowStride + WorklistGraphLayout.nodeHeight / 2 }
+    private func y(_ node: WorklistGraphNode, layout: WorklistGraphLayout) -> Double { layout.topInset + Double(node.row) * WorklistGraphLayout.rowStride + WorklistGraphLayout.nodeHeight / 2 }
 
     private func connections(_ layout: WorklistGraphLayout) -> some View {
         Canvas { context, _ in
-            let byID = Dictionary(uniqueKeysWithValues: layout.nodes.map { ($0.item.key.memberID, $0) })
-            for edge in layout.edges {
-                if let from = byID[edge.predecessor], let to = byID[edge.dependent] {
-                    let start = CGPoint(x: x(from) + WorklistGraphLayout.nodeWidth / 2, y: y(from))
-                    let end = CGPoint(x: x(to) - WorklistGraphLayout.nodeWidth / 2, y: y(to))
+            for (index, edge) in layout.edges.enumerated() {
+                let points = layout.route(edge, index: index)
+                if let start = points.first, let end = points.last {
                     var path = Path()
                     path.move(to: start)
-                    path.addCurve(to: end, control1: CGPoint(x: start.x + 36, y: start.y), control2: CGPoint(x: end.x - 36, y: end.y))
+                    for point in points.dropFirst() { path.addLine(to: point) }
                     path.move(to: CGPoint(x: end.x - 8, y: end.y - 5)); path.addLine(to: end)
                     path.addLine(to: CGPoint(x: end.x - 8, y: end.y + 5))
-                    context.stroke(path, with: .color(.secondary), lineWidth: 2)
+                    context.stroke(path, with: .color(.secondary), style: StrokeStyle(lineWidth: 2, lineJoin: .round))
                 }
             }
         }.accessibilityHidden(true)

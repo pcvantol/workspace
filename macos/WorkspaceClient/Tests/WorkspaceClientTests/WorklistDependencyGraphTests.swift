@@ -70,14 +70,42 @@ final class WorklistDependencyGraphTests: XCTestCase {
         XCTAssertEqual(viewport.zoom, 1)
         viewport.magnify(1.25); XCTAssertEqual(viewport.zoom, 1.25)
         viewport.magnify(100); XCTAssertEqual(viewport.zoom, 2)
-        viewport.magnify(0.001); XCTAssertEqual(viewport.zoom, 0.2)
-        for invalid in [0.0, -1, .nan, .infinity] { viewport.magnify(invalid); XCTAssertEqual(viewport.zoom, 0.2) }
+        viewport.magnify(0.001); XCTAssertEqual(viewport.zoom, 0.002)
+        for invalid in [0.0, -1, .nan, .infinity] { viewport.magnify(invalid); XCTAssertEqual(viewport.zoom, 0.002) }
         let graph = try layout([item("a", 0)])
         viewport.fit(layout: graph, width: graph.width, height: graph.height); XCTAssertEqual(viewport.zoom, 1)
         viewport.fit(layout: graph, width: graph.width / 2, height: graph.height); XCTAssertEqual(viewport.zoom, 0.5)
         for invalid in [0.0, -1, .nan, .infinity] { viewport.fit(layout: graph, width: invalid, height: 500); XCTAssertEqual(viewport.zoom, 0.5) }
-        viewport.fit(layout: graph, width: 1, height: 1); XCTAssertEqual(viewport.zoom, 0.2)
+        viewport.fit(layout: graph, width: 1, height: 1); XCTAssertEqual(viewport.zoom, min(1 / graph.width, 1 / graph.height))
     }
+    func testFitSupportedExtremesAndTransitiveEdgesAvoidNodes() throws {
+        let chain = try layout((0..<64).map { item("n\($0)", $0, dependencies: $0 == 0 ? [] : ["n\($0 - 1)"]) })
+        let independent = try layout((0..<64).map { item("n\($0)", $0) })
+        for graph in [chain, independent] {
+            var viewport = WorklistGraphViewport()
+            viewport.fit(layout: graph, width: 380, height: 340)
+            XCTAssertLessThanOrEqual(graph.width * viewport.zoom, 380.001)
+            XCTAssertLessThanOrEqual(graph.height * viewport.zoom, 340.001)
+            XCTAssertLessThan(viewport.zoom, 0.2)
+            viewport.magnify(1.25)
+            XCTAssertGreaterThan(viewport.zoom, min(380 / graph.width, 340 / graph.height))
+        }
+        let graph = try layout([item("a", 0), item("b", 1, dependencies: ["a"]), item("c", 2, dependencies: ["a", "b"])])
+        for (index, edge) in graph.edges.enumerated() {
+            let route = graph.route(edge, index: index)
+            XCTAssertEqual(route.count, 6)
+            XCTAssertLessThan(route[2].y, graph.topInset)
+            XCTAssertEqual(route[2].y, route[3].y)
+            for node in graph.nodes {
+                let rect = CGRect(x: 16 + Double(node.column) * WorklistGraphLayout.columnStride, y: graph.topInset + Double(node.row) * WorklistGraphLayout.rowStride, width: WorklistGraphLayout.nodeWidth, height: WorklistGraphLayout.nodeHeight)
+                XCTAssertFalse(rect.contains(route[2]))
+                XCTAssertFalse(rect.contains(route[3]))
+            }
+        }
+        XCTAssertEqual(Set(graph.edges.enumerated().map { graph.route($0.element, index: $0.offset)[2].y }).count, 3)
+        XCTAssertTrue(graph.route(.init(predecessor: "foreign", dependent: "c"), index: 0).isEmpty)
+    }
+
     @MainActor
     func testFiveLocalesThemesNarrowViewsPartialAndInvalidGraphs() {
         NSApplication.shared.setActivationPolicy(.prohibited)
