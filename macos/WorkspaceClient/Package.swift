@@ -7,6 +7,6 @@ let package = Package(
     products: [.executable(name: "WorkspaceClient", targets: ["WorkspaceClient"])],
     targets: [
         .executableTarget(name: "WorkspaceClient"),
-        .testTarget(name: "WorkspaceClientTests", dependencies: ["WorkspaceClient"]),
+        .testTarget(name: "WorkspaceClientTests", dependencies: ["WorkspaceClient"], exclude: ["Fixtures"]),
     ]
 )

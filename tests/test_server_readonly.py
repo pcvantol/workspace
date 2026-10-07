@@ -308,7 +308,7 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual(set(operations), set(OPERATIONS))
         http_routes = {operation["path"] for operation in operations.values()
                        if operation["exposure"] == "HTTP_EXPOSED" and
-                       not operation["id"].startswith(("conversations.", "reviews."))}
+                       not operation["id"].startswith(("conversations.", "reviews.", "worksets."))}
         self.assertEqual(http_routes, set(ROUTES))
         self.assertEqual(operations["projects.read"]["local_cli"], "projects")
         self.assertEqual(operations["capabilities.read"]["local_cli"], "capabilities")
@@ -316,16 +316,16 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual({api["paths"][path]["get"]["operationId"] for path in http_routes},
                          {operation["id"] for operation in operations.values()
                           if operation["exposure"] == "HTTP_EXPOSED" and
-                          not operation["id"].startswith(("conversations.", "reviews."))})
+                          not operation["id"].startswith(("conversations.", "reviews.", "worksets."))})
         self.assertEqual({operation["id"] for operation in operations.values()
                           if operation["exposure"] == "LOCAL_ONLY_ADMIN"},
                          {"instance.init", "instance.inspect", "forge.read.configure", "server.serve",
                           "conversations.grant.issue", "conversations.grant.revoke",
-                          "reviews.bind.issue", "reviews.bind.revoke"})
+                          "reviews.bind.issue", "reviews.bind.revoke", "worksets.bind.issue", "worksets.bind.revoke"})
         self.assertTrue(all("path" not in operation for operation in operations.values()
                             if operation["exposure"] == "LOCAL_ONLY_ADMIN"))
         self.assertTrue(all(operation["auth"] in {"BEARER_PINNED", "BEARER_PINNED_AND_DRAFT_GRANT",
-                                                  "BEARER_PINNED_AND_REVIEW_GRANT"}
+                                                  "BEARER_PINNED_AND_REVIEW_GRANT", "BEARER_PINNED_AND_WORKLIST_GRANT"}
                             for operation in operations.values()
                             if operation.get("path") not in (None, "/v1/identity")))
         for item in collection["item"]:

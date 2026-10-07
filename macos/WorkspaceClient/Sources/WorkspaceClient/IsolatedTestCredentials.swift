@@ -14,6 +14,11 @@ struct IsolatedTestDocument: Decodable {
     let review_forge_instance: String?
     let review_mission_ids: [String]?
 
+    let worklist_grant: String?
+    let worklist_actor: String?
+    let worklist_forge_instance: String?
+    let worklist_workset_ids: [String]?
+
     static func load() throws -> IsolatedTestDocument {
         guard let path = ProcessInfo.processInfo.environment["WORKSPACE_ISOLATED_CREDENTIALS_FILE"],
               path.hasPrefix("/"), !path.contains("/../") else {
@@ -54,6 +59,16 @@ struct IsolatedTestDocument: Decodable {
                   Set(missions).count == missions.count,
                   missions.allSatisfy({ $0.range(of: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
                                                   options: .regularExpression) != nil }) else {
+                throw ConversationError.invalidResponse
+            }
+        }
+        let worklistFields = [document.worklist_grant != nil, document.worklist_actor != nil,
+                              document.worklist_forge_instance != nil, document.worklist_workset_ids != nil]
+        if worklistFields.contains(true) {
+            guard worklistFields.allSatisfy({ $0 }),
+                  WorklistAccess(endpoint: document.endpoint, workspaceInstanceID: document.instance_id,
+                    forgeInstanceID: document.worklist_forge_instance ?? "", actorID: document.worklist_actor ?? "",
+                    worksetIDs: document.worklist_workset_ids ?? [], token: document.worklist_grant ?? "").valid else {
                 throw ConversationError.invalidResponse
             }
         }
@@ -114,5 +129,19 @@ final class IsolatedReviewGrant: ReviewCredentialStore, @unchecked Sendable {
     func loadIntent() throws -> MissionReviewIntent? { lock.withLock { intent } }
     func saveIntent(_ value: MissionReviewIntent) throws { lock.withLock { intent = value } }
     func forgetIntent() throws { lock.withLock { intent = nil } }
+}
+final class IsolatedWorklistGrant: WorklistCredentialStore, @unchecked Sendable {
+    private let lock = NSLock()
+    private var access: WorklistAccess?
+    init(_ document: IsolatedTestDocument) {
+        if let token = document.worklist_grant, let actor = document.worklist_actor,
+           let forge = document.worklist_forge_instance, let ids = document.worklist_workset_ids {
+            access = WorklistAccess(endpoint: document.endpoint, workspaceInstanceID: document.instance_id,
+                forgeInstanceID: forge, actorID: actor, worksetIDs: ids, token: token)
+        }
+    }
+    func loadAccess() throws -> WorklistAccess? { lock.withLock { access } }
+    func saveAccess(_ value: WorklistAccess) throws { lock.withLock { access = value } }
+    func forgetAccess() throws { lock.withLock { access = nil } }
 }
 #endif

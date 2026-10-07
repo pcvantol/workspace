@@ -5,9 +5,9 @@ import XCTest
 
 final class MissionReviewsViewTests: XCTestCase {
     private func item(evidence: [MissionEvidenceReference] = [], project: String? = nil,
-                      phase: MissionReviewPhase = .waitingForReview) -> MissionReviewItem {
+                      phase: MissionReviewPhase = .waitingForReview, mission: String = "mission-1", requirement: String = "review-1") -> MissionReviewItem {
         MissionReviewItem(
-            key: MissionReviewKey(missionID: "mission-1", requirementID: "review-1"),
+            key: MissionReviewKey(missionID: mission, requirementID: requirement),
             subjectID: "action-1", subjectRevision: "r7", projectID: project,
             title: "Action delivered", actionResult: "Delivered", waitingReason: "Review fence",
             phase: phase, authority: .forge, freshness: .current,
@@ -28,6 +28,25 @@ final class MissionReviewsViewTests: XCTestCase {
         hosting.frame = NSRect(x: 0, y: 0, width: width, height: 1800)
         hosting.layoutSubtreeIfNeeded()
         XCTAssertEqual(hosting.frame.width, width)
+    }
+
+    @MainActor
+    func testWorklistReopeningSameTargetOverridesManualOtherReviewSelection() {
+        let first = item()
+        let second = item(mission: "mission-2", requirement: "review-2")
+        var parentSelection: MissionReviewKey? = first.key
+        let selection = Binding(get: { parentSelection }, set: { parentSelection = $0 })
+        let view = MissionReviewsView(items: [first, second], access: .available, selection: selection)
+        XCTAssertEqual(view.selectedReview?.key, first.key)
+        view.selectReview(second.key)
+        XCTAssertEqual(parentSelection, second.key)
+        XCTAssertEqual(view.selectedReview?.key, second.key)
+        // Same persistent view; a fresh worklist request selects A again without an identity reset.
+        selection.wrappedValue = first.key
+        XCTAssertEqual(view.selectedReview?.key, first.key)
+        render(view, language: "en", width: 640)
+        selection.wrappedValue = nil
+        XCTAssertNil(view.selectedReview)
     }
 
     func testAllFiveLocalesHaveConcreteReviewCopy() {

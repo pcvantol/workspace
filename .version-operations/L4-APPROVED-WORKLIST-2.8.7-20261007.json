@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "L4-APPROVED-WORKLIST-VIEW-V1-20261007: bounded native approved worklist read delivery, r81 plan revision 86",
+  "determined_version": "2.8.7",
+  "event_lineage": "L4-APPROVED-WORKLIST-VIEW-V1-20261007: bounded native approved worklist read delivery, r81 plan revision 86",
+  "expected_source_revision": "cf935098ee82ef44933ef2b109b49b7e43ce3315",
+  "expected_version": "2.8.6",
+  "operation_id": "L4-APPROVED-WORKLIST-2.8.7-20261007",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

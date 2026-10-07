@@ -57,6 +57,10 @@ if [[ "$(uname -s)" == Darwin ]]; then
   swift_coverage="$(swift test --package-path macos/WorkspaceClient --scratch-path "$swift_scratch" --show-codecov-path)"
   test -s "$swift_coverage"
   python3 scripts/validate_swift_review_coverage.py "$swift_coverage"
+  isolated_scratch="${swift_scratch}-isolated"
+  swift test --package-path macos/WorkspaceClient --scratch-path "$isolated_scratch" --enable-code-coverage -Xswiftc -DWORKSPACE_ISOLATED_TEST --filter ConversationTests/testIsolatedCredentialDocumentAndMemoryStores
+  isolated_coverage="$(swift test --package-path macos/WorkspaceClient --scratch-path "$isolated_scratch" -Xswiftc -DWORKSPACE_ISOLATED_TEST --show-codecov-path)"
+  python3 scripts/validate_swift_review_coverage.py "$isolated_coverage" --isolated
   WORKSPACE_SWIFT_SCRATCH="$swift_scratch" bash scripts/build_macos_app.sh "${TMPDIR:-/tmp}/workspace-validation-$(id -u)/Workspace.app"
 fi
 

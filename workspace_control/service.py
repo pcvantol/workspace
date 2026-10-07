@@ -266,8 +266,10 @@ class Service:
             self._load_instance()
             from .conversations import ConversationStore
             from .review_peer import ReviewTransport
+            from .worklist_peer import WorklistReadTransport
             self.conversations = ConversationStore(self.root, self._root_fd)
             self.reviews = ReviewTransport(self.root, self._root_fd)
+            self.worklists = WorklistReadTransport(self.root, self._root_fd)
         except Exception:
             self.close()
             raise
@@ -357,6 +359,15 @@ class Service:
 
     def revoke_review(self, binding_id):
         return self.reviews.revoke(binding_id)
+
+    def provision_worklist(self, actor_id, endpoint, forge_instance_id,
+                           forge_token_file, client_token_file):
+        """Owner-provisioned read capability, separate from status/review grants."""
+        return self.worklists.provision(actor_id, endpoint, forge_instance_id,
+                                       forge_token_file, client_token_file)
+
+    def revoke_worklist(self, binding_id):
+        return self.worklists.revoke(binding_id)
 
     def forge_status(self):
         """Read a scoped Forge observation without borrowing peer authority."""

@@ -1,6 +1,21 @@
 # Workspace Roadmap
 
-## Selected GUI continuation — native Missions and reviews
+## Qualified GUI continuation — native approved worklist
+
+The [7 October selection](https://github.com/pcvantol/forge/issues/208#issuecomment-6038111333)
+selects r81 plan revision 86: one read-only PRM-W-CONTRACT/PRM-W-VIEW workset
+subset, exact membership/order, independent lifecycle facts and verified
+blocker explanations with existing review detail navigation. The
+[consumer boundary](docs/WORKSPACE_APPROVED_WORKLIST_VIEW_V1.md) pins acceptance
+and the direct L3/L4 JOIN. Protected Forge2.7.67/da57b7b readproducer and
+Workspace2.8.7 installed/native candidate are qualified.
+[PR137](https://github.com/pcvantol/workspace/pull/137) and the current owning
+[#208 register](https://github.com/pcvantol/forge/issues/208) will record protected
+merge and exact-main final acceptance; those gates and terminal disposition
+remain pending. Full PRM management/decision/sync/Q and
+signing/trust/release remain separate. Local selection never grants activation.
+
+## Delivered GUI continuation — native Missions and reviews
 
 The 6 October owner decision in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-6012171755)
 selects r81 plan revision 85 under the same LANE_4 assignment. The
@@ -12,8 +27,10 @@ receipt and current readback. The Forge review consumer grant and readback
 contract are qualified on protected producer main
 `f4d3b269d54fd302a586cd8f41421c4d15e8c4d5` with an installed receipt in
 [#207](https://github.com/pcvantol/forge/issues/207#issuecomment-6016125785).
-Workspace 2.8.6 consumes that exact seam. Its own installed two-product and
-packaged GUI qualification, exact-head review and protected merge remain open.
+Workspace 2.8.6 consumes that seam. Its installed two-product/native qualification,
+independent review and protected merge completed on main
+`73411de5a39d04d736b9742cf5356852582e54be` in #136 with the
+[terminal receipt](https://github.com/pcvantol/forge/issues/208#issuecomment-6020633531).
 Signing, live Keychain successor, two-Mac
 trust and public release retain their separate r81 gates.
 
