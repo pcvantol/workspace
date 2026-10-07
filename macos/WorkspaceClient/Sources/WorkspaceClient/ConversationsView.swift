@@ -77,6 +77,7 @@ enum ConversationCopy {
 struct ConversationsView: View {
     @ObservedObject var client: ClientState
     @ObservedObject var state: ConversationState
+    @Environment(\.nativeTabCommandsActive) private var commandsActive
     @Environment(\.scenePhase) private var scenePhase
     @FocusState private var editorFocused: Bool
     @FocusState private var searchFocused: Bool
@@ -152,7 +153,7 @@ struct ConversationsView: View {
                     Button { searchFocused = true } label: {
                         Image(systemName: "magnifyingglass")
                     }
-                    .keyboardShortcut("f", modifiers: .command)
+                    .keyboardShortcut(commandsActive ? KeyboardShortcut("f", modifiers: .command) : nil)
                     .accessibilityLabel(ConversationCopy.text("find"))
                 }
                 Picker(ConversationCopy.text("filter"), selection: $state.modeFilter) {

@@ -104,6 +104,7 @@ struct ApprovedWorklistView: View {
     let cache: WorklistObservationCache
     let onOpenReviews: ((ApprovedWorklistItem) -> Void)?
     @Environment(\.locale) private var locale
+    @Environment(\.nativeTabCommandsActive) private var commandsActive
     @State private var selectedKey: ApprovedWorklistKey?
     @State private var search: String
     @State private var filter: WorklistFilter
@@ -149,7 +150,7 @@ struct ApprovedWorklistView: View {
                             .accessibilityLabel(copy("search"))
                             .accessibilityIdentifier("worklist.search")
                         Button(copy("focusSearch")) { searchFocused = true }
-                            .keyboardShortcut("f", modifiers: .command)
+                            .keyboardShortcut(commandsActive ? KeyboardShortcut("f", modifiers: .command) : nil)
                     }
                     ViewThatFits(in: .horizontal) {
                         HStack { filterPicker; sortPicker }

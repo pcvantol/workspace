@@ -94,6 +94,7 @@ struct MissionReviewsView: View {
     let onDecision: ((MissionReviewItem, MissionReviewOutcome) -> Void)?
     let decisionsBusy: Bool
     @Environment(\.locale) private var locale
+    @Environment(\.nativeTabCommandsActive) private var commandsActive
     @State private var search = ""
     @State private var filter: MissionReviewFilter = .all
     @State private var selectedKey: MissionReviewKey?
@@ -133,7 +134,7 @@ struct MissionReviewsView: View {
                             .focused($searchFocused)
                             .accessibilityLabel(copy("search"))
                         Button(copy("focusSearch")) { searchFocused = true }
-                            .keyboardShortcut("f", modifiers: .command)
+                            .keyboardShortcut(commandsActive ? KeyboardShortcut("f", modifiers: .command) : nil)
                     }
                     Picker(copy("filter"), selection: $filter) {
                         Text(copy("all")).tag(MissionReviewFilter.all)

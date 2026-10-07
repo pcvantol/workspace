@@ -25,6 +25,17 @@ private enum IsolatedWindowEvidence {
 }
 #endif
 
+private struct NativeTabCommandsKey: EnvironmentKey {
+    static let defaultValue = true
+}
+
+extension EnvironmentValues {
+    var nativeTabCommandsActive: Bool {
+        get { self[NativeTabCommandsKey.self] }
+        set { self[NativeTabCommandsKey.self] = newValue }
+    }
+}
+
 @main
 struct WorkspaceApp: App {
     @StateObject private var client: ClientState
@@ -105,12 +116,15 @@ struct ContentView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             ConversationsView(client: client, state: conversations)
+                .environment(\.nativeTabCommandsActive, selectedTab == 0)
                 .tabItem { Label(ConversationCopy.text("nav"), systemImage: "bubble.left.and.bubble.right") }.tag(0)
             LiveMissionReviewsView(client: client, state: reviews, selected: requestedReview)
                 .id(requestedReview)
+                .environment(\.nativeTabCommandsActive, selectedTab == 1)
                 .tabItem { Label(MissionReviewCopy.text("nav"), systemImage: "checkmark.seal") }.tag(1)
             LiveApprovedWorklistView(client: client, state: worklists,
                 reviewNavigationStatus: reviewNavigationStatus, onOpenReviews: openReview)
+                .environment(\.nativeTabCommandsActive, selectedTab == 2)
                 .tabItem { Label(WorklistCopy.text("nav"), systemImage: "list.bullet.rectangle") }.tag(2)
             ServerOverviewView(client: client)
                 .tabItem { Label("Server", systemImage: "server.rack") }.tag(3)

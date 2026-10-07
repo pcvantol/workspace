@@ -10,7 +10,7 @@ SOURCES = {
     "MissionReviewState.swift", "MissionReviewTransport.swift",
     "MissionReviewsView.swift", "WorkspaceApp.swift",
     "ApprovedWorklistPresentation.swift",
-    "ApprovedWorklistView.swift",
+    "ApprovedWorklistView.swift", "ConversationsView.swift",
     "WorklistTransport.swift", "WorklistProjection.swift",
     "WorklistState.swift", "LiveApprovedWorklistView.swift",
 }
