@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "L4-WORKLIST-DEPENDENCY-GRAPH-V1-20261007 r81 plan87",
+  "determined_version": "2.8.8",
+  "event_lineage": "L4-WORKLIST-DEPENDENCY-GRAPH-V1-20261007 r81 plan87",
+  "expected_source_revision": "cc98b0d726b0884617fe84d87b8df06a638cc3c8",
+  "expected_version": "2.8.7",
+  "operation_id": "L4-WORKLIST-GRAPH-2.8.8-20261007",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

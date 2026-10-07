@@ -1,5 +1,30 @@
 # Workspace Backlog
 
+## Selected native dependency graph — 7 October 2026, r81 plan revision 87
+
+[Coordinator mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6044025195)
+selects `L4-WORKLIST-DEPENDENCY-GRAPH-V1-20261007` under the same native HTTP
+assignment and Work session. [Pickup plan87](https://github.com/pcvantol/forge/issues/208#issuecomment-6044087280)
+binds clean base `cc98b0d726b0884617fe84d87b8df06a638cc3c8` and branch
+`codex/r81-worklist-dependency-graph`. The primary iCloud checkout is preserved.
+PR137 /2.8.7 is completed history, closed by its
+[terminal receipt](https://github.com/pcvantol/forge/issues/208#issuecomment-6043502128).
+Its earlier 2.7.67 qualification remains intact.
+
+Product2.8.8 adds a read-only Dependencies alternative to the existing list,
+with shared scoped selection/detail, exact edges, deterministic bounded geometry,
+zoom/scroll-pan/fit/focus and five-language accessible native controls. It reuses
+existing storage, grants, whole-snapshot validation, refresh and review navigation.
+The graph never computes eligibility or dispatch; committed position stays separate.
+New consumer acceptance explicitly targets Forge2.7.68 protected
+`47c9f406323cbecd1c36227696f7f01b6a7b1c11`, wheelSHA256
+`f5eed947d2844568e11ebfd610998dff76067ed3f4ba8b966a43e8ef3fc5a6c1`.
+Source and installed/native candidate qualification passed; protected merge and
+fresh exact-main installed/GUI qualification remain pending. Equal schema alone
+does not prove this combination. Candidate evidence belongs in [PR138](https://github.com/pcvantol/workspace/pull/138).
+Signing/trust/release/full PRM families retain their separate gates.
+
+
 ## Qualified r81 plan revision 86 — native approved worklist and blocker explanations
 
 The [7 October selection](https://github.com/pcvantol/forge/issues/208#issuecomment-6038111333)
