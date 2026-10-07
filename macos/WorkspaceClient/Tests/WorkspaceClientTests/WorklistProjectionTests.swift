@@ -70,6 +70,22 @@ final class WorklistProjectionTests: XCTestCase {
         reject(try changed { var items = $0["items"] as! [[String: Any]]; items[0]["detail_reference"] = ["kind": "URL", "mission_id": "mission-a"]; $0["items"] = items })
         reject(try changed("pending") { var items = $0["items"] as! [[String: Any]]; items[0]["mission_state_revision"] = 1; $0["items"] = items })
     }
+    func testMissingCurrentMissionStateIsPartialAndCannotOpenReviewDetail() throws {
+        let partial = try changed { doc in
+            var items = doc["items"] as! [[String: Any]]
+            for key in ["mission_state_revision", "allocation_binding", "detail_reference"] { items[0][key] = NSNull() }
+            items[0]["execution_state"] = "UNAVAILABLE"
+            items[0]["evidence_references"] = [Any]()
+            doc["items"] = items
+            doc["completeness"] = "PARTIAL"
+        }
+        let observed = try WorklistProjection.decode(partial, access: Self.access, worksetID: "workset-a")
+        XCTAssertFalse(observed.completeWithinScope)
+        XCTAssertEqual(observed.items.first?.missionID, "mission-a")
+        XCTAssertFalse(observed.items.first!.missionBindingVerified)
+        XCTAssertFalse(observed.items.first!.reviewDetailAvailable)
+        XCTAssertEqual(observed.items.first?.sourceRevision, observed.snapshotRevision)
+    }
     func testPartialDependenciesAndProducerNextPointerRemainDistinct() throws {
         reject(try changed { $0["items"] = ($0["items"] as! [Any]) + ($0["items"] as! [Any]) })
         reject(try changed { var items = $0["items"] as! [[String: Any]]; items[0]["dependencies"] = ["candidate-a"]; $0["items"] = items })

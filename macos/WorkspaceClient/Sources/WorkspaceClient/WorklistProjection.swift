@@ -81,7 +81,7 @@ enum WorklistProjection {
         let items = try rawItems.map { try item($0, scope: scoped, installation: installation, revision: snapshotRevision) }
         try require(Set(items.map(\.key.memberID)).count == items.count && Set(items.map(\.committedPosition)).count == items.count)
         let complete = completeness == "COMPLETE_WITHIN_SCOPE"
-        if complete { try require(Set(items.map(\.committedPosition)) == Set(0..<items.count)) }
+        if complete { try require(Set(items.map(\.committedPosition)) == Set(0..<items.count) && items.allSatisfy { $0.executionState != "UNAVAILABLE" }) }
         for item in items {
             for dependency in item.dependencies {
                 if let preceding = items.first(where: { $0.key.memberID == dependency }) {
@@ -129,7 +129,11 @@ enum WorklistProjection {
         let order = try integer(value["committed_order"], maximum: 63)
         let mission = try optionalID(value["mission_id"])
         let missionRevision: Int?
-        if let mission {
+        let verifiedBinding = !(value["allocation_binding"] is NSNull)
+        if mission != nil && !verifiedBinding {
+            missionRevision = nil
+            try require(value["mission_state_revision"] is NSNull && value["detail_reference"] is NSNull && (value["evidence_references"] as? [Any])?.isEmpty == true && (value["execution_state"] as? String) == "UNAVAILABLE")
+        } else if let mission {
             missionRevision = try integer(value["mission_state_revision"])
             let allocation = try object(value["allocation_binding"], keys: ["kind", "candidate_id", "subject_revision", "mission_id", "installation_id", "envelope_digest"])
             try require(try text(allocation["kind"]) == "CANONICAL_CANDIDATE_INTAKE" && text(allocation["candidate_id"]) == candidate && text(allocation["subject_revision"]) == subject && text(allocation["mission_id"]) == mission && text(allocation["installation_id"]) == installation && WorklistWire.digest(text(allocation["envelope_digest"])))
@@ -160,6 +164,6 @@ enum WorklistProjection {
         }
         try require(Set(evidence).count == evidence.count)
         let facts = try WorklistFacts(approved: boolean(value["approved"]) ? .yes : .no, released: boolean(value["released"]) ? .yes : .no, eligible: fact(eligibility, yes: "ELIGIBLE", no: "BLOCKED"), active: boolean(value["active"]) ? .yes : .no, engineeringComplete: fact(engineering, yes: "PROVEN", no: "UNPROVEN"), reviewAccepted: fact(review, yes: "ACCEPTED", no: "WAITING"), finalAccepted: final == "NOT_REQUIRED" ? .notRequired : fact(final, yes: "ACCEPTED", no: "WAITING"), completed: boolean(value["completed"]) ? .yes : .no)
-        return ApprovedWorklistItem(key: ApprovedWorklistKey(forgeInstanceID: scope.forgeInstanceID, actorID: scope.actorID, worksetID: scope.worksetID, memberID: candidate), subjectID: candidate, subjectRevision: subject, committedPosition: order, snapshotRevision: revision, sourceRevision: missionRevision.map(String.init) ?? subject, missionID: mission, projectID: nil, title: title, facts: facts, blockers: blockers, executionState: execution, reviewState: review, effectMode: effect, dependencies: dependencies, evidence: evidence, reviewDetailAvailable: !(value["detail_reference"] is NSNull))
+        return ApprovedWorklistItem(key: ApprovedWorklistKey(forgeInstanceID: scope.forgeInstanceID, actorID: scope.actorID, worksetID: scope.worksetID, memberID: candidate), subjectID: candidate, subjectRevision: subject, committedPosition: order, snapshotRevision: revision, sourceRevision: missionRevision.map(String.init) ?? revision, missionID: mission, projectID: nil, title: title, facts: facts, blockers: blockers, executionState: execution, reviewState: review, effectMode: effect, dependencies: dependencies, evidence: evidence, reviewDetailAvailable: !(value["detail_reference"] is NSNull), missionBindingVerified: verifiedBinding)
     }
 }

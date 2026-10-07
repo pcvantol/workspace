@@ -139,6 +139,18 @@ class WorklistContractTests(unittest.TestCase):
         changed["items"][0]["mission_state_revision"] = 1
         self.assert_rejected(seal(changed))
 
+    def test_real_partial_missing_state_keeps_only_unverified_typed_mission_reference(self):
+        doc = projection(allocated=True, complete=False)
+        item = doc["items"][0]
+        item.update(execution_state="UNAVAILABLE", mission_state_revision=None, allocation_binding=None,
+                    detail_reference=None, evidence_references=[], engineering_result="UNKNOWN", final_acceptance="UNKNOWN")
+        self.assertEqual(validate_projection(seal(doc), BINDING, "workset-a")["items"][0]["mission_id"], "mission-a")
+        doc["completeness"] = "COMPLETE_WITHIN_SCOPE"
+        self.assert_rejected(seal(doc))
+        doc["completeness"] = "PARTIAL"
+        item["execution_state"] = "COMPLETED"
+        self.assert_rejected(seal(doc))
+
     def test_next_and_idle_are_producer_facts_not_client_count_inference(self):
         for field, value in [("candidate_id", "foreign"), ("mission_id", "foreign"),
                              ("committed_order", 2), ("committed_order", True), ("state", "IDLE"),

@@ -64,6 +64,7 @@ struct ApprovedWorklistItem: Equatable {
     var dependencies: [String] = []
     var evidence: [WorklistEvidenceReference] = []
     var reviewDetailAvailable = false
+    var missionBindingVerified = false
 
     var displayTitle: String {
         guard let title, !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {

@@ -13,6 +13,7 @@ enum WorklistCopy {
         "subject": ["Workset subject", "Werksetonderwerp", "Gegenstand des Arbeitssatzes", "Objet de l’ensemble", "Objeto del conjunto"],
         "subjectRevision": ["Subject revision", "Onderwerprevisie", "Gegenstandsrevision", "Révision de l’objet", "Revisión del objeto"],
         "mission": ["Canonical Mission", "Canonieke Mission", "Kanonische Mission", "Mission canonique", "Mission canónica"],
+        "unverifiedMissionRef": ["Mission reference — current allocation readback unavailable", "Missionreferentie — actuele allocatiereadback ontbreekt", "Missionreferenz — aktuelle Zuordnungsrücklesung nicht verfügbar", "Référence de Mission — lecture d’allocation actuelle indisponible", "Referencia de Mission — lectura actual de asignación no disponible"],
         "noMission": ["No verified Mission reference", "Geen geverifieerde Missionreferentie", "Keine verifizierte Missionreferenz", "Aucune référence de Mission vérifiée", "Sin referencia de Mission verificada"],
         "committedPosition": ["Committed position", "Vastgelegde positie", "Festgelegte Position", "Position fixée", "Posición establecida"],
         "membershipRevision": ["Membership revision", "Lidmaatschapsrevisie", "Mitgliedschaftsrevision", "Révision des membres", "Revisión de miembros"],
@@ -232,7 +233,7 @@ struct ApprovedWorklistView: View {
             LabeledContent(copy("subjectRevision"), value: item.subjectRevision)
             LabeledContent(copy("sourceRevision"), value: item.sourceRevision)
             LabeledContent(copy("project"), value: item.projectID ?? copy("noProject"))
-            LabeledContent(copy("mission"), value: item.missionID ?? copy("noMission"))
+            LabeledContent(copy(item.missionBindingVerified ? "mission" : "unverifiedMissionRef"), value: item.missionID ?? copy("noMission"))
             LabeledContent(copy("executionState"), value: item.executionState)
             LabeledContent(copy("reviewState"), value: item.reviewState)
             LabeledContent(copy("effectMode"), value: item.effectMode)

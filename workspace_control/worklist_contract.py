@@ -64,8 +64,13 @@ def _allocation(item, installation):
         _require(item["mission_state_revision"] is None and item["allocation_binding"] is None
                  and item["detail_reference"] is None)
         return
-    _require(_id(item["mission_id"]) and _integer(item["mission_state_revision"]))
+    _require(_id(item["mission_id"]))
     binding = item["allocation_binding"]
+    if binding is None:
+        _require(item["execution_state"] == "UNAVAILABLE" and item["mission_state_revision"] is None
+                 and item["detail_reference"] is None and item["evidence_references"] == [])
+        return
+    _require(_integer(item["mission_state_revision"]))
     _shape(binding, {"kind", "candidate_id", "subject_revision", "mission_id", "installation_id", "envelope_digest"})
     _require(binding["kind"] == "CANONICAL_CANDIDATE_INTAKE"
              and binding["candidate_id"] == item["candidate_id"]
@@ -151,7 +156,8 @@ def validate_projection(value, binding, workset_id):
     _require(len(by_id) == len(items) and len(positions) == len(items))
     complete = value["completeness"] == "COMPLETE_WITHIN_SCOPE"
     if complete:
-        _require(positions == set(range(len(items))))
+        _require(positions == set(range(len(items)))
+                 and all(item["execution_state"] != "UNAVAILABLE" for item in items))
     for item in items:
         for dependency in item["dependencies"]:
             if dependency in by_id:
