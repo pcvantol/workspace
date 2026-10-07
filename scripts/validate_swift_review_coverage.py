@@ -1,4 +1,4 @@
-"""Require executable-line coverage strictly above 80.2% for review source."""
+"""Require executable-line coverage strictly above 80.2% for native source."""
 
 import json
 from pathlib import Path
@@ -9,6 +9,7 @@ SOURCES = {
     "MissionReviewDecisionState.swift", "MissionReviewDiscovery.swift",
     "MissionReviewState.swift", "MissionReviewTransport.swift",
     "MissionReviewsView.swift", "WorkspaceApp.swift",
+    "ApprovedWorklistPresentation.swift",
 }
 
 

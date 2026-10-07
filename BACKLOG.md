@@ -1,6 +1,20 @@
 # Workspace Backlog
 
-## r81 plan revision 85 — native Missions and reviews
+## r81 plan revision 86 — native approved worklist and blocker explanations
+
+The [7 October selection](https://github.com/pcvantol/forge/issues/208#issuecomment-6038111333)
+continues the existing LANE_4 assignment on base
+`73411de5a39d04d736b9742cf5356852582e54be`, branch
+`codex/r81-approved-worklist-view`, with one admitted sourcewriter.
+[The consumer boundary](docs/WORKSPACE_APPROVED_WORKLIST_VIEW_V1.md) selects
+only the read-only PRM-W-CONTRACT/PRM-W-VIEW workset subset: exact authorized
+membership/order, separate lifecycle facts, verified blockers, local discovery
+and safe navigation to existing review detail. L3 supplies the separate read
+producer under the JOIN. Versioned schema/grants and qualified protected pin
+are open dependencies; source fixtures do not close installed/native DoD.
+Existing grants, history, budgets and signing/trust/release gates remain intact.
+
+## Delivered r81 plan revision 85 — native Missions and reviews
 
 The 6 October selection in [Forge #208](https://github.com/pcvantol/forge/issues/208#issuecomment-6012171755)
 continues `L4-WORKSPACE-NATIVE-CLIENT-HTTP-V1-20261002` with one Workspace
@@ -17,11 +31,10 @@ with an exact-main installed-wheel receipt in
 [#207](https://github.com/pcvantol/forge/issues/207#issuecomment-6016125785).
 Workspace 2.8.6 now owns a separate review grant binding, strict Server
 transport, native list/detail/decision state and same-operation readback.
-Workspace cannot report its inbox or decision flow as installed-qualified until
-its own installed two-product authorization and GUI readback pass. Protected merge, independent
-exact-head Quality/Security, per-changed-file coverage above 80.2%, packaged
-GUI clicks and exact-main installed readback remain the delivery gates. Prior
-signing/Keychain/two-Mac/public-release gates remain separate.
+Installed two-product/native qualification, independent review, strict per-file
+coverage, protected merge and exact-main installed delivery completed in #136
+and [the terminal receipt](https://github.com/pcvantol/forge/issues/208#issuecomment-6020633531).
+Prior signing/Keychain/two-Mac/public-release gates remain separate.
 
 ## Delivered r81 plan revision 84 — archive and restore own conversations
 

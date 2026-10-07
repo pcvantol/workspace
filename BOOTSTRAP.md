@@ -1,6 +1,19 @@
 # Workspace Bootstrap
 
-## Active owner priority — 6 October 2026, r81 plan revision 85
+## Active coordinator selection — 7 October 2026, r81 plan revision 86
+
+The [native approved worklist selection](https://github.com/pcvantol/forge/issues/208#issuecomment-6038111333)
+continues the same LANE_4 assignment and one sourcewriter. Read the
+[consumer boundary](docs/WORKSPACE_APPROVED_WORKLIST_VIEW_V1.md) for the
+read-only PRM-W-CONTRACT/PRM-W-VIEW workset subset: exact membership/order,
+independent lifecycle facts and verified blocker explanations. The existing
+L3 writer owns the separate producer under
+`L3-L4-APPROVED-WORKLIST-READ-V1-20261007`. Coordinate the exact schema early;
+status/review grants gain no authority. Producer pin and own installed/native
+qualification remain open. Preserve the completed review delivery and the
+separate r81 signing/trust/release gates; no worklist mutation or live EP.
+
+## Delivered owner priority — 6 October 2026, r81 plan revision 85
 
 The owner selected the native **Missions & reviews** overview and bounded
 decision inbox under the existing LANE_4 assignment in
@@ -14,8 +27,10 @@ the separate review producer on protected Forge main
 `f4d3b269d54fd302a586cd8f41421c4d15e8c4d5` with exact installed-wheel
 qualification in [#207](https://github.com/pcvantol/forge/issues/207#issuecomment-6016125785).
 Workspace 2.8.6 consumes only that actor- and Mission-scoped seam through its
-own Server and native Client. Workspace's own installed two-product and GUI
-qualification, exact-head review and protected merge remain delivery gates.
+own Server and native Client. Its installed two-product/native qualification,
+independent review and protected merge completed in #136 on main
+`73411de5a39d04d736b9742cf5356852582e54be` with the
+[terminal receipt](https://github.com/pcvantol/forge/issues/208#issuecomment-6020633531).
 Archive/restore in 2.8.5 and its receipt below remain delivered history.
 
 ## Delivered owner priority — 5 October 2026, r81 plan revision 84
