@@ -159,7 +159,12 @@ const ownOperations = {
   'conversations.grant.issue': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'conversation-grant-issue'},
   'conversations.grant.revoke': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'conversation-grant-revoke'},
   'reviews.bind.issue': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'review-bind-issue'},
-  'reviews.bind.revoke': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'review-bind-revoke'}
+  'reviews.bind.revoke': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'review-bind-revoke'},
+  'worksets.contract.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/worksets/openapi.json'},
+  'worksets.scopes': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_WORKLIST_GRANT', method: 'GET', path: '/v1/worksets'},
+  'worksets.get': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_WORKLIST_GRANT', method: 'GET', path: '/v1/worksets/{workset_id}'},
+  'worksets.bind.issue': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'worklist-bind-issue'},
+  'worksets.bind.revoke': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'worklist-bind-revoke'}
 };
 function validOwnOperation(operation) {
   if (!operation || !Object.hasOwn(ownOperations, operation.id)) return false;

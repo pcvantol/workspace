@@ -281,6 +281,7 @@ struct LiveMissionReviewsView: View {
     @ObservedObject var client: ClientState
     @StateObject private var state: MissionReviewState
     @Environment(\.locale) private var locale
+    private let requestedSelection: MissionReviewKey?
     @State private var grantToken = ""
     @State private var proposedItem: MissionReviewItem?
     @State private var proposedOutcome: MissionReviewOutcome?
@@ -288,7 +289,8 @@ struct LiveMissionReviewsView: View {
     @FocusState private var reasonFocused: Bool
     private let refreshTimer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
 
-    init(client: ClientState, state: MissionReviewState = MissionReviewState()) {
+    init(client: ClientState, state: MissionReviewState = MissionReviewState(), selected: MissionReviewKey? = nil) {
+        requestedSelection = selected
         self.client = client
         _state = StateObject(wrappedValue: state)
     }
@@ -332,7 +334,7 @@ struct LiveMissionReviewsView: View {
                     }
                 }.padding(.horizontal, 20)
             }
-            MissionReviewsView(items: state.items, access: state.access,
+            MissionReviewsView(items: state.items, access: state.access, selected: requestedSelection,
                                decisionsBusy: state.isBusy || state.pendingIntent != nil,
                                onDecision: state.pendingIntent == nil ? { item, outcome in
                 proposedItem = item

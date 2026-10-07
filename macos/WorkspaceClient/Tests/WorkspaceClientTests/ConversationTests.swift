@@ -410,7 +410,10 @@ final class ConversationTests: XCTestCase {
             "local_root": root.appendingPathComponent("drafts").path,
             "review_grant": String(repeating: "R", count: 43),
             "review_actor": "reviewer-a", "review_forge_instance": "forge-a",
-            "review_mission_ids": ["mission-a"]
+            "review_mission_ids": ["mission-a"],
+            "worklist_grant": String(repeating: "W", count: 43),
+            "worklist_actor": "reviewer-a", "worklist_forge_instance": "forge-a",
+            "worklist_workset_ids": ["workset-a"]
         ]
         try JSONSerialization.data(withJSONObject: document).write(to: file)
         try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: file.path)
@@ -434,8 +437,32 @@ final class ConversationTests: XCTestCase {
         let reviews = IsolatedReviewGrant(loaded)
         XCTAssertEqual(try reviews.loadAccess()?.actorID, "reviewer-a")
         XCTAssertEqual(try reviews.loadAccess()?.missionIDs, ["mission-a"])
+        let reviewAccess = try XCTUnwrap(reviews.loadAccess())
+        try reviews.saveAccess(reviewAccess)
+        XCTAssertNil(try reviews.loadIntent())
+        try reviews.forgetIntent()
         try reviews.forgetAccess()
         XCTAssertNil(try reviews.loadAccess())
+        let worklists = IsolatedWorklistGrant(loaded)
+        let worklistAccess = try XCTUnwrap(worklists.loadAccess())
+        XCTAssertEqual(worklistAccess.actorID, "reviewer-a")
+        XCTAssertEqual(worklistAccess.worksetIDs, ["workset-a"])
+        try worklists.saveAccess(worklistAccess)
+        try worklists.forgetAccess()
+        XCTAssertNil(try worklists.loadAccess())
+        var withoutWorklist = document
+        for field in ["worklist_grant", "worklist_actor", "worklist_forge_instance", "worklist_workset_ids"] { withoutWorklist.removeValue(forKey: field) }
+        try JSONSerialization.data(withJSONObject: withoutWorklist).write(to: file)
+        XCTAssertNil(try IsolatedWorklistGrant(IsolatedTestDocument.load()).loadAccess())
+        var badWorklist = document
+        badWorklist["worklist_workset_ids"] = ["workset-a", "workset-a"]
+        try JSONSerialization.data(withJSONObject: badWorklist).write(to: file)
+        XCTAssertThrowsError(try IsolatedTestDocument.load())
+        badWorklist = document
+        badWorklist.removeValue(forKey: "worklist_actor")
+        try JSONSerialization.data(withJSONObject: badWorklist).write(to: file)
+        XCTAssertThrowsError(try IsolatedTestDocument.load())
+        try JSONSerialization.data(withJSONObject: document).write(to: file)
         try FileManager.default.setAttributes([.posixPermissions: 0o644], ofItemAtPath: file.path)
         XCTAssertThrowsError(try IsolatedTestDocument.load())
         try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: file.path)

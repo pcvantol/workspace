@@ -34,6 +34,14 @@ def main(argv=None):
     review_issue.add_argument("--client-token-file", required=True)
     review_revoke = commands.add_parser("review-bind-revoke")
     review_revoke.add_argument("--binding-id", required=True)
+    worklist_issue = commands.add_parser("worklist-bind-issue")
+    worklist_issue.add_argument("--actor", required=True)
+    worklist_issue.add_argument("--forge-endpoint", required=True)
+    worklist_issue.add_argument("--forge-instance-id", required=True)
+    worklist_issue.add_argument("--forge-token-file", required=True)
+    worklist_issue.add_argument("--client-token-file", required=True)
+    worklist_revoke = commands.add_parser("worklist-bind-revoke")
+    worklist_revoke.add_argument("--binding-id", required=True)
     forge_binding = commands.add_parser("forge-read-configure")
     forge_binding.add_argument("--endpoint", required=True)
     forge_binding.add_argument("--instance-id", required=True)
@@ -84,6 +92,16 @@ def main(argv=None):
                 revoked = service.revoke_conversation_grants(args.actor, args.project)
             print(json.dumps({"actor_id": args.actor, "project_id": args.project,
                               "revoked": revoked}, sort_keys=True))
+        elif args.command == "worklist-bind-issue":
+            with Service(args.root) as service:
+                result = service.provision_worklist(args.actor, args.forge_endpoint,
+                                                    args.forge_instance_id,
+                                                    args.forge_token_file, args.client_token_file)
+            print(json.dumps(result, sort_keys=True))
+        elif args.command == "worklist-bind-revoke":
+            with Service(args.root) as service:
+                result = service.revoke_worklist(args.binding_id)
+            print(json.dumps(result, sort_keys=True))
         elif args.command == "review-bind-issue":
             with Service(args.root) as service:
                 result = service.provision_review(args.actor, args.forge_endpoint,

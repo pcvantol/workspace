@@ -18,6 +18,7 @@ from .schemas import OPENAPI_SCHEMAS, SUCCESS_SCHEMA
 from .service import Service, _unique_json_object
 from .conversations import ConversationConflict
 from .review_peer import ReviewError
+from .worklist_peer import WorklistError
 
 
 OPERATIONS = {
@@ -89,6 +90,19 @@ OPERATIONS = {
                                   "auth": "PRIVATE_ROOT_OWNER", "summary": "issue project and actor draft grant"},
     "conversations.grant.revoke": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "conversation-grant-revoke",
                                    "auth": "PRIVATE_ROOT_OWNER", "summary": "revoke project and actor draft grants"},
+    "worksets.contract.read": {"exposure": "HTTP_EXPOSED", "method": "GET",
+                              "path": "/v1/worksets/openapi.json", "auth": "BEARER_PINNED",
+                              "contract": "worklist", "summary": "own scoped worklist read contract"},
+    "worksets.scopes": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/worksets",
+                        "auth": "BEARER_PINNED_AND_WORKLIST_GRANT", "contract": "worklist",
+                        "summary": "exact granted Forge worksets"},
+    "worksets.get": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/worksets/{workset_id}",
+                     "auth": "BEARER_PINNED_AND_WORKLIST_GRANT", "contract": "worklist",
+                     "summary": "one coherent approved worklist snapshot"},
+    "worksets.bind.issue": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "worklist-bind-issue",
+                            "auth": "PRIVATE_ROOT_OWNER", "summary": "bind actor and workset read grant"},
+    "worksets.bind.revoke": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "worklist-bind-revoke",
+                             "auth": "PRIVATE_ROOT_OWNER", "summary": "revoke own workset read binding"},
     "reviews.bind.issue": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "review-bind-issue",
                            "auth": "PRIVATE_ROOT_OWNER", "summary": "bind actor and scoped Forge review grant"},
     "reviews.bind.revoke": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "review-bind-revoke",
@@ -271,6 +285,30 @@ def review_openapi_contract():
                           "get": operation("reviews.operation")}}}
 
 
+def worklist_openapi_contract():
+    document = {"openapi": "3.0.3", "info": {"title": "Workspace scoped worklist read V1", "version": "1"},
+            "components": {"securitySchemes": {
+                "bearerAuth": {"type": "http", "scheme": "bearer"},
+                "worklistGrant": {"type": "apiKey", "in": "header", "name": "X-Workspace-Worklist-Grant"}}},
+            "paths": {"/v1/worksets": {"get": {
+                "operationId": "worksets.scopes",
+                "security": [{"bearerAuth": [], "worklistGrant": []}],
+                "parameters": [{"name": "X-Workspace-Instance", "in": "header", "required": True,
+                                "schema": {"type": "string"}}],
+                "responses": {"200": {"description": "Exact granted Forge instance/actor/workset IDs"},
+                              "401": {"description": "Unauthorized or expired/revoked producer grant"},
+                              "403": {"description": "Denied worklist capability"},
+                              "409": {"description": "Wrong pinned Workspace instance"},
+                              "503": {"description": "Unavailable or invalid producer readback"}}}}}}
+    projection = json.loads(json.dumps(document["paths"]["/v1/worksets"]))
+    projection["get"]["operationId"] = "worksets.get"
+    projection["get"]["parameters"].append({"name": "workset_id", "in": "path", "required": True,
+                                             "schema": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"}})
+    projection["get"]["responses"]["200"]["description"] = "Exact scoped Forge worklist snapshot and typed proof references"
+    document["paths"]["/v1/worksets/{workset_id}"] = projection
+    return document
+
+
 def handler_for(service, *, public_host=None, scheme="http"):
     class Handler(BaseHTTPRequestHandler):
         timeout = 5
@@ -403,6 +441,25 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return self._reply(503, {"error": "CONVERSATIONS_UNAVAILABLE"})
             self._reply(code, result)
 
+        def _worklist_error(self, error):
+            code = {"UNAUTHORIZED": 401, "DENIED": 403, "NOT_FOUND": 404,
+                    "CONFLICT": 409}.get(error.state, 503)
+            self._reply(code, {"error": "WORKLIST_" + error.state})
+
+        def _worklist_get(self, path):
+            grants = self.headers.get_all("X-Workspace-Worklist-Grant", [])
+            if len(grants) != 1:
+                return self._reply(403, {"error": "WORKLIST_GRANT_REQUIRED"})
+            try:
+                binding = service.worklists.access(grants[0])
+                result = (service.worklists.scopes(binding) if path == "/v1/worksets" else
+                          service.worklists.projection(binding, path.rsplit("/", 1)[1]))
+            except WorklistError as error:
+                return self._worklist_error(error)
+            except (OSError, ValueError, UnicodeError):
+                return self._reply(503, {"error": "WORKLIST_UNAVAILABLE"})
+            self._reply(200, result)
+
         def _review_binding(self):
             grants = self.headers.get_all("X-Workspace-Review-Grant", [])
             if len(grants) != 1:
@@ -499,12 +556,17 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 if self._pinned_auth():
                     return self._reply(200, review_openapi_contract())
                 return
+            if path == "/v1/worksets/openapi.json":
+                if self._pinned_auth():
+                    return self._reply(200, worklist_openapi_contract())
+                return
             conversation = path == "/v1/conversations" or re.fullmatch(r"/v1/conversations/[0-9a-f]{32}", path)
             review = (path == "/v1/reviews" or
                       re.fullmatch(r"/v1/reviews/missions/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}", path) or
                       re.fullmatch(r"/v1/reviews/missions/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/decisions/"
                                    r"[A-Za-z0-9][A-Za-z0-9._:-]{0,127}", path))
-            if path not in ROUTES and not conversation and not review:
+            worklist = path == "/v1/worksets" or re.fullmatch(r"/v1/worksets/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}", path)
+            if path not in ROUTES and not conversation and not review and not worklist:
                 return self._reply(404, {"error": "NOT_FOUND"})
             if not self._pinned_auth():
                 return
@@ -512,6 +574,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return self._conversation_get(path)
             if review:
                 return self._review_get(path)
+            if worklist:
+                return self._worklist_get(path)
             try:
                 if path == "/v1/status":
                     result = service.status()

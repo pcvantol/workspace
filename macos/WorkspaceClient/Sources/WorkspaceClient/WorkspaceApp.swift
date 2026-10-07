@@ -30,6 +30,7 @@ struct WorkspaceApp: App {
     @StateObject private var client: ClientState
     @StateObject private var conversations: ConversationState
     @StateObject private var reviews: MissionReviewState
+    @StateObject private var worklists: WorklistState
 
     init() {
         #if WORKSPACE_ISOLATED_TEST
@@ -41,17 +42,19 @@ struct WorkspaceApp: App {
             grants: IsolatedDraftGrant(document),
             localDrafts: PrivateLocalDraftCache(root: URL(fileURLWithPath: document.local_root))))
         _reviews = StateObject(wrappedValue: MissionReviewState(credentials: IsolatedReviewGrant(document)))
+        _worklists = StateObject(wrappedValue: WorklistState(credentials: IsolatedWorklistGrant(document)))
         IsolatedWindowEvidence.capture(in: document.local_root)
         #else
         _client = StateObject(wrappedValue: ClientState())
         _conversations = StateObject(wrappedValue: ConversationState())
         _reviews = StateObject(wrappedValue: MissionReviewState())
+        _worklists = StateObject(wrappedValue: WorklistState())
         #endif
     }
 
     var body: some Scene {
         WindowGroup("Workspace") {
-            ContentView(client: client, conversations: conversations, reviews: reviews)
+            ContentView(client: client, conversations: conversations, reviews: reviews, worklists: worklists)
                 .frame(minWidth: 640, minHeight: 520)
         }
         .defaultSize(width: 900, height: 650)
@@ -67,22 +70,50 @@ struct ContentView: View {
     @ObservedObject var client: ClientState
     @StateObject private var conversations: ConversationState
     @StateObject private var reviews: MissionReviewState
+    @StateObject private var worklists: WorklistState
+    @State private var selectedTab = 0
+    @State private var requestedReview: MissionReviewKey?
+    @State private var reviewNavigationStatus = ""
 
     init(client: ClientState, conversations: ConversationState = ConversationState(),
-         reviews: MissionReviewState = MissionReviewState()) {
+         reviews: MissionReviewState = MissionReviewState(), worklists: WorklistState = WorklistState()) {
         self.client = client
         _conversations = StateObject(wrappedValue: conversations)
         _reviews = StateObject(wrappedValue: reviews)
+        _worklists = StateObject(wrappedValue: worklists)
+    }
+
+    private func openReview(_ item: ApprovedWorklistItem) {
+        Task { @MainActor in
+            guard item.reviewDetailAvailable, let mission = item.missionID, !reviews.isBusy else {
+                reviewNavigationStatus = "reviewRequired"
+                return
+            }
+            await reviews.refresh(client: client)
+            guard reviews.access == .available, reviews.actorID == item.key.actorID,
+                  reviews.forgeInstanceID == item.key.forgeInstanceID,
+                  let target = reviews.items.first(where: { $0.key.missionID == mission }) else {
+                reviewNavigationStatus = "reviewRequired"
+                return
+            }
+            requestedReview = target.key
+            reviewNavigationStatus = ""
+            selectedTab = 1
+        }
     }
 
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             ConversationsView(client: client, state: conversations)
-                .tabItem { Label(ConversationCopy.text("nav"), systemImage: "bubble.left.and.bubble.right") }
-            LiveMissionReviewsView(client: client, state: reviews)
-                .tabItem { Label(MissionReviewCopy.text("nav"), systemImage: "checkmark.seal") }
+                .tabItem { Label(ConversationCopy.text("nav"), systemImage: "bubble.left.and.bubble.right") }.tag(0)
+            LiveMissionReviewsView(client: client, state: reviews, selected: requestedReview)
+                .id(requestedReview)
+                .tabItem { Label(MissionReviewCopy.text("nav"), systemImage: "checkmark.seal") }.tag(1)
+            LiveApprovedWorklistView(client: client, state: worklists,
+                reviewNavigationStatus: reviewNavigationStatus, onOpenReviews: openReview)
+                .tabItem { Label(WorklistCopy.text("nav"), systemImage: "list.bullet.rectangle") }.tag(2)
             ServerOverviewView(client: client)
-                .tabItem { Label("Server", systemImage: "server.rack") }
+                .tabItem { Label("Server", systemImage: "server.rack") }.tag(3)
         }
     }
 }

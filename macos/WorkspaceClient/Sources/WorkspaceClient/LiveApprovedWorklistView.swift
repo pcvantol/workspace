@@ -1,0 +1,54 @@
+import SwiftUI
+import Combine
+
+struct LiveApprovedWorklistView: View {
+    @ObservedObject var client: ClientState
+    @ObservedObject var state: WorklistState
+    var reviewNavigationStatus = ""
+    let onOpenReviews: (ApprovedWorklistItem) -> Void
+    @Environment(\.locale) private var locale
+    @State private var grant = ""
+    private let timer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
+
+    private func copy(_ key: String) -> String {
+        WorklistCopy.text(key, language: locale.language.languageCode?.identifier)
+    }
+    private func connection() async -> WorklistConnection? {
+        guard client.phase == "CONNECTED", let token = try? await client.draftReadToken() else { return nil }
+        return WorklistConnection(endpoint: client.savedEndpoint, instanceID: client.savedInstance, readToken: token)
+    }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Button(copy("refresh")) { Task { await state.refresh(connection: connection()) } }
+                    .disabled(state.isBusy).accessibilityIdentifier("worklist.refresh")
+                if state.hasGrant {
+                    Button(copy("forgetGrant")) { state.forgetGrant() }.disabled(state.isBusy)
+                }
+                if state.isBusy { ProgressView().controlSize(.small) }
+            }.padding(.horizontal, 18).padding(.top, 12)
+            if !state.hasGrant || state.cache.availability == .denied {
+                HStack {
+                    SecureField(copy("grant"), text: $grant).textFieldStyle(.roundedBorder)
+                    Button(copy("saveGrant")) {
+                        let submitted = grant
+                        grant = ""
+                        Task { await state.saveGrant(submitted, connection: connection()) }
+                    }.disabled(grant.isEmpty || state.isBusy || client.phase != "CONNECTED")
+                }.padding(.horizontal, 18)
+            }
+            if !state.worksetIDs.isEmpty {
+                Picker(copy("workset"), selection: Binding(get: { state.selectedWorkset }, set: { selected in
+                    Task { await state.refresh(connection: connection(), selecting: selected) }
+                })) {
+                    ForEach(state.worksetIDs, id: \.self) { Text($0).tag($0) }
+                }.disabled(state.isBusy).padding(.horizontal, 18).accessibilityIdentifier("worklist.workset")
+            }
+            if !reviewNavigationStatus.isEmpty { Text(copy(reviewNavigationStatus)).foregroundStyle(.orange).padding(.horizontal, 18) }
+            ApprovedWorklistView(cache: state.cache, onOpenReviews: onOpenReviews)
+        }
+        .task { await state.refresh(connection: connection()) }
+        .onChange(of: client.phase) { _, _ in Task { await state.refresh(connection: connection()) } }
+        .onReceive(timer) { _ in Task { await state.refresh(connection: connection()) } }
+    }
+}

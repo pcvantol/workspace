@@ -61,6 +61,45 @@ commit/reorder/release/hold/disarm/intake/planning/provider/EP-submit control.
 Closing Workspace does not stop Forge. Review decisions retain their existing
 separate authority, confirmation and receipt/current-readback semantics.
 
+## Versioned read integration (producer acceptance pending)
+
+The L3 source proposal exposes `forge-workspace-worklist/v1` from
+`forge/api/workspace-worklist-v1.json`. The current inspected schema at Forge
+`7aad34d6b9bf88967f7189ef041317630a7612d1` is blob
+`a94a6b85e00402e10cc280e03d5937108619f711`, SHA256
+`7674be1cd915b2976be5ace74a9f06deaf973f386b3ce8dfa4679120761f3b19`.
+This records an inspected proposal, not protected/installed producer acceptance.
+
+The owner provisions a private separate binding with `workspace-server --root
+ROOT worklist-bind-issue --actor ACTOR --forge-endpoint URL --forge-instance-id
+INSTANCE --forge-token-file PRIVATE_FILE --client-token-file PRIVATE_FILE`.
+`worklist-bind-revoke --binding-id ID` removes only that separate read access.
+The Forge bearer remains under the Server's private root; only a random hashed
+Workspace client credential is distributed. Native storage has its own Keychain
+service/account, separate from Server pairing, drafts and reviews.
+
+| Workspace route | Authentication and effect |
+| --- | --- |
+| `GET /v1/worksets/openapi.json` | Pinned Server read bearer; own bounded contract. |
+| `GET /v1/worksets` | Pinned read bearer plus `X-Workspace-Worklist-Grant`; exact authorized IDs. |
+| `GET /v1/worksets/{workset_id}` | Same independent grant; one bounded snapshot, no pagination. |
+
+Both Server and native Client validate exact fields, actor/instance/workset,
+member/order uniqueness, predecessor references, canonical allocation and typed
+evidence. The snapshot digest binds the producer's eleven fixed fields using
+sorted compact UTF8 JSON. Python-canonical Unicode/slash fixture regression
+checks native interoperability. `FINAL_BUSINESS_ACCEPTANCE.subject_id` is the
+Business governance decision ID; `MISSION_COMPLETION.subject_id` is the Mission.
+Neither reference is an arbitrary URL, executable link or invented project.
+Missing/malformed grants never borrow existing status/review access.
+
+A grant/scope denial or changed pairing clears observations. Offline or rejected
+mixed observations retain only an explicitly stale cache. Restart restores the
+separate credential and reads anew; no cache creates current authority. Producer
+continuation supplies next/idle; local filters never recompute it. Existing review
+navigation refreshes independent review authority and matches exact actor, Forge
+instance and canonical Mission before selecting a detail. It records no decision.
+
 ## Targets and proof
 
 | Target | Required evidence |
@@ -81,8 +120,8 @@ separate from workflow success; prior observe-only debt is not blanket cleanup.
 
 `WORKSPACE_WORKLIST_DELIVERY=IN_PROGRESS`; `FORGE_READ_PRODUCER_PIN=AWAITING_JOIN`.
 [Pickup](https://github.com/pcvantol/forge/issues/208#issuecomment-6038328457)
-records admission and direct JOIN coordination. The first source step is local
-presentation/snapshot safety and negative regressions; integrated delivery
+records admission and direct JOIN coordination. The integrated source adds native presentation, independent credentials,
+GET-only Server transport and strict whole-snapshot validation. Final delivery
 requires the real producer handoff and every owning gate.
 
 Preserve historical candidates, user data and consumed budgets. Signing,

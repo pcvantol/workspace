@@ -56,6 +56,7 @@ final class ApprovedWorklistPresentationTests: XCTestCase {
         XCTAssertTrue(ApprovedWorklistPresentation.visible(rows, search: "outside", filter: .all, sort: .committed).isEmpty)
         XCTAssertNil(first.missionID)
         XCTAssertNil(first.projectID)
+        XCTAssertEqual(item("blank", title: "  ").displayTitle, "blank")
         let tied = [item("b", title: "same"), item("a", title: "same")]
         XCTAssertEqual(ApprovedWorklistPresentation.visible(tied, search: "", filter: .all, sort: .title).map(\.key.memberID), ["a", "b"])
     }

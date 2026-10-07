@@ -39,6 +39,12 @@ struct WorklistBlockReason: Equatable {
     let explanation: String?
 }
 
+struct WorklistEvidenceReference: Equatable, Hashable {
+    let kind: String
+    let subjectID: String
+    let digest: String
+}
+
 struct ApprovedWorklistItem: Equatable {
     let key: ApprovedWorklistKey
     let subjectID: String
@@ -51,6 +57,20 @@ struct ApprovedWorklistItem: Equatable {
     let title: String?
     let facts: WorklistFacts
     let blockers: [WorklistBlockReason]
+
+    var executionState: String = "UNKNOWN"
+    var reviewState: String = "UNKNOWN"
+    var effectMode: String = "UNKNOWN"
+    var dependencies: [String] = []
+    var evidence: [WorklistEvidenceReference] = []
+    var reviewDetailAvailable = false
+
+    var displayTitle: String {
+        guard let title, !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return key.memberID
+        }
+        return title
+    }
 }
 
 enum WorklistFreshness { case current, stale, unknown }
@@ -67,6 +87,11 @@ struct ApprovedWorklistSnapshot: Equatable {
     let continuation: WorklistContinuation
     let nextMemberID: String?
     let items: [ApprovedWorklistItem]
+
+    var installationID: String = ""
+    var worksetRevision: Int = 0
+    var activationSupport: String = "UNKNOWN"
+    var continuationReasons: [String] = []
 
     func isCoherent(for expected: ApprovedWorklistScope) -> Bool {
         guard scope == expected, !scope.forgeInstanceID.isEmpty,
@@ -137,8 +162,8 @@ enum ApprovedWorklistPresentation {
                 item.blockers.flatMap { [$0.code, $0.explanation ?? ""] }
             return text.contains { normalized($0).contains(needle) }
         }.sorted { left, right in
-            let leftValue = sort == .title ? normalized(left.title ?? left.key.memberID) : left.key.memberID
-            let rightValue = sort == .title ? normalized(right.title ?? right.key.memberID) : right.key.memberID
+            let leftValue = sort == .title ? normalized(left.displayTitle) : left.key.memberID
+            let rightValue = sort == .title ? normalized(right.displayTitle) : right.key.memberID
             if sort != .committed && leftValue != rightValue { return leftValue < rightValue }
             if left.committedPosition != right.committedPosition {
                 return left.committedPosition < right.committedPosition

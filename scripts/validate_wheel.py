@@ -17,6 +17,8 @@ ROOT = Path(__file__).resolve().parents[1]
 PACKAGE_FILES = {"workspace_control/__init__.py", "workspace_control/service.py",
                  "workspace_control/http.py", "workspace_control/cli.py",
                  "workspace_control/review_peer.py",
+                 "workspace_control/worklist_peer.py",
+                 "workspace_control/worklist_contract.py",
                  "workspace_control/client.html", "workspace_control/client.js",
                  "workspace_control/client.css"}
 
