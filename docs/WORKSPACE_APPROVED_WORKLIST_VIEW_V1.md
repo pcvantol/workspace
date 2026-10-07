@@ -141,11 +141,40 @@ separate from workflow success; prior observe-only debt is not blanket cleanup.
 
 ## Qualification state
 
-`WORKSPACE_WORKLIST_DELIVERY=IN_PROGRESS`; `FORGE_READ_PRODUCER_PIN=QUALIFIED_PROTECTED_MAIN`.
+`WORKSPACE_WORKLIST_DELIVERY=SOURCE_AND_CANDIDATE_QUALIFIED`; `FORGE_READ_PRODUCER_PIN=QUALIFIED_PROTECTED_MAIN`.
 [Pickup](https://github.com/pcvantol/forge/issues/208#issuecomment-6038328457)
 records admission and direct JOIN coordination. The integrated source adds native presentation, independent credentials,
-GET-only Server transport and strict whole-snapshot validation. Final delivery
-requires the real producer handoff and every owning gate.
+GET-only Server transport and strict whole-snapshot validation.
+
+Candidate `1090f2590bc1d0e4a7c902aeb912249e2bbdb3ad` /2.8.7 passed full validation:
+79 native tests plus the isolated credential test, all changed executable Swift
+and Python product files strictly above80.2%, source wheel/sdist parity and
+ad-hoc app. Independent complete-slice Quality and Security reviews passed
+that exact HEAD after two P2 fixes: repeated-target selection and pairing
+removal/late-response invalidation.
+
+Actual noneditable Workspace/Forge candidate proof verifies source/wheel/
+installed bytes,17 authenticated HTTP requests with two actors/scopes, actual
+empty/IDLE, expiry/revoke/hold and Serverrestart. A separate actual canonical
+Mission flow supplies before/after Businessacceptance/dependency readbacks,
+real packaged list/Cmd-F filter/detail/separately authorized review navigation,
+restart and unchanged canonical source bytes from all new reads/clicks.
+Declared private synthetic storage-fault control yields actual `PARTIAL`,
+restores exact current-state document bytes, and preserves FK constraints.
+Negative OS-stream membership corruption yields503 with no partial-page merge.
+The consumer uses authenticated HTTP throughout; fault injection is not a
+successful mocked contract, producer source change or SQL fallback. Owned
+synthetic runtime roots/processes are removed after each successful run.
+
+[PR137](https://github.com/pcvantol/workspace/pull/137) and the current owning
+[#208 register](https://github.com/pcvantol/forge/issues/208) are the authoritative
+protected merge/exact-main receipt and terminal-disposition readback. A final
+register decision closes only this subset; no new family follows automatically.
+TDE1090f25 observe workflow succeeded, but actual assessment/qualification
+exits2/2 and policyFAIL: preserved product maximum complexity80 in unchanged
+`review_peer.py` against policy30. New worklist validator maximum23 is reported
+honestly; runtime qualified, policy is not PASS. This does not grant blanket
+legacy cleanup or product activation.
 
 Preserve historical candidates, user data and consumed budgets. Signing,
 notarization, live personal Keychain, two-Mac trust, public release and production

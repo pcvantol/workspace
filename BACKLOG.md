@@ -1,6 +1,6 @@
 # Workspace Backlog
 
-## r81 plan revision 86 — native approved worklist and blocker explanations
+## Qualified r81 plan revision 86 — native approved worklist and blocker explanations
 
 The [7 October selection](https://github.com/pcvantol/forge/issues/208#issuecomment-6038111333)
 continues the existing LANE_4 assignment on base
@@ -10,8 +10,12 @@ continues the existing LANE_4 assignment on base
 only the read-only PRM-W-CONTRACT/PRM-W-VIEW workset subset: exact authorized
 membership/order, separate lifecycle facts, verified blockers, local discovery
 and safe navigation to existing review detail. L3 supplies the separate read
-producer under the JOIN. Versioned schema/grants and qualified protected pin
-are open dependencies; source fixtures do not close installed/native DoD.
+producer on protected Forge2.7.67/da57b7b under the JOIN. Workspace2.8.7
+source and actual installed/native candidate qualify this read subset in
+[PR137](https://github.com/pcvantol/workspace/pull/137); final protected-main
+readback and terminal disposition belong to the current owning
+[#208 register](https://github.com/pcvantol/forge/issues/208). No new family
+is selected after this subset.
 Existing grants, history, budgets and signing/trust/release gates remain intact.
 
 ## Delivered r81 plan revision 85 — native Missions and reviews

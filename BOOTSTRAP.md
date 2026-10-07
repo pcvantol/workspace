@@ -1,6 +1,6 @@
 # Workspace Bootstrap
 
-## Active coordinator selection — 7 October 2026, r81 plan revision 86
+## Qualified approved worklist source — 7 October 2026, r81 plan revision 86
 
 The [native approved worklist selection](https://github.com/pcvantol/forge/issues/208#issuecomment-6038111333)
 continues the same LANE_4 assignment and one sourcewriter. Read the
@@ -10,7 +10,11 @@ independent lifecycle facts and verified blocker explanations. The existing
 L3 writer owns the separate producer under
 `L3-L4-APPROVED-WORKLIST-READ-V1-20261007`. Coordinate the exact schema early;
 status/review grants gain no authority. The protected Forge2.7.67 read pin is
-qualified under the JOIN; own final installed/native qualification remains open. Preserve the completed review delivery and the
+qualified under the JOIN. Workspace2.8.7 source and installed candidate are qualified;
+protected merge and final exact-main readback are recorded in
+[PR137](https://github.com/pcvantol/workspace/pull/137) and the current owning
+[#208 register](https://github.com/pcvantol/forge/issues/208). Read its terminal
+decision before resuming; do not reopen a finalized subset. Preserve the completed review delivery and the
 separate r81 signing/trust/release gates; no worklist mutation or live EP.
 
 ## Delivered owner priority — 6 October 2026, r81 plan revision 85

@@ -1,15 +1,18 @@
 # Workspace Roadmap
 
-## Selected GUI continuation — native approved worklist
+## Qualified GUI continuation — native approved worklist
 
 The [7 October selection](https://github.com/pcvantol/forge/issues/208#issuecomment-6038111333)
 selects r81 plan revision 86: one read-only PRM-W-CONTRACT/PRM-W-VIEW workset
 subset, exact membership/order, independent lifecycle facts and verified
 blocker explanations with existing review detail navigation. The
 [consumer boundary](docs/WORKSPACE_APPROVED_WORKLIST_VIEW_V1.md) pins acceptance
-and the direct L3/L4 JOIN. Exact readproducer and installed/native qualification
-remain open; full PRM management/decision/sync/Q and signing/trust/release remain
-separate. Local selection never grants activation.
+and the direct L3/L4 JOIN. Protected Forge2.7.67/da57b7b readproducer and
+Workspace2.8.7 installed/native candidate are qualified.
+[PR137](https://github.com/pcvantol/workspace/pull/137) and the current owning
+[#208 register](https://github.com/pcvantol/forge/issues/208) record protected
+merge and exact-main final acceptance. Full PRM management/decision/sync/Q and
+signing/trust/release remain separate. Local selection never grants activation.
 
 ## Delivered GUI continuation — native Missions and reviews
 
