@@ -51,7 +51,7 @@ struct WorklistDependencyGraph: View {
                     }
                 }
             }.frame(height: 420)
-        }.accessibilityIdentifier("worklist.graph")
+        }
     }
 
     private func controls(_ layout: WorklistGraphLayout, reader: ScrollViewProxy, size: CGSize) -> some View {
@@ -65,8 +65,7 @@ struct WorklistDependencyGraph: View {
         HStack {
             Button(copy("graphZoomOut")) { viewport.magnify(1 / 1.25) }
                 .accessibilityIdentifier("worklist.graph.zoom-out")
-            Text(viewport.zoom, format: .percent.precision(.fractionLength(0))).monospacedDigit()
-                .accessibilityLabel(copy("graphZoom"))
+            Text("\(copy("graphZoom")): \(viewport.zoom.formatted(.percent.precision(.fractionLength(0))))").monospacedDigit()
             Button(copy("graphZoomIn")) { viewport.magnify(1.25) }
                 .accessibilityIdentifier("worklist.graph.zoom-in")
             Button(copy("graphFit")) { viewport.fit(layout: layout, width: size.width, height: max(1, size.height - 80)) }
@@ -112,8 +111,14 @@ struct WorklistDependencyGraph: View {
         }
         .buttonStyle(.plain)
         .opacity(node.contextOnly ? 0.65 : 1)
-        .accessibilityLabel("\(item.displayTitle), \(copy("committedPosition")) \(item.committedPosition + 1), \(copy("active")) \(copy(item.facts.active.rawValue)), \(copy("completed")) \(copy(item.facts.completed.rawValue)), \(copy("dependencies")): \(item.dependencies.joined(separator: ", ")), \(item.blockers.map(\.code).joined(separator: ", "))")
+        .accessibilityLabel(Self.nodeLabel(node, language: locale.language.languageCode?.identifier ?? "en"))
         .accessibilityIdentifier("worklist.graph.node.\(item.key.memberID)")
+    }
+
+    static func nodeLabel(_ node: WorklistGraphNode, language: String) -> String {
+        let item = node.item
+        func text(_ key: String) -> String { WorklistCopy.text(key, language: language) }
+        return "\(item.displayTitle), \(text("committedPosition")) \(item.committedPosition + 1), \(text("active")) \(text(item.facts.active.rawValue)), \(text("completed")) \(text(item.facts.completed.rawValue)), \(text("dependencies")): \(item.dependencies.joined(separator: ", ")), \(item.blockers.map(\.code).joined(separator: ", "))" + (node.contextOnly ? ", " + text("graphFiltered") : "")
     }
 
     private func x(_ node: WorklistGraphNode) -> Double { 16 + Double(node.column) * WorklistGraphLayout.columnStride + WorklistGraphLayout.nodeWidth / 2 }

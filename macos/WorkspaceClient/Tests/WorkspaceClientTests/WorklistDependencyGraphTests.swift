@@ -106,6 +106,19 @@ final class WorklistDependencyGraphTests: XCTestCase {
         XCTAssertTrue(graph.route(.init(predecessor: "foreign", dependent: "c"), index: 0).isEmpty)
     }
 
+    func testFilteredContextIsExplicitInFiveLanguageAccessibleNodeLabels() {
+        let row = item("a", 0, dependencies: ["predecessor"])
+        for language in ["en", "nl", "de", "fr", "es"] {
+            for filtered in [false, true] {
+                let label = WorklistDependencyGraph.nodeLabel(.init(item: row, column: 0, row: 0, contextOnly: filtered), language: language)
+                XCTAssertEqual(label.contains(WorklistCopy.text("graphFiltered", language: language)), filtered)
+                XCTAssertTrue(label.contains("predecessor"))
+                XCTAssertTrue(label.contains(WorklistCopy.text("completed", language: language)))
+                XCTAssertTrue(label.contains(WorklistCopy.text("unknown", language: language)))
+            }
+        }
+    }
+
     @MainActor
     func testFiveLocalesThemesNarrowViewsPartialAndInvalidGraphs() {
         NSApplication.shared.setActivationPolicy(.prohibited)
