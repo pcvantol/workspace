@@ -97,11 +97,12 @@ struct MissionReviewsView: View {
     @Environment(\.nativeTabCommandsActive) private var commandsActive
     @State private var search = ""
     @State private var filter: MissionReviewFilter = .all
-    @State private var selectedKey: MissionReviewKey?
+    @State private var localSelectedKey: MissionReviewKey?
+    private let externalSelection: Binding<MissionReviewKey?>?
     @FocusState private var searchFocused: Bool
 
     init(items: [MissionReviewItem] = [], access: MissionReviewListAccess = .unavailable,
-         selected: MissionReviewKey? = nil, search: String = "",
+         selected: MissionReviewKey? = nil, selection: Binding<MissionReviewKey?>? = nil, search: String = "",
          filter: MissionReviewFilter = .all,
          decisionsBusy: Bool = false,
          onDecision: ((MissionReviewItem, MissionReviewOutcome) -> Void)? = nil) {
@@ -109,10 +110,23 @@ struct MissionReviewsView: View {
         self.access = access
         self.onDecision = onDecision
         self.decisionsBusy = decisionsBusy
-        _selectedKey = State(initialValue: selected)
+        externalSelection = selection
+        _localSelectedKey = State(initialValue: selected)
         _search = State(initialValue: search)
         _filter = State(initialValue: filter)
     }
+
+    private var selectedKey: MissionReviewKey? {
+        get { if let externalSelection { return externalSelection.wrappedValue }; return localSelectedKey }
+        nonmutating set { if let externalSelection { externalSelection.wrappedValue = newValue } else { localSelectedKey = newValue } }
+    }
+
+    var selectedReview: MissionReviewItem? {
+        guard access == .available else { return nil }
+        return MissionReviewDiscovery.selected(selectedKey, in: items)
+    }
+
+    func selectReview(_ key: MissionReviewKey) { selectedKey = key }
 
     private func copy(_ key: String) -> String {
         MissionReviewCopy.text(key, language: locale.language.languageCode?.identifier)
@@ -154,7 +168,7 @@ struct MissionReviewsView: View {
                 if case .available = access {
                     ForEach(visible, id: \.key) { item in
                         Button {
-                            selectedKey = item.key
+                            selectReview(item.key)
                         } label: {
                             HStack {
                                 VStack(alignment: .leading) {
@@ -172,7 +186,7 @@ struct MissionReviewsView: View {
                         .accessibilityAddTraits(selectedKey == item.key ? .isSelected : [])
                     }
                 }
-                if let selected = MissionReviewDiscovery.selected(selectedKey, in: items),
+                if let selected = selectedReview,
                    case .available = access {
                     if !visible.contains(selected) {
                         Text(copy("hidden")).foregroundStyle(.secondary)
@@ -283,6 +297,7 @@ struct LiveMissionReviewsView: View {
     @StateObject private var state: MissionReviewState
     @Environment(\.locale) private var locale
     private let requestedSelection: MissionReviewKey?
+    private let reviewSelection: Binding<MissionReviewKey?>?
     @State private var grantToken = ""
     @State private var proposedItem: MissionReviewItem?
     @State private var proposedOutcome: MissionReviewOutcome?
@@ -290,7 +305,8 @@ struct LiveMissionReviewsView: View {
     @FocusState private var reasonFocused: Bool
     private let refreshTimer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
 
-    init(client: ClientState, state: MissionReviewState = MissionReviewState(), selected: MissionReviewKey? = nil) {
+    init(client: ClientState, state: MissionReviewState = MissionReviewState(), selected: MissionReviewKey? = nil, selection: Binding<MissionReviewKey?>? = nil) {
+        reviewSelection = selection
         requestedSelection = selected
         self.client = client
         _state = StateObject(wrappedValue: state)
@@ -335,7 +351,7 @@ struct LiveMissionReviewsView: View {
                     }
                 }.padding(.horizontal, 20)
             }
-            MissionReviewsView(items: state.items, access: state.access, selected: requestedSelection,
+            MissionReviewsView(items: state.items, access: state.access, selected: requestedSelection, selection: reviewSelection,
                                decisionsBusy: state.isBusy || state.pendingIntent != nil,
                                onDecision: state.pendingIntent == nil ? { item, outcome in
                 proposedItem = item

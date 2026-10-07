@@ -118,8 +118,7 @@ struct ContentView: View {
             ConversationsView(client: client, state: conversations)
                 .environment(\.nativeTabCommandsActive, selectedTab == 0)
                 .tabItem { Label(ConversationCopy.text("nav"), systemImage: "bubble.left.and.bubble.right") }.tag(0)
-            LiveMissionReviewsView(client: client, state: reviews, selected: requestedReview)
-                .id(requestedReview)
+            LiveMissionReviewsView(client: client, state: reviews, selection: $requestedReview)
                 .environment(\.nativeTabCommandsActive, selectedTab == 1)
                 .tabItem { Label(MissionReviewCopy.text("nav"), systemImage: "checkmark.seal") }.tag(1)
             LiveApprovedWorklistView(client: client, state: worklists,

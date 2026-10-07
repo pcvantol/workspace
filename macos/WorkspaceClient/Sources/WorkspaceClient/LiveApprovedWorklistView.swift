@@ -14,8 +14,11 @@ struct LiveApprovedWorklistView: View {
         WorklistCopy.text(key, language: locale.language.languageCode?.identifier)
     }
     private func connection() async -> WorklistConnection? {
-        guard client.phase == "CONNECTED", let token = try? await client.draftReadToken() else { return nil }
-        return WorklistConnection(endpoint: client.savedEndpoint, instanceID: client.savedInstance, readToken: token)
+        let endpoint = client.savedEndpoint, instance = client.savedInstance
+        guard !endpoint.isEmpty, !instance.isEmpty, client.phase != "FORGETTING" else { return nil }
+        let token = client.phase == "CONNECTED" ? try? await client.draftReadToken() : nil
+        guard endpoint == client.savedEndpoint, instance == client.savedInstance else { return nil }
+        return WorklistConnection(endpoint: endpoint, instanceID: instance, readToken: token)
     }
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -45,10 +48,23 @@ struct LiveApprovedWorklistView: View {
                 }.disabled(state.isBusy).padding(.horizontal, 18).accessibilityIdentifier("worklist.workset")
             }
             if !reviewNavigationStatus.isEmpty { Text(copy(reviewNavigationStatus)).foregroundStyle(.orange).padding(.horizontal, 18) }
-            ApprovedWorklistView(cache: state.cache, onOpenReviews: onOpenReviews)
+            ApprovedWorklistView(cache: state.cache.snapshot != nil &&
+                !state.matchesObservedPairing(endpoint: client.savedEndpoint, instanceID: client.savedInstance)
+                ? WorklistObservationCache() : state.cache, onOpenReviews: onOpenReviews)
         }
         .task { await state.refresh(connection: connection()) }
-        .onChange(of: client.phase) { _, _ in Task { await state.refresh(connection: connection()) } }
+        .onChange(of: client.phase) { _, phase in
+            if phase == "FORGETTING" { state.invalidatePairing() }
+            Task { await state.refresh(connection: connection()) }
+        }
+        .onChange(of: client.savedEndpoint) { _, _ in
+            state.invalidatePairing()
+            Task { await state.refresh(connection: connection()) }
+        }
+        .onChange(of: client.savedInstance) { _, _ in
+            state.invalidatePairing()
+            Task { await state.refresh(connection: connection()) }
+        }
         .onReceive(timer) { _ in Task { await state.refresh(connection: connection()) } }
     }
 }

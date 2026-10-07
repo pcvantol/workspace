@@ -110,11 +110,17 @@ navigation. A complete observation cannot claim unavailable current Mission
 state. Only the active native tab registers its search shortcut; hidden
 conversation/review/worklist tabs cannot take its keyboard focus.
 
-A grant/scope denial or changed pairing clears observations. Offline or rejected
+A grant/scope denial or changed/removed pairing clears observations and visible
+scope metadata. An absent pairing is distinct from a known paired endpoint
+without a current read token. Pairing generations discard in-flight probe,
+scope and snapshot replies after invalidation. Native hides any snapshot whose
+observed Workspace endpoint/instance no longer matches pairing. Offline or rejected
 mixed observations retain only an explicitly stale cache. Restart restores the
 separate credential and reads anew; no cache creates current authority. Producer
 continuation supplies next/idle; local filters never recompute it. Existing review
-navigation refreshes independent review authority and matches exact actor, Forge
+navigation shares its selected review key with manual review selection so that
+A → manual B → reopen A always selects A without resetting view identity. It
+refreshes independent review authority and matches exact actor, Forge
 instance and canonical Mission before selecting a detail. It records no decision.
 
 ## Targets and proof
