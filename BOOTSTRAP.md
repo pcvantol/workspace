@@ -19,8 +19,9 @@ The graph never computes eligibility or dispatch; committed position stays separ
 New consumer acceptance explicitly targets Forge2.7.68 protected
 `47c9f406323cbecd1c36227696f7f01b6a7b1c11`, wheelSHA256
 `f5eed947d2844568e11ebfd610998dff76067ed3f4ba8b966a43e8ef3fc5a6c1`.
-Implementation/tests/review/protected merge/exact-main installed and GUI
-qualification are pending; equal schema does not prove this combination.
+Source and installed/native candidate qualification passed; protected merge and
+fresh exact-main installed/GUI qualification remain pending. Equal schema alone
+does not prove this combination. Candidate evidence belongs in [PR138](https://github.com/pcvantol/workspace/pull/138).
 Signing/trust/release/full PRM families retain their separate gates.
 
 

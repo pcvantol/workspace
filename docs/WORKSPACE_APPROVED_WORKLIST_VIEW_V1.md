@@ -203,8 +203,57 @@ The graph never computes eligibility or dispatch; committed position stays separ
 New consumer acceptance explicitly targets Forge2.7.68 protected
 `47c9f406323cbecd1c36227696f7f01b6a7b1c11`, wheelSHA256
 `f5eed947d2844568e11ebfd610998dff76067ed3f4ba8b966a43e8ef3fc5a6c1`.
-Implementation/tests/review/protected merge/exact-main installed and GUI
-qualification are pending; equal schema does not prove this combination.
+Source and installed/native candidate qualification passed; protected merge and
+fresh exact-main installed/GUI qualification remain pending. Equal schema alone
+does not prove this combination. Candidate evidence belongs in [PR138](https://github.com/pcvantol/workspace/pull/138).
 Signing/trust/release/full PRM families retain their separate gates.
 
 Graph nodes are exact snapshot members. Directed edges use only explicit dependencies, never adjacent committed positions. The entire authorized context remains visible when filtered, with a textual filtered-context marker. PARTIAL missing predecessor references get an unavailable-observation note and no invented node/edge. Invalid/cyclic/forward/foreign complete references fail closed. A fixed-size bounded layout uses committed-order tie breaking and stable dependency columns; identical snapshots do not reshuffle. Native scrollbars/trackpad pan, zoom/fit, focus and previous/next controls supplement tab/space node navigation and the usable list alternative. All observed state/facts/reasons retain existing detail semantics; denial/pairing forget clears the source cache used by both views. No additional polling, authority or dependency store.
+
+### Graph candidate qualification — protected-main gates pending
+
+Product2.8.8 source passed full owning validation:86native tests plus the
+isolated credential test, graph297/314(94.59%), layout68/68(100%),
+existing view444/465(95.48%) executable lines. No changed production Python;
+existing Python per-file gates passed. Independent complete-source Quality and
+Security PASS bind94816a74b6de0cf12463a51a2afa2a53b6a654ba after three P2 fixes:
+large-graph fit, edge occlusion and localized accessible filtered-context labels.
+The later13335ea commit changes only the test's MainActor annotation for the
+older hosted Swift toolchain. All product/source packaging bytes are unchanged.
+
+Actual new Forge2.7.68/47c9f406 consumer proof uses noneditable Python3.14.8
+packages with source/wheel/installed bytes verified. Candidate read receipt
+SHA2560636957599de0ff2a4d1a3b1204d52f37b084de7ce2da093ef91bf7f86128c7d
+covers17real authenticated HTTP requests, two separate actors/worksets,
+empty/held/expired/revoked/foreign access and actual own Serverrestart.
+Serial receipt SHA256ed9228ae9468e0dcce67172d9dfeac2f136737650f46dbd4528b108d6e5959db
+records one existing genuine L3 A→B flow: both Candidate decisions and release
+precede first intake; A waits on final acceptance, then actual B activation
+binds distinctMISSION-0002. Exactly2allocations/2providers/2EP submissions;
+third advisory Candidate remains unselected. Quiescent GUI intervals have only
+GET requests and unchanged canonical Forge DB/provider-input files. Normal Forge
+continuation effects are separate from zero added Workspace navigation effects.
+The declared owned unavailable-current-document fault yields PARTIAL and exact
+original document restoration; no SQL/import/CLI consumer fallback.
+
+Native executableSHA2563ac7299b2441001c8b1a5af4a6ad3ddf7a8bc42564ea190260e6b2b769de9257
+was rebuilt on reviewed94816a7. Actual new packaged graph/node/zoom/fit/focus/
+next/previous/Cmd-F filter/list↔graph selection/existing reviewdetail clicks
+passed before and after A-final/B-activation, with apprestart and no decision
+click. Raw native and Server receipts retain their actual build/start source
+revisions(94816a7 native,377150b Server); every installed Server product byte and
+native production/packaging byte is verified identical at13335ea. They are not
+rewritten as a newer source measurement. Fresh exact-main products and these
+actual GUI clicks will be qualified again after protected merge.
+
+Own runtime/credentials/target roots are removed. Earlier failed harnesses
+(missing fixture dependency, old2.7.67 enum expectation, AX-query/label-tree
+assertions) receive no PASS; corrected genuine observations are preserved.
+Unit tests still enforce current pairing/denial/offline-cache and late-response
+fences; graph has no independent store or refresh loop. Hosted CI toolchain test
+annotation was fixed, not weakened. Actual candidate TDE assessment/qualification
+exits2/2, policyFAIL in this Swift assessment: product maximum32 vs30 in
+unchanged ServerTransport.swift and WorklistProjection.swift. The earlier
+Python assessment/complexity80 remains separate historical evidence. Observe
+workflowSUCCESS is not policyPASS. Final public receipts and owning register
+will close only this selected graph subset after the protected/exact-main gates.
