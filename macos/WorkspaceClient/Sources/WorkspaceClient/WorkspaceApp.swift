@@ -51,7 +51,8 @@ struct WorkspaceApp: App {
         _client = StateObject(wrappedValue: ClientState(keychain: IsolatedServerCredentials(document)))
         _conversations = StateObject(wrappedValue: ConversationState(
             grants: IsolatedDraftGrant(document),
-            localDrafts: PrivateLocalDraftCache(root: URL(fileURLWithPath: document.local_root))))
+            localDrafts: PrivateLocalDraftCache(root: URL(fileURLWithPath: document.local_root)),
+            advisory: AdvisoryState(credentials: IsolatedAdvisoryCredentials(document))))
         _reviews = StateObject(wrappedValue: MissionReviewState(credentials: IsolatedReviewGrant(document)))
         _worklists = StateObject(wrappedValue: WorklistState(credentials: IsolatedWorklistGrant(document),
             controls: WorklistControlState(credentials: IsolatedWorklistControlGrant(document))))

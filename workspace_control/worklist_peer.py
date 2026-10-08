@@ -107,11 +107,16 @@ def _valid_binding(binding):
 
 class WorklistReadTransport:
     def __init__(self, root, root_fd, *, namespace="worklist"):
-        if namespace not in ("worklist", "worklist-control"):
+        if namespace not in ("worklist", "worklist-control", "advisory"):
             raise ValueError("unsupported binding namespace")
         self.namespace = namespace
         self.root = Path(root)
         self.root_fd = root_fd
+
+    scope_field = "workset_ids"
+
+    def _valid_record(self, binding):
+        return _valid_binding(binding)
 
     def _bindings(self):
         try:
@@ -122,7 +127,7 @@ class WorklistReadTransport:
             raise WorklistError("INVALID_CONFIGURATION") from None
         if (not isinstance(document, dict) or set(document) != {"bindings"}
                 or not isinstance(document["bindings"], list) or len(document["bindings"]) > 100
-                or not all(_valid_binding(binding) for binding in document["bindings"])):
+                or not all(self._valid_record(binding) for binding in document["bindings"])):
             raise WorklistError("INVALID_CONFIGURATION")
         bindings = document["bindings"]
         for identity in (lambda item: item["id"], lambda item: item["client_digest"],
@@ -213,7 +218,7 @@ class WorklistReadTransport:
         finally:
             os.close(lock)
         return {"binding_id": binding["id"], "actor_id": actor_id,
-                "forge_instance_id": forge_instance_id, "workset_ids": binding["workset_ids"],
+                "forge_instance_id": forge_instance_id, self.scope_field: binding[self.scope_field],
                 "client_token_file": client_token_file}
 
     def revoke(self, binding_id):

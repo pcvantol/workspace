@@ -51,6 +51,11 @@ def main(argv=None):
     control_issue.add_argument("--client-token-file", required=True)
     control_revoke = commands.add_parser("worklist-control-bind-revoke")
     control_revoke.add_argument("--binding-id", required=True)
+    advisory_issue = commands.add_parser("advisory-bind-issue")
+    for flag in ["actor", "project", "forge-endpoint", "forge-grant-receipt-file", "forge-token-file", "client-token-file"]:
+        advisory_issue.add_argument("--" + flag, required=True)
+    advisory_revoke = commands.add_parser("advisory-bind-revoke")
+    advisory_revoke.add_argument("--binding-id", required=True)
     forge_binding = commands.add_parser("forge-read-configure")
     forge_binding.add_argument("--endpoint", required=True)
     forge_binding.add_argument("--instance-id", required=True)
@@ -119,6 +124,15 @@ def main(argv=None):
         elif args.command == "worklist-control-bind-revoke":
             with Service(args.root) as service:
                 result = service.revoke_worklist_control(args.binding_id)
+            print(json.dumps(result, sort_keys=True))
+        elif args.command == "advisory-bind-issue":
+            with Service(args.root) as service:
+                result = service.provision_advisory(args.actor, args.project, args.forge_endpoint,
+                    args.forge_grant_receipt_file, args.forge_token_file, args.client_token_file)
+            print(json.dumps(result, sort_keys=True))
+        elif args.command == "advisory-bind-revoke":
+            with Service(args.root) as service:
+                result = service.revoke_advisory(args.binding_id)
             print(json.dumps(result, sort_keys=True))
         elif args.command == "review-bind-issue":
             with Service(args.root) as service:

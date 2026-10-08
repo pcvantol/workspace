@@ -464,6 +464,25 @@ final class ConversationTests: XCTestCase {
         XCTAssertEqual(try IsolatedWorklistControlGrant(loaded).loadIntent(),intent, "Actual private transport intent survives app-store reconstruction")
         try controls.forgetIntent();XCTAssertNil(try controls.loadIntent())
         try controls.forgetAccess();XCTAssertNil(try controls.loadAccess())
+        let adviceAccess=AdvisoryAccess(endpoint:loaded.endpoint,workspaceInstanceID:instance,workspaceProjectID:loaded.project_id,
+            actorID:"reviewer-a",forgeInstanceID:"forge-a",forgeProjectID:"project-a",repositoryID:"repo-a",
+            conversationIDs:[String(repeating:"a",count:32)],token:String(repeating:"A",count:43))
+        var withAdvice=document
+        withAdvice["advisory_access"]=try JSONSerialization.jsonObject(with:JSONEncoder().encode(adviceAccess))
+        try JSONSerialization.data(withJSONObject:withAdvice).write(to:file)
+        let adviceDocument=try IsolatedTestDocument.load();let advice=IsolatedAdvisoryCredentials(adviceDocument)
+        XCTAssertEqual(try advice.loadAccess(),adviceAccess);try advice.saveAccess(adviceAccess)
+        let adviceRequest=AdvisoryRequest(contract_version:AdvisoryWire.contract,turn_id:"synthetic-pending",instance_id:"forge-a",project_id:"project-a",repository_id:"repo-a",
+            conversation_id:String(repeating:"a",count:32),advisor_kind:"BUSINESS",objective:"Synthetic restart intent",expected_revision:0,context_revision:"sha256:"+String(repeating:"a",count:64),selected_sources:[])
+        let adviceIntent=AdvisoryIntent(fingerprint:adviceAccess.fingerprint,endpoint:loaded.endpoint,workspaceInstanceID:instance,
+            workspaceProjectID:loaded.project_id,actorID:"reviewer-a",request:adviceRequest,cancel:nil)
+        XCTAssertNil(try advice.loadIntent());try advice.saveIntent(adviceIntent)
+        XCTAssertEqual(try IsolatedAdvisoryCredentials(adviceDocument).loadIntent(),adviceIntent)
+        try advice.forgetIntent();XCTAssertNil(try advice.loadIntent());try advice.forgetAccess();XCTAssertNil(try advice.loadAccess())
+        var badAdvice=withAdvice;var rawAdvice=badAdvice["advisory_access"] as! [String:Any];rawAdvice["workspaceProjectID"]="foreign";badAdvice["advisory_access"]=rawAdvice
+        try JSONSerialization.data(withJSONObject:badAdvice).write(to:file);XCTAssertThrowsError(try IsolatedTestDocument.load())
+        try JSONSerialization.data(withJSONObject:document).write(to:file)
+        XCTAssertNil(try IsolatedAdvisoryCredentials(IsolatedTestDocument.load()).loadAccess())
         var noControls = document
         for field in ["control_grant","control_actor","control_forge_instance","control_workset_ids"] { noControls.removeValue(forKey:field) }
         try JSONSerialization.data(withJSONObject:noControls).write(to:file)
@@ -1131,6 +1150,27 @@ final class ConversationTests: XCTestCase {
         render(ConversationsView(client: client, state: state))
         render(ServerOverviewView(client: client))
         render(SettingsView(client: client, conversations: state))
+    }
+
+    @MainActor
+    func testMountedConversationDisconnectClearsAdviceAndRetainsLocalDraft() async throws {
+        let client = ClientState(keychain: BrokenCredentials())
+        let advice = AdvisoryState(credentials: AdviceMemory())
+        let state = ConversationState(grants: MemoryDraftGrant(), localDrafts: MemoryLocalDrafts(), advisory: advice)
+        let hosting = NSHostingView(rootView: ConversationsView(client: client, state: state))
+        hosting.frame = NSRect(x: 0, y: 0, width: 940, height: 700)
+        hosting.layoutSubtreeIfNeeded()
+        try await Task.sleep(for: .milliseconds(100))
+        state.draft = "Retain this unsent local question."
+        client.connect(address: "invalid-server-address")
+        hosting.layoutSubtreeIfNeeded()
+        try await Task.sleep(for: .milliseconds(100))
+        XCTAssertTrue(advice.history.isEmpty)
+        XCTAssertNil(advice.capability)
+        XCTAssertEqual(state.draft, "Retain this unsent local question.")
+        XCTAssertFalse(advice.hasGrant)
+        XCTAssertEqual(client.phase, "UNAVAILABLE")
+        withExtendedLifetime(hosting) {}
     }
 
     @MainActor

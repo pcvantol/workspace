@@ -1,5 +1,41 @@
 # Workspace Bootstrap
 
+## Selected native Business/Architect chat — 8 October 2026, r81 plan89
+
+[Mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6055010173)
+selects L4-NATIVE-ADVISORY-CHAT-V1-20261008 under directive
+L34-NATIVE-CHAT-CANDIDATE-CONTINUATION-V1-20261008 and the existing
+L4-WORKSPACE-NATIVE-CLIENT-HTTP-V1-20261002 assignment/Work session.
+[Pickup](https://github.com/pcvantol/forge/issues/208#issuecomment-6055534439)
+binds clean base94579dac44be4ef14328be356e81e04f4a00a6f4 /2.8.9 and
+branchcodex/r81-native-advisory-chat, one admitted Workspace writer. Primary
+checkout, history/budgets and closed PR139/plan88 remain intact.
+
+Bounded product2.8.10 adds explicit textual BUSINESS/ARCHITECTURE send,
+authorized canonical history/cursor, immutable snapshot/durable same-turn
+recovery and cancel-intention through own authenticated Server into pinned
+Forge2.8.0/88f7560f271a2bc2b0af68de0300d0d784cf6315. WheelSHA256
+424ae4cc555c2ee07f6acc8c9b3c865b971363a5a02b2d8f79d364d4fa7251a6,
+wire-schemaSHAfc4750604a4f063d11a1680d9d5ca77ade4784cff53692b40692e86d6c26e7ef.
+Workspace stores presentation/drafts and necessary private transport intent;
+Forge remains canonical advice/consumption authority. Existing draftgrants and
+advisory capability are separate. No provider on reads/mode/search/reconnect,
+no Candidate/apply/approval/Mission/repository operation. UX drafts remain
+usable but generation is unsupported. Source pins are observations, and
+provider_stopped:false/NOT_REPORTED/live-model-NOT_QUALIFIED remain explicit.
+
+Source finalization: production candidate d9dd22ef1ead89fce0e111d1995e5d465223c00b
+passed full102native+1isolated+119Python owning validation and strict per-file
+coverage. Independent Quality/SecurityPASS follow the repaired digest,
+first-transcript404 and revoke/delayed-body/byte-forwarding races. Actual four
+packaged GUI phases on unchanged native production bytes and34targeted fresh
+noneditable installed service checks are recorded in the consumer document.
+Protected merge and fresh exact-main/new packaged GUI acceptance remain pending. L2, new L3Candidate API, PR258 and signing
+are not dependencies; newer Forge main is not the selected pin. See the
+[consumer boundary](docs/WORKSPACE_NATIVE_ADVISORY_CHAT_V1.md). Existing
+2.7.67/2.7.68/2.7.69 receipts and separate open signing/trust/release gates stay.
+
+
 ## Selected native worklist hold controls — 8 October 2026, r81 plan88
 
 [Owner mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6050026304)

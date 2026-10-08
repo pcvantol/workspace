@@ -82,6 +82,13 @@ class ConversationStore:
             raise ValueError("duplicate conversation grant")
         return grants
 
+    @contextmanager
+    def forward_grant(self, token, expected_scope):
+        """Keep live draft authority through forwarding, serialized with revoke."""
+        with self.lock, self._grant_write_lock():
+            if self.scope(token) != expected_scope:raise PermissionError('draft scope changed')
+            yield
+
     def issue_grant(self, actor_id, project_id):
         if not isinstance(actor_id, str) or ACTOR.fullmatch(actor_id) is None:
             raise ValueError("invalid actor")

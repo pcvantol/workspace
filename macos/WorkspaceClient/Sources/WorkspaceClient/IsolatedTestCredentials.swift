@@ -19,6 +19,8 @@ struct IsolatedTestDocument: Decodable {
     let worklist_forge_instance: String?
     let worklist_workset_ids: [String]?
 
+    let advisory_access: AdvisoryAccess?
+
     let control_grant: String?
     let control_actor: String?
     let control_forge_instance: String?
@@ -86,6 +88,10 @@ struct IsolatedTestDocument: Decodable {
                     worksetIDs: document.control_workset_ids ?? [], token: document.control_grant ?? "").valid else {
                 throw ConversationError.invalidResponse
             }
+        }
+        if let advisory=document.advisory_access {
+            guard advisory.valid,advisory.endpoint==document.endpoint,advisory.workspaceInstanceID==document.instance_id,
+                  advisory.workspaceProjectID==document.project_id else { throw ConversationError.invalidResponse }
         }
         return document
     }
@@ -192,5 +198,33 @@ final class IsolatedWorklistControlGrant: WorklistControlCredentials, @unchecked
         }
     }
     func forgetIntent() throws { try lock.withLock { try pendingStore.remove(scopeHash: key) } }
+}
+final class IsolatedAdvisoryCredentials: AdvisoryCredentials, @unchecked Sendable {
+    private let lock=NSLock()
+    private var access:AdvisoryAccess?
+    private let cache:PrivateLocalDraftCache
+    private let key=String(repeating:"a",count:64)
+    init(_ document:IsolatedTestDocument) {
+        access=document.advisory_access
+        cache=PrivateLocalDraftCache(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("advisory-intent"))
+    }
+    func loadAccess() throws -> AdvisoryAccess? { lock.withLock { access } }
+    func saveAccess(_ value:AdvisoryAccess) throws { lock.withLock { access=value } }
+    func forgetAccess() throws { lock.withLock { access=nil } }
+    func loadIntent() throws -> AdvisoryIntent? {
+        try lock.withLock {
+            guard let record=try cache.load(scopeHash:key) else { return nil }
+            let intent=try JSONDecoder().decode(AdvisoryIntent.self,from:Data(record.draft.utf8));_=try intent.request.data();return intent
+        }
+    }
+    func saveIntent(_ value:AdvisoryIntent) throws {
+        try lock.withLock {
+            let record=LocalDraftSnapshot(scopeHash:key,selectedID:nil,title:"",focus:"",mode:"BUSINESS",
+                draft:String(decoding:try JSONEncoder().encode(value),as:UTF8.self),savedRevision:nil,
+                requestID:UUID().uuidString.replacingOccurrences(of:"-",with:"").lowercased())
+            try cache.save(record)
+        }
+    }
+    func forgetIntent() throws { try lock.withLock { try cache.remove(scopeHash:key) } }
 }
 #endif
