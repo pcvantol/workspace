@@ -18,6 +18,9 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: '3.14'
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
       - run: bash scripts/validate.sh
   python-314:
     name: Python 3.14 installed Server
@@ -28,6 +31,9 @@ jobs:
         with:
           python-version: '3.14'
       - run: python3 --version
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
       - run: bash scripts/validate.sh
       - run: python3 -m pip install 'build==1.6.1' 'playwright==1.63.0'
       - run: python3 -m playwright install chromium --with-deps

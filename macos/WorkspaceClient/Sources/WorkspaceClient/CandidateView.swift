@@ -81,7 +81,7 @@ struct CandidateView:View {
         VStack(alignment:.leading,spacing:10) {
             Text(copy("userOrigin")).font(.headline)
             Text(copy("lineHint")).font(.caption)
-            ForEach(CandidateForm.scalarKeys+CandidateForm.listKeys,id:\.self) { key in
+            ForEach(CandidateForm.scalarKeys.filter{$0 != "confidence"}+CandidateForm.listKeys,id:\.self) { key in
                 VStack(alignment:.leading,spacing:4) {
                     Text(copy(key=="title" ? "titleField":key))
                     TextField(copy(key=="title" ? "titleField":key),text:Binding(get:{state.local.form.text[key] ?? ""},set:{state.edit(key,$0)}),axis:.vertical)
@@ -89,6 +89,10 @@ struct CandidateView:View {
                         .accessibilityIdentifier("candidate.field."+key).disabled(state.busy)
                 }
             }
+            Picker(copy("confidence"),selection:Binding(get:{state.local.form.text["confidence"] ?? ""},set:{state.edit("confidence",$0)})) {
+                Text(copy("choose")).tag("")
+                ForEach(0...100,id:\.self) { Text(String($0)).tag(String($0)) }
+            }.disabled(state.busy).accessibilityIdentifier("candidate.field.confidence")
             Text(copy("effectBoundary")).font(.caption)
             Picker(copy("mode"),selection:Binding(get:{state.local.form.text["mode"] ?? ""},set:{state.edit("mode",$0)})) {
                 Text(copy("choose")).tag("")

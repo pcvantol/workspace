@@ -649,6 +649,20 @@ def verify_browser_locales(browser, url, token):
             _verify_locale_shell(page, language, title, token_label)
             _verify_locale_auth(page, locale, token, unauthorized, connected)
             _verify_locale_readback(page, url, project_state, observed, peer, capability, demo)
+            # Explicit language changes rerender this same authorized observation.
+            before = page.locator("#token").input_value()
+            requests = []
+            page.on("request", lambda request: requests.append(request.url))
+            for choice in ("nl", "de", "fr", "es", "en"):
+                page.select_option("#language", choice)
+                assert page.locator("html").get_attribute("lang") == choice
+                assert page.locator("#token").input_value() == before
+                assert page.locator("#projects li").count() > 0
+            assert requests == [], "display-language change must not request the Server"
+            page.reload()
+            assert page.locator("#language").input_value() == "en"
+            assert page.locator("html").get_attribute("lang") == "en"
+
         finally:
             context.close()
 

@@ -1,5 +1,6 @@
 const translations = {
   en: {
+    languageLabel: 'Language', systemLanguage: 'Follow system',
     title: 'Workspace Client',
     intro: 'Read-only Server status and project information', tokenLabel: 'Instance token',
     tokenPlaceholder: 'Paste the token from your private data root', connect: 'Connect',
@@ -15,6 +16,7 @@ const translations = {
       HTTP_EXPOSED: 'HTTP_EXPOSED', LOCAL_ONLY_ADMIN: 'LOCAL_ONLY_ADMIN'}
   },
   nl: {
+    languageLabel: 'Taal', systemLanguage: 'Systeem volgen',
     title: 'Workspace-client',
     intro: 'Alleen-lezen serverstatus en projectinformatie', tokenLabel: 'Instantietoken',
     tokenPlaceholder: 'Plak het token uit uw privégegevensmap', connect: 'Verbinden',
@@ -30,6 +32,7 @@ const translations = {
       HTTP_EXPOSED: 'VIA HTTP', LOCAL_ONLY_ADMIN: 'ALLEEN LOKAAL BEHEER'}
   },
   de: {
+    languageLabel: 'Sprache', systemLanguage: 'System folgen',
     title: 'Workspace-Oberfläche',
     intro: 'Schreibgeschützter Serverstatus und Projektinformationen', tokenLabel: 'Instanztoken',
     tokenPlaceholder: 'Token aus dem privaten Datenverzeichnis einfügen', connect: 'Verbinden',
@@ -45,6 +48,7 @@ const translations = {
       HTTP_EXPOSED: 'ÜBER HTTP', LOCAL_ONLY_ADMIN: 'NUR LOKALE VERWALTUNG'}
   },
   fr: {
+    languageLabel: 'Langue', systemLanguage: 'Suivre le système',
     title: 'Interface Workspace',
     intro: 'État du serveur et informations sur les projets en lecture seule', tokenLabel: 'Jeton d’instance',
     tokenPlaceholder: 'Collez le jeton de votre répertoire de données privé', connect: 'Se connecter',
@@ -60,6 +64,7 @@ const translations = {
       HTTP_EXPOSED: 'PAR HTTP', LOCAL_ONLY_ADMIN: 'ADMINISTRATION LOCALE UNIQUEMENT'}
   },
   es: {
+    languageLabel: 'Idioma', systemLanguage: 'Seguir el sistema',
     title: 'Cliente de Workspace',
     intro: 'Estado del servidor e información de proyectos de solo lectura', tokenLabel: 'Token de instancia',
     tokenPlaceholder: 'Pegue el token de su directorio privado de datos', connect: 'Conectar',
@@ -75,16 +80,28 @@ const translations = {
       HTTP_EXPOSED: 'POR HTTP', LOCAL_ONLY_ADMIN: 'SOLO ADMINISTRACIÓN LOCAL'}
   }
 };
-const locale = (navigator.language || 'en').toLowerCase().split('-')[0];
-const language = Object.hasOwn(translations, locale) ? locale : 'en';
-const copy = translations[language];
+const languagePreferenceKey = 'workspace.ui.language';
+const systemLanguage = (navigator.language || 'en').toLowerCase().split('-')[0];
+let preference = 'system';
+try { preference = localStorage.getItem(languagePreferenceKey) || 'system'; } catch (_) {}
+const resolveLanguage = value => Object.hasOwn(translations, value) ? value :
+  (Object.hasOwn(translations, systemLanguage) ? systemLanguage : 'en');
+let language = resolveLanguage(preference);
+let copy = translations[language];
 const label = value => copy.labels[value] || value;
-document.documentElement.lang = language;
-document.title = copy.title;
-for (const element of document.querySelectorAll('[data-i18n]')) {
-  element.textContent = copy[element.dataset.i18n];
+const languageChoice = document.getElementById('language');
+languageChoice.value = Object.hasOwn(translations, preference) ? preference : 'system';
+function applyLanguage() {
+  language = resolveLanguage(languageChoice.value);
+  copy = translations[language];
+  document.documentElement.lang = language;
+  document.title = copy.title;
+  for (const element of document.querySelectorAll('[data-i18n]')) {
+    element.textContent = copy[element.dataset.i18n];
+  }
+  document.getElementById('token').placeholder = copy.tokenPlaceholder;
+  renderReadback();
 }
-document.getElementById('token').placeholder = copy.tokenPlaceholder;
 const state = document.getElementById('state');
 const server = document.getElementById('server');
 const projectState = document.getElementById('project-state');
@@ -93,18 +110,46 @@ const projects = document.getElementById('projects');
 const capabilityState = document.getElementById('capability-state');
 const peerState = document.getElementById('peer-state');
 const capabilities = document.getElementById('capabilities');
-state.textContent = label('UNAVAILABLE');
-server.textContent = copy.noConnection;
-projectState.textContent = label('UNAVAILABLE');
-projectObserved.textContent = copy.noObservation;
-capabilityState.textContent = label('UNAVAILABLE');
-peerState.textContent = `${copy.peerOperations}: ${label('UNQUALIFIED')}`;
-let connectionAttempt = 0;
-function clearCapabilities() {
-  capabilityState.textContent = label('UNAVAILABLE');
+let connectionState = 'UNAVAILABLE';
+let readStatus = null;
+let readCatalogue = null;
+let readCapabilities = null;
+function renderReadback() {
+  state.textContent = label(connectionState);
+  server.textContent = readStatus ? `${readStatus.instance_id} · ${copy.version} ${readStatus.version} · ${label(readStatus.state)}` :
+    (connectionState === 'UNCONFIGURED' ? copy.noBinding : copy.noConnection);
+  projects.replaceChildren();
+  projectState.textContent = label(connectionState === 'UNCONFIGURED' ? 'UNCONFIGURED' : 'UNAVAILABLE');
+  projectObserved.textContent = copy.noObservation;
+  if (readCatalogue) {
+    const catalogue = readCatalogue;
+    const labels = [catalogue.state];
+    if (catalogue.stale && catalogue.partial) labels.push('PARTIAL');
+    if (catalogue.projects.length === 0 && !['EMPTY', 'UNCONFIGURED'].includes(catalogue.state)) labels.push('EMPTY');
+    if (catalogue.source) labels.push(catalogue.source);
+    projectState.textContent = labels.map(label).join(' · ');
+    projectObserved.textContent = catalogue.state === 'UNCONFIGURED' ? copy.noObservation : `${copy.observed}: ${catalogue.observed_at}`;
+    for (const item of catalogue.projects) {
+      const row = document.createElement('li');
+      row.textContent = `${item.name} (${item.id})${catalogue.source === 'DEMO' ? ` · ${label('DEMO')}` : ''}`;
+      projects.appendChild(row);
+    }
+  }
+  capabilityState.textContent = label(readCapabilities ? 'AVAILABLE' : 'UNAVAILABLE');
   peerState.textContent = `${copy.peerOperations}: ${label('UNQUALIFIED')}`;
   capabilities.replaceChildren();
+  for (const operation of readCapabilities?.operations || []) {
+    const row = document.createElement('li');
+    row.textContent = `${operation.id} · ${label(operation.exposure)}`;
+    capabilities.appendChild(row);
+  }
 }
+languageChoice.addEventListener('change', () => {
+  try { localStorage.setItem(languagePreferenceKey, languageChoice.value); } catch (_) {}
+  applyLanguage();
+});
+applyLanguage();
+let connectionAttempt = 0;
 document.getElementById('token').addEventListener('keydown', event => {
   if (event.key === 'Enter' && !event.isComposing && !event.repeat) {
     event.preventDefault();
@@ -192,21 +237,15 @@ document.getElementById('forget').addEventListener('click', () => {
   connectionAttempt += 1;
   localStorage.removeItem('workspace.instanceId');
   document.getElementById('token').value = '';
-  state.textContent = label('UNCONFIGURED');
-  server.textContent = copy.noBinding;
-  projectState.textContent = label('UNCONFIGURED');
-  projectObserved.textContent = copy.noObservation;
-  projects.replaceChildren();
-  clearCapabilities();
+  connectionState = 'UNCONFIGURED';
+  readStatus = readCatalogue = readCapabilities = null;
+  renderReadback();
 });
 document.getElementById('connect').addEventListener('click', async () => {
   const attempt = ++connectionAttempt;
-  state.textContent = label('CONNECTING');
-  server.textContent = copy.noConnection;
-  projectState.textContent = label('UNAVAILABLE');
-  projects.replaceChildren();
-  projectObserved.textContent = copy.noObservation;
-  clearCapabilities();
+  connectionState = 'CONNECTING';
+  readStatus = readCatalogue = readCapabilities = null;
+  renderReadback();
   try {
     const identityResponse = await fetch('/v1/identity', {cache: 'no-store'});
     if (attempt !== connectionAttempt) return;
@@ -244,8 +283,9 @@ document.getElementById('connect').addEventListener('click', async () => {
         !['UNCONFIGURED', 'EMPTY', 'PARTIAL', 'STALE', 'AVAILABLE', 'SOURCE_UNAVAILABLE']
           .includes(status.project_source)) throw new Error('UNAVAILABLE');
     if (!pinned) localStorage.setItem('workspace.instanceId', identity.instance_id);
-    state.textContent = label('CONNECTED');
-    server.textContent = `${status.instance_id} · ${copy.version} ${status.version} · ${label(status.state)}`;
+    connectionState = 'CONNECTED';
+    readStatus = status;
+    renderReadback();
     const capabilityResponse = await fetch('/v1/capabilities', {headers, cache: 'no-store'})
       .catch(() => ({status: 503, ok: false}));
     if (attempt !== connectionAttempt) return;
@@ -267,12 +307,8 @@ document.getElementById('connect').addEventListener('click', async () => {
           inventory.operations.length === Object.keys(ownOperations).length &&
           inventory.operations.every(validOwnOperation) &&
           new Set(inventory.operations.map(operation => operation.id)).size === inventory.operations.length) {
-        capabilityState.textContent = label('AVAILABLE');
-        for (const operation of inventory.operations) {
-          const row = document.createElement('li');
-          row.textContent = `${operation.id} · ${label(operation.exposure)}`;
-          capabilities.appendChild(row);
-        }
+        readCapabilities = inventory;
+        renderReadback();
       }
     }
     const projectResponse = await fetch('/v1/projects', {headers, cache: 'no-store'})
@@ -284,26 +320,13 @@ document.getElementById('connect').addEventListener('click', async () => {
     const catalogue = await projectResponse.json().catch(() => null);
     if (attempt !== connectionAttempt) return;
     if (!validProjectCatalogue(catalogue)) return;
-    const labels = [catalogue.state];
-    if (catalogue.stale && catalogue.partial) labels.push('PARTIAL');
-    if (catalogue.projects.length === 0 && !['EMPTY', 'UNCONFIGURED'].includes(catalogue.state)) labels.push('EMPTY');
-    if (catalogue.source) labels.push(catalogue.source);
-    projectState.textContent = labels.map(label).join(' · ');
-    projectObserved.textContent = catalogue.state === 'UNCONFIGURED' ?
-      copy.noObservation : `${copy.observed}: ${catalogue.observed_at}`;
-    for (const item of catalogue.projects) {
-      const row = document.createElement('li');
-      row.textContent = `${item.name} (${item.id})${catalogue.source === 'DEMO' ? ` · ${label('DEMO')}` : ''}`;
-      projects.appendChild(row);
-    }
+    readCatalogue = catalogue;
+    renderReadback();
   } catch (error) {
     if (attempt !== connectionAttempt) return;
-    state.textContent = label(error.message === 'UNAUTHORIZED' ? 'UNAUTHORIZED' :
-      error.message === 'WRONG_INSTANCE' ? 'WRONG_INSTANCE' : 'UNAVAILABLE');
-    server.textContent = copy.noConnection;
-    projectState.textContent = label('UNAVAILABLE');
-    projectObserved.textContent = copy.noObservation;
-    projects.replaceChildren();
-    clearCapabilities();
+    connectionState = error.message === 'UNAUTHORIZED' ? 'UNAUTHORIZED' :
+      error.message === 'WRONG_INSTANCE' ? 'WRONG_INSTANCE' : 'UNAVAILABLE';
+    readStatus = readCatalogue = readCapabilities = null;
+    renderReadback();
   }
 });

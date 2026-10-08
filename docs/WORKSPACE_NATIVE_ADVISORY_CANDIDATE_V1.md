@@ -128,3 +128,14 @@ fresh own-window screenshot manifests with reachable evidence links.
 TDE workflowSUCCESS and actual policyFAIL remain distinct. No broad debt cleanup,
 protection weakening, signing/notary/two-Mac/public/live quality or operational
 installation claim. After the selected outcome, checkpoint; no automatic next UI.
+
+## Owner language steering (r81 plan92)
+
+The owner's five-language request extends this same delivery in en/nl/de/fr/es.
+Settings and the browser provide a persisted language preference with system
+fallback. Changing display language retains all bindings, own unsent text and
+immutable source identities and makes no extra network or provider request.
+The existing EP presentation is a reference, not imported product source.
+Four installed GUI attempts remain diagnostic, not acceptance (explicit model
+turn counts1/0/1/1); native confidence entry now uses an empty-first explicit
+percentage picker. Previous receipts/budget history remain preserved.

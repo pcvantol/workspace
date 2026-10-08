@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Workspace Client</title><link rel="stylesheet" href="/client.css"></head><body><main><h1>Workspace</h1><p data-i18n="intro">Read-only Server status and project information</p>
+<label for="language" data-i18n="languageLabel">Language</label><select id="language"><option value="system" data-i18n="systemLanguage">Follow system</option><option value="en">English</option><option value="nl">Nederlands</option><option value="de">Deutsch</option><option value="fr">Français</option><option value="es">Español</option></select>
 <label for="token" data-i18n="tokenLabel">Instance token</label><input id="token" type="password" autocomplete="off" placeholder="Paste the token from your private data root">
 <button id="connect" data-i18n="connect">Connect</button> <button id="forget" type="button" data-i18n="forget">Forget server binding</button><p id="state" class="state" role="status">UNAVAILABLE</p>
 <section><h2 data-i18n="serverHeading">Server</h2><p id="server" aria-live="polite" aria-atomic="true">No connection</p></section>

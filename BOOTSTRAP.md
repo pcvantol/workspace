@@ -1,5 +1,17 @@
 # Workspace Bootstrap
 
+## Owner five-language steering — r81 plan92, 8 October 2026
+
+The same owner Work session now requires consistent English, Dutch, German,
+French and Spanish throughout Workspace, with a persistent explicit choice and
+system fallback. This extends the active Candidate delivery; same writer,
+assignment, branch and original base. No new peer API or translation provider.
+Canonical user/source content and pending intents retain their identity on a
+language switch. EP presentation was inspected read-only. Closed predecessors,
+producer pin Forge2.9.0/8923be50 and consumed history stay unchanged.
+Two native localization tests and browser zero-request switching checks pass;
+full validation/review/protected/installed acceptance remains pending.
+
 ## Selected native advice to Candidate — 8 October 2026, r81 plan91
 
 [Mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6060807829)

@@ -3,7 +3,7 @@ import SwiftUI
 
 enum MissionReviewCopy {
     static func text(_ key: String, language chosen: String? = nil) -> String {
-        let language = chosen ?? Locale.current.language.languageCode?.identifier ?? "en"
+        let language = chosen ?? WorkspaceLanguage.current
         let index = ["en": 0, "nl": 1, "de": 2, "fr": 3, "es": 4][language] ?? 0
         let lines: [String: [String]] = [
             "nav": ["Missions & reviews", "Missions en reviews", "Missionen und Prüfungen", "Missions et revues", "Misiones y revisiones"],

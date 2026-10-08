@@ -50,7 +50,7 @@ final class ApprovedWorklistViewTests: XCTestCase {
                 XCTAssertFalse(WorklistCopy.text(key, language: language).isEmpty)
             }
         }
-        XCTAssertEqual(WorklistCopy.text("nav"), "Approved worklist")
+        XCTAssertEqual(WorklistCopy.text("nav"), WorklistCopy.text("nav",language:WorkspaceLanguage.current))
         XCTAssertEqual(WorklistCopy.text("nav", language: "unsupported"), "Approved worklist")
         XCTAssertEqual(WorklistCopy.text("nav", language: "nl"), "Goedgekeurde werklijst")
         XCTAssertEqual(WorklistCopy.text("not-a-key", language: "fr"), "not-a-key")
