@@ -516,7 +516,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
                         if len(lengths)!=1 or not lengths[0].isdecimal() or not 1<=int(lengths[0])<=16000 or self.headers.get('Transfer-Encoding') or self.headers.get('Content-Type','').split(';',1)[0].lower()!='application/json':raise WorklistError('INVALID_REQUEST')
                         try:body=json.loads(self.rfile.read(int(lengths[0])),object_pairs_hook=_unique_json_object)
                         except (ValueError,UnicodeError,RecursionError):raise WorklistError('INVALID_REQUEST') from None
-                        result=(service.advisory.submit(b,c,body) if len(parts)==5 else service.advisory.cancel(b,c,parts[5],body))
+                        authority=service.advisory_forward_scope(self.headers['X-Workspace-Draft-Grant'],scope)
+                        result=(service.advisory.submit(b,c,body,authority=authority) if len(parts)==5 else service.advisory.cancel(b,c,parts[5],body,authority=authority))
                     elif len(parts)==4:
                         if set(query)-{'cursor','limit'} or any(len(v)!=1 for v in query.values()):raise WorklistError('INVALID_REQUEST')
                         try:cursor=int(query.get('cursor',['0'])[0]);limit=int(query.get('limit',['4'])[0])

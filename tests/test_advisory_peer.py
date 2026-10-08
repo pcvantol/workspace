@@ -21,7 +21,7 @@ class AdvisoryPeerTests(unittest.TestCase):
   temp=tempfile.TemporaryDirectory();self.addCleanup(temp.cleanup);self.root=Path(temp.name);self.root.chmod(0o700);initialize(self.root)
   stamp=datetime.now(timezone.utc).isoformat()
   (self.root/'projects.json').write_text(json.dumps({'source':'LOCAL','observed_at':stamp,'projects':[{'id':'ws-project','name':'Synthetic project'}]}));(self.root/'projects.json').chmod(0o600)
-  self.ws=Service(self.root);self.addCleanup(self.ws.close);self.error=None;self.bad=False;self.requests=[];self.turns={};self.revision=0;self.read_entered=Event();self.read_release=Event();self.delay_path=None
+  self.ws=Service(self.root);self.addCleanup(self.ws.close);self.error=None;self.bad=False;self.requests=[];self.turns={};self.revision=0;self.read_entered=Event();self.read_release=Event();self.delay_path=None;self.body_authorized=Event()
   self.owner_tokens={};self.client={};self.proof={};self.drafts={};self.conversations={}
   for actor in ['alice','bob']:
    self.drafts[actor]=self.ws.issue_conversation_grant(actor,'ws-project')
@@ -62,7 +62,13 @@ class AdvisoryPeerTests(unittest.TestCase):
    proof={'instance_id':'forge-one','project_id':'project-one','repository_id':'repo-one','principal_id':actor,'conversation_ids':[self.conversations[actor]],'grant_id':'grant-'+actor,'maximum_turns':8,'expires_at':'2026-10-09T00:00:00Z','state':'ACTIVE','token_sha256':sha256(self.owner_tokens[actor].encode()).hexdigest()}
    file=self.root/(actor+'.proof');file.write_text(json.dumps(proof));file.chmod(0o600);self.proof[actor]=file
    client=self.root/(actor+'.client');self.ws.provision_advisory(actor,'ws-project',self.endpoint,str(file),str(token),str(client));self.client[actor]=client.read_text().strip()
-  self.http=ThreadingHTTPServer(('127.0.0.1',0),handler_for(self.ws));thread=Thread(target=self.http.serve_forever,daemon=True);thread.start();self.addCleanup(self.http.server_close);self.addCleanup(thread.join,2);self.addCleanup(self.http.shutdown)
+  base=handler_for(self.ws)
+  class Observed(base):
+   def _conversation_scope(self):
+    value=super()._conversation_scope()
+    if value is not None:owner.body_authorized.set()
+    return value
+  self.http=ThreadingHTTPServer(('127.0.0.1',0),Observed);thread=Thread(target=self.http.serve_forever,daemon=True);thread.start();self.addCleanup(self.http.server_close);self.addCleanup(thread.join,2);self.addCleanup(self.http.shutdown)
  def call(self,path,method='GET',body=None,actor='alice',headers=None):
   h={'Authorization':'Bearer '+self.ws.token,'X-Workspace-Instance':self.ws.instance_id,'X-Workspace-Draft-Grant':self.drafts[actor],'X-Workspace-Advisory-Grant':self.client[actor],'Content-Type':'application/json'};h.update(headers or {})
   try:
@@ -87,6 +93,18 @@ class AdvisoryPeerTests(unittest.TestCase):
   self.bad=True;self.assertEqual(self.call(base+'/turns/turn-one')[0],503);self.bad=False
   self.error=409;self.assertEqual(self.call('/v1/advisory/capability')[1]['error'],'TURN_BUDGET_EXHAUSTED');self.error=503;self.assertEqual(self.call(base)[0],503)
   self.assertEqual(self.call('/v1/advisory/openapi.json')[0],200);self.assertIn('x-forge-wire-schema',advisory_openapi_contract())
+ def testRevocationWhileReadingBodyForwardsNoSubmitOrCancel(self):
+  import socket,http.client
+  c=self.conversations['alice'];base='/v1/advisory/'+c
+  for path,body in [(base+'/turns',{**record()['request'],'conversation_id':c}),(base+'/turns/turn-one/cancel',{'contract_version':w.CONTRACT,'expected_revision':1,'request_digest':w.digest(record()['request'])})]:
+   self.drafts['alice']=self.ws.issue_conversation_grant('alice','ws-project');self.body_authorized.clear()
+   payload=json.dumps(body).encode();before=len([x for x in self.requests if x[0]=='POST'])
+   headers={'Host':'127.0.0.1:'+str(self.http.server_port),'Authorization':'Bearer '+self.ws.token,'X-Workspace-Instance':self.ws.instance_id,'X-Workspace-Draft-Grant':self.drafts['alice'],'X-Workspace-Advisory-Grant':self.client['alice'],'Content-Type':'application/json','Content-Length':str(len(payload))}
+   with socket.create_connection(self.http.server_address,timeout=5) as sock:
+    sock.sendall(('POST '+path+' HTTP/1.1\r\n'+''.join(k+': '+v+'\r\n' for k,v in headers.items())+'\r\n').encode())
+    self.assertTrue(self.body_authorized.wait(3));self.ws.revoke_conversation_grants('alice','ws-project');sock.sendall(payload)
+    response=http.client.HTTPResponse(sock);response.begin();self.assertEqual(response.status,403);response.read();response.close()
+   self.assertEqual(len([x for x in self.requests if x[0]=='POST']),before)
  def testBindingAndDraftRevocationDuringDelayedHistoryDenyResponse(self):
   from concurrent.futures import ThreadPoolExecutor
   c=self.conversations['alice'];self.delay_path='/v1/advisory/'+c+'?cursor=0&limit=4'

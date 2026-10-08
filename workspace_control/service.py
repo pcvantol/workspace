@@ -9,6 +9,7 @@ import secrets
 import stat
 import threading
 from datetime import datetime, timezone
+from contextlib import contextmanager
 
 from . import __version__
 
@@ -354,6 +355,12 @@ class Service:
 
     def revoke_conversation_grants(self, actor_id, project_id):
         return self.conversations.revoke_grants(actor_id, project_id)
+
+    @contextmanager
+    def advisory_forward_scope(self, token, expected_scope):
+        with self.conversations.forward_grant(token, expected_scope):
+            if self.conversation_scope(token)!=expected_scope:raise PermissionError('advisory scope changed')
+            yield
 
     def provision_review(self, actor_id, endpoint, forge_instance_id,
                          forge_token_file, client_token_file):

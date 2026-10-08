@@ -6,7 +6,7 @@ from urllib.parse import urlencode
 from hashlib import sha256
 from .worklist_peer import WorklistReadTransport, WorklistError, _ids, _FORGE_TOKEN
 from .advisory_http import request as control_request
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from .service import _regular_private
 from .review_peer import _id, _time
 from .forge_peer import _endpoint
@@ -74,28 +74,30 @@ class AdvisoryTransport(WorklistReadTransport):
         if v['original_turn']['request']['turn_id']!=t:raise WorklistError('INVALID_RESPONSE')
         return v
 
-    def submit(self,b,c,body):
+    def submit(self,b,c,body,*,authority):
         wire.request(body,b,c)
-        return self._write(b,f'/v1/advisory/{c}/turns',body,'submit',c,body)
+        return self._write(b,f'/v1/advisory/{c}/turns',body,'submit',c,body,authority=authority)
 
-    def cancel(self,b,c,t,body):
+    def cancel(self,b,c,t,body,*,authority):
         if not _id(t):raise WorklistError('INVALID_REQUEST')
         try:wire.validate(body,'cancel_request')
         except WorklistError:raise WorklistError('INVALID_REQUEST') from None
-        v=self._write(b,f'/v1/advisory/{c}/turns/{t}/cancel',body,'cancel',c)
+        v=self._write(b,f'/v1/advisory/{c}/turns/{t}/cancel',body,'cancel',c,authority=authority)
         if v['original_turn']['request']['turn_id']!=t or v['original_turn']['request_digest']!=body['request_digest']:raise WorklistError('INVALID_RESPONSE')
         return v
 
     @contextmanager
-    def _forward_gate(self,b):
+    def _forward_gate(self,b,authority=None):
         fd=self._locked()
         try:
-            if b not in self._bindings():raise WorklistError('DENIED')
-            yield
+            with authority or nullcontext():
+                if b not in self._bindings():raise WorklistError('DENIED')
+                yield
+        except PermissionError:raise WorklistError('DENIED') from None
         finally:os.close(fd)
 
-    def _write(self,b,path,body,kind,c,expected=None):
-        raw=control_request(b,'POST',path,body,gate=self._forward_gate(b))
+    def _write(self,b,path,body,kind,c,expected=None,*,authority):
+        raw=control_request(b,'POST',path,body,gate=self._forward_gate(b,authority))
         if b not in self._bindings():raise WorklistError('DENIED')
         return wire.response(raw,kind,b,c,expected)
 
