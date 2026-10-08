@@ -15,6 +15,11 @@ struct MissionDefinitionCard: Identifiable, Equatable, Codable {
     let group: String
     let labels: [String]
     let status: String
+    var objective: String? = nil
+    var architectureChoices: [String]? = nil
+    var consequences: [String]? = nil
+    var risks: [String]? = nil
+    var remainingDecisions: [String]? = nil
 }
 
 struct MissionRelation: Equatable, Codable {
@@ -24,11 +29,19 @@ struct MissionRelation: Equatable, Codable {
     let proposed: Bool
 }
 
+struct MissionChatLine: Identifiable, Equatable, Codable {
+    let id: String
+    let role: String
+    let text: String
+}
+
 struct MissionWorkspaceObservation: Equatable, Codable {
+    let scopeKey: String
     let project: String
     let cards: [MissionDefinitionCard]
     let relations: [MissionRelation]
     let complete: Bool
+    var transcript: [MissionChatLine]? = nil
 
     // Unknown endpoints may belong to a later page; never fabricate a node or title.
     var visibleRelations: [MissionRelation] {

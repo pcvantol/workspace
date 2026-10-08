@@ -149,7 +149,8 @@ struct ContentView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             MissionWorkspaceView(observation: missionObservation, canRefine: false, canApprove: false,
-                                 onRefine: { _, _ in }, onApprove: { _ in })
+                                 onRefine: { _, _, _ in }, onApprove: { _ in })
+                .environment(\.nativeTabCommandsActive, selectedTab == 4)
                 .tabItem { Label(MissionWorkspaceCopy.text("missions", language: locale.language.languageCode?.identifier ?? "en"), systemImage: "bubble.left.and.text.bubble.right") }.tag(4)
             ConversationsView(client: client, state: conversations)
                 .environment(\.nativeTabCommandsActive, selectedTab == 0)

@@ -33,7 +33,13 @@ read back. Approval itself invokes no model and starts no execution.
 Early native presentation and presentation tests are under construction. The
 isolated fixture is explicitly synthetic and cannot authorize generation or
 approval; both controls are disabled until genuine transport is connected.
-The early graph is an adjacency presentation, not yet the final directed canvas.
+The graph now renders directed edges, shared selection and proposed/established
+relations. The independent early UX checkpoint requires final installed task
+acceptance; initial targeted corrections add visible selected conversation
+title/history, fixed approval area, consequences/risks/remaining human decisions,
+explicit edge types, status filters and separate outcomes/criteria. Missing
+consequences remain unknown and cannot enable approval. Scope identity, rather
+than display title, fences local message/selection.
 New producer route/schema/wheel pin is pending the direct L3 handoff after r41.
 Old 2.9/2.10 receipts are not this consumer qualification. No product PASS yet.
 

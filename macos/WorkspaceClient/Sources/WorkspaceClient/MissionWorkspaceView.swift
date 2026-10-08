@@ -4,10 +4,11 @@ struct MissionWorkspaceView: View {
     let observation: MissionWorkspaceObservation?
     let canRefine: Bool
     let canApprove: Bool
-    let onRefine: (String, String) -> Void
+    let onRefine: (String, String, MissionDefinitionCard?) -> Void
     let onApprove: (MissionDefinitionCard) -> Void
     @State private var selection: String?
     @State private var search = ""
+    @State private var statusFilter = ""
     @State private var panel = "chat"
     @State private var graph = false
     @State private var message = ""
@@ -15,10 +16,11 @@ struct MissionWorkspaceView: View {
     @State private var zoom = 1.0
     @FocusState private var messageFocused: Bool
     @Environment(\.locale) private var locale
+    @Environment(\.nativeTabCommandsActive) private var commandsActive
 
     init(observation: MissionWorkspaceObservation?, canRefine: Bool, canApprove: Bool,
          selectedID: String? = nil, activePanel: String = "chat", showGraph: Bool = false,
-         onRefine: @escaping (String, String) -> Void, onApprove: @escaping (MissionDefinitionCard) -> Void) {
+         onRefine: @escaping (String, String, MissionDefinitionCard?) -> Void, onApprove: @escaping (MissionDefinitionCard) -> Void) {
         self.observation = observation; self.canRefine = canRefine; self.canApprove = canApprove
         self.onRefine = onRefine; self.onApprove = onApprove
         _selection = State(initialValue: observation?.selected(selectedID)?.id)
@@ -58,7 +60,9 @@ struct MissionWorkspaceView: View {
                 }
             }.padding(20)
         }
-        .onChange(of: observation?.project) { _, _ in selection = nil; message = "" }
+        .onChange(of: observation?.scopeKey) { _, _ in
+            selection = nil; message = ""; search = ""; statusFilter = ""; zoom = 1; panel = "chat"
+        }
         .onChange(of: observation?.cards.map(\.id)) { _, ids in
             if let selection, !(ids ?? []).contains(selection) { self.selection = nil }
         }
@@ -71,12 +75,18 @@ struct MissionWorkspaceView: View {
                 Text(copy("dependencies")).tag(true)
             }.pickerStyle(.segmented).accessibilityIdentifier("mission.display")
             if let observation {
+                Picker(copy("statusFilter"), selection: $statusFilter) {
+                    Text(copy("allStatuses")).tag("")
+                    ForEach(Array(Set(observation.cards.map(\.status))).sorted(), id: \.self) { status in
+                        Text(copy(status)).tag(status)
+                    }
+                }.accessibilityIdentifier("mission.status-filter")
                 Text(observation.project).font(.headline)
                 if graph { dependencyGraph(observation) }
                 else {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 14) {
-                            let cards = observation.matching(search: search, status: nil)
+                            let cards = observation.matching(search: search, status: statusFilter.isEmpty ? nil : statusFilter)
                             ForEach(Array(Set(cards.map(\.group))).sorted(), id: \.self) { group in
                                 DisclosureGroup(group) {
                                     ForEach(cards.filter { $0.group == group }) { item in
@@ -86,12 +96,15 @@ struct MissionWorkspaceView: View {
                                                     Text(item.title).font(.headline)
                                                     Text(item.value).font(.caption).foregroundStyle(.secondary)
                                                     Text(copy(item.status)).font(.caption)
+                                                    if !item.labels.isEmpty { Text(item.labels.map { copy($0) }.joined(separator: " · ")).font(.caption).foregroundStyle(.secondary) }
                                                 }.frame(maxWidth: .infinity, alignment: .leading)
                                             }.buttonStyle(.plain).padding(8)
                                                 .background(selection == item.id ? Color.accentColor.opacity(0.12) : Color.clear)
                                                 .accessibilityIdentifier("mission.select." + item.id)
                                             DisclosureGroup(copy("outcomes")) {
                                                 Text(item.outcome)
+                                            }
+                                            DisclosureGroup(copy("done")) {
                                                 ForEach(item.criteria, id: \.self) { Text("• " + $0) }
                                             }.font(.caption)
                                         }
@@ -108,32 +121,50 @@ struct MissionWorkspaceView: View {
     private var conversation: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(copy("chat")).font(.headline)
+            if let card {
+                Text(card.title).font(.title3.bold())
+                Text(copy(card.status)).font(.caption).foregroundStyle(.secondary)
+            }
             Picker(copy("lens"), selection: $lens) {
                 Text(copy("business")).tag("BUSINESS")
                 Text(copy("architect")).tag("ARCHITECTURE")
             }.pickerStyle(.segmented)
-            Spacer()
-            Text(copy("prompt")).foregroundStyle(.secondary)
-            if let card, !card.questions.isEmpty {
-                ForEach(card.questions, id: \.self) { Text($0).padding(12).background(Color.accentColor.opacity(0.08)) }
-            }
+            ScrollView {
+                VStack(alignment: .leading, spacing: 14) {
+                    if (observation?.transcript ?? []).isEmpty { Text(copy("prompt")).foregroundStyle(.secondary) }
+                    ForEach(observation?.transcript ?? []) { line in
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(copy(line.role)).font(.caption.bold()).foregroundStyle(.secondary)
+                            Text(line.text).textSelection(.enabled)
+                        }.padding(12).frame(maxWidth: .infinity, alignment: .leading)
+                            .background(line.role == "USER" ? Color.secondary.opacity(0.07) : Color.accentColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
+                    }
+                    if let card, !card.questions.isEmpty {
+                        ForEach(card.questions.filter { question in !(observation?.transcript ?? []).contains(where: { $0.text == question }) }, id: \.self) { question in
+                            Text(question).padding(12).background(Color.accentColor.opacity(0.08))
+                        }
+                    }
+                }.frame(maxWidth: .infinity, alignment: .leading)
+            }.accessibilityIdentifier("mission.transcript")
             TextEditor(text: $message).frame(minHeight: 90, maxHeight: 150)
                 .focused($messageFocused).accessibilityLabel(copy("message"))
                 .accessibilityIdentifier("mission.message")
-            Button(copy("send")) { onRefine(message, lens) }
-                .keyboardShortcut(.return, modifiers: .command)
+            Button(copy("send")) { onRefine(message, lens, card) }
+                .keyboardShortcut(commandsActive ? KeyboardShortcut(.return, modifiers: .command) : nil)
                 .disabled(!canRefine || message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 .accessibilityIdentifier("mission.refine")
             if !canRefine { Text(copy("connection")).font(.caption).foregroundStyle(.secondary) }
         }
     }
     private var definition: some View {
+        VStack(alignment: .leading, spacing: 12) {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 Text(copy("definition")).font(.headline)
                 if let card {
                     Text(card.title).font(.title2.bold())
                     Text(copy(card.status)).foregroundStyle(.secondary)
+                    if let objective = card.objective { section("objective", [objective]) }
                     section("value", [card.value])
                     section("outcomes", [card.outcome])
                     section("scope", card.scope)
@@ -141,26 +172,37 @@ struct MissionWorkspaceView: View {
                     section("done", card.criteria)
                     section("questions", card.questions)
                     section("changes", card.changes)
+                    section("consequences", card.consequences ?? [copy("notEstablished")])
+                    section("architectureChoices", card.architectureChoices ?? [])
+                    section("risks", card.risks ?? [copy("notEstablished")])
+                    section("remainingDecisions", card.remainingDecisions ?? [copy("notEstablished")])
                     if let observation {
                         section("dependencies", observation.visibleRelations.filter { $0.dependent == card.id }
-                            .map { edge in (observation.selected(edge.predecessor)?.title ?? "") + ": " + edge.reason })
+                            .map { edge in copy(edge.proposed ? "proposed" : "established") + " · " + (observation.selected(edge.predecessor)?.title ?? "") + ": " + edge.reason })
                     }
-                    Button(copy("approve")) { onApprove(card) }
-                        .buttonStyle(.borderedProminent).disabled(!canApprove)
-                        .accessibilityIdentifier("mission.approve")
-                    Text(copy("approvalEffect")).font(.caption).foregroundStyle(.secondary)
                     DisclosureGroup(copy("inspector")) {
                         LabeledContent(copy("revision"), value: String(card.revision))
                     }
                 } else { Text(copy("choose")).foregroundStyle(.secondary) }
             }.frame(maxWidth: .infinity, alignment: .leading)
         }
+        if let card {
+            Divider()
+            Text(card.title + " · " + copy("revision") + " " + String(card.revision)).font(.caption.bold())
+            Button(copy("approve")) { onApprove(card) }
+                .buttonStyle(.borderedProminent)
+                .disabled(!canApprove || card.consequences == nil || card.risks == nil || card.remainingDecisions == nil || !card.questions.isEmpty)
+                .accessibilityIdentifier("mission.approve")
+            Text(copy("approvalEffect")).font(.caption).foregroundStyle(.secondary)
+            if !canApprove { Text(copy("approveUnavailable")).font(.caption).foregroundStyle(.secondary) }
+        }
+        }
     }
     private func section(_ key: String, _ lines: [String]) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             if !lines.isEmpty {
                 Text(copy(key)).font(.subheadline.bold())
-                ForEach(lines, id: \.self) { Text($0).textSelection(.enabled) }
+                ForEach(Array(lines.enumerated()), id: \.offset) { _, line in Text(line).textSelection(.enabled) }
             }
         }
     }
@@ -169,10 +211,13 @@ struct MissionWorkspaceView: View {
         let stride = WorklistGraphLayout.columnStride
         let height = max(180, Double(observation.cards.count) * WorklistGraphLayout.rowStride + 40)
         let canvasWidth = stride + width + 40
+        let matching = Set(observation.matching(search: search, status: statusFilter.isEmpty ? nil : statusFilter).map(\.id))
         return VStack(alignment: .leading, spacing: 10) {
-            HStack {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
                 Button(copy("zoomOut")) { zoom = max(0.25, zoom / 1.25) }
                 Button(copy("zoomIn")) { zoom = min(2, zoom * 1.25) }
+                }
                 Button(copy("fit")) { zoom = min(1, 260 / canvasWidth) }
             }
             Text(copy("edgeLegend")).font(.caption).foregroundStyle(.secondary)
@@ -211,6 +256,7 @@ struct MissionWorkspaceView: View {
                             }.buttonStyle(.plain)
                                 .position(x: 20 + Double(index % 2) * stride + width / 2,
                                           y: 60 + Double(index) * WorklistGraphLayout.rowStride)
+                                .opacity(matching.contains(item.id) ? 1 : 0.45)
                                 .id(item.id).accessibilityIdentifier("mission.graph.node." + item.id)
                         }
                     }.frame(width: canvasWidth, height: height)
@@ -220,7 +266,7 @@ struct MissionWorkspaceView: View {
             }
             if let selection {
                 ForEach(Array(observation.visibleRelations.filter { $0.dependent == selection || $0.predecessor == selection }.enumerated()), id: \.offset) { _, edge in
-                    Text((observation.selected(edge.predecessor)?.title ?? "") + " → " +
+                    Text(copy(edge.proposed ? "proposed" : "established") + " · " + (observation.selected(edge.predecessor)?.title ?? "") + " → " +
                          (observation.selected(edge.dependent)?.title ?? "") + ": " + edge.reason)
                         .font(.caption).textSelection(.enabled)
                 }
