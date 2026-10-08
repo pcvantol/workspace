@@ -13,6 +13,7 @@ SOURCES = {
     "ApprovedWorklistView.swift", "ConversationsView.swift",
     "WorklistTransport.swift", "WorklistProjection.swift",
     "WorklistState.swift", "LiveApprovedWorklistView.swift",
+    "WorklistControlContract.swift", "WorklistControlTransport.swift", "WorklistControlState.swift", "WorklistControlView.swift",
 }
 
 

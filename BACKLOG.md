@@ -1,5 +1,33 @@
 # Workspace Backlog
 
+## Selected native worklist hold controls — 8 October 2026, r81 plan88
+
+[Owner mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6050026304)
+selects `L4-NATIVE-WORKLIST-HOLD-CONTROLS-V1-20261008` under the same
+`L4-WORKSPACE-NATIVE-CLIENT-HTTP-V1-20261002` assignment and Work session.
+[Pickup](https://github.com/pcvantol/forge/issues/208#issuecomment-6050146453)
+binds clean base366196cdce5404862c1df8d77866ba15900c64bd /2.8.8 and
+branchcodex/r81-native-worklist-hold. The primary iCloud checkout stays intact.
+[Completed PR138](https://github.com/pcvantol/forge/issues/208#issuecomment-6045050571)
+and its2.7.68 graph evidence remain closed history.
+
+Product2.8.9 adds a separate scoped hold/unhold capability through the existing
+native→authenticated Workspace Server→Forge HTTP path. Hold fences only future
+Mission admission, including no cancellation of already admitted/not-yet-started
+work. Unhold removes only the exact owned observed hold; other release/acceptance/
+authority/evidence/budget conditions remain authoritative in Forge. Exact user
+confirmation and durable same-ID intent precede POST. Refresh/restart reads the
+operation first; explicit resume alone may reconcile the same ID/payload.
+No ordinary readgrant is upgraded and no workset/scheduler store is introduced.
+
+New consumer acceptance pins Forge2.7.69/e64302ffd2385926c1d5fad3e1417778798309aa,
+wheelSHA256ac4cf14f18d49d48c23bc04fbe536f529886415b548703e7d2bdbd71f3258ab0.
+L3 adviceHTTP is independent. Owning implementation/tests, independent reviews,
+protected merge and exact-main installed/newGUI qualification remain pending;
+prior source/producer/schema proof is not new consumer acceptance. Signing,
+personal Keychain, trust, public release/operation and full PRM remain separate.
+
+
 ## Selected native dependency graph — 7 October 2026, r81 plan revision 87
 
 [Coordinator mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6044025195)

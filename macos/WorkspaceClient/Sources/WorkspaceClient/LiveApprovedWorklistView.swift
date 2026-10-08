@@ -4,12 +4,18 @@ import Combine
 struct LiveApprovedWorklistView: View {
     @ObservedObject var client: ClientState
     @ObservedObject var state: WorklistState
+    @ObservedObject var controls: WorklistControlState
     var reviewNavigationStatus = ""
     let onOpenReviews: (ApprovedWorklistItem) -> Void
     @Environment(\.locale) private var locale
     @State private var grant = ""
     private let timer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
 
+    init(client: ClientState, state: WorklistState, reviewNavigationStatus: String = "",
+         onOpenReviews: @escaping (ApprovedWorklistItem) -> Void) {
+        self.client = client; self.state = state; self.controls = state.controls
+        self.reviewNavigationStatus = reviewNavigationStatus; self.onOpenReviews = onOpenReviews
+    }
     private func copy(_ key: String) -> String {
         WorklistCopy.text(key, language: locale.language.languageCode?.identifier)
     }
@@ -48,23 +54,31 @@ struct LiveApprovedWorklistView: View {
                 }.disabled(state.isBusy).padding(.horizontal, 18).accessibilityIdentifier("worklist.workset")
             }
             if !reviewNavigationStatus.isEmpty { Text(copy(reviewNavigationStatus)).foregroundStyle(.orange).padding(.horizontal, 18) }
+            WorklistControlView(state: controls, connection: connection, stateScope: state.cache.snapshot?.scope)
             ApprovedWorklistView(cache: state.cache.snapshot != nil &&
                 !state.matchesObservedPairing(endpoint: client.savedEndpoint, instanceID: client.savedInstance)
                 ? WorklistObservationCache() : state.cache, onOpenReviews: onOpenReviews)
         }
-        .task { await state.refresh(connection: connection()) }
+        .task { await state.refresh(connection: connection()); await controls.refresh(connection: connection(), scope: state.cache.snapshot?.scope) }
+        .onChange(of: state.cache.snapshot?.scope) { _, scope in
+            controls.invalidate()
+            Task { await controls.refresh(connection: connection(), scope: scope) }
+        }
+        .onChange(of: controls.current?.workset_revision) { _, _ in
+            Task { await state.refresh(connection: connection()) }
+        }
         .onChange(of: client.phase) { _, phase in
-            if phase == "FORGETTING" { state.invalidatePairing() }
+            if phase == "FORGETTING" { state.invalidatePairing(); controls.invalidate() }
             Task { await state.refresh(connection: connection()) }
         }
         .onChange(of: client.savedEndpoint) { _, _ in
-            state.invalidatePairing()
+            state.invalidatePairing(); controls.invalidate()
             Task { await state.refresh(connection: connection()) }
         }
         .onChange(of: client.savedInstance) { _, _ in
-            state.invalidatePairing()
+            state.invalidatePairing(); controls.invalidate()
             Task { await state.refresh(connection: connection()) }
         }
-        .onReceive(timer) { _ in Task { await state.refresh(connection: connection()) } }
+        .onReceive(timer) { _ in Task { await state.refresh(connection: connection()); await controls.refresh(connection: connection(), scope: state.cache.snapshot?.scope) } }
     }
 }

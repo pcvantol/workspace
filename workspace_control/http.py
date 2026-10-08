@@ -103,6 +103,13 @@ OPERATIONS = {
                             "auth": "PRIVATE_ROOT_OWNER", "summary": "bind actor and workset read grant"},
     "worksets.bind.revoke": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "worklist-bind-revoke",
                              "auth": "PRIVATE_ROOT_OWNER", "summary": "revoke own workset read binding"},
+    "workset-controls.contract.read": {"exposure":"HTTP_EXPOSED", "method":"GET", "path":"/v1/workset-controls/openapi.json", "auth":"BEARER_PINNED", "contract":"worklist-control", "summary":"scoped hold contract"},
+    "workset-controls.scopes": {"exposure":"HTTP_EXPOSED", "method":"GET", "path":"/v1/workset-controls", "auth":"BEARER_PINNED_AND_WORKLIST_CONTROL_GRANT", "contract":"worklist-control", "summary":"explicit live command scopes"},
+    "workset-controls.get": {"exposure":"HTTP_EXPOSED", "method":"GET", "path":"/v1/workset-controls/{workset_id}", "auth":"BEARER_PINNED_AND_WORKLIST_CONTROL_GRANT", "contract":"worklist-control", "summary":"current scoped hold readback"},
+    "workset-controls.submit": {"exposure":"HTTP_EXPOSED", "method":"POST", "path":"/v1/workset-controls/{workset_id}/commands", "auth":"BEARER_PINNED_AND_WORKLIST_CONTROL_GRANT", "contract":"worklist-control", "summary":"explicit hold or exact own unhold"},
+    "workset-controls.operation": {"exposure":"HTTP_EXPOSED", "method":"GET", "path":"/v1/workset-controls/{workset_id}/commands/{operation_id}", "auth":"BEARER_PINNED_AND_WORKLIST_CONTROL_GRANT", "contract":"worklist-control", "summary":"same-operation original receipt and current state"},
+    "workset-controls.bind.issue": {"exposure":"LOCAL_ONLY_ADMIN", "local_cli":"worklist-control-bind-issue", "auth":"PRIVATE_ROOT_OWNER", "summary":"bind separate scoped command capability"},
+    "workset-controls.bind.revoke": {"exposure":"LOCAL_ONLY_ADMIN", "local_cli":"worklist-control-bind-revoke", "auth":"PRIVATE_ROOT_OWNER", "summary":"revoke own command binding"},
     "reviews.bind.issue": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "review-bind-issue",
                            "auth": "PRIVATE_ROOT_OWNER", "summary": "bind actor and scoped Forge review grant"},
     "reviews.bind.revoke": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "review-bind-revoke",
@@ -309,6 +316,30 @@ def worklist_openapi_contract():
     return document
 
 
+def worklist_control_openapi_contract():
+    from .worklist_control_contract import REQUEST_KEYS
+    request_properties = {key: {"type":"string"} for key in REQUEST_KEYS}
+    request_properties.update({"expected_revision":{"type":"integer", "minimum":1},
+        "expected_hold_revision":{"type":"integer", "minimum":1, "nullable":True},
+        "hold_operation_id":{"type":"string", "nullable":True},
+        "intent":{"type":"string", "enum":["hold", "unhold"]},
+        "reason_code":{"type":"string", "enum":["USER_REQUEST", "TEMPORARY_WAIT"]}})
+    document = {"openapi":"3.0.3", "info":{"title":"Workspace scoped hold capability V1", "version":"1"},
+        "components":{"securitySchemes":{"bearerAuth":{"type":"http", "scheme":"bearer"},
+            "controlGrant":{"type":"apiKey", "in":"header", "name":"X-Workspace-Worklist-Control-Grant"}}}, "paths":{}}
+    for name, details in OPERATIONS.items():
+        if details.get("contract") != "worklist-control" or name.endswith("contract.read"):
+            continue
+        operation = {"operationId":name, "security":[{"bearerAuth":[], "controlGrant":[]}],
+                     "responses":{"200":{"description":"Verified scoped original receipt and separate current readback"},
+                                  "403":{"description":"Denied command capability"}, "409":{"description":"Stale or conflicting command"}}}
+        if details["method"] == "POST":
+            operation["requestBody"] = {"required":True, "content":{"application/json":{"schema":{
+                "type":"object", "additionalProperties":False, "required":sorted(REQUEST_KEYS), "properties":request_properties}}}}
+        document["paths"][details["path"]] = {details["method"].lower():operation}
+    return document
+
+
 def handler_for(service, *, public_host=None, scheme="http"):
     class Handler(BaseHTTPRequestHandler):
         timeout = 5
@@ -460,6 +491,38 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return self._reply(503, {"error": "WORKLIST_UNAVAILABLE"})
             self._reply(200, result)
 
+        def _control_route(self, path, *, write=False):
+            if not self._pinned_auth():
+                return
+            grants = self.headers.get_all("X-Workspace-Worklist-Control-Grant", [])
+            if len(grants) != 1:
+                return self._reply(403, {"error": "WORKLIST_CONTROL_DENIED"})
+            try:
+                binding = service.worklist_controls.access(grants[0])
+                parts = path.split("/")
+                if path == "/v1/workset-controls" and not write:
+                    result = service.worklist_controls.scopes(binding)
+                elif write:
+                    lengths = self.headers.get_all("Content-Length", [])
+                    if (len(lengths) != 1 or not lengths[0].isdecimal() or
+                            not 1 <= int(lengths[0]) <= 4096 or self.headers.get("Transfer-Encoding") or
+                            self.headers.get("Content-Type", "").split(";", 1)[0].lower() != "application/json"):
+                        return self._reply(400, {"error": "INVALID_BODY"})
+                    try:
+                        body = json.loads(self.rfile.read(int(lengths[0])), object_pairs_hook=_unique_json_object)
+                    except (ValueError, UnicodeError, RecursionError):
+                        return self._reply(400, {"error": "INVALID_BODY"})
+                    result = service.worklist_controls.submit(binding, parts[3], body)
+                else:
+                    result = service.worklist_controls.readback(binding, parts[3], parts[5] if len(parts) == 6 else None)
+            except WorklistError as error:
+                code = {"DENIED":403, "UNAUTHORIZED":401, "NOT_FOUND":404, "CONFLICT":409,
+                        "INVALID_REQUEST":400}.get(error.state, 503)
+                return self._reply(code, {"error": "WORKLIST_CONTROL_" + error.state})
+            except (OSError, ValueError, UnicodeError):
+                return self._reply(503, {"error": "WORKLIST_CONTROL_UNAVAILABLE"})
+            return self._reply(200, result)
+
         def _review_binding(self):
             grants = self.headers.get_all("X-Workspace-Review-Grant", [])
             if len(grants) != 1:
@@ -560,13 +623,19 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 if self._pinned_auth():
                     return self._reply(200, worklist_openapi_contract())
                 return
+            if path == "/v1/workset-controls/openapi.json":
+                if self._pinned_auth():
+                    return self._reply(200, worklist_control_openapi_contract())
+                return
             conversation = path == "/v1/conversations" or re.fullmatch(r"/v1/conversations/[0-9a-f]{32}", path)
             review = (path == "/v1/reviews" or
                       re.fullmatch(r"/v1/reviews/missions/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}", path) or
                       re.fullmatch(r"/v1/reviews/missions/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/decisions/"
                                    r"[A-Za-z0-9][A-Za-z0-9._:-]{0,127}", path))
             worklist = path == "/v1/worksets" or re.fullmatch(r"/v1/worksets/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}", path)
-            if path not in ROUTES and not conversation and not review and not worklist:
+            control = path == "/v1/workset-controls" or re.fullmatch(
+                r"/v1/workset-controls/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}(?:/commands/[A-Za-z0-9][A-Za-z0-9._:-]{0,127})?", path)
+            if path not in ROUTES and not conversation and not review and not worklist and not control:
                 return self._reply(404, {"error": "NOT_FOUND"})
             if not self._pinned_auth():
                 return
@@ -576,6 +645,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return self._review_get(path)
             if worklist:
                 return self._worklist_get(path)
+            if control:
+                return self._control_route(path)
             try:
                 if path == "/v1/status":
                     result = service.status()
@@ -599,6 +670,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_POST(self):
             if not self._trusted_origin():
                 return
+            if re.fullmatch(r"/v1/workset-controls/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/commands", self.path):
+                return self._control_route(self.path, write=True)
             if re.fullmatch(r"/v1/reviews/missions/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/decisions",
                             self.path):
                 return self._review_write(self.path)

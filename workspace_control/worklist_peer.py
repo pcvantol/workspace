@@ -106,13 +106,16 @@ def _valid_binding(binding):
 
 
 class WorklistReadTransport:
-    def __init__(self, root, root_fd):
+    def __init__(self, root, root_fd, *, namespace="worklist"):
+        if namespace not in ("worklist", "worklist-control"):
+            raise ValueError("unsupported binding namespace")
+        self.namespace = namespace
         self.root = Path(root)
         self.root_fd = root_fd
 
     def _bindings(self):
         try:
-            document = _private_json("worklist-bindings.json", dir_fd=self.root_fd)
+            document = _private_json(self.namespace + "-bindings.json", dir_fd=self.root_fd)
         except FileNotFoundError:
             return []
         except (ValueError, OSError, UnicodeError):
@@ -138,7 +141,7 @@ class WorklistReadTransport:
         raise WorklistError("DENIED")
 
     def _write_bindings(self, bindings):
-        name = ".worklist-bindings-" + secrets.token_hex(8)
+        name = "." + self.namespace + "-bindings-" + secrets.token_hex(8)
         descriptor = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
                              0o600, dir_fd=self.root_fd)
         try:
@@ -147,7 +150,7 @@ class WorklistReadTransport:
                 stream.write("\n")
                 stream.flush()
                 os.fsync(stream.fileno())
-            os.replace(name, "worklist-bindings.json", src_dir_fd=self.root_fd,
+            os.replace(name, self.namespace + "-bindings.json", src_dir_fd=self.root_fd,
                        dst_dir_fd=self.root_fd)
             os.fsync(self.root_fd)
         finally:
@@ -157,7 +160,7 @@ class WorklistReadTransport:
                 pass
 
     def _locked(self):
-        descriptor = os.open(".worklist-bindings.lock", os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW,
+        descriptor = os.open("." + self.namespace + "-bindings.lock", os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW,
                              0o600, dir_fd=self.root_fd)
         info = os.fstat(descriptor)
         if not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o077:
@@ -180,6 +183,11 @@ class WorklistReadTransport:
                        "forge_instance_id": forge_instance_id, "forge_token": forge_token}
         scopes = _scopes(_get(provisional, "/v1/worksets"), provisional, provisioning=True)
         provisional["workset_ids"] = scopes["workset_ids"]
+        return self._provision_binding(provisional, client_token_file)
+
+    def _provision_binding(self, provisional, client_token_file):
+        actor_id = provisional["actor_id"]
+        forge_instance_id = provisional["forge_instance_id"]
         info = os.stat(Path(client_token_file).parent, follow_symlinks=False)
         if not stat.S_ISDIR(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o077:
             raise ValueError("worklist client token parent must be private")

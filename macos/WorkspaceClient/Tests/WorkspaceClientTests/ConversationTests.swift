@@ -413,7 +413,9 @@ final class ConversationTests: XCTestCase {
             "review_mission_ids": ["mission-a"],
             "worklist_grant": String(repeating: "W", count: 43),
             "worklist_actor": "reviewer-a", "worklist_forge_instance": "forge-a",
-            "worklist_workset_ids": ["workset-a"]
+            "worklist_workset_ids": ["workset-a"],
+            "control_grant": String(repeating: "C", count: 43), "control_actor":"reviewer-a",
+            "control_forge_instance":"forge-a", "control_workset_ids":["workset-a"]
         ]
         try JSONSerialization.data(withJSONObject: document).write(to: file)
         try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: file.path)
@@ -450,6 +452,27 @@ final class ConversationTests: XCTestCase {
         try worklists.saveAccess(worklistAccess)
         try worklists.forgetAccess()
         XCTAssertNil(try worklists.loadAccess())
+        let controls = IsolatedWorklistControlGrant(loaded)
+        let controlAccess = try XCTUnwrap(controls.loadAccess())
+        try controls.saveAccess(controlAccess)
+        let raw: [String:Any] = ["instance_id":"forge-a", "workset_id":"workset-a", "definition_revision":"sha256:"+String(repeating:"a",count:64), "workset_revision":1, "control_revision":0, "held":false, "hold":NSNull(), "hold_provenance":"NONE", "admitted_mission_ids":[], "boundary":"FUTURE_ADMISSION_ONLY", "ongoing_work_cancelled":false, "observed_at":"2026-10-08T00:00:00Z"]
+        let current = try WorklistControlWire.current(raw, access:controlAccess, workset:"workset-a")
+        let command = WorklistControlRequest(current:current, intent:"hold", reason:"USER_REQUEST")
+        let intent = WorklistControlIntent(accessFingerprint:WorklistControlIntent.fingerprint(controlAccess), endpoint:controlAccess.endpoint,
+            workspaceInstanceID:controlAccess.workspaceInstanceID, actorID:controlAccess.actorID, request:command)
+        XCTAssertNil(try controls.loadIntent());try controls.saveIntent(intent)
+        XCTAssertEqual(try IsolatedWorklistControlGrant(loaded).loadIntent(),intent, "Actual private transport intent survives app-store reconstruction")
+        try controls.forgetIntent();XCTAssertNil(try controls.loadIntent())
+        try controls.forgetAccess();XCTAssertNil(try controls.loadAccess())
+        var noControls = document
+        for field in ["control_grant","control_actor","control_forge_instance","control_workset_ids"] { noControls.removeValue(forKey:field) }
+        try JSONSerialization.data(withJSONObject:noControls).write(to:file)
+        XCTAssertNil(try IsolatedWorklistControlGrant(IsolatedTestDocument.load()).loadAccess())
+        var badControls = document;badControls["control_workset_ids"]=["workset-a","workset-a"]
+        try JSONSerialization.data(withJSONObject:badControls).write(to:file);XCTAssertThrowsError(try IsolatedTestDocument.load())
+        badControls = document;badControls.removeValue(forKey:"control_actor")
+        try JSONSerialization.data(withJSONObject:badControls).write(to:file);XCTAssertThrowsError(try IsolatedTestDocument.load())
+        try JSONSerialization.data(withJSONObject:document).write(to:file)
         var withoutWorklist = document
         for field in ["worklist_grant", "worklist_actor", "worklist_forge_instance", "worklist_workset_ids"] { withoutWorklist.removeValue(forKey: field) }
         try JSONSerialization.data(withJSONObject: withoutWorklist).write(to: file)
