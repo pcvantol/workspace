@@ -14,6 +14,13 @@ private enum IsolatedWindowEvidence {
             let bitmap = NSBitmapImageRep(cgImage: image)
             guard let png = bitmap.representation(using: .png, properties: [:]) else { return }
             let root = URL(fileURLWithPath: directory, isDirectory: true)
+            let facts:[String:Any]=["pid":ProcessInfo.processInfo.processIdentifier,
+                "appearance":window.effectiveAppearance.bestMatch(from:[.aqua,.darkAqua])?.rawValue ?? "unknown",
+                "locale":Locale.current.identifier,"width":window.frame.width,"height":window.frame.height]
+            if let data=try? JSONSerialization.data(withJSONObject:facts,options:.sortedKeys) {
+                try? FileManager.default.createDirectory(at:root,withIntermediateDirectories:true,attributes:[.posixPermissions:0o700])
+                try? data.write(to:root.appendingPathComponent("window-facts.public.json"),options:.atomic)
+            }
             try? FileManager.default.createDirectory(at: root, withIntermediateDirectories: true,
                                                      attributes: [.posixPermissions: 0o700])
             let target = root.appendingPathComponent("conversation-window.png")

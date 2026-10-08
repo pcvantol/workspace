@@ -79,6 +79,11 @@ struct AdvisoryView: View {
                     Button(copy("forgetGrant")) { state.forgetGrant() }.disabled(state.busy || state.pending != nil)
                 }
                 Button(copy("refresh")) { Task { await state.refresh(connection()) } }.disabled(state.busy).accessibilityIdentifier("advisory.refresh")
+                if candidates.hasOwnDraft {
+                    Button(CandidateCopy.text("form",locale:locale.language.languageCode?.identifier ?? "en")) {
+                        Task { await candidates.openOwnDraft(connection()) }
+                    }.disabled(candidates.busy).accessibilityIdentifier("candidate.open-own-draft")
+                }
                 if let cap=state.capability {
                     GroupBox(copy("context")) {
                         VStack(alignment:.leading,spacing:8) {

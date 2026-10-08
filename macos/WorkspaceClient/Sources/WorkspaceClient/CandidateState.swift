@@ -177,6 +177,11 @@ import Combine
         } catch { if e==epoch { fail(error) } }
     }
     func saveGrantSelection(_ token:String) async { await saveGrant(token,connection:connection) }
+    var hasOwnDraft:Bool { local.turnID != nil || !local.form.text.isEmpty || pending }
+    func openOwnDraft(_ new:AdvisoryConnection?) async {
+        guard let c=new ?? connection else { return }
+        do { _=try admit(c);open=true;await refresh(c) } catch { fail(error) }
+    }
     func refreshSelection() async { await refresh(connection) }
     func loadSelectedFields() {
         guard !busy,!pending,let p=preview else { return }
@@ -203,7 +208,7 @@ import Combine
     func recover() async {
         guard !busy,pending,let c=connection else { return }
         await refresh(c)
-        guard !busy,pending else { return };let e=epoch;busy=true;defer{if e==epoch { busy=false }}
+        guard !busy,pending,hasGrant,capability != nil,source != nil else { return };let e=epoch;busy=true;defer{if e==epoch { busy=false }}
         do {
             let a=try access(c)
             if let r=local.saveIntent {

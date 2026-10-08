@@ -237,3 +237,13 @@ extension CandidateTests {
     private func signalled(_ semaphore:DispatchSemaphore) -> Bool { semaphore.wait(timeout:.now()) == .success }
     private func waitBarrier(_ semaphore:DispatchSemaphore) { _=semaphore.wait(timeout:.now()+3) }
 }
+
+extension CandidateTests {
+    @MainActor func testObservedDenialStopsExplicitRecoveryBeforeAnyPost() async throws {
+        let (s,_,_)=try await prepared();dropBefore=true;await s.save();XCTAssertTrue(s.pending)
+        let before=calls.filter{$0.httpMethod=="POST"}.count;code=403;await s.recover()
+        XCTAssertEqual(s.phase,"candidateDenied");XCTAssertTrue(s.pending);XCTAssertNil(s.source)
+        XCTAssertEqual(calls.filter{$0.httpMethod=="POST"}.count,before)
+        XCTAssertEqual(s.local.saveIntent?.proposal_id,"proposal-one")
+    }
+}
