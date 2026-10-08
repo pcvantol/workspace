@@ -28,6 +28,14 @@ prior source/producer/schema proof is not new consumer acceptance. Signing,
 personal Keychain, trust, public release/operation and full PRM remain separate.
 
 
+Candidate finalization: final source a12780c, full95native+1isolated+113Python
+validation/per-file coveragePASS, independent Quality/SecurityPASS and actual
+new pinned installed/native GUI/hold/A→B proofPASS. See
+[the source finalization](docs/WORKSPACE_WORKLIST_HOLD_CONTROLS_V1.md).
+Protected merge and fresh exact-main receipts remain pending; TDE policyFAIL
+is separate from its successful observe workflow. Existing receipts stay intact.
+
+
 ## Selected native dependency graph — 7 October 2026, r81 plan revision 87
 
 [Coordinator mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6044025195)

@@ -112,3 +112,69 @@ no unnecessary full historical producer/FCI matrix. Only existing declared
 external EP/LLM/OS/repository fixtures, both HTTP/auth/data/control products real.
 TDE workflow and actual policyFAIL remain distinct; no broad debt cleanup or
 suppression. Consumer delivery is pending until these actual receipts exist.
+
+## Candidate finalization — protected and exact-main gates pending
+
+Final production source a12780cde7780ca2eafe609639b900b6eb9acb5c passed full
+`bash scripts/validate.sh`:95native tests,1isolated private credential/pending
+reconstruction test and113Python tests. Every changed Swift/Python production
+file is strictly above80.2% executable-line coverage: controlcontract94.67%,
+controlstate98.74%, controltransport100%, controlview85.44%, existing approved
+view95.52%, liveview88.33%, readstate100%, app83.77%, isolatedadapter93.16%;
+Pythoncontrolcontract100%, controlpeer88.37%, sharedreadpeer99.52% and all
+other changed Python files passed their individual gates. No exclusions.
+Independent complete exact-source Quality and Security PASS bind that SHA,
+after manual-refresh, reconnect and successful-read→404 currentness fixes.
+Confirmation/control content shares the existing worklist ScrollView.
+
+Actual installed Python3.14.8 candidate Server and packaged isolated ad-hoc
+Client qualify the new Forge2.7.69/e64302ffd2385926c1d5fad3e1417778798309aa
+combination. All15Workspace and230Forge product files match source/wheel/
+noneditable installed bytes. Workspace wheelSHA256
+ade06d2e93615691936a391b3648ad9b50c4ed9b6fe339fa805c09b6eb59db56;
+native executableSHA256
+b0f242ac9afb9b0045dbe81ab370598480efd8022680b4c1bb7ffb857d9b8d95.
+The pinned Forge wheel remains
+ac4cf14f18d49d48c23bc04fbe536f529886415b548703e7d2bdbd71f3258ab0.
+
+Installed/native flow receiptSHA256
+cc47f01322fd0b5cff698d7b7ad931af4fa8dc9cc9564d2c1b1415344015ed94
+records8actual packaged GUI phases and6confirmed commands: hold before
+admission, body loss/double click, real app/Serverrestart and GET-only recovery,
+exact unhold, hold with admitted A unaffected, unhold retaining final acceptance,
+hold after that gate and exact unhold allowing preapproved B. Normal owner final
+Businessacceptance remains in Forge. Exactly2distinct Missions/2providers/
+2EP submissions; no Workspace-triggered provider/intake/planning/decision or
+extra command POST during reads, refresh, graph and actual scope switching.
+Quiescent read-only GUI also leaves the canonical DB unchanged. Actual narrow
+confirmation uses640logical-pixel width/minimum content height; OS titlebar
+bounds are distinct. Scoped authority is not expanded by the empty readscope.
+
+Installed authority/fault receiptSHA256
+7af1483aabaa790b254e9691d58140148fd6080372a11f4fea0324bc3ee0d49e
+qualifies the installed owner setup/revoke CLI, separate actors/worksets,
+readgrant command denial, wrong/revoked/expired/stale grants, foreign/local-owner
+and LEGACY_UNKNOWN holds, immutable original effect versus newer current state,
+payload conflict and real malformed provenance503 with exact document restore.
+A genuinely revoked positive command grant fails its positive gate. Scope/late
+callbacks, PENDING/absence, explicit same-ID resume and bounded conflict handling
+retain their owning regression proof; no automatic POST or invented authority.
+Only the already qualified external EP/LLM/OS/identity/repository boundaries are
+explicit adapters. The full historical43/FCI matrix was not repeated.
+
+Raw earlier failures retain no PASS: harness WRONG_INSTANCE409/revoked401,
+continuation state-key expectation, AX alias/label assertions and stale previous
+packaged-process attachment. Exact PID/path selection fixes the latter; each
+accepted GUI receipt binds the actual package/process/executable. Temporary
+native diagnostics are removed. All own case credentials/runtime/targets are
+removed by the qualification receipts; the primary iCloud checkout and older
+2.7.67/2.7.68 combinations remain intact. No new L3/advice dependency.
+
+Actual final-source TDE observe workflowSUCCESS is separate from assessment/
+qualification exits2/2 and policyFAIL: Swift product complexity maximum32vs30
+in unchanged existing ServerTransport/WorklistProjection code. No suppression
+or broader complexity cleanup. Source finalization closes the selected candidate;
+normal protected merge and fresh exact-main noneditable Server/native GUI/HTTP
+receipts remain pending and will close only this subset in the owning register.
+Signing/notarization, personal Keychain, two-Mac trust, public distribution,
+operational installation/activation and full PRM families remain separate gates.
