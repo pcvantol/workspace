@@ -22,6 +22,7 @@ final class CandidateTests:XCTestCase {
         forgeInstanceID:"forge-one",forgeProjectID:"project-one",repositoryID:"repo-one",conversationID:String(repeating:"a",count:32),proposalIDs:["proposal-one","proposal-two"],maximumRegistrations:2,token:String(repeating:"C",count:43))
     var connection:AdvisoryConnection { .init(endpoint:access.endpoint,workspaceInstanceID:access.workspaceInstanceID,actorID:access.actorID,workspaceProjectID:access.workspaceProjectID,conversationID:access.conversationID,bearer:"synthetic-read-root",draftGrant:String(repeating:"D",count:43)) }
     var calls:[URLRequest]=[]
+    var sourceOverride:[String:Any]?
     var proposals:[[String:Any]]=[]
     var observed:[String:Any]?
     var drop=false
@@ -49,13 +50,21 @@ final class CandidateTests:XCTestCase {
             if path.hasSuffix("/access") {
                 raw=["contract_version":"workspace-candidate-access/v1","actor_id":"alice","workspace_project_id":"ws-project","instance_id":"forge-one","project_id":"project-one","repository_id":"repo-one","conversation_id":self.access.conversationID,"proposal_ids":self.access.proposalIDs,"maximum_registrations":2]
             } else if path.hasSuffix("/capability") { raw=try self.fixture("capability") }
-            else if path.contains("/source/") { raw=["contract_version":CandidateWire.contract,"source":try self.fixture("source"),"read_only":true] }
+            else if path.contains("/source/") { raw=["contract_version":CandidateWire.contract,"source":try self.sourceOverride ?? self.fixture("source"),"read_only":true] }
             else if r.httpMethod=="POST" {
                 if self.dropBefore { self.dropBefore=false;throw URLError(.networkConnectionLost) }
                 let submitted=try self.body(r)
                 if path.hasSuffix("/registrations") {
                     raw=try self.fixture("registration")
                     var receipt=raw["original_receipt"] as! [String:Any];receipt["operation_id"]=submitted["operation_id"];receipt["proposal_revision"]=submitted["proposal_revision"];receipt["proposal_digest"]=submitted["proposal_digest"]
+                    let p=self.proposals.first(where:{$0["proposal_revision"] as? Int==submitted["proposal_revision"] as? Int})!
+                    let fields=p["fields"] as! [String:Any]
+                    receipt["source"]=p["source"];receipt["rationale"]=fields["rationale"]
+                    var document=receipt["candidate"] as! [String:Any]
+                    for key in ["title","objective","scope","acceptance_criteria","dependencies","effect_policy"] { document[key]=fields[key] }
+                    document["architecture_constraints"]=(fields["architecture_constraints"] as! [String])+(fields["exclusions"] as! [String]).map{"EXCLUDED: "+$0}
+                    receipt["candidate"]=document;receipt["candidate_digest"]=try AdvisoryWire.digest(document)
+                    var current=raw["current"] as! [String:Any];current["candidate"]=document;current["candidate_digest"]=receipt["candidate_digest"];raw["current"]=current
                     receipt["registration_key"]=try AdvisoryWire.digest(["forge-one:alice","project-one","repo-one",self.access.conversationID,"proposal-one",submitted["proposal_revision"]!] as [Any]);raw["original_receipt"]=receipt;self.observed=raw
                 } else {
                     var p=try self.fixture("proposal");p["fields"]=submitted["fields"];p["proposal_id"]=submitted["proposal_id"];p["proposal_revision"]=(submitted["expected_revision"] as! Int)+1;p.removeValue(forKey:"proposal_digest");p["proposal_digest"]=try AdvisoryWire.digest(p)
@@ -75,10 +84,10 @@ final class CandidateTests:XCTestCase {
         }
         let c=URLSessionConfiguration.ephemeral;c.protocolClasses=[StubProtocol.self];return CandidateTransport(configuration:c)
     }
-    func turn() throws -> AdvisoryTurnRecord {
+    func turn(source supplied:[String:Any]?=nil) throws -> AdvisoryTurnRecord {
         let a=AdvisoryTests(),raw=try a.fixture("record")
         var t=try AdvisoryWire.turn(raw,access:a.access,conversation:a.connection.conversationID)
-        let s=try AdvisoryWire.decode(fixture("source"),as:CandidateSource.self)
+        let s=try AdvisoryWire.decode(supplied ?? fixture("source"),as:CandidateSource.self)
         let oldOutput=t.outcome!.output!
         let output=AdvisoryOutput(contract_version:oldOutput.contract_version,request_digest:s.request_digest,advisor_kind:s.advisor_kind,summary:s.advice_summary,alternatives:oldOutput.alternatives,questions:oldOutput.questions,suggestions:oldOutput.suggestions,evidence_references:s.evidence_references,applied:false)
         t=AdvisoryTurnRecord(request:AdvisoryRequest(contract_version:AdvisoryWire.contract,turn_id:s.turn_id,instance_id:"forge-one",project_id:"project-one",repository_id:"repo-one",conversation_id:access.conversationID,advisor_kind:s.advisor_kind,objective:"Synthetic source",expected_revision:0,context_revision:s.context_revision,selected_sources:s.selected_sources),request_digest:s.request_digest,session_id:s.session_id,invocation_id:s.invocation_id,context:t.context,provider:t.provider,status:"COMPLETE",lifecycle:t.lifecycle,execution:"CONFIRMED",outcome:AdvisoryOutcome(execution:"CONFIRMED",diagnostic:t.outcome!.diagnostic,usage:t.outcome!.usage,usage_status:"OBSERVED",observed_model:"NOT_REPORTED",observed_effort:"NOT_REPORTED",output:output,result_digest:s.result_digest,error_code:nil),admitted_at:t.admitted_at,grant_id:t.grant_id,consumption:1)
@@ -171,6 +180,42 @@ extension CandidateTests {
         var p=try fixture("preview");p["registration"]=try fixture("registration");_=try CandidateWire.preview(data(p),access:access,id:"proposal-one",revision:1)
         p["latest_revision"]=0;XCTAssertThrowsError(try CandidateWire.preview(data(p),access:access,id:"proposal-one",revision:1))
         XCTAssertFalse(CandidateWire.safe("password=secret"));XCTAssertFalse(CandidateWire.safePath(".env.private"));XCTAssertFalse(CandidateWire.safePath("docs/name."));XCTAssertFalse(CandidateWire.safePath("/private"))
+    }
+    @MainActor func testCompletedSourceSwitchClearsOldProposalAndRegistrationWithoutLosingOwnForm() async throws {
+        let (s,_,_)=try await prepared();await s.save();await s.prepareRegistration();await s.register()
+        XCTAssertNotNil(s.registration);let own=s.local.form
+        var other=try fixture("source");other["turn_id"]="turn-two";sourceOverride=other
+        let posts=calls.filter{$0.httpMethod=="POST"}.count
+        await s.begin(try turn(source:other),connection:connection)
+        XCTAssertEqual(s.source?.turn_id,"turn-two");XCTAssertNil(s.preview);XCTAssertNil(s.registration);XCTAssertNil(s.confirmation)
+        XCTAssertNil(s.local.proposalID);XCTAssertEqual(s.local.form,own)
+        await s.prepareRegistration();XCTAssertNil(s.confirmation)
+        await s.chooseProposal("proposal-one");XCTAssertEqual(s.phase,"candidateConflict");XCTAssertNil(s.preview)
+        XCTAssertEqual(calls.filter{$0.httpMethod=="POST"}.count,posts)
+    }
+    func testFrozenReceiptSourceAndOriginalCandidateCorrelation() throws {
+        let p=try CandidateWire.proposal(fixture("proposal"),access:access,id:"proposal-one",revision:1)
+        let valid=try CandidateWire.registration(fixture("registration"),access:access,id:"proposal-one")
+        try CandidateWire.correlate(valid,p)
+        var other=valid;other.original_receipt.source.turn_id="unrelated-turn"
+        XCTAssertThrowsError(try CandidateWire.correlate(other,p))
+        other=valid;other.original_receipt.candidate.objective="Another digest-consistent original objective"
+        XCTAssertThrowsError(try CandidateWire.correlate(other,p))
+        other=valid;other.original_receipt.rationale="Other rationale"
+        XCTAssertThrowsError(try CandidateWire.correlate(other,p))
+        other=valid;other.current.candidate.objective="Changed current candidate"
+        try CandidateWire.correlate(other,p)
+    }
+    func testAncestorSymlinksRejectPrivateDraftReadAndWrite() throws {
+        let base=FileManager.default.temporaryDirectory.appendingPathComponent("candidate-ancestor-"+UUID().uuidString)
+        defer{try? FileManager.default.removeItem(at:base)}
+        let actual=base.appendingPathComponent("actual"),alias=base.appendingPathComponent("alias")
+        try FileManager.default.createDirectory(at:actual,withIntermediateDirectories:true)
+        try FileManager.default.createSymbolicLink(at:alias,withDestinationURL:actual)
+        let store=PrivateCandidateLocalStore(root:alias.appendingPathComponent("private"))
+        var value=CandidateLocal();value.key=CandidateLocal.scopeKey(connection)
+        XCTAssertThrowsError(try store.save(value));XCTAssertThrowsError(try store.load(value.key))
+        XCTAssertFalse(FileManager.default.fileExists(atPath:actual.appendingPathComponent("private").path))
     }
     func testDurableOwnDraftIntentRoundtripAndPrivateStorageFaults() throws {
         let root=FileManager.default.temporaryDirectory.appendingPathComponent("candidate-private-"+UUID().uuidString)

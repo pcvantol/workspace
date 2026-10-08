@@ -81,6 +81,12 @@ enum CandidateWire {
         }
         return v
     }
+    static func correlate(_ value:CandidateRegistration,_ p:CandidateProposal) throws {
+        let r=value.original_receipt,f=p.fields,c=r.candidate
+        guard r.proposal_digest==p.proposal_digest,r.proposal_revision==p.proposal_revision,r.source==p.source,r.rationale==f.rationale,
+              c.title==f.title,c.objective==f.objective,c.scope==f.scope,c.acceptance_criteria==f.acceptance_criteria,
+              c.architecture_constraints==f.architecture_constraints+f.exclusions.map({"EXCLUDED: "+$0}),c.dependencies==f.dependencies,c.effect_policy==f.effect_policy else { throw AdvisoryError.invalid }
+    }
     static func preview(_ data:Data,access:CandidateAccess,id:String,revision:Int) throws -> CandidatePreview {
         let raw=try AdvisoryWire.object(data);try validate(raw,kind:"preview")
         let p=try proposal(raw["proposal"] as! [String:Any],access:access,id:id,revision:revision)
@@ -88,7 +94,7 @@ enum CandidateWire {
         guard v.latest_revision>=revision else { throw AdvisoryError.invalid }
         if let r=raw["registration"] as? [String:Any] {
             let observed=try registration(r,access:access,id:id)
-            guard observed.original_receipt.proposal_digest==p.proposal_digest,observed.original_receipt.source==p.source else { throw AdvisoryError.invalid }
+            try correlate(observed,p)
         }
         return v
     }

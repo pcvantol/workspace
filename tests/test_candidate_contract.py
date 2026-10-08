@@ -56,6 +56,10 @@ class CandidateContractTests(unittest.TestCase):
   d=registration();d['current']['candidate']['id']='other';d['current']['candidate_digest']=w.digest(d['current']['candidate'])
   with self.assertRaises(WorklistError):w.registration(d,B,'a'*32,'proposal-one')
   d=registration();d['current']['candidate']['objective']='Current changed independently';d['current']['candidate_digest']=w.digest(d['current']['candidate']);d['current'].update(recommendation_status='SUPERSEDED',source_fresh=False);w.registration(d,B,'a'*32,'proposal-one')
+  w.correlate(registration(),proposal())
+  for mutate in [lambda d:d['original_receipt']['source'].update(turn_id='unrelated'),lambda d:d['original_receipt']['candidate'].update(objective='A different original objective'),lambda d:d['original_receipt'].update(rationale='Different rationale')]:
+   d=registration();mutate(d);d['original_receipt']['candidate_digest']=w.digest(d['original_receipt']['candidate'])
+   with self.assertRaises(WorklistError):w.correlate(d,proposal())
   p={'contract_version':w.CONTRACT,'state':'PENDING','operation_id':'operation-one','read_only':True};w.response(p,'pending',B,'a'*32,'proposal-one',expected='operation-one')
   with self.assertRaises(WorklistError):w.response(p,'pending',B,expected='other')
 if __name__=='__main__':unittest.main()

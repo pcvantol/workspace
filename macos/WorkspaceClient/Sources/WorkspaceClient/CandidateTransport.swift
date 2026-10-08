@@ -63,7 +63,8 @@ final class CandidateTransport: @unchecked Sendable {
     func register(_ a:CandidateAccess,_ c:AdvisoryConnection,body:CandidateRegistrationRequest) async throws -> CandidateRegistration {
         let data=try CandidateWire.data(body,kind:"registration_request");try CandidateWire.bound(AdvisoryWire.object(data),access:a)
         guard a.proposalIDs.contains(body.proposal_id),WorklistWire.identifier(body.operation_id) else { throw AdvisoryError.denied }
-        return try CandidateWire.registration(AdvisoryWire.object(await read(a,c,path:"/v1/advisory-candidates/"+c.conversationID+"/proposals/"+body.proposal_id+"/registrations",body:data)),access:a,id:body.proposal_id,expected:body)
+        let value=try CandidateWire.registration(AdvisoryWire.object(await read(a,c,path:"/v1/advisory-candidates/"+c.conversationID+"/proposals/"+body.proposal_id+"/registrations",body:data)),access:a,id:body.proposal_id,expected:body)
+        try CandidateWire.correlate(value,await preview(a,c,id:body.proposal_id,revision:body.proposal_revision).proposal);return value
     }
     func operation(_ a:CandidateAccess,_ c:AdvisoryConnection,body:CandidateRegistrationRequest) async throws -> CandidateRegistration? {
         try CandidateWire.bound(AdvisoryWire.object(CandidateWire.data(body,kind:"registration_request")),access:a)
@@ -73,6 +74,7 @@ final class CandidateTransport: @unchecked Sendable {
             try CandidateWire.validate(raw,kind:"pending")
             guard raw["operation_id"] as? String==body.operation_id else { throw AdvisoryError.invalid };return nil
         }
-        return try CandidateWire.registration(raw,access:a,id:body.proposal_id,expected:body)
+        let value=try CandidateWire.registration(raw,access:a,id:body.proposal_id,expected:body)
+        try CandidateWire.correlate(value,await preview(a,c,id:body.proposal_id,revision:body.proposal_revision).proposal);return value
     }
 }

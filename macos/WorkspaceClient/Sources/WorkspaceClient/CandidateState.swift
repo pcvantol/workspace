@@ -54,7 +54,7 @@ import Combine
         let e=epoch;busy=true;defer{if epoch==e { busy=false }}
         do {
             let a=try access(c),p=try await transport.preview(a,c,id:id,revision:revision)
-            guard e==epoch else { return }
+            guard e==epoch else { return };guard p.proposal.source.turn_id==local.turnID else { throw AdvisoryError.state("PROPOSAL_CONFLICT") }
             var v=local;v.revision=revision;try persist(v);preview=p;registration=p.registration;confirmation=nil;phase="candidateSaved"
         } catch { if epoch==e { fail(error) } }
     }
@@ -65,7 +65,7 @@ import Combine
             let c=try admit(new);guard !busy else { return };admittedEpoch=epoch
             if let current=local.turnID,current != turn.request.turn_id,pending { phase="candidatePending";open=true;return }
             if local.turnID != turn.request.turn_id {
-                var v=local;v.turnID=turn.request.turn_id;v.proposalID=nil;v.revision=0;v.registrationIntent=nil;try persist(v)
+                var v=local;v.turnID=turn.request.turn_id;v.proposalID=nil;v.revision=0;v.registrationIntent=nil;try persist(v);clear()
             }
             open=true;await refresh(c)
             guard admittedEpoch==epoch else { return }
@@ -131,6 +131,7 @@ import Combine
                 do {
                     let p=try await transport.preview(a,c,id:id,revision:max(1,local.revision))
                     guard e==epoch else { return }
+                    guard p.proposal.source.turn_id==local.turnID else { throw AdvisoryError.state("PROPOSAL_CONFLICT") }
                     var v=local;if v.revision==0 { v.revision=p.proposal.proposal_revision };try persist(v);preview=p;registration=p.registration;phase="candidateSaved"
                 } catch AdvisoryError.missing { preview=nil;registration=nil;phase="candidateEditing" }
             } else { phase="candidateEditing" }
@@ -164,7 +165,7 @@ import Combine
         } catch { if e==epoch { fail(error) } }
     }
     func prepareRegistration() async {
-        guard !busy,!pending,let c=connection,let p=preview else { return }
+        guard !busy,!pending,let c=connection,let p=preview,p.proposal.proposal_id==local.proposalID,p.proposal.source.turn_id==local.turnID else { return }
         let e=epoch;busy=true;defer{if e==epoch { busy=false }}
         do {
             let a=try access(c),current=try await transport.preview(a,c,id:p.proposal.proposal_id,revision:p.proposal.proposal_revision)

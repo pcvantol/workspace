@@ -83,7 +83,9 @@ class CandidateTransport(AdvisoryTransport):
         if p not in b['proposal_ids']:raise WorklistError('DENIED')
         if not _id(o):raise WorklistError('INVALID_REQUEST')
         raw=self._read(b,f'/v1/advisory-candidates/{c}/proposals/{p}/registrations/{o}')
-        return wire.response(raw,'pending' if raw.get('state')=='PENDING' else 'registration',b,c,p,expected=o if raw.get('state')=='PENDING' else None)
+        value=wire.response(raw,'pending' if raw.get('state')=='PENDING' else 'registration',b,c,p,expected=o if raw.get('state')=='PENDING' else None)
+        if raw.get('state')!='PENDING':wire.correlate(value,self.preview(b,c,p,value['original_receipt']['proposal_revision'])['proposal'])
+        return value
 
     def command(self,b,c,body,*,registration=False,authority):
         kind='registration_request' if registration else 'proposal_request'
@@ -91,4 +93,6 @@ class CandidateTransport(AdvisoryTransport):
         path=f'/v1/advisory-candidates/{c}/proposals'+(f"/{body['proposal_id']}/registrations" if registration else '')
         raw=control_request(b,'POST',path,body,gate=self._forward_gate(b,authority),error_validator=wire.validate)
         self._current_authority(b,raw)
-        return wire.response(raw,'registration' if registration else 'saved',b,c,body['proposal_id'],None if registration else body['expected_revision']+1,body)
+        value=wire.response(raw,'registration' if registration else 'saved',b,c,body['proposal_id'],None if registration else body['expected_revision']+1,body)
+        if registration:wire.correlate(value,self.preview(b,c,body['proposal_id'],body['proposal_revision'])['proposal'])
+        return value

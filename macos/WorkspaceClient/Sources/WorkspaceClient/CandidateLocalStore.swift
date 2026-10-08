@@ -46,15 +46,37 @@ protocol CandidateLocalStore:Sendable {
 struct PrivateCandidateLocalStore:CandidateLocalStore {
     let root:URL
     init(root:URL = FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0].appendingPathComponent("Workspace/CandidateDrafts")) { self.root=root }
-    private func file(_ key:String) throws -> URL {
+    private func name(_ key:String) throws -> String {
         guard key.range(of:"^[0-9a-f]{64}$",options:.regularExpression) != nil else { throw AdvisoryError.invalid }
-        try FileManager.default.createDirectory(at:root,withIntermediateDirectories:true,attributes:[.posixPermissions:0o700])
-        var info=stat()
-        guard lstat(root.path,&info)==0,info.st_mode & mode_t(S_IFMT)==mode_t(S_IFDIR),info.st_uid==getuid(),info.st_mode & 0o077==0 else { throw AdvisoryError.unavailable }
-        return root.appendingPathComponent("candidate-"+key+".json")
+        return "candidate-"+key+".json"
+    }
+    private func directory() throws -> Int32 {
+        // Only the platform's fixed /tmp and /var aliases are normalized.
+        var path=root.standardizedFileURL.path
+        if path.hasPrefix("/tmp/") { path="/private"+path }
+        if path.hasPrefix("/var/") { path="/private"+path }
+        var fd=Darwin.open("/",O_RDONLY|O_DIRECTORY|O_NOFOLLOW|O_CLOEXEC)
+        guard fd>=0 else { throw AdvisoryError.unavailable }
+        do {
+            for component in path.split(separator:"/").map(String.init) {
+                var next=openat(fd,component,O_RDONLY|O_DIRECTORY|O_NOFOLLOW|O_CLOEXEC)
+                if next<0 && errno==ENOENT {
+                    let created=mkdirat(fd,component,0o700)
+                    guard created==0 || errno==EEXIST else { throw AdvisoryError.unavailable }
+                    if created==0 { guard fsync(fd)==0 else { throw AdvisoryError.unavailable } }
+                    next=openat(fd,component,O_RDONLY|O_DIRECTORY|O_NOFOLLOW|O_CLOEXEC)
+                }
+                guard next>=0 else { throw AdvisoryError.unavailable }
+                Darwin.close(fd);fd=next
+            }
+            var info=stat()
+            guard fstat(fd,&info)==0,info.st_mode & mode_t(S_IFMT)==mode_t(S_IFDIR),info.st_uid==getuid(),info.st_mode & 0o077==0 else { throw AdvisoryError.unavailable }
+            return fd
+        } catch { Darwin.close(fd);throw error }
     }
     func load(_ key:String) throws -> CandidateLocal? {
-        let url=try file(key),fd=Darwin.open(url.path,O_RDONLY|O_NOFOLLOW)
+        let file=try name(key),dir=try directory();defer{Darwin.close(dir)}
+        let fd=openat(dir,file,O_RDONLY|O_NOFOLLOW|O_CLOEXEC)
         if fd<0 && errno==ENOENT { return nil }
         guard fd>=0 else { throw AdvisoryError.unavailable }
         let handle=FileHandle(fileDescriptor:fd,closeOnDealloc:true);defer{try? handle.close()}
@@ -69,19 +91,19 @@ struct PrivateCandidateLocalStore:CandidateLocalStore {
         return v
     }
     func save(_ value:CandidateLocal) throws {
-        let target=try file(value.key),data=try JSONEncoder().encode(value)
+        let target=try name(value.key),data=try JSONEncoder().encode(value)
         guard data.count<=65536 else { throw AdvisoryError.state("LOCAL_CAPACITY_EXHAUSTED") }
-        // Atomic private replacement; never follow an existing file or parent symlink.
+        let dir=try directory();defer{Darwin.close(dir)}
         var info=stat()
-        if lstat(target.path,&info)==0 {
+        if fstatat(dir,target,&info,AT_SYMLINK_NOFOLLOW)==0 {
             guard info.st_mode & mode_t(S_IFMT)==mode_t(S_IFREG),info.st_uid==getuid(),info.st_mode & 0o077==0 else { throw AdvisoryError.unavailable }
         } else if errno != ENOENT { throw AdvisoryError.unavailable }
-        let temporary=root.appendingPathComponent(".candidate-"+UUID().uuidString+".tmp")
-        let fd=Darwin.open(temporary.path,O_WRONLY|O_CREAT|O_EXCL|O_NOFOLLOW,0o600)
+        let temporary=".candidate-"+UUID().uuidString+".tmp"
+        let fd=openat(dir,temporary,O_WRONLY|O_CREAT|O_EXCL|O_NOFOLLOW|O_CLOEXEC,0o600)
         guard fd>=0 else { throw AdvisoryError.unavailable }
         let h=FileHandle(fileDescriptor:fd,closeOnDealloc:true)
-        defer { try? h.close();try? FileManager.default.removeItem(at:temporary) }
+        defer { try? h.close();unlinkat(dir,temporary,0) }
         try h.write(contentsOf:data);try h.synchronize()
-        guard rename(temporary.path,target.path)==0 else { throw AdvisoryError.unavailable }
+        guard renameat(dir,temporary,dir,target)==0,fsync(dir)==0 else { throw AdvisoryError.unavailable }
     }
 }

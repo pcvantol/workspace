@@ -78,6 +78,14 @@ def registration(value,b,c,p,expected=None):
     if expected is not None and (r['proposal_digest']!=expected['proposal_digest'] or r['proposal_revision']!=expected['proposal_revision'] or r['source']['context_revision']!=expected['context_revision']):raise WorklistError('INVALID_RESPONSE')
     return value
 
+def correlate(value, proposal):
+    r=value['original_receipt'];f=proposal['fields']
+    expected={k:f[k] for k in ('title','objective','scope','acceptance_criteria','dependencies','effect_policy')}
+    expected['architecture_constraints']=[*f['architecture_constraints'],*['EXCLUDED: '+x for x in f['exclusions']]]
+    actual={k:v for k,v in r['candidate'].items() if k not in ('id','recommendation_id')}
+    if r['proposal_digest']!=proposal['proposal_digest'] or r['proposal_revision']!=proposal['proposal_revision'] or r['source']!=proposal['source'] or r['rationale']!=f['rationale'] or actual!=expected:raise WorklistError('INVALID_RESPONSE')
+    return value
+
 def response(value,kind,b,c=None,p=None,revision=None,expected=None):
     validate(value,kind)
     if kind=='capability':
@@ -90,7 +98,7 @@ def response(value,kind,b,c=None,p=None,revision=None,expected=None):
         if kind=='preview':
             if value['latest_revision']<d['proposal_revision']:raise WorklistError('INVALID_RESPONSE')
             if value['registration'] is not None:
-                registration(value['registration'],b,c,p,{'proposal_digest':d['proposal_digest'],'proposal_revision':d['proposal_revision'],'context_revision':d['source']['context_revision']})
+                registration(value['registration'],b,c,p,{'proposal_digest':d['proposal_digest'],'proposal_revision':d['proposal_revision'],'context_revision':d['source']['context_revision']});correlate(value['registration'],d)
     elif kind=='registration':registration(value,b,c,p,expected)
     elif expected is not None and value['operation_id']!=expected:raise WorklistError('INVALID_RESPONSE')
     return value
