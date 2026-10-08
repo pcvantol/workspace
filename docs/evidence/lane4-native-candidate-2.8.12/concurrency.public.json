@@ -1,0 +1,14 @@
+[
+  {
+    "status": 200,
+    "code": null
+  },
+  {
+    "status": 409,
+    "code": "CONVERSATION_BUSY"
+  },
+  {
+    "status": 409,
+    "code": "CONVERSATION_BUSY"
+  }
+]

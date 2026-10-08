@@ -1,0 +1,202 @@
+{
+  "status": 200,
+  "response": {
+    "contract_version": "forge-advisory-candidate/v1",
+    "current": {
+      "candidate": {
+        "acceptance_criteria": [
+          "Every documented boundary and unresolved question is explicitly recorded."
+        ],
+        "architecture_constraints": [
+          "EXCLUDED: No code implementation or execution.",
+          "Preserve the existing service boundary."
+        ],
+        "dependencies": [],
+        "effect_policy": {
+          "contract_version": "1.0",
+          "delivery": "EVIDENCE_ONLY",
+          "mode": "READ_ONLY_ASSESSMENT",
+          "read_paths": [
+            "docs/advice.md"
+          ],
+          "write_paths": []
+        },
+        "id": "advice-candidate-49f94c7309a2c4cfe5e1a80674a93675",
+        "objective": "An explicitly amended documentary assessment with preserved service ownership.",
+        "recommendation_id": "advice-recommendation-49f94c7309a2c4cfe5e1a80674a93675",
+        "scope": [
+          "Read the selected documentary contract only."
+        ],
+        "title": "Explicit synthetic documentary assessment"
+      },
+      "candidate_digest": "sha256:aa4458dcf778368cffbc5e2e9c6f23f81254943e16da5bf582d072742c9011e0",
+      "conversation_revision": 3,
+      "mission_allocation": false,
+      "recommendation_status": "RECOMMENDED",
+      "source_fresh": true
+    },
+    "original_receipt": {
+      "candidate": {
+        "acceptance_criteria": [
+          "Every documented boundary and unresolved question is explicitly recorded."
+        ],
+        "architecture_constraints": [
+          "EXCLUDED: No code implementation or execution.",
+          "Preserve the existing service boundary."
+        ],
+        "dependencies": [],
+        "effect_policy": {
+          "contract_version": "1.0",
+          "delivery": "EVIDENCE_ONLY",
+          "mode": "READ_ONLY_ASSESSMENT",
+          "read_paths": [
+            "docs/advice.md"
+          ],
+          "write_paths": []
+        },
+        "id": "advice-candidate-49f94c7309a2c4cfe5e1a80674a93675",
+        "objective": "An explicitly amended documentary assessment with preserved service ownership.",
+        "recommendation_id": "advice-recommendation-49f94c7309a2c4cfe5e1a80674a93675",
+        "scope": [
+          "Read the selected documentary contract only."
+        ],
+        "title": "Explicit synthetic documentary assessment"
+      },
+      "candidate_digest": "sha256:aa4458dcf778368cffbc5e2e9c6f23f81254943e16da5bf582d072742c9011e0",
+      "contract_version": "forge-advisory-candidate/v1",
+      "operation_id": "candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+      "principal_reference": "forge-runtime-4591f36f-6de6-4a30-a672-27ab17e01a14:alice",
+      "proposal_digest": "sha256:6a4bc91a46a9662ba3305976c2fdd222a84f236593f415e0b9c407a3e4d08f02",
+      "proposal_revision": 2,
+      "rationale": "This bounded handoff was explicitly authored by the user.",
+      "recommendation_digest": "sha256:24b0725d91415a8f88c56db6039e3f5712060b885bbdbc7ea648eeb0d0d92fc2",
+      "recommendation_id": "advice-recommendation-49f94c7309a2c4cfe5e1a80674a93675",
+      "registered_at": "2026-10-08T18:09:54.617911+00:00",
+      "registration_key": "sha256:49f94c7309a2c4cfe5e1a80674a9367572f55f44c5060c075c48840c4b267c6f",
+      "source": {
+        "advice_summary": "Synthetic external fixture advice for BUSINESS",
+        "advisor_kind": "BUSINESS",
+        "context_revision": "sha256:f6f89571c8ac980f8643a37ebb689daf033c17e90117d61f426624d9310f9800",
+        "conversation_revision": 3,
+        "evidence_references": [
+          "project-binding:sha256:d74dc388f000d871d8c13eca04da739a465805dc5e1ea266cf37d4f0a0681c93",
+          "advisory-source:selected-context:sha256:6758e1761ffff93ff24573feb7c94b92549d2cf4b28a82a8922abfdbf818b02d"
+        ],
+        "invocation_id": "advice-invocation-6ea3f8c0bc03451faaf87fd9165f687b",
+        "request_digest": "sha256:1e04b07a2c6a6c0fc976e78457b39df9c038ec9f7f240498a477f2afaacd9aa8",
+        "result_digest": "sha256:639afa4766614297c9767dbbd699b00306294ecee0844f12c180d166b6200e19",
+        "selected_sources": [
+          {
+            "source_id": "selected-context",
+            "version": "sha256:6758e1761ffff93ff24573feb7c94b92549d2cf4b28a82a8922abfdbf818b02d"
+          }
+        ],
+        "session_id": "advice-session-20a831ed148c4a0f8d252b3d61dfd1c2",
+        "turn_id": "43DCFA13-DEE4-45B6-A17A-FA000B7F89A9"
+      },
+      "status_at_registration": "RECOMMENDED"
+    },
+    "recorded": false
+  },
+  "expected_receipt": {
+    "candidate": {
+      "acceptance_criteria": [
+        "Every documented boundary and unresolved question is explicitly recorded."
+      ],
+      "architecture_constraints": [
+        "EXCLUDED: No code implementation or execution.",
+        "Preserve the existing service boundary."
+      ],
+      "dependencies": [],
+      "effect_policy": {
+        "contract_version": "1.0",
+        "delivery": "EVIDENCE_ONLY",
+        "mode": "READ_ONLY_ASSESSMENT",
+        "read_paths": [
+          "docs/advice.md"
+        ],
+        "write_paths": []
+      },
+      "id": "advice-candidate-49f94c7309a2c4cfe5e1a80674a93675",
+      "objective": "An explicitly amended documentary assessment with preserved service ownership.",
+      "recommendation_id": "advice-recommendation-49f94c7309a2c4cfe5e1a80674a93675",
+      "scope": [
+        "Read the selected documentary contract only."
+      ],
+      "title": "Explicit synthetic documentary assessment"
+    },
+    "candidate_digest": "sha256:aa4458dcf778368cffbc5e2e9c6f23f81254943e16da5bf582d072742c9011e0",
+    "contract_version": "forge-advisory-candidate/v1",
+    "operation_id": "candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "principal_reference": "forge-runtime-4591f36f-6de6-4a30-a672-27ab17e01a14:alice",
+    "proposal_digest": "sha256:6a4bc91a46a9662ba3305976c2fdd222a84f236593f415e0b9c407a3e4d08f02",
+    "proposal_revision": 2,
+    "rationale": "This bounded handoff was explicitly authored by the user.",
+    "recommendation_digest": "sha256:24b0725d91415a8f88c56db6039e3f5712060b885bbdbc7ea648eeb0d0d92fc2",
+    "recommendation_id": "advice-recommendation-49f94c7309a2c4cfe5e1a80674a93675",
+    "registered_at": "2026-10-08T18:09:54.617911+00:00",
+    "registration_key": "sha256:49f94c7309a2c4cfe5e1a80674a9367572f55f44c5060c075c48840c4b267c6f",
+    "source": {
+      "advice_summary": "Synthetic external fixture advice for BUSINESS",
+      "advisor_kind": "BUSINESS",
+      "context_revision": "sha256:f6f89571c8ac980f8643a37ebb689daf033c17e90117d61f426624d9310f9800",
+      "conversation_revision": 3,
+      "evidence_references": [
+        "project-binding:sha256:d74dc388f000d871d8c13eca04da739a465805dc5e1ea266cf37d4f0a0681c93",
+        "advisory-source:selected-context:sha256:6758e1761ffff93ff24573feb7c94b92549d2cf4b28a82a8922abfdbf818b02d"
+      ],
+      "invocation_id": "advice-invocation-6ea3f8c0bc03451faaf87fd9165f687b",
+      "request_digest": "sha256:1e04b07a2c6a6c0fc976e78457b39df9c038ec9f7f240498a477f2afaacd9aa8",
+      "result_digest": "sha256:639afa4766614297c9767dbbd699b00306294ecee0844f12c180d166b6200e19",
+      "selected_sources": [
+        {
+          "source_id": "selected-context",
+          "version": "sha256:6758e1761ffff93ff24573feb7c94b92549d2cf4b28a82a8922abfdbf818b02d"
+        }
+      ],
+      "session_id": "advice-session-20a831ed148c4a0f8d252b3d61dfd1c2",
+      "turn_id": "43DCFA13-DEE4-45B6-A17A-FA000B7F89A9"
+    },
+    "status_at_registration": "RECOMMENDED"
+  },
+  "actual_effects": {
+    "candidates": [
+      {
+        "id": "advice-candidate-49f94c7309a2c4cfe5e1a80674a93675",
+        "recommendation_id": "advice-recommendation-49f94c7309a2c4cfe5e1a80674a93675",
+        "title": "Explicit synthetic documentary assessment",
+        "objective": "An explicitly amended documentary assessment with preserved service ownership.",
+        "scope": [
+          "Read the selected documentary contract only."
+        ],
+        "acceptance_criteria": [
+          "Every documented boundary and unresolved question is explicitly recorded."
+        ],
+        "architecture_constraints": [
+          "EXCLUDED: No code implementation or execution.",
+          "Preserve the existing service boundary."
+        ],
+        "dependencies": [],
+        "effect_policy": {
+          "contract_version": "1.0",
+          "mode": "READ_ONLY_ASSESSMENT",
+          "delivery": "EVIDENCE_ONLY",
+          "read_paths": [
+            "docs/advice.md"
+          ],
+          "write_paths": []
+        }
+      }
+    ],
+    "recommendation_statuses": [
+      "RECOMMENDED"
+    ],
+    "allocations": [],
+    "missions": [],
+    "business_decisions": 0,
+    "architecture_decisions": 0,
+    "EP_requests": 0,
+    "actions": [],
+    "workset_mutation_requests": 0
+  }
+}

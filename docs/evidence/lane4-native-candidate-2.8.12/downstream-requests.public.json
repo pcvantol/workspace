@@ -1,0 +1,3097 @@
+[
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 404
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability?source_id=selected-context&source_version=sha256%3A6758e1761ffff93ff24573feb7c94b92549d2cf4b28a82a8922abfdbf818b02d",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 404
+  },
+  {
+    "method": "POST",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c/turns",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c/turns/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability?source_id=selected-context&source_version=sha256%3A6758e1761ffff93ff24573feb7c94b92549d2cf4b28a82a8922abfdbf818b02d",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=1",
+    "status": 404
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability?source_id=selected-context&source_version=sha256%3A6758e1761ffff93ff24573feb7c94b92549d2cf4b28a82a8922abfdbf818b02d",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=1",
+    "status": 404
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=1",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=1",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=1",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=1",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations",
+    "status": 409
+  },
+  {
+    "method": "POST",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations",
+    "status": 409
+  },
+  {
+    "method": "POST",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 401
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 401
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations",
+    "status": 409
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations",
+    "status": 409
+  },
+  {
+    "method": "POST",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/capacity-proposal/registrations",
+    "status": 409
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 401
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 401
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=1",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 403
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 403
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal/registrations/candidate-783dfcb9-335e-4fea-bc4a-f428d6449dc6",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/proposals/gui-proposal?revision=2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/capability",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory-candidates/7c569a590249ed73b2753d04eac0125c/source/43DCFA13-DEE4-45B6-A17A-FA000B7F89A9",
+    "status": 403
+  },
+  {
+    "method": "GET",
+    "path": "/v1/advisory/7c569a590249ed73b2753d04eac0125c?cursor=0&limit=4",
+    "status": 403
+  }
+]
