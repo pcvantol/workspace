@@ -46,15 +46,25 @@ class CandidateTransport(AdvisoryTransport):
                 'instance_id':b['forge_instance_id'],'project_id':b['forge_project_id'],'repository_id':b['repository_id'],
                 'conversation_id':b['conversation_id'],'proposal_ids':b['proposal_ids'],'maximum_registrations':b['maximum_registrations']}
 
-    def _current_authority(self,b):
+    def _current_authority(self,b,raw=None):
         if b not in self._bindings():raise WorklistError('DENIED')
         wire.response(control_request(b,'GET','/v1/advisory-candidates/capability',gate=self._forward_gate(b),error_validator=wire.validate),'capability',b)
+        # A delayed historical response cannot retain a source whose ACL was
+        # revoked while the response was in flight. Re-read the exact source,
+        # never substitute newer metadata or call a provider.
+        if raw is not None:
+            if not isinstance(raw,dict) or any(k in raw and not isinstance(raw[k],dict) for k in ('proposal','original_receipt')):raise WorklistError('INVALID_RESPONSE')
+            original=raw.get('source') or raw.get('proposal',{}).get('source') or raw.get('original_receipt',{}).get('source')
+            if original is not None:
+                wire.source(original)
+                path=f"/v1/advisory-candidates/{b['conversation_id']}/source/{original['turn_id']}"
+                wire.response(control_request(b,'GET',path,gate=self._forward_gate(b),error_validator=wire.validate),'source_read',b,b['conversation_id'],original['turn_id'])
         if b not in self._bindings():raise WorklistError('DENIED')
 
     def _read(self,b,path):
         registered='client_digest' in b
         raw=control_request(b,'GET',path,gate=self._forward_gate(b) if registered else None,error_validator=wire.validate)
-        if registered:self._current_authority(b)
+        if registered:self._current_authority(b,raw)
         return raw
 
     def capability(self,b):
@@ -80,5 +90,5 @@ class CandidateTransport(AdvisoryTransport):
         wire.request(body,kind,b,c)
         path=f'/v1/advisory-candidates/{c}/proposals'+(f"/{body['proposal_id']}/registrations" if registration else '')
         raw=control_request(b,'POST',path,body,gate=self._forward_gate(b,authority),error_validator=wire.validate)
-        self._current_authority(b)
+        self._current_authority(b,raw)
         return wire.response(raw,'registration' if registration else 'saved',b,c,body['proposal_id'],None if registration else body['expected_revision']+1,body)
