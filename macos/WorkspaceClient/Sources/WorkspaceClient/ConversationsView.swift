@@ -365,7 +365,7 @@ struct ConversationsView: View {
             if phase == "CONNECTED" {
                 Task { await state.prepare(client: client); await advisory.refresh(adviceConnection()) }
             } else {
-                advisory.suspend()
+                advisory.suspend(transient:phase=="CONNECTING")
                 Task { await state.handleClientPhase(phase) }
             }
         }

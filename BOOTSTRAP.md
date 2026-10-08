@@ -1,5 +1,39 @@
 # Workspace Bootstrap
 
+## Selected native advice inspector — 8 October 2026, r81 plan90
+
+[Mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6058224232)
+selects L4-NATIVE-ADVISORY-INSPECTOR-V1-20261008 within the existing native
+HTTP assignment, writer and Work-session01a1104a-5647-7260-9206-f61073231c9a.
+[Pickup](https://github.com/pcvantol/forge/issues/208#issuecomment-6058288788)
+binds clean basee663be08255fff30b3caa19f9f32c2030590ddbf/2.8.10 and
+branchcodex/r81-native-advisory-inspector in the same owning checkout. Closed
+[PR140/plan89 terminal](https://github.com/pcvantol/forge/issues/208#issuecomment-6057361472)
+qualifies that text-chat subset and closes its historical pending fields below.
+No reopening, primary iCloud mutation, second sourcewriter or budget reset.
+
+Bounded2.8.11 adds selected-turn/category/frozen-context/source-metadata
+inspection to the existing chat. Exact sourceID+version only, missing/ambiguous
+metadata explicit; source pins remain observations. No source contents or URL/
+file fetch, provider request, new grant, Candidate or execution authority.
+Current next-send context and frozen historical context remain distinct. State
+is ephemeral and cleared by existing scope/deny/offline/epoch policy; bounded
+history retains selected cursor-page with no duplicate records. Five languages,
+native themes/640px/keyboard/focus and new actual GUI/screenshots are required.
+
+The producer remains Forge2.8.0/88f7560f271a2bc2b0af68de0300d0d784cf6315,
+wheel424ae4cc555c2ee07f6acc8c9b3c865b971363a5a02b2d8f79d364d4fa7251a6,
+schemafc4750604a4f063d11a1680d9d5ca77ade4784cff53692b40692e86d6c26e7ef.
+Source finalization66f3ab3 passes106native+1isolated+119Python, all changed
+productionfiles>80.2%, independent exactQuality/SecurityPASS and requiredCI.
+Ten actual candidateGUI phases are recorded; rejected/partial harness attempts
+are retained without acceptance claim. Protected merge and complete fresh
+exact-main installed/native screenshots remain pending, including the real
+immutable-source publication/revoke boundary.
+Plan89 and all older qualification boundaries remain preserved; full family,
+Candidate/live quality/signing/public operation remain outside this selection.
+See [owning inspector boundary](docs/WORKSPACE_NATIVE_ADVISORY_INSPECTOR_V1.md).
+
 ## Selected native Business/Architect chat — 8 October 2026, r81 plan89
 
 [Mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6055010173)
@@ -271,3 +305,9 @@ Before a bounded change:
 The committed projection is the generic authority and requires no sibling
 checkout or network access. This local entrypoint does not authorize
 Engineering Platform execution.
+
+Routine CONNECTING revalidation hides all inspected content/metadata while
+retaining only scoped navigation identity/category; the already open sheet
+shows an unavailable placeholder until fresh authorized reads restore that
+same turn. Actual failure/offline/denial or scope change closes and clears all
+inspection state. No cached transcript is kept for this transient recovery.

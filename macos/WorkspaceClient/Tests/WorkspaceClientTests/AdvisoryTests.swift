@@ -25,7 +25,9 @@ final class AdvisoryTests:XCTestCase {
     var loseBeforeAdmission=false
     var ambiguous=false
     var errorCode="TURN_BUDGET_EXHAUSTED"
+    var inspectorFixtureOverride:[String:[String:Any]]?
     func fixture(_ key:String) throws -> [String:Any] {
+        if let value=inspectorFixtureOverride?[key] { return value }
         let path=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/advisory/wire.json")
         let raw=try JSONSerialization.jsonObject(with:Data(contentsOf:path)) as! [String:Any];return raw[key] as! [String:Any]
     }

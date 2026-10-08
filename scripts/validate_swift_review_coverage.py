@@ -6,7 +6,7 @@ import sys
 
 
 SOURCES = {
-    "AdvisoryModels.swift", "AdvisoryWire.swift", "AdvisoryCredentials.swift", "AdvisoryTransport.swift", "AdvisoryState.swift", "AdvisoryView.swift", "ConversationState.swift",
+    "AdvisoryInspector.swift", "AdvisoryInspectorView.swift", "AdvisoryModels.swift", "AdvisoryWire.swift", "AdvisoryCredentials.swift", "AdvisoryTransport.swift", "AdvisoryState.swift", "AdvisoryView.swift", "ConversationState.swift",
     "MissionReviewDecisionState.swift", "MissionReviewDiscovery.swift",
     "MissionReviewState.swift", "MissionReviewTransport.swift",
     "MissionReviewsView.swift", "WorkspaceApp.swift",

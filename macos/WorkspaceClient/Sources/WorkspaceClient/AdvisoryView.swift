@@ -55,6 +55,7 @@ struct AdvisoryView: View {
     let connection:() async -> AdvisoryConnection?
     @Environment(\.locale) private var locale
     @State private var grant=""
+    @FocusState private var inspectorEntry:String?
     private func copy(_ key:String) -> String { AdvisoryCopy.text(key,language:locale.language.languageCode?.identifier ?? "en") }
     var body: some View {
         GroupBox(copy("title")) {
@@ -116,6 +117,10 @@ struct AdvisoryView: View {
                 }
             }.frame(maxWidth:.infinity,alignment:.leading)
         }
+        .sheet(isPresented:Binding(get:{state.inspectorOpen},set:{ if !$0 { state.closeInspector() } })) {
+            AdvisoryInspectorView(state:state)
+        }
+        .onChange(of:state.inspectedTurnID) { old,new in if new==nil { inspectorEntry=old } }
     }
     private func modeLabel(_ mode:String) -> String { ConversationCopy.text(mode=="BUSINESS" ? "business":mode=="ARCHITECTURE" ? "architect":"ux") }
     @ViewBuilder private func turn(_ t:AdvisoryTurnRecord) -> some View {
@@ -127,11 +132,18 @@ struct AdvisoryView: View {
                 if t.hasValidatedAdvice,let output=t.outcome?.output {
                     Text(copy("result")).font(.caption.bold())
                     Text(verbatim:output.summary).textSelection(.enabled)
-                    ForEach(Array((output.alternatives+output.questions+output.suggestions).enumerated()),id:\.offset) { Text(verbatim:$0.element).textSelection(.enabled) }
+                    ForEach(AdvisoryAnswerCategory.allCases.filter{$0 != .summary}) { category in
+                        Text(AdvisoryInspectorCopy.text(category.rawValue,language:locale.language.languageCode?.identifier ?? "en")).font(.caption.bold())
+                        ForEach(Array(category.items(t).enumerated()),id:\.offset) { Text(verbatim:$0.element).textSelection(.enabled) }
+                    }
                     ForEach(Array(output.evidence_references.enumerated()),id:\.offset) { Text(verbatim:$0.element).font(.caption) }
                     if let usage=t.outcome?.usage { LabeledContent(copy("tokens"),value:"\(usage.input_tokens) / \(usage.output_tokens)") }
                     LabeledContent(copy("model"),value:"NOT_REPORTED / NOT_REPORTED")
                 }
+                Button(AdvisoryInspectorCopy.text("inspect",language:locale.language.languageCode?.identifier ?? "en")) { state.inspect(t.request.turn_id) }
+                    .disabled(state.busy || !state.hasGrant || state.capability==nil)
+                    .focused($inspectorEntry,equals:t.request.turn_id)
+                    .accessibilityIdentifier("advisory.inspect."+t.request.turn_id)
                 Text(verbatim:t.execution).font(.caption)
                 Text(verbatim:t.admitted_at).font(.caption)
             }.frame(maxWidth:.infinity,alignment:.leading)
