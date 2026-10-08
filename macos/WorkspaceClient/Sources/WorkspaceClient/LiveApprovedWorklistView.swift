@@ -69,7 +69,10 @@ struct LiveApprovedWorklistView: View {
         }
         .onChange(of: client.phase) { _, phase in
             if phase == "FORGETTING" { state.invalidatePairing(); controls.invalidate() }
-            Task { await state.refresh(connection: connection()) }
+            Task {
+                if phase == "CONNECTED" { await state.refreshWithControls(connection: connection()) }
+                else { await state.refresh(connection: connection()) }
+            }
         }
         .onChange(of: client.savedEndpoint) { _, _ in
             state.invalidatePairing(); controls.invalidate()

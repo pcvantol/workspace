@@ -160,6 +160,11 @@ final class WorklistControlTests: XCTestCase {
         XCTAssertEqual(reopened.phase,"controlApplied");XCTAssertTrue(reopened.current?.held == true)
         XCTAssertNil(credentials.intent);XCTAssertEqual(calls.filter { $0.httpMethod=="POST" }.count,1)
         await reopened.resume(connection:connection);XCTAssertEqual(calls.filter { $0.httpMethod=="POST" }.count,1)
+        await reader.refreshWithControls(connection:.init(endpoint:connection.endpoint,instanceID:connection.instanceID,readToken:nil))
+        XCTAssertNil(reopened.current)
+        await reader.refreshWithControls(connection:connection)
+        XCTAssertTrue(reopened.current?.held == true)
+        XCTAssertEqual(calls.filter { $0.httpMethod=="POST" }.count,1)
         dropPost=false;reopened.prepare(intent:"unhold",reason:"USER_REQUEST");await reopened.confirm(connection:connection)
         XCTAssertFalse(reopened.current?.held ?? true);XCTAssertEqual(calls.filter { $0.httpMethod=="POST" }.count,2)
     }
