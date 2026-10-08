@@ -7,6 +7,14 @@ private enum IsolatedWindowEvidence {
     static func capture(in directory: String) {
         Task { @MainActor in
             try? await Task.sleep(for: .seconds(2))
+            guard let app=NSApp else { return }
+            // Apply the isolated theme after AppKit creates the application.
+            if let theme=ProcessInfo.processInfo.environment["WORKSPACE_ISOLATED_THEME"],
+               ["light","dark"].contains(theme),
+               let appearance=NSAppearance(named:theme=="dark" ? .darkAqua:.aqua) {
+                app.appearance=appearance
+                try? await Task.sleep(for:.milliseconds(200))
+            }
             guard let window = NSApp.windows.first(where: { $0.title == "Workspace" }),
                   let image = CGWindowListCreateImage(.null, .optionIncludingWindow,
                                                       CGWindowID(window.windowNumber),
@@ -65,10 +73,6 @@ struct WorkspaceApp: App {
         _reviews = StateObject(wrappedValue: MissionReviewState(credentials: IsolatedReviewGrant(document)))
         _worklists = StateObject(wrappedValue: WorklistState(credentials: IsolatedWorklistGrant(document),
             controls: WorklistControlState(credentials: IsolatedWorklistControlGrant(document))))
-        // Own isolated qualification selects genuine AppKit appearances only.
-        if let theme=ProcessInfo.processInfo.environment["WORKSPACE_ISOLATED_THEME"],
-           let appearance=NSAppearance(named:theme=="dark" ? .darkAqua:.aqua),
-           ["light","dark"].contains(theme) { NSApp.appearance=appearance }
         IsolatedWindowEvidence.capture(in: document.local_root)
         #else
         _client = StateObject(wrappedValue: ClientState())
