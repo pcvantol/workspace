@@ -42,6 +42,15 @@ def main(argv=None):
     worklist_issue.add_argument("--client-token-file", required=True)
     worklist_revoke = commands.add_parser("worklist-bind-revoke")
     worklist_revoke.add_argument("--binding-id", required=True)
+    control_issue = commands.add_parser("worklist-control-bind-issue")
+    control_issue.add_argument("--actor", required=True)
+    control_issue.add_argument("--forge-endpoint", required=True)
+    control_issue.add_argument("--forge-instance-id", required=True)
+    control_issue.add_argument("--workset-id", action="append", required=True)
+    control_issue.add_argument("--forge-token-file", required=True)
+    control_issue.add_argument("--client-token-file", required=True)
+    control_revoke = commands.add_parser("worklist-control-bind-revoke")
+    control_revoke.add_argument("--binding-id", required=True)
     forge_binding = commands.add_parser("forge-read-configure")
     forge_binding.add_argument("--endpoint", required=True)
     forge_binding.add_argument("--instance-id", required=True)
@@ -101,6 +110,15 @@ def main(argv=None):
         elif args.command == "worklist-bind-revoke":
             with Service(args.root) as service:
                 result = service.revoke_worklist(args.binding_id)
+            print(json.dumps(result, sort_keys=True))
+        elif args.command == "worklist-control-bind-issue":
+            with Service(args.root) as service:
+                result = service.provision_worklist_control(args.actor, args.forge_endpoint,
+                    args.forge_instance_id, args.workset_id, args.forge_token_file, args.client_token_file)
+            print(json.dumps(result, sort_keys=True))
+        elif args.command == "worklist-control-bind-revoke":
+            with Service(args.root) as service:
+                result = service.revoke_worklist_control(args.binding_id)
             print(json.dumps(result, sort_keys=True))
         elif args.command == "review-bind-issue":
             with Service(args.root) as service:

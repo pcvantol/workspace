@@ -145,3 +145,7 @@ work into this design's scope.
 ## Selected workset-only graph continuation, 7 October 2026
 
 The [plan87 selection](https://github.com/pcvantol/forge/issues/208#issuecomment-6044025195) selects only the authorized-workset dependency graph in PRM-W-VIEW over the existing list/snapshot. Full project-DAG management/decision/sync/Q nodes remain unqualified. Candidate acceptance against exact Forge2.7.68 has its own installed/native receipts; protected merge and fresh exact-main qualification remain pending; PR137 remains completed with its distinct2.7.67 evidence.
+
+## Selected scoped hold consumer, 8 October 2026
+
+The [plan88 mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6050026304) adds only scoped hold/unhold, current status and durable command recovery over the completed workset list/graph. [Consumer boundary](WORKSPACE_WORKLIST_HOLD_CONTROLS_V1.md) pins Forge2.7.69/e64302f and full consumer delivery gates. This is a bounded PRM-W-CONTRACT/VIEW/MANAGE qualification subset, not full management/decision/sync/Q, graph reopening, chat selection or workset activation.

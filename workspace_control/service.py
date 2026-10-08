@@ -267,9 +267,11 @@ class Service:
             from .conversations import ConversationStore
             from .review_peer import ReviewTransport
             from .worklist_peer import WorklistReadTransport
+            from .worklist_control_peer import WorklistControlTransport
             self.conversations = ConversationStore(self.root, self._root_fd)
             self.reviews = ReviewTransport(self.root, self._root_fd)
             self.worklists = WorklistReadTransport(self.root, self._root_fd)
+            self.worklist_controls = WorklistControlTransport(self.root, self._root_fd)
         except Exception:
             self.close()
             raise
@@ -368,6 +370,14 @@ class Service:
 
     def revoke_worklist(self, binding_id):
         return self.worklists.revoke(binding_id)
+
+    def provision_worklist_control(self, actor_id, endpoint, forge_instance_id, workset_ids,
+                                   forge_token_file, client_token_file):
+        return self.worklist_controls.provision(actor_id, endpoint, forge_instance_id, workset_ids,
+                                               forge_token_file, client_token_file)
+
+    def revoke_worklist_control(self, binding_id):
+        return self.worklist_controls.revoke(binding_id)
 
     def forge_status(self):
         """Read a scoped Forge observation without borrowing peer authority."""

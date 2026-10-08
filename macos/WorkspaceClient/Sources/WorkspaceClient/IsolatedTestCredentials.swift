@@ -19,6 +19,11 @@ struct IsolatedTestDocument: Decodable {
     let worklist_forge_instance: String?
     let worklist_workset_ids: [String]?
 
+    let control_grant: String?
+    let control_actor: String?
+    let control_forge_instance: String?
+    let control_workset_ids: [String]?
+
     static func load() throws -> IsolatedTestDocument {
         guard let path = ProcessInfo.processInfo.environment["WORKSPACE_ISOLATED_CREDENTIALS_FILE"],
               path.hasPrefix("/"), !path.contains("/../") else {
@@ -69,6 +74,16 @@ struct IsolatedTestDocument: Decodable {
                   WorklistAccess(endpoint: document.endpoint, workspaceInstanceID: document.instance_id,
                     forgeInstanceID: document.worklist_forge_instance ?? "", actorID: document.worklist_actor ?? "",
                     worksetIDs: document.worklist_workset_ids ?? [], token: document.worklist_grant ?? "").valid else {
+                throw ConversationError.invalidResponse
+            }
+        }
+        let controlFields = [document.control_grant != nil, document.control_actor != nil,
+                             document.control_forge_instance != nil, document.control_workset_ids != nil]
+        if controlFields.contains(true) {
+            guard controlFields.allSatisfy({ $0 }),
+                  WorklistAccess(endpoint: document.endpoint, workspaceInstanceID: document.instance_id,
+                    forgeInstanceID: document.control_forge_instance ?? "", actorID: document.control_actor ?? "",
+                    worksetIDs: document.control_workset_ids ?? [], token: document.control_grant ?? "").valid else {
                 throw ConversationError.invalidResponse
             }
         }
@@ -143,5 +158,39 @@ final class IsolatedWorklistGrant: WorklistCredentialStore, @unchecked Sendable 
     func loadAccess() throws -> WorklistAccess? { lock.withLock { access } }
     func saveAccess(_ value: WorklistAccess) throws { lock.withLock { access = value } }
     func forgetAccess() throws { lock.withLock { access = nil } }
+}
+final class IsolatedWorklistControlGrant: WorklistControlCredentials, @unchecked Sendable {
+    private let lock = NSLock()
+    private var access: WorklistAccess?
+    private let pendingStore: PrivateLocalDraftCache
+    private let key = String(repeating: "c", count: 64)
+    init(_ document: IsolatedTestDocument) {
+        pendingStore = PrivateLocalDraftCache(root: URL(fileURLWithPath: document.local_root).appendingPathComponent("control-intent"))
+        if let token = document.control_grant, let actor = document.control_actor,
+           let forge = document.control_forge_instance, let ids = document.control_workset_ids {
+            access = WorklistAccess(endpoint: document.endpoint, workspaceInstanceID: document.instance_id,
+                forgeInstanceID: forge, actorID: actor, worksetIDs: ids, token: token)
+        }
+    }
+    func loadAccess() throws -> WorklistAccess? { lock.withLock { access } }
+    func saveAccess(_ value: WorklistAccess) throws { lock.withLock { access = value } }
+    func forgetAccess() throws { lock.withLock { access = nil } }
+    func loadIntent() throws -> WorklistControlIntent? {
+        try lock.withLock {
+            guard let value = try pendingStore.load(scopeHash: key) else { return nil }
+            let intent = try JSONDecoder().decode(WorklistControlIntent.self, from: Data(value.draft.utf8))
+            guard intent.request.valid else { throw CredentialError.corruptBinding }
+            return intent
+        }
+    }
+    func saveIntent(_ value: WorklistControlIntent) throws {
+        try lock.withLock {
+            let data = try JSONEncoder().encode(value)
+            let record = LocalDraftSnapshot(scopeHash: key, selectedID: nil, title: "", focus: "", mode: "BUSINESS",
+                draft: String(decoding: data, as: UTF8.self), savedRevision: nil, requestID: UUID().uuidString.replacingOccurrences(of: "-", with: "").lowercased())
+            try pendingStore.save(record)
+        }
+    }
+    func forgetIntent() throws { try lock.withLock { try pendingStore.remove(scopeHash: key) } }
 }
 #endif

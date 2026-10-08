@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "L4-NATIVE-WORKLIST-HOLD-CONTROLS-V1-20261008 r81 plan88",
+  "determined_version": "2.8.9",
+  "event_lineage": "L4-NATIVE-WORKLIST-HOLD-CONTROLS-V1-20261008 r81 plan88",
+  "expected_source_revision": "366196cdce5404862c1df8d77866ba15900c64bd",
+  "expected_version": "2.8.8",
+  "operation_id": "L4-NATIVE-WORKLIST-HOLD-2.8.9-20261008",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

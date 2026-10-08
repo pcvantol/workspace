@@ -15,13 +15,15 @@ final class WorklistState: ObservableObject {
     @Published private(set) var selectedWorkset = ""
     @Published private(set) var isBusy = false
     @Published private(set) var hasGrant = false
+    let controls: WorklistControlState
     private let credentials: any WorklistCredentialStore
     private let transport: WorklistTransport
     private var pairingGeneration = 0
     private var observedBinding: ServerBinding?
 
     init(credentials: any WorklistCredentialStore = WorklistKeychain(),
-         transport: WorklistTransport = WorklistTransport()) {
+         transport: WorklistTransport = WorklistTransport(), controls: WorklistControlState = WorklistControlState()) {
+        self.controls = controls
         self.credentials = credentials
         self.transport = transport
     }
@@ -64,6 +66,11 @@ final class WorklistState: ObservableObject {
             selectedWorkset = worksetIDs[0]
             try await read(access, connection: connection, readToken: readToken, generation: generation)
         } catch { if generation == pairingGeneration { fail(error) } }
+    }
+
+    func refreshWithControls(connection: WorklistConnection?) async {
+        await refresh(connection: connection)
+        await controls.refresh(connection: connection, scope: cache.snapshot?.scope)
     }
 
     func refresh(connection: WorklistConnection?, selecting workset: String? = nil) async {
