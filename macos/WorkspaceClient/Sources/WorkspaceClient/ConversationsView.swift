@@ -358,13 +358,13 @@ struct ConversationsView: View {
         } message: {
             Text(ConversationCopy.text("archiveConfirmMessage"))
         }
-        .task { await state.prepare(client: client); await advisory.refresh(adviceConnection()) }
+        .task { await state.prepare(client: client); await advisory.refresh(adviceConnection()); await candidates.refresh(adviceConnection()) }
         .onChange(of:advisoryScope) { _, _ in
-            advisory.invalidate();candidates.invalidate();Task { await advisory.refresh(adviceConnection()) }
+            advisory.invalidate();candidates.invalidate();Task { await advisory.refresh(adviceConnection()); await candidates.refresh(adviceConnection()) }
         }
         .onChange(of: client.phase) { _, phase in
             if phase == "CONNECTED" {
-                Task { await state.prepare(client: client); await advisory.refresh(adviceConnection()) }
+                Task { await state.prepare(client: client); await advisory.refresh(adviceConnection()); await candidates.refresh(adviceConnection()) }
             } else {
                 advisory.suspend(transient:phase=="CONNECTING");candidates.suspend()
                 Task { await state.handleClientPhase(phase) }
