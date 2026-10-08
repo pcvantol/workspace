@@ -178,8 +178,8 @@
         "write_paths": []
       },
       "architecture_constraints": [
-        "Use existing contracts",
-        "EXCLUDED: No implementation"
+        "EXCLUDED: No implementation",
+        "Use existing contracts"
       ]
     },
     "registration": null,
@@ -232,12 +232,12 @@
           "write_paths": []
         },
         "architecture_constraints": [
-          "Use existing contracts",
-          "EXCLUDED: No implementation"
+          "EXCLUDED: No implementation",
+          "Use existing contracts"
         ]
       },
       "recommendation_id": "recommendation-one",
-      "candidate_digest": "sha256:0f091d3b1c91903c1d9eb2b5f0397e91aeed34610209ca60f5d3db384e714026",
+      "candidate_digest": "sha256:65714298faaceccfb3134ab9f955685106e01a71c4d3e45f1cdea096a66616e8",
       "recommendation_digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
       "registered_at": "2026-10-08T14:00:00Z",
       "status_at_registration": "RECOMMENDED",
@@ -266,11 +266,11 @@
           "write_paths": []
         },
         "architecture_constraints": [
-          "Use existing contracts",
-          "EXCLUDED: No implementation"
+          "EXCLUDED: No implementation",
+          "Use existing contracts"
         ]
       },
-      "candidate_digest": "sha256:0f091d3b1c91903c1d9eb2b5f0397e91aeed34610209ca60f5d3db384e714026",
+      "candidate_digest": "sha256:65714298faaceccfb3134ab9f955685106e01a71c4d3e45f1cdea096a66616e8",
       "recommendation_status": "RECOMMENDED",
       "conversation_revision": 1,
       "source_fresh": true,

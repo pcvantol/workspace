@@ -81,7 +81,9 @@ def registration(value,b,c,p,expected=None):
 def correlate(value, proposal):
     r=value['original_receipt'];f=proposal['fields']
     expected={k:f[k] for k in ('title','objective','scope','acceptance_criteria','dependencies','effect_policy')}
-    expected['architecture_constraints']=[*f['architecture_constraints'],*['EXCLUDED: '+x for x in f['exclusions']]]
+    expected['architecture_constraints']=sorted([*f['architecture_constraints'],*['EXCLUDED: '+x for x in f['exclusions']]])
+    for key in ('scope','acceptance_criteria','dependencies'):expected[key]=sorted(expected[key])
+    expected['effect_policy']={**f['effect_policy'],'read_paths':sorted(f['effect_policy']['read_paths']),'write_paths':sorted(f['effect_policy']['write_paths'])}
     actual={k:v for k,v in r['candidate'].items() if k not in ('id','recommendation_id')}
     if r['proposal_digest']!=proposal['proposal_digest'] or r['proposal_revision']!=proposal['proposal_revision'] or r['source']!=proposal['source'] or r['rationale']!=f['rationale'] or actual!=expected:raise WorklistError('INVALID_RESPONSE')
     return value

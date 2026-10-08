@@ -62,7 +62,7 @@ final class CandidateTests:XCTestCase {
                     receipt["source"]=p["source"];receipt["rationale"]=fields["rationale"]
                     var document=receipt["candidate"] as! [String:Any]
                     for key in ["title","objective","scope","acceptance_criteria","dependencies","effect_policy"] { document[key]=fields[key] }
-                    document["architecture_constraints"]=(fields["architecture_constraints"] as! [String])+(fields["exclusions"] as! [String]).map{"EXCLUDED: "+$0}
+                    document["architecture_constraints"]=((fields["architecture_constraints"] as! [String])+(fields["exclusions"] as! [String]).map{"EXCLUDED: "+$0}).sorted()
                     receipt["candidate"]=document;receipt["candidate_digest"]=try AdvisoryWire.digest(document)
                     var current=raw["current"] as! [String:Any];current["candidate"]=document;current["candidate_digest"]=receipt["candidate_digest"];raw["current"]=current
                     receipt["registration_key"]=try AdvisoryWire.digest(["forge-one:alice","project-one","repo-one",self.access.conversationID,"proposal-one",submitted["proposal_revision"]!] as [Any]);raw["original_receipt"]=receipt;self.observed=raw

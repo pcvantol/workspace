@@ -14,7 +14,7 @@ def request():
 def proposal(revision=1):
  r=request();d={k:v for k,v in r.items() if k not in ('turn_id','expected_revision','expected_conversation_revision','context_revision')};d.update(principal_reference='forge-one:alice',proposal_revision=revision,source=source(),field_origins={'fields':'EXPLICIT_USER','source.advice_summary':'VALIDATED_ADVICE'});d['proposal_digest']=w.digest(d);return d
 def candidate():
- f=fields();return {'id':'candidate-one','recommendation_id':'recommendation-one',**{k:f[k] for k in ('title','objective','scope','acceptance_criteria','dependencies','effect_policy')},'architecture_constraints':[*f['architecture_constraints'],*['EXCLUDED: '+v for v in f['exclusions']]]}
+ f=fields();return {'id':'candidate-one','recommendation_id':'recommendation-one',**{k:f[k] for k in ('title','objective','scope','acceptance_criteria','dependencies','effect_policy')},'architecture_constraints':sorted([*f['architecture_constraints'],*['EXCLUDED: '+v for v in f['exclusions']]])}
 def registration_request():
  r=request();return {k:v for k,v in r.items() if k not in ('fields','turn_id','expected_revision')}|{'operation_id':'operation-one','proposal_revision':1,'proposal_digest':proposal()['proposal_digest'],'confirm':True}
 def registration():
