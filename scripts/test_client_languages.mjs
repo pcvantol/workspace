@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
+import {execFileSync} from 'node:child_process';
+const serverOperations=JSON.parse(execFileSync('python3',['-c',"import json; from workspace_control.http import operation_inventory; print(json.dumps(operation_inventory('a'*32)))"],{encoding:'utf8'}));
 
 function client({saved='system',system='en',storageFault=false}={}) {
   const elements=new Map();
@@ -23,6 +25,7 @@ function client({saved='system',system='en',storageFault=false}={}) {
       requests++;
       const body=path==='/v1/identity'?{instance_id:'a'.repeat(32)}:
         path==='/v1/status'?{instance_id:'a'.repeat(32),version:'2.8.12',state:'READY',project_source:'AVAILABLE'}:
+        path==='/v1/capabilities'?serverOperations:
         path==='/v1/projects'?{state:'AVAILABLE',source:'DEMO',partial:false,stale:false,observed_at:'2026-10-08',projects:[{id:'source-id',name:'Original source text'}]}:null;
       return {ok:body!==null,status:body?200:503,json:async()=>body};
     }});
@@ -33,6 +36,7 @@ const c=client();
 c.element('token').value='unsent synthetic token';
 await c.element('connect').listeners.click();
 assert.equal(c.requests(),4);
+assert.ok(c.element('capabilities').children.some(row=>row.textContent.startsWith('candidate.register')));
 const labels={en:'Language',nl:'Taal',de:'Sprache',fr:'Langue',es:'Idioma'};
 for(const [language,title] of Object.entries(labels)) {
   c.change(language);
