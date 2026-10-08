@@ -65,6 +65,10 @@ struct WorkspaceApp: App {
         _reviews = StateObject(wrappedValue: MissionReviewState(credentials: IsolatedReviewGrant(document)))
         _worklists = StateObject(wrappedValue: WorklistState(credentials: IsolatedWorklistGrant(document),
             controls: WorklistControlState(credentials: IsolatedWorklistControlGrant(document))))
+        // Own isolated qualification selects genuine AppKit appearances only.
+        if let theme=ProcessInfo.processInfo.environment["WORKSPACE_ISOLATED_THEME"],
+           let appearance=NSAppearance(named:theme=="dark" ? .darkAqua:.aqua),
+           ["light","dark"].contains(theme) { NSApp.appearance=appearance }
         IsolatedWindowEvidence.capture(in: document.local_root)
         #else
         _client = StateObject(wrappedValue: ClientState())
