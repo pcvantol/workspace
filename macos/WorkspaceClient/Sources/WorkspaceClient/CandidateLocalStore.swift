@@ -45,7 +45,8 @@ protocol CandidateLocalStore:Sendable {
 }
 struct PrivateCandidateLocalStore:CandidateLocalStore {
     let root:URL
-    init(root:URL = FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0].appendingPathComponent("Workspace/CandidateDrafts")) { self.root=root }
+    let synchronizeDirectory:@Sendable(Int32)->Int32
+    init(root:URL = FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0].appendingPathComponent("Workspace/CandidateDrafts"),synchronizeDirectory:@escaping @Sendable(Int32)->Int32 = { fsync($0) }) { self.root=root;self.synchronizeDirectory=synchronizeDirectory }
     private func name(_ key:String) throws -> String {
         guard key.range(of:"^[0-9a-f]{64}$",options:.regularExpression) != nil else { throw AdvisoryError.invalid }
         return "candidate-"+key+".json"
@@ -63,10 +64,16 @@ struct PrivateCandidateLocalStore:CandidateLocalStore {
                 if next<0 && errno==ENOENT {
                     let created=mkdirat(fd,component,0o700)
                     guard created==0 || errno==EEXIST else { throw AdvisoryError.unavailable }
-                    if created==0 { guard fsync(fd)==0 else { throw AdvisoryError.unavailable } }
                     next=openat(fd,component,O_RDONLY|O_DIRECTORY|O_NOFOLLOW|O_CLOEXEC)
                 }
                 guard next>=0 else { throw AdvisoryError.unavailable }
+                var child=stat()
+                guard fstat(next,&child)==0 else { Darwin.close(next);throw AdvisoryError.unavailable }
+                // Synchronize every owned child entry on retries, including entries
+                // left behind by an earlier failed parent sync.
+                if child.st_uid==getuid(),synchronizeDirectory(fd) != 0 {
+                    Darwin.close(next);throw AdvisoryError.unavailable
+                }
                 Darwin.close(fd);fd=next
             }
             var info=stat()
@@ -104,6 +111,6 @@ struct PrivateCandidateLocalStore:CandidateLocalStore {
         let h=FileHandle(fileDescriptor:fd,closeOnDealloc:true)
         defer { try? h.close();unlinkat(dir,temporary,0) }
         try h.write(contentsOf:data);try h.synchronize()
-        guard renameat(dir,temporary,dir,target)==0,fsync(dir)==0 else { throw AdvisoryError.unavailable }
+        guard renameat(dir,temporary,dir,target)==0,synchronizeDirectory(dir)==0 else { throw AdvisoryError.unavailable }
     }
 }

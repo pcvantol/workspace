@@ -1,4 +1,5 @@
 import AppKit
+import Darwin
 import Foundation
 import SwiftUI
 import XCTest
@@ -16,6 +17,16 @@ final class CandidateDraftMemory:CandidateLocalStore,@unchecked Sendable {
     var broken=false
     func load(_ key:String) throws -> CandidateLocal? { if broken { throw AdvisoryError.unavailable };return values[key] }
     func save(_ v:CandidateLocal) throws { if broken { throw AdvisoryError.unavailable };values[v.key]=v }
+}
+final class CandidateSyncFault:@unchecked Sendable {
+    let lock=NSLock();var calls=0;let inode:ino_t
+    init(_ path:String) { var s=stat();lstat(path,&s);inode=s.st_ino }
+    func sync(_ fd:Int32) -> Int32 {
+        var s=stat();guard fstat(fd,&s)==0 else { return -1 }
+        lock.lock();defer{lock.unlock()}
+        if s.st_ino==inode { calls+=1;if calls==1 { errno=EIO;return -1 } }
+        return fsync(fd)
+    }
 }
 final class CandidateTests:XCTestCase {
     let access=CandidateAccess(endpoint:"http://127.0.0.1:12345/",workspaceInstanceID:String(repeating:"a",count:32),workspaceProjectID:"ws-project",actorID:"alice",
@@ -205,6 +216,17 @@ extension CandidateTests {
         XCTAssertThrowsError(try CandidateWire.correlate(other,p))
         other=valid;other.current.candidate.objective="Changed current candidate"
         try CandidateWire.correlate(other,p)
+    }
+    func testFailedCreatedParentSyncIsRetriedBeforeIntentCanPersist() throws {
+        let base=FileManager.default.temporaryDirectory.appendingPathComponent("candidate-sync-"+UUID().uuidString)
+        defer{try? FileManager.default.removeItem(at:base)}
+        try FileManager.default.createDirectory(at:base,withIntermediateDirectories:true,attributes:[.posixPermissions:0o700])
+        let root=base.appendingPathComponent("private"),fault=CandidateSyncFault(base.path)
+        var value=CandidateLocal();value.key=CandidateLocal.scopeKey(connection);value.registrationIntent=try AdvisoryWire.decode(fixture("registration_request"),as:CandidateRegistrationRequest.self);value.registrationPending=true
+        let store=PrivateCandidateLocalStore(root:root,synchronizeDirectory:{fault.sync($0)})
+        XCTAssertThrowsError(try store.save(value));XCTAssertTrue(FileManager.default.fileExists(atPath:root.path))
+        let retry=PrivateCandidateLocalStore(root:root,synchronizeDirectory:{fault.sync($0)})
+        try retry.save(value);XCTAssertGreaterThanOrEqual(fault.calls,2);XCTAssertEqual(try retry.load(value.key),value)
     }
     func testAncestorSymlinksRejectPrivateDraftReadAndWrite() throws {
         let base=FileManager.default.temporaryDirectory.appendingPathComponent("candidate-ancestor-"+UUID().uuidString)

@@ -169,3 +169,20 @@ adapter start failure, normative tuple/JSON detector repairs and unsupported
 regional-locale selection. No predecessor, source producer pin or budget resets.
 Later qualified Forge2.10 future JOIN6064119435 explicitly selects no consumer
 upgrade or approval UI.
+
+## Independent review repairs and final source candidate
+
+Independent whole-slice Quality and Security at9dcf16d withheld PASS for four
+P2 findings; the bounded continuation atd5149c1 closes original-source/content
+correlation, completed A-to-B selection and descriptor fencing. A final retry
+durability finding requires ancestor-entry synchronization even after an earlier
+failed sync. The new filesystem fault control creates that failure, then proves
+a new store retry resynchronizes before persisting the original intent.
+Full owning122native+1isolated+125Python PASS, all changed sources>80.2%,
+CandidateLocalStore89.38%. No reduced gate or manufactured review acceptance.
+Actual repaired source d5149c1 completes13 genuine installed groups and17GUI
+phases, including owner configuration context drift/replacement using its current
+revision/digest, denied old scope, restoration of unchanged history/retained budget,
+measured themes and all five languages. New final durability bytes, independent
+closure/protected delivery and fresh exact-main qualification remain pending.
+All earlier successful/partial/rejected receipts retain their exact source pins.
