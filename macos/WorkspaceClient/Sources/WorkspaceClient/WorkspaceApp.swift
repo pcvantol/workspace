@@ -105,7 +105,7 @@ struct ContentView: View {
     @StateObject private var conversations: ConversationState
     @StateObject private var reviews: MissionReviewState
     @StateObject private var worklists: WorklistState
-    @State private var selectedTab = 0
+    @State private var selectedTab = 4
     @State private var requestedReview: MissionReviewKey?
     @State private var reviewNavigationStatus = ""
 
@@ -115,6 +115,16 @@ struct ContentView: View {
         _conversations = StateObject(wrappedValue: conversations)
         _reviews = StateObject(wrappedValue: reviews)
         _worklists = StateObject(wrappedValue: worklists)
+    }
+
+    private var missionObservation: MissionWorkspaceObservation? {
+        #if WORKSPACE_ISOLATED_TEST
+        if let path = ProcessInfo.processInfo.environment["WORKSPACE_ISOLATED_MISSION_PREVIEW"],
+           let data = try? Data(contentsOf: URL(fileURLWithPath: path)), data.count <= 65536 {
+            return try? JSONDecoder().decode(MissionWorkspaceObservation.self, from: data)
+        }
+        #endif
+        return nil
     }
 
     private func openReview(_ item: ApprovedWorklistItem) {
@@ -138,6 +148,9 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
+            MissionWorkspaceView(observation: missionObservation, canRefine: false, canApprove: false,
+                                 onRefine: { _, _ in }, onApprove: { _ in })
+                .tabItem { Label(MissionWorkspaceCopy.text("missions", language: locale.language.languageCode?.identifier ?? "en"), systemImage: "bubble.left.and.text.bubble.right") }.tag(4)
             ConversationsView(client: client, state: conversations)
                 .environment(\.nativeTabCommandsActive, selectedTab == 0)
                 .tabItem { Label(ConversationCopy.text("nav",language:locale.language.languageCode?.identifier), systemImage: "bubble.left.and.bubble.right") }.tag(0)

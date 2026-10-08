@@ -1,0 +1,49 @@
+import Foundation
+
+enum MissionWorkspaceCopy {
+    static func text(_ key: String, language: String) -> String {
+        let index = ["en": 0, "nl": 1, "de": 2, "fr": 3, "es": 4][language] ?? 0
+        let rows: [String: [String]] = [
+            "missions": ["Missions", "Missies", "Missionen", "Missions", "Misiones"],
+            "settings": ["Settings", "Instellingen", "Einstellungen", "Réglages", "Ajustes"],
+            "panel": ["Workspace panels", "Werkpanelen", "Arbeitsbereiche", "Panneaux", "Paneles"],
+            "overview": ["Overview", "Overzicht", "Übersicht", "Vue générale", "Resumen"],
+            "chat": ["Conversation", "Gesprek", "Gespräch", "Conversation", "Conversación"],
+            "definition": ["Mission definition", "Missiedefinitie", "Missionsdefinition", "Définition de mission", "Definición de misión"],
+            "search": ["Find a mission", "Zoek een missie", "Mission suchen", "Rechercher une mission", "Buscar una misión"],
+            "display": ["View", "Weergave", "Ansicht", "Affichage", "Vista"],
+            "list": ["List", "Lijst", "Liste", "Liste", "Lista"],
+            "dependencies": ["Dependencies", "Afhankelijkheden", "Abhängigkeiten", "Dépendances", "Dependencias"],
+            "outcomes": ["Intended results", "Beoogde resultaten", "Geplante Ergebnisse", "Résultats attendus", "Resultados previstos"],
+            "partial": ["More authorized results may be available.", "Meer toegankelijke resultaten kunnen beschikbaar zijn.", "Weitere berechtigte Ergebnisse sind möglicherweise verfügbar.", "D’autres résultats autorisés peuvent être disponibles.", "Puede haber más resultados autorizados."],
+            "empty": ["Start with your goal", "Begin met je doel", "Beginnen Sie mit Ihrem Ziel", "Commencez par votre objectif", "Empieza con tu objetivo"],
+            "connection": ["Connect the qualified mission service in Settings.", "Verbind de gekwalificeerde missiedienst in Instellingen.", "Verbinden Sie den qualifizierten Missionsdienst in den Einstellungen.", "Connectez le service de missions qualifié dans les réglages.", "Conecta el servicio de misiones calificado en Ajustes."],
+            "lens": ["Perspective", "Invalshoek", "Perspektive", "Perspective", "Perspectiva"],
+            "business": ["Business", "Business", "Business", "Business", "Negocio"],
+            "architect": ["Architect", "Architect", "Architekt", "Architecte", "Arquitecto"],
+            "prompt": ["What would you like to achieve? Refine the scope together.", "Wat wil je bereiken? Verfijn samen de scope.", "Was möchten Sie erreichen? Verfeinern Sie gemeinsam den Umfang.", "Que souhaitez-vous accomplir ? Précisez ensemble le périmètre.", "¿Qué quieres lograr? Define el alcance en la conversación."],
+            "message": ["Your message", "Je bericht", "Ihre Nachricht", "Votre message", "Tu mensaje"],
+            "send": ["Send and refine", "Versturen en verfijnen", "Senden und verfeinern", "Envoyer et préciser", "Enviar y precisar"],
+            "value": ["Goal and value", "Doel en waarde", "Ziel und Nutzen", "Objectif et valeur", "Objetivo y valor"],
+            "scope": ["Within scope", "Binnen scope", "Im Umfang", "Dans le périmètre", "Dentro del alcance"],
+            "excluded": ["Outside scope", "Buiten scope", "Außerhalb des Umfangs", "Hors périmètre", "Fuera del alcance"],
+            "done": ["When it is done", "Wanneer het klaar is", "Wann es fertig ist", "Quand ce sera terminé", "Cuándo estará terminado"],
+            "questions": ["Open questions", "Open vragen", "Offene Fragen", "Questions ouvertes", "Preguntas abiertas"],
+            "changes": ["What changed", "Wat is gewijzigd", "Was sich geändert hat", "Ce qui a changé", "Qué cambió"],
+            "approve": ["Approve and prepare", "Goedkeuren en klaarzetten", "Genehmigen und vorbereiten", "Approuver et préparer", "Aprobar y preparar"],
+            "approvalEffect": ["Approve this exact definition. Execution starts through its existing authorized route.", "Keur deze exacte definitie goed. Uitvoering start via de bestaande bevoegde route.", "Genehmigen Sie diese genaue Definition. Die Ausführung beginnt über den bestehenden berechtigten Weg.", "Approuvez cette définition exacte. L’exécution suit son parcours autorisé existant.", "Aprueba esta definición exacta. La ejecución sigue su ruta autorizada existente."],
+            "inspector": ["Technical details", "Technische details", "Technische Details", "Détails techniques", "Detalles técnicos"],
+            "revision": ["Version", "Versie", "Version", "Version", "Versión"],
+            "choose": ["Choose a mission to see its definition.", "Kies een missie om de definitie te zien.", "Wählen Sie eine Mission für ihre Definition.", "Choisissez une mission pour voir sa définition.", "Elige una misión para ver su definición."],
+            "zoomOut": ["Zoom out", "Uitzoomen", "Verkleinern", "Dézoomer", "Alejar"],
+            "zoomIn": ["Zoom in", "Inzoomen", "Vergrößern", "Zoomer", "Acercar"],
+            "focus": ["Focus selection", "Selectie in beeld", "Auswahl fokussieren", "Centrer la sélection", "Centrar selección"],
+            "fit": ["Fit", "Passend maken", "Einpassen", "Ajuster", "Ajustar"],
+            "edgeLegend": ["Arrows mean requires. Suggested relations remain proposals.", "Pijlen betekenen vereist. Voorgestelde relaties blijven voorstellen.", "Pfeile bedeuten benötigt. Vorgeschlagene Beziehungen bleiben Vorschläge.", "Les flèches indiquent un prérequis. Les relations suggérées restent des propositions.", "Las flechas indican requisitos. Las relaciones sugeridas siguen siendo propuestas."],
+            "CONCEPT": ["Draft", "Concept", "Entwurf", "Brouillon", "Borrador"],
+            "REFINEMENT_REQUIRED": ["Needs refinement", "Te verfijnen", "Zu verfeinern", "À préciser", "Por precisar"],
+            "AWAITING_APPROVAL": ["Ready for approval", "Klaar voor goedkeuring", "Bereit zur Genehmigung", "Prêt à approuver", "Listo para aprobar"],
+        ]
+        return rows[key]?[index] ?? key
+    }
+}
