@@ -1,0 +1,30 @@
+{
+  "state": "EARLY_SYNTHETIC_UX_ONLY_NOT_QUALIFIED",
+  "source_revision": "29f7e0e805f28da86ba03ffbb68a677f540501fb",
+  "source_tree": "322e54df23424d75ace7c94b554e94044c946690",
+  "producer": null,
+  "wheel": null,
+  "executable_sha256": "6f31c46c8227c5d8992f352b5afe005455e553564dda867a005e1c0294487847",
+  "appearance": "NSAppearanceNameAqua",
+  "language": "nl",
+  "viewport": [
+    "1280x780",
+    "640x720"
+  ],
+  "model_calls": 0,
+  "approval_effects": 0,
+  "clicks": [
+    "expand actual native tree group",
+    "select portal definition",
+    "switch dependency view",
+    "fit directed graph",
+    "resize own window narrow"
+  ],
+  "primary_checkout_untouched": true,
+  "files": {
+    "directed-native-tree-chat-definition.png": "8a95f9c4ecc083135c7cee938ce47d22bce2836c89e55c2ca5656fe1b499bb2b",
+    "directed-native-dependency-graph.png": "e47bdd347bbe5401d667143b61803f021ebdee7ef1fdc66ce76ce921a9d5de54",
+    "early-source-files.public.json": "a3762356d27d474ef9d9a5b102f09cdf8a78a831321d821a2bf11075343c7c81",
+    "directed-native-narrow-definition.png": "d505606f268b3200b615d974d7a5fdf32778c77748c9b5cd33330dfc94e0f9ef"
+  }
+}
