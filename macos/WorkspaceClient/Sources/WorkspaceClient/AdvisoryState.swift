@@ -12,6 +12,29 @@ import Combine
     @Published private(set) var revision=0
     @Published private(set) var nextCursor:Int?
     @Published private(set) var selectedSources:[AdvisorySource]=[]
+    @Published private(set) var inspectorOpen=false
+    private var inspectorNeedsTail=false
+    @Published private(set) var inspectedTurnID:String?
+    @Published private(set) var inspectedReference:String?
+    @Published private(set) var inspectorCategory:AdvisoryAnswerCategory = .summary
+    var inspectedTurn:AdvisoryTurnRecord? {
+        guard hasGrant,capability != nil,let id=inspectedTurnID else { return nil }
+        return history.first{$0.request.turn_id==id} ?? (latest?.turn.request.turn_id==id ? latest?.turn:nil)
+    }
+    func inspect(_ id:String) {
+        guard !busy,hasGrant,capability != nil,history.contains(where:{$0.request.turn_id==id}) || latest?.turn.request.turn_id==id else { return }
+        inspectorOpen=true;inspectorNeedsTail=history.count>4;inspectedTurnID=id;inspectedReference=nil;inspectorCategory = .summary
+    }
+    func inspectCategory(_ category:AdvisoryAnswerCategory) {
+        guard inspectedTurn != nil else { return };inspectorCategory=category;inspectedReference=nil
+    }
+    func inspectReference(_ reference:String) {
+        guard inspectedTurn?.context.evidence_references.contains(reference)==true else { return };inspectedReference=reference
+    }
+    func inspectorBack() {
+        if inspectedReference != nil { inspectedReference=nil } else { closeInspector() }
+    }
+    func closeInspector() { inspectorOpen=false;inspectorNeedsTail=false;inspectedTurnID=nil;inspectedReference=nil;inspectorCategory = .summary }
     private let credentials:any AdvisoryCredentials
     private let transport:AdvisoryTransport
     private var connection:AdvisoryConnection?
@@ -19,13 +42,13 @@ import Combine
     init(credentials:any AdvisoryCredentials = AdvisoryKeychain(), transport:AdvisoryTransport = AdvisoryTransport()) {
         self.credentials=credentials;self.transport=transport
     }
-    private func clearPresentation() { capability=nil;history=[];latest=nil;nextCursor=nil;revision=0 }
+    private func clearPresentation(preserveInspection:Bool=false) { if !preserveInspection { closeInspector() };capability=nil;history=[];latest=nil;nextCursor=nil;revision=0 }
     func invalidate() {
         generation &+= 1;connection=nil;clearPresentation();selectedSources=[];busy=false;hasGrant=false;phase="adviceReadOnly"
         pending=try? credentials.loadIntent()
     }
-    func suspend() {
-        generation &+= 1;clearPresentation();busy=false;hasGrant=false;phase="adviceOffline"
+    func suspend(transient:Bool=false) {
+        generation &+= 1;clearPresentation(preserveInspection:transient);busy=false;hasGrant=false;phase="adviceOffline"
     }
     private func admit(_ new:AdvisoryConnection?) -> Bool {
         guard let new else { invalidate();return false }
@@ -79,7 +102,8 @@ import Combine
     }
     func refresh(_ new:AdvisoryConnection?) async {
         guard admit(new),!busy,let c=new else { return }
-        let epoch=generation;busy=true;defer { if epoch==generation { busy=false } }
+        let epoch=generation;let preservePage=inspectedTurnID != nil && (history.count>4 || inspectorNeedsTail)
+        busy=true;defer { if epoch==generation { busy=false } }
         do {
             pending=try credentials.loadIntent()
             guard try credentials.loadAccess() != nil else { clearPresentation();hasGrant=false;phase="adviceReadOnly";return }
@@ -89,6 +113,7 @@ import Combine
                 guard epoch==generation else { return };try accept(value,intent:p)
             }
             let cap=try await transport.capability(a,c,sources:selectedSources)
+            guard epoch==generation else { return }
             var page:AdvisoryHistory?
             do { page=try await transport.history(a,c) }
             catch AdvisoryError.missing {
@@ -96,8 +121,16 @@ import Combine
                 // Absence is not an empty canonical transcript or an auto send.
                 guard pending==nil,revision==0,latest==nil else { throw AdvisoryError.missing }
             }
+            var turns=page?.turns ?? [];var cursor=page?.next_cursor
+            if preservePage,let next=cursor,let first=page {
+                let tail=try await transport.history(a,c,cursor:next)
+                guard tail.revision==first.revision,turns.count+tail.turns.count<=8,
+                      Set((turns+tail.turns).map{$0.request.turn_id}).count==turns.count+tail.turns.count else { throw AdvisoryError.state("CONVERSATION_OR_CONTEXT_STALE") }
+                turns+=tail.turns;cursor=tail.next_cursor
+            }
             guard epoch==generation else { return }
-            capability=cap;history=page?.turns ?? [];revision=page?.revision ?? 0;nextCursor=page?.next_cursor
+            capability=cap;history=turns;revision=page?.revision ?? 0;nextCursor=cursor
+            if inspectedTurnID != nil && inspectedTurn==nil { closeInspector() }
             if pending==nil { phase=page==nil ? "adviceNew":latest?.turn.status=="COMPLETE" ? "adviceComplete":"adviceCurrent" }
             else if !pendingForSelection { phase="adviceOtherPending" }
         } catch { if epoch==generation { fail(error) } }

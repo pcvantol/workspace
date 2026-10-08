@@ -166,3 +166,13 @@ versus blocking30 policyFAIL. No threshold, protection or broad debt changes.
 Normal protected merge and fresh exact-main receipts remain pending. Version
 2.8.10 is the bounded canonical PATCH operation under this selected assignment;
 no signing/notarization/public/live-provider/two-Mac activation is qualified.
+
+## Closed plan89 and separately selected inspector
+
+[PR140/plan89 terminal](https://github.com/pcvantol/forge/issues/208#issuecomment-6057361472)
+closes the historical pending fields above: protected main e663be08255fff30b3caa19f9f32c2030590ddbf,
+2.8.10, full102native+1isolated+119Python, independentQ/S, fresh noneditable
+pinned2.8.0 integration and4actual packaged GUI phases/31installed checks PASS.
+This remains its own immutable qualification; live quality/signing/full family
+remain unqualified. [Plan90 inspector selection](WORKSPACE_NATIVE_ADVISORY_INSPECTOR_V1.md)
+extends read-only presentation and must obtain its own new source/artifact proof.

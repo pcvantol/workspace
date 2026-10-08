@@ -6,8 +6,8 @@ linked from the existing [roadmap](../ROADMAP.md) and
 See [functional design](ROLE_AWARE_CONVERSATIONS_V1.md),
 [documentary DAG](ROLE_AWARE_CONVERSATIONS_V1_DAG.json) and the
 [Forge plan](https://github.com/pcvantol/forge/blob/main/docs/roadmap/ROLE_AWARE_CONVERSATIONS_V1.md).
-Design is canonical after owning protected merge. The full runtime nodes remain
-PLANNED; the 4 October r81 revision selects only a Workspace-owned RC-WC/RC-WS
+Design is canonical after owning protected merge. The full-family runtime nodes remain
+PLANNED; bounded delivered subsets are reconciled by their receipts below; the 4 October r81 revision selects only a Workspace-owned RC-WC/RC-WS
 presentation and unsent-draft subset for product 2.8.3.
 
 The 5 October r81 plan revision 84 selects reversible archive/restore on product
@@ -73,9 +73,21 @@ selects the bounded BUSINESS/ARCHITECTURE RC-WC/RC-WS consumer subset on
 Workspace2.8.10, against pinned qualified Forge2.8.0/88f7560. See the
 [owning implementation/qualification boundary](WORKSPACE_NATIVE_ADVISORY_CHAT_V1.md).
 This extends delivered draft/archive UX with explicit send and canonical history,
-not Candidate/apply/UX/provider execution or full-family closure. Protected/
-installed/newGUI acceptance remains pending. Older draft/hold/graph receipts
+not Candidate/apply/UX/provider execution or full-family closure. [PR140/plan89 terminal](https://github.com/pcvantol/forge/issues/208#issuecomment-6057361472)
+closes protected/exact-main installed/newGUI acceptance for that subset. Older draft/hold/graph receipts
 remain closed; no new L3Candidate or signing predecessor.
+
+## Selected native advice inspector — r81 plan90
+
+[8October selection](https://github.com/pcvantol/forge/issues/208#issuecomment-6058224232)
+adds bounded native selected-turn details, separate answer categories, frozen
+context and exact-version source metadata to the delivered2.8.10 chat.
+Workspace2.8.11 uses the same qualified2.8.0 producer, auth and bounded history;
+no new producer dependency or generation by inspection. Missing/ambiguous/current
+version mismatches are explicit, and denial/offline/scope changes clear all
+inspection presentation. See [selected consumer boundary](WORKSPACE_NATIVE_ADVISORY_INSPECTOR_V1.md).
+New own source/reviews/protected/installed/UI qualification remains pending;
+this neither reopens PR140 nor closes the full RC-WC/RC-WS/RC-WQ family.
 
 ## Acceptance and release slices
 

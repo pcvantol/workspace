@@ -185,7 +185,12 @@ UX Advisor adds advice, not a new mandatory Mission approval stage.
 
 `RC-WC -> RC-WS -> RC-WP -> RC-WQ` consumes the corresponding qualified Forge
 contract/session/proposal/service subsets RC-FC/FS/FP/FQ under existing F6.
-Full runtime nodes remain PLANNED beyond the narrow own draft subset above.
+Full-family runtime nodes remain PLANNED beyond the independently delivered
+subsets. [Plan89/PR140](https://github.com/pcvantol/forge/issues/208#issuecomment-6057361472)
+qualifies the bounded native Business/Architect text chat on2.8.10/Forge2.8.0;
+[plan90 inspector](docs/WORKSPACE_NATIVE_ADVISORY_INSPECTOR_V1.md) selects a
+separate read-only detail/context/source presentation outcome with new evidence.
+This does not qualify Candidate/apply/UX/live quality or full-family closure.
 Contract-first work is parallel non-blocking;
 full Workspace delivery is POST_AUTONOMY. No edge is added to the first live
 canary, and neither full policy UI nor the universal installer is a prerequisite.

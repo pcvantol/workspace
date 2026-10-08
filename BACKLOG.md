@@ -149,9 +149,12 @@ Request IDs make create retries idempotent. The [draft HTTP contract](docs/WORKS
 describes routes and authority. The existing read-only routes and Forge read
 keep their meanings.
 
-This is a **Workspace-owned RC-WC/RC-WS subset**. No qualified Forge
-conversation producer exists for live advice, canonical history, proposals,
-apply or Mission handoff, so those remain unavailable. The source change
+This historical2.8.3 entry is a **Workspace-owned RC-WC/RC-WS draft subset**.
+[Plan89/PR140 terminal](https://github.com/pcvantol/forge/issues/208#issuecomment-6057361472)
+subsequently qualifies bounded text advice/canonical history on2.8.10/Forge2.8.0.
+[Plan90 inspector](docs/WORKSPACE_NATIVE_ADVISORY_INSPECTOR_V1.md) selects a
+separate source/context presentation outcome. Live advice quality, proposals,
+apply and Mission handoff remain unqualified by these Workspace receipts. The source change
 requires protected PR, exact-head Quality/Security review, full validation,
 then isolated installed-wheel/native ad-hoc GUI HTTP readback. Those gates
 must be reported separately; source presence alone does not qualify the
