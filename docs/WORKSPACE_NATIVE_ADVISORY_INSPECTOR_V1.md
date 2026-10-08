@@ -76,3 +76,38 @@ retaining only scoped navigation identity/category; the already open sheet
 shows an unavailable placeholder until fresh authorized reads restore that
 same turn. Actual failure/offline/denial or scope change closes and clears all
 inspection state. No cached transcript is kept for this transient recovery.
+
+## Source finalization — fresh exact-main acceptance pending
+
+Production66f3ab3d450e4bfa0e10ed388dee3ba9e904515e passed full owning validation:
+106native+1isolated+119Python. Changed native files: inspector36/36100%,
+inspectorview260/29588.14%, state224/23894.12%, chatview342/38888.14%,
+conversationview1088/125986.42%; all stricter existing gates pass. Python product
+unchanged, full Python coverage still passes. Independent exact66f3ab3
+QualityPASS/SecurityPASS, no P1/P2. Required PRchecks PASS; actual TDEpolicy
+FAIL complexity32>30 remains separate from successful observe workflow.
+
+New candidate packaged GUI actually completed10phases: targeted send/loss/
+Server+apprestart/Architect continuation, Business categories/source metadata/
+unlinked-reference screenshot, Architect/empty category/cursor/640px, reopen,
+real Serveroffline clearing/reconnect, genuine grantrevoke clearing and owner
+renewal/reopen. Inspection phases preserve the actual provider ledger and6
+explicit admitted synthetic turns (two native sends plus empty/cursor fixtures),
+with zero inspectionPOST/providers. The unchanged original first two records
+are checked, and unit scope/late-response/version/ambiguity/privacy tests pass.
+
+Retained failed intermediate harness attempts: empty initial providerledger,
+expired synthetic owner-project observation, and a rejected same-ID source
+republication. These are NOT installed acceptance. The real pinned producer
+makes source identities immutable. Final qualification must use actual owner
+publication of a NEW identity, preserve the old pinned history while allowed,
+then revoke the old source and observe whole-history403/current old metadata
+absence. No private-store edits or fabricated older-version partial success.
+Only external model output (including empty categories), OS and repository
+transport are deterministic; all advice is admitted by the real explicit route.
+
+Source finalization is reviewable; protected merge and fresh exact-main complete
+noneditable service/nativeGUI/screenshot proof remain pending. This does not
+reopen plan89 or qualify live advice quality/signing/Candidate/full-family.
+Own failed-probe apps/services/credentials cleaned; original artifacts/budgets
+and primary checkout preserved. Final receipt must bind actual final counts.

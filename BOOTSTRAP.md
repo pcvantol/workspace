@@ -24,8 +24,12 @@ native themes/640px/keyboard/focus and new actual GUI/screenshots are required.
 The producer remains Forge2.8.0/88f7560f271a2bc2b0af68de0300d0d784cf6315,
 wheel424ae4cc555c2ee07f6acc8c9b3c865b971363a5a02b2d8f79d364d4fa7251a6,
 schemafc4750604a4f063d11a1680d9d5ca77ade4784cff53692b40692e86d6c26e7ef.
-New own gates/per-file>80.2%/independentQ&S/protectedmerge/finalization and
-fresh exact-main noneditable installed/native inspection proof remain pending.
+Source finalization66f3ab3 passes106native+1isolated+119Python, all changed
+productionfiles>80.2%, independent exactQuality/SecurityPASS and requiredCI.
+Ten actual candidateGUI phases are recorded; rejected/partial harness attempts
+are retained without acceptance claim. Protected merge and complete fresh
+exact-main installed/native screenshots remain pending, including the real
+immutable-source publication/revoke boundary.
 Plan89 and all older qualification boundaries remain preserved; full family,
 Candidate/live quality/signing/public operation remain outside this selection.
 See [owning inspector boundary](docs/WORKSPACE_NATIVE_ADVISORY_INSPECTOR_V1.md).
