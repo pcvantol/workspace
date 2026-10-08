@@ -129,6 +129,19 @@ final class WorklistControlTests: XCTestCase {
         XCTAssertTrue(WorklistControlRequest(current:own,intent:"unhold",reason:"TEMPORARY_WAIT").valid)
     }
     @MainActor
+    func testPreviouslyAvailableCapability404ClearsActionableCurrentWithoutPost() async {
+        let credentials=ControlMemoryCredentials();credentials.access=access
+        let state=WorklistControlState(credentials:credentials,transport:transport())
+        await state.refresh(connection:connection,scope:scope)
+        XCTAssertTrue(state.current?.mayHold == true)
+        code=404;await state.refresh(connection:connection,scope:scope)
+        XCTAssertEqual(state.phase,"controlUnsupported");XCTAssertNil(state.current)
+        state.prepare(intent:"hold",reason:"USER_REQUEST")
+        XCTAssertNil(state.confirmation);await state.confirm(connection:connection)
+        XCTAssertEqual(calls.filter { $0.httpMethod=="POST" }.count,0)
+        XCTAssertNil(credentials.intent)
+    }
+    @MainActor
     func testConfirmationPersistenceLostResponseRestartReadbackNoAutomaticPost() async throws {
         let credentials = ControlMemoryCredentials();credentials.access=access
         let transport = transport();let state = WorklistControlState(credentials:credentials,transport:transport)

@@ -116,6 +116,7 @@ enum WorklistCopy {
 
 struct ApprovedWorklistView: View {
     let cache: WorklistObservationCache
+    let controlContent: AnyView?
     let onOpenReviews: ((ApprovedWorklistItem) -> Void)?
     @Environment(\.locale) private var locale
     @Environment(\.nativeTabCommandsActive) private var commandsActive
@@ -129,10 +130,11 @@ struct ApprovedWorklistView: View {
     init(cache: WorklistObservationCache = WorklistObservationCache(),
          selected: ApprovedWorklistKey? = nil, search: String = "",
          filter: WorklistFilter = .all, sort: WorklistSort = .committed, graphMode: Bool = false,
-         onOpenReviews: ((ApprovedWorklistItem) -> Void)? = nil) {
+         controlContent: AnyView? = nil, onOpenReviews: ((ApprovedWorklistItem) -> Void)? = nil) {
         _graphMode = State(initialValue: graphMode)
         self.cache = cache
         self.onOpenReviews = onOpenReviews
+        self.controlContent = controlContent
         _selectedKey = State(initialValue: selected)
         _search = State(initialValue: search)
         _filter = State(initialValue: filter)
@@ -153,6 +155,7 @@ struct ApprovedWorklistView: View {
             VStack(alignment: .leading, spacing: 14) {
                 Text(copy("nav")).font(.largeTitle.bold())
                 Text(copy("subtitle")).foregroundStyle(.secondary)
+                if let controlContent { controlContent }
                 if cache.usingLastObservation {
                     Text(copy("cachedObservation")).foregroundStyle(.orange)
                         .accessibilityIdentifier("worklist.cached")

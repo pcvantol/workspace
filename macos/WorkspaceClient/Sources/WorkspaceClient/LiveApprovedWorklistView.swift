@@ -54,10 +54,11 @@ struct LiveApprovedWorklistView: View {
                 }.disabled(state.isBusy).padding(.horizontal, 18).accessibilityIdentifier("worklist.workset")
             }
             if !reviewNavigationStatus.isEmpty { Text(copy(reviewNavigationStatus)).foregroundStyle(.orange).padding(.horizontal, 18) }
-            WorklistControlView(state: controls, connection: connection, stateScope: state.cache.snapshot?.scope)
             ApprovedWorklistView(cache: state.cache.snapshot != nil &&
                 !state.matchesObservedPairing(endpoint: client.savedEndpoint, instanceID: client.savedInstance)
-                ? WorklistObservationCache() : state.cache, onOpenReviews: onOpenReviews)
+                ? WorklistObservationCache() : state.cache,
+                controlContent: AnyView(WorklistControlView(state: controls, connection: connection, stateScope: state.cache.snapshot?.scope)),
+                onOpenReviews: onOpenReviews)
         }
         .task { await state.refreshWithControls(connection: connection()) }
         .onChange(of: state.cache.snapshot?.scope) { _, scope in

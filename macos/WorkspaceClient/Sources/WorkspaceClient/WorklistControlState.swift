@@ -48,7 +48,7 @@ final class WorklistControlState: ObservableObject {
         switch error {
         case WorklistControlError.denied: current = nil; receipt = nil; phase = "controlDenied"
         case WorklistControlError.conflict: current = nil; phase = "controlConflict"
-        case WorklistControlError.missing: phase = pending == nil ? "controlUnsupported" : "controlPending"
+        case WorklistControlError.missing: current = nil; phase = pending == nil ? "controlUnsupported" : "controlPending"
         case WorklistControlError.invalid: current = nil; phase = "controlInvalid"
         default: current = nil; phase = "controlOffline"
         }
