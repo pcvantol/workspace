@@ -48,6 +48,11 @@ class CandidateContractTests(unittest.TestCase):
  def testOriginalReceiptAndCurrentReadbackCannotBeForged(self):
   w.response(registration(),'registration',B,'a'*32,'proposal-one',expected=registration_request())
   self.reject(lambda d:w.response(d,'registration',B,'a'*32,'proposal-one',expected=registration_request()),registration(),[lambda d:d['original_receipt'].update(registration_key='sha256:'+'0'*64),lambda d:d['original_receipt'].update(operation_id='bad/ID'),lambda d:d['original_receipt'].update(registered_at='bad'),lambda d:d['original_receipt'].update(proposal_digest='sha256:'+'0'*64),lambda d:d['original_receipt'].update(rationale='<bad>'),lambda d:d['current']['candidate'].update(title='changed without digest'),lambda d:d['current'].update(candidate_digest='sha256:'+'0'*64),lambda d:d['original_receipt'].update(recommendation_id='wrong')])
+  scoped=['forge-one:alice','project-one','repo-one','a'*32,'proposal-one',1]
+  for index in range(1,5):
+   foreign=scoped.copy();foreign[index]='foreign'
+   d=registration();d['original_receipt']['registration_key']=w.digest(foreign)
+   with self.assertRaises(WorklistError):w.registration(d,B,'a'*32,'proposal-one')
   d=registration();d['current']['candidate']['id']='other';d['current']['candidate_digest']=w.digest(d['current']['candidate'])
   with self.assertRaises(WorklistError):w.registration(d,B,'a'*32,'proposal-one')
   d=registration();d['current']['candidate']['objective']='Current changed independently';d['current']['candidate_digest']=w.digest(d['current']['candidate']);d['current'].update(recommendation_status='SUPERSEDED',source_fresh=False);w.registration(d,B,'a'*32,'proposal-one')

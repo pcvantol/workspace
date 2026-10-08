@@ -159,6 +159,13 @@ extension CandidateTests {
             var b=try fixture("registration"),r=b["original_receipt"] as! [String:Any];r[key]=key=="rationale" ? "<script>":"bad/value";b["original_receipt"]=r
             XCTAssertThrowsError(try CandidateWire.registration(b,access:access,id:"proposal-one"))
         }
+        for index in 1...4 {
+            var scoped:[Any]=["forge-one:alice","project-one","repo-one",String(repeating:"a",count:32),"proposal-one",1]
+            scoped[index]="foreign"
+            var b=try fixture("registration"),r=b["original_receipt"] as! [String:Any]
+            r["registration_key"]=try AdvisoryWire.digest(scoped);b["original_receipt"]=r
+            XCTAssertThrowsError(try CandidateWire.registration(b,access:access,id:"proposal-one"))
+        }
         var b=try fixture("registration"),c=b["current"] as! [String:Any],doc=c["candidate"] as! [String:Any];doc["id"]="foreign";c["candidate"]=doc;c["candidate_digest"]=try AdvisoryWire.digest(doc);b["current"]=c
         XCTAssertThrowsError(try CandidateWire.registration(b,access:access,id:"proposal-one"))
         var p=try fixture("preview");p["registration"]=try fixture("registration");_=try CandidateWire.preview(data(p),access:access,id:"proposal-one",revision:1)
