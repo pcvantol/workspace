@@ -147,13 +147,13 @@ final class AdvisoryTests:XCTestCase {
         for language in ["en","nl","de","fr","es"] {
             XCTAssertNotEqual(AdvisoryCopy.text("send",language:language),"send")
             for theme in [ColorScheme.light,.dark] {
-                let host=NSHostingView(rootView:AdvisoryView(state:state,drafts:drafts,connection:{self.connection}).environment(\.locale,Locale(identifier:language)).environment(\.colorScheme,theme))
+                let host=NSHostingView(rootView:AdvisoryView(state:state,candidates:drafts.candidates,drafts:drafts,connection:{self.connection}).environment(\.locale,Locale(identifier:language)).environment(\.colorScheme,theme))
                 host.frame=NSRect(x:0,y:0,width:440,height:1500);host.layoutSubtreeIfNeeded()
             }
         }
         await state.send(text:"Synthetic displayed advice",mode:"BUSINESS",connection:connection)
         func renderCurrent() {
-            let host=NSHostingView(rootView:AdvisoryView(state:state,drafts:drafts,connection:{self.connection}));host.frame=NSRect(x:0,y:0,width:640,height:2200);host.layoutSubtreeIfNeeded()
+            let host=NSHostingView(rootView:AdvisoryView(state:state,candidates:drafts.candidates,drafts:drafts,connection:{self.connection}));host.frame=NSRect(x:0,y:0,width:640,height:2200);host.layoutSubtreeIfNeeded()
         }
         renderCurrent();drafts.mode="UX";renderCurrent()
         ambiguous=true;await state.send(text:"Synthetic unresolved",mode:"ARCHITECTURE",connection:connection);renderCurrent()

@@ -1,5 +1,37 @@
 # Workspace Bootstrap
 
+## Owner five-language steering — r81 plan92, 8 October 2026
+
+The same owner Work session now requires consistent English, Dutch, German,
+French and Spanish throughout Workspace, with a persistent explicit choice and
+system fallback. This extends the active Candidate delivery; same writer,
+assignment, branch and original base. No new peer API or translation provider.
+Canonical user/source content and pending intents retain their identity on a
+language switch. EP presentation was inspected read-only. Closed predecessors,
+producer pin Forge2.9.0/8923be50 and consumed history stay unchanged.
+Full118native+1isolated+125Python owning validation and per-file coverage pass.
+Current production37d95bb has17actual packaged GUI phases and genuine selected
+installed controls, including preference persistence and measured native themes.
+Independent exact-head reviews/protected/fresh exact-main finish remain pending.
+
+## Selected native advice to Candidate — 8 October 2026, r81 plan91
+
+[Mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6060807829)
+selects L4-NATIVE-ADVISORY-CANDIDATE-V1-20261008 within the existing assignment,
+writer and Work session. [Pickup](https://github.com/pcvantol/forge/issues/208#issuecomment-6060988549)
+binds clean3c29fc377abf2dac5b5aec49dfbac2897fa7e8f6/2.8.11 and
+branchcodex/r81-native-advisory-candidate, r81 plan91. Closed
+[PR141/plan90 terminal](https://github.com/pcvantol/forge/issues/208#issuecomment-6059862568)
+reconciles previous pending fields without reopening its immutable proof.
+Bounded2.8.12 adds explicit user proposal save/amendment and exact-revision
+unapproved Candidate registration, separate owner grant and durable same-request
+recovery through existing native→ownServer→Forge HTTP. No approval/Mission/provider
+from this flow. New consumerqualification targets Forge2.9.0/8923be50, not newer
+main; earlier pins/budget history/primary checkout remain preserved. Full source/
+review/protected/finalization/newinstalled/nativeGUI gates remain pending.
+See [the selected consumer boundary](docs/WORKSPACE_NATIVE_ADVISORY_CANDIDATE_V1.md).
+
+
 ## Selected native advice inspector — 8 October 2026, r81 plan90
 
 [Mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6058224232)

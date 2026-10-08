@@ -40,7 +40,7 @@ OPENAPI_SCHEMAS = {
                        "auth": {"type": "string", "enum": ["PUBLIC", "BEARER_PINNED",
                                                         "BEARER_PINNED_AND_DRAFT_GRANT",
                                                         "BEARER_PINNED_AND_REVIEW_GRANT",
-                                                        "BEARER_PINNED_AND_WORKLIST_GRANT", "BEARER_PINNED_AND_WORKLIST_CONTROL_GRANT", "BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT", "PRIVATE_ROOT_OWNER"]},
+                                                        "BEARER_PINNED_AND_WORKLIST_GRANT", "BEARER_PINNED_AND_WORKLIST_CONTROL_GRANT", "BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT", "BEARER_PINNED_AND_DRAFT_AND_CANDIDATE_GRANT", "PRIVATE_ROOT_OWNER"]},
                        "method": {"type": "string", "enum": ["GET", "POST", "PATCH"]},
                        "path": {"type": "string"}, "local_cli": {"type": "string"}},
     },

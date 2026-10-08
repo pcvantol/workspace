@@ -16,13 +16,14 @@ def validate(value, kind):
     _check(value, SCHEMA['$defs'][kind])
     return value
 
-def _check(value, schema):
-    if '$ref' in schema: return _check(value, SCHEMA['$defs'][schema['$ref'].rsplit('/', 1)[1]])
+def _check(value, schema, definitions=None):
+    definitions = SCHEMA['$defs'] if definitions is None else definitions
+    if '$ref' in schema: return _check(value, definitions[schema['$ref'].rsplit('/', 1)[1]], definitions)
     for union in ('oneOf', 'anyOf'):
         if union in schema:
             matches = 0
             for option in schema[union]:
-                try: _check(value, option); matches += 1
+                try: _check(value, option, definitions); matches += 1
                 except WorklistError: pass
             if not matches or (union == 'oneOf' and matches != 1): raise WorklistError('INVALID_RESPONSE')
             return
@@ -34,10 +35,10 @@ def _check(value, schema):
     if isinstance(value, dict):
         props = schema.get('properties', {})
         if not set(schema.get('required', [])) <= set(value) or (schema.get('additionalProperties') is False and not set(value) <= set(props)): raise WorklistError('INVALID_RESPONSE')
-        for key, item in value.items(): _check(item, props.get(key, {}))
+        for key, item in value.items(): _check(item, props.get(key, {}), definitions)
     elif isinstance(value, list):
         if not schema.get('minItems', 0) <= len(value) <= schema.get('maxItems', 64): raise WorklistError('INVALID_RESPONSE')
-        for item in value: _check(item, schema.get('items', {}))
+        for item in value: _check(item, schema.get('items', {}), definitions)
     elif isinstance(value, str):
         if not schema.get('minLength', 0) <= len(value) <= schema.get('maxLength', 4096): raise WorklistError('INVALID_RESPONSE')
         if 'pattern' in schema and re.fullmatch(schema['pattern'], value) is None: raise WorklistError('INVALID_RESPONSE')

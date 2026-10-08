@@ -57,6 +57,7 @@ final class ConversationState: ObservableObject {
     @Published private(set) var archiveConfirmation: Bool?
 
     let advisory: AdvisoryState
+    let candidates: CandidateState
 
     private let grants: DraftGrantWorker
     private let localDrafts: LocalDraftWorker
@@ -74,8 +75,10 @@ final class ConversationState: ObservableObject {
     init(grants: any DraftGrantStore = DraftGrantKeychain(),
          localDrafts: any LocalDraftStore = PrivateLocalDraftCache(),
          transport: ConversationTransport = ConversationTransport(),
-         advisory: AdvisoryState? = nil) {
+         advisory: AdvisoryState? = nil,
+         candidates: CandidateState? = nil) {
         self.advisory = advisory ?? AdvisoryState()
+        self.candidates = candidates ?? CandidateState()
         self.grants = DraftGrantWorker(grants)
         self.localDrafts = LocalDraftWorker(localDrafts)
         self.transport = transport

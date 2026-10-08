@@ -1,5 +1,23 @@
 # Workspace Backlog
 
+## Selected native advice to Candidate — 8 October 2026, r81 plan91
+
+[Mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6060807829)
+selects L4-NATIVE-ADVISORY-CANDIDATE-V1-20261008 within the existing assignment,
+writer and Work session. [Pickup](https://github.com/pcvantol/forge/issues/208#issuecomment-6060988549)
+binds clean3c29fc377abf2dac5b5aec49dfbac2897fa7e8f6/2.8.11 and
+branchcodex/r81-native-advisory-candidate, r81 plan91. Closed
+[PR141/plan90 terminal](https://github.com/pcvantol/forge/issues/208#issuecomment-6059862568)
+reconciles previous pending fields without reopening its immutable proof.
+Bounded2.8.12 adds explicit user proposal save/amendment and exact-revision
+unapproved Candidate registration, separate owner grant and durable same-request
+recovery through existing native→ownServer→Forge HTTP. No approval/Mission/provider
+from this flow. New consumerqualification targets Forge2.9.0/8923be50, not newer
+main; earlier pins/budget history/primary checkout remain preserved. Full source/
+review/protected/finalization/newinstalled/nativeGUI gates remain pending.
+See [the selected consumer boundary](docs/WORKSPACE_NATIVE_ADVISORY_CANDIDATE_V1.md).
+
+
 ## Selected native worklist hold controls — 8 October 2026, r81 plan88
 
 [Owner mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6050026304)

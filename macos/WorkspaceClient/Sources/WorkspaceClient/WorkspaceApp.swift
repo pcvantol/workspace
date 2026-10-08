@@ -7,6 +7,14 @@ private enum IsolatedWindowEvidence {
     static func capture(in directory: String) {
         Task { @MainActor in
             try? await Task.sleep(for: .seconds(2))
+            guard let app=NSApp else { return }
+            // Apply the isolated theme after AppKit creates the application.
+            if let theme=ProcessInfo.processInfo.environment["WORKSPACE_ISOLATED_THEME"],
+               ["light","dark"].contains(theme),
+               let appearance=NSAppearance(named:theme=="dark" ? .darkAqua:.aqua) {
+                app.appearance=appearance
+                try? await Task.sleep(for:.milliseconds(200))
+            }
             guard let window = NSApp.windows.first(where: { $0.title == "Workspace" }),
                   let image = CGWindowListCreateImage(.null, .optionIncludingWindow,
                                                       CGWindowID(window.windowNumber),
@@ -14,6 +22,13 @@ private enum IsolatedWindowEvidence {
             let bitmap = NSBitmapImageRep(cgImage: image)
             guard let png = bitmap.representation(using: .png, properties: [:]) else { return }
             let root = URL(fileURLWithPath: directory, isDirectory: true)
+            let facts:[String:Any]=["pid":ProcessInfo.processInfo.processIdentifier,
+                "appearance":window.effectiveAppearance.bestMatch(from:[.aqua,.darkAqua])?.rawValue ?? "unknown",
+                "locale":WorkspaceLanguage.current,"preferred_languages":Locale.preferredLanguages,"width":window.frame.width,"height":window.frame.height]
+            if let data=try? JSONSerialization.data(withJSONObject:facts,options:.sortedKeys) {
+                try? FileManager.default.createDirectory(at:root,withIntermediateDirectories:true,attributes:[.posixPermissions:0o700])
+                try? data.write(to:root.appendingPathComponent("window-facts.public.json"),options:.atomic)
+            }
             try? FileManager.default.createDirectory(at: root, withIntermediateDirectories: true,
                                                      attributes: [.posixPermissions: 0o700])
             let target = root.appendingPathComponent("conversation-window.png")
@@ -52,7 +67,9 @@ struct WorkspaceApp: App {
         _conversations = StateObject(wrappedValue: ConversationState(
             grants: IsolatedDraftGrant(document),
             localDrafts: PrivateLocalDraftCache(root: URL(fileURLWithPath: document.local_root)),
-            advisory: AdvisoryState(credentials: IsolatedAdvisoryCredentials(document))))
+            advisory: AdvisoryState(credentials: IsolatedAdvisoryCredentials(document)),
+            candidates:CandidateState(credentials:IsolatedCandidateCredentials(document),
+                store:PrivateCandidateLocalStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("candidate-drafts")))))
         _reviews = StateObject(wrappedValue: MissionReviewState(credentials: IsolatedReviewGrant(document)))
         _worklists = StateObject(wrappedValue: WorklistState(credentials: IsolatedWorklistGrant(document),
             controls: WorklistControlState(credentials: IsolatedWorklistControlGrant(document))))
@@ -65,14 +82,17 @@ struct WorkspaceApp: App {
         #endif
     }
 
+    @AppStorage(WorkspaceLanguage.key) private var language="system"
     var body: some Scene {
         WindowGroup("Workspace") {
             ContentView(client: client, conversations: conversations, reviews: reviews, worklists: worklists)
+                .environment(\.locale,Locale(identifier:WorkspaceLanguage.resolve(language)))
                 .frame(minWidth: 640, minHeight: 520)
         }
         .defaultSize(width: 900, height: 650)
         Settings {
             SettingsView(client: client, conversations: conversations)
+                .environment(\.locale,Locale(identifier:WorkspaceLanguage.resolve(language)))
                 .frame(width: 490)
                 .padding(24)
         }
@@ -80,6 +100,7 @@ struct WorkspaceApp: App {
 }
 
 struct ContentView: View {
+    @Environment(\.locale) private var locale
     @ObservedObject var client: ClientState
     @StateObject private var conversations: ConversationState
     @StateObject private var reviews: MissionReviewState
@@ -119,130 +140,132 @@ struct ContentView: View {
         TabView(selection: $selectedTab) {
             ConversationsView(client: client, state: conversations)
                 .environment(\.nativeTabCommandsActive, selectedTab == 0)
-                .tabItem { Label(ConversationCopy.text("nav"), systemImage: "bubble.left.and.bubble.right") }.tag(0)
+                .tabItem { Label(ConversationCopy.text("nav",language:locale.language.languageCode?.identifier), systemImage: "bubble.left.and.bubble.right") }.tag(0)
             LiveMissionReviewsView(client: client, state: reviews, selection: $requestedReview)
                 .environment(\.nativeTabCommandsActive, selectedTab == 1)
-                .tabItem { Label(MissionReviewCopy.text("nav"), systemImage: "checkmark.seal") }.tag(1)
+                .tabItem { Label(MissionReviewCopy.text("nav",language:locale.language.languageCode?.identifier), systemImage: "checkmark.seal") }.tag(1)
             LiveApprovedWorklistView(client: client, state: worklists,
                 reviewNavigationStatus: reviewNavigationStatus, onOpenReviews: openReview)
                 .environment(\.nativeTabCommandsActive, selectedTab == 2)
-                .tabItem { Label(WorklistCopy.text("nav"), systemImage: "list.bullet.rectangle") }.tag(2)
+                .tabItem { Label(WorklistCopy.text("nav",language:locale.language.languageCode?.identifier), systemImage: "list.bullet.rectangle") }.tag(2)
             ServerOverviewView(client: client)
-                .tabItem { Label("Server", systemImage: "server.rack") }.tag(3)
+                .tabItem { Label(WorkspaceCopy.text("Server",language:locale.language.languageCode?.identifier), systemImage: "server.rack") }.tag(3)
         }
     }
 }
 
 struct ServerOverviewView: View {
+    @Environment(\.locale) private var locale
     @ObservedObject var client: ClientState
     @Environment(\.scenePhase) private var scenePhase
     private let refresh = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
 
+    private func copy(_ key:String) -> String { WorkspaceCopy.text(key,language:locale.language.languageCode?.identifier) }
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
             HStack {
                 VStack(alignment: .leading) {
                     Text("Workspace").font(.largeTitle.bold())
-                    Text("Read-only Server connection").foregroundStyle(.secondary)
+                    Text(copy("Read-only Server connection")).foregroundStyle(.secondary)
                 }
                 Spacer()
-                SettingsLink { Label("Settings", systemImage: "gearshape") }
-                Button("Reconnect") { client.reconnect() }
+                SettingsLink { Label(copy("Settings"), systemImage: "gearshape") }
+                Button(copy("Reconnect")) { client.reconnect() }
                     .disabled(client.savedEndpoint.isEmpty ||
                               ["LOADING", "CONNECTING", "SAVING", "FORGETTING"].contains(client.phase))
                 if client.phase == "LOADING" || client.phase == "CONNECTING" {
-                    Button("Cancel") { client.cancel() }
+                    Button(copy("Cancel")) { client.cancel() }
                 }
             }
-            SectionCard("Connection") {
+            SectionCard(copy("Connection")) {
                 VStack(alignment: .leading, spacing: 8) {
-                    LabeledContent("State", value: client.phase)
-                    LabeledContent("Server", value: client.savedEndpoint.isEmpty ? "Not paired" : client.savedEndpoint)
-                    LabeledContent("Instance", value: client.savedInstance.isEmpty ? "Not pinned" : client.savedInstance)
-                    Text(client.detail).foregroundStyle(client.phase == "CONNECTED" ? .primary : .secondary)
+                    LabeledContent(copy("State"), value: copy(client.phase))
+                    LabeledContent(copy("Server"), value: client.savedEndpoint.isEmpty ? copy("Not paired") : client.savedEndpoint)
+                    LabeledContent(copy("Instance"), value: client.savedInstance.isEmpty ? copy("Not pinned") : client.savedInstance)
+                    Text(WorkspaceCopy.detail(client.detail,language:locale.language.languageCode?.identifier)).foregroundStyle(client.phase == "CONNECTED" ? .primary : .secondary)
                         .textSelection(.enabled)
                 }.frame(maxWidth: .infinity, alignment: .leading)
             }
             if let snapshot = client.snapshot {
-                SectionCard("Server") {
+                SectionCard(copy("Server")) {
                     VStack(alignment: .leading) {
-                        LabeledContent("Version", value: snapshot.status.version)
-                        LabeledContent("State", value: snapshot.status.state)
-                        LabeledContent("Project source", value: snapshot.status.project_source)
-                        LabeledContent("Read at", value: snapshot.observedAt.formatted(date: .abbreviated, time: .standard))
+                        LabeledContent(copy("Version"), value: snapshot.status.version)
+                        LabeledContent(copy("State"), value: copy(snapshot.status.state))
+                        LabeledContent(copy("Project source"), value: copy(snapshot.status.project_source))
+                        LabeledContent(copy("Read at"), value: snapshot.observedAt.formatted(.dateTime.locale(locale)))
                         if client.phase != "CONNECTED" {
-                            Text("Cached read — current Server state is unavailable").foregroundStyle(.orange)
+                            Text(copy("Cached read — current Server state is unavailable")).foregroundStyle(.orange)
                         }
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
-                SectionCard("Forge read") {
+                SectionCard(copy("Forge read")) {
                     VStack(alignment: .leading, spacing: 8) {
                         switch snapshot.forge {
                         case .success(let forge):
-                            LabeledContent("State", value: forge.state)
+                            LabeledContent(copy("State"), value: copy(forge.state))
                             if forge.state == "OBSERVED" {
-                                LabeledContent("Forge version", value: forge.product_version ?? "Unknown")
-                                LabeledContent("Instance", value: forge.instance_id ?? "Unknown")
-                                LabeledContent("Repository", value: forge.repository_id ?? "Unknown")
-                                LabeledContent("Availability", value: forge.availability ?? "Unknown")
-                                LabeledContent("Freshness", value: forge.freshness ?? "UNKNOWN")
-                                LabeledContent("Source observed", value: forge.source_observed_at ?? "No source time")
-                                LabeledContent("Retrieved", value: forge.retrieved_at ?? "No retrieval time")
+                                LabeledContent(copy("Forge version"), value: forge.product_version ?? copy("Unknown"))
+                                LabeledContent(copy("Instance"), value: forge.instance_id ?? copy("Unknown"))
+                                LabeledContent(copy("Repository"), value: forge.repository_id ?? copy("Unknown"))
+                                LabeledContent(copy("Availability"), value: copy(forge.availability ?? "Unknown"))
+                                LabeledContent(copy("Freshness"), value: copy(forge.freshness ?? "UNKNOWN"))
+                                LabeledContent(copy("Source observed"), value: forge.source_observed_at ?? copy("No source time"))
+                                LabeledContent(copy("Retrieved"), value: forge.retrieved_at ?? copy("No retrieval time"))
                                 if !forge.isCurrent {
-                                    Text("Forge has no current available observation")
+                                    Text(copy("Forge has no current available observation"))
                                         .foregroundStyle(.orange)
                                 }
                             } else {
-                                Text("No verified Forge observation")
+                                Text(copy("No verified Forge observation"))
                                     .foregroundStyle(.orange)
                             }
-                        case .failure(let error):
-                            Text("Forge read unavailable: \(error.localizedDescription)")
+                        case .failure:
+                            Text(copy("Forge read unavailable"))
                                 .foregroundStyle(.orange)
                         }
                         if client.phase != "CONNECTED" {
-                            Text("Cached read — reconnect to check Forge again")
+                            Text(copy("Cached read — reconnect to check Forge again"))
                                 .foregroundStyle(.orange)
                         }
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
                 HStack(alignment: .top, spacing: 16) {
-                    SectionCard("Projects") {
+                    SectionCard(copy("Projects")) {
                         VStack(alignment: .leading, spacing: 8) {
                             switch snapshot.projects {
                             case .success(let catalogue):
-                                LabeledContent("State", value: catalogue.state)
-                                LabeledContent("Source", value: catalogue.source ?? "Unconfigured")
-                                LabeledContent("Observed", value: catalogue.observed_at ?? "No source observation")
-                                if catalogue.partial { Text("Partial source data").foregroundStyle(.orange) }
-                                if catalogue.stale { Text("Stale source data").foregroundStyle(.orange) }
+                                LabeledContent(copy("State"), value: copy(catalogue.state))
+                                LabeledContent(copy("Source"), value: copy(catalogue.source ?? "Unconfigured"))
+                                LabeledContent(copy("Observed"), value: catalogue.observed_at ?? copy("No source observation"))
+                                if catalogue.partial { Text(copy("Partial source data")).foregroundStyle(.orange) }
+                                if catalogue.stale { Text(copy("Stale source data")).foregroundStyle(.orange) }
                                 ForEach(catalogue.projects) { project in
                                     HStack { Text(project.name); Spacer(); Text(project.id).foregroundStyle(.secondary) }
                                 }
-                            case .failure(let error):
-                                Text("UNAVAILABLE: \(error.localizedDescription)").foregroundStyle(.orange)
+                            case .failure:
+                                Text(copy("Unavailable")).foregroundStyle(.orange)
                             }
                         }.frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    SectionCard("Capabilities") {
+                    SectionCard(copy("Capabilities")) {
                         VStack(alignment: .leading, spacing: 8) {
                             switch snapshot.capabilities {
                             case .success(let inventory):
-                                Text(inventory.peer_operations_qualified ? "Peer operations qualified" : "Peer operations unqualified")
+                                Text(copy(inventory.peer_operations_qualified ? "Peer operations qualified" : "Peer operations unqualified"))
                                     .foregroundStyle(.secondary)
                                 ForEach(inventory.operations) { operation in
-                                    HStack { Text(operation.id); Spacer(); Text(operation.exposure).font(.caption).foregroundStyle(.secondary) }
+                                    HStack { Text(operation.id); Spacer(); Text(copy(operation.exposure)).font(.caption).foregroundStyle(.secondary) }
                                 }
-                            case .failure(let error):
-                                Text("UNAVAILABLE: \(error.localizedDescription)").foregroundStyle(.orange)
+                            case .failure:
+                                Text(copy("Unavailable")).foregroundStyle(.orange)
                             }
                         }.frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
             } else {
-                ContentUnavailableView("No Server read yet", systemImage: "network.slash",
-                                       description: Text("Open Settings to pair an installed Workspace Server."))
+                ContentUnavailableView(copy("No Server read yet"), systemImage: "network.slash",
+                                       description: Text(copy("Open Settings to pair an installed Workspace Server.")))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             Spacer(minLength: 0)
@@ -282,26 +305,33 @@ struct SettingsView: View {
     @State private var address = ""
     @State private var token = ""
     @State private var forgettingServer = false
+    @AppStorage(WorkspaceLanguage.key) private var language="system"
 
     var body: some View {
         Form {
-            Section("Workspace Server") {
-                TextField("Server address", text: $address, prompt: Text("https://server.example"))
+            Section(WorkspaceCopy.text("Language")) {
+                Picker(WorkspaceCopy.text("Language"),selection:$language) {
+                    Text(WorkspaceCopy.text("Follow system")).tag("system")
+                    ForEach(WorkspaceLanguage.supported,id:\.self) { Text(WorkspaceLanguage.names[$0]!).tag($0) }
+                }.accessibilityIdentifier("workspace.language")
+            }
+            Section(WorkspaceCopy.text("Workspace Server")) {
+                TextField(WorkspaceCopy.text("Server address"), text: $address, prompt: Text("https://server.example"))
                     .textContentType(.URL)
-                SecureField("Instance token", text: $token)
-                Text("Only loopback may use HTTP. Other Server addresses require HTTPS with normal certificate verification.")
+                SecureField(WorkspaceCopy.text("Instance token"), text: $token)
+                Text(WorkspaceCopy.text("Only loopback may use HTTP. Other Server addresses require HTTPS with normal certificate verification."))
                     .font(.caption).foregroundStyle(.secondary)
             }
-            Section("Binding") {
-                LabeledContent("Pinned instance", value: client.savedInstance.isEmpty ? "None" : client.savedInstance)
+            Section(WorkspaceCopy.text("Binding")) {
+                LabeledContent(WorkspaceCopy.text("Pinned instance"), value: client.savedInstance.isEmpty ? WorkspaceCopy.text("None") : client.savedInstance)
                 HStack {
-                    Button("Connect") {
+                    Button(WorkspaceCopy.text("Connect")) {
                         guard !forgettingServer, !conversations.preparingServerForget else { return }
                         client.connect(address: address, enteredToken: token)
                         token = ""
                     }.disabled(forgettingServer || conversations.preparingServerForget ||
                                ["LOADING", "SAVING", "FORGETTING"].contains(client.phase))
-                    Button("Forget Server") {
+                    Button(WorkspaceCopy.text("Forget Server")) {
                         guard !forgettingServer else { return }
                         forgettingServer = true
                         Task {
@@ -318,9 +348,9 @@ struct SettingsView: View {
                                forgettingServer || conversations.preparingServerForget ||
                                ["SAVING", "FORGETTING"].contains(client.phase))
                 }
-                Text("Forget removes this app's current pairing only. Earlier pre-release pairings may still exist in Mac Keychain.")
+                Text(WorkspaceCopy.text("Forget removes this app's current pairing only. Earlier pre-release pairings may still exist in Mac Keychain."))
                     .font(.caption).foregroundStyle(.secondary)
-                Text(client.detail).font(.caption).foregroundStyle(.secondary)
+                Text(WorkspaceCopy.detail(client.detail)).font(.caption).foregroundStyle(.secondary)
             }
         }
         .onAppear { address = client.savedEndpoint }

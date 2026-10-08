@@ -128,3 +128,7 @@ Full experience: RC-WQ plus its qualified producer subsets. Preserve existing
 conversation/session references and canonical decision provenance across
 upgrade/restore. Do not reset Missions, budgets or approvals. Forge Server Console
 continues as instance administration; Workspace remains the human project surface.
+
+## Selected plan91 RC-WP registration subset
+
+See [native Candidate consumer](WORKSPACE_NATIVE_ADVISORY_CANDIDATE_V1.md): explicit proposal save/amendment/registration selected; full RC-WP/decisions/execution/family not qualified. Closed plan90 terminal reconciles inspector pending fields; budgets and prior producer combinations preserved.

@@ -10,6 +10,7 @@ python3 scripts/advance_product_version.py --check
 python3 scripts/test_product_version_operations.py
 python3 scripts/test_release_operation.py
 python3 scripts/test_release_workflow_contract.py
+node --test --experimental-test-coverage --test-coverage-include=workspace_control/client.js --test-coverage-lines=80.21 scripts/test_client_languages.mjs
 python3 scripts/test_macos_app_packaging.py
 python3 scripts/test_macos_app_preservation.py
 python3 scripts/validate_advisory_projection.py

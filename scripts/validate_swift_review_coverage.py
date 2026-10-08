@@ -6,6 +6,8 @@ import sys
 
 
 SOURCES = {
+    "WorkspaceLocalization.swift",
+    "CandidateModels.swift", "CandidateWire.swift", "CandidateCredentials.swift", "CandidateTransport.swift", "CandidateLocalStore.swift", "CandidateState.swift", "CandidateView.swift",
     "AdvisoryInspector.swift", "AdvisoryInspectorView.swift", "AdvisoryModels.swift", "AdvisoryWire.swift", "AdvisoryCredentials.swift", "AdvisoryTransport.swift", "AdvisoryState.swift", "AdvisoryView.swift", "ConversationState.swift",
     "MissionReviewDecisionState.swift", "MissionReviewDiscovery.swift",
     "MissionReviewState.swift", "MissionReviewTransport.swift",

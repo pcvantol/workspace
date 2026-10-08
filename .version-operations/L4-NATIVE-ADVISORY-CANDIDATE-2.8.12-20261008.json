@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "L4-NATIVE-ADVISORY-CANDIDATE-V1-20261008 r81 plan91",
+  "determined_version": "2.8.12",
+  "event_lineage": "L4-NATIVE-ADVISORY-CANDIDATE-V1-20261008 r81 plan91",
+  "expected_source_revision": "3c29fc377abf2dac5b5aec49dfbac2897fa7e8f6",
+  "expected_version": "2.8.11",
+  "operation_id": "L4-NATIVE-ADVISORY-CANDIDATE-2.8.12-20261008",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

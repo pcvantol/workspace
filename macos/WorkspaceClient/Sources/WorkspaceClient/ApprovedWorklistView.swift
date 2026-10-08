@@ -109,7 +109,7 @@ enum WorklistCopy {
 
     static func text(_ key: String, language: String? = nil) -> String {
         guard let translations = values[key] else { return key }
-        let index = languages.firstIndex(of: language ?? "en") ?? 0
+        let index = languages.firstIndex(of: language ?? WorkspaceLanguage.current) ?? 0
         return translations[index]
     }
 }

@@ -51,11 +51,13 @@ enum AdvisoryCopy {
 }
 struct AdvisoryView: View {
     @ObservedObject var state:AdvisoryState
+    @ObservedObject var candidates:CandidateState
     @ObservedObject var drafts:ConversationState
     let connection:() async -> AdvisoryConnection?
     @Environment(\.locale) private var locale
     @State private var grant=""
     @FocusState private var inspectorEntry:String?
+    @FocusState private var candidateEntry:String?
     private func copy(_ key:String) -> String { AdvisoryCopy.text(key,language:locale.language.languageCode?.identifier ?? "en") }
     var body: some View {
         GroupBox(copy("title")) {
@@ -77,6 +79,11 @@ struct AdvisoryView: View {
                     Button(copy("forgetGrant")) { state.forgetGrant() }.disabled(state.busy || state.pending != nil)
                 }
                 Button(copy("refresh")) { Task { await state.refresh(connection()) } }.disabled(state.busy).accessibilityIdentifier("advisory.refresh")
+                if candidates.hasOwnDraft {
+                    Button(CandidateCopy.text("form",locale:locale.language.languageCode?.identifier ?? "en")) {
+                        Task { await candidates.openOwnDraft(connection()) }
+                    }.disabled(candidates.busy).accessibilityIdentifier("candidate.open-own-draft")
+                }
                 if let cap=state.capability {
                     GroupBox(copy("context")) {
                         VStack(alignment:.leading,spacing:8) {
@@ -99,7 +106,7 @@ struct AdvisoryView: View {
                 Button(copy("send")) {
                     let text=drafts.draft,mode=drafts.mode
                     Task { await state.send(text:text,mode:mode,connection:connection()) }
-                }.disabled(!drafts.canEdit || !state.canSend(text:drafts.draft,mode:drafts.mode))
+                }.disabled(candidates.open || !drafts.canEdit || !state.canSend(text:drafts.draft,mode:drafts.mode))
                     .keyboardShortcut(.return,modifiers:.command).accessibilityIdentifier("advisory.send")
                 if let pending=state.pending,state.pendingForSelection {
                     Text(verbatim:pending.request.turn_id).font(.caption)
@@ -120,6 +127,8 @@ struct AdvisoryView: View {
         .sheet(isPresented:Binding(get:{state.inspectorOpen},set:{ if !$0 { state.closeInspector() } })) {
             AdvisoryInspectorView(state:state)
         }
+        .sheet(isPresented:$candidates.open) { CandidateView(state:candidates) }
+        .onChange(of:candidates.open) { _,isOpen in if !isOpen { candidateEntry=candidates.local.turnID } }
         .onChange(of:state.inspectedTurnID) { old,new in if new==nil { inspectorEntry=old } }
     }
     private func modeLabel(_ mode:String) -> String { ConversationCopy.text(mode=="BUSINESS" ? "business":mode=="ARCHITECTURE" ? "architect":"ux") }
@@ -129,6 +138,11 @@ struct AdvisoryView: View {
                 Text(verbatim:t.request.turn_id).font(.caption)
                 Text(copy("submitted")).font(.caption.bold())
                 Text(verbatim:t.request.objective).textSelection(.enabled)
+                if t.hasValidatedAdvice {
+                    Button(CandidateCopy.text("title",locale:locale.language.languageCode?.identifier ?? "en")) {
+                        candidateEntry=t.request.turn_id;Task { await candidates.begin(t,connection:connection()) }
+                    }.disabled(state.busy || candidates.busy).accessibilityIdentifier("advisory.candidate."+t.request.turn_id).focused($candidateEntry,equals:t.request.turn_id)
+                }
                 if t.hasValidatedAdvice,let output=t.outcome?.output {
                     Text(copy("result")).font(.caption.bold())
                     Text(verbatim:output.summary).textSelection(.enabled)
