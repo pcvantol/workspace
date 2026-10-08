@@ -79,7 +79,9 @@ final class CandidateTests:XCTestCase {
         let a=AdvisoryTests(),raw=try a.fixture("record")
         var t=try AdvisoryWire.turn(raw,access:a.access,conversation:a.connection.conversationID)
         let s=try AdvisoryWire.decode(fixture("source"),as:CandidateSource.self)
-        t=AdvisoryTurnRecord(request:AdvisoryRequest(contract_version:AdvisoryWire.contract,turn_id:s.turn_id,instance_id:"forge-one",project_id:"project-one",repository_id:"repo-one",conversation_id:access.conversationID,advisor_kind:s.advisor_kind,objective:"Synthetic source",expected_revision:0,context_revision:s.context_revision,selected_sources:s.selected_sources),request_digest:s.request_digest,session_id:s.session_id,invocation_id:s.invocation_id,context:t.context,provider:t.provider,status:"COMPLETE",lifecycle:t.lifecycle,execution:"CONFIRMED",outcome:AdvisoryOutcome(execution:"CONFIRMED",diagnostic:t.outcome!.diagnostic,usage:t.outcome!.usage,usage_status:"OBSERVED",observed_model:"NOT_REPORTED",observed_effort:"NOT_REPORTED",output:t.outcome!.output,result_digest:s.result_digest,error_code:nil),admitted_at:t.admitted_at,grant_id:t.grant_id,consumption:1)
+        let oldOutput=t.outcome!.output!
+        let output=AdvisoryOutput(contract_version:oldOutput.contract_version,request_digest:s.request_digest,advisor_kind:s.advisor_kind,summary:s.advice_summary,alternatives:oldOutput.alternatives,questions:oldOutput.questions,suggestions:oldOutput.suggestions,evidence_references:s.evidence_references,applied:false)
+        t=AdvisoryTurnRecord(request:AdvisoryRequest(contract_version:AdvisoryWire.contract,turn_id:s.turn_id,instance_id:"forge-one",project_id:"project-one",repository_id:"repo-one",conversation_id:access.conversationID,advisor_kind:s.advisor_kind,objective:"Synthetic source",expected_revision:0,context_revision:s.context_revision,selected_sources:s.selected_sources),request_digest:s.request_digest,session_id:s.session_id,invocation_id:s.invocation_id,context:t.context,provider:t.provider,status:"COMPLETE",lifecycle:t.lifecycle,execution:"CONFIRMED",outcome:AdvisoryOutcome(execution:"CONFIRMED",diagnostic:t.outcome!.diagnostic,usage:t.outcome!.usage,usage_status:"OBSERVED",observed_model:"NOT_REPORTED",observed_effort:"NOT_REPORTED",output:output,result_digest:s.result_digest,error_code:nil),admitted_at:t.admitted_at,grant_id:t.grant_id,consumption:1)
         return t
     }
     @MainActor func prepared() async throws -> (CandidateState,CandidateMemory,CandidateDraftMemory) {
@@ -148,6 +150,9 @@ extension CandidateTests {
         for (key,value) in [("instance_id","foreign" as Any),("additional_model_calls",1),("proposal_ids",["other"])] {
             var b=try fixture("capability");b[key]=value;XCTAssertThrowsError(try CandidateWire.capability(data(b),access:access))
         }
+        var linkedSource=try AdvisoryWire.decode(fixture("source"),as:CandidateSource.self)
+        XCTAssertTrue(linkedSource.matches(try turn()));linkedSource.advice_summary="Another summary with unchanged digest";XCTAssertFalse(linkedSource.matches(try turn()))
+        linkedSource=try AdvisoryWire.decode(fixture("source"),as:CandidateSource.self);linkedSource.evidence_references=["foreign:ref"];XCTAssertFalse(linkedSource.matches(try turn()))
         let source=try fixture("source");XCTAssertThrowsError(try CandidateWire.source(data(["contract_version":CandidateWire.contract,"source":source,"read_only":true]),turn:"wrong"))
         _=try CandidateWire.registration(fixture("registration"),access:access,id:"proposal-one")
         for key in ["registration_key","candidate_digest","principal_reference","operation_id","rationale"] {

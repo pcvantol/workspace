@@ -175,7 +175,8 @@ extension CandidateSource {
     func matches(_ turn:AdvisoryTurnRecord) -> Bool {
         turn_id==turn.request.turn_id && request_digest==turn.request_digest && result_digest==turn.outcome?.result_digest &&
         session_id==turn.session_id && invocation_id==turn.invocation_id && context_revision==turn.request.context_revision &&
-        advisor_kind==turn.request.advisor_kind && selected_sources==turn.request.selected_sources
+        advisor_kind==turn.request.advisor_kind && selected_sources==turn.request.selected_sources &&
+        advice_summary==turn.outcome?.output?.summary && evidence_references==turn.context.evidence_references
     }
 }
 extension CandidateProposal {
