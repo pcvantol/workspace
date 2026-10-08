@@ -8,7 +8,7 @@ from .review_peer import _unique_pairs
 from .worklist_peer import WorklistError
 from .advisory_contract import validate
 
-def request(binding, method, path, body=None, *, gate=None):
+def request(binding, method, path, body=None, *, gate=None, error_validator=validate):
     scheme,host,port=_endpoint(binding['endpoint'])
     connection=(http.client.HTTPSConnection(host,port,timeout=60,context=ssl.create_default_context()) if scheme=='https' else http.client.HTTPConnection(host,port,timeout=60))
     try:
@@ -24,7 +24,7 @@ def request(binding, method, path, body=None, *, gate=None):
         if len(raw)>65536:raise WorklistError('INVALID_RESPONSE')
         value=json.loads(raw,object_pairs_hook=_unique_pairs)
         if response.status!=200:
-            validate(value,'error');raise WorklistError(value['error']['code'])
+            error_validator(value,'error');raise WorklistError(value['error']['code'])
         return value
     except WorklistError:raise
     except (ssl.SSLCertVerificationError,ssl.CertificateError):raise WorklistError('TLS_UNTRUSTED') from None

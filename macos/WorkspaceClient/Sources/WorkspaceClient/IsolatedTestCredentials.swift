@@ -20,6 +20,7 @@ struct IsolatedTestDocument: Decodable {
     let worklist_workset_ids: [String]?
 
     let advisory_access: AdvisoryAccess?
+    let candidate_access: CandidateAccess?
 
     let control_grant: String?
     let control_actor: String?
@@ -92,6 +93,10 @@ struct IsolatedTestDocument: Decodable {
         if let advisory=document.advisory_access {
             guard advisory.valid,advisory.endpoint==document.endpoint,advisory.workspaceInstanceID==document.instance_id,
                   advisory.workspaceProjectID==document.project_id else { throw ConversationError.invalidResponse }
+        }
+        if let candidate=document.candidate_access {
+            guard candidate.valid,candidate.endpoint==document.endpoint,candidate.workspaceInstanceID==document.instance_id,
+                  candidate.workspaceProjectID==document.project_id else { throw ConversationError.invalidResponse }
         }
         return document
     }
@@ -226,5 +231,13 @@ final class IsolatedAdvisoryCredentials: AdvisoryCredentials, @unchecked Sendabl
         }
     }
     func forgetIntent() throws { try lock.withLock { try cache.remove(scopeHash:key) } }
+}
+final class IsolatedCandidateCredentials:CandidateCredentials,@unchecked Sendable {
+    private let lock=NSLock()
+    private var access:CandidateAccess?
+    init(_ document:IsolatedTestDocument) { access=document.candidate_access }
+    func load() throws -> CandidateAccess? { lock.withLock { access } }
+    func save(_ value:CandidateAccess) throws { lock.withLock { access=value } }
+    func forget() throws { lock.withLock { access=nil } }
 }
 #endif

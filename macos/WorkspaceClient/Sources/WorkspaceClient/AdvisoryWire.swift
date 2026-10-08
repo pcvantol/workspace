@@ -8,13 +8,13 @@ enum AdvisoryWire {
     static let contract = "forge-advisory-conversation/v1"
     static func validate(_ value: Any, kind: String) throws {
         let defs=schema["$defs"] as! [String:Any]
-        try check(value, defs[kind] as! [String:Any])
+        try check(value, defs[kind] as! [String:Any], definitions:defs)
     }
-    private static func check(_ value: Any, _ rules: [String:Any]) throws {
-        if let ref=rules["$ref"] as? String { return try validate(value,kind:ref.components(separatedBy:"/").last!) }
+    static func check(_ value: Any, _ rules: [String:Any], definitions:[String:Any]) throws {
+        if let ref=rules["$ref"] as? String { return try check(value,definitions[ref.components(separatedBy:"/").last!] as! [String:Any],definitions:definitions) }
         for union in ["oneOf","anyOf"] {
             if let options=rules[union] as? [[String:Any]] {
-                let matches=options.filter { (try? check(value,$0)) != nil }.count
+                let matches=options.filter { (try? check(value,$0,definitions:definitions)) != nil }.count
                 guard matches>0 && (union != "oneOf" || matches==1) else { throw AdvisoryError.invalid }
                 return
             }
@@ -28,10 +28,10 @@ enum AdvisoryWire {
             let properties=rules["properties"] as? [String:[String:Any]] ?? [:]
             guard Set(rules["required"] as? [String] ?? []).isSubset(of:Set(obj.keys)),
                 (rules["additionalProperties"] as? Bool) != false || Set(obj.keys).isSubset(of:Set(properties.keys)) else { throw AdvisoryError.invalid }
-            for (k,v) in obj { try check(v,properties[k] ?? [:]) }
+            for (k,v) in obj { try check(v,properties[k] ?? [:],definitions:definitions) }
         } else if let items=value as? [Any] {
             guard items.count >= (rules["minItems"] as? Int ?? 0), items.count <= (rules["maxItems"] as? Int ?? 64) else { throw AdvisoryError.invalid }
-            for v in items { try check(v,rules["items"] as? [String:Any] ?? [:]) }
+            for v in items { try check(v,rules["items"] as? [String:Any] ?? [:],definitions:definitions) }
         } else if let text=value as? String {
             guard text.unicodeScalars.count >= (rules["minLength"] as? Int ?? 0), text.unicodeScalars.count <= (rules["maxLength"] as? Int ?? 4096) else { throw AdvisoryError.invalid }
             if let pattern=rules["pattern"] as? String { guard text.range(of:pattern,options:.regularExpression)?.lowerBound==text.startIndex else { throw AdvisoryError.invalid } }

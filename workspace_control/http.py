@@ -128,6 +128,19 @@ OPERATIONS["advisory.contract.read"]={"exposure":"HTTP_EXPOSED","method":"GET","
 for key in ["issue", "revoke"]:
     OPERATIONS["advisory.bind."+key]={"exposure":"LOCAL_ONLY_ADMIN","local_cli":"advisory-bind-"+key,"auth":"PRIVATE_ROOT_OWNER","summary":"private owner advisory binding"}
 
+for key, method, path in [
+    ("access", "GET", "/v1/advisory-candidates/access"),
+    ("capability", "GET", "/v1/advisory-candidates/capability"),
+    ("source", "GET", "/v1/advisory-candidates/{conversation_id}/source/{turn_id}"),
+    ("save", "POST", "/v1/advisory-candidates/{conversation_id}/proposals"),
+    ("preview", "GET", "/v1/advisory-candidates/{conversation_id}/proposals/{proposal_id}"),
+    ("register", "POST", "/v1/advisory-candidates/{conversation_id}/proposals/{proposal_id}/registrations"),
+    ("operation", "GET", "/v1/advisory-candidates/{conversation_id}/proposals/{proposal_id}/registrations/{operation_id}")]:
+    OPERATIONS["candidate."+key]={"exposure":"HTTP_EXPOSED","method":method,"path":path,
+        "auth":"BEARER_PINNED_AND_DRAFT_AND_CANDIDATE_GRANT","contract":"candidate","summary":"explicit unapproved Candidate proposal and registration"}
+for key in ["issue", "revoke"]:
+    OPERATIONS["candidate.bind."+key]={"exposure":"LOCAL_ONLY_ADMIN","local_cli":"candidate-bind-"+key,"auth":"PRIVATE_ROOT_OWNER","summary":"private owner Candidate binding"}
+
 ROUTES = {details["path"]: details["summary"] for details in OPERATIONS.values()
           if details["exposure"] == "HTTP_EXPOSED" and details.get("contract", "read") == "read"}
 
@@ -535,6 +548,52 @@ def handler_for(service, *, public_host=None, scheme="http"):
             if self._conversation_scope()!=scope:return
             self._reply(200,result)
 
+        def _candidate_route(self, *, write=False):
+            if not self._pinned_auth():return
+            scope=self._conversation_scope()
+            if scope is None:return
+            tokens=self.headers.get_all("X-Workspace-Candidate-Grant",[])
+            if len(tokens)!=1:return self._reply(403,{"error":"CANDIDATE_GRANT_REQUIRED"})
+            try:
+                b=service.candidates.access(tokens[0]);service.candidates.bound(b,scope)
+                parsed=urlsplit(self.path);parts=parsed.path.split('/');query=parse_qs(parsed.query,keep_blank_values=True,max_num_fields=2)
+                if parts[-1] in ('access','capability'):
+                    if write or query:raise WorklistError('INVALID_REQUEST')
+                    result=service.candidates.metadata(b,scope) if parts[-1]=='access' else service.candidates.capability(b)
+                else:
+                    c=parts[3];service.candidates.bound(b,scope,c)
+                    if write:
+                        if query:raise WorklistError('INVALID_REQUEST')
+                        lengths=self.headers.get_all('Content-Length',[])
+                        if len(lengths)!=1 or not lengths[0].isdecimal() or not 1<=int(lengths[0])<=65536 or self.headers.get('Transfer-Encoding') or self.headers.get('Content-Type','').split(';',1)[0].lower()!='application/json':raise WorklistError('INVALID_REQUEST')
+                        try:body=json.loads(self.rfile.read(int(lengths[0])),object_pairs_hook=_unique_json_object)
+                        except (ValueError,UnicodeError,RecursionError):raise WorklistError('INVALID_REQUEST') from None
+                        registering=len(parts)==7
+                        if registering and (not isinstance(body,dict) or body.get('proposal_id')!=parts[5]):raise WorklistError('INVALID_REQUEST')
+                        authority=service.advisory_forward_scope(self.headers['X-Workspace-Draft-Grant'],scope)
+                        result=service.candidates.command(b,c,body,registration=registering,authority=authority)
+                    elif parts[4]=='source':
+                        if query:raise WorklistError('INVALID_REQUEST')
+                        result=service.candidates.source(b,c,parts[5])
+                    elif len(parts)==6:
+                        if set(query)!={'revision'} or len(query['revision'])!=1:raise WorklistError('INVALID_REQUEST')
+                        try:revision=int(query['revision'][0])
+                        except ValueError:raise WorklistError('INVALID_REQUEST') from None
+                        result=service.candidates.preview(b,c,parts[5],revision)
+                    else:
+                        if query:raise WorklistError('INVALID_REQUEST')
+                        result=service.candidates.operation(b,c,parts[5],parts[7])
+            except WorklistError as error:
+                state=error.state
+                code=403 if state=='DENIED' else 404 if state in ('CANDIDATE_SUBJECT_NOT_FOUND','CANDIDATE_NOT_FOUND','PROPOSAL_NOT_FOUND','REGISTRATION_NOT_FOUND','ADVISORY_NOT_FOUND') else 400 if state=='INVALID_REQUEST' or state.endswith('_INVALID') else 409 if any(x in state for x in ('CONFLICT','STALE','PENDING','BUDGET','CAPACITY','KEY','REVISION')) else 503
+                return self._reply(code,{"error":state})
+            except FileNotFoundError:return self._reply(404,{"error":"CANDIDATE_NOT_FOUND"})
+            except (ValueError,OSError,UnicodeError,sqlite3.Error):return self._reply(503,{"error":"CANDIDATE_UNAVAILABLE"})
+            if self._conversation_scope()!=scope:return
+            try:service.candidates.access(tokens[0])
+            except WorklistError:return self._reply(403,{"error":"DENIED"})
+            self._reply(200,result)
+
         def _worklist_error(self, error):
             code = {"UNAUTHORIZED": 401, "DENIED": 403, "NOT_FOUND": 404,
                     "CONFLICT": 409}.get(error.state, 503)
@@ -657,6 +716,10 @@ def handler_for(service, *, public_host=None, scheme="http"):
             if not self._trusted_origin():
                 return
             target = self.requestline.split()[1]
+            if target.startswith("/v1/advisory-candidates/"):
+                parsed=urlsplit(target);ident=r"[A-Za-z0-9][A-Za-z0-9._:-]{0,127}"
+                if parsed.fragment or '%' in parsed.path or '..' in parsed.path or not re.fullmatch(r"/v1/advisory-candidates/(?:access|capability|[0-9a-f]{32}/(?:source/"+ident+r"|proposals/"+ident+r"(?:/registrations/"+ident+r")?))",parsed.path):return self._reply(400,{"error":"INVALID_PATH"})
+                return self._candidate_route()
             if target.startswith("/v1/advisory/"):
                 parsed=urlsplit(target)
                 path=parsed.path
@@ -742,6 +805,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_POST(self):
             if not self._trusted_origin():
                 return
+            if re.fullmatch(r"/v1/advisory-candidates/[0-9a-f]{32}/proposals(?:/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/registrations)?",self.path):
+                return self._candidate_route(write=True)
             if re.fullmatch(r"/v1/advisory/[0-9a-f]{32}/turns(?:/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/cancel)?",self.path):
                 return self._advisory_route(write=True)
             if re.fullmatch(r"/v1/workset-controls/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/commands", self.path):

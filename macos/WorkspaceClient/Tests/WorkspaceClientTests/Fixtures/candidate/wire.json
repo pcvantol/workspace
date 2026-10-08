@@ -1,0 +1,337 @@
+{
+  "capability": {
+    "contract_version": "forge-advisory-candidate/v1",
+    "instance_id": "forge-one",
+    "project_id": "project-one",
+    "repository_id": "repo-one",
+    "conversation_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "proposal_ids": [
+      "proposal-one",
+      "proposal-two"
+    ],
+    "maximum_registrations": 2,
+    "registration_authority": "CANDIDATE_ONLY_NO_APPROVAL_OR_EXECUTION",
+    "additional_model_calls": 0,
+    "maximum_proposals_per_instance": 64,
+    "maximum_revisions_per_proposal": 8,
+    "read_only": true
+  },
+  "source": {
+    "turn_id": "turn-one",
+    "session_id": "session-one",
+    "invocation_id": "inv-one",
+    "request_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+    "result_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+    "context_revision": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+    "advisor_kind": "BUSINESS",
+    "conversation_revision": 1,
+    "selected_sources": [],
+    "evidence_references": [
+      "project:one"
+    ],
+    "advice_summary": "Synthetic validated advice; user input remains separate."
+  },
+  "proposal": {
+    "contract_version": "forge-advisory-candidate/v1",
+    "instance_id": "forge-one",
+    "project_id": "project-one",
+    "repository_id": "repo-one",
+    "conversation_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "proposal_id": "proposal-one",
+    "fields": {
+      "title": "Synthetic proposal caf\u00e9",
+      "objective": "A bounded assessment",
+      "business_value": "Explicit usefulness",
+      "engineering_value": "Explicit verification",
+      "architectural_value": "Explicit boundary",
+      "rationale": "Explicit user reasoning",
+      "confidence": 65,
+      "scope": [
+        "Only assess the documented boundary"
+      ],
+      "exclusions": [
+        "No implementation"
+      ],
+      "acceptance_criteria": [
+        "The evidence names every inspected boundary and limitation."
+      ],
+      "architecture_constraints": [
+        "Use existing contracts"
+      ],
+      "dependencies": [],
+      "effect_policy": {
+        "contract_version": "1.0",
+        "mode": "READ_ONLY_ASSESSMENT",
+        "delivery": "EVIDENCE_ONLY",
+        "read_paths": [
+          "docs/"
+        ],
+        "write_paths": []
+      }
+    },
+    "principal_reference": "forge-one:alice",
+    "proposal_revision": 1,
+    "source": {
+      "turn_id": "turn-one",
+      "session_id": "session-one",
+      "invocation_id": "inv-one",
+      "request_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "result_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "context_revision": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "advisor_kind": "BUSINESS",
+      "conversation_revision": 1,
+      "selected_sources": [],
+      "evidence_references": [
+        "project:one"
+      ],
+      "advice_summary": "Synthetic validated advice; user input remains separate."
+    },
+    "field_origins": {
+      "fields": "EXPLICIT_USER",
+      "source.advice_summary": "VALIDATED_ADVICE"
+    },
+    "proposal_digest": "sha256:a8fbc8b388182e619bd9953fd35a1b52010ccda477c38ff6d2ec72a8061740d8"
+  },
+  "preview": {
+    "contract_version": "forge-advisory-candidate/v1",
+    "proposal": {
+      "contract_version": "forge-advisory-candidate/v1",
+      "instance_id": "forge-one",
+      "project_id": "project-one",
+      "repository_id": "repo-one",
+      "conversation_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "proposal_id": "proposal-one",
+      "fields": {
+        "title": "Synthetic proposal caf\u00e9",
+        "objective": "A bounded assessment",
+        "business_value": "Explicit usefulness",
+        "engineering_value": "Explicit verification",
+        "architectural_value": "Explicit boundary",
+        "rationale": "Explicit user reasoning",
+        "confidence": 65,
+        "scope": [
+          "Only assess the documented boundary"
+        ],
+        "exclusions": [
+          "No implementation"
+        ],
+        "acceptance_criteria": [
+          "The evidence names every inspected boundary and limitation."
+        ],
+        "architecture_constraints": [
+          "Use existing contracts"
+        ],
+        "dependencies": [],
+        "effect_policy": {
+          "contract_version": "1.0",
+          "mode": "READ_ONLY_ASSESSMENT",
+          "delivery": "EVIDENCE_ONLY",
+          "read_paths": [
+            "docs/"
+          ],
+          "write_paths": []
+        }
+      },
+      "principal_reference": "forge-one:alice",
+      "proposal_revision": 1,
+      "source": {
+        "turn_id": "turn-one",
+        "session_id": "session-one",
+        "invocation_id": "inv-one",
+        "request_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+        "result_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+        "context_revision": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+        "advisor_kind": "BUSINESS",
+        "conversation_revision": 1,
+        "selected_sources": [],
+        "evidence_references": [
+          "project:one"
+        ],
+        "advice_summary": "Synthetic validated advice; user input remains separate."
+      },
+      "field_origins": {
+        "fields": "EXPLICIT_USER",
+        "source.advice_summary": "VALIDATED_ADVICE"
+      },
+      "proposal_digest": "sha256:a8fbc8b388182e619bd9953fd35a1b52010ccda477c38ff6d2ec72a8061740d8"
+    },
+    "latest_revision": 1,
+    "candidate_preview": {
+      "id": "candidate-one",
+      "recommendation_id": "recommendation-one",
+      "title": "Synthetic proposal caf\u00e9",
+      "objective": "A bounded assessment",
+      "scope": [
+        "Only assess the documented boundary"
+      ],
+      "acceptance_criteria": [
+        "The evidence names every inspected boundary and limitation."
+      ],
+      "dependencies": [],
+      "effect_policy": {
+        "contract_version": "1.0",
+        "mode": "READ_ONLY_ASSESSMENT",
+        "delivery": "EVIDENCE_ONLY",
+        "read_paths": [
+          "docs/"
+        ],
+        "write_paths": []
+      },
+      "architecture_constraints": [
+        "Use existing contracts",
+        "EXCLUDED: No implementation"
+      ]
+    },
+    "registration": null,
+    "read_only": true
+  },
+  "registration": {
+    "contract_version": "forge-advisory-candidate/v1",
+    "recorded": true,
+    "original_receipt": {
+      "contract_version": "forge-advisory-candidate/v1",
+      "operation_id": "operation-one",
+      "principal_reference": "forge-one:alice",
+      "registration_key": "sha256:408c12ced26a07c7c2c0313710a9d25f3d7672a16f4be6409f65406d430c4bce",
+      "proposal_digest": "sha256:a8fbc8b388182e619bd9953fd35a1b52010ccda477c38ff6d2ec72a8061740d8",
+      "proposal_revision": 1,
+      "source": {
+        "turn_id": "turn-one",
+        "session_id": "session-one",
+        "invocation_id": "inv-one",
+        "request_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+        "result_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+        "context_revision": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+        "advisor_kind": "BUSINESS",
+        "conversation_revision": 1,
+        "selected_sources": [],
+        "evidence_references": [
+          "project:one"
+        ],
+        "advice_summary": "Synthetic validated advice; user input remains separate."
+      },
+      "candidate": {
+        "id": "candidate-one",
+        "recommendation_id": "recommendation-one",
+        "title": "Synthetic proposal caf\u00e9",
+        "objective": "A bounded assessment",
+        "scope": [
+          "Only assess the documented boundary"
+        ],
+        "acceptance_criteria": [
+          "The evidence names every inspected boundary and limitation."
+        ],
+        "dependencies": [],
+        "effect_policy": {
+          "contract_version": "1.0",
+          "mode": "READ_ONLY_ASSESSMENT",
+          "delivery": "EVIDENCE_ONLY",
+          "read_paths": [
+            "docs/"
+          ],
+          "write_paths": []
+        },
+        "architecture_constraints": [
+          "Use existing contracts",
+          "EXCLUDED: No implementation"
+        ]
+      },
+      "recommendation_id": "recommendation-one",
+      "candidate_digest": "sha256:0f091d3b1c91903c1d9eb2b5f0397e91aeed34610209ca60f5d3db384e714026",
+      "recommendation_digest": "sha256:4444444444444444444444444444444444444444444444444444444444444444",
+      "registered_at": "2026-10-08T14:00:00Z",
+      "status_at_registration": "RECOMMENDED",
+      "rationale": "Explicit user reasoning"
+    },
+    "current": {
+      "candidate": {
+        "id": "candidate-one",
+        "recommendation_id": "recommendation-one",
+        "title": "Synthetic proposal caf\u00e9",
+        "objective": "A bounded assessment",
+        "scope": [
+          "Only assess the documented boundary"
+        ],
+        "acceptance_criteria": [
+          "The evidence names every inspected boundary and limitation."
+        ],
+        "dependencies": [],
+        "effect_policy": {
+          "contract_version": "1.0",
+          "mode": "READ_ONLY_ASSESSMENT",
+          "delivery": "EVIDENCE_ONLY",
+          "read_paths": [
+            "docs/"
+          ],
+          "write_paths": []
+        },
+        "architecture_constraints": [
+          "Use existing contracts",
+          "EXCLUDED: No implementation"
+        ]
+      },
+      "candidate_digest": "sha256:0f091d3b1c91903c1d9eb2b5f0397e91aeed34610209ca60f5d3db384e714026",
+      "recommendation_status": "RECOMMENDED",
+      "conversation_revision": 1,
+      "source_fresh": true,
+      "mission_allocation": false
+    }
+  },
+  "request": {
+    "contract_version": "forge-advisory-candidate/v1",
+    "instance_id": "forge-one",
+    "project_id": "project-one",
+    "repository_id": "repo-one",
+    "conversation_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "proposal_id": "proposal-one",
+    "turn_id": "turn-one",
+    "expected_revision": 0,
+    "expected_conversation_revision": 1,
+    "context_revision": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+    "fields": {
+      "title": "Synthetic proposal caf\u00e9",
+      "objective": "A bounded assessment",
+      "business_value": "Explicit usefulness",
+      "engineering_value": "Explicit verification",
+      "architectural_value": "Explicit boundary",
+      "rationale": "Explicit user reasoning",
+      "confidence": 65,
+      "scope": [
+        "Only assess the documented boundary"
+      ],
+      "exclusions": [
+        "No implementation"
+      ],
+      "acceptance_criteria": [
+        "The evidence names every inspected boundary and limitation."
+      ],
+      "architecture_constraints": [
+        "Use existing contracts"
+      ],
+      "dependencies": [],
+      "effect_policy": {
+        "contract_version": "1.0",
+        "mode": "READ_ONLY_ASSESSMENT",
+        "delivery": "EVIDENCE_ONLY",
+        "read_paths": [
+          "docs/"
+        ],
+        "write_paths": []
+      }
+    }
+  },
+  "registration_request": {
+    "contract_version": "forge-advisory-candidate/v1",
+    "instance_id": "forge-one",
+    "project_id": "project-one",
+    "repository_id": "repo-one",
+    "conversation_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "proposal_id": "proposal-one",
+    "expected_conversation_revision": 1,
+    "context_revision": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+    "operation_id": "operation-one",
+    "proposal_revision": 1,
+    "proposal_digest": "sha256:a8fbc8b388182e619bd9953fd35a1b52010ccda477c38ff6d2ec72a8061740d8",
+    "confirm": true
+  }
+}

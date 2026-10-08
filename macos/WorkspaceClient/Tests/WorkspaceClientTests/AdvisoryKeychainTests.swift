@@ -3,7 +3,7 @@ import Security
 import XCTest
 @testable import WorkspaceClient
 
-private final class AdviceKeychainBackend:@unchecked Sendable {
+final class AdviceKeychainBackend:@unchecked Sendable {
     var records:[String:Data]=[:]
     var failure:OSStatus?
     var services:[String]=[]

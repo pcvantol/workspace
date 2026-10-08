@@ -78,13 +78,14 @@ struct ConversationsView: View {
     @ObservedObject var client: ClientState
     @ObservedObject var state: ConversationState
     @ObservedObject var advisory: AdvisoryState
+    @ObservedObject var candidates:CandidateState
     @Environment(\.nativeTabCommandsActive) private var commandsActive
     @Environment(\.scenePhase) private var scenePhase
     @FocusState private var editorFocused: Bool
     @FocusState private var searchFocused: Bool
 
     init(client:ClientState,state:ConversationState) {
-        self.client=client;self.state=state;self.advisory=state.advisory
+        self.client=client;self.state=state;self.advisory=state.advisory;self.candidates=state.candidates
     }
     private var advisoryScope:[String] { [client.savedEndpoint,client.savedInstance,state.projectID,state.selectedID ?? "",state.selectedConversation?.actor_id ?? ""] }
     private func adviceConnection() async -> AdvisoryConnection? { await state.advisoryConnection(client:client) }
@@ -307,7 +308,7 @@ struct ConversationsView: View {
                         .focused($editorFocused)
                         .accessibilityLabel(ConversationCopy.text("draft"))
                         .disabled(!state.canEdit)
-                    AdvisoryView(state:advisory,drafts:state,connection:adviceConnection)
+                    AdvisoryView(state:advisory,candidates:candidates,drafts:state,connection:adviceConnection)
                     }
                     .padding(20)
                     .frame(maxWidth: 720, alignment: .leading)
@@ -359,18 +360,18 @@ struct ConversationsView: View {
         }
         .task { await state.prepare(client: client); await advisory.refresh(adviceConnection()) }
         .onChange(of:advisoryScope) { _, _ in
-            advisory.invalidate();Task { await advisory.refresh(adviceConnection()) }
+            advisory.invalidate();candidates.invalidate();Task { await advisory.refresh(adviceConnection()) }
         }
         .onChange(of: client.phase) { _, phase in
             if phase == "CONNECTED" {
                 Task { await state.prepare(client: client); await advisory.refresh(adviceConnection()) }
             } else {
-                advisory.suspend(transient:phase=="CONNECTING")
+                advisory.suspend(transient:phase=="CONNECTING");candidates.suspend()
                 Task { await state.handleClientPhase(phase) }
             }
         }
         .onChange(of:state.state) { _, value in
-            if ["UNAUTHORIZED","GRANT_REQUIRED","STALE"].contains(value) { advisory.invalidate() }
+            if ["UNAUTHORIZED","GRANT_REQUIRED","STALE"].contains(value) { advisory.invalidate();candidates.invalidate() }
         }
         .onChange(of: [state.title, state.focus, state.mode, state.draft]) { _, _ in
             state.persistLocal()

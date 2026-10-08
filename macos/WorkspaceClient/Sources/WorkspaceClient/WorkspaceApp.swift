@@ -52,7 +52,9 @@ struct WorkspaceApp: App {
         _conversations = StateObject(wrappedValue: ConversationState(
             grants: IsolatedDraftGrant(document),
             localDrafts: PrivateLocalDraftCache(root: URL(fileURLWithPath: document.local_root)),
-            advisory: AdvisoryState(credentials: IsolatedAdvisoryCredentials(document))))
+            advisory: AdvisoryState(credentials: IsolatedAdvisoryCredentials(document)),
+            candidates:CandidateState(credentials:IsolatedCandidateCredentials(document),
+                store:PrivateCandidateLocalStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("candidate-drafts")))))
         _reviews = StateObject(wrappedValue: MissionReviewState(credentials: IsolatedReviewGrant(document)))
         _worklists = StateObject(wrappedValue: WorklistState(credentials: IsolatedWorklistGrant(document),
             controls: WorklistControlState(credentials: IsolatedWorklistControlGrant(document))))
