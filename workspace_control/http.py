@@ -8,6 +8,7 @@ import json
 import os
 import re
 import secrets
+from urllib.parse import urlsplit, parse_qs
 import sqlite3
 import ssl
 import stat
@@ -115,6 +116,18 @@ OPERATIONS = {
     "reviews.bind.revoke": {"exposure": "LOCAL_ONLY_ADMIN", "local_cli": "review-bind-revoke",
                             "auth": "PRIVATE_ROOT_OWNER", "summary": "revoke Workspace actor review binding"},
 }
+for key, method, path in [
+    ("access", "GET", "/v1/advisory/access"), ("capability", "GET", "/v1/advisory/capability"),
+    ("history", "GET", "/v1/advisory/{conversation_id}"),
+    ("submit", "POST", "/v1/advisory/{conversation_id}/turns"),
+    ("turn", "GET", "/v1/advisory/{conversation_id}/turns/{turn_id}"),
+    ("cancel", "POST", "/v1/advisory/{conversation_id}/turns/{turn_id}/cancel")]:
+    OPERATIONS["advisory."+key] = {"exposure":"HTTP_EXPOSED", "method":method, "path":path,
+        "auth":"BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT", "contract":"advisory", "summary":"scoped textual advice"}
+OPERATIONS["advisory.contract.read"]={"exposure":"HTTP_EXPOSED","method":"GET","path":"/v1/advisory/openapi.json","auth":"BEARER_PINNED","contract":"advisory","summary":"closed advisory contract"}
+for key in ["issue", "revoke"]:
+    OPERATIONS["advisory.bind."+key]={"exposure":"LOCAL_ONLY_ADMIN","local_cli":"advisory-bind-"+key,"auth":"PRIVATE_ROOT_OWNER","summary":"private owner advisory binding"}
+
 ROUTES = {details["path"]: details["summary"] for details in OPERATIONS.values()
           if details["exposure"] == "HTTP_EXPOSED" and details.get("contract", "read") == "read"}
 
@@ -340,6 +353,14 @@ def worklist_control_openapi_contract():
     return document
 
 
+def advisory_openapi_contract():
+    from .advisory_contract import SCHEMA
+    return {"openapi":"3.0.3", "info":{"title":"Workspace advisory transport V1", "version":"1"},
+        "x-forge-wire-schema":SCHEMA,
+        "paths":{op["path"]:{op["method"].lower():{"operationId":key,"responses":{"200":{"description":"Verified textual advisory readback"}}}}
+                 for key,op in OPERATIONS.items() if op.get("contract")=="advisory" and key!="advisory.contract.read"}}
+
+
 def handler_for(service, *, public_host=None, scheme="http"):
     class Handler(BaseHTTPRequestHandler):
         timeout = 5
@@ -472,6 +493,46 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return self._reply(503, {"error": "CONVERSATIONS_UNAVAILABLE"})
             self._reply(code, result)
 
+        def _advisory_route(self, *, write=False):
+            if not self._pinned_auth(): return
+            scope=self._conversation_scope()
+            if scope is None:return
+            tokens=self.headers.get_all("X-Workspace-Advisory-Grant",[])
+            if len(tokens)!=1:return self._reply(403,{"error":"ADVISORY_GRANT_REQUIRED"})
+            try:
+                b=service.advisory.access(tokens[0]);service.advisory.bound(b,scope)
+                parsed=urlsplit(self.path);parts=parsed.path.split('/');query=parse_qs(parsed.query,keep_blank_values=True,max_num_fields=4)
+                if parsed.path=='/v1/advisory/access' and not write and not query:
+                    result=service.advisory.metadata(b,scope)
+                elif parsed.path=='/v1/advisory/capability' and not write:
+                    if set(query)-{'source_id','source_version'} or len(query.get('source_id',[]))!=len(query.get('source_version',[])):raise WorklistError('INVALID_REQUEST')
+                    selections=[{'source_id':k,'version':v} for k,v in zip(query.get('source_id',[]),query.get('source_version',[]))]
+                    result=service.advisory.capability(b,selections)
+                else:
+                    c=parts[3];service.advisory.bound(b,scope,c)
+                    if write:
+                        if query:raise WorklistError('INVALID_REQUEST')
+                        lengths=self.headers.get_all('Content-Length',[])
+                        if len(lengths)!=1 or not lengths[0].isdecimal() or not 1<=int(lengths[0])<=16000 or self.headers.get('Transfer-Encoding') or self.headers.get('Content-Type','').split(';',1)[0].lower()!='application/json':raise WorklistError('INVALID_REQUEST')
+                        try:body=json.loads(self.rfile.read(int(lengths[0])),object_pairs_hook=_unique_json_object)
+                        except (ValueError,UnicodeError,RecursionError):raise WorklistError('INVALID_REQUEST') from None
+                        result=(service.advisory.submit(b,c,body) if len(parts)==5 else service.advisory.cancel(b,c,parts[5],body))
+                    elif len(parts)==4:
+                        if set(query)-{'cursor','limit'} or any(len(v)!=1 for v in query.values()):raise WorklistError('INVALID_REQUEST')
+                        try:cursor=int(query.get('cursor',['0'])[0]);limit=int(query.get('limit',['4'])[0])
+                        except ValueError:raise WorklistError('INVALID_REQUEST') from None
+                        result=service.advisory.history(b,c,cursor,limit)
+                    else:
+                        if query:raise WorklistError('INVALID_REQUEST')
+                        result=service.advisory.turn(b,c,parts[5])
+            except WorklistError as error:
+                state=error.state
+                code=403 if state=='DENIED' else 404 if state=='ADVISORY_NOT_FOUND' else 400 if state in ('INVALID_REQUEST','ADVISOR_UNSUPPORTED','ADVISORY_REQUEST_INVALID') else 409 if state in ('ADVISORY_CONFLICT','CONVERSATION_BUSY','TURN_PAYLOAD_CONFLICT','CONVERSATION_OR_CONTEXT_STALE','INVOCATION_UNRESOLVED','TURN_BUDGET_EXHAUSTED','TRANSCRIPT_CAPACITY_EXHAUSTED','CONVERSATION_CAPACITY_EXHAUSTED','CANCEL_PRECONDITION_CHANGED','CONTEXT_STALE') else 503
+                return self._reply(code,{"error":state})
+            except FileNotFoundError:return self._reply(404,{"error":"ADVISORY_NOT_FOUND"})
+            except (ValueError,OSError,UnicodeError,sqlite3.Error):return self._reply(503,{"error":"ADVISORY_UNAVAILABLE"})
+            self._reply(200,result)
+
         def _worklist_error(self, error):
             code = {"UNAUTHORIZED": 401, "DENIED": 403, "NOT_FOUND": 404,
                     "CONFLICT": 409}.get(error.state, 503)
@@ -594,6 +655,15 @@ def handler_for(service, *, public_host=None, scheme="http"):
             if not self._trusted_origin():
                 return
             target = self.requestline.split()[1]
+            if target.startswith("/v1/advisory/"):
+                parsed=urlsplit(target)
+                path=parsed.path
+                if parsed.fragment or '%' in path or '..' in path or not re.fullmatch(r"/v1/advisory/(?:access|capability|openapi.json|[0-9a-f]{32}(?:/turns/[A-Za-z0-9][A-Za-z0-9._:-]{0,127})?)",path):
+                    return self._reply(400,{"error":"INVALID_PATH"})
+                if path=="/v1/advisory/openapi.json":
+                    if self._pinned_auth():return self._reply(200,advisory_openapi_contract())
+                    return
+                return self._advisory_route()
             # Only literal origin-form paths are accepted; URL parsing can raise
             # on malformed authority targets before they reach the 400 response.
             if (not target.startswith("/") or target.startswith("//") or
@@ -670,6 +740,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_POST(self):
             if not self._trusted_origin():
                 return
+            if re.fullmatch(r"/v1/advisory/[0-9a-f]{32}/turns(?:/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/cancel)?",self.path):
+                return self._advisory_route(write=True)
             if re.fullmatch(r"/v1/workset-controls/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/commands", self.path):
                 return self._control_route(self.path, write=True)
             if re.fullmatch(r"/v1/reviews/missions/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/decisions",

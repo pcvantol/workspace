@@ -66,6 +66,17 @@ DAG editing features are not automatic prerequisites. Wire contracts can be
 specified in parallel, but production controls stay unavailable until their
 actual producer capability is qualified.
 
+## Selected native textual advice — r81 plan89
+
+The [8October mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6055010173)
+selects the bounded BUSINESS/ARCHITECTURE RC-WC/RC-WS consumer subset on
+Workspace2.8.10, against pinned qualified Forge2.8.0/88f7560. See the
+[owning implementation/qualification boundary](WORKSPACE_NATIVE_ADVISORY_CHAT_V1.md).
+This extends delivered draft/archive UX with explicit send and canonical history,
+not Candidate/apply/UX/provider execution or full-family closure. Protected/
+installed/newGUI acceptance remains pending. Older draft/hold/graph receipts
+remain closed; no new L3Candidate or signing predecessor.
+
 ## Acceptance and release slices
 
 Read-only history/context can be delivered independently; expose no unavailable

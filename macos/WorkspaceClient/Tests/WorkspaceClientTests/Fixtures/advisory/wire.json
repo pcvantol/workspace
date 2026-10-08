@@ -1,0 +1,157 @@
+{
+  "capability": {
+    "contract_version": "forge-advisory-conversation/v1",
+    "supported_modes": [
+      "BUSINESS",
+      "ARCHITECTURE"
+    ],
+    "unsupported": [
+      "UX",
+      "APPLY"
+    ],
+    "project_id": "project-one",
+    "repository_id": "repo-one",
+    "instance_id": "forge-one",
+    "conversation_ids": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    ],
+    "context": {
+      "instance_id": "forge-one",
+      "project_id": "project-one",
+      "repository_id": "repo-one",
+      "dataset_generation": 1,
+      "included_sources": [
+        "selected"
+      ],
+      "selected_sources": [],
+      "missing_sources": [
+        "Vision",
+        "Portfolio"
+      ],
+      "freshness": "CURRENT_CONFIGURED_BINDING",
+      "evidence_references": [
+        "project:one"
+      ],
+      "limitations": [
+        "No live repository head proof."
+      ]
+    },
+    "context_revision": "sha256:5da3e56a7f0b5fa1c6607a7d849ad2c078bdb80e748c1129a4fd7af1ab1cbebe",
+    "maximum_turns": 8,
+    "available_sources": [],
+    "max_concurrent_invocations_per_instance": 1,
+    "cancel_request_supported": true,
+    "provider_stop_supported": false,
+    "retained_principal_consumed_turns": 0,
+    "live_model_quality": "NOT_QUALIFIED",
+    "unknown_usage": "NOT_REPORTED_AND_NOT_ACCEPTED_AS_BOUND_PROOF",
+    "read_only": true
+  },
+  "record": {
+    "request": {
+      "contract_version": "forge-advisory-conversation/v1",
+      "turn_id": "turn-one",
+      "instance_id": "forge-one",
+      "project_id": "project-one",
+      "repository_id": "repo-one",
+      "conversation_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "advisor_kind": "BUSINESS",
+      "objective": "Value, caf\u00e9 and constraints.",
+      "expected_revision": 0,
+      "context_revision": "sha256:5da3e56a7f0b5fa1c6607a7d849ad2c078bdb80e748c1129a4fd7af1ab1cbebe",
+      "selected_sources": []
+    },
+    "request_digest": "sha256:2ec4e6ddce4198083a7ed829b3866af3ff2da7f7fdde29f803ec2fae66bf73ca",
+    "session_id": "session-one",
+    "invocation_id": "inv-one",
+    "context": {
+      "instance_id": "forge-one",
+      "project_id": "project-one",
+      "repository_id": "repo-one",
+      "dataset_generation": 1,
+      "included_sources": [
+        "selected"
+      ],
+      "selected_sources": [],
+      "missing_sources": [
+        "Vision",
+        "Portfolio"
+      ],
+      "freshness": "CURRENT_CONFIGURED_BINDING",
+      "evidence_references": [
+        "project:one"
+      ],
+      "limitations": [
+        "No live repository head proof."
+      ]
+    },
+    "provider": {
+      "provider_id": "provider-one",
+      "requested_model": null,
+      "requested_profile": null,
+      "requested_effort": "NOT_CONFIGURED",
+      "policy_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "generation_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "configuration_revision": 1,
+      "input_token_bound": 1000,
+      "context_token_bound": 2000,
+      "output_token_bound": 1000
+    },
+    "status": "COMPLETE",
+    "lifecycle": [
+      "CREATED",
+      "PREPARED",
+      "REASONING",
+      "REVIEW",
+      "COMPLETE"
+    ],
+    "execution": "CONFIRMED",
+    "outcome": {
+      "execution": "CONFIRMED",
+      "diagnostic": {
+        "classification": "COMPLETED_VALID",
+        "process_started": true,
+        "exception_type": null,
+        "errno": null,
+        "timed_out": false,
+        "elapsed_milliseconds": 3,
+        "returncode": 0,
+        "error_category": null,
+        "terminal_events": [
+          "turn.completed"
+        ]
+      },
+      "usage": {
+        "input_tokens": 100,
+        "output_tokens": 60
+      },
+      "usage_status": "OBSERVED",
+      "observed_model": "NOT_REPORTED",
+      "observed_effort": "NOT_REPORTED",
+      "output": {
+        "contract_version": "forge-advisory-conversation/v1",
+        "request_digest": "sha256:2ec4e6ddce4198083a7ed829b3866af3ff2da7f7fdde29f803ec2fae66bf73ca",
+        "advisor_kind": "BUSINESS",
+        "summary": "Synthetic bounded advice.",
+        "alternatives": [
+          "Smaller scope."
+        ],
+        "questions": [
+          "Which criterion?"
+        ],
+        "suggestions": [
+          "Review constraints."
+        ],
+        "evidence_references": [
+          "project:one"
+        ],
+        "applied": false
+      },
+      "result_digest": "sha256:744575f30ae7aeb4cf05f634e49a5b8e20c4e8cb0c9c63f4dcc9f4cf95b14978",
+      "error_code": null
+    },
+    "admitted_at": "2026-10-08T06:00:00Z",
+    "grant_id": "grant-one",
+    "consumption": 1
+  }
+}

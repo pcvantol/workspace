@@ -268,10 +268,12 @@ class Service:
             from .review_peer import ReviewTransport
             from .worklist_peer import WorklistReadTransport
             from .worklist_control_peer import WorklistControlTransport
+            from .advisory_peer import AdvisoryTransport
             self.conversations = ConversationStore(self.root, self._root_fd)
             self.reviews = ReviewTransport(self.root, self._root_fd)
             self.worklists = WorklistReadTransport(self.root, self._root_fd)
             self.worklist_controls = WorklistControlTransport(self.root, self._root_fd)
+            self.advisory = AdvisoryTransport(self.root, self._root_fd, self.conversations)
         except Exception:
             self.close()
             raise
@@ -378,6 +380,15 @@ class Service:
 
     def revoke_worklist_control(self, binding_id):
         return self.worklist_controls.revoke(binding_id)
+
+    def provision_advisory(self, actor, project, endpoint, receipt_file, token_file, client_file):
+        catalogue=self.projects()
+        if catalogue["state"] not in ("AVAILABLE", "PARTIAL") or project not in {p["id"] for p in catalogue["projects"]}:
+            raise ValueError("current Workspace project required")
+        return self.advisory.provision(actor, project, endpoint, receipt_file, token_file, client_file)
+
+    def revoke_advisory(self, binding_id):
+        return self.advisory.revoke(binding_id)
 
     def forge_status(self):
         """Read a scoped Forge observation without borrowing peer authority."""

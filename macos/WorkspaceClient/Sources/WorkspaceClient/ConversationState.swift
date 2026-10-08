@@ -56,6 +56,8 @@ final class ConversationState: ObservableObject {
     @Published private(set) var preparingServerForget = false
     @Published private(set) var archiveConfirmation: Bool?
 
+    let advisory: AdvisoryState
+
     private let grants: DraftGrantWorker
     private let localDrafts: LocalDraftWorker
     private let transport: ConversationTransport
@@ -71,10 +73,21 @@ final class ConversationState: ObservableObject {
 
     init(grants: any DraftGrantStore = DraftGrantKeychain(),
          localDrafts: any LocalDraftStore = PrivateLocalDraftCache(),
-         transport: ConversationTransport = ConversationTransport()) {
+         transport: ConversationTransport = ConversationTransport(),
+         advisory: AdvisoryState? = nil) {
+        self.advisory = advisory ?? AdvisoryState()
         self.grants = DraftGrantWorker(grants)
         self.localDrafts = LocalDraftWorker(localDrafts)
         self.transport = transport
+    }
+
+    func advisoryConnection(client:ClientState) async -> AdvisoryConnection? {
+        guard !authorizationSuspended, !preparingServerForget, let access, let selected=selectedConversation,
+              access.projectID==projectID, access.endpoint==client.savedEndpoint, access.instanceID==client.savedInstance,
+              client.phase=="CONNECTED", state != "UNAUTHORIZED" else { return nil }
+        guard let token=try? await client.draftReadToken(), self.access==access, selectedID==selected.id else { return nil }
+        return AdvisoryConnection(endpoint:access.endpoint,workspaceInstanceID:access.instanceID,actorID:selected.actor_id,
+            workspaceProjectID:projectID,conversationID:selected.id,bearer:token,draftGrant:access.token)
     }
 
     var visibleConversations: [Conversation] {
