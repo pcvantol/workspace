@@ -9,8 +9,10 @@ assignment, branch and original base. No new peer API or translation provider.
 Canonical user/source content and pending intents retain their identity on a
 language switch. EP presentation was inspected read-only. Closed predecessors,
 producer pin Forge2.9.0/8923be50 and consumed history stay unchanged.
-Two native localization tests and browser zero-request switching checks pass;
-full validation/review/protected/installed acceptance remains pending.
+Full118native+1isolated+125Python owning validation and per-file coverage pass.
+Current production37d95bb has17actual packaged GUI phases and genuine selected
+installed controls, including preference persistence and measured native themes.
+Independent exact-head reviews/protected/fresh exact-main finish remain pending.
 
 ## Selected native advice to Candidate — 8 October 2026, r81 plan91
 

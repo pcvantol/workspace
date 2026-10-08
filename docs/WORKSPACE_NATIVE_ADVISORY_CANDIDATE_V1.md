@@ -139,3 +139,33 @@ The existing EP presentation is a reference, not imported product source.
 Four installed GUI attempts remain diagnostic, not acceptance (explicit model
 turn counts1/0/1/1); native confidence entry now uses an empty-first explicit
 percentage picker. Previous receipts/budget history remain preserved.
+
+## Source qualification and source finalization candidate
+
+Current production at37d95bb5ab6ccf9195624b884b40a7815313b6cb passes full
+owning118native+1isolated+125Python validation and strict per-file coverage;
+browser JavaScript92.08%, WorkspaceLocalization93.10%, WorkspaceApp83.57%,
+CandidateView85.78%. Exact-schema projection remains unchanged atd5f33e93.
+A genuine noneditable two-product/package qualification completes17actual GUI
+phases and selected installed controls on this producer pin. Native Aqua and
+DarkAqua are measured, not inferred from arguments. All five languages and
+640px windows, explicit in-app preference change and process-restart persistence
+are witnessed. Original/current receipt, source metadata, lost-save/registration
+and fresh app/Server processes, amendment/old revision, cancel, genuine grant
+revoke/renew/expiry/source ACL, delayed transport, capacity and two scopes pass.
+Concurrency returns genuine409CONVERSATION_BUSY and200; serial original-key
+readback and new-key alias retain one original receipt and one unapproved
+Candidate. Normative HTTP JSON is compared with the real producer model
+serialization, preserving the distinction between original and current.
+Explicit advice turn1; Candidate-phase additional turns0. No business or
+architecture decisions, allocations, Missions, Actions or EP requests; zero
+workset mutation requests and real approved-intake refusal without both approvals.
+Independent exact-head reviews/protected delivery and fresh exact-main installed
+qualification remain pending; this is not current-main acceptance.
+
+The owner language revision is[r81 plan92](https://github.com/pcvantol/forge/issues/208#issuecomment-6063462839).
+Historical diagnostic attempts remain distinct, including a zero-provider test
+adapter start failure, normative tuple/JSON detector repairs and unsupported
+regional-locale selection. No predecessor, source producer pin or budget resets.
+Later qualified Forge2.10 future JOIN6064119435 explicitly selects no consumer
+upgrade or approval UI.
