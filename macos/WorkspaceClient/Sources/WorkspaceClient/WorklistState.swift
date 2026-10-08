@@ -68,6 +68,11 @@ final class WorklistState: ObservableObject {
         } catch { if generation == pairingGeneration { fail(error) } }
     }
 
+    func refreshWithControls(connection: WorklistConnection?) async {
+        await refresh(connection: connection)
+        await controls.refresh(connection: connection, scope: cache.snapshot?.scope)
+    }
+
     func refresh(connection: WorklistConnection?, selecting workset: String? = nil) async {
         guard let connection else { invalidatePairing(); return }
         guard !isBusy else { return }

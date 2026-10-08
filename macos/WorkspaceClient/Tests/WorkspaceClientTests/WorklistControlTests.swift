@@ -144,7 +144,19 @@ final class WorklistControlTests: XCTestCase {
         XCTAssertEqual(credentials.intent?.request.operation_id,confirmed)
         XCTAssertEqual(calls.filter { $0.httpMethod=="POST" }.count,1)
         let reopened = WorklistControlState(credentials:credentials,transport:transport)
-        await reopened.refresh(connection:connection,scope:scope)
+        let readCredentials = WorklistMemoryCredentials(); readCredentials.stored = access
+        WorklistStubProtocol.handler = { request in
+            XCTAssertEqual(request.httpMethod, "GET")
+            if request.url?.path == "/v1/worksets" {
+                return (200, try JSONSerialization.data(withJSONObject: ["contract_version":"forge-workspace-worklist-scopes/v1", "instance_id":"forge-1", "principal_id":"actor-a", "workset_ids":["workset-a"], "read_only":true]), "application/json")
+            }
+            return (200, try JSONSerialization.data(withJSONObject:self.snapshot(revision:self.revision)), "application/json")
+        }
+        let readConfig = URLSessionConfiguration.ephemeral; readConfig.protocolClasses = [WorklistStubProtocol.self]
+        let reader = WorklistState(credentials:readCredentials, transport:WorklistTransport(configuration:readConfig), controls:reopened)
+        await reader.refreshWithControls(connection:connection)
+        XCTAssertEqual(reader.cache.snapshot?.scope,scope)
+        XCTAssertTrue(calls.contains { $0.url?.path == "/v1/workset-controls/workset-a/commands/" + confirmed && $0.httpMethod == "GET" })
         XCTAssertEqual(reopened.phase,"controlApplied");XCTAssertTrue(reopened.current?.held == true)
         XCTAssertNil(credentials.intent);XCTAssertEqual(calls.filter { $0.httpMethod=="POST" }.count,1)
         await reopened.resume(connection:connection);XCTAssertEqual(calls.filter { $0.httpMethod=="POST" }.count,1)

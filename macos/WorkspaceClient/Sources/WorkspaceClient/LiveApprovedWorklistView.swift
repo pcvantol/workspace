@@ -29,7 +29,7 @@ struct LiveApprovedWorklistView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Button(copy("refresh")) { Task { await state.refresh(connection: connection()) } }
+                Button(copy("refresh")) { Task { await state.refreshWithControls(connection: connection()) } }
                     .disabled(state.isBusy).accessibilityIdentifier("worklist.refresh")
                 if state.hasGrant {
                     Button(copy("forgetGrant")) { state.forgetGrant() }.disabled(state.isBusy)
@@ -59,7 +59,7 @@ struct LiveApprovedWorklistView: View {
                 !state.matchesObservedPairing(endpoint: client.savedEndpoint, instanceID: client.savedInstance)
                 ? WorklistObservationCache() : state.cache, onOpenReviews: onOpenReviews)
         }
-        .task { await state.refresh(connection: connection()); await controls.refresh(connection: connection(), scope: state.cache.snapshot?.scope) }
+        .task { await state.refreshWithControls(connection: connection()) }
         .onChange(of: state.cache.snapshot?.scope) { _, scope in
             controls.invalidate()
             Task { await controls.refresh(connection: connection(), scope: scope) }
@@ -79,6 +79,6 @@ struct LiveApprovedWorklistView: View {
             state.invalidatePairing(); controls.invalidate()
             Task { await state.refresh(connection: connection()) }
         }
-        .onReceive(timer) { _ in Task { await state.refresh(connection: connection()); await controls.refresh(connection: connection(), scope: state.cache.snapshot?.scope) } }
+        .onReceive(timer) { _ in Task { await state.refreshWithControls(connection: connection()) } }
     }
 }
