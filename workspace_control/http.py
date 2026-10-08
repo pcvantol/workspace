@@ -585,7 +585,7 @@ def handler_for(service, *, public_host=None, scheme="http"):
                         result=service.candidates.operation(b,c,parts[5],parts[7])
             except WorklistError as error:
                 state=error.state
-                code=403 if state=='DENIED' else 404 if state in ('CANDIDATE_SUBJECT_NOT_FOUND','CANDIDATE_NOT_FOUND','PROPOSAL_NOT_FOUND','REGISTRATION_NOT_FOUND','ADVISORY_NOT_FOUND') else 400 if state=='INVALID_REQUEST' or state.endswith('_INVALID') else 409 if any(x in state for x in ('CONFLICT','STALE','PENDING','BUDGET','CAPACITY','KEY','REVISION','CONTEXT_CHANGED','NOT_COMPLETE')) else 503
+                code=403 if state=='DENIED' else 404 if state in ('CANDIDATE_SUBJECT_NOT_FOUND','CANDIDATE_NOT_FOUND','PROPOSAL_NOT_FOUND','REGISTRATION_NOT_FOUND','ADVISORY_NOT_FOUND') else 400 if state=='INVALID_REQUEST' or state.endswith('_INVALID') else 409 if any(x in state for x in ('CONFLICT','STALE','PENDING','BUSY','BUDGET','CAPACITY','KEY','REVISION','CONTEXT_CHANGED','NOT_COMPLETE')) else 503
                 return self._reply(code,{"error":state})
             except FileNotFoundError:return self._reply(404,{"error":"CANDIDATE_NOT_FOUND"})
             except (ValueError,OSError,UnicodeError,sqlite3.Error):return self._reply(503,{"error":"CANDIDATE_UNAVAILABLE"})

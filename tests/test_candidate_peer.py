@@ -20,7 +20,7 @@ class CandidatePeerTests(unittest.TestCase):
   temp=tempfile.TemporaryDirectory();self.addCleanup(temp.cleanup);self.root=Path(temp.name);self.root.chmod(0o700);initialize(self.root)
   (self.root/'projects.json').write_text(json.dumps({'source':'LOCAL','observed_at':datetime.now(timezone.utc).isoformat(),'projects':[{'id':'ws-project','name':'Synthetic'}]}));(self.root/'projects.json').chmod(0o600)
   self.ws=Service(self.root);self.addCleanup(self.ws.close)
-  self.requests=[];self.error=None;self.bad=False;self.delay=None;self.entered=Event();self.release=Event();self.body_authorized=Event()
+  self.requests=[];self.error=None;self.error_code=None;self.bad=False;self.delay=None;self.entered=Event();self.release=Event();self.body_authorized=Event()
   self.tokens={};self.client={};self.drafts={};self.conversations={};self.files={}
   for actor in ['alice','bob']:
    self.drafts[actor]=self.ws.issue_conversation_grant(actor,'ws-project')
@@ -33,7 +33,7 @@ class CandidatePeerTests(unittest.TestCase):
     owner.requests.append((self.command,self.path));conv=owner.conversations.get(actor,'unknown')
     code=owner.error or (200 if actor else 403)
     if self.path==owner.delay:owner.entered.set();assert owner.release.wait(5)
-    if code!=200:value={'contract_version':w.CONTRACT,'error':{'code':'PROPOSAL_STALE' if code==409 else 'CANDIDATE_SUBJECT_NOT_FOUND' if code==404 else 'CANDIDATE_SOURCE_UNAVAILABLE'}}
+    if code!=200:value={'contract_version':w.CONTRACT,'error':{'code':owner.error_code or ('PROPOSAL_STALE' if code==409 else 'CANDIDATE_SUBJECT_NOT_FOUND' if code==404 else 'CANDIDATE_SOURCE_UNAVAILABLE')}}
     elif self.path.endswith('/capability'):value=capability();value['conversation_id']=conv
     elif '/source/' in self.path:value={'contract_version':w.CONTRACT,'source':source(),'read_only':True}
     elif self.command=='POST':
@@ -99,6 +99,8 @@ class CandidatePeerTests(unittest.TestCase):
   rr['proposal_id']='proposal-two';self.assertEqual(self.call(base+'/proposals/proposal-one/registrations','POST',rr)[0],400)
   for code in [404,409,503]:
    self.error=code;self.assertEqual(self.call(base+'/source/turn-one')[0],code)
+  self.error=409;self.error_code='CONVERSATION_BUSY';self.assertEqual(self.call(base+'/source/turn-one'),(409,{'error':'CONVERSATION_BUSY'}))
+  self.error_code=None
   self.error=None;self.bad=True;self.assertEqual(self.call(base+'/source/turn-one')[0],503)
  def testOwnerReceiptTokenPrincipalAndPrivateFilesCannotInventGrant(self):
   file,token,client=self.files['alice'];p=json.loads(file.read_text())
