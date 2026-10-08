@@ -98,8 +98,8 @@ import Combine
         case AdvisoryError.state(let code):
             if code.contains("CAPACITY") || code.contains("BUDGET") || code.contains("KEY_LIMIT") { phase="candidateCapacity" }
             else if code.contains("PENDING") { phase="candidatePending" }
-            else if code.contains("STALE") || code.contains("CONFLICT") { phase="candidateConflict" }
-            else if code.contains("UNSUPPORTED") { phase="candidateUnsupported" }
+            else if code.contains("STALE") || code.contains("CONFLICT") || code.contains("CONTEXT_CHANGED") { phase="candidateConflict" }
+            else if code.contains("UNSUPPORTED") || code.contains("NOT_COMPLETE") { phase="candidateUnsupported" }
             else { phase=pending ? "candidateUncertain":"candidateOffline" }
         default:phase=pending ? "candidateUncertain":"candidateOffline"
         }

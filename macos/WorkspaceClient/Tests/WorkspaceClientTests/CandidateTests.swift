@@ -116,7 +116,7 @@ final class CandidateTests:XCTestCase {
     }
     @MainActor func testDenyOfflineConflictCapacityClearProtectedPresentationKeepOwnText() async throws {
         let (s,_,store)=try await prepared();await s.save();s.edit("rationale","Own unsent explanation")
-        for (status,error,phase) in [(403,"DENIED","candidateDenied"),(409,"SOURCE_STALE","candidateConflict"),(409,"PROPOSAL_CAPACITY_EXHAUSTED","candidateCapacity"),(503,"UNSUPPORTED","candidateUnsupported"),(400,"INVALID_REQUEST","candidateOffline"),(404,"missing","candidateMissing")] {
+        for (status,error,phase) in [(403,"DENIED","candidateDenied"),(409,"SOURCE_STALE","candidateConflict"),(409,"SOURCE_CONTEXT_CHANGED","candidateConflict"),(409,"ADVICE_NOT_COMPLETE","candidateUnsupported"),(409,"PROPOSAL_CAPACITY_EXHAUSTED","candidateCapacity"),(503,"UNSUPPORTED","candidateUnsupported"),(400,"INVALID_REQUEST","candidateOffline"),(404,"missing","candidateMissing")] {
             code=status;errorCode=error;await s.refreshSelection();XCTAssertEqual(s.phase,phase);XCTAssertNil(s.source);XCTAssertNil(s.preview);XCTAssertNil(s.registration);XCTAssertEqual(s.local.form.text["rationale"],"Own unsent explanation")
         }
         code=200;await s.refreshSelection();s.suspend();XCTAssertNil(s.source);XCTAssertEqual(s.local.form.text["rationale"],"Own unsent explanation")

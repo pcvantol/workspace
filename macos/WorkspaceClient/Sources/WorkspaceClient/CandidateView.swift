@@ -23,6 +23,7 @@ struct CandidateView:View {
                 }
                 if let cap=state.capability {
                     Text("\(copy("allowance")): \(cap.maximum_registrations)").font(.caption)
+                    Text("\(copy("latestRevision")): ≤ \(cap.maximum_revisions_per_proposal)").font(.caption)
                     Picker(copy("proposalID"),selection:Binding(get:{state.local.proposalID ?? ""},set:{id in Task { await state.chooseProposal(id) }})) {
                         Text(copy("choose")).tag("")
                         ForEach(cap.proposal_ids,id:\.self) { Text(verbatim:$0).tag($0) }
