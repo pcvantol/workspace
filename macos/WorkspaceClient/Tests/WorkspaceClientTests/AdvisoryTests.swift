@@ -22,6 +22,7 @@ final class AdvisoryTests:XCTestCase {
     var records:[[String:Any]]=[]
     var code=200
     var drop=false
+    var loseBeforeAdmission=false
     var ambiguous=false
     var errorCode="TURN_BUDGET_EXHAUSTED"
     func fixture(_ key:String) throws -> [String:Any] {
@@ -46,6 +47,7 @@ final class AdvisoryTests:XCTestCase {
                 raw=["contract_version":"workspace-advisory-access/v1","actor_id":"alice","workspace_project_id":"ws-project","instance_id":"forge-one","project_id":"project-one","repository_id":"repo-one","conversation_ids":self.access.conversationIDs]
             } else if path.hasSuffix("/capability") { raw=try self.fixture("capability") }
             else if request.httpMethod=="POST" {
+                if self.loseBeforeAdmission { self.loseBeforeAdmission=false;throw URLError(.networkConnectionLost) }
                 if path.hasSuffix("/cancel") {
                     var record=self.records.last!;record["status"]="CANCEL_REQUESTED";record["execution"]="MAY_HAVE_HAPPENED";record["outcome"]=NSNull();self.records[self.records.count-1]=record
                     raw=["contract_version":AdvisoryWire.contract,"original_turn":record,"current_revision":self.records.count,"provider_stopped":false,"cancel_request_recorded":true]
@@ -64,6 +66,7 @@ final class AdvisoryTests:XCTestCase {
                 guard let record=self.records.first(where:{($0["request"] as! [String:Any])["turn_id"] as? String==request.url!.lastPathComponent}) else { return (404,Data("{}".utf8)) }
                 raw=["contract_version":AdvisoryWire.contract,"original_turn":record,"current_revision":self.records.count,"read_only":true]
             } else {
+                if self.records.isEmpty { return (404,Data("{}".utf8)) }
                 let parts=URLComponents(url:request.url!,resolvingAgainstBaseURL:false)!.queryItems ?? []
                 let cursor=Int(parts.first(where:{$0.name=="cursor"})?.value ?? "0")!
                 let page=Array(self.records.dropFirst(cursor).prefix(4));let next=cursor+page.count<self.records.count ? cursor+page.count:nil
@@ -74,6 +77,7 @@ final class AdvisoryTests:XCTestCase {
         let config=URLSessionConfiguration.ephemeral;config.protocolClasses=[StubProtocol.self];return AdvisoryTransport(configuration:config)
     }
     func testClosedSchemaUnicodeHashesAndUnsafeProvenance() throws {
+        XCTAssertEqual(try AdvisoryWire.digest(["objective":"x\u{007f}"]),"sha256:1ba22095794a23b1ce908e20fe4d28a5727100b98c9a5efc321a69d0fbb5cb06")
         let cap=try fixture("capability"),record=try fixture("record")
         _=try AdvisoryWire.capability(JSONSerialization.data(withJSONObject:cap),access:access)
         let turn=try AdvisoryWire.turn(record,access:access,conversation:connection.conversationID)
@@ -88,7 +92,7 @@ final class AdvisoryTests:XCTestCase {
     }
     @MainActor func testBusinessArchitectContinuityLossRestartAndNoAutomaticPost() async throws {
         let memory=AdviceMemory();memory.access=access;let wire=transport();let state=AdvisoryState(credentials:memory,transport:wire)
-        await state.refresh(connection);XCTAssertTrue(state.canSend(text:"Synthetic value.",mode:"BUSINESS"));XCTAssertFalse(state.canSend(text:"UX",mode:"UX"))
+        await state.refresh(connection);XCTAssertEqual(state.phase,"adviceNew");XCTAssertFalse(calls.contains{$0.httpMethod=="POST"});XCTAssertTrue(state.canSend(text:"Synthetic value.",mode:"BUSINESS"));XCTAssertFalse(state.canSend(text:"UX",mode:"UX"))
         drop=true;await state.send(text:"Synthetic value.",mode:"BUSINESS",connection:connection)
         let request=try XCTUnwrap(memory.intent?.request);XCTAssertEqual(calls.filter{$0.httpMethod=="POST"}.count,1)
         let reopened=AdvisoryState(credentials:memory,transport:wire);await reopened.refresh(connection)
@@ -100,6 +104,24 @@ final class AdvisoryTests:XCTestCase {
         XCTAssertEqual(reopened.history.count,4);XCTAssertEqual(reopened.nextCursor,4);await reopened.more(connection);XCTAssertEqual(reopened.history.count,5)
         let before=calls.filter{$0.httpMethod=="POST"}.count;await reopened.refresh(connection);await reopened.resume(connection);XCTAssertEqual(calls.filter{$0.httpMethod=="POST"}.count,before)
         code=403;await reopened.refresh(connection);XCTAssertTrue(reopened.history.isEmpty);XCTAssertNil(reopened.capability)
+    }
+    @MainActor func testAbsentFirstTranscriptRequiresExplicitSameIDRecovery() async throws {
+        let memory=AdviceMemory();memory.access=access
+        let state=AdvisoryState(credentials:memory,transport:transport())
+        await state.refresh(connection);XCTAssertEqual(state.phase,"adviceNew")
+        loseBeforeAdmission=true
+        await state.send(text:"Synthetic first turn lost before admission.",mode:"BUSINESS",connection:connection)
+        let frozen=try XCTUnwrap(memory.intent?.request)
+        await state.refresh(connection)
+        XCTAssertEqual(state.phase,"adviceUncertain")
+        XCTAssertEqual(calls.filter{$0.httpMethod=="POST"}.count,1)
+        await state.resume(connection)
+        XCTAssertNil(memory.intent)
+        XCTAssertEqual(state.latest?.turn.request,frozen)
+        let submits=calls.filter{$0.httpMethod=="POST"}
+        XCTAssertEqual(submits.count,2)
+        XCTAssertEqual(try AdvisoryWire.digest(AdvisoryWire.object(body(submits[0]))),
+                       try AdvisoryWire.digest(AdvisoryWire.object(body(submits[1]))))
     }
     @MainActor func testPersistenceFailureMissingExplicitRecoveryCancellationAndBounds() async throws {
         let memory=AdviceMemory();memory.access=access;let wire=transport();let state=AdvisoryState(credentials:memory,transport:wire)

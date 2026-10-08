@@ -64,7 +64,7 @@ enum AdvisoryWire {
         let data=try JSONSerialization.data(withJSONObject:raw,options:[.sortedKeys,.withoutEscapingSlashes])
         let ascii=String(decoding:data,as:UTF8.self).unicodeScalars.map { scalar -> String in
             let v=scalar.value
-            if v<128 { return String(scalar) }
+            if v<127 { return String(scalar) }
             if v<=0xffff { return String(format:"\\u%04x",v) }
             return String(format:"\\u%04x\\u%04x",0xd800+((v-0x10000)>>10),0xdc00+((v-0x10000)&0x3ff))
         }.joined()

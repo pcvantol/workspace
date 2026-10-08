@@ -531,6 +531,7 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return self._reply(code,{"error":state})
             except FileNotFoundError:return self._reply(404,{"error":"ADVISORY_NOT_FOUND"})
             except (ValueError,OSError,UnicodeError,sqlite3.Error):return self._reply(503,{"error":"ADVISORY_UNAVAILABLE"})
+            if self._conversation_scope()!=scope:return
             self._reply(200,result)
 
         def _worklist_error(self, error):

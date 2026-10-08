@@ -89,10 +89,16 @@ import Combine
                 guard epoch==generation else { return };try accept(value,intent:p)
             }
             let cap=try await transport.capability(a,c,sources:selectedSources)
-            let page=try await transport.history(a,c)
+            var page:AdvisoryHistory?
+            do { page=try await transport.history(a,c) }
+            catch AdvisoryError.missing {
+                // Pinned Forge does not allocate a transcript until first send.
+                // Absence is not an empty canonical transcript or an auto send.
+                guard pending==nil,revision==0,latest==nil else { throw AdvisoryError.missing }
+            }
             guard epoch==generation else { return }
-            capability=cap;history=page.turns;revision=page.revision;nextCursor=page.next_cursor
-            if pending==nil { phase=latest?.turn.status=="COMPLETE" ? "adviceComplete":"adviceCurrent" }
+            capability=cap;history=page?.turns ?? [];revision=page?.revision ?? 0;nextCursor=page?.next_cursor
+            if pending==nil { phase=page==nil ? "adviceNew":latest?.turn.status=="COMPLETE" ? "adviceComplete":"adviceCurrent" }
             else if !pendingForSelection { phase="adviceOtherPending" }
         } catch { if epoch==generation { fail(error) } }
     }
@@ -158,8 +164,12 @@ import Combine
             do { value=try await transport.turn(a,c,request:p.request) }
             catch AdvisoryError.missing {
                 let cap=try await transport.capability(a,c,sources:p.request.selected_sources)
-                let page=try await transport.history(a,c)
-                guard cap.context_revision==p.request.context_revision,page.revision==p.request.expected_revision else { throw AdvisoryError.state("CONVERSATION_OR_CONTEXT_STALE") }
+                var currentRevision:Int
+                do { currentRevision=try await transport.history(a,c).revision }
+                catch AdvisoryError.missing {
+                    guard p.request.expected_revision==0 else { throw AdvisoryError.missing };currentRevision=0
+                }
+                guard cap.context_revision==p.request.context_revision,currentRevision==p.request.expected_revision else { throw AdvisoryError.state("CONVERSATION_OR_CONTEXT_STALE") }
             }
             guard epoch==generation else { return }
             if let cancel=p.cancel {

@@ -62,15 +62,15 @@ class AdvisoryTransport(WorklistReadTransport):
         if not isinstance(selections,list) or len(selections)>2:raise WorklistError('INVALID_REQUEST')
         for s in selections:wire.validate(s,'source')
         query=urlencode([pair for s in selections for pair in [('source_id',s['source_id']),('source_version',s['version'])]])
-        return wire.response(control_request(b,'GET','/v1/advisory/capability'+('?' + query if query else '')),'capability',b)
+        return wire.response(self._read(b,'/v1/advisory/capability'+('?' + query if query else '')),'capability',b)
 
     def history(self,b,c,cursor,limit):
         if type(cursor) is not int or not 0<=cursor<=8 or type(limit) is not int or not 1<=limit<=4:raise WorklistError('INVALID_REQUEST')
-        return wire.response(control_request(b,'GET',f'/v1/advisory/{c}?cursor={cursor}&limit={limit}'),'history',b,c)
+        return wire.response(self._read(b,f'/v1/advisory/{c}?cursor={cursor}&limit={limit}'),'history',b,c)
 
     def turn(self,b,c,t):
         if not _id(t):raise WorklistError('INVALID_REQUEST')
-        v=wire.response(control_request(b,'GET',f'/v1/advisory/{c}/turns/{t}'),'turn',b,c)
+        v=wire.response(self._read(b,f'/v1/advisory/{c}/turns/{t}'),'turn',b,c)
         if v['original_turn']['request']['turn_id']!=t:raise WorklistError('INVALID_RESPONSE')
         return v
 
@@ -98,3 +98,11 @@ class AdvisoryTransport(WorklistReadTransport):
         raw=control_request(b,'POST',path,body,gate=self._forward_gate(b))
         if b not in self._bindings():raise WorklistError('DENIED')
         return wire.response(raw,kind,b,c,expected)
+
+    def _read(self,b,path):
+        # Provision probes are owner-attested but not yet registered. Every
+        # registered binding is fenced both when forwarding and after waiting.
+        registered='client_digest' in b
+        raw=control_request(b,'GET',path,gate=self._forward_gate(b) if registered else None)
+        if registered and b not in self._bindings():raise WorklistError('DENIED')
+        return raw

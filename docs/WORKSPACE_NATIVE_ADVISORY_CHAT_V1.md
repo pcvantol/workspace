@@ -90,6 +90,15 @@ remain. Old callback generations cannot update new UI or credential cleanup.
 Archive/restore only changes existing Workspace presentation, never Forge turns
 or ongoing generation. Both lenses share one conversation, not approval roles.
 
+Pinned Forge returns404 before the first admitted turn instead of allocating a
+transcript during a read. With a live capability and no previous/pending turn,
+native shows this absence explicitly and uses the producer's initial CAS0 only
+on explicit send. It does not invent a canonical history record. Missing exact
+turn readback with a durable intent stays uncertain; explicit same-ID recovery
+checks the frozen context and CAS, including this initial absent-transcript
+case. Registered binding and Workspace draft authority are rechecked after
+outstanding reads so a revoked grant cannot return a previously fetched result.
+
 ## Qualification boundary
 
 This selected RC-WC/RC-WS text subset is not RC-WP/Candidate promotion, UX

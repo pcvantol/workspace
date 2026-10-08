@@ -5,7 +5,7 @@ from datetime import datetime,timezone
 from hashlib import sha256
 from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
 from pathlib import Path
-from threading import Thread
+from threading import Thread,Event
 from urllib.request import Request,urlopen
 from urllib.error import HTTPError
 import io,json,secrets,tempfile,unittest
@@ -21,7 +21,7 @@ class AdvisoryPeerTests(unittest.TestCase):
   temp=tempfile.TemporaryDirectory();self.addCleanup(temp.cleanup);self.root=Path(temp.name);self.root.chmod(0o700);initialize(self.root)
   stamp=datetime.now(timezone.utc).isoformat()
   (self.root/'projects.json').write_text(json.dumps({'source':'LOCAL','observed_at':stamp,'projects':[{'id':'ws-project','name':'Synthetic project'}]}));(self.root/'projects.json').chmod(0o600)
-  self.ws=Service(self.root);self.addCleanup(self.ws.close);self.error=None;self.bad=False;self.requests=[];self.turns={};self.revision=0
+  self.ws=Service(self.root);self.addCleanup(self.ws.close);self.error=None;self.bad=False;self.requests=[];self.turns={};self.revision=0;self.read_entered=Event();self.read_release=Event();self.delay_path=None
   self.owner_tokens={};self.client={};self.proof={};self.drafts={};self.conversations={}
   for actor in ['alice','bob']:
    self.drafts[actor]=self.ws.issue_conversation_grant(actor,'ws-project')
@@ -33,6 +33,8 @@ class AdvisoryPeerTests(unittest.TestCase):
    def route(self):
     actor=next((a for a,t in owner.owner_tokens.items() if self.headers.get('Authorization')=='Bearer '+t),None)
     owner.requests.append((self.command,self.path))
+    if self.command=="GET" and self.path==owner.delay_path:
+     owner.read_entered.set();assert owner.read_release.wait(4)
     code=owner.error or (200 if actor else 403);value={}
     conv=owner.conversations.get(actor,'unknown')
     if code!=200:value={'contract_version':w.CONTRACT,'error':{'code':'TURN_BUDGET_EXHAUSTED' if code==409 else 'ADVISORY_SOURCE_UNAVAILABLE'}}
@@ -85,6 +87,24 @@ class AdvisoryPeerTests(unittest.TestCase):
   self.bad=True;self.assertEqual(self.call(base+'/turns/turn-one')[0],503);self.bad=False
   self.error=409;self.assertEqual(self.call('/v1/advisory/capability')[1]['error'],'TURN_BUDGET_EXHAUSTED');self.error=503;self.assertEqual(self.call(base)[0],503)
   self.assertEqual(self.call('/v1/advisory/openapi.json')[0],200);self.assertIn('x-forge-wire-schema',advisory_openapi_contract())
+ def testBindingAndDraftRevocationDuringDelayedHistoryDenyResponse(self):
+  from concurrent.futures import ThreadPoolExecutor
+  c=self.conversations['alice'];self.delay_path='/v1/advisory/'+c+'?cursor=0&limit=4'
+  binding=self.ws.advisory.access(self.client['alice'])
+  with ThreadPoolExecutor(max_workers=1) as pool:
+   response=pool.submit(self.call,self.delay_path)
+   try:
+    self.assertTrue(self.read_entered.wait(3));self.ws.revoke_advisory(binding['id'])
+   finally:self.read_release.set()
+   self.assertEqual(response.result(timeout=5)[0],403)
+  self.delay_path='/v1/advisory/'+self.conversations['bob']+'?cursor=0&limit=4'
+  self.read_entered.clear();self.read_release.clear()
+  with ThreadPoolExecutor(max_workers=1) as pool:
+   response=pool.submit(self.call,self.delay_path,actor='bob')
+   try:
+    self.assertTrue(self.read_entered.wait(3));self.ws.revoke_conversation_grants('bob','ws-project')
+   finally:self.read_release.set()
+   self.assertEqual(response.result(timeout=5)[0],403)
  def testOwnerReceiptBindingCliRevocationAndInvalidInputs(self):
   peer=self.ws.advisory;binding=peer.access(self.client['alice']);self.ws.revoke_advisory(binding['id'])
   args=['--root',str(self.root),'advisory-bind-issue','--actor','alice','--project','ws-project','--forge-endpoint',self.endpoint,'--forge-grant-receipt-file',str(self.proof['alice']),'--forge-token-file',str(self.root/'alice.forge'),'--client-token-file',str(self.root/'new-client')]

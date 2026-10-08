@@ -4,6 +4,7 @@ enum AdvisoryCopy {
     static func text(_ key:String, language:String) -> String {
         let index=["en","nl","de","fr","es"].firstIndex(of:language) ?? 0
         let values:[String:[String]] = [
+            "adviceNew":["No Forge transcript exists yet. Explicit send may start the first turn under current access.","Nog geen Forge-transcript. Expliciet verzenden kan de eerste beurt onder actuele toegang starten.","Noch kein Forge-Verlauf. Explizites Senden kann den ersten Beitrag unter aktuellem Zugang starten.","Aucun historique Forge pour le moment. Un envoi explicite peut démarrer le premier tour avec l’accès actuel.","Aún no existe historial Forge. El envío explícito puede iniciar el primer turno con el acceso actual."],
             "conversation":["Conversation","Gesprek","Gespräch","Conversation","Conversación"],
             "budget":["Retained / maximum","Behouden / maximum","Beibehalten / Maximum","Conservé / maximum","Conservado / máximo"],
             "tokens":["Observed tokens","Waargenomen tokens","Beobachtete Tokens","Jetons observés","Tokens observados"],
