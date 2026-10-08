@@ -4,7 +4,8 @@ enum WorkspaceLanguage {
     static let key="workspace.ui.language"
     static let supported=["en","nl","de","fr","es"]
     static let names=["en":"English","nl":"Nederlands","de":"Deutsch","fr":"Français","es":"Español"]
-    static func resolve(_ preference:String?,system:Locale = .current) -> String {
+    static var systemLocale:Locale { Locale(identifier:Locale.preferredLanguages.first ?? Locale.current.identifier) }
+    static func resolve(_ preference:String?,system:Locale = WorkspaceLanguage.systemLocale) -> String {
         if let preference,supported.contains(preference) { return preference }
         let code=system.language.languageCode?.identifier ?? "en"
         return supported.contains(code) ? code:"en"

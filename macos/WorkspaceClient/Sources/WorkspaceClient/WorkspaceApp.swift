@@ -24,7 +24,7 @@ private enum IsolatedWindowEvidence {
             let root = URL(fileURLWithPath: directory, isDirectory: true)
             let facts:[String:Any]=["pid":ProcessInfo.processInfo.processIdentifier,
                 "appearance":window.effectiveAppearance.bestMatch(from:[.aqua,.darkAqua])?.rawValue ?? "unknown",
-                "locale":WorkspaceLanguage.current,"width":window.frame.width,"height":window.frame.height]
+                "locale":WorkspaceLanguage.current,"preferred_languages":Locale.preferredLanguages,"width":window.frame.width,"height":window.frame.height]
             if let data=try? JSONSerialization.data(withJSONObject:facts,options:.sortedKeys) {
                 try? FileManager.default.createDirectory(at:root,withIntermediateDirectories:true,attributes:[.posixPermissions:0o700])
                 try? data.write(to:root.appendingPathComponent("window-facts.public.json"),options:.atomic)

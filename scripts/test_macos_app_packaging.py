@@ -71,6 +71,8 @@ class MacOSPackagingTests(unittest.TestCase):
         info = plistlib.loads((ROOT / "macos/WorkspaceClient/Resources/Info.plist").read_bytes())
         client = (ROOT / "macos/WorkspaceClient/Sources/WorkspaceClient/ClientState.swift").read_text()
         self.assertEqual(info["CFBundleIdentifier"], BUNDLE_ID)
+        self.assertEqual(info["CFBundleDevelopmentRegion"], "en")
+        self.assertEqual(info["CFBundleLocalizations"], ["en", "nl", "de", "fr", "es"])
         self.assertIn(f'private let service = "{KEYCHAIN_SERVICE}"', client)
         self.assertNotIn('private let service = "' + BUNDLE_ID + '.v1"', client)
 
