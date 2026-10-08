@@ -24,9 +24,13 @@ no Candidate/apply/approval/Mission/repository operation. UX drafts remain
 usable but generation is unsupported. Source pins are observations, and
 provider_stopped:false/NOT_REPORTED/live-model-NOT_QUALIFIED remain explicit.
 
-Full owning validation/per-file>80.2%, independent exact-head Quality/Security,
-protected merge/finalization and fresh exact-main noneditable installed/new
-packaged GUI proof remain pending. L2, new L3Candidate API, PR258 and signing
+Source finalization: production candidate d9dd22ef1ead89fce0e111d1995e5d465223c00b
+passed full102native+1isolated+119Python owning validation and strict per-file
+coverage. Independent Quality/SecurityPASS follow the repaired digest,
+first-transcript404 and revoke/delayed-body/byte-forwarding races. Actual four
+packaged GUI phases on unchanged native production bytes and34targeted fresh
+noneditable installed service checks are recorded in the consumer document.
+Protected merge and fresh exact-main/new packaged GUI acceptance remain pending. L2, new L3Candidate API, PR258 and signing
 are not dependencies; newer Forge main is not the selected pin. See the
 [consumer boundary](docs/WORKSPACE_NATIVE_ADVISORY_CHAT_V1.md). Existing
 2.7.67/2.7.68/2.7.69 receipts and separate open signing/trust/release gates stay.

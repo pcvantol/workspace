@@ -113,3 +113,56 @@ perfile>80.2%, independent Q/S, protected merge/finalization and actual fresh
 exact-main packaged GUI/service proof are mandatory. No live paid/login probe,
 personal Keychain, live EP, signing/trust/public/operational activation. TDE
 workflow and actual policyFAIL remain separate. All acceptance still pending.
+
+## Source finalization — exact-main acceptance remains pending
+
+Production candidate d9dd22ef1ead89fce0e111d1995e5d465223c00b passed the full
+owning validate:102native tests,1isolated private intent reconstruction test
+and119Python tests. Changed Python production files individually pass the
+strict>80.2% gate, including advisorycontract98.90%, advisoryhttp90.62%,
+advisorypeer97.80%, conversations93.38%, ownHTTP94.63%, service95.76% and
+sharedreadpeer99.52%. Swift: credentials98.80%, models100%, state93.97%,
+transport96.05%, view89.05%, wire93.08%, conversationstate89.34%,
+conversationview86.42%, app83.77% and isolatedadapter94.40%. No exclusions.
+
+Independent full review found ASCII DEL canonicalization and revoke-during-GET
+issues, then delayed-body draft revocation before forwarding. All are repaired;
+exact d9dd22e Quality/SecurityPASS carries the prior full selected-source review
+and independently examines the bounded final repair. Live draft/project
+checks and byte forwarding serialize with thread/cross-process draft revoke;
+long provider wait does not hold that lease. Actual delayed body tests for both
+submit/cancel demonstrate zero downstream POSTs, and delayed read tests deny
+revoked results.
+
+Fresh Python3.14.8 noneditable Workspace candidate wheelSHA256
+0f1df0b298f903a64c3b14183d5fe8e3243f707a604756e4364a5ef7bd0ef3d9 matches
+all19product files in source/wheel/installation. Pinned Forge wheel matches
+all237product files.34targeted real installed HTTP/service checks PASS;
+receiptSHA256 ed6225a33975c8a39e4a777b4e26d5bf3bb0c64df9a46d6cf54139329f36c6c0.
+The declared external model executable observes9requests; real current auth,
+context, transcript, result, cancellation, storage and HTTP stay product-owned.
+Both actual delayed-body/revoke attempts consume zero provider requests.
+Business→Architect and cursor continuations, twoactors, foreign/wrong/expired/
+stale/revoked/source-ACL denial, unsafe output, duplicate/conflict, actual
+Serverrestart/body loss, busy/cancel-intent/provider_stopped:false, timeout/
+uncertainty, retained consumption and original grant budget are checked. The
+actual positive turn GET200 followed by grant revoke must produce403; this
+control is independent of subsequent sourceACL denial. Explicit renewal keeps
+consumption1 and natural expiry denies capability. No full producer historical
+matrix is repeated.
+
+Four actual packaged native GUI phases pass on34f4492 and unchanged final
+native production bytes: explicit Business send/actual double click/body loss,
+app and Serverrestart GET-only recovery, explicit Architect continuation with
+local draft retained, then authorized refresh and real history cursor click.
+Native executableSHA25626fbdb44e91c2873379f7612a6dc2dbf1e80d21c09af4cdea87c49cad0ec2772.
+Failed intermediate harness attempts remain separate and do not prove final
+acceptance; own failed-probe services, apps and credentials are removed.
+Candidate GUI evidence is not final-main qualification. Fresh final-main
+services/package/clicks and own-window narrow screenshot remain required.
+
+TDE observe workflowSUCCESS is separate from actual product complexity32
+versus blocking30 policyFAIL. No threshold, protection or broad debt changes.
+Normal protected merge and fresh exact-main receipts remain pending. Version
+2.8.10 is the bounded canonical PATCH operation under this selected assignment;
+no signing/notarization/public/live-provider/two-Mac activation is qualified.
