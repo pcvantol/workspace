@@ -1,0 +1,166 @@
+{
+  "boundary": "CONTROLLED_DETERMINISTIC_QUALIFICATION_RENDERED_TEXT_AND_HASHED_DECISION_PROOF_NOT_OPERATIONAL_DATA",
+  "source": "Original source539 normal native journey; current c5 native rendering/read-only reread",
+  "producer": "Forge2.11.0/1b00c735930013e668f23286c56c5432be69e7c8",
+  "cases": [
+    {
+      "visible_title": "Account foundation",
+      "exact_definition_revision": 2,
+      "human_readable_definition": {
+        "objective": "Build isolated account access for the client portal.",
+        "business_value": "Clients can track their payments.",
+        "expected_result": "A portal with current invoice status.",
+        "scope": [
+          "Account isolation"
+        ],
+        "exclusions": [
+          "Payment execution"
+        ],
+        "acceptance_criteria": [
+          "Clients see only invoices belonging to their account."
+        ],
+        "architecture_choices": [],
+        "risks": [
+          "Account isolation must be verified."
+        ],
+        "change_summary": "Initial proposed definition.",
+        "components": [
+          "Account isolation"
+        ],
+        "possible_subresults": []
+      },
+      "canonical_decisions": {
+        "business_kind": "BUSINESS",
+        "architecture_kind": "ARCHITECTURE",
+        "distinct_ids_verified": true,
+        "business_id_sha256": "c58de861576dc67fdd86d4843252724d77bbeea74cf0bd65f38650aea4f7a95b",
+        "architecture_id_sha256": "7636395bc8297380e4973eb7fadb59326e08c78a008f3e9919b75d744d45f781"
+      },
+      "original_package_digest": "sha256:970a7bba2f475ebc724ad432a9b8f458a76dcc8051834ee48a35b20befa5f910",
+      "canonical_subject_revision": "sha256:d8b2d82edf7a0777def1e525492c78e2014997ba2ff9f30e49e74f20f05165b0",
+      "state": "COMPLETE",
+      "mission_status": "APPROVED_PLANNABLE",
+      "current_readiness": {
+        "state": "APPROVED_WAITING",
+        "mission_status": "APPROVED_PLANNABLE",
+        "execution_ready": false,
+        "blockers": [
+          "EXPLICIT_WORKSET_RELEASE_REQUIRED"
+        ]
+      },
+      "execution_started": false,
+      "original_frozen_consequences": {
+        "exclusions": [
+          "Payment execution"
+        ],
+        "human_gates": [
+          "Explicit owner approval of the complete frozen definition."
+        ],
+        "repository_effect": {
+          "contract_version": "1.0",
+          "delivery": "GIT",
+          "mode": "BOUNDED_REPOSITORY_CHANGE",
+          "read_paths": [
+            "src/accounts/access.py",
+            "tests/test_accounts.py"
+          ],
+          "write_paths": [
+            "src/accounts/access.py",
+            "tests/test_accounts.py"
+          ]
+        },
+        "risks": [
+          "Account isolation must be verified."
+        ]
+      },
+      "actual_relations": []
+    },
+    {
+      "visible_title": "Client portal",
+      "exact_definition_revision": 1,
+      "human_readable_definition": {
+        "objective": "Show invoices and payments.",
+        "business_value": "Clients can track their payments.",
+        "expected_result": "A portal with current invoice status.",
+        "scope": [
+          "Invoice and payment views"
+        ],
+        "exclusions": [
+          "Payment execution"
+        ],
+        "acceptance_criteria": [
+          "Clients see only invoices belonging to their account."
+        ],
+        "architecture_choices": [],
+        "risks": [
+          "Account isolation must be verified."
+        ],
+        "change_summary": "Initial proposed definition.",
+        "components": [
+          "Invoice views",
+          "Payment views"
+        ],
+        "possible_subresults": []
+      },
+      "canonical_decisions": {
+        "business_kind": "BUSINESS",
+        "architecture_kind": "ARCHITECTURE",
+        "distinct_ids_verified": true,
+        "business_id_sha256": "7fcd72ffb0a8752c1c16f8b648f17dc7e48fd12c606ce263d170564e66b25955",
+        "architecture_id_sha256": "84e9e8f75fecef8df98980e2c180fb830088588b2e3107318efcb3817834a5bc"
+      },
+      "original_package_digest": "sha256:a3366372424d948844672bcc2d609fe4fda330e38c54029ef516b170605b8719",
+      "canonical_subject_revision": "sha256:a95737acb0b22fe737d83bbfbc80427a963c5c52a4aeb051c45a81566f7444e7",
+      "state": "COMPLETE",
+      "mission_status": "APPROVED_PLANNABLE",
+      "current_readiness": {
+        "state": "APPROVED_WAITING",
+        "mission_status": "APPROVED_PLANNABLE",
+        "execution_ready": false,
+        "blockers": [
+          "DEPENDENCY_NOT_PROVEN",
+          "EXPLICIT_WORKSET_RELEASE_REQUIRED"
+        ]
+      },
+      "execution_started": false,
+      "original_frozen_consequences": {
+        "exclusions": [
+          "Payment execution"
+        ],
+        "human_gates": [
+          "Explicit owner approval of the complete frozen definition."
+        ],
+        "repository_effect": {
+          "contract_version": "1.0",
+          "delivery": "GIT",
+          "mode": "BOUNDED_REPOSITORY_CHANGE",
+          "read_paths": [
+            "src/invoices/views.py",
+            "src/payments/views.py",
+            "tests/test_invoice_views.py",
+            "tests/test_payment_views.py"
+          ],
+          "write_paths": [
+            "src/invoices/views.py",
+            "src/payments/views.py",
+            "tests/test_invoice_views.py",
+            "tests/test_payment_views.py"
+          ]
+        },
+        "risks": [
+          "Account isolation must be verified."
+        ]
+      },
+      "actual_relations": [
+        {
+          "source_definition_revision": 2,
+          "relation_kind": "REQUIRES",
+          "human_reason": "The portal requires the independently governed account isolation foundation."
+        }
+      ]
+    }
+  ],
+  "additional_generation_for_readback": 0,
+  "no_new_grants_or_budget_reset": true,
+  "excluded": "No complete canonical records, operator/principal/installation/profile identities, endpoints, private paths, credentials, tokens or source execution resources."
+}
