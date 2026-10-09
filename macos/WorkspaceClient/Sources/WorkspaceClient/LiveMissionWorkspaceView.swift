@@ -132,7 +132,7 @@ struct LiveMissionWorkspaceView: View {
         }
         if let card {
             guard let item=state.items.first(where: { $0.object_id==card.id && $0.revision==card.revision }),
-                  let own=await conversations.missionWorkspaceConnection(client:client),state.producerConnection(own,id:item.conversation_id) != nil else { return }
+                  let own=await conversations.missionWorkspaceConnection(client:client),selectionGeneration==selection.selectionGeneration,state.producerConnection(own,id:item.conversation_id) != nil else { return }
             activeConversationID=item.conversation_id
             guard let intended=await connection(),selectionGeneration==selection.selectionGeneration,activeConversationID==intended.conversationID else { return }
             await state.refresh(intended)

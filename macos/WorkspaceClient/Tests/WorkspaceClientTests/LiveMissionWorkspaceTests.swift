@@ -5,9 +5,15 @@ import XCTest
 
 private final class MissionRootCredentials:CredentialStore,@unchecked Sendable {
     let access:AdvisoryAccess
+    private let lock=NSLock()
+    private var tokenPause:(() -> Void)?
+    func pauseNextToken(_ pause:@escaping () -> Void) { lock.withLock { tokenPause=pause } }
     init(_ access:AdvisoryAccess) { self.access=access }
     func binding() throws -> ServerBinding? { .init(endpoint:access.endpoint,instanceID:access.workspaceInstanceID) }
-    func token() throws -> String? { "synthetic-root" }
+    func token() throws -> String? {
+        let pause=lock.withLock { let value=tokenPause;tokenPause=nil;return value };pause?()
+        return "synthetic-root"
+    }
     func save(binding:ServerBinding,token:String) throws {}
     func forget() throws {}
 }
@@ -46,7 +52,8 @@ final class LiveMissionWorkspaceTests:XCTestCase {
             return (200,try JSONSerialization.data(withJSONObject:raw))
         }
         let config=URLSessionConfiguration.ephemeral;config.protocolClasses=[StubProtocol.self]
-        let client=ClientState(keychain:MissionRootCredentials(access),transport:ServerTransport(configuration:config))
+        let rootCredentials=MissionRootCredentials(access)
+        let client=ClientState(keychain:rootCredentials,transport:ServerTransport(configuration:config))
         for _ in 0..<100 where client.phase != "CONNECTED" { try await Task.sleep(for:.milliseconds(10)) }
         XCTAssertEqual(client.phase,"CONNECTED")
         let conversations=ConversationState(grants:MissionDraftCredentials(.init(endpoint:access.endpoint,instanceID:access.workspaceInstanceID,projectID:access.workspaceProjectID,token:c.draftGrant)),localDrafts:MissionNoLocalDrafts(),transport:ConversationTransport(configuration:config),missionConcepts:mission)
@@ -141,7 +148,8 @@ final class LiveMissionWorkspaceTests:XCTestCase {
             return (200,try JSONSerialization.data(withJSONObject:raw))
         }
         let config=URLSessionConfiguration.ephemeral;config.protocolClasses=[StubProtocol.self]
-        let client=ClientState(keychain:MissionRootCredentials(access),transport:ServerTransport(configuration:config))
+        let rootCredentials=MissionRootCredentials(access)
+        let client=ClientState(keychain:rootCredentials,transport:ServerTransport(configuration:config))
         for _ in 0..<100 where client.phase != "CONNECTED" { try await Task.sleep(for:.milliseconds(10)) }
         let conversations=ConversationState(grants:MissionDraftCredentials(.init(endpoint:access.endpoint,instanceID:access.workspaceInstanceID,projectID:access.workspaceProjectID,token:String(repeating:"D",count:43))),localDrafts:MissionNoLocalDrafts(),transport:ConversationTransport(configuration:config),missionConcepts:mission)
         let view=LiveMissionWorkspaceView(client:client,conversations:conversations)
@@ -188,6 +196,18 @@ final class LiveMissionWorkspaceTests:XCTestCase {
         releaseRefresh.signal();await selectOther.value;await delayedRefinement.value
         XCTAssertEqual(peer.calls.filter { $0.httpMethod=="POST" && $0.url!.path.hasSuffix("/turns") }.count,1)
         StubProtocol.handler=liveHandler
+        await view.prepare(card)
+        let tokenEntered=expectation(description:"Earlier credential lookup is delayed"),releaseToken=DispatchSemaphore(value:0)
+        rootCredentials.pauseNextToken { tokenEntered.fulfill();XCTAssertEqual(releaseToken.wait(timeout:.now()+5),.success) }
+        let earlyRefinement=Task { await view.refine("Original A intent must not overwrite B",lens:"BUSINESS",card:card) }
+        await fulfillment(of:[tokenEntered],timeout:3)
+        let earlySelection=Task { await view.prepare(secondCard) }
+        for _ in 0..<100 where conversations.missionSelection.conversationID != otherProducer { await Task.yield() }
+        XCTAssertEqual(conversations.missionSelection.conversationID,otherProducer)
+        releaseToken.signal();await earlyRefinement.value;await earlySelection.value
+        XCTAssertEqual(conversations.missionSelection.conversationID,otherProducer)
+        XCTAssertEqual(mission.packet?.objectID,secondCard.id)
+        XCTAssertEqual(peer.calls.filter { $0.httpMethod=="POST" && $0.url!.path.hasSuffix("/turns") }.count,1)
         twoCards=false;credentials.access=access
         await view.prepare(card)
         peer.dropSubmit=true

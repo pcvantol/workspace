@@ -76,10 +76,11 @@ struct MissionWorkspaceView: View {
     private var overview: some View {
         VStack(alignment: .leading, spacing: 12) {
             TextField(copy("search"), text: $search).accessibilityIdentifier("mission.search")
+            Text(copy("display")).font(.caption).foregroundStyle(.secondary)
             Picker(copy("display"), selection: $graph) {
                 Text(copy("list")).tag(false)
                 Text(copy("dependencies")).tag(true)
-            }.pickerStyle(.segmented).accessibilityIdentifier("mission.display")
+            }.pickerStyle(.segmented).labelsHidden().accessibilityLabel(copy("display")).accessibilityIdentifier("mission.display")
             if let observation {
                 Picker(copy("statusFilter"), selection: $statusFilter) {
                     Text(copy("allStatuses")).tag("")
@@ -152,7 +153,9 @@ struct MissionWorkspaceView: View {
                     }
                 }.frame(maxWidth: .infinity, alignment: .leading)
             }.accessibilityIdentifier("mission.transcript")
-            TextEditor(text: $message).frame(minHeight: 90, maxHeight: 150)
+            TextEditor(text: $message).scrollContentBackground(.hidden)
+                .padding(10).background(.background,in:RoundedRectangle(cornerRadius:14))
+                .frame(minHeight: 90, maxHeight: 150)
                 .focused($messageFocused).accessibilityLabel(copy("message"))
                 .accessibilityIdentifier("mission.message")
             Button(copy("send")) { onRefine(message, lens, card) }
