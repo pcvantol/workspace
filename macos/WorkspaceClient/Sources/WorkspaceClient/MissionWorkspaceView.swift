@@ -119,6 +119,11 @@ struct MissionWorkspaceView: View {
                                                     if !item.labels.isEmpty { Text(item.labels.map { copy($0) }.joined(separator: " · ")).font(.caption).foregroundStyle(.secondary) }
                                                 }.frame(maxWidth: .infinity, alignment: .leading)
                                             }.buttonStyle(.plain).padding(8)
+                                                .focusable()
+                                                .onKeyPress(keys: [.return, .space]) { _ in
+                                                    selection = item.id; panel = "definition"; onSelect(item)
+                                                    return .handled
+                                                }
                                                 .background(selection == item.id ? Color.accentColor.opacity(0.12) : Color.clear)
                                                 .accessibilityIdentifier("mission.select." + item.id)
                                             DisclosureGroup(copy("outcomes")) {
@@ -297,6 +302,11 @@ struct MissionWorkspaceView: View {
                                     .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 8))
                                     .overlay(RoundedRectangle(cornerRadius: 8).stroke(selection == item.id ? Color.accentColor : .secondary))
                             }.buttonStyle(.plain)
+                                .focusable()
+                                .onKeyPress(keys: [.return, .space]) { _ in
+                                    selection = item.id; onSelect(item)
+                                    return .handled
+                                }
                                 .position(x: 20 + width / 2,
                                           y: 60 + Double(index) * WorklistGraphLayout.rowStride)
                                 .opacity(matching.contains(item.id) ? 1 : 0.45)
