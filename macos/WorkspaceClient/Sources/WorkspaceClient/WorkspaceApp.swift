@@ -2,6 +2,7 @@ import Combine
 import SwiftUI
 #if WORKSPACE_ISOLATED_TEST
 import AppKit
+import ScreenCaptureKit
 
 private enum IsolatedWindowEvidence {
     static func capture(in directory: String) {
@@ -15,10 +16,14 @@ private enum IsolatedWindowEvidence {
                 app.appearance=appearance
                 try? await Task.sleep(for:.milliseconds(200))
             }
-            guard let window = NSApp.windows.first(where: { $0.title == "Workspace" }),
-                  let image = CGWindowListCreateImage(.null, .optionIncludingWindow,
-                                                      CGWindowID(window.windowNumber),
-                                                      [.boundsIgnoreFraming, .bestResolution]) else { return }
+            guard let window=NSApp.windows.first(where: { $0.title=="Workspace" }),
+                  let available=try? await SCShareableContent.excludingDesktopWindows(true,onScreenWindowsOnly:true),
+                  let owned=available.windows.first(where: { $0.windowID==CGWindowID(window.windowNumber) && $0.owningApplication?.processID==ProcessInfo.processInfo.processIdentifier }) else { return }
+            let configuration=SCStreamConfiguration()
+            configuration.width=Int(window.frame.width*window.backingScaleFactor)
+            configuration.height=Int(window.frame.height*window.backingScaleFactor)
+            configuration.showsCursor=false
+            guard let image=try? await SCScreenshotManager.captureImage(contentFilter:SCContentFilter(desktopIndependentWindow:owned),configuration:configuration) else { return }
             let bitmap = NSBitmapImageRep(cgImage: image)
             guard let png = bitmap.representation(using: .png, properties: [:]) else { return }
             let root = URL(fileURLWithPath: directory, isDirectory: true)
@@ -69,7 +74,8 @@ struct WorkspaceApp: App {
             localDrafts: PrivateLocalDraftCache(root: URL(fileURLWithPath: document.local_root)),
             advisory: AdvisoryState(credentials: IsolatedAdvisoryCredentials(document)),
             candidates:CandidateState(credentials:IsolatedCandidateCredentials(document),
-                store:PrivateCandidateLocalStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("candidate-drafts")))))
+                store:PrivateCandidateLocalStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("candidate-drafts"))),
+            missionConcepts:MissionConceptState(credentials:IsolatedAdvisoryCredentials(document,mission:true),store:PrivateMissionIntentStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("mission-intents")))))
         _reviews = StateObject(wrappedValue: MissionReviewState(credentials: IsolatedReviewGrant(document)))
         _worklists = StateObject(wrappedValue: WorklistState(credentials: IsolatedWorklistGrant(document),
             controls: WorklistControlState(credentials: IsolatedWorklistControlGrant(document))))
@@ -87,9 +93,10 @@ struct WorkspaceApp: App {
         WindowGroup("Workspace") {
             ContentView(client: client, conversations: conversations, reviews: reviews, worklists: worklists)
                 .environment(\.locale,Locale(identifier:WorkspaceLanguage.resolve(language)))
-                .frame(minWidth: 640, minHeight: 520)
+                .frame(minWidth: 560, minHeight: 520)
         }
-        .defaultSize(width: 900, height: 650)
+        .defaultSize(width: 1180, height: 780)
+        .windowToolbarStyle(.unifiedCompact)
         Settings {
             SettingsView(client: client, conversations: conversations)
                 .environment(\.locale,Locale(identifier:WorkspaceLanguage.resolve(language)))
@@ -100,12 +107,13 @@ struct WorkspaceApp: App {
 }
 
 struct ContentView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.locale) private var locale
     @ObservedObject var client: ClientState
     @StateObject private var conversations: ConversationState
     @StateObject private var reviews: MissionReviewState
     @StateObject private var worklists: WorklistState
-    @State private var selectedTab = 0
+    @State private var selectedTab = 4
     @State private var requestedReview: MissionReviewKey?
     @State private var reviewNavigationStatus = ""
 
@@ -115,6 +123,16 @@ struct ContentView: View {
         _conversations = StateObject(wrappedValue: conversations)
         _reviews = StateObject(wrappedValue: reviews)
         _worklists = StateObject(wrappedValue: worklists)
+    }
+
+    private var missionObservation: MissionWorkspaceObservation? {
+        #if WORKSPACE_ISOLATED_TEST
+        if let path = ProcessInfo.processInfo.environment["WORKSPACE_ISOLATED_MISSION_PREVIEW"],
+           let data = try? Data(contentsOf: URL(fileURLWithPath: path)), data.count <= 65536 {
+            return try? JSONDecoder().decode(MissionWorkspaceObservation.self, from: data)
+        }
+        #endif
+        return nil
     }
 
     private func openReview(_ item: ApprovedWorklistItem) {
@@ -138,6 +156,15 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
+            Group {
+                if let preview=missionObservation {
+                    MissionWorkspaceView(observation:preview,canRefine:false,canApprove:false,onRefine:{ _, _, _ in },onApprove:{ _ in })
+                } else {
+                    LiveMissionWorkspaceView(client:client,conversations:conversations)
+                }
+            }
+                .environment(\.nativeTabCommandsActive, selectedTab == 4)
+                .tabItem { Label(MissionWorkspaceCopy.text("missions", language: locale.language.languageCode?.identifier ?? "en"), systemImage: "bubble.left.and.text.bubble.right") }.tag(4)
             ConversationsView(client: client, state: conversations)
                 .environment(\.nativeTabCommandsActive, selectedTab == 0)
                 .tabItem { Label(ConversationCopy.text("nav",language:locale.language.languageCode?.identifier), systemImage: "bubble.left.and.bubble.right") }.tag(0)
@@ -151,6 +178,9 @@ struct ContentView: View {
             ServerOverviewView(client: client)
                 .tabItem { Label(WorkspaceCopy.text("Server",language:locale.language.languageCode?.identifier), systemImage: "server.rack") }.tag(3)
         }
+        .tabViewStyle(.sidebarAdaptable)
+        .tint(WorkspaceAppearance.accent(for:colorScheme))
+        .background(WorkspaceAppearance.backdrop(for:colorScheme))
     }
 }
 
@@ -321,6 +351,9 @@ struct SettingsView: View {
                 SecureField(WorkspaceCopy.text("Instance token"), text: $token)
                 Text(WorkspaceCopy.text("Only loopback may use HTTP. Other Server addresses require HTTPS with normal certificate verification."))
                     .font(.caption).foregroundStyle(.secondary)
+            }
+            Section(MissionWorkspaceCopy.text("setupTitle",language:WorkspaceLanguage.current)) {
+                MissionSetupView(client:client,conversations:conversations,state:conversations.missionConcepts)
             }
             Section(WorkspaceCopy.text("Binding")) {
                 LabeledContent(WorkspaceCopy.text("Pinned instance"), value: client.savedInstance.isEmpty ? WorkspaceCopy.text("None") : client.savedInstance)

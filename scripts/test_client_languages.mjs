@@ -24,7 +24,7 @@ function client({saved='system',system='en',storageFault=false}={}) {
     removeItem(key){storage.delete(key);}},fetch:async path=>{
       requests++;
       const body=path==='/v1/identity'?{instance_id:'a'.repeat(32)}:
-        path==='/v1/status'?{instance_id:'a'.repeat(32),version:'2.8.12',state:'READY',project_source:'AVAILABLE'}:
+        path==='/v1/status'?{instance_id:'a'.repeat(32),version:serverOperations.product_version,state:'READY',project_source:'AVAILABLE'}:
         path==='/v1/capabilities'?serverOperations:
         path==='/v1/projects'?{state:'AVAILABLE',source:'DEMO',partial:false,stale:false,observed_at:'2026-10-08',projects:[{id:'source-id',name:'Original source text'}]}:null;
       return {ok:body!==null,status:body?200:503,json:async()=>body};

@@ -19,16 +19,19 @@ enum AdvisoryWire {
                 return
             }
         }
-        if let type=rules["type"] as? String { try scalar(value,type) }
+        if let types=rules["type"] as? [String] {
+            guard types.contains(where: { (try? scalar(value,$0)) != nil }) else { throw AdvisoryError.invalid }
+        } else if let type=rules["type"] as? String { try scalar(value,type) }
         if let constant=rules["const"] {
             guard NSDictionary(dictionary:["v":value]).isEqual(to:["v":constant]), boolean(value)==boolean(constant) else { throw AdvisoryError.invalid }
         }
         if let values=rules["enum"] as? [String] { guard let v=value as? String, values.contains(v) else { throw AdvisoryError.invalid };return }
         if let obj=value as? [String:Any] {
+            guard obj.count >= (rules["minProperties"] as? Int ?? 0), obj.count <= (rules["maxProperties"] as? Int ?? 256) else { throw AdvisoryError.invalid }
             let properties=rules["properties"] as? [String:[String:Any]] ?? [:]
             guard Set(rules["required"] as? [String] ?? []).isSubset(of:Set(obj.keys)),
                 (rules["additionalProperties"] as? Bool) != false || Set(obj.keys).isSubset(of:Set(properties.keys)) else { throw AdvisoryError.invalid }
-            for (k,v) in obj { try check(v,properties[k] ?? [:],definitions:definitions) }
+            for (k,v) in obj { try check(v,properties[k] ?? (rules["additionalProperties"] as? [String:Any] ?? [:]),definitions:definitions) }
         } else if let items=value as? [Any] {
             guard items.count >= (rules["minItems"] as? Int ?? 0), items.count <= (rules["maxItems"] as? Int ?? 64) else { throw AdvisoryError.invalid }
             for v in items { try check(v,rules["items"] as? [String:Any] ?? [:],definitions:definitions) }

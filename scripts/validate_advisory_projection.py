@@ -17,3 +17,12 @@ swift=(root/'macos/WorkspaceClient/Sources/WorkspaceClient/CandidateWire.swift')
 match=re.search(r'Data\(###"(.+?)"###\.utf8\)',swift)
 if match is None or json.loads(match[1])!=json.loads(candidate):raise ValueError('native Candidate schema projection drift')
 print('Pinned Forge2.9.0 Candidate wire projections match.')
+
+# Actual L3 schema preview, not a qualified final producer pin.
+import base64
+mission=(root/'workspace_control/mission-concepts-v1.json').read_bytes()
+if sha256(mission).hexdigest()!='0311529ca95451a99f4fd8a35127707310252c96324b42f3230e8c79fcfa6124':raise ValueError('mission concept schema preview drift')
+swift=(root/'macos/WorkspaceClient/Sources/WorkspaceClient/MissionConceptWire.swift').read_text()
+match=re.search(r'Data\(base64Encoded: "([A-Za-z0-9+/=]+)"\)',swift)
+if match is None or base64.b64decode(match[1])!=mission:raise ValueError('native mission concept schema preview drift')
+print('Actual producer mission concept preview matches; final qualification pending.')

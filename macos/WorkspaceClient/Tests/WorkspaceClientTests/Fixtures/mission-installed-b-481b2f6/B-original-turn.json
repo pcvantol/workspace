@@ -1,0 +1,224 @@
+{
+  "contract_version": "forge-chat-first-mission/v1",
+  "current_revision": 3,
+  "original_turn": {
+    "admitted_at": "2026-10-09T07:00:51.708537+00:00",
+    "consumption": 1,
+    "context": {
+      "concept_configuration_revision": "sha256:23973811d8fe4d849f10379a448a2758459adf890ea96547eb4bb4c6c0e12e4c",
+      "concept_dependency_catalog": [
+        {
+          "candidate_id": "concept-candidate-3a03db223dd21bb7dfd549d1c1717cc3",
+          "concept_revision": 1,
+          "dependencies": [],
+          "object_id": "concept-358b05d68d26f62990a4371ee44b1c33",
+          "recommendation_status": "MISSION_ALLOCATED",
+          "subject_revision": "sha256:f2082b00f226bf9806821cbe82c50a1053b18c2b1225fbe512044a37029c6d3e",
+          "title": "Account foundation"
+        }
+      ],
+      "concept_dependency_graph": {
+        "concept-candidate-3a03db223dd21bb7dfd549d1c1717cc3": []
+      },
+      "concept_dependency_references": [
+        "concept-candidate-3a03db223dd21bb7dfd549d1c1717cc3"
+      ],
+      "concept_repository_source": {
+        "github_repository": "synthetic-owner/synthetic-repository",
+        "repository_id": "synthetic-repository"
+      },
+      "concept_work_profiles": {
+        "BUILD": {
+          "components": {
+            "Account isolation": {
+              "description": "Isolate client account access to portal records.",
+              "read_paths": [
+                "src/accounts/access.py",
+                "tests/test_accounts.py"
+              ],
+              "write_paths": [
+                "src/accounts/access.py",
+                "tests/test_accounts.py"
+              ]
+            },
+            "Invoice views": {
+              "description": "Invoice status views within the existing portal.",
+              "read_paths": [
+                "src/invoices/views.py",
+                "tests/test_invoice_views.py"
+              ],
+              "write_paths": [
+                "src/invoices/views.py",
+                "tests/test_invoice_views.py"
+              ]
+            },
+            "Payment views": {
+              "description": "Payment status display; payment execution is excluded.",
+              "read_paths": [
+                "src/payments/views.py",
+                "tests/test_payment_views.py"
+              ],
+              "write_paths": [
+                "src/payments/views.py",
+                "tests/test_payment_views.py"
+              ]
+            }
+          },
+          "constraints": [
+            "Preserve existing public contracts and account isolation."
+          ],
+          "effect_policy": {
+            "contract_version": "1.0",
+            "delivery": "GIT",
+            "mode": "BOUNDED_REPOSITORY_CHANGE",
+            "read_paths": [
+              "src/",
+              "tests/"
+            ],
+            "write_paths": [
+              "src/",
+              "tests/"
+            ]
+          },
+          "human_gates": [
+            "Explicit owner approval of the complete frozen definition."
+          ],
+          "maximum_actions": 4,
+          "maximum_consecutive_no_progress_actions": 2,
+          "required_capabilities": [
+            "bounded_repository_change"
+          ],
+          "required_disciplines": [
+            "engineering",
+            "security"
+          ],
+          "technical_assumptions": [
+            "Use the configured repository and existing authentication."
+          ]
+        }
+      },
+      "dataset_generation": 0,
+      "evidence_references": [
+        "project-binding:sha256:cde0eb7f7950374187821fc0556991fa5ebdbc04c831507b38bd30d77c355fd0"
+      ],
+      "freshness": "CURRENT_CONFIGURED_BINDING",
+      "included_sources": [
+        "PROJECT_BINDING"
+      ],
+      "instance_id": "forge-runtime-25d2ae77-b2d7-47d1-86f9-d88ba9090354",
+      "limitations": [
+        "Explicit owner-published public immutable repository snapshots only; no harvesting or inferred facts."
+      ],
+      "missing_sources": [
+        "LIVE_REPOSITORY_CONTENT",
+        "CANONICAL_VISION",
+        "CANONICAL_PORTFOLIO",
+        "CANONICAL_ROADMAP"
+      ],
+      "project_id": "isolated-project",
+      "repository_id": "synthetic-repository",
+      "selected_sources": []
+    },
+    "execution": "CONFIRMED",
+    "grant_id": "advice-81d1a0f34174db18505a53d16dba12b9",
+    "invocation_id": "advice-invocation-9b3d750910694b8ba4d53b7de4c946be",
+    "lifecycle": [
+      "CREATED",
+      "PREPARED",
+      "REASONING",
+      "REVIEW",
+      "COMPLETE"
+    ],
+    "outcome": {
+      "diagnostic": {
+        "classification": "COMPLETED_VALID",
+        "elapsed_milliseconds": 23,
+        "errno": null,
+        "error_category": null,
+        "exception_type": null,
+        "process_started": true,
+        "returncode": 0,
+        "terminal_events": [
+          "turn.completed"
+        ],
+        "timed_out": false
+      },
+      "error_code": null,
+      "execution": "CONFIRMED",
+      "observed_effort": "NOT_REPORTED",
+      "observed_model": "NOT_REPORTED",
+      "output": {
+        "contract_version": "forge-chat-first-mission/v1",
+        "definition": {
+          "acceptance_criteria": [
+            "Clients see only invoices belonging to their account."
+          ],
+          "architecture_choices": [],
+          "business_value": "Clients can track their payments.",
+          "change_summary": "Initial proposed definition.",
+          "components": [
+            "Invoice views",
+            "Payment views"
+          ],
+          "dependencies": [
+            "concept-candidate-3a03db223dd21bb7dfd549d1c1717cc3"
+          ],
+          "dependency_reasons": {
+            "concept-candidate-3a03db223dd21bb7dfd549d1c1717cc3": "The portal requires the independently governed account isolation foundation."
+          },
+          "exclusions": [
+            "Payment execution"
+          ],
+          "expected_result": "A portal with current invoice status.",
+          "objective": "Show invoices and payments.",
+          "possible_subresults": [],
+          "questions": [],
+          "risks": [
+            "Account isolation must be verified."
+          ],
+          "scope": [
+            "Invoice and payment views"
+          ],
+          "title": "Client portal",
+          "work_kind": "BUILD"
+        },
+        "request_digest": "sha256:fada59350c7e4cdfc6f9ff054c86b9350163e200c4e3044bec832ff27f42d94d"
+      },
+      "result_digest": "sha256:0b3a5663a0e21a619df6acd9dd853ca665649c24c4f09b75db552166d093a34e",
+      "usage": {
+        "input_tokens": 100,
+        "output_tokens": 60
+      },
+      "usage_status": "OBSERVED"
+    },
+    "provider": {
+      "configuration_revision": 2,
+      "context_token_bound": 48000,
+      "generation_digest": "sha256:14f97cb6a10ac727f2b55f65b810e45f3a0608eb3c1fbbff63f38759154588ca",
+      "input_token_bound": 40000,
+      "output_token_bound": 8000,
+      "policy_digest": "sha256:8bc30e97e2f5ba0b02459c42935be7b61707ef966ced89794e026938b6517905",
+      "provider_id": "synthetic-codex-transport",
+      "requested_effort": "NOT_CONFIGURED",
+      "requested_model": null,
+      "requested_profile": null
+    },
+    "request": {
+      "advisor_kind": "ARCHITECTURE",
+      "context_revision": "sha256:d8d231932f5234ed16824acc6dba699f5becb0b4030d106cf5b304b1434ad066",
+      "contract_version": "forge-chat-first-mission/v1",
+      "conversation_id": "portal",
+      "expected_revision": 0,
+      "instance_id": "forge-runtime-25d2ae77-b2d7-47d1-86f9-d88ba9090354",
+      "objective": "Show invoices and payments.",
+      "project_id": "isolated-project",
+      "repository_id": "synthetic-repository",
+      "selected_sources": [],
+      "turn_id": "initial"
+    },
+    "request_digest": "sha256:fada59350c7e4cdfc6f9ff054c86b9350163e200c4e3044bec832ff27f42d94d",
+    "session_id": "advice-session-37c5ce6b13f0449f80d39cc862c846fa",
+    "status": "COMPLETE"
+  },
+  "read_only": true
+}

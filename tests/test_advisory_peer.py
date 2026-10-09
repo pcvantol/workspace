@@ -17,7 +17,13 @@ from workspace_control.worklist_peer import WorklistError
 from tests.test_advisory_contract import capability,record
 
 class AdvisoryPeerTests(unittest.TestCase):
+ fixture_wire=w
+ fixture_capability=staticmethod(capability)
+ fixture_record=staticmethod(record)
+ fixture_prefix='/v1/advisory'
+ fixture_concept=False
  def setUp(self):
+  w=self.fixture_wire;capability=self.fixture_capability;record=self.fixture_record
   temp=tempfile.TemporaryDirectory();self.addCleanup(temp.cleanup);self.root=Path(temp.name);self.root.chmod(0o700);initialize(self.root)
   stamp=datetime.now(timezone.utc).isoformat()
   (self.root/'projects.json').write_text(json.dumps({'source':'LOCAL','observed_at':stamp,'projects':[{'id':'ws-project','name':'Synthetic project'}]}));(self.root/'projects.json').chmod(0o600)
@@ -36,15 +42,21 @@ class AdvisoryPeerTests(unittest.TestCase):
     if self.command=="GET" and self.path==owner.delay_path:
      owner.read_entered.set();assert owner.read_release.wait(4)
     code=owner.error or (200 if actor else 403);value={}
-    conv=owner.conversations.get(actor,'unknown')
+    conv=getattr(owner,'producer_conversations',owner.conversations).get(actor,'unknown')
     if code!=200:value={'contract_version':w.CONTRACT,'error':{'code':'TURN_BUDGET_EXHAUSTED' if code==409 else 'ADVISORY_SOURCE_UNAVAILABLE'}}
-    elif self.path.startswith('/v1/advisory/capability'):
+    elif self.path.startswith(owner.fixture_prefix+'/capability'):
      value=capability();value['conversation_ids']=[conv]
+    elif owner.fixture_concept and self.path==owner.fixture_prefix+'/resolve':
+     value=owner.fixture_resolve(actor,json.loads(self.rfile.read(int(self.headers['Content-Length']))))
+    elif owner.fixture_concept and self.path.endswith('/context'):
+     cap=capability();value=dict(contract_version=w.CONTRACT,conversation_id=conv,context=cap['context'],context_revision=cap['context_revision'],read_only=True,additional_model_calls=0)
     elif self.command=='POST' and self.path.endswith('/cancel'):
      r=deepcopy(next(iter(owner.turns.values())));r['status']='CANCEL_REQUESTED';r['execution']='MAY_HAVE_HAPPENED';r['outcome']=None
      value={'contract_version':w.CONTRACT,'original_turn':r,'current_revision':owner.revision,'provider_stopped':False,'cancel_request_recorded':True}
+    elif owner.fixture_concept and self.path.startswith(owner.fixture_prefix+'/catalog'):
+     value=owner.fixture_catalog(conv)
     elif self.command=='POST':
-     body=json.loads(self.rfile.read(int(self.headers['Content-Length'])));r=record();r['request']=body;r['request_digest']=w.digest(body);r['grant_id']='grant-'+actor;r['outcome']['output']['request_digest']=r['request_digest'];r['outcome']['output']['advisor_kind']=body['advisor_kind'];r['outcome']['result_digest']=w.digest(r['outcome']['output']);owner.turns[body['turn_id']]=r;owner.revision+=1
+     body=json.loads(self.rfile.read(int(self.headers['Content-Length'])));r=record();r['request']=body;r['request_digest']=w.digest(body);r['grant_id']='grant-'+actor;r['outcome']['output']['request_digest']=r['request_digest'];r['outcome']['output'].update({} if owner.fixture_concept else {'advisor_kind':body['advisor_kind']});r['outcome']['result_digest']=w.digest(r['outcome']['output']);owner.turns[body['turn_id']]=r;owner.revision+=1
      value={'contract_version':w.CONTRACT,'original_turn':r,'current_revision':owner.revision,'recorded':True}
     elif '/turns/' in self.path:
      turn=self.path.rsplit('/',1)[1]
@@ -61,7 +73,7 @@ class AdvisoryPeerTests(unittest.TestCase):
    token=self.root/(actor+'.forge');token.write_text(self.owner_tokens[actor]);token.chmod(0o600)
    proof={'instance_id':'forge-one','project_id':'project-one','repository_id':'repo-one','principal_id':actor,'conversation_ids':[self.conversations[actor]],'grant_id':'grant-'+actor,'maximum_turns':8,'expires_at':'2026-10-09T00:00:00Z','state':'ACTIVE','token_sha256':sha256(self.owner_tokens[actor].encode()).hexdigest()}
    file=self.root/(actor+'.proof');file.write_text(json.dumps(proof));file.chmod(0o600);self.proof[actor]=file
-   client=self.root/(actor+'.client');self.ws.provision_advisory(actor,'ws-project',self.endpoint,str(file),str(token),str(client));self.client[actor]=client.read_text().strip()
+   client=self.root/(actor+'.client');(self.ws.mission_concepts.provision if self.fixture_concept else self.ws.provision_advisory)(actor,'ws-project',self.endpoint,str(file),str(token),str(client));self.client[actor]=client.read_text().strip()
   base=handler_for(self.ws)
   class Observed(base):
    def _conversation_scope(self):

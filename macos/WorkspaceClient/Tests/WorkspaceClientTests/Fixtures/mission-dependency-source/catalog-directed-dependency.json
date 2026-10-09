@@ -1,0 +1,124 @@
+{
+  "additional_model_calls": 0,
+  "complete_portfolio": false,
+  "contract_version": "forge-chat-first-mission/v1",
+  "items": [
+    {
+      "approval_supported": false,
+      "blockers": [
+        "EXPLICIT_WORKSET_RELEASE_REQUIRED"
+      ],
+      "candidate_id": "concept-candidate-4a8932de35ab89d489f288ef4f9ea7f1",
+      "context_revision": "sha256:ccd9bfe2c76df4f7a43eb958e04b94268d9dff77e87b47d16b925fee901cc12b",
+      "conversation_id": "foundation",
+      "conversation_revision": 3,
+      "definition": {
+        "acceptance_criteria": [
+          "Clients see only invoices belonging to their account."
+        ],
+        "architecture_choices": [],
+        "business_value": "Clients can track their payments.",
+        "change_summary": "Initial proposed definition.",
+        "dependencies": [],
+        "dependency_reasons": {},
+        "exclusions": [
+          "Payment execution"
+        ],
+        "expected_result": "A portal with current invoice status.",
+        "objective": "Build isolated account access for the client portal.",
+        "questions": [],
+        "risks": [
+          "Account isolation must be verified."
+        ],
+        "scope": [
+          "Invoice and payment views"
+        ],
+        "title": "Account foundation",
+        "work_kind": "BUILD"
+      },
+      "definition_digest": "sha256:8342dfe3f1f359712dc1b4361009a2251716e497947ac9cf96d10a8983e30e05",
+      "edges": [],
+      "group_id": null,
+      "labels": [],
+      "mission_id": "MISSION-0006",
+      "object_id": "concept-0dfdd71fff57ad7ba60e6bdaea52084c",
+      "parent_id": null,
+      "questions": [],
+      "revision": 1,
+      "source_turn_id": "initial",
+      "state": "APPROVED_WAITING",
+      "summary": "A portal with current invoice status.",
+      "title": "Account foundation"
+    },
+    {
+      "approval_supported": false,
+      "blockers": [
+        "EXPLICIT_WORKSET_RELEASE_REQUIRED"
+      ],
+      "candidate_id": "concept-candidate-fd854de589531dfeade2b38e04618de7",
+      "context_revision": "sha256:ffd464a50230a14c9bb60474205ecaf12a17eff3c0b42b4c131283392f5d74f9",
+      "conversation_id": "portal",
+      "conversation_revision": 3,
+      "definition": {
+        "acceptance_criteria": [
+          "Clients see only invoices belonging to their account."
+        ],
+        "architecture_choices": [],
+        "business_value": "Clients can track their payments.",
+        "change_summary": "Initial proposed definition.",
+        "dependencies": [
+          "concept-candidate-4a8932de35ab89d489f288ef4f9ea7f1"
+        ],
+        "dependency_reasons": {
+          "concept-candidate-4a8932de35ab89d489f288ef4f9ea7f1": "The portal requires the independently governed account isolation foundation."
+        },
+        "exclusions": [
+          "Payment execution"
+        ],
+        "expected_result": "A portal with current invoice status.",
+        "objective": "Show invoices and payments.",
+        "questions": [],
+        "risks": [
+          "Account isolation must be verified."
+        ],
+        "scope": [
+          "Invoice and payment views"
+        ],
+        "title": "Client portal",
+        "work_kind": "BUILD"
+      },
+      "definition_digest": "sha256:b0cf9485a68e7a7c1b6ecad8c45eca6558a805b04b08dcadae8fff8508c9e065",
+      "edges": [
+        {
+          "candidate_id": "concept-candidate-4a8932de35ab89d489f288ef4f9ea7f1",
+          "kind": "REQUIRES",
+          "reason": "The portal requires the independently governed account isolation foundation.",
+          "source_object_id": "concept-0dfdd71fff57ad7ba60e6bdaea52084c",
+          "state": "APPROVED_DEFINITION",
+          "subject_revision": "sha256:a8b550322cd4ac8c0cb2d8184df8f5c28c29ff86e2227dd091b71cb2a44bf74b",
+          "target_object_id": "concept-904d7fcef229ccc888e0771bb269e261"
+        }
+      ],
+      "group_id": null,
+      "labels": [],
+      "mission_id": "MISSION-0007",
+      "object_id": "concept-904d7fcef229ccc888e0771bb269e261",
+      "parent_id": null,
+      "questions": [],
+      "revision": 1,
+      "source_turn_id": "initial",
+      "state": "APPROVED_WAITING",
+      "summary": "A portal with current invoice status.",
+      "title": "Client portal"
+    }
+  ],
+  "next_cursor": null,
+  "population": "AUTHORIZED_ADMITTED_CONCEPTS_ONLY",
+  "read_only": true,
+  "scope": {
+    "instance_id": "forge-runtime-f7084b74-5c0a-40f7-9c59-d137c599feca",
+    "project_id": "isolated-project",
+    "repository_id": "synthetic-repository"
+  },
+  "snapshot_revision": "sha256:3e3b94eede37183aac2519763cd52cd444bc91c209082c31e1fca508644effdd"
+}

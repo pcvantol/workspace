@@ -1,0 +1,110 @@
+{
+  "additional_model_calls": 0,
+  "context": {
+    "concept_configuration_revision": "sha256:12b49b36eb1c66431f89960ab5b79b0f8a0b5a5ae47e518f0947f824deb3a52a",
+    "concept_dependency_catalog": [],
+    "concept_dependency_graph": {
+      "concept-candidate-c2f4cde2c6548a9bf580b06556cfc627": []
+    },
+    "concept_dependency_references": [],
+    "concept_repository_source": {
+      "github_repository": "synthetic-owner/synthetic-repository",
+      "repository_id": "synthetic-repository"
+    },
+    "concept_work_profiles": {
+      "BUILD": {
+        "components": {
+          "Account isolation": {
+            "description": "Isolate client account access to portal records.",
+            "read_paths": [
+              "src/accounts/access.py",
+              "tests/test_accounts.py"
+            ],
+            "write_paths": [
+              "src/accounts/access.py",
+              "tests/test_accounts.py"
+            ]
+          },
+          "Invoice views": {
+            "description": "Invoice status views within the existing portal.",
+            "read_paths": [
+              "src/invoices/views.py",
+              "tests/test_invoice_views.py"
+            ],
+            "write_paths": [
+              "src/invoices/views.py",
+              "tests/test_invoice_views.py"
+            ]
+          },
+          "Payment views": {
+            "description": "Payment status display; payment execution is excluded.",
+            "read_paths": [
+              "src/payments/views.py",
+              "tests/test_payment_views.py"
+            ],
+            "write_paths": [
+              "src/payments/views.py",
+              "tests/test_payment_views.py"
+            ]
+          }
+        },
+        "constraints": [
+          "Preserve existing public contracts and account isolation."
+        ],
+        "effect_policy": {
+          "contract_version": "1.0",
+          "delivery": "GIT",
+          "mode": "BOUNDED_REPOSITORY_CHANGE",
+          "read_paths": [
+            "src/",
+            "tests/"
+          ],
+          "write_paths": [
+            "src/",
+            "tests/"
+          ]
+        },
+        "human_gates": [
+          "Explicit owner approval of the complete frozen definition."
+        ],
+        "maximum_actions": 4,
+        "maximum_consecutive_no_progress_actions": 2,
+        "required_capabilities": [
+          "bounded_repository_change"
+        ],
+        "required_disciplines": [
+          "engineering",
+          "security"
+        ],
+        "technical_assumptions": [
+          "Use the configured repository and existing authentication."
+        ]
+      }
+    },
+    "dataset_generation": 0,
+    "evidence_references": [
+      "project-binding:sha256:a8d278cf0cc2374e356a32c7f265d1e6f54b7b8a4041b836abdbef624cbc6d55"
+    ],
+    "freshness": "CURRENT_CONFIGURED_BINDING",
+    "included_sources": [
+      "PROJECT_BINDING"
+    ],
+    "instance_id": "forge-runtime-ff9e2fe9-c594-4a4a-b69e-07c666c0a8c5",
+    "limitations": [
+      "Explicit owner-published public immutable repository snapshots only; no harvesting or inferred facts."
+    ],
+    "missing_sources": [
+      "LIVE_REPOSITORY_CONTENT",
+      "CANONICAL_VISION",
+      "CANONICAL_PORTFOLIO",
+      "CANONICAL_ROADMAP"
+    ],
+    "project_id": "isolated-project",
+    "repository_id": "synthetic-repository",
+    "selected_sources": []
+  },
+  "context_revision": "sha256:70754048d13103f1d3d0d714ebf5a7d8c71bd8da0407615bccdb1e134c60b892",
+  "contract_version": "forge-chat-first-mission/v1",
+  "conversation_id": "mission-chat",
+  "read_only": true
+}

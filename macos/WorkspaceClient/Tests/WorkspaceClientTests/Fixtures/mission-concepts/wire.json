@@ -1,0 +1,560 @@
+{
+  "capability": {
+    "contract_version": "forge-chat-first-mission/v1",
+    "supported_modes": [
+      "BUSINESS",
+      "ARCHITECTURE"
+    ],
+    "unsupported": [
+      "UX",
+      "APPLY"
+    ],
+    "project_id": "project-one",
+    "repository_id": "repo-one",
+    "instance_id": "forge-one",
+    "conversation_ids": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    ],
+    "context": {
+      "instance_id": "forge-one",
+      "project_id": "project-one",
+      "repository_id": "repo-one",
+      "dataset_generation": 1,
+      "included_sources": [
+        "selected"
+      ],
+      "selected_sources": [],
+      "missing_sources": [
+        "Vision",
+        "Portfolio"
+      ],
+      "freshness": "CURRENT_CONFIGURED_BINDING",
+      "evidence_references": [
+        "project:one"
+      ],
+      "limitations": [
+        "No live repository head proof."
+      ],
+      "concept_dependency_references": [],
+      "concept_work_profiles": {},
+      "concept_configuration_revision": null,
+      "concept_dependency_catalog": [],
+      "concept_repository_source": {
+        "repository_id": "repo-one",
+        "github_repository": "synthetic-owner/synthetic-repository"
+      },
+      "concept_dependency_graph": {}
+    },
+    "context_revision": "sha256:bbe8ee70333b74aad2bf7a5b04d2f2fe2a76547ab70c7b3f6acb8c382dbc17b4",
+    "maximum_turns": 8,
+    "available_sources": [],
+    "max_concurrent_invocations_per_instance": 1,
+    "cancel_request_supported": true,
+    "provider_stop_supported": false,
+    "retained_principal_consumed_turns": 0,
+    "live_model_quality": "NOT_QUALIFIED",
+    "unknown_usage": "NOT_REPORTED_AND_NOT_ACCEPTED_AS_BOUND_PROOF",
+    "read_only": true,
+    "supported_operations": [
+      "REFINE",
+      "READ",
+      "CANCEL_REQUEST"
+    ],
+    "approval_supported": false,
+    "readiness_qualified": false,
+    "generated_content_origin": "VALIDATED_MODEL_PROPOSAL",
+    "maximum_missions": 0,
+    "supported_work_kinds": [],
+    "workspace_reference_resolution_supported": false
+  },
+  "request": {
+    "contract_version": "forge-chat-first-mission/v1",
+    "turn_id": "turn-one",
+    "instance_id": "forge-one",
+    "project_id": "project-one",
+    "repository_id": "repo-one",
+    "conversation_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "advisor_kind": "BUSINESS",
+    "objective": "Value, café and constraints.",
+    "expected_revision": 0,
+    "context_revision": "sha256:bbe8ee70333b74aad2bf7a5b04d2f2fe2a76547ab70c7b3f6acb8c382dbc17b4",
+    "selected_sources": []
+  },
+  "record": {
+    "request": {
+      "contract_version": "forge-chat-first-mission/v1",
+      "turn_id": "turn-one",
+      "instance_id": "forge-one",
+      "project_id": "project-one",
+      "repository_id": "repo-one",
+      "conversation_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "advisor_kind": "BUSINESS",
+      "objective": "Value, café and constraints.",
+      "expected_revision": 0,
+      "context_revision": "sha256:bbe8ee70333b74aad2bf7a5b04d2f2fe2a76547ab70c7b3f6acb8c382dbc17b4",
+      "selected_sources": []
+    },
+    "request_digest": "sha256:c937a89683bc55e1274236987f838562d458daf6a831ad1a1c62fdcd6d318b55",
+    "session_id": "session-one",
+    "invocation_id": "inv-one",
+    "context": {
+      "instance_id": "forge-one",
+      "project_id": "project-one",
+      "repository_id": "repo-one",
+      "dataset_generation": 1,
+      "included_sources": [
+        "selected"
+      ],
+      "selected_sources": [],
+      "missing_sources": [
+        "Vision",
+        "Portfolio"
+      ],
+      "freshness": "CURRENT_CONFIGURED_BINDING",
+      "evidence_references": [
+        "project:one"
+      ],
+      "limitations": [
+        "No live repository head proof."
+      ],
+      "concept_dependency_references": [],
+      "concept_work_profiles": {},
+      "concept_configuration_revision": null,
+      "concept_dependency_catalog": [],
+      "concept_repository_source": {
+        "repository_id": "repo-one",
+        "github_repository": "synthetic-owner/synthetic-repository"
+      },
+      "concept_dependency_graph": {}
+    },
+    "provider": {
+      "provider_id": "provider-one",
+      "requested_model": null,
+      "requested_profile": null,
+      "requested_effort": "NOT_CONFIGURED",
+      "policy_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "generation_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "configuration_revision": 1,
+      "input_token_bound": 1000,
+      "context_token_bound": 2000,
+      "output_token_bound": 1000
+    },
+    "status": "COMPLETE",
+    "lifecycle": [
+      "CREATED",
+      "PREPARED",
+      "REASONING",
+      "REVIEW",
+      "COMPLETE"
+    ],
+    "execution": "CONFIRMED",
+    "outcome": {
+      "execution": "CONFIRMED",
+      "diagnostic": {
+        "classification": "COMPLETED_VALID",
+        "process_started": true,
+        "exception_type": null,
+        "errno": null,
+        "timed_out": false,
+        "elapsed_milliseconds": 3,
+        "returncode": 0,
+        "error_category": null,
+        "terminal_events": [
+          "turn.completed"
+        ]
+      },
+      "usage": {
+        "input_tokens": 100,
+        "output_tokens": 60
+      },
+      "usage_status": "OBSERVED",
+      "observed_model": "NOT_REPORTED",
+      "observed_effort": "NOT_REPORTED",
+      "output": {
+        "contract_version": "forge-chat-first-mission/v1",
+        "request_digest": "sha256:c937a89683bc55e1274236987f838562d458daf6a831ad1a1c62fdcd6d318b55",
+        "definition": {
+          "work_kind": "INVESTIGATE",
+          "title": "Invoice portal",
+          "objective": "View own invoices",
+          "business_value": "Customers find their invoices",
+          "expected_result": "Read-only invoice portal",
+          "scope": [
+            "Own invoices"
+          ],
+          "exclusions": [
+            "Payments"
+          ],
+          "acceptance_criteria": [
+            "A customer sees only their own invoices."
+          ],
+          "architecture_choices": [
+            "Authenticated read-only access"
+          ],
+          "risks": [
+            "Access isolation requires review"
+          ],
+          "dependencies": [],
+          "questions": [],
+          "change_summary": "Payments excluded from this revision.",
+          "dependency_reasons": {},
+          "components": [],
+          "possible_subresults": []
+        }
+      },
+      "result_digest": "sha256:e17277dea63693d1cdce6225171565125b0741a0c045893cc3ab225f2603d5d6",
+      "error_code": null
+    },
+    "admitted_at": "2026-10-08T06:00:00Z",
+    "grant_id": "grant-one",
+    "consumption": 1
+  },
+  "turn": {
+    "contract_version": "forge-chat-first-mission/v1",
+    "original_turn": {
+      "request": {
+        "contract_version": "forge-chat-first-mission/v1",
+        "turn_id": "turn-one",
+        "instance_id": "forge-one",
+        "project_id": "project-one",
+        "repository_id": "repo-one",
+        "conversation_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "advisor_kind": "BUSINESS",
+        "objective": "Value, café and constraints.",
+        "expected_revision": 0,
+        "context_revision": "sha256:bbe8ee70333b74aad2bf7a5b04d2f2fe2a76547ab70c7b3f6acb8c382dbc17b4",
+        "selected_sources": []
+      },
+      "request_digest": "sha256:c937a89683bc55e1274236987f838562d458daf6a831ad1a1c62fdcd6d318b55",
+      "session_id": "session-one",
+      "invocation_id": "inv-one",
+      "context": {
+        "instance_id": "forge-one",
+        "project_id": "project-one",
+        "repository_id": "repo-one",
+        "dataset_generation": 1,
+        "included_sources": [
+          "selected"
+        ],
+        "selected_sources": [],
+        "missing_sources": [
+          "Vision",
+          "Portfolio"
+        ],
+        "freshness": "CURRENT_CONFIGURED_BINDING",
+        "evidence_references": [
+          "project:one"
+        ],
+        "limitations": [
+          "No live repository head proof."
+        ],
+        "concept_dependency_references": [],
+        "concept_work_profiles": {},
+        "concept_configuration_revision": null,
+        "concept_dependency_catalog": [],
+        "concept_repository_source": {
+          "repository_id": "repo-one",
+          "github_repository": "synthetic-owner/synthetic-repository"
+        },
+        "concept_dependency_graph": {}
+      },
+      "provider": {
+        "provider_id": "provider-one",
+        "requested_model": null,
+        "requested_profile": null,
+        "requested_effort": "NOT_CONFIGURED",
+        "policy_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+        "generation_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+        "configuration_revision": 1,
+        "input_token_bound": 1000,
+        "context_token_bound": 2000,
+        "output_token_bound": 1000
+      },
+      "status": "COMPLETE",
+      "lifecycle": [
+        "CREATED",
+        "PREPARED",
+        "REASONING",
+        "REVIEW",
+        "COMPLETE"
+      ],
+      "execution": "CONFIRMED",
+      "outcome": {
+        "execution": "CONFIRMED",
+        "diagnostic": {
+          "classification": "COMPLETED_VALID",
+          "process_started": true,
+          "exception_type": null,
+          "errno": null,
+          "timed_out": false,
+          "elapsed_milliseconds": 3,
+          "returncode": 0,
+          "error_category": null,
+          "terminal_events": [
+            "turn.completed"
+          ]
+        },
+        "usage": {
+          "input_tokens": 100,
+          "output_tokens": 60
+        },
+        "usage_status": "OBSERVED",
+        "observed_model": "NOT_REPORTED",
+        "observed_effort": "NOT_REPORTED",
+        "output": {
+          "contract_version": "forge-chat-first-mission/v1",
+          "request_digest": "sha256:c937a89683bc55e1274236987f838562d458daf6a831ad1a1c62fdcd6d318b55",
+          "definition": {
+            "work_kind": "INVESTIGATE",
+            "title": "Invoice portal",
+            "objective": "View own invoices",
+            "business_value": "Customers find their invoices",
+            "expected_result": "Read-only invoice portal",
+            "scope": [
+              "Own invoices"
+            ],
+            "exclusions": [
+              "Payments"
+            ],
+            "acceptance_criteria": [
+              "A customer sees only their own invoices."
+            ],
+            "architecture_choices": [
+              "Authenticated read-only access"
+            ],
+            "risks": [
+              "Access isolation requires review"
+            ],
+            "dependencies": [],
+            "questions": [],
+            "change_summary": "Payments excluded from this revision.",
+            "dependency_reasons": {},
+            "components": [],
+            "possible_subresults": []
+          }
+        },
+        "result_digest": "sha256:e17277dea63693d1cdce6225171565125b0741a0c045893cc3ab225f2603d5d6",
+        "error_code": null
+      },
+      "admitted_at": "2026-10-08T06:00:00Z",
+      "grant_id": "grant-one",
+      "consumption": 1
+    },
+    "current_revision": 1,
+    "read_only": true
+  },
+  "history": {
+    "contract_version": "forge-chat-first-mission/v1",
+    "conversation_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "scope": {
+      "instance_id": "forge-one",
+      "project_id": "project-one",
+      "repository_id": "repo-one"
+    },
+    "revision": 1,
+    "turns": [
+      {
+        "request": {
+          "contract_version": "forge-chat-first-mission/v1",
+          "turn_id": "turn-one",
+          "instance_id": "forge-one",
+          "project_id": "project-one",
+          "repository_id": "repo-one",
+          "conversation_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "advisor_kind": "BUSINESS",
+          "objective": "Value, café and constraints.",
+          "expected_revision": 0,
+          "context_revision": "sha256:bbe8ee70333b74aad2bf7a5b04d2f2fe2a76547ab70c7b3f6acb8c382dbc17b4",
+          "selected_sources": []
+        },
+        "request_digest": "sha256:c937a89683bc55e1274236987f838562d458daf6a831ad1a1c62fdcd6d318b55",
+        "session_id": "session-one",
+        "invocation_id": "inv-one",
+        "context": {
+          "instance_id": "forge-one",
+          "project_id": "project-one",
+          "repository_id": "repo-one",
+          "dataset_generation": 1,
+          "included_sources": [
+            "selected"
+          ],
+          "selected_sources": [],
+          "missing_sources": [
+            "Vision",
+            "Portfolio"
+          ],
+          "freshness": "CURRENT_CONFIGURED_BINDING",
+          "evidence_references": [
+            "project:one"
+          ],
+          "limitations": [
+            "No live repository head proof."
+          ],
+          "concept_dependency_references": [],
+          "concept_work_profiles": {},
+          "concept_configuration_revision": null,
+          "concept_dependency_catalog": [],
+          "concept_repository_source": {
+            "repository_id": "repo-one",
+            "github_repository": "synthetic-owner/synthetic-repository"
+          },
+          "concept_dependency_graph": {}
+        },
+        "provider": {
+          "provider_id": "provider-one",
+          "requested_model": null,
+          "requested_profile": null,
+          "requested_effort": "NOT_CONFIGURED",
+          "policy_digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+          "generation_digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+          "configuration_revision": 1,
+          "input_token_bound": 1000,
+          "context_token_bound": 2000,
+          "output_token_bound": 1000
+        },
+        "status": "COMPLETE",
+        "lifecycle": [
+          "CREATED",
+          "PREPARED",
+          "REASONING",
+          "REVIEW",
+          "COMPLETE"
+        ],
+        "execution": "CONFIRMED",
+        "outcome": {
+          "execution": "CONFIRMED",
+          "diagnostic": {
+            "classification": "COMPLETED_VALID",
+            "process_started": true,
+            "exception_type": null,
+            "errno": null,
+            "timed_out": false,
+            "elapsed_milliseconds": 3,
+            "returncode": 0,
+            "error_category": null,
+            "terminal_events": [
+              "turn.completed"
+            ]
+          },
+          "usage": {
+            "input_tokens": 100,
+            "output_tokens": 60
+          },
+          "usage_status": "OBSERVED",
+          "observed_model": "NOT_REPORTED",
+          "observed_effort": "NOT_REPORTED",
+          "output": {
+            "contract_version": "forge-chat-first-mission/v1",
+            "request_digest": "sha256:c937a89683bc55e1274236987f838562d458daf6a831ad1a1c62fdcd6d318b55",
+            "definition": {
+              "work_kind": "INVESTIGATE",
+              "title": "Invoice portal",
+              "objective": "View own invoices",
+              "business_value": "Customers find their invoices",
+              "expected_result": "Read-only invoice portal",
+              "scope": [
+                "Own invoices"
+              ],
+              "exclusions": [
+                "Payments"
+              ],
+              "acceptance_criteria": [
+                "A customer sees only their own invoices."
+              ],
+              "architecture_choices": [
+                "Authenticated read-only access"
+              ],
+              "risks": [
+                "Access isolation requires review"
+              ],
+              "dependencies": [],
+              "questions": [],
+              "change_summary": "Payments excluded from this revision.",
+              "dependency_reasons": {},
+              "components": [],
+              "possible_subresults": []
+            }
+          },
+          "result_digest": "sha256:e17277dea63693d1cdce6225171565125b0741a0c045893cc3ab225f2603d5d6",
+          "error_code": null
+        },
+        "admitted_at": "2026-10-08T06:00:00Z",
+        "grant_id": "grant-one",
+        "consumption": 1
+      }
+    ],
+    "next_cursor": null,
+    "consumed_turns": 1,
+    "maximum_turns": 8,
+    "retention": "PRIVATE_RETAINED_NO_AUTOMATIC_DELETE",
+    "read_only": true
+  },
+  "catalog": {
+    "contract_version": "forge-chat-first-mission/v1",
+    "scope": {
+      "instance_id": "forge-one",
+      "project_id": "project-one",
+      "repository_id": "repo-one"
+    },
+    "snapshot_revision": "sha256:ba4f78a0980c678c5a00417b9946cd13c1a97328e3f2f3ca3bb0ff4e7c28fa6a",
+    "items": [
+      {
+        "object_id": "concept-cccccccccccccccccccccccccccccccc",
+        "conversation_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "revision": 1,
+        "conversation_revision": 1,
+        "definition_digest": "sha256:915218ad6255246f58d6e2b891b64c283aed107c5b68fb94c77bb9915c3db1fc",
+        "definition": {
+          "work_kind": "INVESTIGATE",
+          "title": "Invoice portal",
+          "objective": "View own invoices",
+          "business_value": "Customers find their invoices",
+          "expected_result": "Read-only invoice portal",
+          "scope": [
+            "Own invoices"
+          ],
+          "exclusions": [
+            "Payments"
+          ],
+          "acceptance_criteria": [
+            "A customer sees only their own invoices."
+          ],
+          "architecture_choices": [
+            "Authenticated read-only access"
+          ],
+          "risks": [
+            "Access isolation requires review"
+          ],
+          "dependencies": [],
+          "questions": [],
+          "change_summary": "Payments excluded from this revision.",
+          "dependency_reasons": {},
+          "components": [],
+          "possible_subresults": []
+        },
+        "source_turn_id": "turn-one",
+        "context_revision": "sha256:bbe8ee70333b74aad2bf7a5b04d2f2fe2a76547ab70c7b3f6acb8c382dbc17b4",
+        "title": "Invoice portal",
+        "summary": "Read-only invoice portal",
+        "state": "CONCEPT",
+        "approval_supported": false,
+        "blockers": [
+          "TRUSTED_PLANNING_AND_APPROVAL_PACKAGE_REQUIRED"
+        ],
+        "questions": [],
+        "parent_id": null,
+        "group_id": null,
+        "labels": [],
+        "edges": [],
+        "candidate_id": null,
+        "mission_id": null,
+        "canonical_history": []
+      }
+    ],
+    "next_cursor": null,
+    "population": "AUTHORIZED_ADMITTED_CONCEPTS_ONLY",
+    "complete_portfolio": false,
+    "read_only": true,
+    "additional_model_calls": 0
+  }
+}

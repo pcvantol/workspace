@@ -1,0 +1,96 @@
+{
+  "additional_model_calls": 0,
+  "complete_portfolio": false,
+  "contract_version": "forge-chat-first-mission/v1",
+  "items": [
+    {
+      "approval_supported": false,
+      "blockers": [
+        "TRUSTED_PLANNING_AND_APPROVAL_PACKAGE_REQUIRED"
+      ],
+      "candidate_id": null,
+      "canonical_history": [
+        {
+          "candidate_id": "concept-candidate-c2f4cde2c6548a9bf580b06556cfc627",
+          "definition_revision": 2,
+          "mission_id": "MISSION-0006",
+          "mission_status": "APPROVED_PLANNABLE",
+          "operation_id": "approve-exact-definition",
+          "subject_current": true,
+          "subject_revision": "sha256:c7344366bce5bcfece6c85bfde5215235282f96f5c4814f4c386490c117f8f1e"
+        }
+      ],
+      "context_revision": "sha256:70754048d13103f1d3d0d714ebf5a7d8c71bd8da0407615bccdb1e134c60b892",
+      "conversation_id": "mission-chat",
+      "conversation_revision": 9,
+      "definition": {
+        "acceptance_criteria": [
+          "Clients see only invoices belonging to their account.",
+          "Show a recoverable error when invoice lookup is unavailable."
+        ],
+        "architecture_choices": [],
+        "business_value": "Clients can track their payments.",
+        "change_summary": "Limit implementation to invoice listing and add visible error recovery.",
+        "components": [
+          "Invoice views"
+        ],
+        "dependencies": [],
+        "dependency_reasons": {},
+        "exclusions": [
+          "Payment execution"
+        ],
+        "expected_result": "A portal with current invoice status.",
+        "objective": "Show invoices and payments.",
+        "possible_subresults": [
+          {
+            "acceptance_criteria": [
+              "An account cannot see invoices belonging to another account."
+            ],
+            "expected_result": "The portal authenticates and isolates each account.",
+            "title": "Account isolation"
+          },
+          {
+            "acceptance_criteria": [
+              "Clients see the invoice status belonging to their own account."
+            ],
+            "expected_result": "Clients see current invoice and payment status.",
+            "title": "Invoice views"
+          }
+        ],
+        "questions": [],
+        "risks": [
+          "Account isolation must be verified."
+        ],
+        "scope": [
+          "Only invoice listing; do not implement payment views."
+        ],
+        "title": "Client portal",
+        "work_kind": "BUILD"
+      },
+      "definition_digest": "sha256:8a44fc5a1bb64bfe7a76c15a4e752e09a81d637e29f26969ba5ee034bc5dd409",
+      "edges": [],
+      "group_id": null,
+      "labels": [
+        "Implementation"
+      ],
+      "mission_id": null,
+      "object_id": "concept-f1ba9821a0d705c52d8a1d1868ebde97",
+      "parent_id": null,
+      "questions": [],
+      "revision": 3,
+      "source_turn_id": "third",
+      "state": "CONCEPT",
+      "summary": "A portal with current invoice status.",
+      "title": "Client portal"
+    }
+  ],
+  "next_cursor": null,
+  "population": "AUTHORIZED_ADMITTED_CONCEPTS_ONLY",
+  "read_only": true,
+  "scope": {
+    "instance_id": "forge-runtime-ff9e2fe9-c594-4a4a-b69e-07c666c0a8c5",
+    "project_id": "isolated-project",
+    "repository_id": "synthetic-repository"
+  },
+  "snapshot_revision": "sha256:1cc71456f52a02f0fdeba9b299d0a150f1789cfa40d65d2968cb9f9e3124a6cb"
+}

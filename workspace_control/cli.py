@@ -56,6 +56,11 @@ def main(argv=None):
         advisory_issue.add_argument("--" + flag, required=True)
     advisory_revoke = commands.add_parser("advisory-bind-revoke")
     advisory_revoke.add_argument("--binding-id", required=True)
+    mission_issue = commands.add_parser("mission-bind-issue")
+    for flag in ["actor", "project", "forge-endpoint", "forge-grant-receipt-file", "forge-token-file", "client-token-file"]:
+        mission_issue.add_argument("--"+flag,required=True)
+    mission_revoke=commands.add_parser("mission-bind-revoke")
+    mission_revoke.add_argument("--binding-id",required=True)
     candidate_issue = commands.add_parser("candidate-bind-issue")
     for flag in ["actor", "project", "forge-endpoint", "forge-grant-receipt-file", "forge-token-file", "client-token-file"]:
         candidate_issue.add_argument("--" + flag, required=True)
@@ -139,6 +144,14 @@ def main(argv=None):
             with Service(args.root) as service:
                 result = service.revoke_candidate(args.binding_id)
             print(json.dumps(result, sort_keys=True))
+        elif args.command == "mission-bind-issue":
+            with Service(args.root) as service:
+                result=service.provision_mission(args.actor,args.project,args.forge_endpoint,
+                    args.forge_grant_receipt_file,args.forge_token_file,args.client_token_file)
+            print(json.dumps(result,sort_keys=True))
+        elif args.command == "mission-bind-revoke":
+            with Service(args.root) as service:result=service.revoke_mission(args.binding_id)
+            print(json.dumps(result,sort_keys=True))
         elif args.command == "advisory-bind-issue":
             with Service(args.root) as service:
                 result = service.provision_advisory(args.actor, args.project, args.forge_endpoint,

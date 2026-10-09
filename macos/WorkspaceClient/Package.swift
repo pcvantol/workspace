@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "WorkspaceClient",
-    platforms: [.macOS(.v14)],
+    platforms: [.macOS("26.0")],
     products: [.executable(name: "WorkspaceClient", targets: ["WorkspaceClient"])],
     targets: [
         .executableTarget(name: "WorkspaceClient"),

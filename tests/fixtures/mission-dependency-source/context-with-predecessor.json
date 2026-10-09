@@ -1,0 +1,80 @@
+{
+  "additional_model_calls": 0,
+  "context": {
+    "concept_configuration_revision": "sha256:6fbb32e01bedc2bca9440cf9acdfe381e5c38ab5dde197872f97ce271d4a37a5",
+    "concept_dependency_catalog": [
+      {
+        "candidate_id": "concept-candidate-4a8932de35ab89d489f288ef4f9ea7f1",
+        "concept_revision": 1,
+        "dependencies": [],
+        "object_id": "concept-0dfdd71fff57ad7ba60e6bdaea52084c",
+        "recommendation_status": "MISSION_ALLOCATED",
+        "subject_revision": "sha256:a8b550322cd4ac8c0cb2d8184df8f5c28c29ff86e2227dd091b71cb2a44bf74b",
+        "title": "Account foundation"
+      }
+    ],
+    "concept_dependency_references": [
+      "concept-candidate-4a8932de35ab89d489f288ef4f9ea7f1"
+    ],
+    "concept_work_profiles": {
+      "BUILD": {
+        "constraints": [
+          "Preserve existing public contracts and account isolation."
+        ],
+        "effect_policy": {
+          "contract_version": "1.0",
+          "delivery": "GIT",
+          "mode": "BOUNDED_REPOSITORY_CHANGE",
+          "read_paths": [
+            "src/",
+            "tests/"
+          ],
+          "write_paths": [
+            "src/",
+            "tests/"
+          ]
+        },
+        "human_gates": [
+          "Explicit owner approval of the complete frozen definition."
+        ],
+        "maximum_actions": 4,
+        "maximum_consecutive_no_progress_actions": 2,
+        "required_capabilities": [
+          "bounded_repository_change"
+        ],
+        "required_disciplines": [
+          "engineering",
+          "security"
+        ],
+        "technical_assumptions": [
+          "Use the configured repository and existing authentication."
+        ]
+      }
+    },
+    "dataset_generation": 0,
+    "evidence_references": [
+      "project-binding:sha256:fc030cf8faeeb7c15dc44804e0d1df9da6d1683ceb2518f38dac8ebb3689bc87"
+    ],
+    "freshness": "CURRENT_CONFIGURED_BINDING",
+    "included_sources": [
+      "PROJECT_BINDING"
+    ],
+    "instance_id": "forge-runtime-f7084b74-5c0a-40f7-9c59-d137c599feca",
+    "limitations": [
+      "Explicit owner-published public immutable repository snapshots only; no harvesting or inferred facts."
+    ],
+    "missing_sources": [
+      "LIVE_REPOSITORY_CONTENT",
+      "CANONICAL_VISION",
+      "CANONICAL_PORTFOLIO",
+      "CANONICAL_ROADMAP"
+    ],
+    "project_id": "isolated-project",
+    "repository_id": "synthetic-repository",
+    "selected_sources": []
+  },
+  "context_revision": "sha256:ffd464a50230a14c9bb60474205ecaf12a17eff3c0b42b4c131283392f5d74f9",
+  "contract_version": "forge-chat-first-mission/v1",
+  "conversation_id": "portal",
+  "read_only": true
+}

@@ -21,6 +21,7 @@ PACKAGE_FILES = {"workspace_control/candidate_contract.py", "workspace_control/c
                  "workspace_control/worklist_contract.py",
                  "workspace_control/worklist_control_contract.py",
                  "workspace_control/worklist_control_peer.py",
+                 "workspace_control/mission_peer.py", "workspace_control/mission_contract.py", "workspace_control/mission-concepts-v1.json",
                  "workspace_control/advisory_contract.py", "workspace_control/advisory_peer.py",
                  "workspace_control/advisory_http.py", "workspace_control/advisory-conversation-v1.json",
                  "workspace_control/client.html", "workspace_control/client.js",

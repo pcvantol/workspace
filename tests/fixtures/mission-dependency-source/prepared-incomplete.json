@@ -1,0 +1,39 @@
+{
+  "additional_model_calls": 0,
+  "approval_supported": false,
+  "contract_version": "forge-chat-first-mission/v1",
+  "definition": {
+    "acceptance_criteria": [
+      "Clients see only invoices belonging to their account."
+    ],
+    "architecture_choices": [],
+    "business_value": "Clients can track their payments.",
+    "change_summary": "Initial proposed definition.",
+    "dependencies": [],
+    "dependency_reasons": {},
+    "exclusions": [
+      "Payment execution"
+    ],
+    "expected_result": "A portal with current invoice status.",
+    "objective": "Show invoices and payments.",
+    "questions": [
+      "Only investigate the portal, or also implement it?"
+    ],
+    "risks": [
+      "Account isolation must be verified."
+    ],
+    "scope": [
+      "Invoice and payment views"
+    ],
+    "title": "Client portal",
+    "work_kind": "UNDECIDED"
+  },
+  "object_id": "concept-9156efeb2c375ff692ec470d15f40f55",
+  "package": null,
+  "questions": [
+    "Only investigate the portal, or also implement it?",
+    "The requested kind of work has no authorized project profile."
+  ],
+  "read_only": true,
+  "revision": 1
+}

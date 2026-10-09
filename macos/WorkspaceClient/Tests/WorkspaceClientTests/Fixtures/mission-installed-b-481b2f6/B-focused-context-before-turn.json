@@ -1,0 +1,122 @@
+{
+  "additional_model_calls": 0,
+  "context": {
+    "concept_configuration_revision": "sha256:23973811d8fe4d849f10379a448a2758459adf890ea96547eb4bb4c6c0e12e4c",
+    "concept_dependency_catalog": [
+      {
+        "candidate_id": "concept-candidate-3a03db223dd21bb7dfd549d1c1717cc3",
+        "concept_revision": 1,
+        "dependencies": [],
+        "object_id": "concept-358b05d68d26f62990a4371ee44b1c33",
+        "recommendation_status": "MISSION_ALLOCATED",
+        "subject_revision": "sha256:f2082b00f226bf9806821cbe82c50a1053b18c2b1225fbe512044a37029c6d3e",
+        "title": "Account foundation"
+      }
+    ],
+    "concept_dependency_graph": {
+      "concept-candidate-3a03db223dd21bb7dfd549d1c1717cc3": []
+    },
+    "concept_dependency_references": [
+      "concept-candidate-3a03db223dd21bb7dfd549d1c1717cc3"
+    ],
+    "concept_repository_source": {
+      "github_repository": "synthetic-owner/synthetic-repository",
+      "repository_id": "synthetic-repository"
+    },
+    "concept_work_profiles": {
+      "BUILD": {
+        "components": {
+          "Account isolation": {
+            "description": "Isolate client account access to portal records.",
+            "read_paths": [
+              "src/accounts/access.py",
+              "tests/test_accounts.py"
+            ],
+            "write_paths": [
+              "src/accounts/access.py",
+              "tests/test_accounts.py"
+            ]
+          },
+          "Invoice views": {
+            "description": "Invoice status views within the existing portal.",
+            "read_paths": [
+              "src/invoices/views.py",
+              "tests/test_invoice_views.py"
+            ],
+            "write_paths": [
+              "src/invoices/views.py",
+              "tests/test_invoice_views.py"
+            ]
+          },
+          "Payment views": {
+            "description": "Payment status display; payment execution is excluded.",
+            "read_paths": [
+              "src/payments/views.py",
+              "tests/test_payment_views.py"
+            ],
+            "write_paths": [
+              "src/payments/views.py",
+              "tests/test_payment_views.py"
+            ]
+          }
+        },
+        "constraints": [
+          "Preserve existing public contracts and account isolation."
+        ],
+        "effect_policy": {
+          "contract_version": "1.0",
+          "delivery": "GIT",
+          "mode": "BOUNDED_REPOSITORY_CHANGE",
+          "read_paths": [
+            "src/",
+            "tests/"
+          ],
+          "write_paths": [
+            "src/",
+            "tests/"
+          ]
+        },
+        "human_gates": [
+          "Explicit owner approval of the complete frozen definition."
+        ],
+        "maximum_actions": 4,
+        "maximum_consecutive_no_progress_actions": 2,
+        "required_capabilities": [
+          "bounded_repository_change"
+        ],
+        "required_disciplines": [
+          "engineering",
+          "security"
+        ],
+        "technical_assumptions": [
+          "Use the configured repository and existing authentication."
+        ]
+      }
+    },
+    "dataset_generation": 0,
+    "evidence_references": [
+      "project-binding:sha256:cde0eb7f7950374187821fc0556991fa5ebdbc04c831507b38bd30d77c355fd0"
+    ],
+    "freshness": "CURRENT_CONFIGURED_BINDING",
+    "included_sources": [
+      "PROJECT_BINDING"
+    ],
+    "instance_id": "forge-runtime-25d2ae77-b2d7-47d1-86f9-d88ba9090354",
+    "limitations": [
+      "Explicit owner-published public immutable repository snapshots only; no harvesting or inferred facts."
+    ],
+    "missing_sources": [
+      "LIVE_REPOSITORY_CONTENT",
+      "CANONICAL_VISION",
+      "CANONICAL_PORTFOLIO",
+      "CANONICAL_ROADMAP"
+    ],
+    "project_id": "isolated-project",
+    "repository_id": "synthetic-repository",
+    "selected_sources": []
+  },
+  "context_revision": "sha256:d8d231932f5234ed16824acc6dba699f5becb0b4030d106cf5b304b1434ad066",
+  "contract_version": "forge-chat-first-mission/v1",
+  "conversation_id": "portal",
+  "read_only": true
+}

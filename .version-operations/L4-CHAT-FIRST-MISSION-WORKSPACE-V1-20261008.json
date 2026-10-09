@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "r81 plan93 selected bounded chat-first mission increment; one PATCH allocation; repairs, protected merge and qualification retain this operation",
+  "determined_version": "2.8.13",
+  "event_lineage": "r81 plan93 selected bounded chat-first mission increment; one PATCH allocation; repairs, protected merge and qualification retain this operation",
+  "expected_source_revision": "81a43c2580e922f49b42084be816eec62f67b12d",
+  "expected_version": "2.8.12",
+  "operation_id": "L4-CHAT-FIRST-MISSION-WORKSPACE-V1-20261008",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

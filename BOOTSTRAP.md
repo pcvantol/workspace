@@ -1,3 +1,21 @@
+# Selected chat-first mission Workspace — r81 plan93
+
+[Mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6066649886)
+and [pickup](https://github.com/pcvantol/forge/issues/208#issuecomment-6066993533)
+select L4-CHAT-FIRST-MISSION-WORKSPACE-V1-20261008 in the same assignment/session.
+Clean protected base c8969bafbeee4c30a48502a4d19977c80ffefa83; sole existing
+writer branch codex/r81-chat-first-mission. PR142/plan92 is CLOSED; its terminal
+receipt reconciles prior historical pending markers below. No budget reset.
+
+The normal journey must use chat to develop a complete human-readable definition,
+shared candidate tree/dependency selection and one explicit Approve into genuine
+Forge separate decisions/current readiness. Existing technical form is not this
+journey. New producer JOIN L3-L4-CHAT-FIRST-MISSION-READY-V1-20261008 is being
+aligned directly with the existing L3 writer, after its r41 completion. Early
+native presentation uses explicitly synthetic isolated fixtures only; qualified
+HTTP/generation/approval integration and full UX/Q/S/protected/exact-main DoD
+remain pending. Older producer pins are preserved and not new acceptance.
+
 # Workspace Bootstrap
 
 ## Owner five-language steering — r81 plan92, 8 October 2026
