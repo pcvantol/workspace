@@ -181,6 +181,12 @@ final class LiveMissionWorkspaceTests:XCTestCase {
         XCTAssertEqual(peer.calls.filter { $0.httpMethod=="POST" && $0.url!.path.hasSuffix("/turns") }.count,1)
         let setup=MissionSetupView(client:client,conversations:conversations,state:mission)
         await setup.save(access.token)
+        // A selected real Workspace UUID differs from the granted producer ID.
+        let postCount=peer.calls.filter { $0.httpMethod=="POST" }.count
+        mission.invalidate();await view.refreshKnownScope()
+        XCTAssertNotNil(mission.capability)
+        XCTAssertEqual(peer.calls.filter { $0.httpMethod=="POST" }.count,postCount)
+        XCTAssertEqual(peer.calls.filter { $0.httpMethod=="POST" && $0.url!.path.hasSuffix("/resolve") }.count,1)
         let card=try XCTUnwrap(mission.presentation(project:"Own")?.cards.first)
         twoCards=true
         credentials.access=AdvisoryAccess(endpoint:access.endpoint,workspaceInstanceID:access.workspaceInstanceID,workspaceProjectID:access.workspaceProjectID,actorID:access.actorID,forgeInstanceID:access.forgeInstanceID,forgeProjectID:access.forgeProjectID,repositoryID:access.repositoryID,conversationIDs:[peer.wire.conversation,otherProducer],token:access.token)

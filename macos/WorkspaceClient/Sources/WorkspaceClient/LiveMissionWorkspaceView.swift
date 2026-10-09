@@ -7,6 +7,7 @@ import SwiftUI
     @Published var ownConversationID:String?
     @Published var sceneID=0
     var selectionGeneration=0
+    var refreshing=false
     @Published var draftMessage=""
 }
 
@@ -60,8 +61,8 @@ struct LiveMissionWorkspaceView: View {
         // Authority reads publish project/actor themselves; they cannot key their own task.
         .task(id:connectionScope) { await refresh() }
         .onChange(of:conversations.state) { _, value in
-            if value=="AVAILABLE",state.capability==nil,state.pending==nil,client.phase=="CONNECTED" {
-                Task { await state.refresh(await connection()) }
+            if value=="AVAILABLE",!selection.refreshing,!state.busy,state.capability==nil,state.pending==nil,client.phase=="CONNECTED" {
+                Task { await refreshKnownScope() }
             }
         }
     }
@@ -88,7 +89,15 @@ struct LiveMissionWorkspaceView: View {
         if let existing=state.producerConnection(own,id:own.conversationID) { return existing }
         return await state.resolveWorkspace(own)
     }
+    func refreshKnownScope() async {
+        guard !selection.refreshing,!state.busy,client.phase=="CONNECTED",let own=await conversations.missionWorkspaceConnection(client:client),
+              let known=state.producerConnection(own,id:activeConversationID) else { return }
+        // Automatic availability observes existing granted slots; it never resolves a new binding.
+        await state.refresh(known)
+    }
     func refresh() async {
+        guard !selection.refreshing,!state.busy else { return }
+        selection.refreshing=true;defer { selection.refreshing=false }
         guard client.phase=="CONNECTED" else { activeConversationID=nil;selection.ownConversationID=nil;selection.newDraft=false;state.invalidate();return }
         await conversations.prepare(client:client)
         await state.refresh(await connection())
