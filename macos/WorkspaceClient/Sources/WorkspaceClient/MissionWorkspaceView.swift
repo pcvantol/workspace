@@ -47,9 +47,9 @@ struct MissionWorkspaceView: View {
                 }
                 if geometry.size.width >= 1050 {
                     HSplitView {
-                        overview.frame(minWidth:220,idealWidth:260,maxWidth:320)
-                        conversation.frame(minWidth:320,maxWidth:.infinity)
-                        definition.frame(minWidth:280,idealWidth:340,maxWidth:440)
+                        overview.frame(minWidth:220,idealWidth:260,maxWidth:320).clipped()
+                        conversation.frame(minWidth:320,maxWidth:.infinity).clipped()
+                        definition.frame(minWidth:280,idealWidth:340,maxWidth:440).clipped()
                     }
                 } else {
                     Picker(copy("panel"), selection: $panel) {
@@ -293,7 +293,7 @@ struct MissionWorkspaceView: View {
                     }.frame(width: canvasWidth, height: height)
                         .scaleEffect(zoom, anchor: .topLeading)
                         .frame(width: canvasWidth * zoom, height: height * zoom, alignment: .topLeading)
-                }.accessibilityIdentifier("mission.graph")
+                }.clipped().accessibilityIdentifier("mission.graph")
             }
             if let selection {
                 ForEach(Array(observation.visibleRelations.filter { $0.dependent == selection || $0.predecessor == selection }.enumerated()), id: \.offset) { _, edge in
