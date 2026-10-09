@@ -4,7 +4,17 @@ import XCTest
 
 final class MissionApprovalWireTests:XCTestCase {
     func fixture(_ name:String) throws -> Data {
-        try Data(contentsOf:URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/mission-approval-source/"+name+".json"))
+        let aliases=["prepared-complete":"prepared-root","compound-result":"compound-root","operation-after-refinement":"operation-superseded"]
+        let directory=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/mission-dependency-source/")
+        if name=="catalog-promoted" {
+            // Synthetic catalog replay for native recovery tests, derived from its actual paired root packet.
+            let p=try AdvisoryWire.object(fixture("prepared-complete"))["package"] as! [String:Any],source=p["source"] as! [String:Any],definition=p["definition"] as! [String:Any]
+            let candidate=p["candidate"] as! [String:Any]
+            let item:[String:Any]=["object_id":source["object_id"]!,"conversation_id":source["conversation_id"]!,"revision":source["revision"]!,"conversation_revision":source["conversation_revision"]!,"definition_digest":try AdvisoryWire.digest(definition),"definition":definition,"source_turn_id":source["turn_id"]!,"context_revision":source["context_revision"]!,"title":definition["title"]!,"summary":definition["expected_result"]!,"state":"APPROVED_WAITING","approval_supported":false,"blockers":["EXPLICIT_WORKSET_RELEASE_REQUIRED"],"questions":[],"parent_id":NSNull(),"group_id":NSNull(),"labels":[],"edges":[],"candidate_id":candidate["id"]!,"mission_id":"MISSION-0006"]
+            let scope=Dictionary(uniqueKeysWithValues:["instance_id","project_id","repository_id"].map { ($0,source[$0]!) })
+            return try JSONSerialization.data(withJSONObject:["contract_version":MissionConceptWire.contract,"items":[item],"next_cursor":NSNull(),"snapshot_revision":try AdvisoryWire.digest([item]),"scope":scope,"population":"AUTHORIZED_ADMITTED_CONCEPTS_ONLY","complete_portfolio":false,"read_only":true,"additional_model_calls":0])
+        }
+        return try Data(contentsOf:directory.appendingPathComponent((aliases[name] ?? name)+".json"))
     }
     func access() throws -> (AdvisoryAccess,String) {
         let p=try AdvisoryWire.object(fixture("prepared-complete"))["package"] as! [String:Any],s=p["source"] as! [String:Any],a=p["authority"] as! [String:Any]

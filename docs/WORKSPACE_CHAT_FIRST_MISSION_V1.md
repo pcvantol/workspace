@@ -142,3 +142,42 @@ frozen subject bindings, typed REQUIRES and real completion/worklist facts.
 Fresh actual versioned packets were requested directly under the existing JOIN;
 older immutable examples are not amended to pretend they contain that contract.
 This consumer checkpoint still consumes schema414822dc until that next admission.
+
+## Typed dependency/context consumer checkpoint
+
+Direct JOIN supplied nine new actual source HTTP packets under immutable
+schemaab9bab1cee8437dc2f972ad214e86752a02c46965480122c946fa3b6f7d1bf76.
+Every file SHA256/byte count was checked and copied into distinct
+`tests/fixtures/mission-dependency-source` and native fixture directories; old
+736/414 examples and earlier source checkpoints stay unchanged. The manifest
+records the actual producer production fingerprints and explicitly says not
+protected/installed. No Forge implementation is imported into product source.
+
+The consumer now obtains focused authorized conversation context before binding
+a turn. Typed REQUIRES carries exact source/target, Candidate subject revision,
+original reason and proposed/approved-definition status. Native complete-snapshot
+checks reject an unknown predecessor or mismatched Candidate. Frozen dependency
+bindings and current readiness facts must match the same Candidate versions;
+own HTTP also correlates edges/bindings to the original validated turn context.
+An approved-definition edge is explicitly not released execution order. Actual
+DEPENDENCY_NOT_PROVEN/release/hold/activation blockers have human five-language
+messages; unknown blockers are described without exposing raw internal codes.
+Physical execution readiness is not inferred from canonical decisions.
+
+Full `bash scripts/validate.sh` PASSED:149native+1isolated/allruntime/per-file,
+wheel/noneditable/native packaging and browser gates. New native state268/277
+96.75%, mission view934/103290.50%, live root108/12586.40%; Python mission contract
+155/15997.48%, mission peer119/13091.54%. Log
+`/private/tmp/lane4-plan93-dependency-context-full-validation.log`.
+Two new native actual A→B cases and Python correlation/refusal cases pass.
+Their replay namespace adaptation and component summaries are explicit consumer
+fixtures, not an installed normal user journey or simulated canonical effects.
+
+Subsequent producer catalog readiness/blocker and possible-subresults/repository
+context deltas are later previews, not silently substituted for this tested pin.
+Next own work must remove the old shared advisory Workspace-ID=producer-ID
+assumption for mission-only routing, reuse bounded owner setup/grants, and provide
+native natural-text new-draft/resolve/refine with individual approval. Final
+producer-supported split/new/ready journey, reviews/protected/finalization and
+new exact-main installed/GUI proof remain OPEN. No new grant per conversation,
+second planner, admin proxy, signing, live EP or qualification PASS is introduced.

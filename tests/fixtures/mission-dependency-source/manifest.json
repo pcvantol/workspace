@@ -1,0 +1,54 @@
+{
+  "classification": "ACTUAL_SOURCE_HTTP_SYNTHETIC_ISOLATED_CONTENT",
+  "schema_sha256": "ab9bab1cee8437dc2f972ad214e86752a02c46965480122c946fa3b6f7d1bf76",
+  "protected_or_installed": false,
+  "files": {
+    "prepared-incomplete.json": {
+      "sha256": "4aa27111e859356f6f0841e0f8668a3fe861e07900fb88cbc733c4e7477a6b72",
+      "bytes": 1133
+    },
+    "prepared-root.json": {
+      "sha256": "2f15dad587940e2462358c5a3eb34cf68b71e2c4228bd6eaaa48d839c84c54f8",
+      "bytes": 8563
+    },
+    "compound-root.json": {
+      "sha256": "fc09bea313d82c442d136a4318eef1f7f56a0bd0d266bbe36633253e2605aac2",
+      "bytes": 9319
+    },
+    "operation-current.json": {
+      "sha256": "305f50beed052a4bde953421902f1c25ecb4621c443054d0aa565074ac16e5a2",
+      "bytes": 16823
+    },
+    "operation-superseded.json": {
+      "sha256": "ba40dab424a22e8dac187b91acc33606e077c48c0d959ea72591760ee758a245",
+      "bytes": 16399
+    },
+    "context-with-predecessor.json": {
+      "sha256": "843e390e9604dd2ddd53ef4a6321df9fabd7aa4145d0b658f18d80f41679fdbb",
+      "bytes": 2624
+    },
+    "prepared-dependent.json": {
+      "sha256": "4ee314c5cc70b8021a2ebcd788ff17a3588edeb0acaf6bad0d6d0656ff2921fc",
+      "bytes": 9557
+    },
+    "compound-dependent.json": {
+      "sha256": "68cd8d6a28903582ed1e9ac6a1b9147914e0c463dea07ef034318dc7e8956f0e",
+      "bytes": 9619
+    },
+    "catalog-directed-dependency.json": {
+      "sha256": "116e9823fcec6e438d10e95b2867f5869157790d45f1c40396e0f8f0976d3d35",
+      "bytes": 4573
+    }
+  },
+  "production_fingerprints": {
+    "mission_concept_provider.py": "d3535ae5ad5fc34677069cd8eb59195d4707b720973df1dac74654982df24d96",
+    "mission_concept_readiness.py": "f7877fdc18bb7aa0ed3271d6884797257b444e0e8d5bbbfd2c3f40f86d090ab3",
+    "mission_concept_registration.py": "bba0681ff74856e8f87ff612d81035afcb0d89f3f8fdc5366d3ec3ca429c2466",
+    "mission_concept_setup.py": "ec334d79ffeaf8e092b77478c52d6b8c7f26c530e3d2dc4e9543821ac0e50c78",
+    "mission_concept_planning.py": "ce05cec45871c0b4849fb923bdd18b6680ed0a57315def345a195faa889cd8db",
+    "mission_concept_approval.py": "8f13e09201829cc9699b68c3e7a691499ff59fa48771ebaf5a48891e926cd399",
+    "mission_concept_resolver.py": "9f26280216d3da0f8b7b3879cb245d83a0120a52292d53592506261b39efc06d",
+    "mission_concept_contract.py": "8917406ef65804015d4c204d92f703e31541ea8ce8e16c7ce37c3ecbde35e1dd",
+    "mission_concept_service.py": "871d2ccda1ff8eda4fce3333247e8cd423380f5a9d0cbd24cefd0ba43e783f05"
+  }
+}

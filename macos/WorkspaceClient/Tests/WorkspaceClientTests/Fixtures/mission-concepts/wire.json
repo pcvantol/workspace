@@ -37,9 +37,10 @@
       ],
       "concept_dependency_references": [],
       "concept_work_profiles": {},
-      "concept_configuration_revision": null
+      "concept_configuration_revision": null,
+      "concept_dependency_catalog": []
     },
-    "context_revision": "sha256:fbf8799d9a89ec8ec5c6c84893beaece1940694869e64fb1d76ba12bed556918",
+    "context_revision": "sha256:475ae1824e5a10897d1451cf6de88564bd70a6ec53e72cc9546d304bbc4ecf6d",
     "maximum_turns": 8,
     "available_sources": [],
     "max_concurrent_invocations_per_instance": 1,
@@ -71,7 +72,7 @@
     "advisor_kind": "BUSINESS",
     "objective": "Value, café and constraints.",
     "expected_revision": 0,
-    "context_revision": "sha256:fbf8799d9a89ec8ec5c6c84893beaece1940694869e64fb1d76ba12bed556918",
+    "context_revision": "sha256:475ae1824e5a10897d1451cf6de88564bd70a6ec53e72cc9546d304bbc4ecf6d",
     "selected_sources": []
   },
   "record": {
@@ -85,10 +86,10 @@
       "advisor_kind": "BUSINESS",
       "objective": "Value, café and constraints.",
       "expected_revision": 0,
-      "context_revision": "sha256:fbf8799d9a89ec8ec5c6c84893beaece1940694869e64fb1d76ba12bed556918",
+      "context_revision": "sha256:475ae1824e5a10897d1451cf6de88564bd70a6ec53e72cc9546d304bbc4ecf6d",
       "selected_sources": []
     },
-    "request_digest": "sha256:88816fa03edd3043bf2dfa56d964ae4f475cee951c524d807c68ef4af649a18a",
+    "request_digest": "sha256:efa48fa9ae38bc2edec1bcc40449aace9bfea72e0324af4300b48b3ed15bebc7",
     "session_id": "session-one",
     "invocation_id": "inv-one",
     "context": {
@@ -113,7 +114,8 @@
       ],
       "concept_dependency_references": [],
       "concept_work_profiles": {},
-      "concept_configuration_revision": null
+      "concept_configuration_revision": null,
+      "concept_dependency_catalog": []
     },
     "provider": {
       "provider_id": "provider-one",
@@ -160,7 +162,7 @@
       "observed_effort": "NOT_REPORTED",
       "output": {
         "contract_version": "forge-chat-first-mission/v1",
-        "request_digest": "sha256:88816fa03edd3043bf2dfa56d964ae4f475cee951c524d807c68ef4af649a18a",
+        "request_digest": "sha256:efa48fa9ae38bc2edec1bcc40449aace9bfea72e0324af4300b48b3ed15bebc7",
         "definition": {
           "work_kind": "INVESTIGATE",
           "title": "Invoice portal",
@@ -184,10 +186,11 @@
           ],
           "dependencies": [],
           "questions": [],
-          "change_summary": "Payments excluded from this revision."
+          "change_summary": "Payments excluded from this revision.",
+          "dependency_reasons": {}
         }
       },
-      "result_digest": "sha256:8b1624694dd917be44baddbc4d62bcd07593ec9e4018afaee7834911ce0c2dd0",
+      "result_digest": "sha256:2c22216f6d4fd5a41388c48aac7efb49a264e58e80e691f96fdb1aeb0e2e6fa5",
       "error_code": null
     },
     "admitted_at": "2026-10-08T06:00:00Z",
@@ -207,10 +210,10 @@
         "advisor_kind": "BUSINESS",
         "objective": "Value, café and constraints.",
         "expected_revision": 0,
-        "context_revision": "sha256:fbf8799d9a89ec8ec5c6c84893beaece1940694869e64fb1d76ba12bed556918",
+        "context_revision": "sha256:475ae1824e5a10897d1451cf6de88564bd70a6ec53e72cc9546d304bbc4ecf6d",
         "selected_sources": []
       },
-      "request_digest": "sha256:88816fa03edd3043bf2dfa56d964ae4f475cee951c524d807c68ef4af649a18a",
+      "request_digest": "sha256:efa48fa9ae38bc2edec1bcc40449aace9bfea72e0324af4300b48b3ed15bebc7",
       "session_id": "session-one",
       "invocation_id": "inv-one",
       "context": {
@@ -235,7 +238,8 @@
         ],
         "concept_dependency_references": [],
         "concept_work_profiles": {},
-        "concept_configuration_revision": null
+        "concept_configuration_revision": null,
+        "concept_dependency_catalog": []
       },
       "provider": {
         "provider_id": "provider-one",
@@ -282,7 +286,7 @@
         "observed_effort": "NOT_REPORTED",
         "output": {
           "contract_version": "forge-chat-first-mission/v1",
-          "request_digest": "sha256:88816fa03edd3043bf2dfa56d964ae4f475cee951c524d807c68ef4af649a18a",
+          "request_digest": "sha256:efa48fa9ae38bc2edec1bcc40449aace9bfea72e0324af4300b48b3ed15bebc7",
           "definition": {
             "work_kind": "INVESTIGATE",
             "title": "Invoice portal",
@@ -306,10 +310,11 @@
             ],
             "dependencies": [],
             "questions": [],
-            "change_summary": "Payments excluded from this revision."
+            "change_summary": "Payments excluded from this revision.",
+            "dependency_reasons": {}
           }
         },
-        "result_digest": "sha256:8b1624694dd917be44baddbc4d62bcd07593ec9e4018afaee7834911ce0c2dd0",
+        "result_digest": "sha256:2c22216f6d4fd5a41388c48aac7efb49a264e58e80e691f96fdb1aeb0e2e6fa5",
         "error_code": null
       },
       "admitted_at": "2026-10-08T06:00:00Z",
@@ -340,10 +345,10 @@
           "advisor_kind": "BUSINESS",
           "objective": "Value, café and constraints.",
           "expected_revision": 0,
-          "context_revision": "sha256:fbf8799d9a89ec8ec5c6c84893beaece1940694869e64fb1d76ba12bed556918",
+          "context_revision": "sha256:475ae1824e5a10897d1451cf6de88564bd70a6ec53e72cc9546d304bbc4ecf6d",
           "selected_sources": []
         },
-        "request_digest": "sha256:88816fa03edd3043bf2dfa56d964ae4f475cee951c524d807c68ef4af649a18a",
+        "request_digest": "sha256:efa48fa9ae38bc2edec1bcc40449aace9bfea72e0324af4300b48b3ed15bebc7",
         "session_id": "session-one",
         "invocation_id": "inv-one",
         "context": {
@@ -368,7 +373,8 @@
           ],
           "concept_dependency_references": [],
           "concept_work_profiles": {},
-          "concept_configuration_revision": null
+          "concept_configuration_revision": null,
+          "concept_dependency_catalog": []
         },
         "provider": {
           "provider_id": "provider-one",
@@ -415,7 +421,7 @@
           "observed_effort": "NOT_REPORTED",
           "output": {
             "contract_version": "forge-chat-first-mission/v1",
-            "request_digest": "sha256:88816fa03edd3043bf2dfa56d964ae4f475cee951c524d807c68ef4af649a18a",
+            "request_digest": "sha256:efa48fa9ae38bc2edec1bcc40449aace9bfea72e0324af4300b48b3ed15bebc7",
             "definition": {
               "work_kind": "INVESTIGATE",
               "title": "Invoice portal",
@@ -439,10 +445,11 @@
               ],
               "dependencies": [],
               "questions": [],
-              "change_summary": "Payments excluded from this revision."
+              "change_summary": "Payments excluded from this revision.",
+              "dependency_reasons": {}
             }
           },
-          "result_digest": "sha256:8b1624694dd917be44baddbc4d62bcd07593ec9e4018afaee7834911ce0c2dd0",
+          "result_digest": "sha256:2c22216f6d4fd5a41388c48aac7efb49a264e58e80e691f96fdb1aeb0e2e6fa5",
           "error_code": null
         },
         "admitted_at": "2026-10-08T06:00:00Z",
@@ -463,14 +470,14 @@
       "project_id": "project-one",
       "repository_id": "repo-one"
     },
-    "snapshot_revision": "sha256:c12dbe79d526c1abc3cab40796439d44db16229cce649d4e7586773cec00f43b",
+    "snapshot_revision": "sha256:909eb07336721f03bc2b91b03cc8f89ff9fee57d66af80ac6ba4b348d0b07aae",
     "items": [
       {
         "object_id": "concept-cccccccccccccccccccccccccccccccc",
         "conversation_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "revision": 1,
         "conversation_revision": 1,
-        "definition_digest": "sha256:4ca843371a06d00de3661ddf528468dfc0c66d9dfcd9182c78e398fd06198029",
+        "definition_digest": "sha256:8f93b19c0fc2db7035b60ef34f3edfe257874390f6882f7893b992c5a73de36d",
         "definition": {
           "work_kind": "INVESTIGATE",
           "title": "Invoice portal",
@@ -494,10 +501,11 @@
           ],
           "dependencies": [],
           "questions": [],
-          "change_summary": "Payments excluded from this revision."
+          "change_summary": "Payments excluded from this revision.",
+          "dependency_reasons": {}
         },
         "source_turn_id": "turn-one",
-        "context_revision": "sha256:fbf8799d9a89ec8ec5c6c84893beaece1940694869e64fb1d76ba12bed556918",
+        "context_revision": "sha256:475ae1824e5a10897d1451cf6de88564bd70a6ec53e72cc9546d304bbc4ecf6d",
         "title": "Invoice portal",
         "summary": "Read-only invoice portal",
         "state": "CONCEPT",

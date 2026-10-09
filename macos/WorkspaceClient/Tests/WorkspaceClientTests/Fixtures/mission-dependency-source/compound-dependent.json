@@ -1,0 +1,204 @@
+{
+  "additional_model_calls": 0,
+  "architecture_decision": {
+    "admitted_at": "2026-10-09T05:33:45.269198+00:00",
+    "candidate_id": "concept-candidate-fd854de589531dfeade2b38e04618de7",
+    "canonical_decision": {
+      "capability": "ARCHITECTURE_APPROVAL",
+      "decision": "approved",
+      "decision_id": "candidate-architecture-f18311a96e9f7e5f5c10c6eb",
+      "evidence": {
+        "planning_digest": "sha256:c671bcfeb85566ba3966b3dd3ece9e63ca9cca1846e47104da3eda5dcefa871c"
+      },
+      "gates": [
+        "Explicit owner approval of the complete frozen definition."
+      ],
+      "installation_id": "91f93dd7-4da3-4138-98ca-bd59d22b05c1",
+      "occurred_at": "2026-10-09T05:33:45Z",
+      "operator_id": "606a849359f4df4c",
+      "predecessor_digest": null,
+      "scope": [
+        "synthetic-repository"
+      ],
+      "subject_id": "concept-candidate-fd854de589531dfeade2b38e04618de7",
+      "subject_revision": "sha256:5d799c094a3de0976939efb4ee503d79ad03e7ef035340ee6ac775d96ab51191"
+    },
+    "canonical_decision_digest": "sha256:14343af3be0f07ecf031f4e1d4927ee39a702b15995483fd8a3d1119434e1bad",
+    "contract_version": "forge-candidate-decisions/v1",
+    "decision_id": "candidate-architecture-f18311a96e9f7e5f5c10c6eb",
+    "installation_id": "91f93dd7-4da3-4138-98ca-bd59d22b05c1",
+    "kind": "ARCHITECTURE",
+    "lifecycle_evidence": {
+      "actor": "primary_operator",
+      "confidence": null,
+      "decision_type": "LIFECYCLE",
+      "id": "decision-architecture_decision-b356ec02453fca98",
+      "kind": "architecture_decision",
+      "occurred_at": "2026-10-09T05:33:45.269198+00:00",
+      "ranked_alternatives": [],
+      "rationale": "Explicit approval of the exact frozen Mission definition.",
+      "recommendation_id": "concept-recommendation-fd854de589531dfeade2b38e04618de7",
+      "references": [
+        "candidate-architecture-f18311a96e9f7e5f5c10c6eb",
+        "concept-candidate-fd854de589531dfeade2b38e04618de7",
+        "sha256:5d799c094a3de0976939efb4ee503d79ad03e7ef035340ee6ac775d96ab51191",
+        "sha256:c671bcfeb85566ba3966b3dd3ece9e63ca9cca1846e47104da3eda5dcefa871c",
+        "sha256:ed8938e5e2bde3d1b9f629a33c01e47360eea4284f0845e9857e5cf47d24b84e"
+      ],
+      "selected_recommendation_id": null
+    },
+    "lifecycle_evidence_digest": "sha256:bc44288bcd9fa616ebf8d9f5341746c7bce8eef808ea5967c4c0f8e79a62128c",
+    "operation_id": "concept-architecture-b8240c5832f1d5c39ec01e48d44a05e9",
+    "operator_binding_version": 1,
+    "operator_id": "606a849359f4df4c",
+    "principal_reference": "forge-runtime-f7084b74-5c0a-40f7-9c59-d137c599feca:606a849359f4df4c",
+    "profile_id": "solo",
+    "rationale": "Explicit approval of the exact frozen Mission definition.",
+    "request_digest": "sha256:3379f1cbbdd0dcead772982b503dd88741b269cab37f7db246a333016f2392c7",
+    "source_digest": "sha256:e7e3621d7ed5e5dd2863d7206f2e8379c91bf174de4199f5cd9b5c92f98adee8",
+    "subject_revision": "sha256:5d799c094a3de0976939efb4ee503d79ad03e7ef035340ee6ac775d96ab51191"
+  },
+  "business_decision": {
+    "admitted_at": "2026-10-09T05:33:45.269198+00:00",
+    "candidate_id": "concept-candidate-fd854de589531dfeade2b38e04618de7",
+    "canonical_decision": {
+      "capability": "BUSINESS_APPROVAL",
+      "decision": "approved",
+      "decision_id": "candidate-business-f18311a96e9f7e5f5c10c6eb",
+      "evidence": {},
+      "gates": [
+        "Explicit owner approval of the complete frozen definition."
+      ],
+      "installation_id": "91f93dd7-4da3-4138-98ca-bd59d22b05c1",
+      "occurred_at": "2026-10-09T05:33:45Z",
+      "operator_id": "606a849359f4df4c",
+      "predecessor_digest": null,
+      "scope": [
+        "synthetic-repository"
+      ],
+      "subject_id": "concept-candidate-fd854de589531dfeade2b38e04618de7",
+      "subject_revision": "sha256:5d799c094a3de0976939efb4ee503d79ad03e7ef035340ee6ac775d96ab51191"
+    },
+    "canonical_decision_digest": "sha256:4c55a6206e65682ba942d7189a33cd955ed1ce649250cac86ccbcc99611d5af8",
+    "contract_version": "forge-candidate-decisions/v1",
+    "decision_id": "candidate-business-f18311a96e9f7e5f5c10c6eb",
+    "installation_id": "91f93dd7-4da3-4138-98ca-bd59d22b05c1",
+    "kind": "BUSINESS",
+    "lifecycle_evidence": {
+      "actor": "primary_operator",
+      "confidence": null,
+      "decision_type": "LIFECYCLE",
+      "id": "decision-business_decision-f7d64bb84d1f006b",
+      "kind": "business_decision",
+      "occurred_at": "2026-10-09T05:33:45.269198+00:00",
+      "ranked_alternatives": [],
+      "rationale": "Explicit approval of the exact frozen Mission definition.",
+      "recommendation_id": "concept-recommendation-fd854de589531dfeade2b38e04618de7",
+      "references": [
+        "candidate-business-f18311a96e9f7e5f5c10c6eb",
+        "concept-candidate-fd854de589531dfeade2b38e04618de7",
+        "sha256:5d799c094a3de0976939efb4ee503d79ad03e7ef035340ee6ac775d96ab51191"
+      ],
+      "selected_recommendation_id": null
+    },
+    "lifecycle_evidence_digest": "sha256:7bd28a00ed9225bf834857d91a5696ed2a1e11a7fe43c63b22b5f48dd17a0c24",
+    "operation_id": "concept-business-b8240c5832f1d5c39ec01e48d44a05e9",
+    "operator_binding_version": 1,
+    "operator_id": "606a849359f4df4c",
+    "principal_reference": "forge-runtime-f7084b74-5c0a-40f7-9c59-d137c599feca:606a849359f4df4c",
+    "profile_id": "solo",
+    "rationale": "Explicit approval of the exact frozen Mission definition.",
+    "request_digest": "sha256:6412b2f4fee77a3e532ea48d4c776d3cdbe3800704dd4b93ddef7c696954f461",
+    "source_digest": "sha256:e7e3621d7ed5e5dd2863d7206f2e8379c91bf174de4199f5cd9b5c92f98adee8",
+    "subject_revision": "sha256:5d799c094a3de0976939efb4ee503d79ad03e7ef035340ee6ac775d96ab51191"
+  },
+  "candidate_id": "concept-candidate-fd854de589531dfeade2b38e04618de7",
+  "contract_version": "forge-chat-first-mission/v1",
+  "current": {
+    "blockers": [
+      "DEPENDENCY_NOT_PROVEN",
+      "EXPLICIT_WORKSET_RELEASE_REQUIRED"
+    ],
+    "dependency_facts": [
+      {
+        "candidate_id": "concept-candidate-4a8932de35ab89d489f288ef4f9ea7f1",
+        "proven": false,
+        "subject_revision": "sha256:a8b550322cd4ac8c0cb2d8184df8f5c28c29ff86e2227dd091b71cb2a44bf74b"
+      }
+    ],
+    "execution_ready": false,
+    "execution_resources": "NOT_OBSERVED",
+    "mission_status": "APPROVED_PLANNABLE",
+    "readiness_owner": "FORGE_APPROVED_WORKLIST",
+    "state": "APPROVED_WAITING",
+    "subject_revision": "sha256:5d799c094a3de0976939efb4ee503d79ad03e7ef035340ee6ac775d96ab51191",
+    "workset_facts": []
+  },
+  "envelope_digest": "sha256:86428fdd657e8ce3543a249c3e945259a43dca6ad75ddd17fbfbedb1659c5130",
+  "execution_started": false,
+  "intake_subject_revision": "sha256:5d799c094a3de0976939efb4ee503d79ad03e7ef035340ee6ac775d96ab51191",
+  "mission_id": "MISSION-0007",
+  "operation_id": "approve-portal",
+  "original_registration": {
+    "candidate": {
+      "acceptance_criteria": [
+        "Clients see only invoices belonging to their account."
+      ],
+      "architecture_constraints": [
+        "EXCLUDED: Payment execution",
+        "Preserve existing public contracts and account isolation."
+      ],
+      "dependencies": [
+        "concept-candidate-4a8932de35ab89d489f288ef4f9ea7f1"
+      ],
+      "effect_policy": {
+        "contract_version": "1.0",
+        "delivery": "GIT",
+        "mode": "BOUNDED_REPOSITORY_CHANGE",
+        "read_paths": [
+          "src/",
+          "tests/"
+        ],
+        "write_paths": [
+          "src/",
+          "tests/"
+        ]
+      },
+      "id": "concept-candidate-fd854de589531dfeade2b38e04618de7",
+      "objective": "Show invoices and payments.",
+      "recommendation_id": "concept-recommendation-fd854de589531dfeade2b38e04618de7",
+      "scope": [
+        "synthetic-repository"
+      ],
+      "title": "Client portal"
+    },
+    "candidate_digest": "sha256:5d799c094a3de0976939efb4ee503d79ad03e7ef035340ee6ac775d96ab51191",
+    "contract_version": "forge-chat-first-mission/v1",
+    "operation_id": "approve-portal",
+    "principal_reference": "forge-runtime-f7084b74-5c0a-40f7-9c59-d137c599feca:606a849359f4df4c",
+    "proposal_digest": "sha256:5b0ce7f2a5cf62ced2319cff3553b1a56758c6d54c755fd8263ae0c307296021",
+    "proposal_revision": 1,
+    "rationale": "Explicit approval of the exact generated definition and trusted planning.",
+    "recommendation_digest": "sha256:4053f8f66fc4428be577520b694ebe234cf6c72edc30eabd1cda04ac248e5d12",
+    "recommendation_id": "concept-recommendation-fd854de589531dfeade2b38e04618de7",
+    "registered_at": "2026-10-09T05:33:45.269198+00:00",
+    "registration_key": "sha256:b8240c5832f1d5c39ec01e48d44a05e9bb51f9eaf31dc1bc66e8ba7b5820218b",
+    "source": {
+      "context_revision": "sha256:ffd464a50230a14c9bb60474205ecaf12a17eff3c0b42b4c131283392f5d74f9",
+      "conversation_id": "portal",
+      "conversation_revision": 3,
+      "instance_id": "forge-runtime-f7084b74-5c0a-40f7-9c59-d137c599feca",
+      "invocation_id": "advice-invocation-d69ea5c557b346b3a13e92cb566b03d6",
+      "object_id": "concept-904d7fcef229ccc888e0771bb269e261",
+      "project_id": "isolated-project",
+      "repository_id": "synthetic-repository",
+      "request_digest": "sha256:e935b19bc992dc56a48e4749e55cca90f8d479de2b97bf2329e45bcf23682d7c",
+      "result_digest": "sha256:93663bf59619139f1453326b19c53705bd25feb3b3fc7a97af1daa1cabe27f2c",
+      "revision": 1,
+      "session_id": "advice-session-96de0053903d4e42893b745496aa96a7",
+      "turn_id": "initial"
+    },
+    "status_at_registration": "RECOMMENDED"
+  },
+  "package_digest": "sha256:5696244c7fdddf8197db3ddc1dd0a673979b941e1c3644dd4d23d0d22884a5ef"
+}

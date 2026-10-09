@@ -23,6 +23,10 @@ final class MissionConceptTransportTests: XCTestCase, @unchecked Sendable {
             if path.hasSuffix("/access") {
                 raw=["contract_version":"workspace-advisory-access/v1","actor_id":"alice","workspace_project_id":"ws-project","instance_id":"forge-one","project_id":"project-one","repository_id":"repo-one","conversation_ids":[self.wire.conversation]]
             } else if path.hasSuffix("/capability") { raw=try self.wire.fixture("capability") }
+            else if path.hasSuffix("/context") {
+                let cap=try self.wire.fixture("capability")
+                raw=["contract_version":MissionConceptWire.contract,"conversation_id":self.wire.conversation,"context":cap["context"]!,"context_revision":cap["context_revision"]!,"read_only":true,"additional_model_calls":0]
+            }
             else if path.hasSuffix("/catalog") {
                 var catalog=try self.wire.fixture("catalog")
                 if let record=self.recorded {
@@ -80,6 +84,7 @@ final class MissionConceptTransportTests: XCTestCase, @unchecked Sendable {
         let observed=try await t.probe(connection,token:access.token);XCTAssertEqual(observed,access)
         _ = try await t.capability(access,connection)
         _ = try await t.capability(access,connection,sources:[.init(source_id:"Vision",version:"sha256:"+String(repeating:"a",count:64))])
+        _ = try await t.context(access,connection)
         _ = try await t.history(access,connection)
         let request=try MissionConceptWire.request(wire.fixture("request"),access:access,conversation:wire.conversation)
         _ = try await t.turn(access,connection,request:request)

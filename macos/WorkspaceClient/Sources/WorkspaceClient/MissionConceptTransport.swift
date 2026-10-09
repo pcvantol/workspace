@@ -21,6 +21,10 @@ final class MissionConceptTransport: @unchecked Sendable {
         let query=parts.percentEncodedQuery.map { "?"+$0 } ?? ""
         return try MissionConceptWire.capability(await http.request(connection,token:access.token,path:"/v1/mission-concepts/capability"+query),access:access)
     }
+    func context(_ access:AdvisoryAccess,_ connection:AdvisoryConnection) async throws -> MissionFocusedContext {
+        try http.bound(access,connection)
+        return try MissionConceptWire.context(await http.request(connection,token:access.token,path:"/v1/mission-concepts/"+connection.conversationID+"/context"),access:access,conversation:connection.conversationID)
+    }
     func history(_ access: AdvisoryAccess, _ connection: AdvisoryConnection, cursor: Int = 0) async throws -> MissionConceptHistory {
         try http.bound(access, connection);guard (0...8).contains(cursor) else { throw AdvisoryError.invalid }
         return try MissionConceptWire.history(await http.request(connection,token:access.token,path:"/v1/mission-concepts/"+connection.conversationID+"?cursor=\(cursor)&limit=4"),access:access,conversation:connection.conversationID)

@@ -16,7 +16,9 @@ def validate(value, kind):
 
 def definition(value, allowed_dependencies=None):
     validate({'contract_version': CONTRACT, 'request_digest': 'sha256:'+'0'*64, 'definition': value}, 'output')
-    texts = [value[k] for k in ('title', 'objective', 'business_value', 'expected_result', 'change_summary')]
+    if set(value['dependency_reasons']) != set(value['dependencies']):
+        raise WorklistError('INVALID_RESPONSE')
+    texts = [*value['dependency_reasons'].values(), *[value[k] for k in ('title', 'objective', 'business_value', 'expected_result', 'change_summary')]]
     for key in LIST_FIELDS:
         if len(value[key]) != len(set(value[key])):
             raise WorklistError('INVALID_RESPONSE')
@@ -71,6 +73,10 @@ def response(value, kind, binding, conversation=None, expected=None, *, cursor=0
         scope(value, binding); scope(value['context'], binding)
         if set(value['conversation_ids']) != set(binding['conversation_ids']) or digest(value['context']) != value['context_revision']:
             raise WorklistError('INVALID_RESPONSE')
+    elif kind == 'concept_context':
+        scope(value['context'],binding)
+        if (conversation not in binding['conversation_ids'] or value['conversation_id']!=conversation or digest(value['context'])!=value['context_revision']):
+            raise WorklistError('INVALID_RESPONSE')
     elif kind == 'history':
         scope(value['scope'], binding)
         if value['conversation_id'] != conversation or len({t['request']['turn_id'] for t in value['turns']}) != len(value['turns']):
@@ -85,6 +91,11 @@ def response(value, kind, binding, conversation=None, expected=None, *, cursor=0
             definition(item['definition'])
             if (item['conversation_id'] not in binding['conversation_ids'] or digest(item['definition']) != item['definition_digest'] or item['title'] != item['definition']['title'] or item['summary'] != item['definition']['expected_result'] or item['questions'] != item['definition']['questions'] or item['revision'] > item['conversation_revision']):
                 raise WorklistError('INVALID_RESPONSE')
+        for item in value['items']:
+            for edge in item['edges']:
+                if (edge['target_object_id']!=item['object_id'] or edge['source_object_id']==item['object_id'] or
+                    edge['candidate_id'] not in item['definition']['dependencies'] or item['definition']['dependency_reasons'].get(edge['candidate_id'])!=edge['reason']):
+                    raise WorklistError('INVALID_RESPONSE')
         if value['next_cursor'] is not None and value['next_cursor'] != cursor + len(value['items']):
             raise WorklistError('INVALID_RESPONSE')
         if cursor == 0 and value['next_cursor'] is None and digest(value['items']) != value['snapshot_revision']:
@@ -103,7 +114,12 @@ def frozen_package(value, binding, conversation, *, expected_digest=None):
     principal=binding['forge_instance_id']+':'+binding['actor_id']
     if value['authority']['principal_reference'] != principal or expected_digest is not None and digest(value) != expected_digest:
         raise WorklistError('INVALID_RESPONSE')
-    d=definition(value['definition']);candidate=value['candidate'];preview=value['mission_preview'];planning=value['planning'];effects=value['consequences']
+    bindings=value['dependency_bindings'];d=definition(value['definition'])
+    if (len({b['candidate_id'] for b in bindings})!=len(bindings) or
+        {b['candidate_id'] for b in bindings}!=set(d['dependencies']) or
+        any(b['reason']!=d['dependency_reasons'][b['candidate_id']] for b in bindings)):
+        raise WorklistError('INVALID_RESPONSE')
+    candidate=value['candidate'];preview=value['mission_preview'];planning=value['planning'];effects=value['consequences']
     if (digest(candidate) != value['subject_revision'] or candidate['title'] != d['title'] or candidate['objective'] != d['objective'] or
         set(candidate['acceptance_criteria']) != set(d['acceptance_criteria']) or set(candidate['dependencies']) != set(d['dependencies']) or
         not {'EXCLUDED: '+item for item in d['exclusions']} <= set(candidate['architecture_constraints']) or
@@ -151,4 +167,11 @@ def compound(value, binding, conversation, *, expected_digest=None, operation=No
     complete=response_kind=='compound_result' or value['state']=='COMPLETE'
     if complete and (original is None or len(decisions)!=2 or value['mission_id'] is None):
         raise WorklistError('INVALID_RESPONSE')
+    readiness=value.get('current_readiness') if response_kind=='compound_operation' else value.get('current')
+    if readiness is not None:
+        bindings=package['dependency_bindings'];facts=readiness['dependency_facts']
+        if (readiness['subject_revision']!=package['subject_revision'] or len({f['candidate_id'] for f in facts})!=len(facts) or
+            {f['candidate_id'] for f in facts}!={b['candidate_id'] for b in bindings} or
+            any(not any(b['candidate_id']==f['candidate_id'] and b['subject_revision']==f['subject_revision'] for b in bindings) for f in facts)):
+            raise WorklistError('INVALID_RESPONSE')
     return value

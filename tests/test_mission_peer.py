@@ -77,6 +77,7 @@ class MissionPeerTests(unittest.TestCase):
         status,value=self.call(base+'/turns','POST',r);self.assertEqual(status,200,value)
         self.assertEqual(self.call(base+'/turns/turn-one')[0],200)
         self.assertEqual(self.call(base+'?cursor=0&limit=4')[0],200)
+        self.assertEqual(self.call(base+'/context')[0],200)
         status,value=self.call(self.fixture_prefix+'/catalog');self.assertEqual(status,200,value)
         self.assertEqual(value['items'][0]['definition']['title'],'Invoice portal')
         self.assertFalse(value['items'][0]['approval_supported']);self.assertIsNone(value['items'][0]['mission_id'])

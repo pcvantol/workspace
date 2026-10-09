@@ -48,6 +48,8 @@ class AdvisoryPeerTests(unittest.TestCase):
      value=capability();value['conversation_ids']=[conv]
     elif owner.fixture_concept and self.path==owner.fixture_prefix+'/resolve':
      value=owner.fixture_resolve(actor,json.loads(self.rfile.read(int(self.headers['Content-Length']))))
+    elif owner.fixture_concept and self.path.endswith('/context'):
+     cap=capability();value=dict(contract_version=w.CONTRACT,conversation_id=conv,context=cap['context'],context_revision=cap['context_revision'],read_only=True,additional_model_calls=0)
     elif self.command=='POST' and self.path.endswith('/cancel'):
      r=deepcopy(next(iter(owner.turns.values())));r['status']='CANCEL_REQUESTED';r['execution']='MAY_HAVE_HAPPENED';r['outcome']=None
      value={'contract_version':w.CONTRACT,'original_turn':r,'current_revision':owner.revision,'provider_stopped':False,'cancel_request_recorded':True}

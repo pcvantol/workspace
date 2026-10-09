@@ -132,7 +132,7 @@ for key, method, path in [
     ("cancel", "POST", "/v1/mission-concepts/{conversation_id}/turns/{turn_id}/cancel")]:
     OPERATIONS["mission-concepts."+key]={"exposure":"HTTP_EXPOSED","method":method,"path":path,
         "auth":"BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT","contract":"mission","summary":"scoped versioned mission concept"}
-for key,method,path in [("resolve","POST","/v1/mission-concepts/resolve"),("package","GET","/v1/mission-concepts/{conversation_id}/package"),("approve","POST","/v1/mission-concepts/{conversation_id}/approve"),("operation","GET","/v1/mission-concepts/{conversation_id}/operations/{operation_id}")]:
+for key,method,path in [("context","GET","/v1/mission-concepts/{conversation_id}/context"),("resolve","POST","/v1/mission-concepts/resolve"),("package","GET","/v1/mission-concepts/{conversation_id}/package"),("approve","POST","/v1/mission-concepts/{conversation_id}/approve"),("operation","GET","/v1/mission-concepts/{conversation_id}/operations/{operation_id}")]:
     OPERATIONS["mission-concepts."+key]={"exposure":"HTTP_EXPOSED","method":method,"path":path,"auth":"BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT","contract":"mission","summary":"exact frozen approval and separate current operation readback"}
 OPERATIONS["mission-concepts.contract.read"]={"exposure":"HTTP_EXPOSED","method":"GET","path":"/v1/mission-concepts/openapi.json","auth":"BEARER_PINNED","contract":"mission","summary":"closed versioned mission transport contract"}
 OPERATIONS["advisory.contract.read"]={"exposure":"HTTP_EXPOSED","method":"GET","path":"/v1/advisory/openapi.json","auth":"BEARER_PINNED","contract":"advisory","summary":"closed advisory contract"}
@@ -552,6 +552,9 @@ def handler_for(service, *, public_host=None, scheme="http"):
                     try:body=json.loads(self.rfile.read(int(lengths[0])),object_pairs_hook=_unique_json_object)
                     except (ValueError,UnicodeError,RecursionError):raise WorklistError('INVALID_REQUEST') from None
                     result=peer.resolve(b,scope,body,authority=service.advisory_forward_scope(self.headers['X-Workspace-Draft-Grant'],scope))
+                elif concept and len(parts)==5 and parts[4]=='context' and not write:
+                    if query:raise WorklistError('INVALID_REQUEST')
+                    c=parts[3];peer.bound(b,scope,c);result=peer.context(b,c)
                 elif concept and len(parts)==5 and parts[4]=='package' and not write:
                     if set(query)-{'revision'} or any(len(v)!=1 for v in query.values()):raise WorklistError('INVALID_REQUEST')
                     c=parts[3];peer.bound(b,scope,c)
@@ -768,7 +771,7 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return self._candidate_route()
             if target.startswith("/v1/mission-concepts/"):
                 parsed=urlsplit(target);path=parsed.path
-                if parsed.fragment or '%' in path or '..' in path or not re.fullmatch(r"/v1/mission-concepts/(?:access|capability|catalog|openapi.json|[0-9a-f]{32}(?:/turns/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}|/package|/operations/[A-Za-z0-9][A-Za-z0-9._:-]{0,127})?)",path):
+                if parsed.fragment or '%' in path or '..' in path or not re.fullmatch(r"/v1/mission-concepts/(?:access|capability|catalog|openapi.json|[0-9a-f]{32}(?:/turns/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}|/context|/package|/operations/[A-Za-z0-9][A-Za-z0-9._:-]{0,127})?)",path):
                     return self._reply(400,{"error":"INVALID_PATH"})
                 if path=="/v1/mission-concepts/openapi.json":
                     if self._pinned_auth():return self._reply(200,mission_openapi_contract())

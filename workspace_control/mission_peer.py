@@ -29,6 +29,10 @@ class MissionConceptTransport(AdvisoryTransport):
             if not {(s['source_id'], s['version']) for s in selections} <= known:
                 raise WorklistError('CONTEXT_STALE')
 
+    def context(self,binding,conversation):
+        self.bound(binding,(binding['actor_id'],binding['workspace_project_id']),conversation)
+        return wire.response(self._read(binding,self.prefix+'/'+conversation+'/context'),'concept_context',binding,conversation)
+
     def history(self, binding, conversation, cursor, limit):
         value = super().history(binding, conversation, cursor, limit)
         for record in value['turns']:
@@ -60,6 +64,11 @@ class MissionConceptTransport(AdvisoryTransport):
             self.bound(binding, (binding['actor_id'], binding['workspace_project_id']), item['conversation_id'])
             source = self.turn(binding, item['conversation_id'], item['source_turn_id'])
             record = source['original_turn']
+            references={r['candidate_id']:r for r in record['context']['concept_dependency_catalog']}
+            for edge in item['edges']:
+                ref=references.get(edge['candidate_id'])
+                if ref is None or ref['object_id']!=edge['source_object_id'] or ref['subject_revision']!=edge['subject_revision']:
+                    raise WorklistError('INVALID_RESPONSE')
             if source['current_revision'] != item['conversation_revision']:
                 raise WorklistError('CATALOG_SNAPSHOT_CHANGED')
             if record['status'] != 'COMPLETE' or record['request']['context_revision'] != item['context_revision'] or record['outcome']['output']['definition'] != item['definition']:
@@ -75,6 +84,11 @@ class MissionConceptTransport(AdvisoryTransport):
         if value['package'] is not None:
             frozen=value['package'];source=frozen['source']
             original=self.turn(binding,conversation,source['turn_id'])['original_turn']
+            references={r['candidate_id']:r for r in original['context']['concept_dependency_catalog']}
+            for dependency in frozen['dependency_bindings']:
+                ref=references.get(dependency['candidate_id'])
+                if ref is None or ref['object_id']!=dependency['object_id'] or ref['subject_revision']!=dependency['subject_revision']:
+                    raise WorklistError('INVALID_RESPONSE')
             if (original['request_digest'] != source['request_digest'] or original['request']['context_revision'] != source['context_revision'] or
                 original['session_id'] != source['session_id'] or original['invocation_id'] != source['invocation_id'] or
                 original['outcome']['result_digest'] != source['result_digest'] or original['outcome']['output']['definition'] != frozen['definition']):

@@ -20,6 +20,7 @@ struct MissionDefinitionCard: Identifiable, Equatable, Codable {
     var consequences: [String]? = nil
     var risks: [String]? = nil
     var remainingDecisions: [String]? = nil
+    var blockers:[String]? = nil
 }
 
 struct MissionRelation: Equatable, Codable {

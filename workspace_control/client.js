@@ -212,6 +212,7 @@ const ownOperations = {
   'advisory.submit': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT', method: 'POST', path: '/v1/advisory/{conversation_id}/turns'},
   'advisory.turn': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT', method: 'GET', path: '/v1/advisory/{conversation_id}/turns/{turn_id}'},
   'advisory.cancel': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT', method: 'POST', path: '/v1/advisory/{conversation_id}/turns/{turn_id}/cancel'},
+  'mission-concepts.context': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT', method: 'GET', path: '/v1/mission-concepts/{conversation_id}/context'},
   'mission-concepts.resolve': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT', method: 'POST', path: '/v1/mission-concepts/resolve'},
   'mission-concepts.access': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT', method: 'GET', path: '/v1/mission-concepts/access'},
   'mission-concepts.capability': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT', method: 'GET', path: '/v1/mission-concepts/capability'},

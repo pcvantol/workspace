@@ -7,12 +7,13 @@ from workspace_control.worklist_peer import WorklistError
 
 
 def content():
-    return dict(work_kind='INVESTIGATE',title='Invoice portal', objective='View own invoices', business_value='Customers find their invoices', expected_result='Read-only invoice portal', scope=['Own invoices'], exclusions=['Payments'], acceptance_criteria=['A customer sees only their own invoices.'], architecture_choices=['Authenticated read-only access'], risks=['Access isolation requires review'], dependencies=[], questions=[], change_summary='Payments excluded from this revision.')
+    return dict(dependency_reasons={},work_kind='INVESTIGATE',title='Invoice portal', objective='View own invoices', business_value='Customers find their invoices', expected_result='Read-only invoice portal', scope=['Own invoices'], exclusions=['Payments'], acceptance_criteria=['A customer sees only their own invoices.'], architecture_choices=['Authenticated read-only access'], risks=['Access isolation requires review'], dependencies=[], questions=[], change_summary='Payments excluded from this revision.')
 
 
 def capability():
     value = base_capability(); value['contract_version'] = w.CONTRACT
     value['context']['concept_dependency_references'] = []
+    value['context']['concept_dependency_catalog'] = []
     value['context']['concept_work_profiles'] = {}
     value['context']['concept_configuration_revision'] = None
     value['context_revision'] = w.digest(value['context'])

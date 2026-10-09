@@ -1,0 +1,431 @@
+{
+  "additional_model_calls": 0,
+  "architecture_decision": {
+    "admitted_at": "2026-10-09T05:33:40.572977+00:00",
+    "candidate_id": "concept-candidate-043b0d620e88e0852f0b1bbc560adaae",
+    "canonical_decision": {
+      "capability": "ARCHITECTURE_APPROVAL",
+      "decision": "approved",
+      "decision_id": "candidate-architecture-33ada4637bded6a08d419028",
+      "evidence": {
+        "planning_digest": "sha256:b8b9125146ee283617f69932cdf5ec873cba64f8946bf472f6f2641d86c657c2"
+      },
+      "gates": [
+        "Explicit owner approval of the complete frozen definition."
+      ],
+      "installation_id": "8a890877-f22e-4d5b-8fcf-e76e89b2aa23",
+      "occurred_at": "2026-10-09T05:33:41Z",
+      "operator_id": "606a849359f4df4c",
+      "predecessor_digest": null,
+      "scope": [
+        "synthetic-repository"
+      ],
+      "subject_id": "concept-candidate-043b0d620e88e0852f0b1bbc560adaae",
+      "subject_revision": "sha256:3e503e12101079d9da42da803c5af90e2a2e8ebaa523888ead14dda14e530ab3"
+    },
+    "canonical_decision_digest": "sha256:e4d2906ae693a7a5fb048474fe7178f9dea086a4582a9f8257630364b54bff89",
+    "contract_version": "forge-candidate-decisions/v1",
+    "decision_id": "candidate-architecture-33ada4637bded6a08d419028",
+    "installation_id": "8a890877-f22e-4d5b-8fcf-e76e89b2aa23",
+    "kind": "ARCHITECTURE",
+    "lifecycle_evidence": {
+      "actor": "primary_operator",
+      "confidence": null,
+      "decision_type": "LIFECYCLE",
+      "id": "decision-architecture_decision-6741b62aadcec32b",
+      "kind": "architecture_decision",
+      "occurred_at": "2026-10-09T05:33:40.572977+00:00",
+      "ranked_alternatives": [],
+      "rationale": "Explicit approval of the exact frozen Mission definition.",
+      "recommendation_id": "concept-recommendation-043b0d620e88e0852f0b1bbc560adaae",
+      "references": [
+        "candidate-architecture-33ada4637bded6a08d419028",
+        "concept-candidate-043b0d620e88e0852f0b1bbc560adaae",
+        "sha256:3e503e12101079d9da42da803c5af90e2a2e8ebaa523888ead14dda14e530ab3",
+        "sha256:b8b9125146ee283617f69932cdf5ec873cba64f8946bf472f6f2641d86c657c2",
+        "sha256:dd1f2ec9a16841967f170ebe8532b0e3ee6aff36957c55e21b5e6674c7e6b752"
+      ],
+      "selected_recommendation_id": null
+    },
+    "lifecycle_evidence_digest": "sha256:3844610b6ebfb38f6e921d349231846fd8cebfd0daf25b5e018d9e680510939d",
+    "operation_id": "concept-architecture-b816b67e499f627bff220d90fe51cf0c",
+    "operator_binding_version": 1,
+    "operator_id": "606a849359f4df4c",
+    "principal_reference": "forge-runtime-f57c320a-f66e-4759-956d-f55d7e10747f:606a849359f4df4c",
+    "profile_id": "solo",
+    "rationale": "Explicit approval of the exact frozen Mission definition.",
+    "request_digest": "sha256:11430c11d6e9fdce597d150619f15c0b51f44ba2874df237fc64f3c2828586df",
+    "source_digest": "sha256:509d9c8c6b4f8b1c392301ef4c17d477408f903d552b205c571dcb830725640f",
+    "subject_revision": "sha256:3e503e12101079d9da42da803c5af90e2a2e8ebaa523888ead14dda14e530ab3"
+  },
+  "business_decision": {
+    "admitted_at": "2026-10-09T05:33:40.572977+00:00",
+    "candidate_id": "concept-candidate-043b0d620e88e0852f0b1bbc560adaae",
+    "canonical_decision": {
+      "capability": "BUSINESS_APPROVAL",
+      "decision": "approved",
+      "decision_id": "candidate-business-33ada4637bded6a08d419028",
+      "evidence": {},
+      "gates": [
+        "Explicit owner approval of the complete frozen definition."
+      ],
+      "installation_id": "8a890877-f22e-4d5b-8fcf-e76e89b2aa23",
+      "occurred_at": "2026-10-09T05:33:40Z",
+      "operator_id": "606a849359f4df4c",
+      "predecessor_digest": null,
+      "scope": [
+        "synthetic-repository"
+      ],
+      "subject_id": "concept-candidate-043b0d620e88e0852f0b1bbc560adaae",
+      "subject_revision": "sha256:3e503e12101079d9da42da803c5af90e2a2e8ebaa523888ead14dda14e530ab3"
+    },
+    "canonical_decision_digest": "sha256:93ee1d3c12663891466cb669f8084694dcbdf81cdb7ff80fcc5548fe79154ebd",
+    "contract_version": "forge-candidate-decisions/v1",
+    "decision_id": "candidate-business-33ada4637bded6a08d419028",
+    "installation_id": "8a890877-f22e-4d5b-8fcf-e76e89b2aa23",
+    "kind": "BUSINESS",
+    "lifecycle_evidence": {
+      "actor": "primary_operator",
+      "confidence": null,
+      "decision_type": "LIFECYCLE",
+      "id": "decision-business_decision-63d22f938a2d5f14",
+      "kind": "business_decision",
+      "occurred_at": "2026-10-09T05:33:40.572977+00:00",
+      "ranked_alternatives": [],
+      "rationale": "Explicit approval of the exact frozen Mission definition.",
+      "recommendation_id": "concept-recommendation-043b0d620e88e0852f0b1bbc560adaae",
+      "references": [
+        "candidate-business-33ada4637bded6a08d419028",
+        "concept-candidate-043b0d620e88e0852f0b1bbc560adaae",
+        "sha256:3e503e12101079d9da42da803c5af90e2a2e8ebaa523888ead14dda14e530ab3"
+      ],
+      "selected_recommendation_id": null
+    },
+    "lifecycle_evidence_digest": "sha256:0ea8932d38af932fb3e4170e193a38caf99ffbc75d6a2a7398d250fcf2f00714",
+    "operation_id": "concept-business-b816b67e499f627bff220d90fe51cf0c",
+    "operator_binding_version": 1,
+    "operator_id": "606a849359f4df4c",
+    "principal_reference": "forge-runtime-f57c320a-f66e-4759-956d-f55d7e10747f:606a849359f4df4c",
+    "profile_id": "solo",
+    "rationale": "Explicit approval of the exact frozen Mission definition.",
+    "request_digest": "sha256:8b94258a6b0857e03f9bb1220520cc256200c7cf26b760b027b5e29d4f372942",
+    "source_digest": "sha256:509d9c8c6b4f8b1c392301ef4c17d477408f903d552b205c571dcb830725640f",
+    "subject_revision": "sha256:3e503e12101079d9da42da803c5af90e2a2e8ebaa523888ead14dda14e530ab3"
+  },
+  "candidate_id": "concept-candidate-043b0d620e88e0852f0b1bbc560adaae",
+  "contract_version": "forge-chat-first-mission/v1",
+  "current_definition_state": "APPROVED_WAITING",
+  "current_readiness": {
+    "blockers": [
+      "EXPLICIT_WORKSET_RELEASE_REQUIRED"
+    ],
+    "dependency_facts": [],
+    "execution_ready": false,
+    "execution_resources": "NOT_OBSERVED",
+    "mission_status": "APPROVED_PLANNABLE",
+    "readiness_owner": "FORGE_APPROVED_WORKLIST",
+    "state": "APPROVED_WAITING",
+    "subject_revision": "sha256:3e503e12101079d9da42da803c5af90e2a2e8ebaa523888ead14dda14e530ab3",
+    "workset_facts": []
+  },
+  "execution_started": false,
+  "frozen_package": {
+    "actions_predefined": false,
+    "authority": {
+      "configuration_digest": "sha256:63d25107c1a244dcbadb4e298313c19818baad0983a89a4be873a38794943229",
+      "maximum_missions": 2,
+      "principal_reference": "forge-runtime-f57c320a-f66e-4759-956d-f55d7e10747f:606a849359f4df4c",
+      "profile_id": "solo",
+      "signer": {
+        "installation_id": "8a890877-f22e-4d5b-8fcf-e76e89b2aa23",
+        "operator_binding_version": 1,
+        "operator_id": "606a849359f4df4c"
+      }
+    },
+    "candidate": {
+      "acceptance_criteria": [
+        "Clients see only invoices belonging to their account."
+      ],
+      "architecture_constraints": [
+        "EXCLUDED: Payment execution",
+        "Preserve existing public contracts and account isolation."
+      ],
+      "dependencies": [],
+      "effect_policy": {
+        "contract_version": "1.0",
+        "delivery": "GIT",
+        "mode": "BOUNDED_REPOSITORY_CHANGE",
+        "read_paths": [
+          "src/",
+          "tests/"
+        ],
+        "write_paths": [
+          "src/",
+          "tests/"
+        ]
+      },
+      "id": "concept-candidate-043b0d620e88e0852f0b1bbc560adaae",
+      "objective": "Show invoices and payments.",
+      "recommendation_id": "concept-recommendation-043b0d620e88e0852f0b1bbc560adaae",
+      "scope": [
+        "synthetic-repository"
+      ],
+      "title": "Client portal"
+    },
+    "consequences": {
+      "exclusions": [
+        "Payment execution"
+      ],
+      "human_gates": [
+        "Explicit owner approval of the complete frozen definition."
+      ],
+      "repository_effect": {
+        "contract_version": "1.0",
+        "delivery": "GIT",
+        "mode": "BOUNDED_REPOSITORY_CHANGE",
+        "read_paths": [
+          "src/",
+          "tests/"
+        ],
+        "write_paths": [
+          "src/",
+          "tests/"
+        ]
+      },
+      "risks": [
+        "Account isolation must be verified."
+      ]
+    },
+    "contract_version": "forge-chat-first-mission/v1",
+    "decision_effects": [
+      "REGISTER_CANDIDATE",
+      "BUSINESS_APPROVAL",
+      "ARCHITECTURE_APPROVAL",
+      "GOVERNED_INTAKE"
+    ],
+    "definition": {
+      "acceptance_criteria": [
+        "Clients see only invoices belonging to their account."
+      ],
+      "architecture_choices": [],
+      "business_value": "Clients can track their payments.",
+      "change_summary": "Build the portal; payment execution remains excluded.",
+      "dependencies": [],
+      "dependency_reasons": {},
+      "exclusions": [
+        "Payment execution"
+      ],
+      "expected_result": "A portal with current invoice status.",
+      "objective": "Show invoices and payments.",
+      "questions": [],
+      "risks": [
+        "Account isolation must be verified."
+      ],
+      "scope": [
+        "Invoice and payment views"
+      ],
+      "title": "Client portal",
+      "work_kind": "BUILD"
+    },
+    "dependency_bindings": [],
+    "execution_started": false,
+    "mission_preview": {
+      "acceptance_criteria": [
+        "Clients see only invoices belonging to their account."
+      ],
+      "architecture_review_reference": "candidate-architecture-33ada4637bded6a08d419028",
+      "business_objective": "Show invoices and payments.",
+      "business_value": "Clients can track their payments.",
+      "candidate_id": "concept-candidate-043b0d620e88e0852f0b1bbc560adaae",
+      "criterion_assessment_contracts": [
+        {
+          "criterion": "Clients see only invoices belonging to their account.",
+          "requirements": [
+            {
+              "kind": "effect_report",
+              "requirement_id": "criterion-aaa1aa0c6cf6d03a9a74805710e16b0d"
+            }
+          ],
+          "schema_version": "1.0",
+          "validity_policy": "current_revision"
+        }
+      ],
+      "dependencies": [],
+      "effect_policy": {
+        "contract_version": "1.0",
+        "delivery": "GIT",
+        "mode": "BOUNDED_REPOSITORY_CHANGE",
+        "read_paths": [
+          "src/",
+          "tests/"
+        ],
+        "write_paths": [
+          "src/",
+          "tests/"
+        ]
+      },
+      "engineering_constraints": [
+        "EXCLUDED: Payment execution",
+        "Preserve existing public contracts and account isolation."
+      ],
+      "id": "MISSION-PREVIEW",
+      "maximum_actions": 4,
+      "maximum_consecutive_no_progress_actions": 2,
+      "mission_recommendation_reference": "concept-recommendation-043b0d620e88e0852f0b1bbc560adaae",
+      "required_capabilities": [
+        "bounded_repository_change"
+      ],
+      "required_disciplines": [
+        "engineering",
+        "security"
+      ],
+      "risks": [
+        "Account isolation must be verified."
+      ],
+      "schema_version": "1.0",
+      "scope": [
+        "synthetic-repository"
+      ],
+      "status": "approved_for_engineering",
+      "summary": "Show invoices and payments.",
+      "technical_assumptions": [
+        "Use the configured repository and existing authentication."
+      ],
+      "title": "Client portal"
+    },
+    "planning": {
+      "context_input_bound": 40000,
+      "context_output_bound": 8000,
+      "criterion_assessment_contracts": [
+        {
+          "criterion": "Clients see only invoices belonging to their account.",
+          "requirements": [
+            {
+              "kind": "effect_report",
+              "requirement_id": "criterion-aaa1aa0c6cf6d03a9a74805710e16b0d"
+            }
+          ],
+          "schema_version": "1.0",
+          "validity_policy": "current_revision"
+        }
+      ],
+      "dependencies": [],
+      "effect_policy": {
+        "contract_version": "1.0",
+        "delivery": "GIT",
+        "mode": "BOUNDED_REPOSITORY_CHANGE",
+        "read_paths": [
+          "src/",
+          "tests/"
+        ],
+        "write_paths": [
+          "src/",
+          "tests/"
+        ]
+      },
+      "human_gates": [
+        "Explicit owner approval of the complete frozen definition."
+      ],
+      "maximum_actions": 4,
+      "maximum_consecutive_no_progress_actions": 2,
+      "mission_spec_digest": "sha256:dd1f2ec9a16841967f170ebe8532b0e3ee6aff36957c55e21b5e6674c7e6b752",
+      "non_goals": [
+        "Payment execution"
+      ],
+      "provenance_revision": "sha256:3e503e12101079d9da42da803c5af90e2a2e8ebaa523888ead14dda14e530ab3",
+      "risk_inputs": [
+        "Account isolation must be verified."
+      ],
+      "scope": [
+        "synthetic-repository"
+      ],
+      "write_scopes": [
+        "src/",
+        "tests/"
+      ]
+    },
+    "source": {
+      "context_revision": "sha256:b0e1f5fbd24028a2f74965a714b56834a9789204c79eca3f49f005d17c57d6f8",
+      "conversation_id": "mission-chat",
+      "conversation_revision": 6,
+      "instance_id": "forge-runtime-f57c320a-f66e-4759-956d-f55d7e10747f",
+      "invocation_id": "advice-invocation-395e572543b34b7d9c417d399b597606",
+      "object_id": "concept-9156efeb2c375ff692ec470d15f40f55",
+      "project_id": "isolated-project",
+      "repository_id": "synthetic-repository",
+      "request_digest": "sha256:7b0fdbc409736ff37dcfbabccc34424e53057e1125afe75c81eb575949bbaee8",
+      "result_digest": "sha256:a63250634ba720d24299e4413354622884257c66a748202d100352acce583719",
+      "revision": 2,
+      "session_id": "advice-session-e7e3226e64e74ffa9b55de4b1832fe6c",
+      "turn_id": "second"
+    },
+    "subject_revision": "sha256:3e503e12101079d9da42da803c5af90e2a2e8ebaa523888ead14dda14e530ab3",
+    "trusted_profile_digest": "sha256:c5e8a58d9812991696ff8be06a2d0a3488ee9e2ac2557b32f5b692fd58ea9d75"
+  },
+  "mission_id": "MISSION-0006",
+  "mission_status": "APPROVED_PLANNABLE",
+  "operation_id": "approve-exact-definition",
+  "original_registration": {
+    "candidate": {
+      "acceptance_criteria": [
+        "Clients see only invoices belonging to their account."
+      ],
+      "architecture_constraints": [
+        "EXCLUDED: Payment execution",
+        "Preserve existing public contracts and account isolation."
+      ],
+      "dependencies": [],
+      "effect_policy": {
+        "contract_version": "1.0",
+        "delivery": "GIT",
+        "mode": "BOUNDED_REPOSITORY_CHANGE",
+        "read_paths": [
+          "src/",
+          "tests/"
+        ],
+        "write_paths": [
+          "src/",
+          "tests/"
+        ]
+      },
+      "id": "concept-candidate-043b0d620e88e0852f0b1bbc560adaae",
+      "objective": "Show invoices and payments.",
+      "recommendation_id": "concept-recommendation-043b0d620e88e0852f0b1bbc560adaae",
+      "scope": [
+        "synthetic-repository"
+      ],
+      "title": "Client portal"
+    },
+    "candidate_digest": "sha256:3e503e12101079d9da42da803c5af90e2a2e8ebaa523888ead14dda14e530ab3",
+    "contract_version": "forge-chat-first-mission/v1",
+    "operation_id": "approve-exact-definition",
+    "principal_reference": "forge-runtime-f57c320a-f66e-4759-956d-f55d7e10747f:606a849359f4df4c",
+    "proposal_digest": "sha256:5c49792ee8a5a754f771e751d375314c8b6537ac65ea120c8025fb8049ccbb95",
+    "proposal_revision": 2,
+    "rationale": "Explicit approval of the exact generated definition and trusted planning.",
+    "recommendation_digest": "sha256:3cc76d346799703e592974ba4c0543473a1644f9aebbd36b856eae4fdfe5139e",
+    "recommendation_id": "concept-recommendation-043b0d620e88e0852f0b1bbc560adaae",
+    "registered_at": "2026-10-09T05:33:40.572977+00:00",
+    "registration_key": "sha256:b816b67e499f627bff220d90fe51cf0c58877f386a9752e17c9bb43ad5749026",
+    "source": {
+      "context_revision": "sha256:b0e1f5fbd24028a2f74965a714b56834a9789204c79eca3f49f005d17c57d6f8",
+      "conversation_id": "mission-chat",
+      "conversation_revision": 6,
+      "instance_id": "forge-runtime-f57c320a-f66e-4759-956d-f55d7e10747f",
+      "invocation_id": "advice-invocation-395e572543b34b7d9c417d399b597606",
+      "object_id": "concept-9156efeb2c375ff692ec470d15f40f55",
+      "project_id": "isolated-project",
+      "repository_id": "synthetic-repository",
+      "request_digest": "sha256:7b0fdbc409736ff37dcfbabccc34424e53057e1125afe75c81eb575949bbaee8",
+      "result_digest": "sha256:a63250634ba720d24299e4413354622884257c66a748202d100352acce583719",
+      "revision": 2,
+      "session_id": "advice-session-e7e3226e64e74ffa9b55de4b1832fe6c",
+      "turn_id": "second"
+    },
+    "status_at_registration": "RECOMMENDED"
+  },
+  "package_digest": "sha256:03e642289c8bb527e5c878afb73b019b5acc8fc16c26d209dc23feca06889e6c",
+  "read_only": true,
+  "source_fresh": true,
+  "state": "COMPLETE"
+}

@@ -108,6 +108,11 @@ import Combine
             }
             guard let snapshot,try AdvisoryWire.digest(rawItems)==snapshot,Set(catalog.map(\.object_id)).count==catalog.count,
                   Set(turns.map { $0.request.turn_id }).count==turns.count else { throw AdvisoryError.invalid }
+            for item in catalog {
+                for edge in item.edges {
+                    guard let predecessor=catalog.first(where: { $0.object_id==edge.source_object_id }),predecessor.candidate_id==edge.candidate_id else { throw AdvisoryError.invalid }
+                }
+            }
             guard epoch==generation else { return }
             capability=cap;history=turns;items=catalog;revision=conversationRevision
             if let packet,!catalog.contains(where: { $0.object_id==packet.objectID && $0.revision==packet.revision }) { self.packet=nil }
@@ -115,13 +120,14 @@ import Combine
         } catch { if epoch==generation { fail(error) } }
     }
     func refine(_ text: String, lens: String, connection c: AdvisoryConnection?) async {
-        guard admit(c),canRefine(text,lens:lens),let c,let capability else { return }
+        guard admit(c),canRefine(text,lens:lens),let c else { return }
         let generation=epoch;busy=true;defer { if epoch==generation { busy=false } }
         do {
-            let a=try access(c)
+            let a=try access(c),context=try await transport.context(a,c)
+            guard epoch==generation else { return }
             let request=AdvisoryRequest(contract_version:MissionConceptWire.contract,turn_id:UUID().uuidString.lowercased(),instance_id:a.forgeInstanceID,
                 project_id:a.forgeProjectID,repository_id:a.repositoryID,conversation_id:c.conversationID,advisor_kind:lens,objective:text,
-                expected_revision:revision,context_revision:capability.context_revision,selected_sources:[])
+                expected_revision:revision,context_revision:context.revision,selected_sources:[])
             let intent=MissionTransportIntent(key:CandidateLocal.scopeKey(c),connectionScope:MissionTransportIntent.scope(c),kind:"refine",refine:request,approvalBody:nil,frozenPackage:nil)
             try store.save(intent);pending=intent
             let value=try await transport.submit(a,c,request:request)
@@ -208,7 +214,7 @@ import Combine
             var card=MissionDefinitionCard(id:item.object_id,revision:item.revision,title:item.title,value:item.definition.business_value,outcome:item.definition.expected_result,
                 scope:item.definition.scope,exclusions:item.definition.exclusions,criteria:item.definition.acceptance_criteria,questions:item.questions,
                 changes:[item.definition.change_summary],group:"",labels:item.labels,status:item.state,objective:item.definition.objective,
-                architectureChoices:item.definition.architecture_choices,risks:item.definition.risks)
+                architectureChoices:item.definition.architecture_choices,risks:item.definition.risks,blockers:item.blockers)
             if let packet,packet.objectID==item.object_id,packet.revision==item.revision,let data=packet.packageData,
                let raw=try? AdvisoryWire.object(data),let effects=raw["consequences"] as? [String:Any],let effect=effects["repository_effect"] as? [String:Any] {
                 card.consequences=[effect["mode"] as? String ?? "",effect["delivery"] as? String ?? ""]
@@ -217,6 +223,7 @@ import Combine
             if let approval,let frozen=try? AdvisoryWire.object(approval.frozenPackageData),let source=frozen["source"] as? [String:Any],
                source["object_id"] as? String==item.object_id,source["revision"] as? Int==item.revision {
                 card.status=approval.currentDefinitionState
+                card.blockers=approval.readiness?.blockers
             }
             return card
         }
@@ -227,8 +234,10 @@ import Combine
             }
             return messages
         }
-        // Current preview has no bound edges. Never derive relations from names or list order.
+        let relations=items.flatMap { item in item.edges.map { edge in
+            MissionRelation(predecessor:edge.source_object_id,dependent:edge.target_object_id,reason:edge.reason,proposed:edge.state=="PROPOSED")
+        } }
         let projectScope=AdvisoryConnection(endpoint:connection.endpoint,workspaceInstanceID:connection.workspaceInstanceID,actorID:connection.actorID,workspaceProjectID:connection.workspaceProjectID,conversationID:"",bearer:"",draftGrant:"")
-        return MissionWorkspaceObservation(scopeKey:CandidateLocal.scopeKey(projectScope),project:project,cards:cards,relations:[],complete:false,transcript:lines)
+        return MissionWorkspaceObservation(scopeKey:CandidateLocal.scopeKey(projectScope),project:project,cards:cards,relations:relations,complete:false,transcript:lines)
     }
 }

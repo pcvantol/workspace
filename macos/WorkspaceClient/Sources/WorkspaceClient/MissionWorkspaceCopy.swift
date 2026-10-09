@@ -18,13 +18,19 @@ enum MissionWorkspaceCopy {
             "notEstablished": ["Not established yet; clarify in the conversation.", "Nog niet vastgesteld; verduidelijk dit in het gesprek.", "Noch nicht festgestellt; im Gespräch klären.", "Pas encore établi ; à préciser dans la conversation.", "Aún no establecido; acláralo en la conversación."],
             "approveUnavailable": ["Approval is not available for this definition yet.", "Goedkeuring is nog niet beschikbaar voor deze definitie.", "Die Genehmigung dieser Definition ist noch nicht verfügbar.", "L’approbation de cette définition n’est pas encore disponible.", "La aprobación de esta definición aún no está disponible."],
             "proposed": ["Suggested dependency", "Voorgestelde afhankelijkheid", "Vorgeschlagene Abhängigkeit", "Dépendance proposée", "Dependencia propuesta"],
-            "established": ["Established dependency", "Vastgelegde afhankelijkheid", "Festgelegte Abhängigkeit", "Dépendance établie", "Dependencia establecida"],
+            "established": ["Dependency in approved definition", "Afhankelijkheid in goedgekeurde definitie", "Abhängigkeit im genehmigten Entwurf", "Dépendance dans la définition approuvée", "Dependencia en la definición aprobada"],
             "BOUNDED_REPOSITORY_CHANGE": ["Bounded repository changes", "Begrensde repositorywijzigingen", "Begrenzte Repositoryänderungen", "Modifications limitées du dépôt", "Cambios limitados del repositorio"],
             "READ_ONLY_ASSESSMENT": ["Read-only investigation", "Onderzoek zonder wijzigingen", "Untersuchung ohne Änderungen", "Analyse sans modifications", "Investigación sin cambios"],
             "DOCUMENTATION_ONLY": ["Documentation changes only", "Alleen documentatiewijzigingen", "Nur Dokumentationsänderungen", "Modifications de documentation seulement", "Solo cambios de documentación"],
             "ARCHITECTURE_DESIGN_ONLY": ["Design work only", "Alleen ontwerpwerk", "Nur Entwurfsarbeit", "Conception seulement", "Solo diseño"],
             "GIT": ["Changes stay within the shown repository scope", "Wijzigingen blijven binnen de getoonde repositoryscope", "Änderungen bleiben im angezeigten Repositoryumfang", "Les modifications restent dans le périmètre du dépôt affiché", "Los cambios permanecen dentro del alcance mostrado"],
             "EVIDENCE_ONLY": ["Evidence without repository changes", "Bewijs zonder repositorywijzigingen", "Nachweise ohne Repositoryänderungen", "Preuves sans modifications du dépôt", "Evidencias sin cambios del repositorio"],
+            "blockers": ["Still required", "Nog nodig", "Noch erforderlich", "Encore requis", "Aún requerido"],
+            "DEPENDENCY_NOT_PROVEN": ["A required predecessor has not been proven complete.", "Een vereiste voorganger is nog niet bewezen voltooid.", "Ein erforderlicher Vorgänger ist noch nicht nachweislich abgeschlossen.", "Un prérequis n’est pas encore prouvé terminé.", "No se ha demostrado que un requisito previo esté completo."],
+            "EXPLICIT_WORKSET_RELEASE_REQUIRED": ["The approved work still needs explicit release.", "Het goedgekeurde werk moet nog expliciet worden vrijgegeven.", "Die genehmigte Arbeit benötigt noch eine ausdrückliche Freigabe.", "Le travail approuvé nécessite encore une libération explicite.", "El trabajo aprobado aún requiere liberación explícita."],
+            "ACTIVATION_INPUTS_UNAVAILABLE": ["Required execution conditions are not available yet.", "Vereiste uitvoeringsvoorwaarden zijn nog niet beschikbaar.", "Erforderliche Ausführungsbedingungen sind noch nicht verfügbar.", "Les conditions d’exécution requises ne sont pas encore disponibles.", "Las condiciones de ejecución necesarias aún no están disponibles."],
+            "WORKSET_HELD": ["The work is on hold.", "Het werk staat in de wachtstand.", "Die Arbeit ist angehalten.", "Le travail est en attente.", "El trabajo está en espera."],
+            "anotherCondition": ["Another required condition is not satisfied yet.", "Een andere vereiste voorwaarde is nog niet vervuld.", "Eine weitere erforderliche Bedingung ist noch nicht erfüllt.", "Une autre condition requise n’est pas encore remplie.", "Aún no se cumple otra condición necesaria."],
             "APPROVED_WAITING": ["Approved — waiting for release", "Goedgekeurd — wacht op vrijgave", "Genehmigt — wartet auf Freigabe", "Approuvé — en attente de libération", "Aprobado — esperando liberación"],
             "SUPERSEDED": ["A newer draft needs its own approval", "Een nieuwer concept heeft eigen goedkeuring nodig", "Ein neuerer Entwurf benötigt eine eigene Genehmigung", "Un nouveau brouillon nécessite sa propre approbation", "Un borrador nuevo requiere su propia aprobación"],
             "concepts": ["Draft missions", "Conceptmissies", "Missionsentwürfe", "Missions en brouillon", "Misiones en borrador"],
@@ -71,11 +77,17 @@ enum MissionWorkspaceCopy {
             "zoomIn": ["Zoom in", "Inzoomen", "Vergrößern", "Zoomer", "Acercar"],
             "focus": ["Focus selection", "Selectie in beeld", "Auswahl fokussieren", "Centrer la sélection", "Centrar selección"],
             "fit": ["Fit", "Passend maken", "Einpassen", "Ajuster", "Ajustar"],
-            "edgeLegend": ["Arrows mean requires. Dashed: suggested. Solid: established.", "Pijlen betekenen vereist. Stippellijn: voorgesteld. Doorgetrokken lijn: vastgelegd.", "Pfeile bedeuten benötigt. Gestrichelt: vorgeschlagen. Durchgezogen: festgelegt.", "Les flèches indiquent un prérequis. Pointillé : proposé. Continu : établi.", "Las flechas indican requisitos. Discontinua: propuesta. Continua: establecida."],
+            "edgeLegend": ["Arrows mean requires. Dashed: proposed. Solid: in approved definition; execution order is not released.", "Pijlen betekenen vereist. Stippellijn: voorgesteld. Doorgetrokken: in goedgekeurde definitie; uitvoeringsvolgorde is niet vrijgegeven.", "Pfeile bedeuten benötigt. Gestrichelt: vorgeschlagen. Durchgezogen: im genehmigten Entwurf; Ausführungsreihenfolge nicht freigegeben.", "Les flèches indiquent un prérequis. Pointillé : proposé. Continu : dans la définition approuvée ; ordre d’exécution non libéré.", "Las flechas indican requisitos. Discontinua: propuesta. Continua: en la definición aprobada; orden de ejecución no liberado."],
             "CONCEPT": ["Draft", "Concept", "Entwurf", "Brouillon", "Borrador"],
             "REFINEMENT_REQUIRED": ["Needs refinement", "Te verfijnen", "Zu verfeinern", "À préciser", "Por precisar"],
             "AWAITING_APPROVAL": ["Ready for approval", "Klaar voor goedkeuring", "Bereit zur Genehmigung", "Prêt à approuver", "Listo para aprobar"],
         ]
         return rows[key]?[index] ?? key
     }
+    static func blocker(_ code:String,language:String)->String {
+        let key=code=="NOT_RELEASED" ? "EXPLICIT_WORKSET_RELEASE_REQUIRED":code
+        let known=["DEPENDENCY_NOT_PROVEN","EXPLICIT_WORKSET_RELEASE_REQUIRED","ACTIVATION_INPUTS_UNAVAILABLE","WORKSET_HELD"]
+        return text(known.contains(key) ? key:"anotherCondition",language:language)
+    }
+
 }

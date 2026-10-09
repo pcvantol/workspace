@@ -177,6 +177,9 @@ struct MissionWorkspaceView: View {
                     section("architectureChoices", card.architectureChoices ?? [])
                     section("risks", card.risks ?? [copy("notEstablished")])
                     section("remainingDecisions", card.remainingDecisions ?? [copy("notEstablished")])
+                    if let blockers=card.blockers,!blockers.isEmpty {
+                        section("blockers",blockers.map { MissionWorkspaceCopy.blocker($0,language:locale.language.languageCode?.identifier ?? "en") })
+                    }
                     if let observation {
                         section("dependencies", observation.visibleRelations.filter { $0.dependent == card.id }
                             .map { edge in copy(edge.proposed ? "proposed" : "established") + " · " + (observation.selected(edge.predecessor)?.title ?? "") + ": " + edge.reason })

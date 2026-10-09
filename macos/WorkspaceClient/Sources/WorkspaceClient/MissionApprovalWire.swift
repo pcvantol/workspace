@@ -17,6 +17,7 @@ struct MissionCompoundReadback: Sendable {
     let sourceFresh:Bool
     let currentDefinitionState:String
     let missionID:String?
+    let readiness:MissionReadiness?
 }
 enum MissionApprovalWire {
     static func frozen(_ raw:Any,access:AdvisoryAccess,conversation:String,expectedDigest:String?=nil) throws -> [String:Any] {
@@ -27,7 +28,11 @@ enum MissionApprovalWire {
         guard access.conversationIDs.contains(conversation),source["conversation_id"] as? String==conversation,
               authority["principal_reference"] as? String==access.forgeInstanceID+":"+access.actorID,
               expectedDigest == nil || actualDigest==expectedDigest else { throw AdvisoryError.denied }
-        let d=try MissionConceptWire.definition(p["definition"]!),candidate=p["candidate"] as! [String:Any],preview=p["mission_preview"] as! [String:Any]
+        let d=try MissionConceptWire.definition(p["definition"]!),bindings=p["dependency_bindings"] as! [[String:Any]]
+        guard Set(bindings.map { $0["candidate_id"] as! String }).count==bindings.count,
+              Set(bindings.map { $0["candidate_id"] as! String })==Set(d.dependencies),
+              bindings.allSatisfy({ d.dependency_reasons[$0["candidate_id"] as! String]==$0["reason"] as? String }) else { throw AdvisoryError.invalid }
+        let candidate=p["candidate"] as! [String:Any],preview=p["mission_preview"] as! [String:Any]
         let planning=p["planning"] as! [String:Any],effects=p["consequences"] as! [String:Any]
         guard try AdvisoryWire.digest(candidate)==p["subject_revision"] as? String,
               candidate["title"] as? String==d.title,candidate["objective"] as? String==d.objective,
@@ -91,8 +96,23 @@ enum MissionApprovalWire {
         let complete = !isOperation || raw["state"] as? String=="COMPLETE"
         guard Set(decisions).count==decisions.count,raw["candidate_id"] as? String==candidate["id"] as? String,
               !complete || (raw["original_registration"] is [String:Any] && decisions.count==2 && raw["mission_id"] is String) else { throw AdvisoryError.invalid }
+        let readinessRaw=(isOperation ? raw["current_readiness"]:raw["current"]) as? [String:Any]
+        var readiness:MissionReadiness?
+        if let r=readinessRaw {
+            let bindings=package["dependency_bindings"] as! [[String:Any]],facts=r["dependency_facts"] as! [[String:Any]]
+            guard r["subject_revision"] as? String==package["subject_revision"] as? String,
+                  Set(facts.map { $0["candidate_id"] as! String }).count==facts.count,
+                  Set(facts.map { $0["candidate_id"] as! String })==Set(bindings.map { $0["candidate_id"] as! String }),
+                  facts.allSatisfy({ fact in bindings.contains(where: { $0["candidate_id"] as? String==fact["candidate_id"] as? String && $0["subject_revision"] as? String==fact["subject_revision"] as? String }) }) else { throw AdvisoryError.invalid }
+            readiness=try AdvisoryWire.decode(r,as:MissionReadiness.self)
+        }
         return .init(data:data,frozenPackageData:try JSONSerialization.data(withJSONObject:package),operationID:raw["operation_id"] as! String,
             state:complete ? "COMPLETE":"PENDING",sourceFresh:isOperation ? raw["source_fresh"] as! Bool:true,
-            currentDefinitionState:isOperation ? raw["current_definition_state"] as! String:(raw["current"] as! [String:Any])["state"] as! String,missionID:raw["mission_id"] as? String)
+            currentDefinitionState:isOperation ? raw["current_definition_state"] as! String:(raw["current"] as! [String:Any])["state"] as! String,missionID:raw["mission_id"] as? String,readiness:readiness)
     }
+}
+
+struct MissionReadiness:Codable,Sendable {
+    let state:String;let mission_status:String;let blockers:[String]
+    let execution_resources:String;let execution_ready:Bool;let subject_revision:String
 }

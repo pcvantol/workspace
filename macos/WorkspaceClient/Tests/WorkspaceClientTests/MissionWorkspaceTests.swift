@@ -7,7 +7,7 @@ final class MissionWorkspaceTests: XCTestCase {
     func card(_ id: String, _ status: String = "CONCEPT") -> MissionDefinitionCard {
         .init(id: id, revision: 1, title: "Client portal " + id, value: "View invoices", outcome: "Customers see their invoices",
               scope: ["Read invoices"], exclusions: ["Payments"], criteria: ["Only own invoices visible"], questions: [], changes: [],
-              group: "Customers", labels: ["Research"], status: status, objective: "Allow customers to view their own invoices", architectureChoices: ["Read-only authenticated access"])
+              group: "Customers", labels: ["Research"], status: status, objective: "Allow customers to view their own invoices", architectureChoices: ["Read-only authenticated access"],blockers:["EXPLICIT_WORKSET_RELEASE_REQUIRED"])
     }
     func testSameObjectsAcrossListSelectionAndRelationsWithoutInventedEndpoints() {
         let o = MissionWorkspaceObservation(scopeKey: "own-scope", project: "Own project", cards: [card("A"),card("B","REFINEMENT_REQUIRED")], relations: [

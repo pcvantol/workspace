@@ -14,7 +14,7 @@ from workspace_control.worklist_peer import WorklistError
 class OwnRecords:
     def __init__(self,scope,conversation):self.scope=scope;self.conversation=conversation
     def get(self,scope,conversation):
-        if scope!=self.scope or conversation!=self.conversation:raise PermissionError()
+        if scope!=self.scope or conversation not in (self.conversation if isinstance(self.conversation,list) else [self.conversation]):raise PermissionError()
         return {'id':conversation}
 
 
@@ -31,7 +31,7 @@ class MissionPackagePeerTests(unittest.TestCase):
             return self.package if '/package' in path else source.read('operation-current.json')
         self.peer._read=read
         p=source.package;s=p['source']
-        self.original={'request_digest':s['request_digest'],'request':{'context_revision':s['context_revision']},
+        self.original={'context':{'concept_dependency_catalog':[]},'request_digest':s['request_digest'],'request':{'context_revision':s['context_revision']},
             'session_id':s['session_id'],'invocation_id':s['invocation_id'],
             'outcome':{'result_digest':s['result_digest'],'output':{'definition':p['definition']}}}
         self.peer.turn=lambda binding,conversation,turn_id:{'original_turn':self.original}
@@ -67,3 +67,29 @@ class MissionPackagePeerTests(unittest.TestCase):
         with self.assertRaises(WorklistError):self.peer.operation(self.binding,self.source.conversation,'../foreign')
         self.assertEqual(len(self.paths),before)
         with self.assertRaises(WorklistError):self.peer.package(self.binding,'foreign',2)
+
+    def testRealDependencyPackageRejectsAlteredSubjectVersionAgainstOriginalContext(self):
+        self.package=self.source.read('prepared-dependent.json');p=self.package['package'];s=p['source']
+        self.binding.update(forge_instance_id=s['instance_id'],conversation_ids=['foundation','portal'])
+        self.peer.conversations=OwnRecords((self.binding['actor_id'],'own-project'),'portal')
+        context=self.source.read('context-with-predecessor.json')['context']
+        self.original={'context':context,'request_digest':s['request_digest'],'request':{'context_revision':s['context_revision']},
+            'session_id':s['session_id'],'invocation_id':s['invocation_id'],
+            'outcome':{'result_digest':s['result_digest'],'output':{'definition':p['definition']}}}
+        self.assertEqual(self.peer.package(self.binding,'portal',1),self.package)
+        self.package['package']['dependency_bindings'][0]['subject_revision']='sha256:'+'0'*64
+        self.package['package_digest']=source_examples.w.digest(self.package['package'])
+        with self.assertRaises(WorklistError):self.peer.package(self.binding,'portal',1)
+
+    def testActualCatalogRequiresExactDependencyVersionFromItsSourceTurn(self):
+        catalog=self.source.read('catalog-directed-dependency.json');context=self.source.read('context-with-predecessor.json')['context']
+        self.binding.update(forge_instance_id=catalog['scope']['instance_id'],conversation_ids=['foundation','portal'])
+        self.peer.conversations=OwnRecords((self.binding['actor_id'],'own-project'),['foundation','portal'])
+        self.peer._read=lambda binding,path:catalog
+        def turn(binding,conversation,turn_id):
+            item=next(i for i in catalog['items'] if i['conversation_id']==conversation)
+            return {'current_revision':item['conversation_revision'],'original_turn':{'context':context,'status':'COMPLETE','request':{'context_revision':item['context_revision']},'outcome':{'output':{'definition':item['definition']}}}}
+        self.peer.turn=turn
+        self.assertEqual(self.peer.catalog(self.binding),catalog)
+        context['concept_dependency_catalog'][0]['subject_revision']='sha256:'+'0'*64
+        with self.assertRaises(WorklistError):self.peer.catalog(self.binding)
