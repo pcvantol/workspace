@@ -119,7 +119,7 @@ struct MissionWorkspaceView: View {
                                                     if !item.labels.isEmpty { Text(item.labels.map { copy($0) }.joined(separator: " · ")).font(.caption).foregroundStyle(.secondary) }
                                                 }.frame(maxWidth: .infinity, alignment: .leading)
                                             }.buttonStyle(.plain).padding(8)
-                                                .focusable()
+                                                .focusable(interactions: .edit)
                                                 .onKeyPress(keys: [.return, .space]) { _ in
                                                     selection = item.id; panel = "definition"; onSelect(item)
                                                     return .handled
@@ -243,7 +243,10 @@ struct MissionWorkspaceView: View {
                 .disabled(!canApprove || card.consequences == nil || card.risks == nil || card.remainingDecisions == nil || !card.questions.isEmpty)
                 .accessibilityIdentifier("mission.approve")
             Text(copy("approvalEffect")).font(.caption).foregroundStyle(.secondary)
-            if !canApprove { Text(copy("approveUnavailable")).font(.caption).foregroundStyle(.secondary) }
+            if !canApprove {
+                let recorded = card.canonicalHistory?.contains { $0.definition_revision == card.revision } == true
+                Text(copy(recorded ? card.status : "approveUnavailable")).font(.caption).foregroundStyle(.secondary)
+            }
         }
         }
     }
@@ -302,7 +305,7 @@ struct MissionWorkspaceView: View {
                                     .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 8))
                                     .overlay(RoundedRectangle(cornerRadius: 8).stroke(selection == item.id ? Color.accentColor : .secondary))
                             }.buttonStyle(.plain)
-                                .focusable()
+                                .focusable(interactions: .edit)
                                 .onKeyPress(keys: [.return, .space]) { _ in
                                     selection = item.id; onSelect(item)
                                     return .handled
