@@ -96,7 +96,7 @@ struct LiveMissionWorkspaceView: View {
     }
     func refine(_ text:String,lens:String,card:MissionDefinitionCard?) async {
         guard state.canRefine(text,lens:lens) else { return }
-        if selection.newDraft || card==nil && state.capability?.workspace_reference_resolution_supported==true {
+        if selection.newDraft || card==nil && activeConversationID==nil && state.capability?.workspace_reference_resolution_supported==true {
             let original=[client.savedEndpoint,client.savedInstance,conversations.projectID,conversations.observedActorID ?? ""]
             if selection.ownConversationID==nil {
                 guard !conversations.dirty else { return }
@@ -114,7 +114,10 @@ struct LiveMissionWorkspaceView: View {
             activeConversationID=source.conversationID
             await state.refresh(source)
             await state.refine(text,lens:lens,connection:source)
-            if state.pending==nil,!state.history.isEmpty { selection.newDraft=false;selection.draftMessage="";selection.sceneID &+= 1 }
+            if state.pending==nil,!state.history.isEmpty {
+                selection.newDraft=false;selection.draftMessage="";selection.sceneID &+= 1
+                if let card=state.presentation(project:projectName)?.cards.first(where: { shown in state.items.contains(where: { $0.object_id==shown.id && $0.conversation_id==source.conversationID }) }) { await state.prepare(card,connection:source) }
+            }
             return
         }
         if let card {
@@ -124,7 +127,9 @@ struct LiveMissionWorkspaceView: View {
             await state.refresh(await connection())
             guard state.items.contains(where: { $0.object_id==card.id && $0.revision==card.revision }) else { return }
         }
-        await state.refine(text,lens:lens,connection:await connection())
+        let c=await connection()
+        await state.refine(text,lens:lens,connection:c)
+        if state.pending==nil,let c,let card=state.presentation(project:projectName)?.cards.first(where: { shown in state.items.contains(where: { $0.object_id==shown.id && $0.conversation_id==c.conversationID }) }) { await state.prepare(card,connection:c) }
     }
 }
 

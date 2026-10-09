@@ -94,6 +94,13 @@ final class LiveMissionWorkspaceTests:XCTestCase {
                     var cap=try peer.wire.fixture("capability");cap["workspace_reference_resolution_supported"]=true
                     return (200,try JSONSerialization.data(withJSONObject:cap))
                 }
+                if path.hasSuffix("/package"),let record=peer.recorded {
+                    // Synthetic unprepared packet follows this test's changing turn/catalog.
+                    let item=(try peer.wire.fixture("catalog")["items"] as! [[String:Any]])[0]
+                    let request=record["request"] as! [String:Any]
+                    let packet:[String:Any]=["contract_version":MissionConceptWire.contract,"object_id":item["object_id"]!,"revision":(request["expected_revision"] as! Int)+1,"definition":item["definition"]!,"package":NSNull(),"questions":["Fixture planning remains unavailable."],"approval_supported":false,"read_only":true,"additional_model_calls":0]
+                    return (200,try JSONSerialization.data(withJSONObject:packet))
+                }
                 if peer.recorded==nil && path.hasSuffix("/catalog") {
                     var catalog=try peer.wire.fixture("catalog");catalog["items"]=[];catalog["snapshot_revision"]=try AdvisoryWire.digest([])
                     return (200,try JSONSerialization.data(withJSONObject:catalog))
@@ -144,7 +151,9 @@ final class LiveMissionWorkspaceTests:XCTestCase {
         await setup.save(access.token)
         let card=try XCTUnwrap(mission.presentation(project:"Own")?.cards.first)
         peer.dropSubmit=true
-        await view.refine("Keep the account isolation criterion",lens:"ARCHITECTURE",card:card)
+        await view.refine("Keep the account isolation criterion",lens:"ARCHITECTURE",card:nil)
+        XCTAssertEqual(ownCreates.count,1)
+        XCTAssertEqual(peer.calls.filter { $0.httpMethod=="POST" && $0.url!.path.hasSuffix("/resolve") }.count,1)
         XCTAssertNotNil(mission.pending)
         let host=NSHostingView(rootView:view.environment(\.locale,Locale(identifier:"nl")))
         host.frame=NSRect(x:0,y:0,width:1280,height:720);host.layoutSubtreeIfNeeded()

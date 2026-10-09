@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MissionWorkspaceView: View {
     let observation: MissionWorkspaceObservation?
+    let selectedID: String?
     let canRefine: Bool
     let canApprove: Bool
     let onRefine: (String, String, MissionDefinitionCard?) -> Void
@@ -23,6 +24,7 @@ struct MissionWorkspaceView: View {
     init(observation: MissionWorkspaceObservation?, canRefine: Bool, canApprove: Bool,
          selectedID: String? = nil, draftMessage:String="", activePanel: String = "chat", showGraph: Bool = false,
          onRefine: @escaping (String, String, MissionDefinitionCard?) -> Void, onApprove: @escaping (MissionDefinitionCard) -> Void, onSelect:@escaping(MissionDefinitionCard)->Void = { _ in },onSeparate:@escaping(MissionSuggestedResult,MissionDefinitionCard)->Void = { _, _ in }) {
+        self.selectedID=selectedID
         self.observation = observation; self.canRefine = canRefine; self.canApprove = canApprove
         self.onRefine = onRefine; self.onApprove = onApprove;self.onSelect=onSelect;self.onSeparate=onSeparate
         _message=State(initialValue:draftMessage)
@@ -34,7 +36,7 @@ struct MissionWorkspaceView: View {
     private func copy(_ key: String) -> String {
         MissionWorkspaceCopy.text(key, language: locale.language.languageCode?.identifier ?? "en")
     }
-    private var card: MissionDefinitionCard? { observation?.selected(selection) }
+    private var card: MissionDefinitionCard? { observation?.selected(selection) ?? observation?.selected(selectedID) }
     var body: some View {
         GeometryReader { geometry in
             VStack(alignment: .leading, spacing: 16) {
@@ -64,8 +66,9 @@ struct MissionWorkspaceView: View {
             }.padding(20)
         }
         .onChange(of: observation?.scopeKey) { _, _ in
-            selection = nil; message = ""; search = ""; statusFilter = ""; zoom = 1; panel = "chat"
+            selection = observation?.selected(selectedID)?.id; message = ""; search = ""; statusFilter = ""; zoom = 1; panel = "chat"
         }
+        .onChange(of:selectedID) { _, id in selection=observation?.selected(id)?.id }
         .onChange(of: observation?.cards.map(\.id)) { _, ids in
             if let selection, !(ids ?? []).contains(selection) { self.selection = nil }
         }
