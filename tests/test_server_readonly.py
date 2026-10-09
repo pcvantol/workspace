@@ -321,7 +321,7 @@ class ReadOnlyTests(unittest.TestCase):
                           if operation["exposure"] == "LOCAL_ONLY_ADMIN"},
                          {"instance.init", "instance.inspect", "forge.read.configure", "server.serve",
                           "conversations.grant.issue", "conversations.grant.revoke",
-                          "reviews.bind.issue", "reviews.bind.revoke", "worksets.bind.issue", "worksets.bind.revoke", "workset-controls.bind.issue", "workset-controls.bind.revoke", "advisory.bind.issue", "advisory.bind.revoke", "candidate.bind.issue", "candidate.bind.revoke"})
+                          "reviews.bind.issue", "reviews.bind.revoke", "worksets.bind.issue", "worksets.bind.revoke", "workset-controls.bind.issue", "workset-controls.bind.revoke", "advisory.bind.issue", "advisory.bind.revoke", "mission.bind.issue", "mission.bind.revoke", "candidate.bind.issue", "candidate.bind.revoke"})
         self.assertTrue(all("path" not in operation for operation in operations.values()
                             if operation["exposure"] == "LOCAL_ONLY_ADMIN"))
         self.assertTrue(all(operation["auth"] in {"BEARER_PINNED", "BEARER_PINNED_AND_DRAFT_GRANT",

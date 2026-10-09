@@ -137,6 +137,7 @@ for key,method,path in [("context","GET","/v1/mission-concepts/{conversation_id}
 OPERATIONS["mission-concepts.contract.read"]={"exposure":"HTTP_EXPOSED","method":"GET","path":"/v1/mission-concepts/openapi.json","auth":"BEARER_PINNED","contract":"mission","summary":"closed versioned mission transport contract"}
 OPERATIONS["advisory.contract.read"]={"exposure":"HTTP_EXPOSED","method":"GET","path":"/v1/advisory/openapi.json","auth":"BEARER_PINNED","contract":"advisory","summary":"closed advisory contract"}
 for key in ["issue", "revoke"]:
+    OPERATIONS["mission.bind."+key]={"exposure":"LOCAL_ONLY_ADMIN","local_cli":"mission-bind-"+key,"auth":"PRIVATE_ROOT_OWNER","summary":"bounded private owner mission binding"}
     OPERATIONS["advisory.bind."+key]={"exposure":"LOCAL_ONLY_ADMIN","local_cli":"advisory-bind-"+key,"auth":"PRIVATE_ROOT_OWNER","summary":"private owner advisory binding"}
 
 for key, method, path in [
@@ -771,7 +772,7 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return self._candidate_route()
             if target.startswith("/v1/mission-concepts/"):
                 parsed=urlsplit(target);path=parsed.path
-                if parsed.fragment or '%' in path or '..' in path or not re.fullmatch(r"/v1/mission-concepts/(?:access|capability|catalog|openapi.json|[0-9a-f]{32}(?:/turns/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}|/context|/package|/operations/[A-Za-z0-9][A-Za-z0-9._:-]{0,127})?)",path):
+                if parsed.fragment or '%' in path or '..' in path or not re.fullmatch(r"/v1/mission-concepts/(?:access|capability|catalog|openapi.json|[A-Za-z0-9][A-Za-z0-9._:-]{0,127}(?:/turns/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}|/context|/package|/operations/[A-Za-z0-9][A-Za-z0-9._:-]{0,127})?)",path):
                     return self._reply(400,{"error":"INVALID_PATH"})
                 if path=="/v1/mission-concepts/openapi.json":
                     if self._pinned_auth():return self._reply(200,mission_openapi_contract())
@@ -866,7 +867,7 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return self._candidate_route(write=True)
             if self.path=="/v1/mission-concepts/resolve":
                 return self._advisory_route(write=True,concept=True)
-            if re.fullmatch(r"/v1/mission-concepts/[0-9a-f]{32}/(?:approve|turns(?:/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/cancel)?)",self.path):
+            if re.fullmatch(r"/v1/mission-concepts/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/(?:approve|turns(?:/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/cancel)?)",self.path):
                 return self._advisory_route(write=True,concept=True)
             if re.fullmatch(r"/v1/advisory/[0-9a-f]{32}/turns(?:/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/cancel)?",self.path):
                 return self._advisory_route(write=True)

@@ -226,6 +226,8 @@ const ownOperations = {
   'mission-concepts.operation': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT', method: 'GET', path: '/v1/mission-concepts/{conversation_id}/operations/{operation_id}'},
   'mission-concepts.contract.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/mission-concepts/openapi.json'},
   'advisory.contract.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/advisory/openapi.json'},
+  'mission.bind.issue': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'mission-bind-issue'},
+  'mission.bind.revoke': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'mission-bind-revoke'},
   'advisory.bind.issue': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'advisory-bind-issue'},
   'advisory.bind.revoke': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'advisory-bind-revoke'},
   "candidate.access": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/advisory-candidates/access", "auth": "BEARER_PINNED_AND_DRAFT_AND_CANDIDATE_GRANT"},

@@ -181,3 +181,45 @@ native natural-text new-draft/resolve/refine with individual approval. Final
 producer-supported split/new/ready journey, reviews/protected/finalization and
 new exact-main installed/GUI proof remain OPEN. No new grant per conversation,
 second planner, admin proxy, signing, live EP or qualification PASS is introduced.
+
+## Normal chat and separate producer identity checkpoint
+
+Mission-only bindings now reuse the existing descriptor-backed private binding
+store in a separate closed `mission` namespace. Trusted local owner setup reuses
+an existing finite scoped Forge credential and exact paired issuance receipt;
+producer conversation IDs are independent of Workspace UUIDs. Current own
+project/actor/draft grants still authorize the caller. Resolve independently
+checks both real own references. Existing advisory bindings retain their UUID
+requirements, namespace, credentials and permissions. Mission credentials cannot
+enter the advice API. Local-only mission-bind-issue/revoke use the ordinary owner
+management path; they do not issue Forge grants or run a model.
+
+Native credential storage similarly keeps the mission service separate while
+reusing the existing keychain abstraction. Owner setup belongs to Settings;
+ordinary mission panels contain no token/ID/JSON/planning inputs. The actual
+observed actor of an authorized own conversation list permits an empty starting
+screen. Explicit natural-language Send saves an own draft using existing own
+storage, resolves its stable transport identity, fetches focused context and
+performs one explicit generation. New Mission resets presentation only; a
+separate subject has its own eventual exact approval. Approval additionally
+requires explicit current producer support; cached packets are discarded when
+human content differs even at the same object/revision.
+
+Full `bash scripts/validate.sh` PASSED on this implementation checkpoint:
+153native+1isolated/all own Python and strict per-file gates, fresh noneditable
+wheel/sdist/native packaging and browser inventory/language gates. Live controller
+187/215=86.98%; Python mission peer124/135=91.85%, own service357/372=95.97%.
+Log `/private/tmp/lane4-plan93-normal-chat-namespace-full-validation-retry.log`.
+First inventory failure and actual repair remain retained. Tests cover an empty
+normal controller screen, natural text→one own draft→one resolve→one generation,
+refresh/restart/lost response without duplicate generation, old advice isolation,
+foreign draft/project refusal, exact owner issue/revoke and zero secret output.
+They explicitly use external protocol fixtures at the native boundary; this is
+not the final installed normal-user/GUI qualification.
+
+Producer independent review meanwhile required real scope/component effect
+narrowing and dependency graph repair. Later repository/possible-subresults/
+component/context-graph/readiness fields await its converged schema and fresh
+packets. Current consumer snapshot remains ab9; the old packets are not amended.
+All final coupled producer pin/review/protected/version/finalization/installed
+and actual packaged GUI gates remain OPEN. No overall product PASS is declared.

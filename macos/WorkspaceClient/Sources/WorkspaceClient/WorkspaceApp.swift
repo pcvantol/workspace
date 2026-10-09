@@ -70,7 +70,7 @@ struct WorkspaceApp: App {
             advisory: AdvisoryState(credentials: IsolatedAdvisoryCredentials(document)),
             candidates:CandidateState(credentials:IsolatedCandidateCredentials(document),
                 store:PrivateCandidateLocalStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("candidate-drafts"))),
-            missionConcepts:MissionConceptState(credentials:IsolatedAdvisoryCredentials(document),store:PrivateMissionIntentStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("mission-intents")))))
+            missionConcepts:MissionConceptState(credentials:IsolatedAdvisoryCredentials(document,mission:true),store:PrivateMissionIntentStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("mission-intents")))))
         _reviews = StateObject(wrappedValue: MissionReviewState(credentials: IsolatedReviewGrant(document)))
         _worklists = StateObject(wrappedValue: WorklistState(credentials: IsolatedWorklistGrant(document),
             controls: WorklistControlState(credentials: IsolatedWorklistControlGrant(document))))
@@ -341,6 +341,9 @@ struct SettingsView: View {
                 SecureField(WorkspaceCopy.text("Instance token"), text: $token)
                 Text(WorkspaceCopy.text("Only loopback may use HTTP. Other Server addresses require HTTPS with normal certificate verification."))
                     .font(.caption).foregroundStyle(.secondary)
+            }
+            Section(MissionWorkspaceCopy.text("setupTitle",language:WorkspaceLanguage.current)) {
+                MissionSetupView(client:client,conversations:conversations,state:conversations.missionConcepts)
             }
             Section(WorkspaceCopy.text("Binding")) {
                 LabeledContent(WorkspaceCopy.text("Pinned instance"), value: client.savedInstance.isEmpty ? WorkspaceCopy.text("None") : client.savedInstance)

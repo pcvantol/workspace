@@ -39,13 +39,13 @@ final class AdvisoryTransport: @unchecked Sendable {
               let actor=raw["actor_id"] as? String,let project=raw["workspace_project_id"] as? String,
               let forge=raw["instance_id"] as? String,let forgeProject=raw["project_id"] as? String,
               let repository=raw["repository_id"] as? String,let conversations=raw["conversation_ids"] as? [String],
-              actor==connection.actorID,project==connection.workspaceProjectID,conversations.contains(connection.conversationID) else { throw AdvisoryError.denied }
+              actor==connection.actorID,project==connection.workspaceProjectID,(concept || conversations.contains(connection.conversationID)) else { throw AdvisoryError.denied }
         let value=AdvisoryAccess(endpoint:connection.endpoint,workspaceInstanceID:connection.workspaceInstanceID,workspaceProjectID:project,
             actorID:actor,forgeInstanceID:forge,forgeProjectID:forgeProject,repositoryID:repository,conversationIDs:conversations,token:token)
-        guard value.valid else { throw AdvisoryError.invalid };return value
+        guard concept ? value.validForMission:value.valid else { throw AdvisoryError.invalid };return value
     }
-    func bound(_ access:AdvisoryAccess,_ connection:AdvisoryConnection) throws {
-        guard access.valid,access.endpoint==connection.endpoint,access.workspaceInstanceID==connection.workspaceInstanceID,
+    func bound(_ access:AdvisoryAccess,_ connection:AdvisoryConnection,concept:Bool=false) throws {
+        guard (concept ? access.validForMission:access.valid),access.endpoint==connection.endpoint,access.workspaceInstanceID==connection.workspaceInstanceID,
               access.actorID==connection.actorID,access.workspaceProjectID==connection.workspaceProjectID,
               access.conversationIDs.contains(connection.conversationID) else { throw AdvisoryError.denied }
     }

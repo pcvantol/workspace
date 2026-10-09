@@ -13,11 +13,13 @@ struct AdvisoryAccess: Codable, Equatable, Sendable {
     let repositoryID: String
     let conversationIDs: [String]
     let token: String
-    var valid: Bool {
+    var valid: Bool { valid(producerIDs:false) }
+    var validForMission:Bool { valid(producerIDs:true) }
+    private func valid(producerIDs:Bool) -> Bool {
         (try? ServerEndpoint(endpoint))?.url.absoluteString==endpoint && workspaceInstanceID.range(of:"^[0-9a-f]{32}$",options:.regularExpression) != nil &&
         [workspaceProjectID,actorID,forgeInstanceID,forgeProjectID,repositoryID].allSatisfy(WorklistWire.identifier) &&
         (1...16).contains(conversationIDs.count) && Set(conversationIDs).count==conversationIDs.count &&
-        conversationIDs.allSatisfy { $0.range(of:"^[0-9a-f]{32}$",options:.regularExpression) != nil } &&
+        conversationIDs.allSatisfy { producerIDs ? WorklistWire.identifier($0):$0.range(of:"^[0-9a-f]{32}$",options:.regularExpression) != nil } &&
         token.range(of:"^[A-Za-z0-9_-]{43}$",options:.regularExpression) != nil
     }
     var fingerprint: String { SHA256.hash(data:Data(token.utf8)).map{String(format:"%02x",$0)}.joined() }
@@ -57,9 +59,10 @@ protocol AdvisoryCredentials: Sendable {
 }
 struct AdvisoryKeychain: AdvisoryCredentials {
     private let operations: DraftKeychainOperations
-    init(operations:DraftKeychainOperations = .live) { self.operations=operations }
+    private let mission:Bool
+    init(operations:DraftKeychainOperations = .live,mission:Bool=false) { self.operations=operations;self.mission=mission }
     private func query(_ account:String) -> [CFString:Any] {
-        [kSecClass:kSecClassGenericPassword,kSecAttrService:"com.pcvantol.workspace.native-client.advisory.v1",
+        [kSecClass:kSecClassGenericPassword,kSecAttrService:mission ? "com.pcvantol.workspace.native-client.mission.v1":"com.pcvantol.workspace.native-client.advisory.v1",
          kSecAttrAccount:account,kSecAttrSynchronizable:kCFBooleanFalse as Any]
     }
     private func load(_ account:String) throws -> Data? {
@@ -82,20 +85,20 @@ struct AdvisoryKeychain: AdvisoryCredentials {
     func loadAccess() throws -> AdvisoryAccess? {
         guard let data=try load("advisory-access") else { return nil }
         let access=try JSONDecoder().decode(AdvisoryAccess.self,from:data)
-        guard access.valid else { throw CredentialError.corruptBinding };return access
+        guard mission ? access.validForMission:access.valid else { throw CredentialError.corruptBinding };return access
     }
     func saveAccess(_ access:AdvisoryAccess) throws {
-        guard access.valid else { throw CredentialError.corruptBinding };try save(JSONEncoder().encode(access),account:"advisory-access")
+        guard mission ? access.validForMission:access.valid else { throw CredentialError.corruptBinding };try save(JSONEncoder().encode(access),account:"advisory-access")
     }
     func forgetAccess() throws { try forget("advisory-access") }
     func loadIntent() throws -> AdvisoryIntent? {
-        guard let data=try load("advisory-intent") else { return nil }
+        guard !mission else { throw CredentialError.corruptBinding };guard let data=try load("advisory-intent") else { return nil }
         let intent=try JSONDecoder().decode(AdvisoryIntent.self,from:data)
         _=try intent.request.data();guard intent.fingerprint.range(of:"^[0-9a-f]{64}$",options:.regularExpression) != nil else { throw CredentialError.corruptBinding }
         return intent
     }
-    func saveIntent(_ intent:AdvisoryIntent) throws { _=try intent.request.data();try save(JSONEncoder().encode(intent),account:"advisory-intent") }
-    func forgetIntent() throws { try forget("advisory-intent") }
+    func saveIntent(_ intent:AdvisoryIntent) throws { guard !mission else { throw CredentialError.corruptBinding };_=try intent.request.data();try save(JSONEncoder().encode(intent),account:"advisory-intent") }
+    func forgetIntent() throws { guard !mission else { throw CredentialError.corruptBinding };try forget("advisory-intent") }
 }
 extension AdvisoryRequest {
     func data() throws -> Data {

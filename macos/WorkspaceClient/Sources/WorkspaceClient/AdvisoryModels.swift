@@ -111,6 +111,9 @@ struct AdvisoryTurnRecord: Codable, Equatable, Sendable {
 }
 
 struct AdvisoryCapability: Codable, Equatable, Sendable {
+    let workspace_reference_resolution_supported:Bool?
+    let approval_supported:Bool?
+    let supported_operations:[String]?
     let contract_version: String
     let supported_modes: [String]
     let unsupported: [String]

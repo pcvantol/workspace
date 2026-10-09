@@ -42,7 +42,7 @@ class AdvisoryPeerTests(unittest.TestCase):
     if self.command=="GET" and self.path==owner.delay_path:
      owner.read_entered.set();assert owner.read_release.wait(4)
     code=owner.error or (200 if actor else 403);value={}
-    conv=owner.conversations.get(actor,'unknown')
+    conv=getattr(owner,'producer_conversations',owner.conversations).get(actor,'unknown')
     if code!=200:value={'contract_version':w.CONTRACT,'error':{'code':'TURN_BUDGET_EXHAUSTED' if code==409 else 'ADVISORY_SOURCE_UNAVAILABLE'}}
     elif self.path.startswith(owner.fixture_prefix+'/capability'):
      value=capability();value['conversation_ids']=[conv]

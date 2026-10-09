@@ -45,6 +45,9 @@ final class MissionApprovalRecoveryTests: XCTestCase, @unchecked Sendable {
             if path.hasSuffix("/capability") {
                 var cap=try MissionConceptWireTests().fixture("capability")
                 cap["instance_id"]=access.forgeInstanceID;cap["project_id"]=access.forgeProjectID;cap["repository_id"]=access.repositoryID;cap["conversation_ids"]=[conversation]
+                cap["approval_supported"]=true;cap["maximum_missions"]=2;cap["supported_work_kinds"]=["BUILD"]
+                cap["supported_operations"]=["REFINE","READ","CANCEL_REQUEST","PREPARE","APPROVE","READ_OPERATION"]
+                cap["workspace_reference_resolution_supported"]=true
                 var context=cap["context"] as! [String:Any]
                 context["instance_id"]=access.forgeInstanceID;context["project_id"]=access.forgeProjectID;context["repository_id"]=access.repositoryID
                 cap["context"]=context;cap["context_revision"]=try AdvisoryWire.digest(context)

@@ -16,8 +16,9 @@ class AdvisoryTransport(WorklistReadTransport):
     scope_field='conversation_ids'
     wire=wire
     prefix='/v1/advisory'
+    binding_namespace='advisory'
     def __init__(self,root,root_fd,conversations):
-        super().__init__(root,root_fd,namespace='advisory');self.conversations=conversations
+        super().__init__(root,root_fd,namespace=self.binding_namespace);self.conversations=conversations
 
     def _valid_record(self,b):
         fields={'id','client_digest','actor_id','endpoint','forge_instance_id','forge_token','conversation_ids',
@@ -27,7 +28,13 @@ class AdvisoryTransport(WorklistReadTransport):
         if not isinstance(b['client_digest'],str) or not isinstance(b['forge_token'],str) or re.fullmatch('[0-9a-f]{64}',b['client_digest']) is None or _FORGE_TOKEN.fullmatch(b['forge_token']) is None or not _ids(b['conversation_ids'],16):return False
         try:_endpoint(b['endpoint'])
         except ValueError:return False
-        return all(re.fullmatch('[0-9a-f]{32}',c) for c in b['conversation_ids'])
+        return self._valid_conversations(b['conversation_ids'])
+
+    def _valid_conversations(self,values):
+        return all(re.fullmatch('[0-9a-f]{32}',c) for c in values)
+
+    def _local_conversations(self,b,values):
+        for c in values:self.conversations.get((b['actor_id'],b['workspace_project_id']),c)
 
     def provision(self,actor,workspace_project,endpoint,receipt_file,forge_token_file,client_token_file):
         if not _id(actor) or not _id(workspace_project):raise ValueError('invalid advisory binding')
@@ -44,7 +51,7 @@ class AdvisoryTransport(WorklistReadTransport):
            'forge_project_id':proof['project_id'],'repository_id':proof['repository_id'],'grant_id':proof['grant_id'],
            'forge_token':token,'conversation_ids':proof['conversation_ids']}
         if not self._valid_record({'id':'probe','client_digest':'0'*64,**b}):raise ValueError('invalid scope')
-        for c in b['conversation_ids']:self.conversations.get((actor,workspace_project),c)
+        self._local_conversations(b,b['conversation_ids'])
         self.capability(b,[])
         result=self._provision_binding(b,client_token_file);return {**result,'workspace_project_id':workspace_project,'forge_project_id':b['forge_project_id'],'repository_id':b['repository_id']}
 
@@ -52,7 +59,7 @@ class AdvisoryTransport(WorklistReadTransport):
         if scope!=(b['actor_id'],b['workspace_project_id']):raise WorklistError('DENIED')
         if conversation is not None:
             if conversation not in b['conversation_ids']:raise WorklistError('DENIED')
-            self.conversations.get(scope,conversation)
+            self._local_conversations(b,[conversation])
 
     def metadata(self,b,scope):
         self.bound(b,scope);self.capability(b,[])

@@ -10,6 +10,17 @@ from . import mission_contract as wire
 class MissionConceptTransport(AdvisoryTransport):
     wire = wire
     prefix = '/v1/mission-concepts'
+    binding_namespace='mission'
+
+    def _valid_conversations(self,values):
+        # These are producer slots, not Workspace draft IDs. Base validation
+        # already bounds and closes every ID, token, actor and project.
+        return all(re.fullmatch('[A-Za-z0-9][A-Za-z0-9._:-]{0,127}',c) for c in values)
+
+    def _local_conversations(self,b,values):
+        # Source slots are authorized by the exact owner-attested existing Forge
+        # grant. Resolve separately checks actual local Workspace references.
+        return None
 
     def _read(self, binding, path):
         value = super()._read(binding, path)

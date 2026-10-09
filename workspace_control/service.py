@@ -398,6 +398,15 @@ class Service:
             raise ValueError("current Workspace project required")
         return self.advisory.provision(actor, project, endpoint, receipt_file, token_file, client_file)
 
+    def provision_mission(self,actor,project,endpoint,receipt_file,token_file,client_file):
+        catalogue=self.projects()
+        if catalogue['state'] not in ('AVAILABLE','PARTIAL') or project not in {p['id'] for p in catalogue['projects']}:
+            raise ValueError('current Workspace project required')
+        return self.mission_concepts.provision(actor,project,endpoint,receipt_file,token_file,client_file)
+
+    def revoke_mission(self,binding_id):
+        return self.mission_concepts.revoke(binding_id)
+
     def provision_candidate(self, actor, project, endpoint, receipt_file, token_file, client_file):
         catalogue=self.projects()
         if catalogue["state"] not in ("AVAILABLE", "PARTIAL") or project not in {p["id"] for p in catalogue["projects"]}:

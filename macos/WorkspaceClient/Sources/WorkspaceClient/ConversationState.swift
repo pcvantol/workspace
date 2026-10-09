@@ -46,6 +46,7 @@ final class ConversationState: ObservableObject {
     @Published var sortOrder: ConversationSortOrder = .recentlyChanged
     @Published var grantEntry = ""
     @Published private(set) var conversations: [Conversation] = []
+    @Published private(set) var observedActorID:String?
     @Published private(set) var state = "UNAVAILABLE"
     @Published private(set) var detail = "Connect a Workspace Server and enter a project draft grant."
     @Published private(set) var savedRevision: Int?
@@ -95,6 +96,15 @@ final class ConversationState: ObservableObject {
         guard let token=try? await client.draftReadToken(), self.access==access, selectedID==selected.id else { return nil }
         return AdvisoryConnection(endpoint:access.endpoint,workspaceInstanceID:access.instanceID,actorID:selected.actor_id,
             workspaceProjectID:projectID,conversationID:selected.id,bearer:token,draftGrant:access.token)
+    }
+
+    func missionWorkspaceConnection(client:ClientState) async -> AdvisoryConnection? {
+        guard !authorizationSuspended,!preparingServerForget,let access,let actor=observedActorID,
+              access.projectID==projectID,access.endpoint==client.savedEndpoint,access.instanceID==client.savedInstance,
+              client.phase=="CONNECTED",state=="AVAILABLE" else { return nil }
+        guard let token=try? await client.draftReadToken(),self.access==access else { return nil }
+        return .init(endpoint:access.endpoint,workspaceInstanceID:access.instanceID,actorID:actor,workspaceProjectID:projectID,
+            conversationID:selectedConversation?.id ?? "",bearer:token,draftGrant:access.token)
     }
 
     var visibleConversations: [Conversation] {
@@ -335,6 +345,7 @@ final class ConversationState: ObservableObject {
             let list = try await transport.list(endpoint: endpoint, readToken: token, access: access)
             guard epoch == scopeEpoch, attempt == loadAttempt, self.access == access,
                   projectID == access.projectID else { return }
+            observedActorID=list.actor_id
             conversations = list.conversations
             if let selectedID {
                 guard let latest = conversations.first(where: { $0.id == selectedID }) else {
@@ -426,13 +437,14 @@ final class ConversationState: ObservableObject {
         let epoch = scopeEpoch
         let retainLocalText = dirty
         let priorConversations = conversations
+        let priorActorID=observedActorID
         let priorSelectedID = selectedID
         let priorConflict = serverConflict
         let priorSavedRevision = savedRevision
         let priorSavedFields = savedFields
         let priorCreatingNewDraft = creatingNewDraft
         authorizationSuspended = true
-        conversations = []
+        conversations = [];observedActorID=nil
         selectedID = nil
         serverConflict = nil
         if retainLocalText {
@@ -442,7 +454,7 @@ final class ConversationState: ObservableObject {
             guard await flushLocal() else {
                 guard epoch == scopeEpoch else { return false }
                 authorizationSuspended = false
-                conversations = priorConversations
+                conversations = priorConversations;observedActorID=priorActorID
                 selectedID = priorSelectedID
                 serverConflict = priorConflict
                 savedRevision = priorSavedRevision
@@ -730,7 +742,7 @@ final class ConversationState: ObservableObject {
         scopeEpoch += 1
         localTask?.cancel()
         localVersion += 1
-        conversations = []
+        conversations = [];observedActorID=nil
         selectedID = nil
         creatingNewDraft = false
         authorizationSuspended = false

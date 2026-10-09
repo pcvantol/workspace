@@ -33,7 +33,7 @@ class MissionPeerTests(unittest.TestCase):
         binding={'principal_reference':principal,'scope':scope,
             'workspace_conversation_id':body['workspace_conversation_id'],
             'workspace_draft_id':body['workspace_draft_id'],
-            'conversation_id':self.conversations[actor],
+            'conversation_id':getattr(self,'producer_conversations',self.conversations)[actor],
             'binding_key':w.digest([principal,scope,body['workspace_conversation_id'],body['workspace_draft_id']])}
         return dict(contract_version=w.CONTRACT,operation_id=body['operation_id'],binding=binding,additional_model_calls=0,grant_issued=False,budget_reset=False)
 
@@ -65,6 +65,47 @@ class MissionPeerTests(unittest.TestCase):
             self.ws.revoke_conversation_grants('alice','ws-project');sock.sendall(payload)
             response=http.client.HTTPResponse(sock);response.begin();self.assertEqual(response.status,403);response.read();response.close()
         self.assertTrue(all(method=='GET' for method,_ in self.requests))
+        self.assertFalse(self.turns)
+
+    def testProducerIDsRemainSeparateFromOwnDraftsAndLegacyAdviceAccess(self):
+        import json
+        self.producer_conversations={**self.conversations,'alice':'producer-slot-a'}
+        proof=json.loads(self.proof['alice'].read_text());proof['conversation_ids']=['producer-slot-a']
+        self.proof['alice'].write_text(json.dumps(proof))
+        original=self.ws.mission_concepts.access(self.client['alice']);self.ws.revoke_mission(original['id'])
+        private=self.root/'separate-mission-client'
+        self.ws.provision_mission('alice','ws-project',self.endpoint,str(self.proof['alice']),str(self.root/'alice.forge'),str(private))
+        token=private.read_text().strip();headers={'X-Workspace-Advisory-Grant':token}
+        status,metadata=self.call(self.fixture_prefix+'/access',headers=headers)
+        self.assertEqual(status,200,metadata);self.assertEqual(metadata['conversation_ids'],['producer-slot-a'])
+        self.assertEqual(self.call('/v1/advisory/access',headers=headers)[0],403)
+        c=self.conversations['alice'];body=dict(contract_version=w.CONTRACT,operation_id='separate-pair',workspace_conversation_id=c,workspace_draft_id=c)
+        status,resolved=self.call(self.fixture_prefix+'/resolve','POST',body,headers=headers)
+        self.assertEqual(status,200,resolved);self.assertEqual(resolved['binding']['conversation_id'],'producer-slot-a')
+        self.assertEqual(resolved['binding']['workspace_conversation_id'],c)
+        before=sum(method=='POST' for method,_ in self.requests)
+        foreign=dict(body,workspace_draft_id=self.conversations['bob'])
+        self.assertEqual(self.call(self.fixture_prefix+'/resolve','POST',foreign,headers=headers)[0],403)
+        self.assertEqual(sum(method=='POST' for method,_ in self.requests),before)
+        self.assertEqual(self.call(self.fixture_prefix+'/producer-slot-b?cursor=0&limit=4',headers=headers)[0],403)
+        self.assertTrue((self.root/'mission-bindings.json').exists())
+        self.assertFalse((self.root/'advisory-bindings.json').exists())
+        self.assertFalse(self.turns)
+
+    def testLocalOwnerMissionBindingIssueAndRevokeRemainBoundedAndPrintNoSecrets(self):
+        import json,io
+        from contextlib import redirect_stdout
+        from workspace_control.cli import main
+        existing=self.ws.mission_concepts.access(self.client['alice']);self.ws.revoke_mission(existing['id'])
+        private=self.root/'cli-mission-client'
+        args=['--root',str(self.root),'mission-bind-issue','--actor','alice','--project','ws-project','--forge-endpoint',self.endpoint,'--forge-grant-receipt-file',str(self.proof['alice']),'--forge-token-file',str(self.root/'alice.forge'),'--client-token-file',str(private)]
+        output=io.StringIO()
+        with redirect_stdout(output):self.assertEqual(main(args),0)
+        issued=json.loads(output.getvalue());self.assertNotIn(self.owner_tokens['alice'],output.getvalue())
+        self.assertNotIn(private.read_text().strip(),output.getvalue())
+        with redirect_stdout(io.StringIO()):self.assertEqual(main(['--root',str(self.root),'mission-bind-revoke','--binding-id',issued['binding_id']]),0)
+        self.assertEqual(self.call(self.fixture_prefix+'/access',headers={'X-Workspace-Advisory-Grant':private.read_text().strip()})[0],403)
+        with self.assertRaises(ValueError):self.ws.provision_mission('alice','foreign',self.endpoint,str(self.proof['alice']),str(self.root/'alice.forge'),str(self.root/'refused'))
         self.assertFalse(self.turns)
 
     def testActualOwnScopeRoutesAndNoReadGeneration(self):

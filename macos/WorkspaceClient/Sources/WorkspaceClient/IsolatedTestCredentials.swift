@@ -20,6 +20,7 @@ struct IsolatedTestDocument: Decodable {
     let worklist_workset_ids: [String]?
 
     let advisory_access: AdvisoryAccess?
+    let mission_access:AdvisoryAccess?
     let candidate_access: CandidateAccess?
 
     let control_grant: String?
@@ -93,6 +94,10 @@ struct IsolatedTestDocument: Decodable {
         if let advisory=document.advisory_access {
             guard advisory.valid,advisory.endpoint==document.endpoint,advisory.workspaceInstanceID==document.instance_id,
                   advisory.workspaceProjectID==document.project_id else { throw ConversationError.invalidResponse }
+        }
+        if let mission=document.mission_access {
+            guard mission.validForMission,mission.endpoint==document.endpoint,mission.workspaceInstanceID==document.instance_id,
+                  mission.workspaceProjectID==document.project_id else { throw ConversationError.invalidResponse }
         }
         if let candidate=document.candidate_access {
             guard candidate.valid,candidate.endpoint==document.endpoint,candidate.workspaceInstanceID==document.instance_id,
@@ -209,8 +214,8 @@ final class IsolatedAdvisoryCredentials: AdvisoryCredentials, @unchecked Sendabl
     private var access:AdvisoryAccess?
     private let cache:PrivateLocalDraftCache
     private let key=String(repeating:"a",count:64)
-    init(_ document:IsolatedTestDocument) {
-        access=document.advisory_access
+    init(_ document:IsolatedTestDocument,mission:Bool=false) {
+        access=mission ? document.mission_access:document.advisory_access
         cache=PrivateLocalDraftCache(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("advisory-intent"))
     }
     func loadAccess() throws -> AdvisoryAccess? { lock.withLock { access } }

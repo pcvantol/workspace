@@ -16,7 +16,7 @@ import Combine
     private let transport: MissionConceptTransport
     private var connection: AdvisoryConnection?
     private var epoch = 0
-    init(credentials: any AdvisoryCredentials = AdvisoryKeychain(), store: any MissionIntentStore = PrivateMissionIntentStore(), transport: MissionConceptTransport = MissionConceptTransport()) {
+    init(credentials: any AdvisoryCredentials = AdvisoryKeychain(mission:true), store: any MissionIntentStore = PrivateMissionIntentStore(), transport: MissionConceptTransport = MissionConceptTransport()) {
         self.credentials=credentials;self.store=store;self.transport=transport
     }
     func invalidate() {
@@ -28,9 +28,37 @@ import Combine
         return true
     }
     private func access(_ c: AdvisoryConnection) throws -> AdvisoryAccess {
-        guard let a=try credentials.loadAccess(),a.valid,a.endpoint==c.endpoint,a.workspaceInstanceID==c.workspaceInstanceID,
+        guard let a=try credentials.loadAccess(),a.validForMission,a.endpoint==c.endpoint,a.workspaceInstanceID==c.workspaceInstanceID,
               a.workspaceProjectID==c.workspaceProjectID,a.actorID==c.actorID,a.conversationIDs.contains(c.conversationID) else { throw AdvisoryError.denied }
         return a
+    }
+    func saveGrant(_ token:String,workspace own:AdvisoryConnection?) async {
+        guard !busy,pending==nil,let own,token.range(of:"^[A-Za-z0-9_-]{43}$",options:.regularExpression) != nil else { return }
+        let generation=epoch;busy=true;defer { if epoch==generation { busy=false } }
+        do {
+            let a=try await transport.probe(own,token:token)
+            guard epoch==generation else { return }
+            try credentials.saveAccess(a)
+            busy=false;await refresh(producerConnection(own))
+        } catch { if epoch==generation { fail(error) } }
+    }
+    func producerConnection(_ own:AdvisoryConnection?,id:String?=nil) -> AdvisoryConnection? {
+        guard let own,let a=try? credentials.loadAccess(),a.validForMission,a.endpoint==own.endpoint,
+              a.workspaceInstanceID==own.workspaceInstanceID,a.workspaceProjectID==own.workspaceProjectID,a.actorID==own.actorID,
+              let source=id ?? a.conversationIDs.first,a.conversationIDs.contains(source) else { return nil }
+        return .init(endpoint:own.endpoint,workspaceInstanceID:own.workspaceInstanceID,actorID:own.actorID,
+            workspaceProjectID:own.workspaceProjectID,conversationID:source,bearer:own.bearer,draftGrant:own.draftGrant)
+    }
+    func resolveWorkspace(_ own:AdvisoryConnection) async -> AdvisoryConnection? {
+        guard own.conversationID.range(of:"^[0-9a-f]{32}$",options:.regularExpression) != nil,let control=producerConnection(own) else { return nil }
+        let generation=epoch
+        do {
+            let a=try access(control)
+            let resolved=try await transport.resolve(a,control,workspaceDraftID:own.conversationID,
+                operationID:"resolve-"+CandidateLocal.scopeKey(own),workspaceConversationID:own.conversationID)
+            guard epoch==generation else { return nil }
+            return producerConnection(own,id:resolved.producerConversationID)
+        } catch { if epoch==generation { fail(error) };return nil }
     }
     private func fail(_ error: Error) {
         packet=nil;approval=nil;capability=nil;history=[];items=[];revision=0
@@ -115,7 +143,7 @@ import Combine
             }
             guard epoch==generation else { return }
             capability=cap;history=turns;items=catalog;revision=conversationRevision
-            if let packet,!catalog.contains(where: { $0.object_id==packet.objectID && $0.revision==packet.revision }) { self.packet=nil }
+            if let packet,!catalog.contains(where: { $0.object_id==packet.objectID && $0.revision==packet.revision && $0.definition==packet.definition }) { self.packet=nil }
             phase=pending != nil ? "pending" : approval?.currentDefinitionState ?? "current"
         } catch { if epoch==generation { fail(error) } }
     }
@@ -188,7 +216,7 @@ import Combine
         } catch { if epoch==generation { fail(error) } }
     }
     func canApprove(_ card:MissionDefinitionCard) -> Bool {
-        guard !busy,pending==nil,let packet,packet.objectID==card.id,packet.revision==card.revision,packet.packageData != nil,packet.questions.isEmpty else { return false }
+        guard !busy,pending==nil,capability?.approval_supported==true,capability?.supported_operations?.contains("APPROVE")==true,let packet,packet.objectID==card.id,packet.revision==card.revision,packet.packageData != nil,packet.questions.isEmpty else { return false }
         return approval?.state != "COMPLETE"
     }
     func approve(_ card:MissionDefinitionCard,connection c:AdvisoryConnection?) async {
