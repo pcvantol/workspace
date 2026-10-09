@@ -1,0 +1,69 @@
+SwiftUI.WindowGroup<SwiftUI.ModifiedContent<SwiftUI.ModifiedContent<WorkspaceClient.ContentView, SwiftUI._EnvironmentKeyWritingModifier<Foundation.Locale>>, SwiftUI._FlexFrameLayout>>-1-AppWindow-1 | 0 | AXWindow | Workspace |  | 
+ | 1 | AXGroup |  |  | 
+SwiftUI.WindowGroup<SwiftUI.ModifiedContent<SwiftUI.ModifiedContent<WorkspaceClient.ContentView, SwiftUI._EnvironmentKeyWritingModifier<Foundation.Locale>>, SwiftUI._FlexFrameLayout>>-1-AppWindow-1, SidebarNavigationSplitView | 2 | AXSplitGroup |  |  | 
+ | 3 | AXGroup |  |  | 
+ | 4 | AXScrollArea |  |  | 
+ | 5 | AXOutline |  | Navigatiekolom | 
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Missies
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Gesprekken
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Missions en reviews
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Goedgekeurde werklijst
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Server
+ListColumn | 6 | AXColumn |  |  | 
+ | 3 | AXSplitter |  |  | 220
+ | 3 | AXGroup |  |  | 
+ | 4 | AXGroup |  |  | 
+mission.new | 5 | AXButton |  | Nieuwe missie | 
+ | 5 | AXButton |  | Vernieuwen | 
+ | 5 | AXStaticText |  |  | Missies
+gearshape | 5 | AXButton |  | Instellingen | 
+ | 5 | AXSplitGroup |  |  | 
+ | 6 | AXGroup |  |  | 
+mission.search | 7 | AXTextField |  |  | 
+ | 7 | AXStaticText |  |  | Weergave
+mission.display | 7 | AXRadioGroup |  | Weergave, Weergave | <AXUIElement 0x7c70c38300> {pid=90819}
+ | 8 | AXRadioButton |  | Lijst | 1
+ | 8 | AXRadioButton |  | Afhankelijkheden | 0
+ | 7 | AXStaticText |  |  | Status
+mission.status-filter | 7 | AXPopUpButton |  |  | Alle statussen
+ | 7 | AXStaticText |  |  | Chat-first kwalificatie
+ | 7 | AXScrollArea |  |  | 
+ | 8 | AXDisclosureTriangle |  | Conceptmissies | 0
+ | 7 | AXStaticText |  |  | Meer toegankelijke resultaten kunnen beschikbaar zijn.
+ | 6 | AXSplitter |  |  | 320
+ | 6 | AXGroup |  |  | 
+ | 7 | AXStaticText |  |  | Gesprek
+ | 7 | AXStaticText |  |  | Invalshoek
+ | 7 | AXRadioGroup |  |  | <AXUIElement 0x7c70c381b0> {pid=90819}
+ | 8 | AXRadioButton |  | Business | 1
+ | 8 | AXRadioButton |  | Architect | 0
+mission.transcript | 7 | AXScrollArea |  |  | 
+ | 8 | AXStaticText |  |  | Wat wil je bereiken? Verfijn samen de scope.
+ | 7 | AXScrollArea |  |  | 
+mission.message | 8 | AXTextArea |  | Je bericht | 
+ | 8 | AXScrollBar |  |  | 0
+mission.refine | 7 | AXButton |  | Versturen en verfijnen | 
+ | 6 | AXSplitter |  |  | 465.5
+ | 6 | AXGroup |  |  | 
+ | 7 | AXScrollArea |  |  | 
+ | 8 | AXStaticText |  |  | Missiedefinitie
+ | 8 | AXStaticText |  |  | Kies een missie om de definitie te zien.
+ | 1 | AXToolbar |  |  | 
+ | 2 | AXButton |  | Verberg navigatiekolom | 
+ | 1 | AXButton |  |  | 
+ | 1 | AXButton |  |  | 
+ | 2 | AXGroup |  |  | 
+ | 3 | AXGroup |  |  | 
+ | 1 | AXButton |  |  | 
+ | 1 | AXStaticText |  |  | Workspace
+

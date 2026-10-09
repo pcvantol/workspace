@@ -1,0 +1,88 @@
+SwiftUI.WindowGroup<SwiftUI.ModifiedContent<SwiftUI.ModifiedContent<WorkspaceClient.ContentView, SwiftUI._EnvironmentKeyWritingModifier<Foundation.Locale>>, SwiftUI._FlexFrameLayout>>-1-AppWindow-1 | 0 | AXWindow | Workspace |  | 
+ | 1 | AXGroup |  |  | 
+SwiftUI.WindowGroup<SwiftUI.ModifiedContent<SwiftUI.ModifiedContent<WorkspaceClient.ContentView, SwiftUI._EnvironmentKeyWritingModifier<Foundation.Locale>>, SwiftUI._FlexFrameLayout>>-1-AppWindow-1, SidebarNavigationSplitView | 2 | AXSplitGroup |  |  | 
+ | 3 | AXGroup |  |  | 
+ | 4 | AXScrollArea |  |  | 
+ | 5 | AXOutline |  | Navigatiekolom | 
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Missies
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Gesprekken
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Missions en reviews
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Goedgekeurde werklijst
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Server
+ListColumn | 6 | AXColumn |  |  | 
+ | 3 | AXSplitter |  |  | 220
+ | 3 | AXGroup |  |  | 
+ | 4 | AXGroup |  |  | 
+mission.new | 5 | AXButton |  | Nieuwe missie | 
+ | 5 | AXButton |  | Vernieuwen | 
+ | 5 | AXStaticText |  |  | Missies
+gearshape | 5 | AXButton |  | Instellingen | 
+ | 5 | AXStaticText |  |  | Werkpanelen
+mission.panel | 5 | AXRadioGroup |  | Werkpanelen, Werkpanelen | <AXUIElement 0x764ac381b0> {pid=90819}
+ | 6 | AXRadioButton |  | Overzicht | 0
+ | 6 | AXRadioButton |  | Gesprek | 0
+ | 6 | AXRadioButton |  | Missiedefinitie | 1
+ | 5 | AXScrollArea |  |  | 
+ | 6 | AXStaticText |  |  | Missiedefinitie
+ | 6 | AXStaticText |  |  | Client portal
+ | 6 | AXStaticText |  |  | Goedgekeurd — wacht op vrijgave
+ | 6 | AXStaticText |  |  | Doel
+ | 6 | AXStaticText |  |  | Show invoices and payments.
+ | 6 | AXStaticText |  |  | Doel en waarde
+ | 6 | AXStaticText |  |  | Clients can track their payments.
+ | 6 | AXStaticText |  |  | Beoogde resultaten
+ | 6 | AXStaticText |  |  | A portal with current invoice status.
+ | 6 | AXStaticText |  |  | Binnen scope
+ | 6 | AXStaticText |  |  | Invoice and payment views
+ | 6 | AXStaticText |  |  | Betrokken onderdelen
+ | 6 | AXStaticText |  |  | Invoice views
+ | 6 | AXStaticText |  |  | Payment views
+ | 6 | AXStaticText |  |  | Buiten scope
+ | 6 | AXStaticText |  |  | Payment execution
+ | 6 | AXStaticText |  |  | Wanneer het klaar is
+ | 6 | AXStaticText |  |  | Clients see only invoices belonging to their account.
+ | 6 | AXStaticText |  |  | Wat is gewijzigd
+ | 6 | AXStaticText |  |  | Initial proposed definition.
+ | 6 | AXStaticText |  |  | Wat goedkeuring toestaat
+ | 6 | AXStaticText |  |  | Nog niet vastgesteld; verduidelijk dit in het gesprek.
+ | 6 | AXStaticText |  |  | Risico’s om te beoordelen
+ | 6 | AXStaticText |  |  | Account isolation must be verified.
+ | 6 | AXStaticText |  |  | Resterende menselijke beslissingen
+ | 6 | AXStaticText |  |  | Nog niet vastgesteld; verduidelijk dit in het gesprek.
+ | 6 | AXStaticText |  |  | Nog nodig
+ | 6 | AXStaticText |  |  | Een vereiste voorganger is nog niet bewezen voltooid.
+ | 6 | AXStaticText |  |  | Het goedgekeurde werk moet nog expliciet worden vrijgegeven.
+ | 6 | AXStaticText |  |  | Afhankelijkheden
+ | 6 | AXStaticText |  |  | Afhankelijkheid in goedgekeurde definitie · Account foundation · Versie 2: The portal requires the independently governed account isolation foundation.
+ | 6 | AXStaticText |  |  | Vastgelegde goedkeuringen
+ | 6 | AXStaticText |  |  | Definitieversie 1
+ | 6 | AXDisclosureTriangle |  | Technische details | 0
+ | 6 | AXScrollBar |  |  | 0
+ | 7 | AXValueIndicator |  |  | 0
+ | 7 | AXButton |  |  | 
+ | 7 | AXButton |  |  | 
+ | 7 | AXButton |  |  | 
+ | 7 | AXButton |  |  | 
+ | 5 | AXStaticText |  |  | Client portal · Versie 1
+mission.approve | 5 | AXButton |  | Goedkeuren en klaarzetten | 
+ | 5 | AXStaticText |  |  | Keur deze exacte definitie goed. Uitvoering start via de bestaande bevoegde route.
+ | 5 | AXStaticText |  |  | Goedgekeurd — wacht op vrijgave
+ | 1 | AXToolbar |  |  | 
+ | 2 | AXButton |  | Verberg navigatiekolom | 
+ | 1 | AXButton |  |  | 
+ | 1 | AXButton |  |  | 
+ | 2 | AXGroup |  |  | 
+ | 3 | AXGroup |  |  | 
+ | 1 | AXButton |  |  | 
+ | 1 | AXStaticText |  |  | Workspace
+

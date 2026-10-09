@@ -1,0 +1,88 @@
+SwiftUI.WindowGroup<SwiftUI.ModifiedContent<SwiftUI.ModifiedContent<WorkspaceClient.ContentView, SwiftUI._EnvironmentKeyWritingModifier<Foundation.Locale>>, SwiftUI._FlexFrameLayout>>-1-AppWindow-1 | 0 | AXWindow | Workspace |  | 
+ | 1 | AXGroup |  |  | 
+SwiftUI.WindowGroup<SwiftUI.ModifiedContent<SwiftUI.ModifiedContent<WorkspaceClient.ContentView, SwiftUI._EnvironmentKeyWritingModifier<Foundation.Locale>>, SwiftUI._FlexFrameLayout>>-1-AppWindow-1, SidebarNavigationSplitView | 2 | AXSplitGroup |  |  | 
+ | 3 | AXGroup |  |  | 
+ | 4 | AXScrollArea |  |  | 
+ | 5 | AXOutline |  | Seitenleiste | 
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Missionen
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Gespräche
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Missionen und Prüfungen
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Genehmigte Arbeitsliste
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Server
+ListColumn | 6 | AXColumn |  |  | 
+ | 3 | AXSplitter |  |  | 220
+ | 3 | AXGroup |  |  | 
+ | 4 | AXGroup |  |  | 
+mission.new | 5 | AXButton |  | Neue Mission | 
+ | 5 | AXButton |  | Aktualisieren | 
+ | 5 | AXStaticText |  |  | Missionen
+gearshape | 5 | AXButton |  | Einstellungen | 
+ | 5 | AXStaticText |  |  | Arbeitsbereiche
+mission.panel | 5 | AXRadioGroup |  | Arbeitsbereiche, Arbeitsbereiche | <AXUIElement 0x79248201b0> {pid=90819}
+ | 6 | AXRadioButton |  | Übersicht | 0
+ | 6 | AXRadioButton |  | Gespräch | 0
+ | 6 | AXRadioButton |  | Missionsdefinition | 1
+ | 5 | AXScrollArea |  |  | 
+ | 6 | AXStaticText |  |  | Missionsdefinition
+ | 6 | AXStaticText |  |  | Client portal
+ | 6 | AXStaticText |  |  | Genehmigt — wartet auf Freigabe
+ | 6 | AXStaticText |  |  | Ziel
+ | 6 | AXStaticText |  |  | Show invoices and payments.
+ | 6 | AXStaticText |  |  | Ziel und Nutzen
+ | 6 | AXStaticText |  |  | Clients can track their payments.
+ | 6 | AXStaticText |  |  | Geplante Ergebnisse
+ | 6 | AXStaticText |  |  | A portal with current invoice status.
+ | 6 | AXStaticText |  |  | Im Umfang
+ | 6 | AXStaticText |  |  | Invoice and payment views
+ | 6 | AXStaticText |  |  | Betroffene Komponenten
+ | 6 | AXStaticText |  |  | Invoice views
+ | 6 | AXStaticText |  |  | Payment views
+ | 6 | AXStaticText |  |  | Außerhalb des Umfangs
+ | 6 | AXStaticText |  |  | Payment execution
+ | 6 | AXStaticText |  |  | Wann es fertig ist
+ | 6 | AXStaticText |  |  | Clients see only invoices belonging to their account.
+ | 6 | AXStaticText |  |  | Was sich geändert hat
+ | 6 | AXStaticText |  |  | Initial proposed definition.
+ | 6 | AXStaticText |  |  | Was die Genehmigung erlaubt
+ | 6 | AXStaticText |  |  | Noch nicht festgestellt; im Gespräch klären.
+ | 6 | AXStaticText |  |  | Zu beurteilende Risiken
+ | 6 | AXStaticText |  |  | Account isolation must be verified.
+ | 6 | AXStaticText |  |  | Verbleibende menschliche Entscheidungen
+ | 6 | AXStaticText |  |  | Noch nicht festgestellt; im Gespräch klären.
+ | 6 | AXStaticText |  |  | Noch erforderlich
+ | 6 | AXStaticText |  |  | Ein erforderlicher Vorgänger ist noch nicht nachweislich abgeschlossen.
+ | 6 | AXStaticText |  |  | Die genehmigte Arbeit benötigt noch eine ausdrückliche Freigabe.
+ | 6 | AXStaticText |  |  | Abhängigkeiten
+ | 6 | AXStaticText |  |  | Abhängigkeit im genehmigten Entwurf · Account foundation · Version 2: The portal requires the independently governed account isolation foundation.
+ | 6 | AXStaticText |  |  | Gespeicherte Genehmigungen
+ | 6 | AXStaticText |  |  | Definitionsversion 1
+ | 6 | AXDisclosureTriangle |  | Technische Details | 0
+ | 6 | AXScrollBar |  |  | 0
+ | 7 | AXValueIndicator |  |  | 0
+ | 7 | AXButton |  |  | 
+ | 7 | AXButton |  |  | 
+ | 7 | AXButton |  |  | 
+ | 7 | AXButton |  |  | 
+ | 5 | AXStaticText |  |  | Client portal · Version 1
+mission.approve | 5 | AXButton |  | Genehmigen und vorbereiten | 
+ | 5 | AXStaticText |  |  | Genehmigen Sie diese genaue Definition. Die Ausführung beginnt über den bestehenden berechtigten Weg.
+ | 5 | AXStaticText |  |  | Genehmigt — wartet auf Freigabe
+ | 1 | AXToolbar |  |  | 
+ | 2 | AXButton |  | Seitenleiste ausblenden | 
+ | 1 | AXButton |  |  | 
+ | 1 | AXButton |  |  | 
+ | 2 | AXGroup |  |  | 
+ | 3 | AXGroup |  |  | 
+ | 1 | AXButton |  |  | 
+ | 1 | AXStaticText |  |  | Workspace
+

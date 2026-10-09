@@ -1,0 +1,87 @@
+SwiftUI.WindowGroup<SwiftUI.ModifiedContent<SwiftUI.ModifiedContent<WorkspaceClient.ContentView, SwiftUI._EnvironmentKeyWritingModifier<Foundation.Locale>>, SwiftUI._FlexFrameLayout>>-1-AppWindow-1 | 0 | AXWindow | Workspace |  | 
+ | 1 | AXGroup |  |  | 
+SwiftUI.WindowGroup<SwiftUI.ModifiedContent<SwiftUI.ModifiedContent<WorkspaceClient.ContentView, SwiftUI._EnvironmentKeyWritingModifier<Foundation.Locale>>, SwiftUI._FlexFrameLayout>>-1-AppWindow-1, SidebarNavigationSplitView | 2 | AXSplitGroup |  |  | 
+ | 3 | AXGroup |  |  | 
+ | 4 | AXScrollArea |  |  | 
+ | 5 | AXOutline |  | Sidebar | 
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Missions
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Conversations
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Missions & reviews
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Approved worklist
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Server
+ListColumn | 6 | AXColumn |  |  | 
+ | 3 | AXSplitter |  |  | 220
+ | 3 | AXGroup |  |  | 
+ | 4 | AXGroup |  |  | 
+mission.new | 5 | AXButton |  | New mission | 
+ | 5 | AXButton |  | Refresh | 
+ | 5 | AXStaticText |  |  | Missions
+gearshape | 5 | AXButton |  | Settings | 
+ | 5 | AXStaticText |  |  | Workspace panels
+mission.panel | 5 | AXRadioGroup |  | Workspace panels, Workspace panels | <AXUIElement 0x77b6c381b0> {pid=90819}
+ | 6 | AXRadioButton |  | Overview | 0
+ | 6 | AXRadioButton |  | Conversation | 0
+ | 6 | AXRadioButton |  | Mission definition | 1
+ | 5 | AXScrollArea |  |  | 
+ | 6 | AXStaticText |  |  | Mission definition
+ | 6 | AXStaticText |  |  | Client portal
+ | 6 | AXStaticText |  |  | Approved — waiting for release
+ | 6 | AXStaticText |  |  | Goal
+ | 6 | AXStaticText |  |  | Show invoices and payments.
+ | 6 | AXStaticText |  |  | Goal and value
+ | 6 | AXStaticText |  |  | Clients can track their payments.
+ | 6 | AXStaticText |  |  | Intended results
+ | 6 | AXStaticText |  |  | A portal with current invoice status.
+ | 6 | AXStaticText |  |  | Within scope
+ | 6 | AXStaticText |  |  | Invoice and payment views
+ | 6 | AXStaticText |  |  | Affected components
+ | 6 | AXStaticText |  |  | Invoice views
+ | 6 | AXStaticText |  |  | Payment views
+ | 6 | AXStaticText |  |  | Outside scope
+ | 6 | AXStaticText |  |  | Payment execution
+ | 6 | AXStaticText |  |  | When it is done
+ | 6 | AXStaticText |  |  | Clients see only invoices belonging to their account.
+ | 6 | AXStaticText |  |  | What changed
+ | 6 | AXStaticText |  |  | Initial proposed definition.
+ | 6 | AXStaticText |  |  | What approval allows
+ | 6 | AXStaticText |  |  | Not established yet; clarify in the conversation.
+ | 6 | AXStaticText |  |  | Risks to consider
+ | 6 | AXStaticText |  |  | Account isolation must be verified.
+ | 6 | AXStaticText |  |  | Remaining human decisions
+ | 6 | AXStaticText |  |  | Not established yet; clarify in the conversation.
+ | 6 | AXStaticText |  |  | Still required
+ | 6 | AXStaticText |  |  | A required predecessor has not been proven complete.
+ | 6 | AXStaticText |  |  | The approved work still needs explicit release.
+ | 6 | AXStaticText |  |  | Dependencies
+ | 6 | AXStaticText |  |  | Dependency in approved definition · Account foundation · Version 2: The portal requires the independently governed account isolation foundation.
+ | 6 | AXStaticText |  |  | Recorded approvals
+ | 6 | AXStaticText |  |  | Definition version 1
+ | 6 | AXDisclosureTriangle |  | Technical details | 0
+ | 6 | AXScrollBar |  |  | 0
+ | 7 | AXValueIndicator |  |  | 0
+ | 7 | AXButton |  |  | 
+ | 7 | AXButton |  |  | 
+ | 7 | AXButton |  |  | 
+ | 7 | AXButton |  |  | 
+ | 5 | AXStaticText |  |  | Client portal · Version 1
+mission.approve | 5 | AXButton |  | Approve and prepare | 
+ | 5 | AXStaticText |  |  | Approve this exact definition. Execution starts through its existing authorized route.
+ | 5 | AXStaticText |  |  | Approved — waiting for release
+ | 1 | AXToolbar |  |  | 
+ | 2 | AXButton |  | Hide Sidebar | 
+ | 1 | AXButton |  |  | 
+ | 1 | AXButton |  |  | 
+ | 2 | AXGroup |  |  | 
+ | 1 | AXButton |  |  | 
+ | 1 | AXStaticText |  |  | Workspace
+

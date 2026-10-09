@@ -1,0 +1,88 @@
+SwiftUI.WindowGroup<SwiftUI.ModifiedContent<SwiftUI.ModifiedContent<WorkspaceClient.ContentView, SwiftUI._EnvironmentKeyWritingModifier<Foundation.Locale>>, SwiftUI._FlexFrameLayout>>-1-AppWindow-1 | 0 | AXWindow | Workspace |  | 
+ | 1 | AXGroup |  |  | 
+SwiftUI.WindowGroup<SwiftUI.ModifiedContent<SwiftUI.ModifiedContent<WorkspaceClient.ContentView, SwiftUI._EnvironmentKeyWritingModifier<Foundation.Locale>>, SwiftUI._FlexFrameLayout>>-1-AppWindow-1, SidebarNavigationSplitView | 2 | AXSplitGroup |  |  | 
+ | 3 | AXGroup |  |  | 
+ | 4 | AXScrollArea |  |  | 
+ | 5 | AXOutline |  | Barra lateral | 
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Misiones
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Conversaciones
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Misiones y revisiones
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Lista de trabajo aprobada
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Servidor
+ListColumn | 6 | AXColumn |  |  | 
+ | 3 | AXSplitter |  |  | 220
+ | 3 | AXGroup |  |  | 
+ | 4 | AXGroup |  |  | 
+mission.new | 5 | AXButton |  | Nueva misión | 
+ | 5 | AXButton |  | Actualizar | 
+ | 5 | AXStaticText |  |  | Misiones
+gearshape | 5 | AXButton |  | Ajustes | 
+ | 5 | AXStaticText |  |  | Paneles
+mission.panel | 5 | AXRadioGroup |  | Paneles, Paneles | <AXUIElement 0x7ce88201b0> {pid=90819}
+ | 6 | AXRadioButton |  | Resumen | 0
+ | 6 | AXRadioButton |  | Conversación | 0
+ | 6 | AXRadioButton |  | Definición de misión | 1
+ | 5 | AXScrollArea |  |  | 
+ | 6 | AXStaticText |  |  | Definición de misión
+ | 6 | AXStaticText |  |  | Client portal
+ | 6 | AXStaticText |  |  | Aprobado — esperando liberación
+ | 6 | AXStaticText |  |  | Objetivo
+ | 6 | AXStaticText |  |  | Show invoices and payments.
+ | 6 | AXStaticText |  |  | Objetivo y valor
+ | 6 | AXStaticText |  |  | Clients can track their payments.
+ | 6 | AXStaticText |  |  | Resultados previstos
+ | 6 | AXStaticText |  |  | A portal with current invoice status.
+ | 6 | AXStaticText |  |  | Dentro del alcance
+ | 6 | AXStaticText |  |  | Invoice and payment views
+ | 6 | AXStaticText |  |  | Componentes afectados
+ | 6 | AXStaticText |  |  | Invoice views
+ | 6 | AXStaticText |  |  | Payment views
+ | 6 | AXStaticText |  |  | Fuera del alcance
+ | 6 | AXStaticText |  |  | Payment execution
+ | 6 | AXStaticText |  |  | Cuándo estará terminado
+ | 6 | AXStaticText |  |  | Clients see only invoices belonging to their account.
+ | 6 | AXStaticText |  |  | Qué cambió
+ | 6 | AXStaticText |  |  | Initial proposed definition.
+ | 6 | AXStaticText |  |  | Qué permite la aprobación
+ | 6 | AXStaticText |  |  | Aún no establecido; acláralo en la conversación.
+ | 6 | AXStaticText |  |  | Riesgos a evaluar
+ | 6 | AXStaticText |  |  | Account isolation must be verified.
+ | 6 | AXStaticText |  |  | Decisiones humanas pendientes
+ | 6 | AXStaticText |  |  | Aún no establecido; acláralo en la conversación.
+ | 6 | AXStaticText |  |  | Aún requerido
+ | 6 | AXStaticText |  |  | No se ha demostrado que un requisito previo esté completo.
+ | 6 | AXStaticText |  |  | El trabajo aprobado aún requiere liberación explícita.
+ | 6 | AXStaticText |  |  | Dependencias
+ | 6 | AXStaticText |  |  | Dependencia en la definición aprobada · Account foundation · Versión 2: The portal requires the independently governed account isolation foundation.
+ | 6 | AXStaticText |  |  | Aprobaciones registradas
+ | 6 | AXStaticText |  |  | Versión de definición 1
+ | 6 | AXDisclosureTriangle |  | Detalles técnicos | 0
+ | 6 | AXScrollBar |  |  | 0
+ | 7 | AXValueIndicator |  |  | 0
+ | 7 | AXButton |  |  | 
+ | 7 | AXButton |  |  | 
+ | 7 | AXButton |  |  | 
+ | 7 | AXButton |  |  | 
+ | 5 | AXStaticText |  |  | Client portal · Versión 1
+mission.approve | 5 | AXButton |  | Aprobar y preparar | 
+ | 5 | AXStaticText |  |  | Aprueba esta definición exacta. La ejecución sigue su ruta autorizada existente.
+ | 5 | AXStaticText |  |  | Aprobado — esperando liberación
+ | 1 | AXToolbar |  |  | 
+ | 2 | AXButton |  | Ocultar barra lateral | 
+ | 1 | AXButton |  |  | 
+ | 1 | AXButton |  |  | 
+ | 2 | AXGroup |  |  | 
+ | 3 | AXGroup |  |  | 
+ | 1 | AXButton |  |  | 
+ | 1 | AXStaticText |  |  | Workspace
+

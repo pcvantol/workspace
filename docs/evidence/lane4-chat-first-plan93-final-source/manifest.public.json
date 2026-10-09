@@ -1,0 +1,90 @@
+{
+  "boundary": "SOURCE_NATIVE_GUI_AND_NEGATIVE_HTTP_PASS_FINAL_UX_AND_MAIN_OPEN",
+  "source": "e76f3a285d8385194d9f4f461469327206f1524d",
+  "tree": "7b81f49f864dcfc2cd55dc911cccaff974db074c",
+  "version": "2.8.13",
+  "producer_source": "1b00c735930013e668f23286c56c5432be69e7c8",
+  "producer_version": "2.11.0",
+  "producer_wheel_sha256": "40f03ff45bf4bcc979ffdd8a79a9ffe9221c0c1445ffe8f157fba8f8c5f4853e",
+  "own_wheel_sha256": "c10248f76ac4dbf7470d6c3a6255b8c99d369e83ad049f11855eec4a8a58d355",
+  "schema_sha256": "0311529ca95451a99f4fd8a35127707310252c96324b42f3230e8c79fcfa6124",
+  "locales": [
+    "en",
+    "nl",
+    "de",
+    "fr",
+    "es"
+  ],
+  "themes": [
+    "DarkAqua",
+    "Aqua"
+  ],
+  "viewports": [
+    [
+      1440,
+      850
+    ],
+    [
+      640,
+      720
+    ]
+  ],
+  "observed_actions": [
+    "Space A to B shared selection",
+    "Enter B to A shared selection",
+    "selected node focus",
+    "zoom twice",
+    "pan scrollbar to0.8",
+    "Refresh preserves B",
+    "New Mission clears transcript/card without send",
+    "five real locale choices and compact definition"
+  ],
+  "generation_this_readonly_extension": 0,
+  "new_grants": 0,
+  "budget_reset": false,
+  "retained_plan93_synthetic_calls": 10,
+  "paid_calls": 0,
+  "CI": [
+    37922768018,
+    37922768082,
+    37922763373
+  ],
+  "TDE_workflow": 37922767977,
+  "TDE_policy": "Not inferred from successful observe workflow; prior exits2 preserved",
+  "app_files_sha256": {
+    "Contents/Info.plist": "4a5d3c86b559e468ed9b6d63e1de7405aa813fa9ee91d6dad82d90c0a0d6f9df",
+    "Contents/MacOS/WorkspaceClient": "0057f07a52a4132973446b5d831e6ee6f9f8d96805c5704ccb0a21e0b5ba3cb3",
+    "Contents/_CodeSignature/CodeResources": "6686de10a28a2fe11b36cbb86dcbacc827cfc4ea116b4dabf1845e5aee629e9b"
+  },
+  "files_sha256": {
+    "focus-B-dark-wide.png": "8ba422b855a460579d5ee655c7973d0f3bbf61281d22d27c9911894bc6843b37",
+    "space-B-dark-wide.png": "8bd5fbafa17e01fa4052c0c73d10087abe5ee56138ccaa391bd87217244df96d",
+    "refresh-B.ax.txt": "36dc1a9349f33e99332ddbb80de4df4119f269c6fc7f92fafc72487c8cd742fc",
+    "installed-negative-reads.public.json": "12e46ab2175d9c52b84495785a556a401007b906ca967be7c10ae24e15cf8ed9",
+    "definition-en-dark-narrow.ax.txt": "233b230c73f8b90cac5a9c8b482465ca7a339000e0e601883b062e6efb058f6f",
+    "graph-light-wide.png": "12077e7762bcaf0f03577da4374796ad1bf1c8f8621cfc6e823e6d05ae5d20d4",
+    "focus-B.ax.txt": "57c6c16939d0b22059c4b941198190d66da7bd4d3a7d67e86ed4e5a5feaf175d",
+    "list-light-wide.ax.txt": "b47b648922cd5b6ee0538193c3bb543ca625394ae3df772f6e2d2199432da3aa",
+    "security-e76f3a2.md": "59266a334e3108bb982ad21479726160b3abb548e1ce180093f8472849102241",
+    "definition-fr-dark-narrow.ax.txt": "a9c5c1e0a2031bb2d0efc199c4d9ac2c866422276dc8ba170b61ed16cd3690b8",
+    "pan.ax.txt": "ab938d2bfe22a815d31a40fcabf2a4765bb22baf8ca42425bfbe3e0e5df1779d",
+    "definition-de-dark-narrow.ax.txt": "cb505e5129cb5c0421fc9e65a1b316f9a2fa6c8283b8d4a7ad5b5df552292cd6",
+    "definition-es-dark-narrow.png": "ab005243018ca778ed49b8f9729d3d62bb72d761e6ecbf4628f94015e4b4677d",
+    "space-B.ax.txt": "306c2f2aad71ec68da93c1f4c2ce6f94f547a76bf1c81926c74d8e7230b09e8e",
+    "definition-dark-narrow.png": "fc8c16a37c0065ad10cbe075224af6820f7f2b1c1e0192fce544e61f5d589f3a",
+    "enter-A-dark-wide.png": "961d16f3c12598d8194dfa71e0ee7be1235581a31ca253faae21db981e8047d4",
+    "definition-en-dark-narrow.png": "f363a6d899b5de02e1b65eefeb4dcc1216d3835362175a971ad2927ab13309f9",
+    "enter-A.ax.txt": "ec4d01947bc9402a6144cdd527a1c901e74e73eebf3fb91de468d072eb175cda",
+    "quality-e76f3a2.md": "4c1460d7332d5f917690d487093290ee680484d2790fff536dcb5747ae72c6a2",
+    "graph-light-wide.ax.txt": "e318d978560debac8adea6a089886d74396194c54afc9b38d0ab80bd1f10bc77",
+    "list-light-wide.png": "38144138a3bcd4ea5cc02290dff96bd842be9cf03e345a59d2717c8af886ff44",
+    "definition-nl-dark-narrow.png": "b9d3fe5d4f3434b6122fa236e7a9fc34cc6654b602d334f453dab59fef442110",
+    "definition-dark-narrow.ax.txt": "a69f5de30a4c28c8f75b30674bc44e7ba105d9f0e337be864195d431b6b1dfbc",
+    "definition-es-dark-narrow.ax.txt": "6de9dc8cb4313c494af84a096605cf54a01c9b5eaae73e73038454cdf86e1c66",
+    "definition-de-dark-narrow.png": "6df7da88b754ce2fc4e80409d6e060264fbcc1e9e768d71bd2df8953ec55cb2d",
+    "definition-nl-dark-narrow.ax.txt": "d697b05b189667f3f40a557f6257d8714011879e115d452dc2c72193f966ff60",
+    "new-mission-dark-wide.png": "8a63633469089cbc5600084adbefda6413f82012b4b4a1d9e518bcc2263b0c95",
+    "new-mission.ax.txt": "bad6103b8029d7985ee61ccac5d8bea03b7c19287b19adff8f598c7e317fddf7",
+    "definition-fr-dark-narrow.png": "14ce5033ac7d390c9860450daffc77cb58a4ed6bc21dc6b434fe3981f18248c4"
+  }
+}

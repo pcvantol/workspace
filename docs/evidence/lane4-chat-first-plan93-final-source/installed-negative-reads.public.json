@@ -1,0 +1,42 @@
+{
+  "result": "INSTALLED_CONSUMER_NEGATIVE_READS_PASS_NOT_FINAL_MAIN",
+  "workspace_source": "e76f3a285d8385194d9f4f461469327206f1524d",
+  "workspace_python_source_bytes_unchanged_since_qualified_wheel": true,
+  "producer_source": "1b00c735930013e668f23286c56c5432be69e7c8",
+  "checks": [
+    {
+      "case": "missing_bearer",
+      "status": 401,
+      "no_source_content": true
+    },
+    {
+      "case": "wrong_workspace_instance",
+      "status": 409,
+      "no_source_content": true
+    },
+    {
+      "case": "missing_mission_grant",
+      "status": 403,
+      "no_source_content": true
+    },
+    {
+      "case": "wrong_draft_grant",
+      "status": 403,
+      "no_source_content": true
+    },
+    {
+      "case": "ungranted_conversation",
+      "status": 403,
+      "no_source_content": true
+    },
+    {
+      "case": "stale_snapshot",
+      "status": 409,
+      "no_stale_ready": true
+    }
+  ],
+  "additional_generation": 0,
+  "new_grants": 0,
+  "budget_reset": false,
+  "ledger_sha256_before_and_after": "27fbbe04620bdade48756eca19527e902b52950aee1daec60d763d38f372df68"
+}
