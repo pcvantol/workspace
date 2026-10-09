@@ -153,7 +153,15 @@ final class LiveMissionWorkspaceTests:XCTestCase {
         for _ in 0..<100 where client.phase != "CONNECTED" { try await Task.sleep(for:.milliseconds(10)) }
         let conversations=ConversationState(grants:MissionDraftCredentials(.init(endpoint:access.endpoint,instanceID:access.workspaceInstanceID,projectID:access.workspaceProjectID,token:String(repeating:"D",count:43))),localDrafts:MissionNoLocalDrafts(),transport:ConversationTransport(configuration:config),missionConcepts:mission)
         let view=LiveMissionWorkspaceView(client:client,conversations:conversations)
-        await view.refresh()
+        let startupHost=NSHostingView(rootView:view.environment(\.locale,Locale(identifier:"nl")))
+        _=NSApplication.shared
+        let startupWindow=NSWindow(contentRect:NSRect(x:0,y:0,width:1180,height:780),styleMask:[.titled],backing:.buffered,defer:false)
+        startupWindow.isReleasedWhenClosed=false
+        startupWindow.contentView=startupHost;startupWindow.orderFront(nil)
+        defer { startupWindow.close() }
+        // Mounted SwiftUI bootstraps through project/actor publication without self-cancellation.
+        for _ in 0..<300 where mission.capability==nil || conversations.state != "AVAILABLE" { try await Task.sleep(for:.milliseconds(10)) }
+        XCTAssertEqual(conversations.state,"AVAILABLE");XCTAssertNotNil(mission.capability)
         XCTAssertTrue(conversations.conversations.isEmpty);XCTAssertTrue(mission.items.isEmpty)
         XCTAssertEqual(conversations.observedActorID,"alice")
         view.beginNewMission()

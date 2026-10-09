@@ -23,7 +23,7 @@ struct LiveMissionWorkspaceView: View {
     init(client:ClientState,conversations:ConversationState) {
         self.client=client;self.conversations=conversations;self.state=conversations.missionConcepts;self.selection=conversations.missionSelection
     }
-    private var scope:[String] { [client.savedEndpoint,client.savedInstance,client.phase,conversations.projectID,conversations.observedActorID ?? ""] }
+    private var connectionScope:[String] { [client.savedEndpoint,client.savedInstance,client.phase] }
     private func copy(_ key:String)->String { MissionWorkspaceCopy.text(key,language:locale.language.languageCode?.identifier ?? "en") }
     private var projectName:String {
         guard let snapshot=client.snapshot,case .success(let projects)=snapshot.projects,!projects.stale else { return "" }
@@ -57,7 +57,13 @@ struct LiveMissionWorkspaceView: View {
         .onChange(of:[client.savedEndpoint,client.savedInstance,conversations.projectID,conversations.observedActorID ?? ""]) { _, _ in
             activeConversationID=nil;selection.ownConversationID=nil;state.invalidate()
         }
-        .task(id:scope) { await refresh() }
+        // Authority reads publish project/actor themselves; they cannot key their own task.
+        .task(id:connectionScope) { await refresh() }
+        .onChange(of:conversations.state) { _, value in
+            if value=="AVAILABLE",state.capability==nil,state.pending==nil,client.phase=="CONNECTED" {
+                Task { await state.refresh(await connection()) }
+            }
+        }
     }
     private var presentation:MissionWorkspaceObservation? {
         guard let shown=state.presentation(project:projectName) else { return nil }
