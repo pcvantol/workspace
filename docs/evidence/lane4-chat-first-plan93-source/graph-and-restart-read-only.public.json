@@ -1,0 +1,51 @@
+{
+  "actual_GUI": true,
+  "native_source_revision": "539b0abc8be607702c3c3d03976782e33afa77eb",
+  "actions": [
+    "real app restart with original credentials/storage",
+    "Dark Aqua",
+    "A-B graph",
+    "fit",
+    "select B",
+    "focus B"
+  ],
+  "screenshot": "graph-restart-dark.png",
+  "restart_in_this_phase": true,
+  "appearance": "Dark Aqua",
+  "viewport": [
+    1440,
+    850
+  ],
+  "phase": "graph-and-restart-read-only",
+  "provider_before": 3,
+  "provider_after": 3,
+  "own_posts": 3,
+  "POST_paths": [
+    "/v1/mission-concepts/resolve",
+    "/v1/mission-concepts/resolve",
+    "/v1/mission-concepts/resolve"
+  ],
+  "resolution_receipts": [
+    {
+      "operation_id": "resolve-d5b1b98bdbf96ba236c43bae7e6e060c98c9191f89d2f414ea0694fda8887c9a",
+      "conversation_id": "portal",
+      "additional_model_calls": 0,
+      "grant_issued": false,
+      "budget_reset": false
+    },
+    {
+      "operation_id": "resolve-d5b1b98bdbf96ba236c43bae7e6e060c98c9191f89d2f414ea0694fda8887c9a",
+      "conversation_id": "portal",
+      "additional_model_calls": 0,
+      "grant_issued": false,
+      "budget_reset": false
+    },
+    {
+      "operation_id": "resolve-d5b1b98bdbf96ba236c43bae7e6e060c98c9191f89d2f414ea0694fda8887c9a",
+      "conversation_id": "portal",
+      "additional_model_calls": 0,
+      "grant_issued": false,
+      "budget_reset": false
+    }
+  ]
+}

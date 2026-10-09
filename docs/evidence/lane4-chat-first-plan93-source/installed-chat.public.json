@@ -1,0 +1,933 @@
+{
+  "result": "INSTALLED_NATIVE_CHAT_SOURCE_QUALIFICATION_PASS_NOT_FINAL_MAIN",
+  "workspace": {
+    "version": "2.8.13",
+    "wheel_sha256": "c10248f76ac4dbf7470d6c3a6255b8c99d369e83ad049f11855eec4a8a58d355",
+    "source_revision": "539b0abc8be607702c3c3d03976782e33afa77eb",
+    "files_verified": 25,
+    "noneditable": true
+  },
+  "forge": {
+    "version": "2.11.0",
+    "wheel_sha256": "sha256:40f03ff45bf4bcc979ffdd8a79a9ffe9221c0c1445ffe8f157fba8f8c5f4853e",
+    "source_tree_revision": null,
+    "module_sha256": {
+      "forge/__init__.py": "sha256:854c463d61bdcd89b489ec119098a264592f20928dd3863fa68a7564828646dc",
+      "forge/runtime/dynamic_mission.py": "sha256:ef3adb3709eb2e714206a219e77812452cbc58e515042bdf95d4f8e6704c8c28",
+      "forge/scheduler/ep_http_adapter.py": "sha256:c839a92b009935df98948ef2b69a45995df28f5f98bc43d7b983b29aaaafb17a",
+      "forge/ep_simulator.py": "sha256:83cf062e24eb164c7b74475a62b95441be8763f8060ea1f2cadf625cef7c2bc9"
+    },
+    "installed_product_files_verified": 258,
+    "source_product_files_verified": null,
+    "exact_source_revision": "1b00c735930013e668f23286c56c5432be69e7c8"
+  },
+  "schema_sha256": "0311529ca95451a99f4fd8a35127707310252c96324b42f3230e8c79fcfa6124",
+  "checks": [
+    {
+      "actual_GUI": true,
+      "native_source_revision": "539b0abc8be607702c3c3d03976782e33afa77eb",
+      "actions": [
+        "ordinary goal",
+        "explicit Send"
+      ],
+      "screenshot": "empty-chat-question.png",
+      "phase": "empty-chat-question",
+      "provider_before": 0,
+      "provider_after": 1,
+      "own_posts": 3,
+      "POST_paths": [
+        "/v1/conversations",
+        "/v1/mission-concepts/resolve",
+        "/v1/mission-concepts/foundation/turns"
+      ],
+      "resolution_receipts": [
+        {
+          "operation_id": "resolve-65e70774ef0c13e9c5c9ce6e9e76a7637071a11f6770a30bc45212b7f3393c77",
+          "conversation_id": "foundation",
+          "additional_model_calls": 0,
+          "grant_issued": false,
+          "budget_reset": false
+        }
+      ]
+    },
+    {
+      "actual_GUI": true,
+      "native_source_revision": "539b0abc8be607702c3c3d03976782e33afa77eb",
+      "actions": [
+        "answer question",
+        "Architect",
+        "explicit refine"
+      ],
+      "screenshot": "refine-complete-foundation.png",
+      "phase": "refine-complete-foundation",
+      "provider_before": 1,
+      "provider_after": 2,
+      "own_posts": 3,
+      "POST_paths": [
+        "/v1/mission-concepts/foundation/turns",
+        "/v1/mission-concepts/resolve",
+        "/v1/mission-concepts/resolve"
+      ],
+      "resolution_receipts": [
+        {
+          "operation_id": "resolve-65e70774ef0c13e9c5c9ce6e9e76a7637071a11f6770a30bc45212b7f3393c77",
+          "conversation_id": "foundation",
+          "additional_model_calls": 0,
+          "grant_issued": false,
+          "budget_reset": false
+        },
+        {
+          "operation_id": "resolve-65e70774ef0c13e9c5c9ce6e9e76a7637071a11f6770a30bc45212b7f3393c77",
+          "conversation_id": "foundation",
+          "additional_model_calls": 0,
+          "grant_issued": false,
+          "budget_reset": false
+        }
+      ]
+    },
+    {
+      "actual_GUI": true,
+      "native_source_revision": "539b0abc8be607702c3c3d03976782e33afa77eb",
+      "actions": [
+        "select existing exact version2",
+        "wait enabled",
+        "Approve once"
+      ],
+      "screenshot": "approve-foundation.png",
+      "phase": "approve-foundation",
+      "provider_before": 2,
+      "provider_after": 2,
+      "own_posts": 3,
+      "POST_paths": [
+        "/v1/mission-concepts/resolve",
+        "/v1/mission-concepts/resolve",
+        "/v1/mission-concepts/foundation/approve"
+      ],
+      "resolution_receipts": [
+        {
+          "operation_id": "resolve-65e70774ef0c13e9c5c9ce6e9e76a7637071a11f6770a30bc45212b7f3393c77",
+          "conversation_id": "foundation",
+          "additional_model_calls": 0,
+          "grant_issued": false,
+          "budget_reset": false
+        },
+        {
+          "operation_id": "resolve-65e70774ef0c13e9c5c9ce6e9e76a7637071a11f6770a30bc45212b7f3393c77",
+          "conversation_id": "foundation",
+          "additional_model_calls": 0,
+          "grant_issued": false,
+          "budget_reset": false
+        }
+      ]
+    },
+    {
+      "actual_GUI": true,
+      "native_source_revision": "539b0abc8be607702c3c3d03976782e33afa77eb",
+      "actions": [
+        "New Mission",
+        "plain dependent portal goal",
+        "Send"
+      ],
+      "screenshot": "new-dependent-chat.png",
+      "phase": "new-dependent-chat",
+      "provider_before": 2,
+      "provider_after": 3,
+      "own_posts": 4,
+      "POST_paths": [
+        "/v1/mission-concepts/resolve",
+        "/v1/conversations",
+        "/v1/mission-concepts/resolve",
+        "/v1/mission-concepts/portal/turns"
+      ],
+      "resolution_receipts": [
+        {
+          "operation_id": "resolve-65e70774ef0c13e9c5c9ce6e9e76a7637071a11f6770a30bc45212b7f3393c77",
+          "conversation_id": "foundation",
+          "additional_model_calls": 0,
+          "grant_issued": false,
+          "budget_reset": false
+        },
+        {
+          "operation_id": "resolve-d5b1b98bdbf96ba236c43bae7e6e060c98c9191f89d2f414ea0694fda8887c9a",
+          "conversation_id": "portal",
+          "additional_model_calls": 0,
+          "grant_issued": false,
+          "budget_reset": false
+        }
+      ]
+    },
+    {
+      "actual_GUI": true,
+      "native_source_revision": "539b0abc8be607702c3c3d03976782e33afa77eb",
+      "actions": [
+        "read exact dependent version1",
+        "Approve once"
+      ],
+      "screenshot": "approve-dependent.png",
+      "phase": "approve-dependent",
+      "provider_before": 3,
+      "provider_after": 3,
+      "own_posts": 1,
+      "POST_paths": [
+        "/v1/mission-concepts/portal/approve"
+      ],
+      "resolution_receipts": []
+    },
+    {
+      "actual_GUI": true,
+      "native_source_revision": "539b0abc8be607702c3c3d03976782e33afa77eb",
+      "actions": [
+        "real app restart with original credentials/storage",
+        "Dark Aqua",
+        "A-B graph",
+        "fit",
+        "select B",
+        "focus B"
+      ],
+      "screenshot": "graph-restart-dark.png",
+      "restart_in_this_phase": true,
+      "appearance": "Dark Aqua",
+      "viewport": [
+        1440,
+        850
+      ],
+      "phase": "graph-and-restart-read-only",
+      "provider_before": 3,
+      "provider_after": 3,
+      "own_posts": 3,
+      "POST_paths": [
+        "/v1/mission-concepts/resolve",
+        "/v1/mission-concepts/resolve",
+        "/v1/mission-concepts/resolve"
+      ],
+      "resolution_receipts": [
+        {
+          "operation_id": "resolve-d5b1b98bdbf96ba236c43bae7e6e060c98c9191f89d2f414ea0694fda8887c9a",
+          "conversation_id": "portal",
+          "additional_model_calls": 0,
+          "grant_issued": false,
+          "budget_reset": false
+        },
+        {
+          "operation_id": "resolve-d5b1b98bdbf96ba236c43bae7e6e060c98c9191f89d2f414ea0694fda8887c9a",
+          "conversation_id": "portal",
+          "additional_model_calls": 0,
+          "grant_issued": false,
+          "budget_reset": false
+        },
+        {
+          "operation_id": "resolve-d5b1b98bdbf96ba236c43bae7e6e060c98c9191f89d2f414ea0694fda8887c9a",
+          "conversation_id": "portal",
+          "additional_model_calls": 0,
+          "grant_issued": false,
+          "budget_reset": false
+        }
+      ]
+    }
+  ],
+  "provider_calls": 3,
+  "network": [
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/identity"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/status"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/capabilities"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/projects"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/forge/status"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/conversations"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/identity"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/status"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/projects"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/capabilities"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/forge/status"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/conversations"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/conversations"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/mission-concepts/resolve"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation/context"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/mission-concepts/foundation/turns"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation/package?revision=1"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation/context"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/mission-concepts/foundation/turns"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation/package?revision=2"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/identity"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/status"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/projects"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/capabilities"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/forge/status"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/mission-concepts/resolve"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/conversations"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/identity"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/status"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/capabilities"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/projects"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/forge/status"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/mission-concepts/resolve"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/conversations"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/identity"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/status"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/forge/status"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/capabilities"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/projects"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/mission-concepts/resolve"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/conversations"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/identity"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/status"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/capabilities"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/projects"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/forge/status"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/mission-concepts/resolve"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/conversations"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation/package?revision=2"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/mission-concepts/foundation/approve"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation/operations/73b576d4-a1a9-4ab8-a254-f0b83ef1c312"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation/operations/73b576d4-a1a9-4ab8-a254-f0b83ef1c312"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/identity"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/status"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/projects"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/forge/status"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/capabilities"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/mission-concepts/resolve"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/conversations"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/conversations"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/mission-concepts/resolve"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/portal?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/portal/context"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/mission-concepts/portal/turns"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/portal?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/portal/package?revision=1"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/mission-concepts/portal/approve"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/portal/operations/c477d648-428b-4e26-aef4-e63eade2d60d"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/identity"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/status"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/projects"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/capabilities"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/forge/status"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/mission-concepts/resolve"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/conversations"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/portal?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/identity"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/status"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/projects"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/forge/status"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/capabilities"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/conversations"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/foundation?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/identity"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/status"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/projects"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/capabilities"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/forge/status"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/mission-concepts/resolve"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/conversations"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/portal?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/identity"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/status"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/capabilities"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/projects"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/forge/status"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/mission-concepts/resolve"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/conversations"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/portal?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/capability?"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/portal?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/catalog?cursor=0&limit=4"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/portal/package?revision=1"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/mission-concepts/portal/operations/c477d648-428b-4e26-aef4-e63eade2d60d"
+    }
+  ],
+  "resolution_receipts": [
+    {
+      "operation_id": "resolve-65e70774ef0c13e9c5c9ce6e9e76a7637071a11f6770a30bc45212b7f3393c77",
+      "conversation_id": "foundation",
+      "additional_model_calls": 0,
+      "grant_issued": false,
+      "budget_reset": false
+    },
+    {
+      "operation_id": "resolve-65e70774ef0c13e9c5c9ce6e9e76a7637071a11f6770a30bc45212b7f3393c77",
+      "conversation_id": "foundation",
+      "additional_model_calls": 0,
+      "grant_issued": false,
+      "budget_reset": false
+    },
+    {
+      "operation_id": "resolve-65e70774ef0c13e9c5c9ce6e9e76a7637071a11f6770a30bc45212b7f3393c77",
+      "conversation_id": "foundation",
+      "additional_model_calls": 0,
+      "grant_issued": false,
+      "budget_reset": false
+    },
+    {
+      "operation_id": "resolve-65e70774ef0c13e9c5c9ce6e9e76a7637071a11f6770a30bc45212b7f3393c77",
+      "conversation_id": "foundation",
+      "additional_model_calls": 0,
+      "grant_issued": false,
+      "budget_reset": false
+    },
+    {
+      "operation_id": "resolve-65e70774ef0c13e9c5c9ce6e9e76a7637071a11f6770a30bc45212b7f3393c77",
+      "conversation_id": "foundation",
+      "additional_model_calls": 0,
+      "grant_issued": false,
+      "budget_reset": false
+    },
+    {
+      "operation_id": "resolve-65e70774ef0c13e9c5c9ce6e9e76a7637071a11f6770a30bc45212b7f3393c77",
+      "conversation_id": "foundation",
+      "additional_model_calls": 0,
+      "grant_issued": false,
+      "budget_reset": false
+    },
+    {
+      "operation_id": "resolve-d5b1b98bdbf96ba236c43bae7e6e060c98c9191f89d2f414ea0694fda8887c9a",
+      "conversation_id": "portal",
+      "additional_model_calls": 0,
+      "grant_issued": false,
+      "budget_reset": false
+    },
+    {
+      "operation_id": "resolve-d5b1b98bdbf96ba236c43bae7e6e060c98c9191f89d2f414ea0694fda8887c9a",
+      "conversation_id": "portal",
+      "additional_model_calls": 0,
+      "grant_issued": false,
+      "budget_reset": false
+    },
+    {
+      "operation_id": "resolve-d5b1b98bdbf96ba236c43bae7e6e060c98c9191f89d2f414ea0694fda8887c9a",
+      "conversation_id": "portal",
+      "additional_model_calls": 0,
+      "grant_issued": false,
+      "budget_reset": false
+    },
+    {
+      "operation_id": "resolve-d5b1b98bdbf96ba236c43bae7e6e060c98c9191f89d2f414ea0694fda8887c9a",
+      "conversation_id": "portal",
+      "additional_model_calls": 0,
+      "grant_issued": false,
+      "budget_reset": false
+    }
+  ],
+  "operational_scope": false,
+  "protected_final_main": false
+}

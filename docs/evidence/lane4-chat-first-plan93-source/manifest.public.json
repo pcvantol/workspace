@@ -1,0 +1,33 @@
+{
+  "qualification": "SOURCE_INSTALLED_FLOW_PASS_NOT_FINAL_MAIN_OR_UX_ACCEPTANCE",
+  "workspace_source": "539b0abc8be607702c3c3d03976782e33afa77eb",
+  "workspace_tree": "4e531f6e401ffabf214d5a4aa6648017c16c12d2",
+  "producer": "1b00c735930013e668f23286c56c5432be69e7c8",
+  "producer_version": "2.11.0",
+  "workspace_version": "2.8.13",
+  "locale": "nl",
+  "theme": "Aqua for generation/approval; DarkAqua for retained restart",
+  "viewport": [
+    1440,
+    850
+  ],
+  "new_synthetic_calls_this_run": 3,
+  "plan93_retained_synthetic_calls_total": 10,
+  "paid_calls": 0,
+  "new_grants_from_graph_or_restart": 0,
+  "budget_reset": false,
+  "app_files_sha256": {
+    "Contents/Info.plist": "4a5d3c86b559e468ed9b6d63e1de7405aa813fa9ee91d6dad82d90c0a0d6f9df",
+    "Contents/MacOS/WorkspaceClient": "26f75ea0ff49290f462eefd070884704f4b052d2db55cab78c8bfcf09ee38da0",
+    "Contents/_CodeSignature/CodeResources": "6686de10a28a2fe11b36cbb86dcbacc827cfc4ea116b4dabf1845e5aee629e9b"
+  },
+  "proof_sha256": {
+    "approve-dependent.png": "b181def6cb93890dff7931ae8db6b29e9f074fc70db5e07d46425baff1f0f5fb",
+    "approve-foundation.png": "f2d1d808b8917fa4221e074d98f92d2ffc0391b17926d7004b9aeb399081d346",
+    "empty-chat-question.png": "49a5f720e7be2647687835658edbf82d8ff348240e9c773d2df8873bd59c551f",
+    "graph-and-restart-read-only.public.json": "be3c78751bc695ee9cfc0d997ca53836907576002134b8f357fb573772e05e4b",
+    "installed-chat.public.json": "7df0a52c15727096286fbf89e83e442873568374c74135d4fe220829678eb685",
+    "new-dependent-chat.png": "5a3c657bd1b874162e76e6374585874f4a0950947f26c2f59a47d676188525be",
+    "refine-complete-foundation.png": "01dcff094df1c376b7faa3b7e629c8123efae59e7b4d90f3290cb0b6d9dc5d21"
+  }
+}
