@@ -9,7 +9,7 @@ final class MissionIntentMemory: MissionIntentStore, @unchecked Sendable {
     func save(_ intent:MissionTransportIntent) throws { if broken { throw AdvisoryError.unavailable };value=intent }
     func clear(_ key:String) throws { if broken { throw AdvisoryError.unavailable };if value?.key==key { value=nil } }
 }
-final class MissionConceptStateTests: XCTestCase {
+final class MissionConceptStateTests: XCTestCase, @unchecked Sendable {
     let peer=MissionConceptTransportTests()
     @MainActor func testRefreshDisplaysOnlyActualDefinitionsAndReadsDoNotSubmit() async throws {
         let credentials=AdviceMemory();credentials.access=peer.wire.access
@@ -76,6 +76,23 @@ final class MissionConceptStateTests: XCTestCase {
         await state.refine("New refinement",lens:"BUSINESS",connection:peer.connection)
         XCTAssertEqual(peer.calls.filter { $0.httpMethod=="POST" }.count,1)
         XCTAssertNil(state.capability)
+    }
+
+    @MainActor func testInvalidatedScopeDoesNotRetryMissingRefinementAfterDelayedRead() async throws {
+        let credentials=AdviceMemory();credentials.access=peer.wire.access
+        let store=MissionIntentMemory(),request=try MissionConceptWire.request(peer.wire.fixture("request"),access:peer.wire.access,conversation:peer.wire.conversation)
+        let intent=MissionTransportIntent(key:CandidateLocal.scopeKey(peer.connection),connectionScope:MissionTransportIntent.scope(peer.connection),kind:"refine",refine:request,approvalBody:nil,frozenPackage:nil)
+        try store.save(intent);peer.absentTurn=true
+        let state=MissionConceptState(credentials:credentials,store:store,transport:peer.transport())
+        let original=try XCTUnwrap(StubProtocol.handler),entered=expectation(description:"Original turn read blocked"),release=DispatchSemaphore(value:0)
+        StubProtocol.handler = { r in
+            if r.url!.path.contains("/turns/") { entered.fulfill();XCTAssertEqual(release.wait(timeout:.now()+5),.success) }
+            return try original(r)
+        }
+        let task=Task { await state.resume(peer.connection) }
+        await fulfillment(of:[entered],timeout:3)
+        state.invalidate();release.signal();await task.value
+        XCTAssertEqual(store.value,intent);XCTAssertTrue(peer.calls.allSatisfy { $0.httpMethod=="GET" })
     }
 
 }

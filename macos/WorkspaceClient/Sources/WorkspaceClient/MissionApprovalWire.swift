@@ -97,6 +97,22 @@ enum MissionApprovalWire {
                   decision["operator_binding_version"] as? Int==signer["operator_binding_version"] as? Int,
                   try AdvisoryWire.digest(decision["canonical_decision"]!)==decision["canonical_decision_digest"] as? String,
                   try AdvisoryWire.digest(decision["lifecycle_evidence"]!)==decision["lifecycle_evidence_digest"] as? String else { throw AdvisoryError.invalid }
+            let canonical=decision["canonical_decision"] as! [String:Any],evidence=decision["lifecycle_evidence"] as! [String:Any]
+            guard canonical["decision_id"] as? String==decision["decision_id"] as? String,
+                  canonical["subject_id"] as? String==candidate["id"] as? String,canonical["subject_revision"] as? String==package["subject_revision"] as? String,
+                  canonical["capability"] as? String==kind+"_APPROVAL",canonical["decision"] as? String=="approved",
+                  canonical["operator_id"] as? String==decision["operator_id"] as? String,canonical["installation_id"] as? String==decision["installation_id"] as? String,
+                  (canonical["scope"] as! [String]).sorted()==(candidate["scope"] as! [String]).sorted(),
+                  (canonical["gates"] as! [String]).sorted()==((package["planning"] as! [String:Any])["human_gates"] as! [String]).sorted(),
+                  evidence["recommendation_id"] as? String==candidate["recommendation_id"] as? String,
+                  evidence["kind"] as? String==kind.lowercased()+"_decision",evidence["actor"] as? String=="primary_operator",
+                  evidence["rationale"] as? String==decision["rationale"] as? String,evidence["occurred_at"] as? String==decision["admitted_at"] as? String,
+                  Set([decision["decision_id"] as! String,candidate["id"] as! String,package["subject_revision"] as! String]).isSubset(of:Set(evidence["references"] as! [String])) else { throw AdvisoryError.invalid }
+            if kind=="ARCHITECTURE" {
+                let planningDigest=try AdvisoryWire.digest(package["planning"]!)
+                guard (canonical["evidence"] as? [String:Any])?["planning_digest"] as? String==planningDigest,
+                      (evidence["references"] as! [String]).contains(planningDigest) else { throw AdvisoryError.invalid }
+            }
             decisions.append(decision["decision_id"] as! String)
         }
         let complete = !isOperation || raw["state"] as? String=="COMPLETE"

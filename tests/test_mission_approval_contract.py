@@ -44,6 +44,13 @@ class MissionApprovalContractTests(unittest.TestCase):
         bad=deepcopy(p);bad['package']['dependency_bindings'][0]['reason']='Other meaning than the frozen package.';bad['package_digest']=w.digest(bad['package'])
         with self.assertRaises(WorklistError):w.prepared(bad,binding,'portal')
 
+    def testRehashedCanonicalEvidenceCannotChangeActualReceiptSubjectOrSigner(self):
+        for key,value in [('subject_id','foreign'),('subject_revision','sha256:'+'0'*64),('operator_id','foreign'),('installation_id','foreign'),('capability','ARCHITECTURE_APPROVAL'),('decision_id','foreign')]:
+            bad=self.read('operation-current.json');receipt=bad['business_decision'];receipt['canonical_decision'][key]=value;receipt['canonical_decision_digest']=w.digest(receipt['canonical_decision'])
+            with self.assertRaises(WorklistError):w.compound(bad,self.binding,self.conversation)
+        bad=self.read('operation-current.json');receipt=bad['architecture_decision'];receipt['lifecycle_evidence']['recommendation_id']='foreign';receipt['lifecycle_evidence_digest']=w.digest(receipt['lifecycle_evidence'])
+        with self.assertRaises(WorklistError):w.compound(bad,self.binding,self.conversation)
+
     def testTwoCanonicalDecisionsAndSupersededReadbackRemainDistinctFromReady(self):
         for name in ['compound-result.json','operation-current.json','operation-after-refinement.json']:
             value=self.read(name)

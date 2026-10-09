@@ -167,6 +167,17 @@ def compound(value, binding, conversation, *, expected_digest=None, operation=No
             decision['installation_id'] != authority['signer']['installation_id'] or decision['operator_binding_version'] != authority['signer']['operator_binding_version'] or
             digest(decision['canonical_decision']) != decision['canonical_decision_digest'] or digest(decision['lifecycle_evidence']) != decision['lifecycle_evidence_digest']):
             raise WorklistError('INVALID_RESPONSE')
+        canonical=decision['canonical_decision'];evidence=decision['lifecycle_evidence']
+        if (canonical['decision_id']!=decision['decision_id'] or canonical['subject_id']!=candidate['id'] or canonical['subject_revision']!=package['subject_revision'] or
+            canonical['capability']!=kind+'_APPROVAL' or canonical['decision']!='approved' or canonical['operator_id']!=decision['operator_id'] or
+            canonical['installation_id']!=decision['installation_id'] or sorted(canonical['scope'])!=sorted(candidate['scope']) or
+            sorted(canonical['gates'])!=sorted(package['planning']['human_gates']) or
+            evidence['recommendation_id']!=candidate['recommendation_id'] or evidence['kind']!=kind.lower()+'_decision' or
+            evidence['actor']!='primary_operator' or evidence['rationale']!=decision['rationale'] or evidence['occurred_at']!=decision['admitted_at'] or
+            not {decision['decision_id'],candidate['id'],package['subject_revision']}<=set(evidence['references'])):
+            raise WorklistError('INVALID_RESPONSE')
+        if kind=='ARCHITECTURE' and (canonical['evidence'].get('planning_digest')!=digest(package['planning']) or digest(package['planning']) not in evidence['references']):
+            raise WorklistError('INVALID_RESPONSE')
         decisions.append(decision['decision_id'])
     if len(decisions) != len(set(decisions)) or value['candidate_id'] != candidate['id']:
         raise WorklistError('INVALID_RESPONSE')

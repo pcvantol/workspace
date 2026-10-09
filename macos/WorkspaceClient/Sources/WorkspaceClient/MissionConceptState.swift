@@ -183,6 +183,7 @@ import Combine
                 do { value=try await transport.operation(a,c,id:id,expectedDigest:digest) }
                 catch AdvisoryError.missing {
                     let package=try await transport.package(a,c,revision:request["revision"] as? Int)
+                    guard epoch==generation,connection==c else { return }
                     guard package.digest==digest else { throw AdvisoryError.state("CONCEPT_OR_CONTEXT_CHANGED") }
                     _ = try await transport.approve(a,c,body:body,packet:package)
                     value=try await transport.operation(a,c,id:id,expectedDigest:digest)
@@ -201,6 +202,7 @@ import Combine
                 let observed=try await transport.turn(a,c,request:request)
                 guard epoch==generation else { return };try accept(observed,intent:p)
             } catch AdvisoryError.missing {
+                guard epoch==generation,connection==c else { return }
                 let observed=try await transport.submit(a,c,request:request)
                 guard epoch==generation else { return };try accept(observed,intent:p)
             }
@@ -214,7 +216,11 @@ import Combine
             let a=try access(c),value=try await transport.package(a,c,revision:card.revision)
             guard epoch==generation else { return }
             guard value.objectID==card.id,value.definition==item.definition else { throw AdvisoryError.invalid }
-            packet=value;approval=nil
+            packet=value
+            if let approval,let original=try? AdvisoryWire.object(approval.frozenPackageData)["source"] as? [String:Any],
+               original["object_id"] as? String==card.id,original["revision"] as? Int==card.revision,approval.state=="COMPLETE" {
+                // A read/selection cannot create a new confirmation for the same completed definition.
+            } else { approval=nil }
         } catch { if epoch==generation { fail(error) } }
     }
     func canApprove(_ card:MissionDefinitionCard) -> Bool {

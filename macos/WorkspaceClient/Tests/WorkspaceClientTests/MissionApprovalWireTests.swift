@@ -56,4 +56,17 @@ final class MissionApprovalWireTests:XCTestCase {
         XCTAssertTrue(try XCTUnwrap(held.readiness).blockers.contains("WORKSET_HELD"))
     }
 
+    func testRehashedCanonicalOrLifecycleEvidenceCannotChangeReceiptMeaning() throws {
+        let (a,c)=try access(),original=try AdvisoryWire.object(fixture("operation-current"))
+        for key in ["subject_id","subject_revision","operator_id","installation_id","capability","decision_id"] {
+            var bad=original,receipt=bad["business_decision"] as! [String:Any],canonical=receipt["canonical_decision"] as! [String:Any]
+            canonical[key]=key=="subject_revision" ? "sha256:"+String(repeating:"0",count:64):key=="capability" ? "ARCHITECTURE_APPROVAL":"foreign"
+            receipt["canonical_decision"]=canonical;receipt["canonical_decision_digest"]=try AdvisoryWire.digest(canonical);bad["business_decision"]=receipt
+            XCTAssertThrowsError(try MissionApprovalWire.compound(JSONSerialization.data(withJSONObject:bad),access:a,conversation:c))
+        }
+        var bad=original,receipt=bad["architecture_decision"] as! [String:Any],evidence=receipt["lifecycle_evidence"] as! [String:Any]
+        evidence["recommendation_id"]="foreign";receipt["lifecycle_evidence"]=evidence;receipt["lifecycle_evidence_digest"]=try AdvisoryWire.digest(evidence);bad["architecture_decision"]=receipt
+        XCTAssertThrowsError(try MissionApprovalWire.compound(JSONSerialization.data(withJSONObject:bad),access:a,conversation:c))
+    }
+
 }

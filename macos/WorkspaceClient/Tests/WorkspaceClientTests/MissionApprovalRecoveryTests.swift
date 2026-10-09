@@ -94,7 +94,10 @@ final class MissionApprovalRecoveryTests: XCTestCase, @unchecked Sendable {
         await state.prepare(card,connection:c);XCTAssertTrue(state.canApprove(card))
         await state.approve(card,connection:c)
         XCTAssertEqual(state.phase,"APPROVED_WAITING");XCTAssertNil(store.value)
-        XCTAssertFalse(state.canApprove(card));XCTAssertEqual(requests.filter { $0.httpMethod=="POST" }.count,1)
+        XCTAssertFalse(state.canApprove(card))
+        await state.prepare(card,connection:c);XCTAssertFalse(state.canApprove(card))
+        await state.approve(card,connection:c)
+        XCTAssertEqual(requests.filter { $0.httpMethod=="POST" }.count,1)
         await state.refresh(c);XCTAssertEqual(state.phase,"APPROVED_WAITING")
         superseded=true;await state.refresh(c)
         XCTAssertEqual(state.phase,"SUPERSEDED");XCTAssertFalse(try XCTUnwrap(state.approval).sourceFresh)
@@ -152,6 +155,27 @@ final class MissionApprovalRecoveryTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(state.phase,"current")
         state.invalidate();XCTAssertNil(state.presentation(project:"Cleared"))
         await state.prepare(card,connection:c);XCTAssertNil(state.packet)
+    }
+
+    @MainActor func testScopeInvalidationWhileRecoveryLookupIsMissingNeverRetriesApprovalPost() async throws {
+        let store=MissionIntentMemory(),(state,c)=try state(store)
+        await state.refresh(c)
+        let card=try XCTUnwrap(state.presentation(project:"Own")?.cards.first)
+        await state.prepare(card,connection:c)
+        let packet=try XCTUnwrap(state.packet)
+        let body=try JSONSerialization.data(withJSONObject:["contract_version":MissionConceptWire.contract,"operation_id":"delayed-own-confirmation","revision":card.revision,"package_digest":packet.digest!,"confirm":true])
+        let intent=MissionTransportIntent(key:CandidateLocal.scopeKey(c),connectionScope:MissionTransportIntent.scope(c),kind:"approve",refine:nil,approvalBody:body,frozenPackage:nil)
+        try store.save(intent);missingOperation=true
+        let original=try XCTUnwrap(StubProtocol.handler),entered=expectation(description:"Original lookup blocked"),release=DispatchSemaphore(value:0)
+        StubProtocol.handler = { request in
+            if request.url!.path.contains("/operations/") { entered.fulfill();XCTAssertEqual(release.wait(timeout:.now()+5),.success) }
+            return try original(request)
+        }
+        let recovery=Task { await state.resume(c) }
+        await fulfillment(of:[entered],timeout:3)
+        state.invalidate();release.signal();await recovery.value
+        XCTAssertEqual(store.value,intent);XCTAssertNil(state.approval)
+        XCTAssertTrue(requests.allSatisfy { $0.httpMethod=="GET" })
     }
 
 }
