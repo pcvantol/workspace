@@ -1,0 +1,44 @@
+{
+  "result": "PROTECTED_MAIN54_INSTALLED_CONSUMER_NEGATIVE_READS_PASS",
+  "workspace_source": "54ec235e2ad42f6f85c4c74d87c351b32d7b048f",
+  "workspace_python_source_bytes_unchanged_since_qualified_wheel": true,
+  "producer_source": "1b00c735930013e668f23286c56c5432be69e7c8",
+  "checks": [
+    {
+      "case": "missing_bearer",
+      "status": 401,
+      "no_source_content": true
+    },
+    {
+      "case": "wrong_workspace_instance",
+      "status": 409,
+      "no_source_content": true
+    },
+    {
+      "case": "missing_mission_grant",
+      "status": 403,
+      "no_source_content": true
+    },
+    {
+      "case": "wrong_draft_grant",
+      "status": 403,
+      "no_source_content": true
+    },
+    {
+      "case": "ungranted_conversation",
+      "status": 403,
+      "no_source_content": true
+    },
+    {
+      "case": "stale_snapshot",
+      "status": 409,
+      "no_stale_ready": true
+    }
+  ],
+  "additional_generation": 0,
+  "new_grants": 1,
+  "continuation_total_turn_ceiling": 5,
+  "previously_consumed_turns": 3,
+  "budget_reset": false,
+  "ledger_sha256_before_and_after": "27fbbe04620bdade48756eca19527e902b52950aee1daec60d763d38f372df68"
+}
