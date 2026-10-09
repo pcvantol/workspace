@@ -1,0 +1,38 @@
+{
+  "result": "SOURCE_NATIVE_KEYBOARD_ENTER_A_AND_B_PASS_NOT_FINAL_MAIN_OR_FINAL_UX",
+  "source": "babf8c2076efe463aedc4a6d679de745f5f7725f",
+  "tree": "d578c3dc64f1c0590bb1f15b661c82505319bb27",
+  "version": "2.8.13",
+  "producer": "Forge2.11.0/1b00c735930013e668f23286c56c5432be69e7c8",
+  "schema": "0311529ca95451a99f4fd8a35127707310252c96324b42f3230e8c79fcfa6124",
+  "locale": "nl",
+  "theme": "DarkAqua",
+  "viewport": [
+    1440,
+    850
+  ],
+  "selection_actual_enter": [
+    "Account foundation",
+    "Client portal"
+  ],
+  "AX_focus_results": [
+    0,
+    0
+  ],
+  "space_activation": "ATTEMPT_NOT_VERIFIED_SELECTION_REMAINED_A",
+  "additional_generation": 0,
+  "grant_or_budget_reset": false,
+  "artifacts_sha256": {
+    "keyboard-enter-A-dark.png": "471a550963d557445e5752934f2351263c5d7e855954dfb72ad61784b3237676",
+    "keyboard-enter-A.ax.txt": "6ace1ed8010c9fe0ad1d3542198021f74fc0d9014ee89828f9958fa30f5ab003",
+    "keyboard-enter-B-dark.png": "dee5730c85a80ac70ef4e0feb3bd10c93864b88029d2252e9935625a2126e59e",
+    "keyboard-enter-B.ax.txt": "0a46ed2a6682e2516788ef50365ac6697a1293b5bc6782282c981635acdb9cb2",
+    "keyboard-space-B-dark.png": "d0cd9eb5373464de934d6a3b042830046907ec0f13b8edd53ac3ad86b0bfecc9",
+    "keyboard-space-B.ax.txt": "12f2772bb7ce86fe48e6a4c58c4bf7420e96689daba1158db789514f037be36f"
+  },
+  "app_files_sha256": {
+    "Contents/Info.plist": "4a5d3c86b559e468ed9b6d63e1de7405aa813fa9ee91d6dad82d90c0a0d6f9df",
+    "Contents/MacOS/WorkspaceClient": "c154c77a5e5c79e864f121dc201d9b351e8ac783e2a5e7b928462efdf45ae9fb",
+    "Contents/_CodeSignature/CodeResources": "6686de10a28a2fe11b36cbb86dcbacc827cfc4ea116b4dabf1845e5aee629e9b"
+  }
+}

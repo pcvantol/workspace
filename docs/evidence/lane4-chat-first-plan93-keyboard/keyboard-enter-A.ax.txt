@@ -1,0 +1,136 @@
+SwiftUI.WindowGroup<SwiftUI.ModifiedContent<SwiftUI.ModifiedContent<WorkspaceClient.ContentView, SwiftUI._EnvironmentKeyWritingModifier<Foundation.Locale>>, SwiftUI._FlexFrameLayout>>-1-AppWindow-1 | 0 | AXWindow | Workspace |  | 
+ | 1 | AXGroup |  |  | 
+SwiftUI.WindowGroup<SwiftUI.ModifiedContent<SwiftUI.ModifiedContent<WorkspaceClient.ContentView, SwiftUI._EnvironmentKeyWritingModifier<Foundation.Locale>>, SwiftUI._FlexFrameLayout>>-1-AppWindow-1, SidebarNavigationSplitView | 2 | AXSplitGroup |  |  | 
+ | 3 | AXGroup |  |  | 
+ | 4 | AXScrollArea |  |  | 
+ | 5 | AXOutline |  | Navigatiekolom | 
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Missies
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Gesprekken
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Missions en reviews
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Goedgekeurde werklijst
+ | 6 | AXRow |  |  | 
+ | 7 | AXCell |  |  | 
+ | 8 | AXStaticText |  |  | Server
+ListColumn | 6 | AXColumn |  |  | 
+ | 3 | AXSplitter |  |  | 220
+ | 3 | AXGroup |  |  | 
+ | 4 | AXGroup |  |  | 
+mission.new | 5 | AXButton |  | Nieuwe missie | 
+ | 5 | AXButton |  | Vernieuwen | 
+ | 5 | AXStaticText |  |  | Missies
+gearshape | 5 | AXButton |  | Instellingen | 
+ | 5 | AXSplitGroup |  |  | 
+ | 6 | AXGroup |  |  | 
+mission.search | 7 | AXTextField |  |  | 
+ | 7 | AXStaticText |  |  | Weergave
+mission.display | 7 | AXRadioGroup |  | Weergave, Weergave | <AXUIElement 0x79e0c3c3f0> {pid=65700}
+ | 8 | AXRadioButton |  | Lijst | 0
+ | 8 | AXRadioButton |  | Afhankelijkheden | 1
+ | 7 | AXStaticText |  |  | Status
+mission.status-filter | 7 | AXPopUpButton |  |  | Alle statussen
+ | 7 | AXStaticText |  |  | Chat-first kwalificatie
+ | 7 | AXButton |  | Uitzoomen | 
+ | 7 | AXButton |  | Inzoomen | 
+ | 7 | AXButton |  | Passend maken | 
+ | 7 | AXStaticText |  |  | Pijlen betekenen vereist. Stippellijn: voorgesteld. Doorgetrokken: in goedgekeurde definitie; uitvoeringsvolgorde is niet vrijgegeven.
+ | 7 | AXButton |  | Selectie in beeld | 
+mission.graph | 7 | AXScrollArea |  |  | 
+mission.graph.node.concept-70e05234bcc9e690dfddef8098dd816c | 8 | AXButton |  | Account foundation, Goedgekeurd — wacht op vrijgave | 
+mission.graph.node.concept-388e299d1b7901dee2bf7f5c8bb3b729 | 8 | AXButton |  | Client portal, Goedgekeurd — wacht op vrijgave | 
+ | 8 | AXScrollBar |  |  | 0
+ | 9 | AXValueIndicator |  |  | 0
+ | 9 | AXButton |  |  | 
+ | 9 | AXButton |  |  | 
+ | 9 | AXButton |  |  | 
+ | 9 | AXButton |  |  | 
+ | 7 | AXStaticText |  |  | Afhankelijkheid in goedgekeurde definitie · Account foundation → Client portal · Versie 2: The portal requires the independently governed account isolation foundation.
+ | 6 | AXSplitter |  |  | 320
+ | 6 | AXGroup |  |  | 
+ | 7 | AXStaticText |  |  | Gesprek
+ | 7 | AXStaticText |  |  | Account foundation
+ | 7 | AXStaticText |  |  | Goedgekeurd — wacht op vrijgave
+ | 7 | AXStaticText |  |  | Invalshoek
+ | 7 | AXRadioGroup |  |  | <AXUIElement 0x79e0c3c240> {pid=65700}
+ | 8 | AXRadioButton |  | Business | 1
+ | 8 | AXRadioButton |  | Architect | 0
+mission.transcript | 7 | AXScrollArea |  |  | 
+ | 8 | AXStaticText |  |  | Jij
+ | 8 | AXStaticText |  |  | Ik wil dat klanten hun facturen en betalingen in een eigen portal kunnen bekijken.
+ | 8 | AXStaticText |  |  | Business
+ | 8 | AXStaticText |  |  | Initial proposed definition.
+ | 8 | AXStaticText |  |  | Jij
+ | 8 | AXStaticText |  |  | Bouw de portal. Begin met een afzonderlijke accountbasis: elke klant mag uitsluitend eigen gegevens zien. De factuur- en betalingsweergaven volgen daarna.
+ | 8 | AXStaticText |  |  | Architect
+ | 8 | AXStaticText |  |  | Initial proposed definition.
+ | 8 | AXScrollBar |  |  | 0
+ | 9 | AXValueIndicator |  |  | 0
+ | 9 | AXButton |  |  | 
+ | 9 | AXButton |  |  | 
+ | 9 | AXButton |  |  | 
+ | 9 | AXButton |  |  | 
+ | 7 | AXScrollArea |  |  | 
+mission.message | 8 | AXTextArea |  | Je bericht | 
+ | 8 | AXScrollBar |  |  | 0
+mission.refine | 7 | AXButton |  | Versturen en verfijnen | 
+ | 6 | AXSplitter |  |  | 405.5
+ | 6 | AXGroup |  |  | 
+ | 7 | AXScrollArea |  |  | 
+ | 8 | AXStaticText |  |  | Missiedefinitie
+ | 8 | AXStaticText |  |  | Account foundation
+ | 8 | AXStaticText |  |  | Goedgekeurd — wacht op vrijgave
+ | 8 | AXStaticText |  |  | Doel
+ | 8 | AXStaticText |  |  | Build isolated account access for the client portal.
+ | 8 | AXStaticText |  |  | Doel en waarde
+ | 8 | AXStaticText |  |  | Clients can track their payments.
+ | 8 | AXStaticText |  |  | Beoogde resultaten
+ | 8 | AXStaticText |  |  | A portal with current invoice status.
+ | 8 | AXStaticText |  |  | Binnen scope
+ | 8 | AXStaticText |  |  | Account isolation
+ | 8 | AXStaticText |  |  | Betrokken onderdelen
+ | 8 | AXStaticText |  |  | Account isolation
+ | 8 | AXStaticText |  |  | Buiten scope
+ | 8 | AXStaticText |  |  | Payment execution
+ | 8 | AXStaticText |  |  | Wanneer het klaar is
+ | 8 | AXStaticText |  |  | Clients see only invoices belonging to their account.
+ | 8 | AXStaticText |  |  | Wat is gewijzigd
+ | 8 | AXStaticText |  |  | Initial proposed definition.
+ | 8 | AXStaticText |  |  | Wat goedkeuring toestaat
+ | 8 | AXStaticText |  |  | Begrensde repositorywijzigingen
+ | 8 | AXStaticText |  |  | Wijzigingen blijven binnen de getoonde repositoryscope
+ | 8 | AXStaticText |  |  | Risico’s om te beoordelen
+ | 8 | AXStaticText |  |  | Account isolation must be verified.
+ | 8 | AXStaticText |  |  | Resterende menselijke beslissingen
+ | 8 | AXStaticText |  |  | Explicit owner approval of the complete frozen definition.
+ | 8 | AXStaticText |  |  | Nog nodig
+ | 8 | AXStaticText |  |  | Het goedgekeurde werk moet nog expliciet worden vrijgegeven.
+ | 8 | AXStaticText |  |  | Vastgelegde goedkeuringen
+ | 8 | AXStaticText |  |  | Definitieversie 2
+ | 8 | AXStaticText |  |  | Uitvoeringsvoorwaarden
+ | 8 | AXStaticText |  |  | Werkelijke uitvoeringsmiddelen zijn niet waargenomen; fysieke uitvoering is niet bewezen gereed.
+ | 8 | AXDisclosureTriangle |  | Technische details | 0
+ | 8 | AXScrollBar |  |  | 0
+ | 9 | AXValueIndicator |  |  | 0
+ | 9 | AXButton |  |  | 
+ | 9 | AXButton |  |  | 
+ | 9 | AXButton |  |  | 
+ | 9 | AXButton |  |  | 
+ | 7 | AXStaticText |  |  | Account foundation · Versie 2
+mission.approve | 7 | AXButton |  | Goedkeuren en klaarzetten | 
+ | 7 | AXStaticText |  |  | Keur deze exacte definitie goed. Uitvoering start via de bestaande bevoegde route.
+ | 7 | AXStaticText |  |  | Goedkeuring is nog niet beschikbaar voor deze definitie.
+ | 1 | AXToolbar |  |  | 
+ | 2 | AXButton |  | Verberg navigatiekolom | 
+ | 1 | AXButton |  |  | 
+ | 1 | AXButton |  |  | 
+ | 2 | AXGroup |  |  | 
+ | 1 | AXButton |  |  | 
+ | 1 | AXStaticText |  |  | Workspace
+
