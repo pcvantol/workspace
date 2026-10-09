@@ -217,6 +217,12 @@ import Combine
             guard epoch==generation else { return }
             guard value.objectID==card.id,value.definition==item.definition else { throw AdvisoryError.invalid }
             packet=value
+            if let recorded=item.canonical_history.first(where: { $0.definition_revision==card.revision && $0.mission_id != nil }) {
+                let current=try await transport.operation(a,c,id:recorded.operation_id,expectedDigest:value.digest)
+                guard epoch==generation,connection==c else { return }
+                guard current.state=="COMPLETE" else { throw AdvisoryError.invalid }
+                approval=current
+            }
             if let approval,let original=try? AdvisoryWire.object(approval.frozenPackageData)["source"] as? [String:Any],
                original["object_id"] as? String==card.id,original["revision"] as? Int==card.revision,approval.state=="COMPLETE" {
                 // A read/selection cannot create a new confirmation for the same completed definition.
@@ -225,6 +231,7 @@ import Combine
     }
     func canApprove(_ card:MissionDefinitionCard) -> Bool {
         guard !busy,pending==nil,capability?.approval_supported==true,capability?.supported_operations?.contains("APPROVE")==true,let packet,packet.objectID==card.id,packet.revision==card.revision,packet.packageData != nil,packet.questions.isEmpty else { return false }
+        guard !items.contains(where: { $0.object_id==card.id && $0.revision==card.revision && $0.canonical_history.contains(where: { $0.definition_revision==card.revision && $0.mission_id != nil }) }) else { return false }
         return approval?.state != "COMPLETE"
     }
     func approve(_ card:MissionDefinitionCard,connection c:AdvisoryConnection?) async {

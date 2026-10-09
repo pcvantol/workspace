@@ -176,7 +176,7 @@ def compound(value, binding, conversation, *, expected_digest=None, operation=No
             evidence['actor']!='primary_operator' or evidence['rationale']!=decision['rationale'] or evidence['occurred_at']!=decision['admitted_at'] or
             not {decision['decision_id'],candidate['id'],package['subject_revision']}<=set(evidence['references'])):
             raise WorklistError('INVALID_RESPONSE')
-        if kind=='ARCHITECTURE' and (canonical['evidence'].get('planning_digest')!=digest(package['planning']) or digest(package['planning']) not in evidence['references']):
+        if kind=='ARCHITECTURE' and (canonical['evidence'].get('planning_digest')!=digest(package['planning']) or digest(package['planning']) not in evidence['references'] or package['planning']['mission_spec_digest'] not in evidence['references']):
             raise WorklistError('INVALID_RESPONSE')
         decisions.append(decision['decision_id'])
     if len(decisions) != len(set(decisions)) or value['candidate_id'] != candidate['id']:

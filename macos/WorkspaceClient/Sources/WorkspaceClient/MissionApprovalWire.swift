@@ -111,7 +111,8 @@ enum MissionApprovalWire {
             if kind=="ARCHITECTURE" {
                 let planningDigest=try AdvisoryWire.digest(package["planning"]!)
                 guard (canonical["evidence"] as? [String:Any])?["planning_digest"] as? String==planningDigest,
-                      (evidence["references"] as! [String]).contains(planningDigest) else { throw AdvisoryError.invalid }
+                      (evidence["references"] as! [String]).contains(planningDigest),
+                      (evidence["references"] as! [String]).contains((package["planning"] as! [String:Any])["mission_spec_digest"] as! String) else { throw AdvisoryError.invalid }
             }
             decisions.append(decision["decision_id"] as! String)
         }

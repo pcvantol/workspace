@@ -12,6 +12,7 @@ final class MissionApprovalRecoveryTests: XCTestCase, @unchecked Sendable {
     var superseded=false
     var deny=false
     var missingOperation=false
+    var alreadyApproved=false
     // Namespace translation is explicit test setup; source decision/effect contents stay unchanged.
     let conversation=String(repeating:"a",count:32)
     func fixture(_ name:String) throws -> Data {
@@ -52,7 +53,14 @@ final class MissionApprovalRecoveryTests: XCTestCase, @unchecked Sendable {
                 context["instance_id"]=access.forgeInstanceID;context["project_id"]=access.forgeProjectID;context["repository_id"]=access.repositoryID
                 cap["context"]=context;cap["context_revision"]=try AdvisoryWire.digest(context)
                 data=try JSONSerialization.data(withJSONObject:cap)
-            } else if path.hasSuffix("/catalog") { data=try self.fixture("catalog-promoted") }
+            } else if path.hasSuffix("/catalog") {
+                var catalog=try AdvisoryWire.object(self.fixture("catalog-promoted"))
+                if !self.alreadyApproved && self.operationID==nil {
+                    var items=catalog["items"] as! [[String:Any]];items[0]["canonical_history"]=[];items[0]["candidate_id"]=NSNull();items[0]["mission_id"]=NSNull();items[0]["state"]="CONCEPT"
+                    catalog["items"]=items;catalog["snapshot_revision"]=try AdvisoryWire.digest(items)
+                }
+                data=try JSONSerialization.data(withJSONObject:catalog)
+            }
             else if path.hasSuffix("/package") { data=try self.fixture("prepared-complete") }
             else if path.hasSuffix("/approve") {
                 var bytes=request.httpBody
@@ -176,6 +184,23 @@ final class MissionApprovalRecoveryTests: XCTestCase, @unchecked Sendable {
         state.invalidate();release.signal();await recovery.value
         XCTAssertEqual(store.value,intent);XCTAssertNil(state.approval)
         XCTAssertTrue(requests.allSatisfy { $0.httpMethod=="GET" })
+    }
+
+    @MainActor func testCompletedCanonicalHistoryRestoresApprovalFenceAfterRestart() async throws {
+        let store=MissionIntentMemory();alreadyApproved=true
+        let (first,c)=try state(store)
+        await first.refresh(c)
+        let card=try XCTUnwrap(first.presentation(project:"Own")?.cards.first)
+        // Genuine canonical history is authoritative even with no local pending intent.
+        XCTAssertFalse(first.canApprove(card))
+        await first.prepare(card,connection:c)
+        XCTAssertEqual(first.approval?.state,"COMPLETE")
+        let (restarted,_)=try state(store)
+        await restarted.refresh(c);await restarted.prepare(card,connection:c)
+        XCTAssertEqual(restarted.approval?.state,"COMPLETE");XCTAssertFalse(restarted.canApprove(card))
+        await restarted.approve(card,connection:c)
+        XCTAssertTrue(requests.allSatisfy { $0.httpMethod=="GET" })
+        XCTAssertNil(store.value)
     }
 
 }
