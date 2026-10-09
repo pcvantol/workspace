@@ -1,0 +1,11 @@
+{
+  "candidate_source": "c5a5054d0a4be62048fc397c68345c37ff465625",
+  "protected_implementation_main": "54ec235e2ad42f6f85c4c74d87c351b32d7b048f",
+  "raw_review_sha256": "67097e1a0c4c1281218a8f58934a911b3f6158ea7cbff15cff2a9b1bab263f10",
+  "public_report_sha256": "f582d8ad0a89502fe54115f64efc5f0beb81722380e8da188adb46c96cb95ec6",
+  "only_transformation": "Replace local sanitized-public artifact link with its verified immutable public GitHub link; raw report retained.",
+  "UX_ACCEPTANCE": "PASS",
+  "TASK_WALKTHROUGH": "PASS",
+  "final_main_installed": "OPEN_ORIGINAL_TEST_GRANT_EXPIRED",
+  "original_grant_expiry_utc": "2026-10-09T12:04:50.650894Z"
+}
