@@ -73,9 +73,7 @@ class MissionPackagePeerTests(unittest.TestCase):
         self.binding.update(forge_instance_id=s['instance_id'],conversation_ids=['foundation','portal'])
         self.peer.conversations=OwnRecords((self.binding['actor_id'],'own-project'),'portal')
         context=self.source.read('context-with-predecessor.json')['context']
-        self.original={'context':context,'request_digest':s['request_digest'],'request':{'context_revision':s['context_revision']},
-            'session_id':s['session_id'],'invocation_id':s['invocation_id'],
-            'outcome':{'result_digest':s['result_digest'],'output':{'definition':p['definition']}}}
+        self.original=self.source.read('B-original-turn.json')['original_turn']
         self.assertEqual(self.peer.package(self.binding,'portal',1),self.package)
         self.package['package']['dependency_bindings'][0]['subject_revision']='sha256:'+'0'*64
         self.package['package_digest']=source_examples.w.digest(self.package['package'])

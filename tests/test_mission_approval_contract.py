@@ -9,12 +9,14 @@ from workspace_control.worklist_peer import WorklistError
 
 class MissionApprovalContractTests(unittest.TestCase):
     def setUp(self):
-        self.root=Path(__file__).parent/'fixtures/mission-dependency-source'
+        self.root=Path(__file__).parent/'fixtures/mission-installed-481b2f6'
         self.prepared=self.read('prepared-complete.json');self.package=self.prepared['package']
         s=self.package['source'];self.conversation=s['conversation_id']
         self.binding={'forge_instance_id':s['instance_id'],'forge_project_id':s['project_id'],'repository_id':s['repository_id'],'actor_id':self.package['authority']['principal_reference'].split(':',1)[1],'conversation_ids':[self.conversation]}
     def read(self,name):
-        aliases={'prepared-complete.json':'prepared-root.json','compound-result.json':'compound-root.json','operation-after-refinement.json':'operation-superseded.json'}
+        aliases={'prepared-complete.json':'natural-prepared-complete.json','prepared-incomplete.json':'natural-prepared-incomplete.json','compound-result.json':'natural-compound-result.json','operation-current.json':'natural-operation-current.json','operation-after-refinement.json':'natural-operation-superseded.json','prepared-dependent.json':'dependency-prepared-dependent.json','compound-dependent.json':'dependency-compound-result.json','catalog-directed-dependency.json':'dependency-catalog-dependency.json','context-with-predecessor.json':'dependency-focused-context.json'}
+        coherent={'prepared-dependent.json':'B-prepared.json','compound-dependent.json':'B-compound.json','catalog-directed-dependency.json':'catalog-A-B.json','context-with-predecessor.json':'B-focused-context-before-turn.json','B-original-turn.json':'B-original-turn.json','catalog-history-after-A2.json':'catalog-history-after-A2.json'}
+        if name in coherent:return json.loads((self.root.parent/'mission-installed-b-481b2f6'/coherent[name]).read_text())
         return json.loads((self.root/aliases.get(name,name)).read_text())
     def testActualPackageMeaningDigestAndScopedOriginal(self):
         self.assertEqual(w.prepared(self.prepared,self.binding,self.conversation,revision=2,expected_definition=self.prepared['definition']),self.prepared)

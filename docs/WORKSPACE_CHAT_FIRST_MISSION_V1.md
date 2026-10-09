@@ -223,3 +223,44 @@ component/context-graph/readiness fields await its converged schema and fresh
 packets. Current consumer snapshot remains ab9; the old packets are not amended.
 All final coupled producer pin/review/protected/version/finalization/installed
 and actual packaged GUI gates remain OPEN. No overall product PASS is declared.
+
+## Repaired producer481b2f6 consumer checkpoint
+
+Admitted source481b2f6a5e55160f695498e2f8862a6d31317086/tree
+d5c2f1be0e386473bcc9ad177123b1c19dde4950, Forge2.11.0, noneditable wheel
+40f03ff45bf4bcc979ffdd8a79a9ffe9221c0c1445ffe8f157fba8f8c5f4853e,
+machine schema0311529ca95451a99f4fd8a35127707310252c96324b42f3230e8c79fcfa6124.
+All24 installed HTTP packet hashes/bytes plus12 explicitly coherent A→B packets
+were verified and copied to separate immutable fixture folders. The original
+24-file export has a root/dependent naming distinction; initial test rejection
+was preserved and corrected by obtaining actual B original-turn/context/compound/
+operation records from one named installed case. No captured packet was rewritten
+or fabricated. This is producer source/install evidence, not protected final-main
+consumer qualification.
+
+Native/Python frozen readers now require canonical IN SCOPE/EXPECTED RESULT and
+named COMPONENT constraints. Definition/component/subresult metadata remains
+producer-owned. Historical canonical records distinguish approved A1 from latest
+concept A2; B's exact A1 Candidate/revision edge remains correctly bound. Logical
+READY_FOR_GOVERNED_ACTIVATION is displayed from owning readiness, and actual hold
+returns waiting. Physical resource readiness remains not observed/false, shown
+separately. All statuses, classification labels, component/proposal controls and
+blocker messages use the existing five-language selection.
+
+Suggested results are labelled unregistered/unapproved. Explicit Refine as a
+separate mission pre-fills ordinary text in a fresh draft; only explicit Send
+resolves/generates a separate subject, with its own later exact approval. Expanding
+or selecting a suggestion performs no provider call, child creation or bulk
+approval. Consumer tests cover actual historical A1→B after A2, typed reason/
+subject/source guards, real ready→held reversal, component scope, same-intent
+recovery and five-language rendering.
+
+Full `bash scripts/validate.sh` PASSED with154native+1isolated, all owning Python
+and per-file gates, browser/wheel/noneditable/native package. New live root188/226
+83.19%, concept state308/31797.16%, mission view1030/114789.80%; Python mission
+contract160/16596.97%, mission peer124/13591.85%. Log
+`/private/tmp/lane4-plan93-031-converged-full-validation.log`.
+Final independent own Q/S, installed natural-user/UX walkthrough, protected own
+lifecycle/version/finalization and fresh exact-main GUI remain OPEN. Producer
+PR265 is a dependency; required validation was still in progress at latest readback.
+No overall product PASS, physical execution claim, signing or public release.

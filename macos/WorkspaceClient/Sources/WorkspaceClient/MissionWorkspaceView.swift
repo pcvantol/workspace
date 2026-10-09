@@ -7,6 +7,7 @@ struct MissionWorkspaceView: View {
     let onRefine: (String, String, MissionDefinitionCard?) -> Void
     let onApprove: (MissionDefinitionCard) -> Void
     let onSelect:(MissionDefinitionCard)->Void
+    let onSeparate:(MissionSuggestedResult,MissionDefinitionCard)->Void
     @State private var selection: String?
     @State private var search = ""
     @State private var statusFilter = ""
@@ -20,10 +21,11 @@ struct MissionWorkspaceView: View {
     @Environment(\.nativeTabCommandsActive) private var commandsActive
 
     init(observation: MissionWorkspaceObservation?, canRefine: Bool, canApprove: Bool,
-         selectedID: String? = nil, activePanel: String = "chat", showGraph: Bool = false,
-         onRefine: @escaping (String, String, MissionDefinitionCard?) -> Void, onApprove: @escaping (MissionDefinitionCard) -> Void, onSelect:@escaping(MissionDefinitionCard)->Void = { _ in }) {
+         selectedID: String? = nil, draftMessage:String="", activePanel: String = "chat", showGraph: Bool = false,
+         onRefine: @escaping (String, String, MissionDefinitionCard?) -> Void, onApprove: @escaping (MissionDefinitionCard) -> Void, onSelect:@escaping(MissionDefinitionCard)->Void = { _ in },onSeparate:@escaping(MissionSuggestedResult,MissionDefinitionCard)->Void = { _, _ in }) {
         self.observation = observation; self.canRefine = canRefine; self.canApprove = canApprove
-        self.onRefine = onRefine; self.onApprove = onApprove;self.onSelect=onSelect
+        self.onRefine = onRefine; self.onApprove = onApprove;self.onSelect=onSelect;self.onSeparate=onSeparate
+        _message=State(initialValue:draftMessage)
         _selection = State(initialValue: observation?.selected(selectedID)?.id)
         _panel = State(initialValue: ["overview", "chat", "definition"].contains(activePanel) ? activePanel : "chat")
         _graph = State(initialValue: showGraph)
@@ -169,6 +171,21 @@ struct MissionWorkspaceView: View {
                     section("value", [card.value])
                     section("outcomes", [card.outcome])
                     section("scope", card.scope)
+                    section("components",card.components ?? [])
+                    if let results=card.suggestedResults,!results.isEmpty {
+                        DisclosureGroup(copy("suggestedResults")) {
+                            ForEach(Array(results.enumerated()),id:\.offset) { _,result in
+                                VStack(alignment:.leading,spacing:6) {
+                                    Text(result.title).font(.headline)
+                                    Text(copy("suggestedOnly")).font(.caption).foregroundStyle(.secondary)
+                                    Text(result.expected_result)
+                                    section("done",result.acceptance_criteria)
+                                    Button(copy("separateSuggestion")) { onSeparate(result,card) }
+                                        .disabled(!canRefine).accessibilityLabel(copy("separateSuggestion")+": "+result.title)
+                                }.padding(.vertical,4)
+                            }
+                        }
+                    }
                     section("excluded", card.exclusions)
                     section("done", card.criteria)
                     section("questions", card.questions)
@@ -182,8 +199,12 @@ struct MissionWorkspaceView: View {
                     }
                     if let observation {
                         section("dependencies", observation.visibleRelations.filter { $0.dependent == card.id }
-                            .map { edge in copy(edge.proposed ? "proposed" : "established") + " · " + (observation.selected(edge.predecessor)?.title ?? "") + ": " + edge.reason })
+                            .map { edge in copy(edge.proposed ? "proposed" : "established") + " · " + (observation.selected(edge.predecessor)?.title ?? "") + (edge.sourceRevision.map { " · "+copy("revision")+" "+String($0) } ?? "") + ": " + edge.reason })
                     }
+                    if let history=card.canonicalHistory,!history.isEmpty {
+                        section("canonicalHistory",history.map { copy("recordedVersion")+" "+String($0.definition_revision)+($0.definition_revision==card.revision ? "":" · "+copy("olderApproval")) })
+                    }
+                    if card.physicalExecutionReady==false { section("executionStatus",[copy("executionUnobserved")]) }
                     DisclosureGroup(copy("inspector")) {
                         LabeledContent(copy("revision"), value: String(card.revision))
                     }
@@ -271,7 +292,7 @@ struct MissionWorkspaceView: View {
             if let selection {
                 ForEach(Array(observation.visibleRelations.filter { $0.dependent == selection || $0.predecessor == selection }.enumerated()), id: \.offset) { _, edge in
                     Text(copy(edge.proposed ? "proposed" : "established") + " · " + (observation.selected(edge.predecessor)?.title ?? "") + " → " +
-                         (observation.selected(edge.dependent)?.title ?? "") + ": " + edge.reason)
+                         (observation.selected(edge.dependent)?.title ?? "") + (edge.sourceRevision.map { " · "+copy("revision")+" "+String($0) } ?? "") + ": " + edge.reason)
                         .font(.caption).textSelection(.enabled)
                 }
             }

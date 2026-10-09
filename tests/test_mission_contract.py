@@ -7,13 +7,15 @@ from workspace_control.worklist_peer import WorklistError
 
 
 def content():
-    return dict(dependency_reasons={},work_kind='INVESTIGATE',title='Invoice portal', objective='View own invoices', business_value='Customers find their invoices', expected_result='Read-only invoice portal', scope=['Own invoices'], exclusions=['Payments'], acceptance_criteria=['A customer sees only their own invoices.'], architecture_choices=['Authenticated read-only access'], risks=['Access isolation requires review'], dependencies=[], questions=[], change_summary='Payments excluded from this revision.')
+    return dict(components=[],possible_subresults=[],dependency_reasons={},work_kind='INVESTIGATE',title='Invoice portal', objective='View own invoices', business_value='Customers find their invoices', expected_result='Read-only invoice portal', scope=['Own invoices'], exclusions=['Payments'], acceptance_criteria=['A customer sees only their own invoices.'], architecture_choices=['Authenticated read-only access'], risks=['Access isolation requires review'], dependencies=[], questions=[], change_summary='Payments excluded from this revision.')
 
 
 def capability():
     value = base_capability(); value['contract_version'] = w.CONTRACT
     value['context']['concept_dependency_references'] = []
     value['context']['concept_dependency_catalog'] = []
+    value['context']['concept_repository_source']={'repository_id':'repo-one','github_repository':'synthetic-owner/synthetic-repository'}
+    value['context']['concept_dependency_graph']={}
     value['context']['concept_work_profiles'] = {}
     value['context']['concept_configuration_revision'] = None
     value['context_revision'] = w.digest(value['context'])
@@ -32,7 +34,7 @@ def record():
 
 def catalog():
     r = record(); d = content()
-    item = dict(object_id='concept-'+'c'*32, conversation_id='a'*32, revision=1, conversation_revision=1, definition_digest=w.digest(d), definition=d, source_turn_id='turn-one', context_revision=r['request']['context_revision'], title=d['title'], summary=d['expected_result'], state='CONCEPT', approval_supported=False, blockers=['TRUSTED_PLANNING_AND_APPROVAL_PACKAGE_REQUIRED'], questions=d['questions'], parent_id=None, group_id=None, labels=[], edges=[], candidate_id=None, mission_id=None)
+    item = dict(object_id='concept-'+'c'*32, conversation_id='a'*32, revision=1, conversation_revision=1, definition_digest=w.digest(d), definition=d, source_turn_id='turn-one', context_revision=r['request']['context_revision'], title=d['title'], summary=d['expected_result'], state='CONCEPT', approval_supported=False, blockers=['TRUSTED_PLANNING_AND_APPROVAL_PACKAGE_REQUIRED'], questions=d['questions'], parent_id=None, group_id=None, labels=[], edges=[], candidate_id=None, mission_id=None,canonical_history=[])
     return dict(contract_version=w.CONTRACT, scope={k:r['request'][k] for k in ('instance_id','project_id','repository_id')}, snapshot_revision=w.digest([item]), items=[item], next_cursor=None, population='AUTHORIZED_ADMITTED_CONCEPTS_ONLY', complete_portfolio=False, read_only=True, additional_model_calls=0)
 
 

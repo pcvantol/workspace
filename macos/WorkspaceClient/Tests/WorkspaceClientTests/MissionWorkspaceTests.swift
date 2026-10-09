@@ -7,7 +7,7 @@ final class MissionWorkspaceTests: XCTestCase {
     func card(_ id: String, _ status: String = "CONCEPT") -> MissionDefinitionCard {
         .init(id: id, revision: 1, title: "Client portal " + id, value: "View invoices", outcome: "Customers see their invoices",
               scope: ["Read invoices"], exclusions: ["Payments"], criteria: ["Only own invoices visible"], questions: [], changes: [],
-              group: "Customers", labels: ["Research"], status: status, objective: "Allow customers to view their own invoices", architectureChoices: ["Read-only authenticated access"],blockers:["EXPLICIT_WORKSET_RELEASE_REQUIRED"])
+              group: "Customers", labels: ["Research"], status: status, objective: "Allow customers to view their own invoices", architectureChoices: ["Read-only authenticated access"],blockers:["EXPLICIT_WORKSET_RELEASE_REQUIRED"],components:["Invoice views"],suggestedResults:[.init(title:"Account isolation",expected_result:"Separate account access",acceptance_criteria:["Only the authenticated account has access."])],canonicalHistory:[.init(definition_revision:1,candidate_id:"synthetic-candidate",subject_revision:"sha256:"+String(repeating:"a",count:64),subject_current:true,mission_id:"MISSION-0006",mission_status:"APPROVED_PLANNABLE",operation_id:"synthetic-approve")],physicalExecutionReady:false)
     }
     func testSameObjectsAcrossListSelectionAndRelationsWithoutInventedEndpoints() {
         let o = MissionWorkspaceObservation(scopeKey: "own-scope", project: "Own project", cards: [card("A"),card("B","REFINEMENT_REQUIRED")], relations: [

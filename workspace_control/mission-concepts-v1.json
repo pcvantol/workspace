@@ -389,7 +389,9 @@
             "questions",
             "change_summary",
             "work_kind",
-            "dependency_reasons"
+            "dependency_reasons",
+            "possible_subresults",
+            "components"
           ],
           "properties": {
             "title": {
@@ -490,6 +492,50 @@
               }
             },
             "questions": {
+              "type": "array",
+              "maxItems": 8,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              }
+            },
+            "possible_subresults": {
+              "type": "array",
+              "maxItems": 4,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "title",
+                  "expected_result",
+                  "acceptance_criteria"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "expected_result": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 1000
+                  },
+                  "acceptance_criteria": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 4,
+                    "items": {
+                      "type": "string",
+                      "minLength": 20,
+                      "maxLength": 1000
+                    }
+                  }
+                }
+              }
+            },
+            "components": {
               "type": "array",
               "maxItems": 8,
               "items": {
@@ -619,7 +665,9 @@
         "concept_dependency_references",
         "concept_work_profiles",
         "concept_configuration_revision",
-        "concept_dependency_catalog"
+        "concept_dependency_catalog",
+        "concept_repository_source",
+        "concept_dependency_graph"
       ],
       "properties": {
         "instance_id": {
@@ -715,6 +763,20 @@
           "maxItems": 64,
           "items": {
             "$ref": "#/$defs/dependency_reference"
+          }
+        },
+        "concept_repository_source": {
+          "$ref": "#/$defs/decision_repository_source"
+        },
+        "concept_dependency_graph": {
+          "type": "object",
+          "maxProperties": 64,
+          "additionalProperties": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "type": "string"
+            }
           }
         }
       }
@@ -1261,7 +1323,8 @@
         "labels",
         "edges",
         "candidate_id",
-        "mission_id"
+        "mission_id",
+        "canonical_history"
       ],
       "properties": {
         "object_id": {
@@ -1305,7 +1368,9 @@
             "questions",
             "change_summary",
             "work_kind",
-            "dependency_reasons"
+            "dependency_reasons",
+            "possible_subresults",
+            "components"
           ],
           "properties": {
             "title": {
@@ -1413,6 +1478,50 @@
                 "minLength": 1,
                 "maxLength": 1000
               }
+            },
+            "possible_subresults": {
+              "type": "array",
+              "maxItems": 4,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "title",
+                  "expected_result",
+                  "acceptance_criteria"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "expected_result": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 1000
+                  },
+                  "acceptance_criteria": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 4,
+                    "items": {
+                      "type": "string",
+                      "minLength": 20,
+                      "maxLength": 1000
+                    }
+                  }
+                }
+              }
+            },
+            "components": {
+              "type": "array",
+              "maxItems": 8,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              }
             }
           }
         },
@@ -1442,7 +1551,8 @@
             "SUBJECT_STALE",
             "RECOMMENDED",
             "BUSINESS_APPROVED",
-            "APPROVED_WAITING"
+            "APPROVED_WAITING",
+            "READY_FOR_GOVERNED_ACTIVATION"
           ]
         },
         "approval_supported": {
@@ -1450,14 +1560,9 @@
         },
         "blockers": {
           "type": "array",
-          "maxItems": 8,
+          "maxItems": 64,
           "items": {
-            "enum": [
-              "TRUSTED_PLANNING_AND_APPROVAL_PACKAGE_REQUIRED",
-              "CANONICAL_SUBJECT_CHANGED",
-              "EXPLICIT_WORKSET_RELEASE_REQUIRED",
-              "CANONICAL_APPROVAL_OR_INTAKE_PENDING"
-            ]
+            "type": "string"
           }
         },
         "questions": {
@@ -1476,7 +1581,18 @@
           "const": null
         },
         "labels": {
-          "const": []
+          "type": "array",
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "Investigation",
+              "Architecture",
+              "Implementation",
+              "Documentation",
+              "Needs clarification"
+            ]
+          }
         },
         "edges": {
           "type": "array",
@@ -1510,6 +1626,54 @@
               "type": "null"
             }
           ]
+        },
+        "canonical_history": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "definition_revision",
+              "candidate_id",
+              "subject_revision",
+              "subject_current",
+              "mission_id",
+              "mission_status",
+              "operation_id"
+            ],
+            "properties": {
+              "definition_revision": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "candidate_id": {
+                "type": "string"
+              },
+              "subject_revision": {
+                "type": "string",
+                "pattern": "^sha256:[0-9a-f]{64}$"
+              },
+              "subject_current": {
+                "type": "boolean"
+              },
+              "mission_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "mission_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "operation_id": {
+                "type": "string"
+              }
+            }
+          }
         }
       }
     },
@@ -1695,11 +1859,11 @@
         },
         "architecture_constraints": {
           "type": "array",
-          "maxItems": 16,
+          "maxItems": 64,
           "items": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 1000
+            "maxLength": 2000
           }
         },
         "dependencies": {
@@ -1904,7 +2068,7 @@
         },
         "engineering_constraints": {
           "type": "array",
-          "maxItems": 32,
+          "maxItems": 64,
           "items": {
             "type": "string",
             "maxLength": 2000
@@ -3234,6 +3398,39 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 64
+        },
+        "components": {
+          "type": "object",
+          "maxProperties": 8,
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "description",
+              "read_paths",
+              "write_paths"
+            ],
+            "properties": {
+              "description": {
+                "type": "string",
+                "maxLength": 1000
+              },
+              "read_paths": {
+                "type": "array",
+                "maxItems": 64,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "write_paths": {
+                "type": "array",
+                "maxItems": 64,
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -3416,7 +3613,9 @@
             "questions",
             "change_summary",
             "work_kind",
-            "dependency_reasons"
+            "dependency_reasons",
+            "possible_subresults",
+            "components"
           ],
           "properties": {
             "title": {
@@ -3517,6 +3716,50 @@
               }
             },
             "questions": {
+              "type": "array",
+              "maxItems": 8,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              }
+            },
+            "possible_subresults": {
+              "type": "array",
+              "maxItems": 4,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "title",
+                  "expected_result",
+                  "acceptance_criteria"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "expected_result": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 1000
+                  },
+                  "acceptance_criteria": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 4,
+                    "items": {
+                      "type": "string",
+                      "minLength": 20,
+                      "maxLength": 1000
+                    }
+                  }
+                }
+              }
+            },
+            "components": {
               "type": "array",
               "maxItems": 8,
               "items": {
@@ -3688,7 +3931,9 @@
             "questions",
             "change_summary",
             "work_kind",
-            "dependency_reasons"
+            "dependency_reasons",
+            "possible_subresults",
+            "components"
           ],
           "properties": {
             "title": {
@@ -3789,6 +4034,50 @@
               }
             },
             "questions": {
+              "type": "array",
+              "maxItems": 8,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              }
+            },
+            "possible_subresults": {
+              "type": "array",
+              "maxItems": 4,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "title",
+                  "expected_result",
+                  "acceptance_criteria"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "expected_result": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 1000
+                  },
+                  "acceptance_criteria": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 4,
+                    "items": {
+                      "type": "string",
+                      "minLength": 20,
+                      "maxLength": 1000
+                    }
+                  }
+                }
+              }
+            },
+            "components": {
               "type": "array",
               "maxItems": 8,
               "items": {
@@ -3871,7 +4160,9 @@
             "questions",
             "change_summary",
             "work_kind",
-            "dependency_reasons"
+            "dependency_reasons",
+            "possible_subresults",
+            "components"
           ],
           "properties": {
             "title": {
@@ -3972,6 +4263,50 @@
               }
             },
             "questions": {
+              "type": "array",
+              "maxItems": 8,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              }
+            },
+            "possible_subresults": {
+              "type": "array",
+              "maxItems": 4,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "title",
+                  "expected_result",
+                  "acceptance_criteria"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "expected_result": {
+                    "type": "string",
+                    "minLength": 20,
+                    "maxLength": 1000
+                  },
+                  "acceptance_criteria": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 4,
+                    "items": {
+                      "type": "string",
+                      "minLength": 20,
+                      "maxLength": 1000
+                    }
+                  }
+                }
+              }
+            },
+            "components": {
               "type": "array",
               "maxItems": 8,
               "items": {
@@ -4603,7 +4938,8 @@
         "candidate_id",
         "subject_revision",
         "reason",
-        "state"
+        "state",
+        "source_definition_revision"
       ],
       "properties": {
         "kind": {
@@ -4641,6 +4977,10 @@
             "PROPOSED",
             "APPROVED_DEFINITION"
           ]
+        },
+        "source_definition_revision": {
+          "type": "integer",
+          "minimum": 1
         }
       }
     },

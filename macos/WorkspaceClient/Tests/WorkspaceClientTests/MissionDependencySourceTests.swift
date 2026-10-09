@@ -4,7 +4,8 @@ import XCTest
 
 final class MissionDependencySourceTests:XCTestCase {
     func fixture(_ name:String) throws -> [String:Any] {
-        let p=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/mission-dependency-source/"+name+".json")
+        let aliases=["prepared-dependent":"B-prepared","compound-dependent":"B-compound","catalog-directed-dependency":"catalog-A-B","context-with-predecessor":"B-focused-context-before-turn","catalog-history-after-A2":"catalog-history-after-A2"]
+        let p=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/mission-installed-b-481b2f6/"+(aliases[name] ?? name)+".json")
         return try AdvisoryWire.object(Data(contentsOf:p))
     }
     func sourceAccess() throws -> AdvisoryAccess {
@@ -73,6 +74,15 @@ final class MissionDependencySourceTests:XCTestCase {
         XCTAssertFalse(shown.relations[0].proposed)
         XCTAssertEqual(shown.visibleRelations[0].predecessor,shown.cards[0].id)
         XCTAssertTrue(calls.allSatisfy { $0.httpMethod=="GET" })
+        var historical=try fixture("catalog-history-after-A2"),historyItems=historical["items"] as! [[String:Any]]
+        for i in historyItems.indices { historyItems[i]["conversation_id"]=ids[i] }
+        historical["items"]=historyItems;historical["snapshot_revision"]=try AdvisoryWire.digest(historyItems)
+        catalog=historical;await state.refresh(c)
+        let latest=try XCTUnwrap(state.presentation(project:"Own"))
+        XCTAssertEqual(latest.cards.first?.revision,2)
+        XCTAssertEqual(latest.cards.first?.canonicalHistory?.first?.definition_revision,1)
+        XCTAssertEqual(latest.relations.first?.sourceRevision,1)
+        XCTAssertEqual(latest.relations.first?.predecessor,latest.cards.first?.id)
         var edges=items[1]["edges"] as! [[String:Any]];edges[0]["source_object_id"]="foreign-object";items[1]["edges"]=edges
         catalog["items"]=items;catalog["snapshot_revision"]=try AdvisoryWire.digest(items)
         await state.refresh(c)

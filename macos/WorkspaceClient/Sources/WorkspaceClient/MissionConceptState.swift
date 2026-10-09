@@ -95,7 +95,7 @@ import Combine
                     do {
                         let value=try await transport.operation(a,c,id:request["operation_id"] as! String,expectedDigest:request["package_digest"] as? String)
                         guard epoch==generation else { return };approval=value
-                        if value.state=="COMPLETE" { try store.clear(p.key);pending=nil;phase=value.currentDefinitionState }
+                        if value.state=="COMPLETE" { try store.clear(p.key);pending=nil;phase=value.presentationState }
                         else { phase="pending" }
                     } catch AdvisoryError.missing { phase="pending" }
                 }
@@ -138,13 +138,15 @@ import Combine
                   Set(turns.map { $0.request.turn_id }).count==turns.count else { throw AdvisoryError.invalid }
             for item in catalog {
                 for edge in item.edges {
-                    guard let predecessor=catalog.first(where: { $0.object_id==edge.source_object_id }),predecessor.candidate_id==edge.candidate_id else { throw AdvisoryError.invalid }
+                    guard let predecessor=catalog.first(where: { $0.object_id==edge.source_object_id }),predecessor.canonical_history.contains(where: {
+                        $0.definition_revision==edge.source_definition_revision && $0.candidate_id==edge.candidate_id && $0.subject_revision==edge.subject_revision && $0.subject_current
+                    }) else { throw AdvisoryError.invalid }
                 }
             }
             guard epoch==generation else { return }
             capability=cap;history=turns;items=catalog;revision=conversationRevision
             if let packet,!catalog.contains(where: { $0.object_id==packet.objectID && $0.revision==packet.revision && $0.definition==packet.definition }) { self.packet=nil }
-            phase=pending != nil ? "pending" : approval?.currentDefinitionState ?? "current"
+            phase=pending != nil ? "pending" : approval?.presentationState ?? "current"
         } catch { if epoch==generation { fail(error) } }
     }
     func refine(_ text: String, lens: String, connection c: AdvisoryConnection?) async {
@@ -186,7 +188,7 @@ import Combine
                     value=try await transport.operation(a,c,id:id,expectedDigest:digest)
                 }
                 guard epoch==generation else { return };approval=value
-                if value.state=="COMPLETE" { try store.clear(p.key);pending=nil;phase=value.currentDefinitionState }
+                if value.state=="COMPLETE" { try store.clear(p.key);pending=nil;phase=value.presentationState }
                 else { phase="pending" }
             } catch { if epoch==generation { fail(error) } }
             return
@@ -232,7 +234,7 @@ import Combine
             let request=try AdvisoryWire.object(body)
             let current=try await transport.operation(a,c,id:request["operation_id"] as! String,expectedDigest:digest)
             guard epoch==generation else { return };approval=current
-            if current.state=="COMPLETE" { try store.clear(intent.key);pending=nil;phase=current.currentDefinitionState }
+            if current.state=="COMPLETE" { try store.clear(intent.key);pending=nil;phase=current.presentationState }
             else { phase="pending" }
         } catch { if epoch==generation { pending=(try? store.load(CandidateLocal.scopeKey(c))) ?? pending;fail(error) } }
     }
@@ -242,7 +244,7 @@ import Combine
             var card=MissionDefinitionCard(id:item.object_id,revision:item.revision,title:item.title,value:item.definition.business_value,outcome:item.definition.expected_result,
                 scope:item.definition.scope,exclusions:item.definition.exclusions,criteria:item.definition.acceptance_criteria,questions:item.questions,
                 changes:[item.definition.change_summary],group:"",labels:item.labels,status:item.state,objective:item.definition.objective,
-                architectureChoices:item.definition.architecture_choices,risks:item.definition.risks,blockers:item.blockers)
+                architectureChoices:item.definition.architecture_choices,risks:item.definition.risks,blockers:item.blockers,components:item.definition.components,suggestedResults:item.definition.possible_subresults,canonicalHistory:item.canonical_history)
             if let packet,packet.objectID==item.object_id,packet.revision==item.revision,let data=packet.packageData,
                let raw=try? AdvisoryWire.object(data),let effects=raw["consequences"] as? [String:Any],let effect=effects["repository_effect"] as? [String:Any] {
                 card.consequences=[effect["mode"] as? String ?? "",effect["delivery"] as? String ?? ""]
@@ -250,7 +252,8 @@ import Combine
             }
             if let approval,let frozen=try? AdvisoryWire.object(approval.frozenPackageData),let source=frozen["source"] as? [String:Any],
                source["object_id"] as? String==item.object_id,source["revision"] as? Int==item.revision {
-                card.status=approval.currentDefinitionState
+                card.status=approval.presentationState
+                card.physicalExecutionReady=approval.readiness?.execution_ready
                 card.blockers=approval.readiness?.blockers
             }
             return card
@@ -263,7 +266,7 @@ import Combine
             return messages
         }
         let relations=items.flatMap { item in item.edges.map { edge in
-            MissionRelation(predecessor:edge.source_object_id,dependent:edge.target_object_id,reason:edge.reason,proposed:edge.state=="PROPOSED")
+            MissionRelation(predecessor:edge.source_object_id,dependent:edge.target_object_id,reason:edge.reason,proposed:edge.state=="PROPOSED",sourceRevision:edge.source_definition_revision)
         } }
         let projectScope=AdvisoryConnection(endpoint:connection.endpoint,workspaceInstanceID:connection.workspaceInstanceID,actorID:connection.actorID,workspaceProjectID:connection.workspaceProjectID,conversationID:"",bearer:"",draftGrant:"")
         return MissionWorkspaceObservation(scopeKey:CandidateLocal.scopeKey(projectScope),project:project,cards:cards,relations:relations,complete:false,transcript:lines)

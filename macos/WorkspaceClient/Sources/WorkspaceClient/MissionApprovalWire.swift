@@ -18,6 +18,9 @@ struct MissionCompoundReadback: Sendable {
     let currentDefinitionState:String
     let missionID:String?
     let readiness:MissionReadiness?
+    var presentationState:String {
+        sourceFresh && state=="COMPLETE" && currentDefinitionState != "SUPERSEDED" ? readiness?.state ?? currentDefinitionState:currentDefinitionState
+    }
 }
 enum MissionApprovalWire {
     static func frozen(_ raw:Any,access:AdvisoryAccess,conversation:String,expectedDigest:String?=nil) throws -> [String:Any] {
@@ -39,6 +42,9 @@ enum MissionApprovalWire {
               Set(candidate["acceptance_criteria"] as! [String])==Set(d.acceptance_criteria),
               Set(candidate["dependencies"] as! [String])==Set(d.dependencies),
               Set(d.exclusions.map { "EXCLUDED: "+$0 }).isSubset(of:Set(candidate["architecture_constraints"] as! [String])),
+              Set(d.scope.map { "IN SCOPE: "+$0 }).isSubset(of:Set(candidate["architecture_constraints"] as! [String])),
+              (candidate["architecture_constraints"] as! [String]).contains("EXPECTED RESULT: "+d.expected_result),
+              d.components.allSatisfy({ name in (candidate["architecture_constraints"] as! [String]).contains(where: { $0.hasPrefix("COMPONENT: "+name+": ") }) }),
               NSDictionary(dictionary:effects["repository_effect"] as! [String:Any]).isEqual(to:candidate["effect_policy"] as! [String:Any]),
               effects["exclusions"] as? [String]==d.exclusions,effects["risks"] as? [String]==d.risks,
               preview["candidate_id"] as? String==candidate["id"] as? String,preview["title"] as? String==d.title,

@@ -6,7 +6,7 @@ from .worklist_peer import WorklistError
 
 CONTRACT = 'forge-chat-first-mission/v1'
 SCHEMA = json.loads(Path(__file__).with_name('mission-concepts-v1.json').read_text())
-LIST_FIELDS = ('scope', 'exclusions', 'acceptance_criteria', 'architecture_choices', 'risks', 'dependencies', 'questions')
+LIST_FIELDS = ('components','scope', 'exclusions', 'acceptance_criteria', 'architecture_choices', 'risks', 'dependencies', 'questions')
 
 
 def validate(value, kind):
@@ -29,6 +29,9 @@ def definition(value, allowed_dependencies=None):
         raise WorklistError('INVALID_RESPONSE')
     if (not value['scope'] or not value['acceptance_criteria'] or any(len(t.strip()) < 20 for t in value['acceptance_criteria'])) and not value['questions']:
         raise WorklistError('INVALID_RESPONSE')
+    for child in value['possible_subresults']:
+        if not all(text.strip() and _safe(text) for text in [child['title'],child['expected_result'],*child['acceptance_criteria']]):
+            raise WorklistError('INVALID_RESPONSE')
     return value
 
 
@@ -123,6 +126,9 @@ def frozen_package(value, binding, conversation, *, expected_digest=None):
     if (digest(candidate) != value['subject_revision'] or candidate['title'] != d['title'] or candidate['objective'] != d['objective'] or
         set(candidate['acceptance_criteria']) != set(d['acceptance_criteria']) or set(candidate['dependencies']) != set(d['dependencies']) or
         not {'EXCLUDED: '+item for item in d['exclusions']} <= set(candidate['architecture_constraints']) or
+        not {'IN SCOPE: '+item for item in d['scope']} <= set(candidate['architecture_constraints']) or
+        'EXPECTED RESULT: '+d['expected_result'] not in candidate['architecture_constraints'] or
+        any(not any(c.startswith('COMPONENT: '+name+': ') for c in candidate['architecture_constraints']) for name in d['components']) or
         effects['repository_effect'] != candidate['effect_policy'] or effects['exclusions'] != d['exclusions'] or effects['risks'] != d['risks'] or
         preview['candidate_id'] != candidate['id'] or preview['title'] != candidate['title'] or preview['business_value'] != d['business_value'] or
         digest(preview) != planning['mission_spec_digest'] or planning['provenance_revision'] != value['subject_revision'] or

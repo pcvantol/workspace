@@ -4,16 +4,9 @@ import XCTest
 
 final class MissionApprovalWireTests:XCTestCase {
     func fixture(_ name:String) throws -> Data {
-        let aliases=["prepared-complete":"prepared-root","compound-result":"compound-root","operation-after-refinement":"operation-superseded"]
-        let directory=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/mission-dependency-source/")
-        if name=="catalog-promoted" {
-            // Synthetic catalog replay for native recovery tests, derived from its actual paired root packet.
-            let p=try AdvisoryWire.object(fixture("prepared-complete"))["package"] as! [String:Any],source=p["source"] as! [String:Any],definition=p["definition"] as! [String:Any]
-            let candidate=p["candidate"] as! [String:Any]
-            let item:[String:Any]=["object_id":source["object_id"]!,"conversation_id":source["conversation_id"]!,"revision":source["revision"]!,"conversation_revision":source["conversation_revision"]!,"definition_digest":try AdvisoryWire.digest(definition),"definition":definition,"source_turn_id":source["turn_id"]!,"context_revision":source["context_revision"]!,"title":definition["title"]!,"summary":definition["expected_result"]!,"state":"APPROVED_WAITING","approval_supported":false,"blockers":["EXPLICIT_WORKSET_RELEASE_REQUIRED"],"questions":[],"parent_id":NSNull(),"group_id":NSNull(),"labels":[],"edges":[],"candidate_id":candidate["id"]!,"mission_id":"MISSION-0006"]
-            let scope=Dictionary(uniqueKeysWithValues:["instance_id","project_id","repository_id"].map { ($0,source[$0]!) })
-            return try JSONSerialization.data(withJSONObject:["contract_version":MissionConceptWire.contract,"items":[item],"next_cursor":NSNull(),"snapshot_revision":try AdvisoryWire.digest([item]),"scope":scope,"population":"AUTHORIZED_ADMITTED_CONCEPTS_ONLY","complete_portfolio":false,"read_only":true,"additional_model_calls":0])
-        }
+        let aliases=["prepared-complete":"natural-prepared-complete","prepared-incomplete":"natural-prepared-incomplete","compound-result":"natural-compound-result","operation-current":"natural-operation-current","operation-after-refinement":"natural-operation-superseded"]
+        let directory=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/mission-installed-481b2f6/")
+        if name=="catalog-promoted" { return try Data(contentsOf:directory.appendingPathComponent("natural-catalog-promoted.json")) }
         return try Data(contentsOf:directory.appendingPathComponent((aliases[name] ?? name)+".json"))
     }
     func access() throws -> (AdvisoryAccess,String) {
@@ -50,4 +43,17 @@ final class MissionApprovalWireTests:XCTestCase {
         candidate["title"]="Unseen scope";pkg["candidate"]=candidate;packet["package"]=pkg
         XCTAssertThrowsError(try MissionApprovalWire.prepared(JSONSerialization.data(withJSONObject:packet),access:a,conversation:c))
     }
+    func testActualInstalledLogicalReadyAndHeldAreNotPhysicalExecutionReady() throws {
+        let directory=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/mission-installed-481b2f6/")
+        let prepared=try AdvisoryWire.object(Data(contentsOf:directory.appendingPathComponent("readiness-prepared-complete.json"))),p=prepared["package"] as! [String:Any],source=p["source"] as! [String:Any],authority=p["authority"] as! [String:Any]
+        let c=source["conversation_id"] as! String
+        let a=AdvisoryAccess(endpoint:"http://127.0.0.1:12345/",workspaceInstanceID:String(repeating:"a",count:32),workspaceProjectID:"own",actorID:(authority["principal_reference"] as! String).components(separatedBy:":").last!,forgeInstanceID:source["instance_id"] as! String,forgeProjectID:source["project_id"] as! String,repositoryID:source["repository_id"] as! String,conversationIDs:[c],token:String(repeating:"C",count:43))
+        let ready=try MissionApprovalWire.compound(Data(contentsOf:directory.appendingPathComponent("readiness-operation-ready.json")),access:a,conversation:c)
+        XCTAssertEqual(ready.presentationState,"READY_FOR_GOVERNED_ACTIVATION")
+        XCTAssertFalse(try XCTUnwrap(ready.readiness).execution_ready)
+        let held=try MissionApprovalWire.compound(Data(contentsOf:directory.appendingPathComponent("readiness-operation-held.json")),access:a,conversation:c)
+        XCTAssertEqual(held.presentationState,"APPROVED_WAITING")
+        XCTAssertTrue(try XCTUnwrap(held.readiness).blockers.contains("WORKSET_HELD"))
+    }
+
 }

@@ -21,6 +21,10 @@ struct MissionDefinitionCard: Identifiable, Equatable, Codable {
     var risks: [String]? = nil
     var remainingDecisions: [String]? = nil
     var blockers:[String]? = nil
+    var components:[String]? = nil
+    var suggestedResults:[MissionSuggestedResult]? = nil
+    var canonicalHistory:[MissionCanonicalHistory]? = nil
+    var physicalExecutionReady:Bool? = nil
 }
 
 struct MissionRelation: Equatable, Codable {
@@ -28,6 +32,7 @@ struct MissionRelation: Equatable, Codable {
     let dependent: String
     let reason: String
     let proposed: Bool
+    var sourceRevision:Int? = nil
 }
 
 struct MissionChatLine: Identifiable, Equatable, Codable {

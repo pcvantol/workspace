@@ -6,6 +6,7 @@ import SwiftUI
     @Published var newDraft=false
     @Published var ownConversationID:String?
     @Published var sceneID=0
+    @Published var draftMessage=""
 }
 
 struct LiveMissionWorkspaceView: View {
@@ -45,10 +46,10 @@ struct LiveMissionWorkspaceView: View {
             MissionWorkspaceView(observation:presentation,
 
                 canRefine:state.capability != nil && !state.busy && state.pending == nil,canApprove:!selection.newDraft && state.packet?.packageData != nil && !state.busy && state.pending == nil && state.approval?.state != "COMPLETE",
-                selectedID:selection.newDraft ? nil:state.items.first(where: { $0.conversation_id==activeConversationID })?.object_id,
+                selectedID:selection.newDraft ? nil:state.items.first(where: { $0.conversation_id==activeConversationID })?.object_id,draftMessage:selection.draftMessage,
                 onRefine:{ text,lens,card in Task { await refine(text,lens:lens,card:card) } },
                 onApprove:{ card in Task { await state.approve(card,connection:await connection()) } },
-                onSelect:{ card in Task { await prepare(card) } }).id(selection.sceneID)
+                onSelect:{ card in Task { await prepare(card) } },onSeparate:{ result,card in prepareSeparate(result,from:card) }).id(selection.sceneID)
         }
         .onChange(of:[client.savedEndpoint,client.savedInstance,conversations.projectID,conversations.observedActorID ?? ""]) { _, _ in
             activeConversationID=nil;selection.ownConversationID=nil;state.invalidate()
@@ -62,7 +63,13 @@ struct LiveMissionWorkspaceView: View {
     }
     func beginNewMission() {
         guard !state.busy,state.pending==nil,state.capability?.workspace_reference_resolution_supported==true,!conversations.dirty else { return }
-        selection.newDraft=true;selection.ownConversationID=nil;activeConversationID=nil;selection.sceneID &+= 1
+        selection.newDraft=true;selection.draftMessage="";selection.ownConversationID=nil;activeConversationID=nil;selection.sceneID &+= 1
+    }
+    func prepareSeparate(_ result:MissionSuggestedResult,from card:MissionDefinitionCard) {
+        guard state.items.contains(where: { $0.object_id==card.id && $0.revision==card.revision && $0.definition.possible_subresults.contains(result) }),
+              !state.busy,state.pending==nil,state.capability?.workspace_reference_resolution_supported==true,!conversations.dirty else { return }
+        beginNewMission()
+        selection.draftMessage=copy("separatePrompt")+"\n"+result.title+"\n"+result.expected_result+"\n"+result.acceptance_criteria.joined(separator:"\n")
     }
     func connection() async -> AdvisoryConnection? {
         guard let own=await conversations.missionWorkspaceConnection(client:client) else { return nil }
@@ -107,7 +114,7 @@ struct LiveMissionWorkspaceView: View {
             activeConversationID=source.conversationID
             await state.refresh(source)
             await state.refine(text,lens:lens,connection:source)
-            if state.pending==nil,!state.history.isEmpty { selection.newDraft=false;selection.sceneID &+= 1 }
+            if state.pending==nil,!state.history.isEmpty { selection.newDraft=false;selection.draftMessage="";selection.sceneID &+= 1 }
             return
         }
         if let card {

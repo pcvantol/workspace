@@ -1,0 +1,79 @@
+{
+  "additional_model_calls": 0,
+  "complete_portfolio": false,
+  "contract_version": "forge-chat-first-mission/v1",
+  "items": [
+    {
+      "approval_supported": false,
+      "blockers": [],
+      "candidate_id": "concept-candidate-1cacf05ccb078f6a4ff7fcf8313318a8",
+      "canonical_history": [
+        {
+          "candidate_id": "concept-candidate-1cacf05ccb078f6a4ff7fcf8313318a8",
+          "definition_revision": 1,
+          "mission_id": "MISSION-0006",
+          "mission_status": "APPROVED_PLANNABLE",
+          "operation_id": "approve-recovery",
+          "subject_current": true,
+          "subject_revision": "sha256:1dbb64cdc32e46c50655e064dfd58c486506ab0326aa366dce58a3f74eb77ade"
+        }
+      ],
+      "context_revision": "sha256:2a8179ad08418d96b8639a639d191a7755f0c1e5960c57597243702e1f2d0dde",
+      "conversation_id": "recovery-chat",
+      "conversation_revision": 3,
+      "definition": {
+        "acceptance_criteria": [
+          "Clients see only invoices belonging to their account."
+        ],
+        "architecture_choices": [],
+        "business_value": "Clients can track their payments.",
+        "change_summary": "Initial proposed definition.",
+        "components": [
+          "Invoice views",
+          "Payment views"
+        ],
+        "dependencies": [],
+        "dependency_reasons": {},
+        "exclusions": [
+          "Payment execution"
+        ],
+        "expected_result": "A portal with current invoice status.",
+        "objective": "Show invoices and payments.",
+        "possible_subresults": [],
+        "questions": [],
+        "risks": [
+          "Account isolation must be verified."
+        ],
+        "scope": [
+          "Invoice and payment views"
+        ],
+        "title": "Client portal",
+        "work_kind": "BUILD"
+      },
+      "definition_digest": "sha256:edb7a8785f4e5ca69c231232fa5209bdc55b19f5b6bb998d68ed46d32bb055f5",
+      "edges": [],
+      "group_id": null,
+      "labels": [
+        "Implementation"
+      ],
+      "mission_id": "MISSION-0006",
+      "object_id": "concept-181d4d74551a60c8b49aa3f81b8c570b",
+      "parent_id": null,
+      "questions": [],
+      "revision": 1,
+      "source_turn_id": "recovery-turn",
+      "state": "READY_FOR_GOVERNED_ACTIVATION",
+      "summary": "A portal with current invoice status.",
+      "title": "Client portal"
+    }
+  ],
+  "next_cursor": null,
+  "population": "AUTHORIZED_ADMITTED_CONCEPTS_ONLY",
+  "read_only": true,
+  "scope": {
+    "instance_id": "forge-runtime-3089a799-b44c-4e72-8bcc-5f0df68a0e63",
+    "project_id": "isolated-project",
+    "repository_id": "synthetic-repository"
+  },
+  "snapshot_revision": "sha256:31f505940a29a1419135df2e81adcb75c3cc4d2e49bddc3992960430a7b16cd4"
+}

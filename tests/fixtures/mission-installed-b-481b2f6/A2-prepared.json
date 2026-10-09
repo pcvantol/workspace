@@ -1,0 +1,289 @@
+{
+  "additional_model_calls": 0,
+  "approval_supported": true,
+  "contract_version": "forge-chat-first-mission/v1",
+  "definition": {
+    "acceptance_criteria": [
+      "Clients see only invoices belonging to their account."
+    ],
+    "architecture_choices": [],
+    "business_value": "Clients can track their payments.",
+    "change_summary": "Clarify account access recovery.",
+    "components": [
+      "Account isolation"
+    ],
+    "dependencies": [],
+    "dependency_reasons": {},
+    "exclusions": [
+      "Payment execution"
+    ],
+    "expected_result": "Isolated account access with understandable recovery after errors.",
+    "objective": "Build isolated account access for the client portal.",
+    "possible_subresults": [],
+    "questions": [],
+    "risks": [
+      "Account isolation must be verified."
+    ],
+    "scope": [
+      "Account isolation"
+    ],
+    "title": "Account foundation",
+    "work_kind": "BUILD"
+  },
+  "object_id": "concept-358b05d68d26f62990a4371ee44b1c33",
+  "package": {
+    "actions_predefined": false,
+    "authority": {
+      "configuration_digest": "sha256:23973811d8fe4d849f10379a448a2758459adf890ea96547eb4bb4c6c0e12e4c",
+      "maximum_missions": 2,
+      "principal_reference": "forge-runtime-25d2ae77-b2d7-47d1-86f9-d88ba9090354:606a849359f4df4c",
+      "profile_id": "solo",
+      "signer": {
+        "installation_id": "c274cb3a-1b14-4064-a01e-d5334351f476",
+        "operator_binding_version": 1,
+        "operator_id": "606a849359f4df4c"
+      }
+    },
+    "candidate": {
+      "acceptance_criteria": [
+        "Clients see only invoices belonging to their account."
+      ],
+      "architecture_constraints": [
+        "COMPONENT: Account isolation: Isolate client account access to portal records.",
+        "EXCLUDED: Payment execution",
+        "EXPECTED RESULT: Isolated account access with understandable recovery after errors.",
+        "IN SCOPE: Account isolation",
+        "Preserve existing public contracts and account isolation."
+      ],
+      "dependencies": [],
+      "effect_policy": {
+        "contract_version": "1.0",
+        "delivery": "GIT",
+        "mode": "BOUNDED_REPOSITORY_CHANGE",
+        "read_paths": [
+          "src/accounts/access.py",
+          "tests/test_accounts.py"
+        ],
+        "write_paths": [
+          "src/accounts/access.py",
+          "tests/test_accounts.py"
+        ]
+      },
+      "id": "concept-candidate-13c4327d1a84b72b7335bdb612b85ede",
+      "objective": "Build isolated account access for the client portal.",
+      "recommendation_id": "concept-recommendation-13c4327d1a84b72b7335bdb612b85ede",
+      "scope": [
+        "synthetic-repository"
+      ],
+      "title": "Account foundation"
+    },
+    "consequences": {
+      "exclusions": [
+        "Payment execution"
+      ],
+      "human_gates": [
+        "Explicit owner approval of the complete frozen definition."
+      ],
+      "repository_effect": {
+        "contract_version": "1.0",
+        "delivery": "GIT",
+        "mode": "BOUNDED_REPOSITORY_CHANGE",
+        "read_paths": [
+          "src/accounts/access.py",
+          "tests/test_accounts.py"
+        ],
+        "write_paths": [
+          "src/accounts/access.py",
+          "tests/test_accounts.py"
+        ]
+      },
+      "risks": [
+        "Account isolation must be verified."
+      ]
+    },
+    "contract_version": "forge-chat-first-mission/v1",
+    "decision_effects": [
+      "REGISTER_CANDIDATE",
+      "BUSINESS_APPROVAL",
+      "ARCHITECTURE_APPROVAL",
+      "GOVERNED_INTAKE"
+    ],
+    "definition": {
+      "acceptance_criteria": [
+        "Clients see only invoices belonging to their account."
+      ],
+      "architecture_choices": [],
+      "business_value": "Clients can track their payments.",
+      "change_summary": "Clarify account access recovery.",
+      "components": [
+        "Account isolation"
+      ],
+      "dependencies": [],
+      "dependency_reasons": {},
+      "exclusions": [
+        "Payment execution"
+      ],
+      "expected_result": "Isolated account access with understandable recovery after errors.",
+      "objective": "Build isolated account access for the client portal.",
+      "possible_subresults": [],
+      "questions": [],
+      "risks": [
+        "Account isolation must be verified."
+      ],
+      "scope": [
+        "Account isolation"
+      ],
+      "title": "Account foundation",
+      "work_kind": "BUILD"
+    },
+    "dependency_bindings": [],
+    "execution_started": false,
+    "mission_preview": {
+      "acceptance_criteria": [
+        "Clients see only invoices belonging to their account."
+      ],
+      "architecture_review_reference": "candidate-architecture-cd442dc80b2f700a69def24e",
+      "business_objective": "Build isolated account access for the client portal.",
+      "business_value": "Clients can track their payments.",
+      "candidate_id": "concept-candidate-13c4327d1a84b72b7335bdb612b85ede",
+      "criterion_assessment_contracts": [
+        {
+          "criterion": "Clients see only invoices belonging to their account.",
+          "requirements": [
+            {
+              "kind": "effect_report",
+              "requirement_id": "criterion-aaa1aa0c6cf6d03a9a74805710e16b0d"
+            }
+          ],
+          "schema_version": "1.0",
+          "validity_policy": "current_revision"
+        }
+      ],
+      "dependencies": [],
+      "effect_policy": {
+        "contract_version": "1.0",
+        "delivery": "GIT",
+        "mode": "BOUNDED_REPOSITORY_CHANGE",
+        "read_paths": [
+          "src/accounts/access.py",
+          "tests/test_accounts.py"
+        ],
+        "write_paths": [
+          "src/accounts/access.py",
+          "tests/test_accounts.py"
+        ]
+      },
+      "engineering_constraints": [
+        "COMPONENT: Account isolation: Isolate client account access to portal records.",
+        "EXCLUDED: Payment execution",
+        "EXPECTED RESULT: Isolated account access with understandable recovery after errors.",
+        "IN SCOPE: Account isolation",
+        "Preserve existing public contracts and account isolation."
+      ],
+      "id": "MISSION-PREVIEW",
+      "maximum_actions": 4,
+      "maximum_consecutive_no_progress_actions": 2,
+      "mission_recommendation_reference": "concept-recommendation-13c4327d1a84b72b7335bdb612b85ede",
+      "repository_evidence_source": {
+        "github_repository": "synthetic-owner/synthetic-repository",
+        "repository_id": "synthetic-repository"
+      },
+      "required_capabilities": [
+        "bounded_repository_change"
+      ],
+      "required_disciplines": [
+        "engineering",
+        "security"
+      ],
+      "risks": [
+        "Account isolation must be verified."
+      ],
+      "schema_version": "1.0",
+      "scope": [
+        "synthetic-repository"
+      ],
+      "status": "approved_for_engineering",
+      "summary": "Build isolated account access for the client portal.",
+      "technical_assumptions": [
+        "Use the configured repository and existing authentication."
+      ],
+      "title": "Account foundation"
+    },
+    "planning": {
+      "context_input_bound": 40000,
+      "context_output_bound": 8000,
+      "criterion_assessment_contracts": [
+        {
+          "criterion": "Clients see only invoices belonging to their account.",
+          "requirements": [
+            {
+              "kind": "effect_report",
+              "requirement_id": "criterion-aaa1aa0c6cf6d03a9a74805710e16b0d"
+            }
+          ],
+          "schema_version": "1.0",
+          "validity_policy": "current_revision"
+        }
+      ],
+      "dependencies": [],
+      "effect_policy": {
+        "contract_version": "1.0",
+        "delivery": "GIT",
+        "mode": "BOUNDED_REPOSITORY_CHANGE",
+        "read_paths": [
+          "src/accounts/access.py",
+          "tests/test_accounts.py"
+        ],
+        "write_paths": [
+          "src/accounts/access.py",
+          "tests/test_accounts.py"
+        ]
+      },
+      "human_gates": [
+        "Explicit owner approval of the complete frozen definition."
+      ],
+      "maximum_actions": 4,
+      "maximum_consecutive_no_progress_actions": 2,
+      "mission_spec_digest": "sha256:0353a4946a9ae78a66c54fb8e40605926f40c59f53c344483b82d2e371059c25",
+      "non_goals": [
+        "Payment execution"
+      ],
+      "provenance_revision": "sha256:b731c88af9860978ac965e99dd02b758b5fba150e084e41688038aa22b8ad3d6",
+      "repository_evidence_source": {
+        "github_repository": "synthetic-owner/synthetic-repository",
+        "repository_id": "synthetic-repository"
+      },
+      "risk_inputs": [
+        "Account isolation must be verified."
+      ],
+      "scope": [
+        "synthetic-repository"
+      ],
+      "write_scopes": [
+        "src/accounts/access.py",
+        "tests/test_accounts.py"
+      ]
+    },
+    "source": {
+      "context_revision": "sha256:ff8b4fa5b259f82c956cd54a32a182424bafb3a7f930d0aa2ce54c6439c5c278",
+      "conversation_id": "foundation",
+      "conversation_revision": 6,
+      "instance_id": "forge-runtime-25d2ae77-b2d7-47d1-86f9-d88ba9090354",
+      "invocation_id": "advice-invocation-5d42234cdf8f4f9298bee2cf1b13b017",
+      "object_id": "concept-358b05d68d26f62990a4371ee44b1c33",
+      "project_id": "isolated-project",
+      "repository_id": "synthetic-repository",
+      "request_digest": "sha256:a927f30c539aab59289b3cd9ff0abcd58250715a3ac4e679581fb58c2e1f6d90",
+      "result_digest": "sha256:d48f75562b2fbdcce4022296b993414dd70f88f33eff30486ff9ab2c068b700e",
+      "revision": 2,
+      "session_id": "advice-session-71a409e7ca4c46928284d578111cff9d",
+      "turn_id": "refine-foundation"
+    },
+    "subject_revision": "sha256:b731c88af9860978ac965e99dd02b758b5fba150e084e41688038aa22b8ad3d6",
+    "trusted_profile_digest": "sha256:36bf2b6ace8ff0c0ae6f7495333c0277b225c69c9241ab195724f5d65d17dd7e"
+  },
+  "package_digest": "sha256:6712669bc1e895005511a81c609a913e91cb1098459e774e7989e330f071dc52",
+  "questions": [],
+  "read_only": true,
+  "revision": 2
+}
