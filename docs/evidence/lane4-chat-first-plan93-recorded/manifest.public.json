@@ -1,0 +1,30 @@
+{
+  "boundary": "SOURCE_GUI_RECORDED_CONSEQUENCES_NOT_FINAL_MAIN_UX_PENDING",
+  "source": "c5a5054d0a4be62048fc397c68345c37ff465625",
+  "tree": "e300f37dac1296357e190b77549dd22a38ccb3c5",
+  "version": "2.8.13",
+  "producer": "Forge2.11.0/1b00c735930013e668f23286c56c5432be69e7c8",
+  "locale": "nl",
+  "theme": "Aqua",
+  "viewport": [
+    1440,
+    850
+  ],
+  "actual": "Original frozen repository consequences and approval conditions visible; current dependency/release/physical-readiness blockers remain separate. Graph and New Mission genuinely clicked.",
+  "additional_generation": 0,
+  "new_grants": 0,
+  "budget_reset": false,
+  "app_files_sha256": {
+    "Contents/Info.plist": "4a5d3c86b559e468ed9b6d63e1de7405aa813fa9ee91d6dad82d90c0a0d6f9df",
+    "Contents/_CodeSignature/CodeResources": "6686de10a28a2fe11b36cbb86dcbacc827cfc4ea116b4dabf1845e5aee629e9b",
+    "Contents/MacOS/WorkspaceClient": "5f48776d0c64808c84fecb6d57d32642bf957e9fe0f9f3fd061400ca8fbcfbb0"
+  },
+  "files_sha256": {
+    "restored-consequences-light.png": "2d0ac21e054d65ab17820ab98ba4591400a6d51b758be7bec9c52bf0701a0550",
+    "graph-light-wide.png": "6da4ceef427708265acdd77ea27b86b743cdb9008aeb8a29690e1e1c700a1aa3",
+    "restored-consequences-light.ax.txt": "4125c7741fb02ab7bcf929bd00dc8c2463941d93df79af3228a7e844274130f1",
+    "security-c5a5054.md": "99a26c1518d2ccc61d182ecf497f8bf13a965c3dbfa05d9c00604fffbf557b2b",
+    "quality-c5a5054.md": "a74ad1f97d3ebf237b1dbd00ac6cd7f705bb42caefacb36b72e4494ce8940121",
+    "new-mission-light.png": "4690204e7706f0a9511aba4f9cc23ae8ee07db01b27c6355cdea0cad7570de62"
+  }
+}
