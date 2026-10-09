@@ -59,6 +59,7 @@ final class ConversationState: ObservableObject {
     let advisory: AdvisoryState
     let candidates: CandidateState
     let missionConcepts: MissionConceptState
+    let missionSelection=MissionWorkspaceSelection()
 
     private let grants: DraftGrantWorker
     private let localDrafts: LocalDraftWorker

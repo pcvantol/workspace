@@ -116,3 +116,14 @@ This validates the implementation checkpoint only. TDE observation is NOT_RUN
 for this checkpoint; historical policyFAIL is preserved. Complete product
 journey, final independent reviews/protected/finalization/new installed proof
 remain OPEN as stated above.
+
+Follow-on native selection fix: the existing ConversationState now owns the
+observable presentation-only mission selection. It survives View reconstruction
+and async callbacks without uninstalled State access, denies an unknown selected
+conversation and clears on disconnect. Full `bash scripts/validate.sh` PASSED
+again (146native+1isolated/allruntime/package gates). Live root108/125=86.40%,
+ConversationState729/812=89.78%; log
+`/private/tmp/lane4-plan93-scoped-selection-full-validation.log`.
+This is still the schema414822dc consumer checkpoint; later producer schema
+changes must be explicitly admitted with fresh actual packets, preserving the
+older source/schema evidence. No final installed/product acceptance follows.

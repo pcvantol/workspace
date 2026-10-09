@@ -56,6 +56,10 @@ final class LiveMissionWorkspaceTests:XCTestCase {
         let observed=await view.connection();XCTAssertEqual(observed,c.replacingBearer("synthetic-root"))
         let card=try XCTUnwrap(mission.presentation(project:"Own project")?.cards.first)
         await view.prepare(card);XCTAssertTrue(mission.canApprove(card))
+        XCTAssertEqual(conversations.missionSelection.conversationID,peer.conversation)
+        conversations.missionSelection.conversationID="foreign"
+        let refused=await view.connection();XCTAssertNil(refused)
+        conversations.missionSelection.conversationID=peer.conversation
         let host=NSHostingView(rootView:view.environment(\.locale,Locale(identifier:"nl")))
         host.frame=NSRect(x:0,y:0,width:1280,height:720);host.layoutSubtreeIfNeeded()
         XCTAssertGreaterThan(host.fittingSize.height,0)
@@ -65,6 +69,7 @@ final class LiveMissionWorkspaceTests:XCTestCase {
         XCTAssertTrue(peer.requests.allSatisfy { $0.httpMethod=="GET" })
         XCTAssertTrue(ownCalls.contains("/v1/conversations"))
         client.forget();await view.refresh()
+        XCTAssertNil(conversations.missionSelection.conversationID)
         XCTAssertNil(mission.presentation(project:"No leak"));let cleared=await view.connection();XCTAssertNil(cleared)
     }
 }

@@ -1,13 +1,22 @@
 import SwiftUI
 
+// Presentation selection only; it carries no grant or planning authority.
+@MainActor final class MissionWorkspaceSelection: ObservableObject {
+    @Published var conversationID:String?
+}
+
 struct LiveMissionWorkspaceView: View {
     @ObservedObject var client: ClientState
     @ObservedObject var conversations: ConversationState
     @ObservedObject var state: MissionConceptState
     @Environment(\.locale) private var locale
-    @State private var activeConversationID:String?
+    @ObservedObject private var selection:MissionWorkspaceSelection
+    private var activeConversationID:String? {
+        get { selection.conversationID }
+        nonmutating set { selection.conversationID=newValue }
+    }
     init(client:ClientState,conversations:ConversationState) {
-        self.client=client;self.conversations=conversations;self.state=conversations.missionConcepts
+        self.client=client;self.conversations=conversations;self.state=conversations.missionConcepts;self.selection=conversations.missionSelection
     }
     private var scope:[String] { [client.savedEndpoint,client.savedInstance,client.phase,conversations.projectID,conversations.selectedConversation?.actor_id ?? ""] }
     private func copy(_ key:String)->String { MissionWorkspaceCopy.text(key,language:locale.language.languageCode?.identifier ?? "en") }
@@ -46,7 +55,7 @@ struct LiveMissionWorkspaceView: View {
             workspaceProjectID:base.workspaceProjectID,conversationID:activeConversationID,bearer:base.bearer,draftGrant:base.draftGrant)
     }
     func refresh() async {
-        guard client.phase=="CONNECTED" else { state.invalidate();return }
+        guard client.phase=="CONNECTED" else { activeConversationID=nil;state.invalidate();return }
         await conversations.prepare(client:client)
         await state.refresh(await connection())
     }
