@@ -308,7 +308,7 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual(set(operations), set(OPERATIONS))
         http_routes = {operation["path"] for operation in operations.values()
                        if operation["exposure"] == "HTTP_EXPOSED" and
-                       not operation["id"].startswith(("conversations.", "reviews.", "worksets.", "workset-controls.", "advisory.", "candidate."))}
+                       not operation["id"].startswith(("conversations.", "reviews.", "worksets.", "workset-controls.", "advisory.", "candidate.", "mission-concepts."))}
         self.assertEqual(http_routes, set(ROUTES))
         self.assertEqual(operations["projects.read"]["local_cli"], "projects")
         self.assertEqual(operations["capabilities.read"]["local_cli"], "capabilities")
@@ -316,7 +316,7 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual({api["paths"][path]["get"]["operationId"] for path in http_routes},
                          {operation["id"] for operation in operations.values()
                           if operation["exposure"] == "HTTP_EXPOSED" and
-                          not operation["id"].startswith(("conversations.", "reviews.", "worksets.", "workset-controls.", "advisory.", "candidate."))})
+                          not operation["id"].startswith(("conversations.", "reviews.", "worksets.", "workset-controls.", "advisory.", "candidate.", "mission-concepts."))})
         self.assertEqual({operation["id"] for operation in operations.values()
                           if operation["exposure"] == "LOCAL_ONLY_ADMIN"},
                          {"instance.init", "instance.inspect", "forge.read.configure", "server.serve",

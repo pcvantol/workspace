@@ -14,6 +14,8 @@ from . import advisory_contract as wire
 
 class AdvisoryTransport(WorklistReadTransport):
     scope_field='conversation_ids'
+    wire=wire
+    prefix='/v1/advisory'
     def __init__(self,root,root_fd,conversations):
         super().__init__(root,root_fd,namespace='advisory');self.conversations=conversations
 
@@ -60,29 +62,29 @@ class AdvisoryTransport(WorklistReadTransport):
 
     def capability(self,b,selections):
         if not isinstance(selections,list) or len(selections)>2:raise WorklistError('INVALID_REQUEST')
-        for s in selections:wire.validate(s,'source')
+        for s in selections:self.wire.validate(s,'source')
         query=urlencode([pair for s in selections for pair in [('source_id',s['source_id']),('source_version',s['version'])]])
-        return wire.response(self._read(b,'/v1/advisory/capability'+('?' + query if query else '')),'capability',b)
+        return self.wire.response(self._read(b,self.prefix+'/capability'+('?' + query if query else '')),'capability',b)
 
     def history(self,b,c,cursor,limit):
         if type(cursor) is not int or not 0<=cursor<=8 or type(limit) is not int or not 1<=limit<=4:raise WorklistError('INVALID_REQUEST')
-        return wire.response(self._read(b,f'/v1/advisory/{c}?cursor={cursor}&limit={limit}'),'history',b,c)
+        return self.wire.response(self._read(b,f'{self.prefix}/{c}?cursor={cursor}&limit={limit}'),'history',b,c)
 
     def turn(self,b,c,t):
         if not _id(t):raise WorklistError('INVALID_REQUEST')
-        v=wire.response(self._read(b,f'/v1/advisory/{c}/turns/{t}'),'turn',b,c)
+        v=self.wire.response(self._read(b,f'{self.prefix}/{c}/turns/{t}'),'turn',b,c)
         if v['original_turn']['request']['turn_id']!=t:raise WorklistError('INVALID_RESPONSE')
         return v
 
     def submit(self,b,c,body,*,authority):
-        wire.request(body,b,c)
-        return self._write(b,f'/v1/advisory/{c}/turns',body,'submit',c,body,authority=authority)
+        self.wire.request(body,b,c)
+        return self._write(b,f'{self.prefix}/{c}/turns',body,'submit',c,body,authority=authority)
 
     def cancel(self,b,c,t,body,*,authority):
         if not _id(t):raise WorklistError('INVALID_REQUEST')
-        try:wire.validate(body,'cancel_request')
+        try:self.wire.validate(body,'cancel_request')
         except WorklistError:raise WorklistError('INVALID_REQUEST') from None
-        v=self._write(b,f'/v1/advisory/{c}/turns/{t}/cancel',body,'cancel',c,authority=authority)
+        v=self._write(b,f'{self.prefix}/{c}/turns/{t}/cancel',body,'cancel',c,authority=authority)
         if v['original_turn']['request']['turn_id']!=t or v['original_turn']['request_digest']!=body['request_digest']:raise WorklistError('INVALID_RESPONSE')
         return v
 
@@ -97,14 +99,14 @@ class AdvisoryTransport(WorklistReadTransport):
         finally:os.close(fd)
 
     def _write(self,b,path,body,kind,c,expected=None,*,authority):
-        raw=control_request(b,'POST',path,body,gate=self._forward_gate(b,authority))
+        raw=control_request(b,'POST',path,body,gate=self._forward_gate(b,authority),error_validator=self.wire.validate)
         if b not in self._bindings():raise WorklistError('DENIED')
-        return wire.response(raw,kind,b,c,expected)
+        return self.wire.response(raw,kind,b,c,expected)
 
     def _read(self,b,path):
         # Provision probes are owner-attested but not yet registered. Every
         # registered binding is fenced both when forwarding and after waiting.
         registered='client_digest' in b
-        raw=control_request(b,'GET',path,gate=self._forward_gate(b) if registered else None)
+        raw=control_request(b,'GET',path,gate=self._forward_gate(b) if registered else None,error_validator=self.wire.validate)
         if registered and b not in self._bindings():raise WorklistError('DENIED')
         return raw

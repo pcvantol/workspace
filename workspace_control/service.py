@@ -271,11 +271,13 @@ class Service:
             from .worklist_control_peer import WorklistControlTransport
             from .advisory_peer import AdvisoryTransport
             from .candidate_peer import CandidateTransport
+            from .mission_peer import MissionConceptTransport
             self.conversations = ConversationStore(self.root, self._root_fd)
             self.reviews = ReviewTransport(self.root, self._root_fd)
             self.worklists = WorklistReadTransport(self.root, self._root_fd)
             self.worklist_controls = WorklistControlTransport(self.root, self._root_fd)
             self.advisory = AdvisoryTransport(self.root, self._root_fd, self.conversations)
+            self.mission_concepts = MissionConceptTransport(self.root, self._root_fd, self.conversations)
             self.candidates = CandidateTransport(self.root, self._root_fd, self.conversations)
         except Exception:
             self.close()

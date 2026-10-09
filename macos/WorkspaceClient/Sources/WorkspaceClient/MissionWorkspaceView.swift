@@ -6,6 +6,7 @@ struct MissionWorkspaceView: View {
     let canApprove: Bool
     let onRefine: (String, String, MissionDefinitionCard?) -> Void
     let onApprove: (MissionDefinitionCard) -> Void
+    let onSelect:(MissionDefinitionCard)->Void
     @State private var selection: String?
     @State private var search = ""
     @State private var statusFilter = ""
@@ -20,9 +21,9 @@ struct MissionWorkspaceView: View {
 
     init(observation: MissionWorkspaceObservation?, canRefine: Bool, canApprove: Bool,
          selectedID: String? = nil, activePanel: String = "chat", showGraph: Bool = false,
-         onRefine: @escaping (String, String, MissionDefinitionCard?) -> Void, onApprove: @escaping (MissionDefinitionCard) -> Void) {
+         onRefine: @escaping (String, String, MissionDefinitionCard?) -> Void, onApprove: @escaping (MissionDefinitionCard) -> Void, onSelect:@escaping(MissionDefinitionCard)->Void = { _ in }) {
         self.observation = observation; self.canRefine = canRefine; self.canApprove = canApprove
-        self.onRefine = onRefine; self.onApprove = onApprove
+        self.onRefine = onRefine; self.onApprove = onApprove;self.onSelect=onSelect
         _selection = State(initialValue: observation?.selected(selectedID)?.id)
         _panel = State(initialValue: ["overview", "chat", "definition"].contains(activePanel) ? activePanel : "chat")
         _graph = State(initialValue: showGraph)
@@ -88,10 +89,10 @@ struct MissionWorkspaceView: View {
                         VStack(alignment: .leading, spacing: 14) {
                             let cards = observation.matching(search: search, status: statusFilter.isEmpty ? nil : statusFilter)
                             ForEach(Array(Set(cards.map(\.group))).sorted(), id: \.self) { group in
-                                DisclosureGroup(group) {
+                                DisclosureGroup(group.isEmpty ? copy("concepts") : group) {
                                     ForEach(cards.filter { $0.group == group }) { item in
                                         VStack(alignment: .leading, spacing: 6) {
-                                            Button { selection = item.id; panel = "definition" } label: {
+                                            Button { selection = item.id; panel = "definition";onSelect(item) } label: {
                                                 VStack(alignment: .leading, spacing: 4) {
                                                     Text(item.title).font(.headline)
                                                     Text(item.value).font(.caption).foregroundStyle(.secondary)
@@ -202,7 +203,7 @@ struct MissionWorkspaceView: View {
         VStack(alignment: .leading, spacing: 6) {
             if !lines.isEmpty {
                 Text(copy(key)).font(.subheadline.bold())
-                ForEach(Array(lines.enumerated()), id: \.offset) { _, line in Text(line).textSelection(.enabled) }
+                ForEach(Array(lines.enumerated()), id: \.offset) { _, line in Text(key == "consequences" ? copy(line):line).textSelection(.enabled) }
             }
         }
     }
@@ -246,7 +247,7 @@ struct MissionWorkspaceView: View {
                             }
                         }.accessibilityHidden(true)
                         ForEach(Array(observation.cards.enumerated()), id: \.element.id) { index, item in
-                            Button { selection = item.id } label: {
+                            Button { selection = item.id;onSelect(item) } label: {
                                 VStack(alignment: .leading, spacing: 6) {
                                     Text(item.title).font(.headline)
                                     Text(copy(item.status)).font(.caption)

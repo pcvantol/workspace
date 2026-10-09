@@ -1,0 +1,98 @@
+import Foundation
+
+struct MissionPreparedPacket: Sendable {
+    let data:Data
+    let packageData:Data?
+    let definition:MissionConceptDefinition
+    let revision:Int
+    let objectID:String
+    let digest:String?
+    let questions:[String]
+}
+struct MissionCompoundReadback: Sendable {
+    let data:Data
+    let frozenPackageData:Data
+    let operationID:String
+    let state:String
+    let sourceFresh:Bool
+    let currentDefinitionState:String
+    let missionID:String?
+}
+enum MissionApprovalWire {
+    static func frozen(_ raw:Any,access:AdvisoryAccess,conversation:String,expectedDigest:String?=nil) throws -> [String:Any] {
+        try MissionConceptWire.validate(raw,kind:"frozen_package")
+        let p=raw as! [String:Any],source=p["source"] as! [String:Any],authority=p["authority"] as! [String:Any]
+        try AdvisoryWire.scope(source,access:access)
+        let actualDigest=try AdvisoryWire.digest(p)
+        guard access.conversationIDs.contains(conversation),source["conversation_id"] as? String==conversation,
+              authority["principal_reference"] as? String==access.forgeInstanceID+":"+access.actorID,
+              expectedDigest == nil || actualDigest==expectedDigest else { throw AdvisoryError.denied }
+        let d=try MissionConceptWire.definition(p["definition"]!),candidate=p["candidate"] as! [String:Any],preview=p["mission_preview"] as! [String:Any]
+        let planning=p["planning"] as! [String:Any],effects=p["consequences"] as! [String:Any]
+        guard try AdvisoryWire.digest(candidate)==p["subject_revision"] as? String,
+              candidate["title"] as? String==d.title,candidate["objective"] as? String==d.objective,
+              Set(candidate["acceptance_criteria"] as! [String])==Set(d.acceptance_criteria),
+              Set(candidate["dependencies"] as! [String])==Set(d.dependencies),
+              Set(d.exclusions.map { "EXCLUDED: "+$0 }).isSubset(of:Set(candidate["architecture_constraints"] as! [String])),
+              NSDictionary(dictionary:effects["repository_effect"] as! [String:Any]).isEqual(to:candidate["effect_policy"] as! [String:Any]),
+              effects["exclusions"] as? [String]==d.exclusions,effects["risks"] as? [String]==d.risks,
+              preview["candidate_id"] as? String==candidate["id"] as? String,preview["title"] as? String==d.title,
+              preview["business_value"] as? String==d.business_value,
+              try AdvisoryWire.digest(preview)==planning["mission_spec_digest"] as? String,
+              planning["provenance_revision"] as? String==p["subject_revision"] as? String,
+              NSDictionary(dictionary:planning["effect_policy"] as! [String:Any]).isEqual(to:candidate["effect_policy"] as! [String:Any]),
+              planning["human_gates"] as? [String]==effects["human_gates"] as? [String] else { throw AdvisoryError.invalid }
+        return p
+    }
+    static func prepared(_ data:Data,access:AdvisoryAccess,conversation:String,revision:Int?=nil,expectedDefinition:MissionConceptDefinition?=nil) throws -> MissionPreparedPacket {
+        let raw=try AdvisoryWire.object(data),hasPackage = !(raw["package"] is NSNull)
+        try MissionConceptWire.validate(raw,kind:hasPackage ? "prepared_complete":"prepared_incomplete")
+        let definition=try MissionConceptWire.definition(raw["definition"]!),actualRevision=raw["revision"] as! Int
+        guard revision == nil || revision==actualRevision,expectedDefinition == nil || expectedDefinition==definition else { throw AdvisoryError.invalid }
+        var packageData:Data?
+        if hasPackage {
+            let p=try frozen(raw["package"]!,access:access,conversation:conversation,expectedDigest:raw["package_digest"] as? String)
+            let source=p["source"] as! [String:Any]
+            guard try MissionConceptWire.definition(p["definition"]!)==definition,
+                  source["revision"] as? Int==actualRevision,source["object_id"] as? String==raw["object_id"] as? String else { throw AdvisoryError.invalid }
+            packageData=try JSONSerialization.data(withJSONObject:p)
+        }
+        return .init(data:data,packageData:packageData,definition:definition,revision:actualRevision,objectID:raw["object_id"] as! String,digest:raw["package_digest"] as? String,questions:raw["questions"] as! [String])
+    }
+    static func compound(_ data:Data,access:AdvisoryAccess,conversation:String,expectedDigest:String?=nil,operation:String?=nil,frozenData:Data?=nil) throws -> MissionCompoundReadback {
+        let raw=try AdvisoryWire.object(data),isOperation=raw["frozen_package"] != nil
+        try MissionConceptWire.validate(raw,kind:isOperation ? "compound_operation":"compound_result")
+        let sourceRaw:Any
+        if isOperation { sourceRaw=raw["frozen_package"]! }
+        else { guard let frozenData else { throw AdvisoryError.invalid };sourceRaw=try AdvisoryWire.object(frozenData) }
+        let package=try frozen(sourceRaw,access:access,conversation:conversation,expectedDigest:raw["package_digest"] as? String)
+        guard expectedDigest == nil || raw["package_digest"] as? String==expectedDigest,
+              operation == nil || raw["operation_id"] as? String==operation else { throw AdvisoryError.invalid }
+        let candidate=package["candidate"] as! [String:Any],authority=package["authority"] as! [String:Any],signer=authority["signer"] as! [String:Any]
+        if let original=raw["original_registration"] as? [String:Any] {
+            guard NSDictionary(dictionary:original["candidate"] as! [String:Any]).isEqual(to:candidate),
+                  NSDictionary(dictionary:original["source"] as! [String:Any]).isEqual(to:package["source"] as! [String:Any]),
+                  original["principal_reference"] as? String==authority["principal_reference"] as? String,
+                  original["candidate_digest"] as? String == (try AdvisoryWire.digest(candidate)) else { throw AdvisoryError.invalid }
+        }
+        var decisions:[String]=[]
+        for (key,kind) in [("business_decision","BUSINESS"),("architecture_decision","ARCHITECTURE")] {
+            guard let decision=raw[key] as? [String:Any] else { continue }
+            guard decision["kind"] as? String==kind,decision["candidate_id"] as? String==candidate["id"] as? String,
+                  decision["subject_revision"] as? String==package["subject_revision"] as? String,
+                  decision["principal_reference"] as? String==authority["principal_reference"] as? String,
+                  decision["operator_id"] as? String==signer["operator_id"] as? String,
+                  decision["installation_id"] as? String==signer["installation_id"] as? String,
+                  decision["operator_binding_version"] as? Int==signer["operator_binding_version"] as? Int,
+                  try AdvisoryWire.digest(decision["canonical_decision"]!)==decision["canonical_decision_digest"] as? String,
+                  try AdvisoryWire.digest(decision["lifecycle_evidence"]!)==decision["lifecycle_evidence_digest"] as? String else { throw AdvisoryError.invalid }
+            decisions.append(decision["decision_id"] as! String)
+        }
+        let complete = !isOperation || raw["state"] as? String=="COMPLETE"
+        guard Set(decisions).count==decisions.count,raw["candidate_id"] as? String==candidate["id"] as? String,
+              !complete || (raw["original_registration"] is [String:Any] && decisions.count==2 && raw["mission_id"] is String) else { throw AdvisoryError.invalid }
+        return .init(data:data,frozenPackageData:try JSONSerialization.data(withJSONObject:package),operationID:raw["operation_id"] as! String,
+            state:complete ? "COMPLETE":"PENDING",sourceFresh:isOperation ? raw["source_fresh"] as! Bool:true,
+            currentDefinitionState:isOperation ? raw["current_definition_state"] as! String:(raw["current"] as! [String:Any])["state"] as! String,missionID:raw["mission_id"] as? String)
+    }
+}

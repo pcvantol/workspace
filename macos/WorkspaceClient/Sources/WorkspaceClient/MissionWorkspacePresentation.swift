@@ -14,7 +14,7 @@ struct MissionDefinitionCard: Identifiable, Equatable, Codable {
     let changes: [String]
     let group: String
     let labels: [String]
-    let status: String
+    var status: String
     var objective: String? = nil
     var architectureChoices: [String]? = nil
     var consequences: [String]? = nil

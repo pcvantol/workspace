@@ -69,7 +69,8 @@ struct WorkspaceApp: App {
             localDrafts: PrivateLocalDraftCache(root: URL(fileURLWithPath: document.local_root)),
             advisory: AdvisoryState(credentials: IsolatedAdvisoryCredentials(document)),
             candidates:CandidateState(credentials:IsolatedCandidateCredentials(document),
-                store:PrivateCandidateLocalStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("candidate-drafts")))))
+                store:PrivateCandidateLocalStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("candidate-drafts"))),
+            missionConcepts:MissionConceptState(credentials:IsolatedAdvisoryCredentials(document),store:PrivateMissionIntentStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("mission-intents")))))
         _reviews = StateObject(wrappedValue: MissionReviewState(credentials: IsolatedReviewGrant(document)))
         _worklists = StateObject(wrappedValue: WorklistState(credentials: IsolatedWorklistGrant(document),
             controls: WorklistControlState(credentials: IsolatedWorklistControlGrant(document))))
@@ -148,8 +149,13 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            MissionWorkspaceView(observation: missionObservation, canRefine: false, canApprove: false,
-                                 onRefine: { _, _, _ in }, onApprove: { _ in })
+            Group {
+                if let preview=missionObservation {
+                    MissionWorkspaceView(observation:preview,canRefine:false,canApprove:false,onRefine:{ _, _, _ in },onApprove:{ _ in })
+                } else {
+                    LiveMissionWorkspaceView(client:client,conversations:conversations)
+                }
+            }
                 .environment(\.nativeTabCommandsActive, selectedTab == 4)
                 .tabItem { Label(MissionWorkspaceCopy.text("missions", language: locale.language.languageCode?.identifier ?? "en"), systemImage: "bubble.left.and.text.bubble.right") }.tag(4)
             ConversationsView(client: client, state: conversations)

@@ -29,10 +29,13 @@ def _check(value, schema, definitions=None):
             return
     expected = schema.get('type')
     types = {'object': dict, 'array': list, 'string': str, 'integer': int, 'boolean': bool, 'null': type(None)}
-    if expected and type(value) is not types[expected]: raise WorklistError('INVALID_RESPONSE')
+    if isinstance(expected, list):
+        if type(value) not in [types[name] for name in expected]: raise WorklistError('INVALID_RESPONSE')
+    elif expected and type(value) is not types[expected]: raise WorklistError('INVALID_RESPONSE')
     if 'const' in schema and (type(value) is not type(schema['const']) or value != schema['const']): raise WorklistError('INVALID_RESPONSE')
     if 'enum' in schema and value not in schema['enum']: raise WorklistError('INVALID_RESPONSE')
     if isinstance(value, dict):
+        if not schema.get('minProperties', 0) <= len(value) <= schema.get('maxProperties', 256): raise WorklistError('INVALID_RESPONSE')
         props = schema.get('properties', {})
         if not set(schema.get('required', [])) <= set(value) or (schema.get('additionalProperties') is False and not set(value) <= set(props)): raise WorklistError('INVALID_RESPONSE')
         for key, item in value.items(): _check(item, props.get(key, {}), definitions)

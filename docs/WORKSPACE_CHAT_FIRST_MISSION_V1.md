@@ -55,3 +55,64 @@ readiness; denial/revoke/cycle/dependency/lost-response/restart/duplicate/curren
 and approved-revision impact. Publish sanitized reachable fresh screenshots and
 exact source/tree/wheel/app/producer/language/theme/viewport manifest. TDE policy
 separate; no signing/live EP/paid provider/login or user installation mutation.
+
+## 9 October continuation — recovery and resolver implementation
+
+Same plan93/writer/branch and unchanged protected base; primary iCloud checkout,
+closed predecessor and consumed budgets remain intact. No app/build/review writer
+was active at admission. Source HEAD remains4ec5838909de7859df5b01dea8dd2106d441be2e;
+the subsequent transport/approval/resolver changes are owning uncommitted WIP.
+
+The native path now persists the original approval intent before POST, recovers
+its exact operation through current authorized readback after a lost response,
+and rechecks completed operation currentness on refresh. APPROVED_WAITING remains
+visible; later SUPERSEDED cannot be presented as a fresh READY or new approval.
+Revocation removes protected presentation. Missing operations require explicit
+same-intent Resume. Storage failures refuse a new approval POST. Selection now
+refreshes the selected conversation before preparing the exact card; state scope
+must match preparation and approval. Existing Candidate private record mechanics
+are reused through the shared descriptor-based private store.
+
+The direct L3 JOIN supplied the closed resolve request/result, and latest actual
+source-schema preview414822dcf69ae9766e7ca60c4d03478510efb28919a10df86b382a445dde0d0d.
+Both local machine projections match these bytes; old schema/producer receipts
+remain separate. Own HTTP resolution verifies both current own Workspace
+conversation/draft records before forwarding, uses the existing draft/advisory
+authority fence, checks exact principal/project/pair/key and finite producer slot
+on response, and rechecks current authority. Native resolution keeps Workspace
+and producer references separate. A normal empty-screen journey still needs
+complete first-use/mapping integration and the final producer contract; publishing
+a resolver endpoint alone is not that journey. No provider, grant or budget reset
+is accepted from resolution.
+
+Actual evidence before the latest whole validation:146 native tests passed;
+LiveMissionWorkspaceView96/118=81.36%, MissionConceptState250/259=96.53%,
+MissionConceptTransport66/68=97.06%, MissionConceptWire128/128=100%.
+All native coverage gates passed. These are consumer tests with declared isolated
+source HTTP examples/external transport fixtures, not installed producer proof.
+Resolver own HTTP four cases passed including revocation while receiving the
+request body; nine concept/approval Python cases passed before that extra case.
+Browser owning tests pass at92.35% executable-line coverage. The first whole
+Python gate correctly failed mission_peer83/117; package/original-turn correlation
+and refusal-before-effect tests were added, without simulating canonical effects.
+Full current validation is running; no new PASS, independent final review,
+protected merge, product increment or installed/GUI acceptance is declared.
+
+Open delivery: normal first-use/new/split mission experience; actual typed
+parent/dependency/current readiness integration; genuine protected producer
+source/tree/schema/wheel pin; final exact-head Quality/Security/UX walkthrough;
+protected own lifecycle/finalization and fresh exact-main installed packaged GUI
+journey/screenshots. Source preview fixed WAITING and fixture graphs are not
+substitutes for these outcomes.
+
+The current full `bash scripts/validate.sh` subsequently PASSED on9October:
+146 native +1 isolated credential case, complete owning Python runtime and
+strict per-file Python/Swift gates, browser92.35%, wheel/sdist content and fresh
+noneditable package checks, native packaging. Final measured new native state
+251/260=96.54%, live root101/123=82.11%; Python mission_peer106/117=90.60%,
+mission_contract134/136=98.53%. Local log:
+`/private/tmp/lane4-plan93-resolver-full-validation.log`.
+This validates the implementation checkpoint only. TDE observation is NOT_RUN
+for this checkpoint; historical policyFAIL is preserved. Complete product
+journey, final independent reviews/protected/finalization/new installed proof
+remain OPEN as stated above.

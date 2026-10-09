@@ -58,4 +58,13 @@ final class MissionWorkspaceTests: XCTestCase {
         XCTAssertGreaterThan(host.fittingSize.height, 0)
     }
 
+    @MainActor func testLiveRootShowsConnectionBoundaryWithoutImplicitEffects() {
+        let client=ClientState(),conversations=ConversationState()
+        let host=NSHostingView(rootView:LiveMissionWorkspaceView(client:client,conversations:conversations).environment(\.locale,Locale(identifier:"nl")))
+        host.frame=NSRect(x:0,y:0,width:1280,height:720);host.layoutSubtreeIfNeeded()
+        XCTAssertGreaterThan(host.fittingSize.height,0)
+        XCTAssertNil(conversations.missionConcepts.capability)
+        XCTAssertFalse(conversations.missionConcepts.busy)
+    }
+
 }

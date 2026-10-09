@@ -1,0 +1,62 @@
+{
+  "additional_model_calls": 0,
+  "complete_portfolio": false,
+  "contract_version": "forge-chat-first-mission/v1",
+  "items": [
+    {
+      "approval_supported": false,
+      "blockers": [
+        "EXPLICIT_WORKSET_RELEASE_REQUIRED"
+      ],
+      "candidate_id": "concept-candidate-d3bca4e64876bc3f9b73ffb7fbe5440a",
+      "context_revision": "sha256:e6ac800a7c3bc95822cf4cf1309dcbb4613fbb6faa6053dd287d0c131a18fab4",
+      "conversation_id": "mission-chat",
+      "conversation_revision": 6,
+      "definition": {
+        "acceptance_criteria": [
+          "Clients see only invoices belonging to their account."
+        ],
+        "architecture_choices": [],
+        "business_value": "Clients can track their payments.",
+        "change_summary": "Build the portal; payment execution remains excluded.",
+        "dependencies": [],
+        "exclusions": [
+          "Payment execution"
+        ],
+        "expected_result": "A portal with current invoice status.",
+        "objective": "Show invoices and payments.",
+        "questions": [],
+        "risks": [
+          "Account isolation must be verified."
+        ],
+        "scope": [
+          "Invoice and payment views"
+        ],
+        "title": "Client portal",
+        "work_kind": "BUILD"
+      },
+      "definition_digest": "sha256:582151ed13da1cba6e787379eccecaf38589aede528b52f43c728772d7a9e3d9",
+      "edges": [],
+      "group_id": null,
+      "labels": [],
+      "mission_id": "MISSION-0006",
+      "object_id": "concept-6f07bd3910a4f41e4c51b33f261e1ac5",
+      "parent_id": null,
+      "questions": [],
+      "revision": 2,
+      "source_turn_id": "second",
+      "state": "APPROVED_WAITING",
+      "summary": "A portal with current invoice status.",
+      "title": "Client portal"
+    }
+  ],
+  "next_cursor": null,
+  "population": "AUTHORIZED_ADMITTED_CONCEPTS_ONLY",
+  "read_only": true,
+  "scope": {
+    "instance_id": "forge-runtime-fda2b94a-a56c-4a46-976e-0d34f773eb2b",
+    "project_id": "isolated-project",
+    "repository_id": "synthetic-repository"
+  },
+  "snapshot_revision": "sha256:85cd13221d203c9c4b933d7bb4a884a5d0d063aa3ca9319b7beb58d65772def2"
+}

@@ -124,6 +124,17 @@ for key, method, path in [
     ("cancel", "POST", "/v1/advisory/{conversation_id}/turns/{turn_id}/cancel")]:
     OPERATIONS["advisory."+key] = {"exposure":"HTTP_EXPOSED", "method":method, "path":path,
         "auth":"BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT", "contract":"advisory", "summary":"scoped textual advice"}
+for key, method, path in [
+    ("access", "GET", "/v1/mission-concepts/access"), ("capability", "GET", "/v1/mission-concepts/capability"),
+    ("catalog", "GET", "/v1/mission-concepts/catalog"), ("history", "GET", "/v1/mission-concepts/{conversation_id}"),
+    ("submit", "POST", "/v1/mission-concepts/{conversation_id}/turns"),
+    ("turn", "GET", "/v1/mission-concepts/{conversation_id}/turns/{turn_id}"),
+    ("cancel", "POST", "/v1/mission-concepts/{conversation_id}/turns/{turn_id}/cancel")]:
+    OPERATIONS["mission-concepts."+key]={"exposure":"HTTP_EXPOSED","method":method,"path":path,
+        "auth":"BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT","contract":"mission","summary":"scoped versioned mission concept"}
+for key,method,path in [("resolve","POST","/v1/mission-concepts/resolve"),("package","GET","/v1/mission-concepts/{conversation_id}/package"),("approve","POST","/v1/mission-concepts/{conversation_id}/approve"),("operation","GET","/v1/mission-concepts/{conversation_id}/operations/{operation_id}")]:
+    OPERATIONS["mission-concepts."+key]={"exposure":"HTTP_EXPOSED","method":method,"path":path,"auth":"BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT","contract":"mission","summary":"exact frozen approval and separate current operation readback"}
+OPERATIONS["mission-concepts.contract.read"]={"exposure":"HTTP_EXPOSED","method":"GET","path":"/v1/mission-concepts/openapi.json","auth":"BEARER_PINNED","contract":"mission","summary":"closed versioned mission transport contract"}
 OPERATIONS["advisory.contract.read"]={"exposure":"HTTP_EXPOSED","method":"GET","path":"/v1/advisory/openapi.json","auth":"BEARER_PINNED","contract":"advisory","summary":"closed advisory contract"}
 for key in ["issue", "revoke"]:
     OPERATIONS["advisory.bind."+key]={"exposure":"LOCAL_ONLY_ADMIN","local_cli":"advisory-bind-"+key,"auth":"PRIVATE_ROOT_OWNER","summary":"private owner advisory binding"}
@@ -374,6 +385,17 @@ def advisory_openapi_contract():
                  for key,op in OPERATIONS.items() if op.get("contract")=="advisory" and key!="advisory.contract.read"}}
 
 
+def mission_openapi_contract():
+    from .mission_contract import SCHEMA
+    return {"openapi":"3.0.3","info":{"title":"Workspace mission concept transport V1","version":"1"},
+        "x-forge-wire-schema":SCHEMA,
+        "paths":{op["path"]:{op["method"].lower():{"operationId":key,
+            "security":[{"bearerAuth":[],"draftGrant":[],"advisoryGrant":[]}],
+            "responses":{"200":{"description":"Scoped concept response"},"403":{"description":"Current scope denied"},"409":{"description":"Revision or context conflict"}}}}
+            for key,op in OPERATIONS.items() if op.get("contract")=="mission" and not key.endswith("contract.read")},
+        "components":{"securitySchemes":{"bearerAuth":{"type":"http","scheme":"bearer"},"draftGrant":{"type":"apiKey","in":"header","name":"X-Workspace-Draft-Grant"},"advisoryGrant":{"type":"apiKey","in":"header","name":"X-Workspace-Advisory-Grant"}}}}
+
+
 def handler_for(service, *, public_host=None, scheme="http"):
     class Handler(BaseHTTPRequestHandler):
         timeout = 5
@@ -506,23 +528,46 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return self._reply(503, {"error": "CONVERSATIONS_UNAVAILABLE"})
             self._reply(code, result)
 
-        def _advisory_route(self, *, write=False):
+        def _advisory_route(self, *, write=False, concept=False):
+            peer=service.mission_concepts if concept else service.advisory
+            prefix="/v1/mission-concepts" if concept else "/v1/advisory"
             if not self._pinned_auth(): return
             scope=self._conversation_scope()
             if scope is None:return
             tokens=self.headers.get_all("X-Workspace-Advisory-Grant",[])
             if len(tokens)!=1:return self._reply(403,{"error":"ADVISORY_GRANT_REQUIRED"})
             try:
-                b=service.advisory.access(tokens[0]);service.advisory.bound(b,scope)
+                b=peer.access(tokens[0]);peer.bound(b,scope)
                 parsed=urlsplit(self.path);parts=parsed.path.split('/');query=parse_qs(parsed.query,keep_blank_values=True,max_num_fields=4)
-                if parsed.path=='/v1/advisory/access' and not write and not query:
-                    result=service.advisory.metadata(b,scope)
-                elif parsed.path=='/v1/advisory/capability' and not write:
+                if parsed.path==prefix+'/access' and not write and not query:
+                    result=peer.metadata(b,scope)
+                elif parsed.path==prefix+'/capability' and not write:
                     if set(query)-{'source_id','source_version'} or len(query.get('source_id',[]))!=len(query.get('source_version',[])):raise WorklistError('INVALID_REQUEST')
                     selections=[{'source_id':k,'version':v} for k,v in zip(query.get('source_id',[]),query.get('source_version',[]))]
-                    result=service.advisory.capability(b,selections)
+                    result=peer.capability(b,selections)
+                elif concept and parsed.path==prefix+'/resolve' and write:
+                    if query:raise WorklistError('INVALID_REQUEST')
+                    lengths=self.headers.get_all('Content-Length',[])
+                    if len(lengths)!=1 or not lengths[0].isdecimal() or not 1<=int(lengths[0])<=16000 or self.headers.get('Transfer-Encoding') or self.headers.get('Content-Type','').split(';',1)[0].lower()!='application/json':raise WorklistError('INVALID_REQUEST')
+                    try:body=json.loads(self.rfile.read(int(lengths[0])),object_pairs_hook=_unique_json_object)
+                    except (ValueError,UnicodeError,RecursionError):raise WorklistError('INVALID_REQUEST') from None
+                    result=peer.resolve(b,scope,body,authority=service.advisory_forward_scope(self.headers['X-Workspace-Draft-Grant'],scope))
+                elif concept and len(parts)==5 and parts[4]=='package' and not write:
+                    if set(query)-{'revision'} or any(len(v)!=1 for v in query.values()):raise WorklistError('INVALID_REQUEST')
+                    c=parts[3];peer.bound(b,scope,c)
+                    try:revision=int(query['revision'][0]) if 'revision' in query else None
+                    except ValueError:raise WorklistError('INVALID_REQUEST') from None
+                    result=peer.package(b,c,revision)
+                elif concept and len(parts)==6 and parts[4]=='operations' and not write:
+                    if query:raise WorklistError('INVALID_REQUEST')
+                    c=parts[3];peer.bound(b,scope,c);result=peer.operation(b,c,parts[5])
+                elif concept and parsed.path==prefix+'/catalog' and not write:
+                    if set(query)-{'cursor','limit','snapshot_revision'} or any(len(v)!=1 for v in query.values()):raise WorklistError('INVALID_REQUEST')
+                    try:cursor=int(query.get('cursor',['0'])[0]);limit=int(query.get('limit',['4'])[0])
+                    except ValueError:raise WorklistError('INVALID_REQUEST') from None
+                    result=peer.catalog(b,cursor,limit,query.get('snapshot_revision',[None])[0])
                 else:
-                    c=parts[3];service.advisory.bound(b,scope,c)
+                    c=parts[3];peer.bound(b,scope,c)
                     if write:
                         if query:raise WorklistError('INVALID_REQUEST')
                         lengths=self.headers.get_all('Content-Length',[])
@@ -530,18 +575,19 @@ def handler_for(service, *, public_host=None, scheme="http"):
                         try:body=json.loads(self.rfile.read(int(lengths[0])),object_pairs_hook=_unique_json_object)
                         except (ValueError,UnicodeError,RecursionError):raise WorklistError('INVALID_REQUEST') from None
                         authority=service.advisory_forward_scope(self.headers['X-Workspace-Draft-Grant'],scope)
-                        result=(service.advisory.submit(b,c,body,authority=authority) if len(parts)==5 else service.advisory.cancel(b,c,parts[5],body,authority=authority))
+                        if concept and parts[4]=='approve':result=peer.approve(b,c,body,authority=authority)
+                        else:result=(peer.submit(b,c,body,authority=authority) if len(parts)==5 else peer.cancel(b,c,parts[5],body,authority=authority))
                     elif len(parts)==4:
                         if set(query)-{'cursor','limit'} or any(len(v)!=1 for v in query.values()):raise WorklistError('INVALID_REQUEST')
                         try:cursor=int(query.get('cursor',['0'])[0]);limit=int(query.get('limit',['4'])[0])
                         except ValueError:raise WorklistError('INVALID_REQUEST') from None
-                        result=service.advisory.history(b,c,cursor,limit)
+                        result=peer.history(b,c,cursor,limit)
                     else:
                         if query:raise WorklistError('INVALID_REQUEST')
-                        result=service.advisory.turn(b,c,parts[5])
+                        result=peer.turn(b,c,parts[5])
             except WorklistError as error:
                 state=error.state
-                code=403 if state=='DENIED' else 404 if state=='ADVISORY_NOT_FOUND' else 400 if state in ('INVALID_REQUEST','ADVISOR_UNSUPPORTED','ADVISORY_REQUEST_INVALID') else 409 if state in ('ADVISORY_CONFLICT','CONVERSATION_BUSY','TURN_PAYLOAD_CONFLICT','CONVERSATION_OR_CONTEXT_STALE','INVOCATION_UNRESOLVED','TURN_BUDGET_EXHAUSTED','TRANSCRIPT_CAPACITY_EXHAUSTED','CONVERSATION_CAPACITY_EXHAUSTED','CANCEL_PRECONDITION_CHANGED','CONTEXT_STALE') else 503
+                code=403 if state=='DENIED' else 404 if state=='ADVISORY_NOT_FOUND' else 400 if state in ('INVALID_REQUEST','ADVISOR_UNSUPPORTED','ADVISORY_REQUEST_INVALID','CONCEPT_REQUEST_INVALID') else 409 if state in ('ADVISORY_CONFLICT','CONVERSATION_BUSY','TURN_PAYLOAD_CONFLICT','CONVERSATION_OR_CONTEXT_STALE','INVOCATION_UNRESOLVED','TURN_BUDGET_EXHAUSTED','TRANSCRIPT_CAPACITY_EXHAUSTED','CONVERSATION_CAPACITY_EXHAUSTED','CANCEL_PRECONDITION_CHANGED','CONTEXT_STALE','CATALOG_SNAPSHOT_CHANGED','CONCEPT_OR_CONTEXT_CHANGED','CONCEPT_PROVIDER_POLICY_CHANGED','CONCEPT_APPROVAL_INPUT_OR_STATE_INVALID','WORKSPACE_RESOLUTION_PAYLOAD_CHANGED','WORKSPACE_RESOLUTION_CAPACITY_EXHAUSTED','WORKSPACE_BINDING_CAPACITY_EXHAUSTED','EXISTING_CONVERSATION_CAPACITY_EXHAUSTED','WORKSPACE_BINDING_BYTE_CAPACITY_EXHAUSTED') else 503
                 return self._reply(code,{"error":state})
             except FileNotFoundError:return self._reply(404,{"error":"ADVISORY_NOT_FOUND"})
             except (ValueError,OSError,UnicodeError,sqlite3.Error):return self._reply(503,{"error":"ADVISORY_UNAVAILABLE"})
@@ -720,6 +766,14 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 parsed=urlsplit(target);ident=r"[A-Za-z0-9][A-Za-z0-9._:-]{0,127}"
                 if parsed.fragment or '%' in parsed.path or '..' in parsed.path or not re.fullmatch(r"/v1/advisory-candidates/(?:access|capability|[0-9a-f]{32}/(?:source/"+ident+r"|proposals/"+ident+r"(?:/registrations/"+ident+r")?))",parsed.path):return self._reply(400,{"error":"INVALID_PATH"})
                 return self._candidate_route()
+            if target.startswith("/v1/mission-concepts/"):
+                parsed=urlsplit(target);path=parsed.path
+                if parsed.fragment or '%' in path or '..' in path or not re.fullmatch(r"/v1/mission-concepts/(?:access|capability|catalog|openapi.json|[0-9a-f]{32}(?:/turns/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}|/package|/operations/[A-Za-z0-9][A-Za-z0-9._:-]{0,127})?)",path):
+                    return self._reply(400,{"error":"INVALID_PATH"})
+                if path=="/v1/mission-concepts/openapi.json":
+                    if self._pinned_auth():return self._reply(200,mission_openapi_contract())
+                    return
+                return self._advisory_route(concept=True)
             if target.startswith("/v1/advisory/"):
                 parsed=urlsplit(target)
                 path=parsed.path
@@ -807,6 +861,10 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return
             if re.fullmatch(r"/v1/advisory-candidates/[0-9a-f]{32}/proposals(?:/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/registrations)?",self.path):
                 return self._candidate_route(write=True)
+            if self.path=="/v1/mission-concepts/resolve":
+                return self._advisory_route(write=True,concept=True)
+            if re.fullmatch(r"/v1/mission-concepts/[0-9a-f]{32}/(?:approve|turns(?:/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/cancel)?)",self.path):
+                return self._advisory_route(write=True,concept=True)
             if re.fullmatch(r"/v1/advisory/[0-9a-f]{32}/turns(?:/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/cancel)?",self.path):
                 return self._advisory_route(write=True)
             if re.fullmatch(r"/v1/workset-controls/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/commands", self.path):

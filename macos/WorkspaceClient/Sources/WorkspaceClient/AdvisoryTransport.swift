@@ -8,9 +8,9 @@ final class AdvisoryTransport: @unchecked Sendable {
         configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
         session=URLSession(configuration:configuration,delegate:redirects,delegateQueue:nil)
     }
-    private func request(_ connection:AdvisoryConnection, token:String,path:String,body:Data?=nil) async throws -> Data {
+    func request(_ connection:AdvisoryConnection, token:String,path:String,body:Data?=nil) async throws -> Data {
         guard token.range(of:"^[A-Za-z0-9_-]{43}$",options:.regularExpression) != nil,
-              path.hasPrefix("/v1/advisory/") else { throw AdvisoryError.denied }
+              (path.hasPrefix("/v1/advisory/") || path.hasPrefix("/v1/mission-concepts/")) else { throw AdvisoryError.denied }
         let endpoint=try ServerEndpoint(connection.endpoint)
         guard let url=URL(string:path,relativeTo:endpoint.url)?.absoluteURL else { throw AdvisoryError.invalid }
         var request=URLRequest(url:url);request.timeoutInterval=65;request.httpMethod=body==nil ? "GET":"POST";request.httpBody=body
@@ -32,8 +32,8 @@ final class AdvisoryTransport: @unchecked Sendable {
         default:throw AdvisoryError.unavailable
         }
     }
-    func probe(connection:AdvisoryConnection,token:String) async throws -> AdvisoryAccess {
-        let raw=try AdvisoryWire.object(await request(connection,token:token,path:"/v1/advisory/access"))
+    func probe(connection:AdvisoryConnection,token:String,concept:Bool=false) async throws -> AdvisoryAccess {
+        let raw=try AdvisoryWire.object(await request(connection,token:token,path:concept ? "/v1/mission-concepts/access":"/v1/advisory/access"))
         guard Set(raw.keys)==["contract_version","actor_id","workspace_project_id","instance_id","project_id","repository_id","conversation_ids"],
               raw["contract_version"] as? String=="workspace-advisory-access/v1",
               let actor=raw["actor_id"] as? String,let project=raw["workspace_project_id"] as? String,
@@ -44,7 +44,7 @@ final class AdvisoryTransport: @unchecked Sendable {
             actorID:actor,forgeInstanceID:forge,forgeProjectID:forgeProject,repositoryID:repository,conversationIDs:conversations,token:token)
         guard value.valid else { throw AdvisoryError.invalid };return value
     }
-    private func bound(_ access:AdvisoryAccess,_ connection:AdvisoryConnection) throws {
+    func bound(_ access:AdvisoryAccess,_ connection:AdvisoryConnection) throws {
         guard access.valid,access.endpoint==connection.endpoint,access.workspaceInstanceID==connection.workspaceInstanceID,
               access.actorID==connection.actorID,access.workspaceProjectID==connection.workspaceProjectID,
               access.conversationIDs.contains(connection.conversationID) else { throw AdvisoryError.denied }
