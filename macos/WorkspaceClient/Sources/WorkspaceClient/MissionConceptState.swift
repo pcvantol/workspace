@@ -266,6 +266,10 @@ import Combine
             }
             if let approval,let frozen=try? AdvisoryWire.object(approval.frozenPackageData),let source=frozen["source"] as? [String:Any],
                source["object_id"] as? String==item.object_id,source["revision"] as? Int==item.revision {
+                if let effects=frozen["consequences"] as? [String:Any],let effect=effects["repository_effect"] as? [String:Any] {
+                    card.consequences=[effect["mode"] as? String ?? "",effect["delivery"] as? String ?? ""]
+                    card.remainingDecisions=effects["human_gates"] as? [String]
+                }
                 card.status=approval.presentationState
                 card.physicalExecutionReady=approval.readiness?.execution_ready
                 card.blockers=approval.readiness?.blockers

@@ -217,7 +217,8 @@ struct MissionWorkspaceView: View {
                     section("consequences", card.consequences ?? [copy("notEstablished")])
                     section("architectureChoices", card.architectureChoices ?? [])
                     section("risks", card.risks ?? [copy("notEstablished")])
-                    section("remainingDecisions", card.remainingDecisions ?? [copy("notEstablished")])
+                    let recorded = card.canonicalHistory?.contains { $0.definition_revision == card.revision } == true
+                    section(recorded ? "recordedApprovalGates" : "remainingDecisions", card.remainingDecisions ?? [copy("notEstablished")])
                     if let blockers=card.blockers,!blockers.isEmpty {
                         section("blockers",blockers.map { MissionWorkspaceCopy.blocker($0,language:locale.language.languageCode?.identifier ?? "en") })
                     }
