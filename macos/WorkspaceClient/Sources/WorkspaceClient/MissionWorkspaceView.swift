@@ -46,10 +46,10 @@ struct MissionWorkspaceView: View {
                     SettingsLink { Image(systemName: "gearshape") }.accessibilityLabel(copy("settings"))
                 }
                 if geometry.size.width >= 1050 {
-                    HStack(alignment: .top, spacing: 20) {
-                        overview.frame(width: 280)
-                        conversation.frame(maxWidth: .infinity)
-                        definition.frame(width: 340)
+                    HSplitView {
+                        overview.frame(minWidth:220,idealWidth:260,maxWidth:320)
+                        conversation.frame(minWidth:320,maxWidth:.infinity)
+                        definition.frame(minWidth:280,idealWidth:340,maxWidth:440)
                     }
                 } else {
                     Picker(copy("panel"), selection: $panel) {
@@ -218,7 +218,7 @@ struct MissionWorkspaceView: View {
             Divider()
             Text(card.title + " · " + copy("revision") + " " + String(card.revision)).font(.caption.bold())
             Button(copy("approve")) { onApprove(card) }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.glassProminent)
                 .disabled(!canApprove || card.consequences == nil || card.risks == nil || card.remainingDecisions == nil || !card.questions.isEmpty)
                 .accessibilityIdentifier("mission.approve")
             Text(copy("approvalEffect")).font(.caption).foregroundStyle(.secondary)

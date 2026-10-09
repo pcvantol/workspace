@@ -72,9 +72,22 @@ class MacOSPackagingTests(unittest.TestCase):
         client = (ROOT / "macos/WorkspaceClient/Sources/WorkspaceClient/ClientState.swift").read_text()
         self.assertEqual(info["CFBundleIdentifier"], BUNDLE_ID)
         self.assertEqual(info["CFBundleDevelopmentRegion"], "en")
+        self.assertEqual(info["LSMinimumSystemVersion"], "26.0")
+        self.assertIn('.macOS("26.0")', (ROOT / "macos/WorkspaceClient/Package.swift").read_text())
         self.assertEqual(info["CFBundleLocalizations"], ["en", "nl", "de", "fr", "es"])
         self.assertIn(f'private let service = "{KEYCHAIN_SERVICE}"', client)
         self.assertNotIn('private let service = "' + BUNDLE_ID + '.v1"', client)
+
+    def test_sdk_before26_is_refused_before_build(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            shim = root / "xcrun"
+            shim.write_text("#!/bin/sh\necho 25.0\n")
+            shim.chmod(0o700)
+            result = self.run_builder(str(root / "Workspace.app"), env={**os.environ, "PATH": str(root) + os.pathsep + os.environ["PATH"]})
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("requires macOS SDK 26 or newer", result.stderr)
+            self.assertFalse((root / "Workspace.app").exists())
 
     def test_signed_mode_requires_all_explicit_resources_before_build(self) -> None:
         result = self.run_builder("--mode", "developer-id", "/tmp/Workspace.app")

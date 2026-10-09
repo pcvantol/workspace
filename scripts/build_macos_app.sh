@@ -137,12 +137,20 @@ else
   [[ -z "$identity$team_id$notary_profile$source_revision" ]] || usage
 fi
 
+sdk_version="$(xcrun --sdk macosx --show-sdk-version)"
+sdk_path="$(xcrun --sdk macosx --show-sdk-path)"
+python3 - "$sdk_version" <<'SDK_CHECK'
+import sys
+if int(sys.argv[1].split('.')[0]) < 26:
+    raise SystemExit('Workspace requires macOS SDK 26 or newer.')
+SDK_CHECK
+
 if ((isolated_test_adapter == 1)); then
-  swift build --package-path "$package" --scratch-path "$scratch" -c release --product WorkspaceClient "${swift_flags[@]}"
+  swift build --sdk "$sdk_path" --package-path "$package" --scratch-path "$scratch" -c release --product WorkspaceClient "${swift_flags[@]}"
 else
-  swift build --package-path "$package" --scratch-path "$scratch" -c release --product WorkspaceClient
+  swift build --sdk "$sdk_path" --package-path "$package" --scratch-path "$scratch" -c release --product WorkspaceClient
 fi
-binary_dir="$(swift build --package-path "$package" --scratch-path "$scratch" -c release --show-bin-path)"
+binary_dir="$(swift build --sdk "$sdk_path" --package-path "$package" --scratch-path "$scratch" -c release --show-bin-path)"
 if [[ "$mode" == developer-id ]]; then
   # The built bytes must still correspond to the protected tree admitted above.
   check_protected_source
@@ -160,6 +168,7 @@ if ((isolated_test_adapter == 1)); then
   /usr/libexec/PlistBuddy -c 'Add :WorkspaceIsolatedTestAdapter bool true' "$output/Contents/Info.plist"
 fi
 chmod 755 "$output/Contents/MacOS/WorkspaceClient"
+/usr/libexec/PlistBuddy -c "Add :DTSDKName string macosx$sdk_version" "$output/Contents/Info.plist"
 plutil -lint "$output/Contents/Info.plist"
 if otool -L "$output/Contents/MacOS/WorkspaceClient" | grep -qi python; then
   echo 'Native Client unexpectedly links Python.' >&2

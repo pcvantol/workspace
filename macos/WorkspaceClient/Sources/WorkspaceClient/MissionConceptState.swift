@@ -82,6 +82,7 @@ import Combine
         try store.clear(intent.key);pending=nil
         phase=observation.turn.status == "COMPLETE" ? "current":"failed"
     }
+    func isCurrent(_ c:AdvisoryConnection) -> Bool { connection==c && capability != nil }
     func refresh(_ new: AdvisoryConnection?) async {
         guard admit(new),!busy,let c=new else { return }
         let generation=epoch;busy=true;defer { if epoch==generation { busy=false } }

@@ -80,6 +80,8 @@ final class LiveMissionWorkspaceTests:XCTestCase {
         let mission=MissionConceptState(credentials:credentials,store:MissionIntentMemory(),transport:peer.transport())
         let sourceHandler=try XCTUnwrap(StubProtocol.handler)
         var ownRows:[[String:Any]]=[],ownCreates:[[String:Any]]=[]
+        var twoCards=false
+        let otherProducer="producer-second"
         func body(_ request:URLRequest) throws -> [String:Any] {
             if let data=request.httpBody { return try AdvisoryWire.object(data) }
             let stream=try XCTUnwrap(request.httpBodyStream);stream.open();defer { stream.close() }
@@ -92,11 +94,25 @@ final class LiveMissionWorkspaceTests:XCTestCase {
             if path.hasPrefix("/v1/mission-concepts/") {
                 if path.hasSuffix("/capability") {
                     var cap=try peer.wire.fixture("capability");cap["workspace_reference_resolution_supported"]=true
+                    if twoCards { cap["conversation_ids"]=[peer.wire.conversation,otherProducer] }
                     return (200,try JSONSerialization.data(withJSONObject:cap))
+                }
+                if twoCards && path.hasSuffix("/catalog") {
+                    let (_,bytes)=try sourceHandler(request)
+                    var catalog=try AdvisoryWire.object(bytes),items=catalog["items"] as! [[String:Any]]
+                    var second=items[0];second["conversation_id"]=otherProducer;second["object_id"]="concept-"+String(repeating:"b",count:32)
+                    items.append(second);catalog["items"]=items;catalog["snapshot_revision"]=try AdvisoryWire.digest(items)
+                    return (200,try JSONSerialization.data(withJSONObject:catalog))
+                }
+                if path=="/v1/mission-concepts/"+otherProducer { return (404,Data("{}".utf8)) }
+                if path=="/v1/mission-concepts/"+otherProducer+"/context" {
+                    let cap=try peer.wire.fixture("capability")
+                    return (200,try JSONSerialization.data(withJSONObject:["contract_version":MissionConceptWire.contract,"conversation_id":otherProducer,"context":cap["context"]!,"context_revision":cap["context_revision"]!,"read_only":true,"additional_model_calls":0]))
                 }
                 if path.hasSuffix("/package"),let record=peer.recorded {
                     // Synthetic unprepared packet follows this test's changing turn/catalog.
-                    let item=(try peer.wire.fixture("catalog")["items"] as! [[String:Any]])[0]
+                    var item=(try peer.wire.fixture("catalog")["items"] as! [[String:Any]])[0]
+                    if path.contains(otherProducer) { item["object_id"]="concept-"+String(repeating:"b",count:32) }
                     let request=record["request"] as! [String:Any]
                     let packet:[String:Any]=["contract_version":MissionConceptWire.contract,"object_id":item["object_id"]!,"revision":(request["expected_revision"] as! Int)+1,"definition":item["definition"]!,"package":NSNull(),"questions":["Fixture planning remains unavailable."],"approval_supported":false,"read_only":true,"additional_model_calls":0]
                     return (200,try JSONSerialization.data(withJSONObject:packet))
@@ -150,6 +166,30 @@ final class LiveMissionWorkspaceTests:XCTestCase {
         let setup=MissionSetupView(client:client,conversations:conversations,state:mission)
         await setup.save(access.token)
         let card=try XCTUnwrap(mission.presentation(project:"Own")?.cards.first)
+        twoCards=true
+        credentials.access=AdvisoryAccess(endpoint:access.endpoint,workspaceInstanceID:access.workspaceInstanceID,workspaceProjectID:access.workspaceProjectID,actorID:access.actorID,forgeInstanceID:access.forgeInstanceID,forgeProjectID:access.forgeProjectID,repositoryID:access.repositoryID,conversationIDs:[peer.wire.conversation,otherProducer],token:access.token)
+        await view.refresh()
+        let secondCard=try XCTUnwrap(mission.presentation(project:"Own")?.cards.first(where: { $0.id=="concept-"+String(repeating:"b",count:32) }))
+        let liveHandler=try XCTUnwrap(StubProtocol.handler)
+        let refreshEntered=expectation(description:"Refinement refresh is delayed"),releaseRefresh=DispatchSemaphore(value:0)
+        var delayRefresh=true
+        StubProtocol.handler = { request in
+            if delayRefresh && request.url!.path.hasSuffix("/capability") {
+                delayRefresh=false;refreshEntered.fulfill();XCTAssertEqual(releaseRefresh.wait(timeout:.now()+5),.success)
+            }
+            return try liveHandler(request)
+        }
+        let delayedRefinement=Task { await view.refine("This message belongs to the original selection",lens:"BUSINESS",card:card) }
+        await fulfillment(of:[refreshEntered],timeout:3)
+        // Actual A→B selection while A refresh is delayed must send to neither subject.
+        let selectOther=Task { await view.prepare(secondCard) }
+        for _ in 0..<100 where conversations.missionSelection.conversationID != otherProducer { await Task.yield() }
+        XCTAssertEqual(conversations.missionSelection.conversationID,otherProducer)
+        releaseRefresh.signal();await selectOther.value;await delayedRefinement.value
+        XCTAssertEqual(peer.calls.filter { $0.httpMethod=="POST" && $0.url!.path.hasSuffix("/turns") }.count,1)
+        StubProtocol.handler=liveHandler
+        twoCards=false;credentials.access=access
+        await view.prepare(card)
         peer.dropSubmit=true
         await view.refine("Keep the account isolation criterion",lens:"ARCHITECTURE",card:nil)
         XCTAssertEqual(ownCreates.count,1)

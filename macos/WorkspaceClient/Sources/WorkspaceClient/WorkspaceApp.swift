@@ -2,6 +2,7 @@ import Combine
 import SwiftUI
 #if WORKSPACE_ISOLATED_TEST
 import AppKit
+import ScreenCaptureKit
 
 private enum IsolatedWindowEvidence {
     static func capture(in directory: String) {
@@ -15,10 +16,14 @@ private enum IsolatedWindowEvidence {
                 app.appearance=appearance
                 try? await Task.sleep(for:.milliseconds(200))
             }
-            guard let window = NSApp.windows.first(where: { $0.title == "Workspace" }),
-                  let image = CGWindowListCreateImage(.null, .optionIncludingWindow,
-                                                      CGWindowID(window.windowNumber),
-                                                      [.boundsIgnoreFraming, .bestResolution]) else { return }
+            guard let window=NSApp.windows.first(where: { $0.title=="Workspace" }),
+                  let available=try? await SCShareableContent.excludingDesktopWindows(true,onScreenWindowsOnly:true),
+                  let owned=available.windows.first(where: { $0.windowID==CGWindowID(window.windowNumber) && $0.owningApplication?.processID==ProcessInfo.processInfo.processIdentifier }) else { return }
+            let configuration=SCStreamConfiguration()
+            configuration.width=Int(window.frame.width*window.backingScaleFactor)
+            configuration.height=Int(window.frame.height*window.backingScaleFactor)
+            configuration.showsCursor=false
+            guard let image=try? await SCScreenshotManager.captureImage(contentFilter:SCContentFilter(desktopIndependentWindow:owned),configuration:configuration) else { return }
             let bitmap = NSBitmapImageRep(cgImage: image)
             guard let png = bitmap.representation(using: .png, properties: [:]) else { return }
             let root = URL(fileURLWithPath: directory, isDirectory: true)
@@ -88,9 +93,10 @@ struct WorkspaceApp: App {
         WindowGroup("Workspace") {
             ContentView(client: client, conversations: conversations, reviews: reviews, worklists: worklists)
                 .environment(\.locale,Locale(identifier:WorkspaceLanguage.resolve(language)))
-                .frame(minWidth: 640, minHeight: 520)
+                .frame(minWidth: 560, minHeight: 520)
         }
-        .defaultSize(width: 900, height: 650)
+        .defaultSize(width: 1180, height: 780)
+        .windowToolbarStyle(.unifiedCompact)
         Settings {
             SettingsView(client: client, conversations: conversations)
                 .environment(\.locale,Locale(identifier:WorkspaceLanguage.resolve(language)))
@@ -101,6 +107,7 @@ struct WorkspaceApp: App {
 }
 
 struct ContentView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.locale) private var locale
     @ObservedObject var client: ClientState
     @StateObject private var conversations: ConversationState
@@ -171,6 +178,9 @@ struct ContentView: View {
             ServerOverviewView(client: client)
                 .tabItem { Label(WorkspaceCopy.text("Server",language:locale.language.languageCode?.identifier), systemImage: "server.rack") }.tag(3)
         }
+        .tabViewStyle(.sidebarAdaptable)
+        .tint(WorkspaceAppearance.accent(for:colorScheme))
+        .background(WorkspaceAppearance.backdrop(for:colorScheme))
     }
 }
 
