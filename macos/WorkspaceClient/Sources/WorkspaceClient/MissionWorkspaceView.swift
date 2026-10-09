@@ -319,11 +319,23 @@ struct MissionWorkspaceView: View {
             }
             if let selection {
                 ForEach(Array(observation.visibleRelations.filter { $0.dependent == selection || $0.predecessor == selection }.enumerated()), id: \.offset) { _, edge in
-                    Text(copy(edge.proposed ? "proposed" : "established") + " · " + (observation.selected(edge.predecessor)?.title ?? "") + " → " +
-                         (observation.selected(edge.dependent)?.title ?? "") + (edge.sourceRevision.map { " · "+copy("revision")+" "+String($0) } ?? "") + ": " + edge.reason)
+                    Text(relationLabel(edge, observation: observation))
                         .font(.caption).textSelection(.enabled)
                 }
             }
         }
+    }
+    private func relationLabel(_ edge: MissionRelation, observation: MissionWorkspaceObservation) -> String {
+        var label = copy(edge.proposed ? "proposed" : "established")
+        label += " · "
+        label += observation.selected(edge.predecessor)?.title ?? ""
+        label += " → "
+        label += observation.selected(edge.dependent)?.title ?? ""
+        if let revision = edge.sourceRevision {
+            label += " · " + copy("revision") + " " + String(revision)
+        }
+        label += ": "
+        label += edge.reason
+        return label
     }
 }
