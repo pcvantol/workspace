@@ -17,6 +17,7 @@ struct MissionWorkspaceView: View {
     @State private var message = ""
     @State private var lens = "BUSINESS"
     @State private var zoom = 1.0
+    @State private var presentationScope: String?
     @FocusState private var messageFocused: Bool
     @Environment(\.locale) private var locale
     @Environment(\.nativeTabCommandsActive) private var commandsActive
@@ -29,6 +30,7 @@ struct MissionWorkspaceView: View {
         self.onRefine = onRefine; self.onApprove = onApprove;self.onSelect=onSelect;self.onSeparate=onSeparate
         _message=State(initialValue:draftMessage)
         _selection = State(initialValue: observation?.selected(selectedID)?.id)
+        _presentationScope = State(initialValue: observation?.scopeKey)
         _panel = State(initialValue: ["overview", "chat", "definition"].contains(activePanel) ? activePanel : "chat")
         _graph = State(initialValue: showGraph)
     }
@@ -52,11 +54,12 @@ struct MissionWorkspaceView: View {
                         definition.frame(minWidth:280,idealWidth:340,maxWidth:440).clipped()
                     }
                 } else {
+                    Text(copy("panel")).font(.caption).foregroundStyle(.secondary)
                     Picker(copy("panel"), selection: $panel) {
                         Text(copy("overview")).tag("overview")
                         Text(copy("chat")).tag("chat")
                         Text(copy("definition")).tag("definition")
-                    }.pickerStyle(.segmented).accessibilityIdentifier("mission.panel")
+                    }.pickerStyle(.segmented).labelsHidden().accessibilityLabel(copy("panel")).accessibilityIdentifier("mission.panel")
                     switch panel {
                     case "overview": overview
                     case "definition": definition
@@ -65,12 +68,22 @@ struct MissionWorkspaceView: View {
                 }
             }.padding(20)
         }
-        .onChange(of: observation?.scopeKey) { _, _ in
-            selection = observation?.selected(selectedID)?.id; message = ""; search = ""; statusFilter = ""; zoom = 1; panel = "chat"
+        .onChange(of: observation?.scopeKey) { _, scope in
+            message = ""
+            // A temporarily unavailable snapshot hides content, but should not
+            // discard navigation within the same authorized project.
+            guard let scope else { return }
+            if presentationScope != scope {
+                selection = observation?.selected(selectedID)?.id
+                search = ""; statusFilter = ""; zoom = 1; panel = "chat"
+            }
+            presentationScope = scope
         }
-        .onChange(of:selectedID) { _, id in selection=observation?.selected(id)?.id }
+        .onChange(of:selectedID) { _, id in
+            if let id { selection=observation?.selected(id)?.id }
+        }
         .onChange(of: observation?.cards.map(\.id)) { _, ids in
-            if let selection, !(ids ?? []).contains(selection) { self.selection = nil }
+            if let ids, let selection, !ids.contains(selection) { self.selection = nil }
         }
     }
     private var overview: some View {
@@ -239,9 +252,8 @@ struct MissionWorkspaceView: View {
     }
     private func dependencyGraph(_ observation: MissionWorkspaceObservation) -> some View {
         let width = WorklistGraphLayout.nodeWidth
-        let stride = WorklistGraphLayout.columnStride
         let height = max(180, Double(observation.cards.count) * WorklistGraphLayout.rowStride + 40)
-        let canvasWidth = stride + width + 40
+        let canvasWidth = width + 40
         let matching = Set(observation.matching(search: search, status: statusFilter.isEmpty ? nil : statusFilter).map(\.id))
         return VStack(alignment: .leading, spacing: 10) {
             VStack(alignment: .leading, spacing: 6) {
@@ -261,9 +273,9 @@ struct MissionWorkspaceView: View {
                             for edge in observation.visibleRelations {
                                 guard let from = observation.cards.firstIndex(where: { $0.id == edge.predecessor }),
                                       let to = observation.cards.firstIndex(where: { $0.id == edge.dependent }) else { continue }
-                                let a = CGPoint(x: 20 + Double(from % 2) * stride + width / 2,
+                                let a = CGPoint(x: 20 + width / 2,
                                                 y: 20 + Double(from) * WorklistGraphLayout.rowStride + 80)
-                                let b = CGPoint(x: 20 + Double(to % 2) * stride + width / 2,
+                                let b = CGPoint(x: 20 + width / 2,
                                                 y: 20 + Double(to) * WorklistGraphLayout.rowStride)
                                 var path = Path()
                                 path.move(to: a); path.addLine(to: b)
@@ -285,7 +297,7 @@ struct MissionWorkspaceView: View {
                                     .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 8))
                                     .overlay(RoundedRectangle(cornerRadius: 8).stroke(selection == item.id ? Color.accentColor : .secondary))
                             }.buttonStyle(.plain)
-                                .position(x: 20 + Double(index % 2) * stride + width / 2,
+                                .position(x: 20 + width / 2,
                                           y: 60 + Double(index) * WorklistGraphLayout.rowStride)
                                 .opacity(matching.contains(item.id) ? 1 : 0.45)
                                 .id(item.id).accessibilityIdentifier("mission.graph.node." + item.id)
