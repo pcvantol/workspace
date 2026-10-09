@@ -66,4 +66,13 @@ final class MissionConceptWireTests: XCTestCase {
         paged=c;paged["items"]=(c["items"] as! [Any]) + (c["items"] as! [Any])
         XCTAssertThrowsError(try MissionConceptWire.catalog(data(paged),access:access))
     }
+    func testDependencyReasonMapUsesItsActualAdditionalPropertySchema() throws {
+        let rules:[String:Any]=["type":"object","maxProperties":8,"additionalProperties":["type":"string","minLength":20,"maxLength":1000]]
+        try AdvisoryWire.check(["candidate-one":"Requires prior authenticated account isolation."],rules,definitions:[:])
+        for value:Any in [true,1,NSNull(),"too short",["untyped":"map"]] {
+            XCTAssertThrowsError(try AdvisoryWire.check(["candidate-one":value],rules,definitions:[:]))
+        }
+        XCTAssertThrowsError(try AdvisoryWire.check(Dictionary(uniqueKeysWithValues:(0...8).map { ("candidate-\($0)","Requires prior authenticated account isolation.") }),rules,definitions:[:]))
+    }
+
 }

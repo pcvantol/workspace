@@ -38,7 +38,9 @@ def _check(value, schema, definitions=None):
         if not schema.get('minProperties', 0) <= len(value) <= schema.get('maxProperties', 256): raise WorklistError('INVALID_RESPONSE')
         props = schema.get('properties', {})
         if not set(schema.get('required', [])) <= set(value) or (schema.get('additionalProperties') is False and not set(value) <= set(props)): raise WorklistError('INVALID_RESPONSE')
-        for key, item in value.items(): _check(item, props.get(key, {}), definitions)
+        additional = schema.get('additionalProperties', {})
+        extra_rules = additional if isinstance(additional, dict) else {}
+        for key, item in value.items(): _check(item, props.get(key, extra_rules), definitions)
     elif isinstance(value, list):
         if not schema.get('minItems', 0) <= len(value) <= schema.get('maxItems', 64): raise WorklistError('INVALID_RESPONSE')
         for item in value: _check(item, schema.get('items', {}), definitions)

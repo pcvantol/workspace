@@ -127,3 +127,18 @@ ConversationState729/812=89.78%; log
 This is still the schema414822dc consumer checkpoint; later producer schema
 changes must be explicitly admitted with fresh actual packets, preserving the
 older source/schema evidence. No final installed/product acceptance follows.
+
+The new dependency contract disclosed a necessary shared JSONSchema fix:
+`additionalProperties` with a schema now validates each extra map value in both
+Python and Swift. A dependency-reason map rejects booleans/integers/null/nested
+objects, too-short reasons and excess entries. Existing advice/concept regressions
+remain valid: current full `bash scripts/validate.sh` PASSED with147native+1isolated,
+all Python/Swift per-file gates, wheel/noneditable/native packaging. Swift shared
+wire162/166=97.59%; Python shared contract96/97=98.97%. Log
+`/private/tmp/lane4-plan93-map-schema-full-validation.log`.
+
+Later L3 source preview adds focused conversation context, dependency_reasons,
+frozen subject bindings, typed REQUIRES and real completion/worklist facts.
+Fresh actual versioned packets were requested directly under the existing JOIN;
+older immutable examples are not amended to pretend they contain that contract.
+This consumer checkpoint still consumes schema414822dc until that next admission.

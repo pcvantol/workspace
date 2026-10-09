@@ -75,6 +75,14 @@ class MissionContractTests(unittest.TestCase):
         h['turns']=[];h['conversation_id']='b'*32
         with self.assertRaises(WorklistError):w.response(h,'history',B,'a'*32)
 
+    def testDependencyReasonValuesAreCheckedAgainstDeclaredAdditionalPropertyType(self):
+        from workspace_control.advisory_contract import _check
+        schema={'type':'object','maxProperties':8,'additionalProperties':{'type':'string','minLength':20,'maxLength':1000}}
+        _check({'candidate-one':'Requires prior authenticated account isolation.'},schema)
+        for value in [True,1,None,'short',{'untyped':'map'}]:
+            with self.assertRaises(WorklistError):_check({'candidate-one':value},schema)
+        with self.assertRaises(WorklistError):_check({str(n):'Requires prior authenticated account isolation.' for n in range(9)},schema)
+
     def testCatalogSnapshotScopeDigestAndNoFabricatedLinks(self):
         c=catalog();self.assertEqual(w.response(c,'catalog',B),c)
         for modify in [lambda d:d['items'][0].update(title='unrelated'),lambda d:d['items'][0].update(summary='unrelated'),lambda d:d['items'][0].update(definition_digest='sha256:'+'0'*64),lambda d:d['items'][0].update(conversation_id='b'*32),lambda d:d['items'][0].update(mission_id='fabricated'),lambda d:d['items'][0].update(revision=2),lambda d:d.update(next_cursor=3),lambda d:d.update(snapshot_revision='sha256:'+'0'*64)]:

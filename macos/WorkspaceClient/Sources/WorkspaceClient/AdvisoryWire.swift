@@ -31,7 +31,7 @@ enum AdvisoryWire {
             let properties=rules["properties"] as? [String:[String:Any]] ?? [:]
             guard Set(rules["required"] as? [String] ?? []).isSubset(of:Set(obj.keys)),
                 (rules["additionalProperties"] as? Bool) != false || Set(obj.keys).isSubset(of:Set(properties.keys)) else { throw AdvisoryError.invalid }
-            for (k,v) in obj { try check(v,properties[k] ?? [:],definitions:definitions) }
+            for (k,v) in obj { try check(v,properties[k] ?? (rules["additionalProperties"] as? [String:Any] ?? [:]),definitions:definitions) }
         } else if let items=value as? [Any] {
             guard items.count >= (rules["minItems"] as? Int ?? 0), items.count <= (rules["maxItems"] as? Int ?? 64) else { throw AdvisoryError.invalid }
             for v in items { try check(v,rules["items"] as? [String:Any] ?? [:],definitions:definitions) }
