@@ -84,7 +84,7 @@ extension WorksetReleaseWire {
         try require(subject["candidate_id"] as? String == selected.candidate_id && subject["subject_revision"] as? String == selected.subject_revision)
         try require(member["candidate_id"] as? String == selected.candidate_id && member["subject_revision"] as? String == selected.subject_revision)
         try require(try AdvisoryWire.digest(member["mission"]!) == AdvisoryWire.digest(subject["mission"]!))
-        try require(try AdvisoryWire.digest(member["planning"]!) == AdvisoryWire.digest(subject["planning"]!))
+        try require(try canonical(member["planning"]!) == canonical(subject["planning"]!))
         let bindings = subject["dependency_bindings"] as! [[String: Any]], dependencies = member["dependencies"] as! [String]
         let policy = member["progression_policy"] as! [String: Any], planning = subject["planning"] as! [String: Any]
         try require(dependencies == bindings.map { $0["candidate_id"] as! String })
@@ -203,7 +203,7 @@ extension WorksetReleaseWire {
         let planning = subject["planning"] as! [String: Any]
         try require((canonical["gates"] as! [String]).sorted() == (planning["human_gates"] as! [String]).sorted())
         if kind == "ARCHITECTURE" {
-            try require(try AdvisoryWire.digest(planning) == (canonical["evidence"] as! [String: Any])["planning_digest"] as? String)
+            try require(try self.canonical(planning) == (canonical["evidence"] as! [String: Any])["planning_digest"] as? String)
         }
     }
 }

@@ -160,7 +160,7 @@ def _decision_join(receipt, subject, kind, signer):
     require({subject['candidate_id'], subject['subject_revision'], receipt['decision_id']}.issubset(evidence['references']))
     require(sorted(canonical['gates']) == sorted(subject['planning']['human_gates']))
     if kind == 'ARCHITECTURE':
-        require(canonical['evidence']['planning_digest'] == digest(subject['planning']))
+        require(canonical.get('evidence', {}).get('planning_digest') == _canonical(subject['planning']))
 
 
 def _semantic_key(value):

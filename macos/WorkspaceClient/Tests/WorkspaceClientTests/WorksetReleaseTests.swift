@@ -70,8 +70,9 @@ private struct ReleaseTestCredentials: WorksetReleaseCredentials {
 }
 private final class ReleaseTestStore: WorksetReleaseIntentStorage, @unchecked Sendable {
     var journal = WorksetReleaseJournal()
+    var onSave: (() -> Void)?
     func load(_ key: String) throws -> WorksetReleaseJournal { journal }
-    func save(_ journal: WorksetReleaseJournal, key: String) throws { self.journal = journal }
+    func save(_ journal: WorksetReleaseJournal, key: String) throws { self.journal = journal; onSave?() }
 }
 
 extension WorksetReleaseTests {
@@ -136,10 +137,12 @@ private actor ReleaseReplayPeer: WorksetReleaseServing {
     var lostBeforeApply = false
     var deny = false
     var delay = false
+    var delaySubmit = false
     init(released: Data, disarmed: Data) { self.released=released;self.disarmed=disarmed }
     func configure(after: Bool = false, before: Bool = false, denied: Bool = false) {
         lostAfterApply=after;lostBeforeApply=before;deny=denied
     }
+    func setSubmitDelay(_ value: Bool) { delaySubmit = value }
     func setDelay(_ value: Bool) { delay = value }
     private func waitIfDelayed() async { if delay { try? await Task.sleep(for: .milliseconds(100)) } }
     func probe(_ connection: AdvisoryConnection, token: String) async throws -> WorksetReleaseAccess { throw AdvisoryError.denied }
@@ -163,6 +166,8 @@ private actor ReleaseReplayPeer: WorksetReleaseServing {
     func submit(_ access: WorksetReleaseAccess, _ connection: AdvisoryConnection, command: WorksetReleaseCommand) async throws -> WorksetReleaseObservation {
         await waitIfDelayed()
         if deny { throw AdvisoryError.denied }
+        if delaySubmit { try await Task.sleep(for: .milliseconds(200)) }
+        try Task.checkCancellation()
         sends.append(command)
         if lostBeforeApply { lostBeforeApply=false;throw AdvisoryError.unavailable }
         replies[command.operation_id]=command
@@ -430,5 +435,74 @@ extension WorksetReleaseTests {
         await peer.setDelay(true);let reading=Task { await state.refresh(connection) };await Task.yield();state.invalidate();await reading.value
         XCTAssertNil(state.observation);XCTAssertNil(state.capability);XCTAssertTrue(state.history.isEmpty)
         XCTAssertEqual(store.journal.history.count,1)
+    }
+}
+
+extension WorksetReleaseTests {
+    @MainActor func testInvalidateDuringSubmitRetainsOriginalIntentAndCancelsDispatch() async throws {
+        let raw=try prepared(),packet=raw["package"] as! [String:Any],access=access(packet)
+        let dir=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/workset-release-source")
+        let peer=ReleaseReplayPeer(released:try Data(contentsOf:dir.appendingPathComponent("operation-released.json")),disarmed:try Data(contentsOf:dir.appendingPathComponent("operation-disarmed.json")))
+        let store=ReleaseTestStore(),state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:store,transport:peer)
+        let connection=AdvisoryConnection(endpoint:access.endpoint,workspaceInstanceID:access.workspaceInstanceID,actorID:access.actorID,workspaceProjectID:access.workspaceProjectID,conversationID:"a",bearer:"read",draftGrant:String(repeating:"c",count:43))
+        await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare();await peer.setSubmitDelay(true)
+        let saved=expectation(description:"Original intent durably saved")
+        store.onSave={ saved.fulfill() }
+        let confirming=Task { await state.confirmRelease() }
+        await fulfillment(of:[saved],timeout:2);store.onSave=nil
+        XCTAssertNotNil(store.journal.pending);let original=store.journal.pending
+        state.invalidate();await confirming.value
+        XCTAssertEqual(store.journal.pending,original);XCTAssertNil(state.observation)
+        let sends=await peer.sends;XCTAssertTrue(sends.isEmpty)
+        await state.refresh(connection);XCTAssertEqual(state.pending,original)
+        let resuming=Task { await state.resume() };await Task.yield();state.invalidate();await resuming.value
+        XCTAssertEqual(store.journal.pending,original)
+        let recoveredSends=await peer.sends;XCTAssertTrue(recoveredSends.isEmpty)
+    }
+}
+
+extension WorksetReleaseTests {
+    @MainActor func testRealTransportCapabilityPreflightCancellationSendsNoCommand() async throws {
+        let raw=try prepared(),packet=raw["package"] as! [String:Any],access=access(packet)
+        let selection=try AdvisoryWire.decode(packet["selection"]!,as:WorksetReleaseSelection.self)
+        let cap:[String:Any]=["contract_version":WorksetReleaseWire.contract,"scope":packet["scope"]!,"principal_id":access.actorID,"permissions":["READ","RELEASE","DISARM"],"subjects":(packet["selection"] as! [String:Any])["subjects"]!,"limits":["maximum_releases":1,"maximum_activations":2],"expires_at":selection.expires_at,"release_supported":true,"disarm_supported":true,"read_only":true,"additional_model_calls":0]
+        let preflight=expectation(description:"Command capability preflight reached")
+        var capabilityReads=0,commandPosts=0
+        WorklistStubProtocol.handler={request in
+            if request.url!.path.hasSuffix("capability") {
+                capabilityReads+=1
+                if capabilityReads==4 { preflight.fulfill();Thread.sleep(forTimeInterval:0.15) }
+                return (200,try JSONSerialization.data(withJSONObject:cap),"application/json")
+            }
+            if request.url!.path.hasSuffix("commands") { commandPosts+=1 }
+            return (200,try JSONSerialization.data(withJSONObject:raw),"application/json")
+        }
+        defer { WorklistStubProtocol.handler=nil }
+        let config=URLSessionConfiguration.ephemeral;config.protocolClasses=[WorklistStubProtocol.self]
+        let store=ReleaseTestStore()
+        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:store,transport:WorksetReleaseTransport(configuration:config,clock:{WorksetReleaseWire.date(selection.expires_at)!.addingTimeInterval(-60)}))
+        let connection=AdvisoryConnection(endpoint:access.endpoint,workspaceInstanceID:access.workspaceInstanceID,actorID:access.actorID,workspaceProjectID:access.workspaceProjectID,conversationID:"a",bearer:"read",draftGrant:String(repeating:"c",count:43))
+        await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare()
+        let confirming=Task { await state.confirmRelease() }
+        await fulfillment(of:[preflight],timeout:3);XCTAssertNotNil(store.journal.pending)
+        state.invalidate();await confirming.value
+        XCTAssertEqual(commandPosts,0);XCTAssertNotNil(store.journal.pending);XCTAssertNil(state.observation)
+    }
+}
+
+extension WorksetReleaseTests {
+    func testUnicodePlanningCanonicalDigestAndMissingOptionalEvidence() throws {
+        let path=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/workset-release-unit/unicode-prepared.json")
+        let data=try Data(contentsOf:path),raw=try WorksetReleaseWire.object(data),packet=raw["package"] as! [String:Any]
+        let selection=try AdvisoryWire.decode(packet["selection"]!,as:WorksetReleaseSelection.self)
+        let preview=try WorksetReleaseWire.prepared(data,access:access(packet),selection:selection)
+        XCTAssertEqual(preview.members[0].humanGates,["dépôt approuvé 😀"])
+        var bad=packet,subjects=packet["subjects"] as! [[String:Any]]
+        var decisions=subjects[0]["candidate_decisions"] as! [String:[String:Any]],receipt=decisions["architecture"]!
+        var canonical=receipt["canonical_decision"] as! [String:Any],evidence=canonical["evidence"] as! [String:Any]
+        evidence.removeValue(forKey:"planning_digest");canonical["evidence"]=evidence
+        receipt["canonical_decision"]=canonical;receipt["canonical_decision_digest"]=try AdvisoryWire.digest(canonical)
+        decisions["architecture"]=receipt;subjects[0]["candidate_decisions"]=decisions;bad["subjects"]=subjects
+        XCTAssertThrowsError(try WorksetReleaseWire.package(bad,access:access(packet)))
     }
 }

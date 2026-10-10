@@ -15,7 +15,10 @@ import Foundation
     private var access: WorksetReleaseAccess?
     private var connection: AdvisoryConnection?
     private var attemptedScope: [String]?
+    private var commandTask: Task<WorksetReleaseObservation, Error>?
     private var generation = 0
+    var authorityEpoch: Int { generation }
+    var interactionActive: Bool { busy || preview != nil || pending != nil || (observation == nil && !selected.isEmpty) }
     private var selecting = false
     private var journal = WorksetReleaseJournal()
     init(credentials: any WorksetReleaseCredentials = WorksetReleaseKeychain(),
@@ -24,6 +27,7 @@ import Foundation
         self.credentials = credentials; self.store = store; self.transport = transport
     }
     func invalidate() {
+        commandTask?.cancel(); commandTask = nil
         generation &+= 1; selecting = false; attemptedScope = nil; connection = nil; access = nil; busy = false
         capability = nil; preview = nil; observation = nil; selected = []; pending = nil; history = []; phase = "unconfigured"
     }
@@ -108,7 +112,7 @@ import Foundation
                 guard preview?.digest == pending.command.package_digest else { throw AdvisoryError.invalid }
             }
             // Explicit recovery sends only the durable original request, after a current authorized read.
-            let result = try await transport.submit(access, connection, command: pending.command)
+            let result = try await submit(access, connection, command: pending.command)
             guard ticket == generation else { return }
             try accept(result, intent: pending, access: access)
         } catch { failed(error, ticket: ticket) }
@@ -194,10 +198,17 @@ import Foundation
             // Fsync the original intent before any effectful network request.
             var next = journal; next.pending = record; try store.save(next, key: access.scopeKey)
             journal = next; pending = record
-            let result = try await transport.submit(access, connection, command: command)
+            let result = try await submit(access, connection, command: command)
             guard ticket == generation else { return }
             try accept(result, intent: record, access: access)
         } catch { failed(error, ticket: ticket) }
+    }
+    private func submit(_ access: WorksetReleaseAccess, _ connection: AdvisoryConnection, command: WorksetReleaseCommand) async throws -> WorksetReleaseObservation {
+        let ticket = generation, transport = self.transport
+        let task = Task { try Task.checkCancellation(); return try await transport.submit(access, connection, command: command) }
+        commandTask = task
+        defer { if ticket == generation { commandTask = nil } }
+        return try await task.value
     }
     private func accept(_ result: WorksetReleaseObservation, intent: WorksetReleaseIntent, access: WorksetReleaseAccess) throws {
         guard result.operationID == intent.command.operation_id else { throw AdvisoryError.invalid }

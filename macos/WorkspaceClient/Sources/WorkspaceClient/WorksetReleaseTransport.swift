@@ -32,6 +32,7 @@ final class WorksetReleaseTransport: WorksetReleaseServing, @unchecked Sendable 
         request.setValue(connection.draftGrant, forHTTPHeaderField: "X-Workspace-Draft-Grant")
         request.setValue(token, forHTTPHeaderField: "X-Workspace-Workset-Release-Grant")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        try Task.checkCancellation()
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse, data.count <= 1_000_000,
               http.value(forHTTPHeaderField: "Content-Type")?.lowercased().hasPrefix("application/json") == true else { throw AdvisoryError.invalid }

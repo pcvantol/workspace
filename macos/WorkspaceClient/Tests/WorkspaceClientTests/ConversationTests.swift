@@ -1193,3 +1193,55 @@ final class ConversationTests: XCTestCase {
         render(view)
     }
 }
+
+private final class ReleaseResolverCredentials: CredentialStore, @unchecked Sendable {
+    let saved: ServerBinding
+    private let lock=NSLock()
+    private var gate: (XCTestExpectation,DispatchSemaphore)?
+    init(_ saved: ServerBinding) { self.saved=saved }
+    func pauseNext(_ started: XCTestExpectation,_ release: DispatchSemaphore) { lock.withLock { gate=(started,release) } }
+    func binding() throws -> ServerBinding? { saved }
+    func token() throws -> String? {
+        let pending=lock.withLock { let value=gate;gate=nil;return value }
+        if let pending { pending.0.fulfill();_ = pending.1.wait(timeout:.now()+3) }
+        return "read-only"
+    }
+    func save(binding: ServerBinding,token: String) throws {}
+    func forget() throws {}
+}
+extension ConversationTests {
+    @MainActor func testMissionReleaseConnectionCannotSurviveDelayedCredentialDisconnectOrSuspension() async throws {
+        let instance=self.instance,record=self.record
+        StubProtocol.handler={request in
+            switch request.url!.path {
+            case "/v1/identity":return (200,Data("{\"instance_id\":\"\(instance)\"}".utf8))
+            case "/v1/status":return (200,Data("{\"instance_id\":\"\(instance)\",\"version\":\"2.8.16\",\"state\":\"READY\",\"project_source\":\"AVAILABLE\"}".utf8))
+            case "/v1/projects":return (200,Data("{\"state\":\"AVAILABLE\",\"projects\":[{\"id\":\"project-a\",\"name\":\"Project A\"}],\"source\":\"LOCAL\",\"observed_at\":\"2026-10-04T20:00:00Z\",\"partial\":false,\"stale\":false}".utf8))
+            case "/v1/conversations":return (200,Data("{\"actor_id\":\"alice\",\"project_id\":\"project-a\",\"conversations\":[\(record)],\"history_availability\":\"UNQUALIFIED_FORGE\"}".utf8))
+            default:return (503,Data("{}".utf8))
+            }
+        }
+        defer { StubProtocol.handler=nil }
+        let config=URLSessionConfiguration.ephemeral;config.protocolClasses=[StubProtocol.self]
+        let credentials=ReleaseResolverCredentials(.init(endpoint:access.endpoint,instanceID:instance))
+        let client=ClientState(keychain:credentials,transport:ServerTransport(configuration:config))
+        for _ in 0..<100 where client.phase != "CONNECTED" { try await Task.sleep(for:.milliseconds(10)) }
+        XCTAssertEqual(client.phase,"CONNECTED")
+        let state=ConversationState(grants:MemoryDraftGrant(access),localDrafts:MemoryLocalDrafts(),transport:ConversationTransport(configuration:config))
+        client.bindReleaseAuthority(state.worksetReleases)
+        await state.prepare(client:client);XCTAssertEqual(state.state,"AVAILABLE")
+        let started=expectation(description:"Release resolver credential read delayed"),unblock=DispatchSemaphore(value:0)
+        credentials.pauseNext(started,unblock)
+        let resolving=Task { await state.missionWorkspaceConnection(client:client) }
+        await fulfillment(of:[started],timeout:2);client.cancel();unblock.signal()
+        let disconnected=await resolving.value;XCTAssertNil(disconnected)
+        client.reconnect()
+        for _ in 0..<100 where client.phase != "CONNECTED" { try await Task.sleep(for:.milliseconds(10)) }
+        let suspended=expectation(description:"Release resolver suspended credential read"),resume=DispatchSemaphore(value:0)
+        credentials.pauseNext(suspended,resume)
+        let another=Task { await state.missionWorkspaceConnection(client:client) }
+        await fulfillment(of:[suspended],timeout:2)
+        let forgotten=await state.prepareForServerForget();XCTAssertTrue(forgotten)
+        resume.signal();let suspendedResult=await another.value;XCTAssertNil(suspendedResult)
+    }
+}

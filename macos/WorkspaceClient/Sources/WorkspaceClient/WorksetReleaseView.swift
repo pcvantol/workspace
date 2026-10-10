@@ -35,6 +35,14 @@ struct WorksetReleaseView: View {
                     .disabled(state.busy || (state.preview == nil && state.observation?.state != "PENDING"))
                     .accessibilityIdentifier("release.resume")
             }
+            ScrollView(.horizontal) {
+            HStack {
+                ForEach(Array(state.history.enumerated()), id: \.element.command.operation_id) { index, intent in
+                    Button(copy(intent.command.intent == "release" ? "originalRelease" : "withdrawal")+" \(index+1)") { Task { await state.observe(intent) } }
+                        .disabled(state.busy).accessibilityIdentifier("release.history.\(index)")
+                }
+            }.buttonStyle(.glass)
+            }
             if let observation = state.observation { current(observation) }
             else { selection }
         }.onReceive(timer) { _ in
@@ -104,12 +112,6 @@ struct WorksetReleaseView: View {
     }
     private func current(_ observation: WorksetReleaseObservation) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                ForEach(Array(state.history.enumerated()), id: \.element.command.operation_id) { index, intent in
-                    Button(copy(intent.command.intent == "release" ? "originalRelease" : "withdrawal")+" \(index+1)") { Task { await state.observe(intent) } }
-                        .disabled(state.busy).accessibilityIdentifier("release.history.\(index)")
-                }
-            }.buttonStyle(.glass)
             if let receipt = observation.originalReceiptData,
                let raw = try? WorksetReleaseWire.object(receipt) {
                 Text(copy(raw["intent"] as? String == "release" ? "originalConfirmed" : "withdrawalConfirmed")).font(.callout)

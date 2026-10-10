@@ -76,7 +76,8 @@ struct LiveMissionWorkspaceView: View {
             if value != "CONNECTED" { releases.invalidate() }
         }
         .onChange(of:conversations.state) { _, value in
-            if value != "AVAILABLE" { releases.invalidate() }
+            if ["UNAUTHORIZED", "GRANT_REQUIRED", "UNAVAILABLE", "OFFLINE", "STALE"].contains(value) { releases.invalidate() }
+            if value=="AVAILABLE",client.phase=="CONNECTED",!selection.refreshing { Task { await refreshReleaseIfNeeded() } }
             if value=="AVAILABLE",!selection.refreshing,!state.busy,state.capability==nil,state.pending==nil,client.phase=="CONNECTED" {
                 Task { await refreshKnownScope() }
             }
@@ -113,20 +114,27 @@ struct LiveMissionWorkspaceView: View {
         await refreshReleaseIfNeeded()
     }
     func refresh() async {
+        guard client.phase=="CONNECTED" else { activeConversationID=nil;selection.ownConversationID=nil;selection.newDraft=false;state.invalidate();releases.invalidate();return }
         guard !selection.refreshing,!state.busy else { return }
         selection.refreshing=true;defer { selection.refreshing=false }
-        guard client.phase=="CONNECTED" else { activeConversationID=nil;selection.ownConversationID=nil;selection.newDraft=false;state.invalidate();releases.invalidate();return }
         await conversations.prepare(client:client)
         await state.refresh(await connection())
         await refreshReleaseIfNeeded()
     }
+    func releaseConnection() async -> AdvisoryConnection? {
+        let epoch = releases.authorityEpoch
+        guard let own = await conversations.missionWorkspaceConnection(client:client),
+              epoch == releases.authorityEpoch, client.phase == "CONNECTED",
+              conversations.state == "AVAILABLE", !conversations.preparingServerForget else { return nil }
+        return own
+    }
     func refreshReleaseIfNeeded() async {
-        guard client.phase=="CONNECTED",let own=await conversations.missionWorkspaceConnection(client:client),!releases.hasAttempted(own) else { return }
+        guard client.phase=="CONNECTED",let own=await releaseConnection(),!releases.hasAttempted(own) else { return }
         await releases.refresh(own)
     }
     func refreshRelease() async {
         guard client.phase=="CONNECTED" else { releases.invalidate();return }
-        await releases.refresh(await conversations.missionWorkspaceConnection(client:client))
+        await releases.refresh(await releaseConnection())
     }
     func resume() async { await state.resume(await connection()) }
     func prepare(_ card:MissionDefinitionCard) async {

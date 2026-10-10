@@ -123,3 +123,19 @@ class WorksetReleasePreparedTests(unittest.TestCase):
             with self.assertRaises(WorklistError):wire.operation(bad,self.binding)
         bad=deepcopy(value);bad['current']['items'][0]['mission_id']='unrelated-mission'
         with self.assertRaises(WorklistError):wire.operation(bad,self.binding)
+
+    def testCanonicalUnicodePlanningAndMissingEvidence(self):
+        # Declared wire regression transformation, never installed approval evidence.
+        bad=deepcopy(self.value);packet=bad['package'];subject=packet['subjects'][0]
+        subject['planning']['human_gates']=['dépôt approuvé 😀']
+        packet['definition']['members'][0]['planning']=deepcopy(subject['planning'])
+        packet['definition']['members'][0]['progression_policy']['higher_scope_obligations']=subject['planning']['human_gates']
+        for role,receipt in subject['candidate_decisions'].items():
+            receipt['canonical_decision']['gates']=subject['planning']['human_gates']
+            if role=='architecture':receipt['canonical_decision']['evidence']['planning_digest']=wire._canonical(subject['planning'])
+            receipt['canonical_decision_digest']=wire.digest(receipt['canonical_decision'])
+        wire._subject_proofs(packet,self.binding)
+        receipt=subject['candidate_decisions']['architecture']
+        receipt['canonical_decision']['evidence'].pop('planning_digest')
+        receipt['canonical_decision_digest']=wire.digest(receipt['canonical_decision'])
+        with self.assertRaises(WorklistError):wire._subject_proofs(packet,self.binding)
