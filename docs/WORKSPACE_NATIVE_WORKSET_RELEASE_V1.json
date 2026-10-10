@@ -15,7 +15,7 @@
     "remaining": 0,
     "starts_after_first_complete_independent_quality_security_pair": true
   },
-  "state": "CORRECTION_ROUND_4_VALIDATED_FULL_INDEPENDENT_REVIEWS_AND_MATCHING_INSTALLED_GUI_PENDING",
+  "state": "PROTECTED_SOURCE_MERGED_DOCUMENTARY_FINALIZATION_PENDING_NEW_FINAL_MAIN_PROOF",
   "prior_plans_93_95_closed": true,
   "users_credentials_retained": true,
   "consumer_version": "2.8.16",
@@ -41,12 +41,12 @@
     "second": "ACCEPTABLE_TO_CONTINUE_EARLY_ONLY"
   },
   "pending_gates": [
-    "full_exact_head_independent_UX_Quality_Security",
-    "noneditable_candidate_integration_and_targeted_runtime_EP_HTTP_simulator",
-    "protected_source_merge",
-    "nonempty_finalization",
-    "new_exact_final_main_installed_native_Server_pinned_Forge",
-    "fresh_five_language_theme_narrow_keyboard_screenshots_and_reachable_manifest"
+    "independent_finalization_review_CI_protected_merge",
+    "NEW_exact_final_main_matching_native_Server_pinned_Forge",
+    "targeted_runtime_A_to_B_actual_final_acceptance_finite_quota_idle",
+    "actual_lost_response_restart_denied_future_disarm",
+    "full_independent_UX_five_language_theme_narrow_keyboard_screens_reachable_manifest",
+    "final_register_readback_safe_own_cleanup"
   ],
   "independent_review_first_pair": {
     "source": "440b5276567744b9efb7b877d1d5557f8e63bb75",
@@ -121,5 +121,55 @@
       "python_dependencies": "DETECTED",
       "boundary": "unit mutation artifacts, not canonical or installed qualification"
     }
+  },
+  "recorded_pre_merge_state": "CORRECTION_ROUND_4_VALIDATED_FULL_INDEPENDENT_REVIEWS_AND_MATCHING_INSTALLED_GUI_PENDING",
+  "protected_source": {
+    "pull_request": 147,
+    "merge_commit": "b11b4c719cdd5672046ae29140aa330e7060dfde",
+    "reviewed_head": "669a64c8a2cc28d5fdcd448910ab2aeed1a5b0db",
+    "tree": "7e9515bce6ee1464ad37ddd6c2154607c5cee3ed",
+    "tree_equal_reviewed_head": true,
+    "version": "2.8.16",
+    "original_patch_operation_retained": true
+  },
+  "independent_review_fifth_pair": {
+    "source": "669a64c8a2cc28d5fdcd448910ab2aeed1a5b0db",
+    "quality": "PASS",
+    "security": "PASS",
+    "whole_original_delta": true,
+    "nonblocking_retained": "response_size_checked_after_buffering"
+  },
+  "candidate_669a64c_boundary": {
+    "matching_native_Server_source": "669a64c8a2cc28d5fdcd448910ab2aeed1a5b0db",
+    "wheel_sha256": "533369daff4d296e8b3cc0dc606c7785668b269e9caa3cb31c28b9551134294c",
+    "native_executable_sha256": "12fe9b93e7ab3493dbf380959eedee36c157f6f9ecdcab11b5ab25de4d8eef02",
+    "independent_actual_GUI": "ACCEPTABLE_TO_CONTINUE_EARLY_ONLY",
+    "actual_tasks": [
+      "C_not_release_selectable",
+      "B_only_missing_predecessor_blocked",
+      "B_before_A_order_blocked",
+      "explicit_reorder_valid_A_to_B",
+      "one_native_release_receipt_CURRENT_COMPLETE",
+      "immediate_empty_new_selection_without_reconnect",
+      "A_then_B_toggle_accumulation_history_retained"
+    ],
+    "original_operation_current_readback": "COMPLETE",
+    "definition_calls": 3,
+    "ep_starts_at_native_release": 0,
+    "actual_pinned_prepare_matrix": {
+      "A_to_B": "SUPPORTED",
+      "B_only": "PREDECESSOR_NOT_SELECTED_BLOCKED",
+      "B_before_A": "DEPENDENCY_ORDER_CONFLICT_BLOCKED",
+      "changed_selected_predecessor_revision": "DENIED_OUTSIDE_FINITE_GRANT"
+    },
+    "legitimate_changed_gap": "declared_unit_transport_fixture_only_not_fabricated_canonical_approval",
+    "not_final_main_proof": true
+  },
+  "finalization": {
+    "classification": "NO_BUMP_DOCUMENTATION_ONLY",
+    "source_base": "b11b4c719cdd5672046ae29140aa330e7060dfde",
+    "product_source_unchanged": true,
+    "state": "PENDING_OWN_REVIEW_CI_PROTECTED_MERGE",
+    "new_final_main_qualification_required": true
   }
 }
