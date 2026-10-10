@@ -107,12 +107,7 @@ import Combine
                     } catch AdvisoryError.missing { phase="pending" }
                 }
             }
-            // A completed receipt is historical; every refresh rechecks its current definition.
-            if pending == nil,let previous=approval {
-                let raw=try AdvisoryWire.object(previous.data)
-                let current=try await transport.operation(a,c,id:previous.operationID,expectedDigest:raw["package_digest"] as? String)
-                guard epoch==generation else { return };approval=current
-            }
+            guard try await refreshRecordedApproval(a, connection: c, generation: generation) else { return }
             let cap=try await transport.capability(a,c)
             var turns:[MissionConceptTurnRecord]=[];var conversationRevision=0
             do {
@@ -135,21 +130,42 @@ import Combine
                 guard let next=page.next_cursor else { break }
                 guard next>cursor,catalog.count<=a.conversationIDs.count else { throw AdvisoryError.invalid };cursor=next
             }
-            guard let snapshot,try AdvisoryWire.digest(rawItems)==snapshot,Set(catalog.map(\.object_id)).count==catalog.count,
-                  Set(turns.map { $0.request.turn_id }).count==turns.count else { throw AdvisoryError.invalid }
-            for item in catalog {
-                for edge in item.edges {
-                    guard let predecessor=catalog.first(where: { $0.object_id==edge.source_object_id }),predecessor.canonical_history.contains(where: {
-                        $0.definition_revision==edge.source_definition_revision && $0.candidate_id==edge.candidate_id && $0.subject_revision==edge.subject_revision && $0.subject_current
-                    }) else { throw AdvisoryError.invalid }
-                }
-            }
+            try validateCatalogue(catalog, rawItems: rawItems, snapshot: snapshot, turns: turns)
             guard epoch==generation else { return }
             capability=cap;history=turns;items=catalog;revision=conversationRevision
-            if let packet,!catalog.contains(where: { $0.object_id==packet.objectID && $0.revision==packet.revision && $0.definition==packet.definition }) { self.packet=nil }
+            discardStalePacket(catalog)
             phase=pending != nil ? "pending" : approval?.presentationState ?? "current"
         } catch { if epoch==generation { fail(error) } }
     }
+    private func discardStalePacket(_ catalog: [MissionConceptCatalogItem]) {
+        if let packet, !catalog.contains(where: {
+            $0.object_id == packet.objectID && $0.revision == packet.revision && $0.definition == packet.definition
+        }) { self.packet = nil }
+    }
+
+    // A completed receipt is historical; every refresh rechecks its current definition.
+    private func refreshRecordedApproval(_ access: AdvisoryAccess, connection: AdvisoryConnection, generation: Int) async throws -> Bool {
+        if pending == nil, let previous = approval {
+            let raw = try AdvisoryWire.object(previous.data)
+            let current = try await transport.operation(access, connection, id: previous.operationID, expectedDigest: raw["package_digest"] as? String)
+            guard epoch == generation else { return false }
+            approval = current
+        }
+        return true
+    }
+
+    private func validateCatalogue(_ catalog: [MissionConceptCatalogItem], rawItems: [Any], snapshot: String?, turns: [MissionConceptTurnRecord]) throws {
+        guard let snapshot,try AdvisoryWire.digest(rawItems)==snapshot,Set(catalog.map(\.object_id)).count==catalog.count,
+              Set(turns.map { $0.request.turn_id }).count==turns.count else { throw AdvisoryError.invalid }
+        for item in catalog {
+            for edge in item.edges {
+                guard let predecessor=catalog.first(where: { $0.object_id==edge.source_object_id }),predecessor.canonical_history.contains(where: {
+                    $0.definition_revision==edge.source_definition_revision && $0.candidate_id==edge.candidate_id && $0.subject_revision==edge.subject_revision && $0.subject_current
+                }) else { throw AdvisoryError.invalid }
+            }
+        }
+    }
+
     func refine(_ text: String, lens: String, connection c: AdvisoryConnection?) async {
         guard admit(c),canRefine(text,lens:lens),let c else { return }
         let generation=epoch;busy=true;defer { if epoch==generation { busy=false } }

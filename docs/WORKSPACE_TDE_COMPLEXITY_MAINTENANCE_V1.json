@@ -1,0 +1,16 @@
+{
+  "baseline_workspace_main": "25002017b15ae4efef01fa85cb4b569df07d2f88",
+  "baseline_product_maximum": 39,
+  "candidate_product_maximum": 28,
+  "policy": {
+    "identifier": "tde.generation-1.default",
+    "owner": "TDE policy governance",
+    "scope": "repository",
+    "version": "1.4.0"
+  },
+  "assessment_status": "PASS_WITH_WARNINGS",
+  "repository_qualification": "QUALIFIED",
+  "assessment_decision": "PASS_WITH_WARNINGS",
+  "thresholds_unchanged": true,
+  "source_final_main_qualification": "PENDING_PROTECTED_DELIVERY"
+}
