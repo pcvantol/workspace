@@ -12,24 +12,42 @@ import Foundation
     private let credentials: any WorksetReleaseCredentials
     private let store: any WorksetReleaseIntentStorage
     private let transport: any WorksetReleaseServing
+    private let clock: @Sendable () -> Date
     private var access: WorksetReleaseAccess?
     private var connection: AdvisoryConnection?
     private var attemptedScope: [String]?
     private var commandTask: Task<WorksetReleaseObservation, Error>?
     private var generation = 0
     var authorityEpoch: Int { generation }
-    var interactionActive: Bool { selecting || busy || preview != nil || pending != nil || (observation == nil && !selected.isEmpty) }
+    var interactionActive: Bool { inspections > 0 || selecting || busy || preview != nil || pending != nil || (observation == nil && !selected.isEmpty) }
     private var selecting = false
+    private var inspections = 0
+    func inspect(_ visible: Bool) { inspections = max(0, inspections + (visible ? 1 : -1)) }
     private var journal = WorksetReleaseJournal()
     init(credentials: any WorksetReleaseCredentials = WorksetReleaseKeychain(),
          store: any WorksetReleaseIntentStorage = PrivateWorksetReleaseStore(),
-         transport: any WorksetReleaseServing = WorksetReleaseTransport()) {
-        self.credentials = credentials; self.store = store; self.transport = transport
+         transport: any WorksetReleaseServing = WorksetReleaseTransport(),
+         clock: @escaping @Sendable () -> Date = { Date() }) {
+        self.credentials = credentials; self.store = store; self.transport = transport; self.clock = clock
     }
     func invalidate() {
         commandTask?.cancel(); commandTask = nil
         generation &+= 1; selecting = false; attemptedScope = nil; connection = nil; access = nil; busy = false
+        clearPresentation()
+    }
+    private func clearPresentation() {
         capability = nil; preview = nil; observation = nil; selected = []; pending = nil; history = []; phase = "unconfigured"
+    }
+    private func beginRefresh(_ connection: AdvisoryConnection?) {
+        guard let connection, access?.matches(connection) == true,
+              let expiry = capability.flatMap({ WorksetReleaseWire.date($0.expires_at) }), expiry > clock() else { invalidate(); return }
+        generation &+= 1; preview = nil; phase = "refreshing"
+        // Keep the same authorized observation subtree while reading; expiry/loss still invalidates immediately.
+    }
+    private func discardChangedCredential(_ next: WorksetReleaseAccess) {
+        if let access, access != next {
+            clearPresentation(); self.access = nil; connection = nil; selecting = false
+        }
     }
     func saveGrant(_ token: String, connection: AdvisoryConnection?) async {
         guard !busy, pending == nil, let connection else { return }
@@ -57,13 +75,14 @@ import Foundation
     func refresh(_ connection: AdvisoryConnection?) async {
         guard !busy else { return }
         let previousAccess = access, previousSelection = selected, wasSelecting = selecting
-        invalidate()
+        beginRefresh(connection)
         guard let connection else { return }
         attemptedScope = Self.scope(connection)
         let ticket = generation; busy = true
         defer { if ticket == generation { busy = false } }
         do {
             guard let access = try credentials.load(), access.matches(connection) else { throw AdvisoryError.denied }
+            discardChangedCredential(access)
             let cap = try await transport.capability(access, connection)
             guard ticket == generation else { return }
             self.connection = connection; self.access = access; capability = cap

@@ -41,6 +41,7 @@ enum WorksetReleaseCopy {
         "released": ["Released — execution not yet confirmed", "Vrijgegeven — uitvoering nog niet bevestigd", "Freigegeben — Ausführung noch nicht bestätigt", "Autorisé — exécution non encore confirmée", "Autorizado — ejecución aún no confirmada"],
         "withdrawn": ["Future starts withdrawn", "Toekomstige starts teruggenomen", "Künftige Starts zurückgenommen", "Démarrages futurs retirés", "Inicios futuros retirados"],
         "resume": ["Resume original request", "Oorspronkelijk verzoek hervatten", "Ursprüngliche Anfrage fortsetzen", "Reprendre la demande initiale", "Reanudar solicitud original"],
+        "refreshing": ["Reading current status; the previous observation is shown", "Actuele status ophalen; de vorige waarneming wordt getoond", "Aktuellen Status lesen; vorherige Beobachtung wird angezeigt", "Lecture de l’état actuel ; observation précédente affichée", "Consultando el estado actual; se muestra la observación anterior"],
         "refresh": ["Refresh current status", "Actuele status vernieuwen", "Aktuellen Status aktualisieren", "Actualiser l’état actuel", "Actualizar estado actual"],
         "up": ["Move earlier", "Eerder plaatsen", "Nach vorne verschieben", "Déplacer plus tôt", "Mover antes"],
         "down": ["Move later", "Later plaatsen", "Nach hinten verschieben", "Déplacer plus tard", "Mover después"],

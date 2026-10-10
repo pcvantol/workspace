@@ -45,7 +45,8 @@ struct WorksetReleaseView: View {
             }
             if let observation = state.observation { current(observation) }
             else { selection }
-        }.onReceive(timer) { _ in
+        }.onAppear { state.inspect(true) }.onDisappear { state.inspect(false) }
+        .onReceive(timer) { _ in
             state.expirePreview()
             if state.observation != nil, !state.busy { onRefresh() }
         }.padding(20).frame(minWidth: 480, idealWidth: 860, minHeight: 560, idealHeight: 760)
@@ -128,7 +129,9 @@ struct WorksetReleaseView: View {
         }
     }
     private func cache(_ snapshot: ApprovedWorklistSnapshot) -> WorklistObservationCache {
-        var cache = WorklistObservationCache(); cache.accept(snapshot, for: snapshot.scope); return cache
+        var cache = WorklistObservationCache(); cache.accept(snapshot, for: snapshot.scope)
+        if state.busy { cache.failed(.stale, for: snapshot.scope) }
+        return cache
     }
 }
 

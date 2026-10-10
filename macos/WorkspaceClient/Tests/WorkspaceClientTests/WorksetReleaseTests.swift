@@ -509,3 +509,19 @@ extension WorksetReleaseTests {
         XCTAssertThrowsError(try WorksetReleaseWire.package(bad,access:access(packet)))
     }
 }
+
+extension WorksetReleaseTests {
+    @MainActor func testOrdinaryRefreshPreservesObservedSubtreeUntilFreshReadAndClearsOnAuthorityLoss() async throws {
+        let (access,connection,peer)=try replayFixture(),credentials=ReleaseMutableCredentials(access),store=ReleaseTestStore()
+        let raw=try prepared(),selection=try AdvisoryWire.decode((raw["package"] as! [String:Any])["selection"]!,as:WorksetReleaseSelection.self)
+        let state=WorksetReleaseState(credentials:credentials,store:store,transport:peer,clock:{WorksetReleaseWire.date(selection.expires_at)!.addingTimeInterval(-60)})
+        await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare();await state.confirmRelease()
+        let original=try XCTUnwrap(state.observation).operationID
+        await peer.setDelay(true);let reading=Task { await state.refresh(connection) };await Task.yield()
+        XCTAssertTrue(state.busy);XCTAssertEqual(state.observation?.operationID,original);XCTAssertEqual(state.phase,"refreshing")
+        await reading.value;XCTAssertEqual(state.observation?.operationID,original)
+        await peer.configure(denied:true);let denied=Task { await state.refresh(connection) };await Task.yield()
+        state.invalidate();await denied.value
+        XCTAssertNil(state.observation);XCTAssertNil(state.capability);XCTAssertTrue(state.history.isEmpty)
+    }
+}
