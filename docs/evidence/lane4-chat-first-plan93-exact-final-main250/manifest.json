@@ -1,0 +1,116 @@
+{
+  "result": "EXACT_FINAL_MAIN_CONTINUITY_CONSUMER_QUALIFIED",
+  "workspace_main": "25002017b15ae4efef01fa85cb4b569df07d2f88",
+  "producer_pin": "9875333acc4258a20fc0180a9ae09c980802d5b1",
+  "producer_version": "2.12.1",
+  "original_portal_frozen_package_decisions_operation_candidate_mission_exactly_equal": true,
+  "retained_operations": [
+    {
+      "source": "foundation",
+      "operation_state": "COMPLETE",
+      "source_fresh": true,
+      "definition_state": "APPROVED_WAITING",
+      "readiness": {
+        "state": "APPROVED_WAITING",
+        "blockers": [
+          "EXPLICIT_WORKSET_RELEASE_REQUIRED"
+        ]
+      },
+      "distinct_decisions": true,
+      "additional_model_calls": 0
+    },
+    {
+      "source": "portal",
+      "operation_state": "COMPLETE",
+      "source_fresh": true,
+      "definition_state": "APPROVED_WAITING",
+      "readiness": {
+        "state": "APPROVED_WAITING",
+        "blockers": [
+          "DEPENDENCY_NOT_PROVEN",
+          "EXPLICIT_WORKSET_RELEASE_REQUIRED"
+        ]
+      },
+      "distinct_decisions": true,
+      "additional_model_calls": 0
+    }
+  ],
+  "total_turn_ceiling": 8,
+  "retained_consumed_turns": 3,
+  "additional_generation": 0,
+  "budget_reset": false,
+  "ledger_sha256": "27fbbe04620bdade48756eca19527e902b52950aee1daec60d763d38f372df68",
+  "wheel_site_product_files_verified": {
+    "workspace": 25,
+    "forge": 266
+  },
+  "actual_gui": "A\u2192B graph card-click; shared transcript/detail v2\u2192v1; refresh",
+  "finalization_exact_final_main": "INSTALLED_HTTP_NATIVE_GUI_CURRENT_CI_PASS",
+  "protected_finalization": "https://github.com/pcvantol/workspace/pull/144",
+  "finalization_reviews": {
+    "quality": {
+      "result": "PASS",
+      "head": "b88aa62b3d082c7a1a59ba9d4a0dbec8f4f1cfe2",
+      "report_sha256": "3cfcf05cc6a8b8024fb80cc290dd3994de17d36fb9de15d8d93a26127b44fa79"
+    },
+    "security": {
+      "result": "PASS",
+      "head": "b88aa62b3d082c7a1a59ba9d4a0dbec8f4f1cfe2",
+      "report_sha256": "c34112bb3ae5e79963cca93cd41dc3e2f9cb16d9677c9a61f445394c5c2d1a9c"
+    }
+  },
+  "full_current_own_validation": "160_NATIVE_PLUS_1_ISOLATED_ALL_GATES_PASS",
+  "tde_finalization": {
+    "workflow": "SUCCESS",
+    "policy": "FAIL",
+    "run": 38016229158
+  },
+  "native": {
+    "source": "25002017b15ae4efef01fa85cb4b569df07d2f88",
+    "minimum_macos": "26.0",
+    "binary_sha256": "5f48776d0c64808c84fecb6d57d32642bf957e9fe0f9f3fd061400ca8fbcfbb0",
+    "actual_final_main_gui": [
+      "wide light A\u2192B card-click",
+      "shared exact v2\u2192v1 selection",
+      "refresh",
+      "dark restart640px definition"
+    ]
+  },
+  "tde_current_main": {
+    "run": 38016502274,
+    "workflow": "SUCCESS",
+    "assessment_exit": 2,
+    "qualification_exit": 2,
+    "policy": "FAIL"
+  },
+  "cleanup": {
+    "own_app_and_runtime_stopped": true,
+    "original_ledger_unchanged": true,
+    "original_data_grants_history_preserved": true
+  },
+  "provider_ledger_sha256": "27fbbe04620bdade48756eca19527e902b52950aee1daec60d763d38f372df68",
+  "full_vertical_slice_delivery": "QUALIFIED_EVIDENCE_PUBLICATION_OWNER_APPROVED",
+  "actual_main_ci": {
+    "native": 38016502266,
+    "server_foundation": 38016502245,
+    "version": 38016502240,
+    "result": "SUCCESS",
+    "exact_head": "25002017b15ae4efef01fa85cb4b569df07d2f88"
+  },
+  "workspace_tree": "1f718818e37afadc3e3d58b8649dc03f9c790ad8",
+  "producer_wheel_sha256": "9b192e7a3cb5d503e795639a2b25b584b178c8bd2ef81af9ef96117af772ec33",
+  "producer_schema_sha256": "0311529ca95451a99f4fd8a35127707310252c96324b42f3230e8c79fcfa6124",
+  "limits": [
+    "Isolated deterministic external model; live model quality not qualified",
+    "No workset release or execution start",
+    "No live EP, signing, public operational installation or full product-family qualification",
+    "TDE policy FAIL remains nonblocking and separately reported"
+  ],
+  "files": {
+    "A-wide.png": "9ddf82a5e28f89baeae3be15cf0aa25b9ab0f2c9c8807cbb8cb7c90bab47b01e",
+    "B-wide.png": "27256c47a9f514b2408fb788dbee413025a01ad67be4150da955dbfb3be747b5",
+    "dark-640.png": "96c4daceb0374161536203ab49cc903c9878bb4999420bd59144796f2a543ee1",
+    "installed-bytes.json": "d3843cf710e78e2bec094ac93a0c5ba0ad9f8a4a2b013c8cd03ea4f07087db12",
+    "negative-reads.json": "16397495435bf264f6edb2ff4441ed844b370b690c7e54e7391e180c9a56ba54"
+  }
+}
