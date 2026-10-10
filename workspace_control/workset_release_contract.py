@@ -111,6 +111,7 @@ def _subject_proofs(value, binding):
         require(subject['mission']['candidate_id'] == subject['candidate_id'])
         require(member['mission'] == subject['mission'] and member['planning'] == subject['planning'])
         require(member['dependencies'] == [d['candidate_id'] for d in subject['dependency_bindings']])
+        require(member['dependencies'] == subject['planning']['dependencies'])
         require(member['progression_policy']['mode'] == value['selection']['progression_mode'])
         require(member['progression_policy']['higher_scope_obligations'] == subject['planning']['human_gates'])
         decisions = subject['candidate_decisions']

@@ -143,3 +143,17 @@ final class WorklistDependencyGraphTests: XCTestCase {
         }
     }
 }
+
+extension WorklistDependencyGraphTests {
+    @MainActor func testHumanReleaseGraphUsesVerifiedNamesWithoutOpaqueDependencyIdentifiers() throws {
+        let rows=[item("opaque-a",0),item("opaque-b",1,dependencies:["opaque-a"])]
+        let node=WorklistGraphNode(item:rows[1],column:1,row:0,contextOnly:false)
+        for language in ["en","nl","de","fr","es"] {
+            let label=WorklistDependencyGraph.nodeLabel(node,language:language,showScopeMetadata:false,humanNames:["opaque-a":"Assessment A"])
+            XCTAssertTrue(label.contains("Assessment A"));XCTAssertFalse(label.contains("opaque-a"))
+        }
+        let host=NSHostingView(rootView:WorklistDependencyGraph(snapshot:snapshot(rows),matching:Set(rows.map(\.key)),selection:.constant(nil),showScopeMetadata:false,humanNames:["opaque-a":"Assessment A"]))
+        host.frame=NSRect(x:0,y:0,width:640,height:480);host.layoutSubtreeIfNeeded()
+        XCTAssertGreaterThan(host.fittingSize.height,0)
+    }
+}

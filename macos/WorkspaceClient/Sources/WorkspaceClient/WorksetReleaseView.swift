@@ -119,7 +119,7 @@ struct WorksetReleaseView: View {
             Text(copy(state.phase)).font(.headline)
             Text(copy("resources")).foregroundStyle(.secondary)
             if let snapshot = observation.snapshot {
-                ApprovedWorklistView(cache: cache(snapshot), showScopeMetadata: false, onOpenReviews: { item in onOpenReviews?(item); dismiss() }).frame(minHeight: 340)
+                ApprovedWorklistView(cache: cache(snapshot), showScopeMetadata: false, humanNames: Dictionary(uniqueKeysWithValues: observation.preview.members.map { ($0.id, $0.definition.title) }), onOpenReviews: { item in onOpenReviews?(item); dismiss() }).frame(minHeight: 340)
             }
             Text(copy("boundary")).font(.callout)
             Button(copy("disarm")) { Task { await state.disarm() } }

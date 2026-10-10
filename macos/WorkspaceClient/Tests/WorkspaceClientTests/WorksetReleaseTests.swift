@@ -411,7 +411,10 @@ extension WorksetReleaseTests {
         XCTAssertNotNil(state.observation);XCTAssertEqual(state.history.count,1)
         state.beginSelection();XCTAssertNil(state.observation);XCTAssertEqual(state.history.count,1)
         await state.refresh(connection);XCTAssertNil(state.observation);await state.prepare();XCTAssertNotNil(state.preview)
-        state.invalidate();XCTAssertNil(state.preview);XCTAssertNil(state.observation)
+        access.subjects.forEach { state.toggle($0) }
+        XCTAssertTrue(state.selected.isEmpty);XCTAssertTrue(state.interactionActive)
+        await state.refresh(connection);XCTAssertNil(state.observation);XCTAssertTrue(state.interactionActive)
+        state.invalidate();XCTAssertNil(state.preview);XCTAssertNil(state.observation);XCTAssertFalse(state.interactionActive)
     }
 }
 

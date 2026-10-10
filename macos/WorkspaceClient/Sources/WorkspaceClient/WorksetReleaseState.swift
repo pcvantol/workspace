@@ -18,7 +18,7 @@ import Foundation
     private var commandTask: Task<WorksetReleaseObservation, Error>?
     private var generation = 0
     var authorityEpoch: Int { generation }
-    var interactionActive: Bool { busy || preview != nil || pending != nil || (observation == nil && !selected.isEmpty) }
+    var interactionActive: Bool { selecting || busy || preview != nil || pending != nil || (observation == nil && !selected.isEmpty) }
     private var selecting = false
     private var journal = WorksetReleaseJournal()
     init(credentials: any WorksetReleaseCredentials = WorksetReleaseKeychain(),

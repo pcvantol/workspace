@@ -15,14 +15,14 @@
     "remaining": 1,
     "starts_after_first_complete_independent_quality_security_pair": true
   },
-  "state": "CORRECTION_ROUND_2_VALIDATED_GUI_AND_REVIEW_PENDING",
+  "state": "CORRECTION_ROUND_2_UX_FIX_VALIDATED_NEW_GUI_REVIEW_PENDING",
   "prior_plans_93_95_closed": true,
   "users_credentials_retained": true,
   "consumer_version": "2.8.16",
   "source_validation": {
     "full_command": "bash scripts/validate.sh",
     "result": "PASS_AFTER_CORRECTION_ROUND_2",
-    "native_tests": 177,
+    "native_tests": 178,
     "isolated_tests": 1,
     "strict_per_changed_production_file_percent_greater_than": 80.2,
     "new_native_minimum_percent": 83.33,
@@ -59,5 +59,10 @@
     "quality": "FAIL_4_FINDINGS",
     "security": "FAIL_4_FINDINGS",
     "reports_retained": true
+  },
+  "candidate_9d2bfa8_boundary": {
+    "native_release_and_targeted_A_to_B": "PASS_CANDIDATE_ONLY",
+    "early_independent_UX": "BLOCKER_PRESERVED_selection_reset_and_opaque_status_metadata",
+    "new_GUI_and_final_main_proof_required": true
   }
 }

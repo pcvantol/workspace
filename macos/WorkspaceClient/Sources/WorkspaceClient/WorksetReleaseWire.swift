@@ -88,6 +88,7 @@ extension WorksetReleaseWire {
         let bindings = subject["dependency_bindings"] as! [[String: Any]], dependencies = member["dependencies"] as! [String]
         let policy = member["progression_policy"] as! [String: Any], planning = subject["planning"] as! [String: Any]
         try require(dependencies == bindings.map { $0["candidate_id"] as! String })
+        try require(dependencies == planning["dependencies"] as? [String])
         try require(policy["mode"] as? String == mode && policy["higher_scope_obligations"] as? [String] == planning["human_gates"] as? [String])
         return .init(subject: selected, missionID: subject["mission_id"] as! String,
                      definition: try MissionConceptWire.definition(subject["definition"]!),

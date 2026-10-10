@@ -139,3 +139,9 @@ class WorksetReleasePreparedTests(unittest.TestCase):
         receipt['canonical_decision']['evidence'].pop('planning_digest')
         receipt['canonical_decision_digest']=wire.digest(receipt['canonical_decision'])
         with self.assertRaises(WorklistError):wire._subject_proofs(packet,self.binding)
+
+    def testDependencyBindingsMustMatchApprovedPlanning(self):
+        bad=deepcopy(self.value);packet=bad['package']
+        packet['subjects'][1]['dependency_bindings']=[]
+        packet['definition']['members'][1]['dependencies']=[]
+        with self.assertRaises(WorklistError):wire._subject_proofs(packet,self.binding)
