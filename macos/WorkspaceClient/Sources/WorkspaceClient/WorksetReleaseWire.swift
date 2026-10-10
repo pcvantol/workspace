@@ -186,7 +186,7 @@ extension WorksetReleaseWire {
                      currentData: currentData, currentRevision: snapshot?.worksetRevision, snapshot: snapshot)
     }
     private static func canonical(_ value: Any) throws -> String {
-        let data = try JSONSerialization.data(withJSONObject: value, options: [.sortedKeys, .withoutEscapingSlashes])
+        let data = try CanonicalJSON.data(value, ascii: false)
         return "sha256:"+SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
     }
     private static func checkedReceipt(_ receipt: [String: Any], preview: WorksetReleasePreview, expected: WorksetReleaseCommand, access: WorksetReleaseAccess) throws {
@@ -233,7 +233,7 @@ extension WorksetReleaseWire {
         let planning = subject["planning"] as! [String: Any]
         try require((canonical["gates"] as! [String]).sorted() == (planning["human_gates"] as! [String]).sorted())
         if kind == "ARCHITECTURE" {
-            try require(try self.canonical(planning) == (canonical["evidence"] as! [String: Any])["planning_digest"] as? String)
+            try require(try AdvisoryWire.digest(planning) == (canonical["evidence"] as! [String: Any])["planning_digest"] as? String)
         }
     }
 }

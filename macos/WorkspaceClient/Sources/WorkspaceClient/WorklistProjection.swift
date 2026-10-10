@@ -90,7 +90,7 @@ enum WorklistProjection {
         let complete = completeness == "COMPLETE_WITHIN_SCOPE"
         try validateMemberOrder(items, complete: complete)
         let (state, reasons, next) = try checkedContinuation(top["continuation"], items: items, complete: complete)
-        let canonical = try JSONSerialization.data(withJSONObject: top.filter { boundFields.contains($0.key) }, options: [.sortedKeys, .withoutEscapingSlashes])
+        let canonical = try CanonicalJSON.data(top.filter { boundFields.contains($0.key) }, ascii: false)
         let digest = "sha256:" + SHA256.hash(data: canonical).map { String(format: "%02x", $0) }.joined()
         try require(digest == snapshotRevision)
         return ApprovedWorklistSnapshot(scope: scoped, membershipRevision: memberRevision, selectorRevision: selectorRevision, snapshotRevision: snapshotRevision, observedAt: observedAt, completeWithinScope: complete, freshness: .current, continuation: state == "READY" ? .ready : state == "BLOCKED" ? .blocked : state == "IDLE" ? .idle : .unknown, nextMemberID: next, items: items, installationID: installation, worksetRevision: worksetRevision, activationSupport: activation, continuationReasons: reasons)
