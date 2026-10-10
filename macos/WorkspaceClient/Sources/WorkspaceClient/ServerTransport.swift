@@ -274,11 +274,7 @@ struct ServerTransport: Sendable {
         if let pinnedInstance, pinnedInstance != identity.instance_id { throw ClientError.wrongInstance }
         let status = try await read(ServerStatus.self, endpoint: endpoint, path: "/v1/status",
                                     token: token, pin: identity.instance_id)
-        guard status.instance_id == identity.instance_id, status.state == "READY",
-              status.version.range(of: "^[0-9]+\\.[0-9]+\\.[0-9]+$", options: .regularExpression) != nil,
-              ["UNCONFIGURED", "EMPTY", "PARTIAL", "STALE", "AVAILABLE", "SOURCE_UNAVAILABLE"].contains(status.project_source) else {
-            throw ClientError.invalidResponse
-        }
+        try validateStatus(status, instanceID: identity.instance_id)
         async let projectRead: Result<ProjectCatalogue, ClientError> = optionalRead(
             ProjectCatalogue.self, endpoint: endpoint, path: "/v1/projects", token: token,
             pin: identity.instance_id, validate: Self.validProjectCatalogue)
@@ -295,14 +291,24 @@ struct ServerTransport: Sendable {
         let projects = await projectRead
         let capabilities = await capabilityRead
         let forge = await forgeRead
-        if case .failure(.unauthorized) = projects { throw ClientError.unauthorized }
-        if case .failure(.wrongInstance) = projects { throw ClientError.wrongInstance }
-        if case .failure(.unauthorized) = capabilities { throw ClientError.unauthorized }
-        if case .failure(.wrongInstance) = capabilities { throw ClientError.wrongInstance }
-        if case .failure(.unauthorized) = forge { throw ClientError.unauthorized }
-        if case .failure(.wrongInstance) = forge { throw ClientError.wrongInstance }
+        try requireCurrentAuthority(projects)
+        try requireCurrentAuthority(capabilities)
+        try requireCurrentAuthority(forge)
         return ServerSnapshot(identity: identity, status: status, projects: projects,
                               capabilities: capabilities, forge: forge, observedAt: Date())
+    }
+
+    private func validateStatus(_ status: ServerStatus, instanceID: String) throws {
+        guard status.instance_id == instanceID, status.state == "READY",
+              status.version.range(of: "^[0-9]+\\.[0-9]+\\.[0-9]+$", options: .regularExpression) != nil,
+              ["UNCONFIGURED", "EMPTY", "PARTIAL", "STALE", "AVAILABLE", "SOURCE_UNAVAILABLE"].contains(status.project_source) else {
+            throw ClientError.invalidResponse
+        }
+    }
+
+    private func requireCurrentAuthority<T>(_ result: Result<T, ClientError>) throws {
+        if case .failure(.unauthorized) = result { throw ClientError.unauthorized }
+        if case .failure(.wrongInstance) = result { throw ClientError.wrongInstance }
     }
 
     private static func validProjectCatalogue(_ catalogue: ProjectCatalogue) -> Bool {

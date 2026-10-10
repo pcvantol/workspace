@@ -83,53 +83,68 @@ import Combine
         phase=observation.turn.status == "COMPLETE" ? "current":"failed"
     }
     func isCurrent(_ c:AdvisoryConnection) -> Bool { connection==c && capability != nil }
+    private func recoverPending(_ a: AdvisoryAccess, _ c: AdvisoryConnection, generation: Int) async throws -> Bool {
+        if let p=pending {
+            guard p.matches(c) else { throw AdvisoryError.denied }
+            if p.kind=="approve",let body=p.approvalBody {
+                let request=try AdvisoryWire.object(body)
+                do {
+                    let value=try await transport.operation(a,c,id:request["operation_id"] as! String,expectedDigest:request["package_digest"] as? String)
+                    guard epoch==generation else { return false };approval=value
+                    if value.state=="COMPLETE" { try store.clear(p.key);pending=nil;phase=value.presentationState }
+                    else { phase="pending" }
+                } catch AdvisoryError.missing { phase="pending" }
+            }
+            if let request=p.refine {
+                do {
+                    let value=try await transport.turn(a,c,request:request)
+                    guard epoch==generation else { return false };try accept(value,intent:p)
+                } catch AdvisoryError.missing { phase="pending" }
+            }
+        }
+        return true
+    }
+
+    private func readHistory(_ a: AdvisoryAccess, _ c: AdvisoryConnection, generation: Int) async throws -> ([MissionConceptTurnRecord], Int)? {
+        var turns:[MissionConceptTurnRecord]=[];var conversationRevision=0
+        do {
+            var cursor=0
+            while true {
+                let page=try await transport.history(a,c,cursor:cursor)
+                guard epoch==generation else { return nil }
+                if cursor>0 && page.revision != conversationRevision { throw AdvisoryError.state("CONVERSATION_OR_CONTEXT_STALE") }
+                conversationRevision=page.revision;turns += page.turns
+                guard let next=page.next_cursor else { break }
+                guard next>cursor,turns.count<=8 else { throw AdvisoryError.invalid };cursor=next
+            }
+        } catch AdvisoryError.missing { turns=[] }
+        return (turns, conversationRevision)
+    }
+
+    private func readCatalogue(_ a: AdvisoryAccess, _ c: AdvisoryConnection, generation: Int) async throws -> ([MissionConceptCatalogItem], [Any], String?)? {
+        var catalog:[MissionConceptCatalogItem]=[],rawItems:[Any]=[],snapshot:String?,cursor=0
+        while true {
+            let page=try await transport.catalog(a,c,cursor:cursor,snapshot:snapshot)
+            guard epoch==generation else { return nil }
+            snapshot=page.snapshot_revision;catalog += page.items
+            rawItems += try JSONSerialization.jsonObject(with:page.itemsJSONData!) as! [Any]
+            guard let next=page.next_cursor else { break }
+            guard next>cursor,catalog.count<=a.conversationIDs.count else { throw AdvisoryError.invalid };cursor=next
+        }
+        return (catalog, rawItems, snapshot)
+    }
+
     func refresh(_ new: AdvisoryConnection?) async {
         guard admit(new),!busy,let c=new else { return }
         let generation=epoch;busy=true;defer { if epoch==generation { busy=false } }
         do {
             let a=try access(c),key=CandidateLocal.scopeKey(c)
             pending=try store.load(key)
-            if let p=pending {
-                guard p.matches(c) else { throw AdvisoryError.denied }
-                if p.kind=="approve",let body=p.approvalBody {
-                    let request=try AdvisoryWire.object(body)
-                    do {
-                        let value=try await transport.operation(a,c,id:request["operation_id"] as! String,expectedDigest:request["package_digest"] as? String)
-                        guard epoch==generation else { return };approval=value
-                        if value.state=="COMPLETE" { try store.clear(p.key);pending=nil;phase=value.presentationState }
-                        else { phase="pending" }
-                    } catch AdvisoryError.missing { phase="pending" }
-                }
-                if let request=p.refine {
-                    do {
-                        let value=try await transport.turn(a,c,request:request)
-                        guard epoch==generation else { return };try accept(value,intent:p)
-                    } catch AdvisoryError.missing { phase="pending" }
-                }
-            }
+            guard try await recoverPending(a, c, generation: generation) else { return }
             guard try await refreshRecordedApproval(a, connection: c, generation: generation) else { return }
             let cap=try await transport.capability(a,c)
-            var turns:[MissionConceptTurnRecord]=[];var conversationRevision=0
-            do {
-                var cursor=0
-                while true {
-                    let page=try await transport.history(a,c,cursor:cursor)
-                    guard epoch==generation else { return }
-                    if cursor>0 && page.revision != conversationRevision { throw AdvisoryError.state("CONVERSATION_OR_CONTEXT_STALE") }
-                    conversationRevision=page.revision;turns += page.turns
-                    guard let next=page.next_cursor else { break }
-                    guard next>cursor,turns.count<=8 else { throw AdvisoryError.invalid };cursor=next
-                }
-            } catch AdvisoryError.missing { turns=[] }
-            var catalog:[MissionConceptCatalogItem]=[],rawItems:[Any]=[],snapshot:String?,cursor=0
-            while true {
-                let page=try await transport.catalog(a,c,cursor:cursor,snapshot:snapshot)
-                guard epoch==generation else { return }
-                snapshot=page.snapshot_revision;catalog += page.items
-                rawItems += try JSONSerialization.jsonObject(with:page.itemsJSONData!) as! [Any]
-                guard let next=page.next_cursor else { break }
-                guard next>cursor,catalog.count<=a.conversationIDs.count else { throw AdvisoryError.invalid };cursor=next
-            }
+            guard let (turns, conversationRevision) = try await readHistory(a, c, generation: generation) else { return }
+            guard let (catalog, rawItems, snapshot) = try await readCatalogue(a, c, generation: generation) else { return }
             try validateCatalogue(catalog, rawItems: rawItems, snapshot: snapshot, turns: turns)
             guard epoch==generation else { return }
             capability=cap;history=turns;items=catalog;revision=conversationRevision
@@ -188,27 +203,31 @@ import Combine
             }
         }
     }
+    private func resumeApproval(_ body: Data, intent p: MissionTransportIntent, connection c: AdvisoryConnection) async {
+        let generation=epoch;busy=true;defer { if epoch==generation { busy=false } }
+        do {
+            let a=try access(c),request=try AdvisoryWire.object(body)
+            let id=request["operation_id"] as! String,digest=request["package_digest"] as! String
+            let value:MissionCompoundReadback
+            do { value=try await transport.operation(a,c,id:id,expectedDigest:digest) }
+            catch AdvisoryError.missing {
+                let package=try await transport.package(a,c,revision:request["revision"] as? Int)
+                guard epoch==generation,connection==c else { return }
+                guard package.digest==digest else { throw AdvisoryError.state("CONCEPT_OR_CONTEXT_CHANGED") }
+                _ = try await transport.approve(a,c,body:body,packet:package)
+                value=try await transport.operation(a,c,id:id,expectedDigest:digest)
+            }
+            guard epoch==generation else { return };approval=value
+            if value.state=="COMPLETE" { try store.clear(p.key);pending=nil;phase=value.presentationState }
+            else { phase="pending" }
+        } catch { if epoch==generation { fail(error) } }
+    }
+
     func resume(_ c: AdvisoryConnection?) async {
         guard admit(c),!busy,let c,let p=try? store.load(CandidateLocal.scopeKey(c)),p.matches(c) else { return }
         pending=p
         if p.kind=="approve",let body=p.approvalBody {
-            let generation=epoch;busy=true;defer { if epoch==generation { busy=false } }
-            do {
-                let a=try access(c),request=try AdvisoryWire.object(body)
-                let id=request["operation_id"] as! String,digest=request["package_digest"] as! String
-                let value:MissionCompoundReadback
-                do { value=try await transport.operation(a,c,id:id,expectedDigest:digest) }
-                catch AdvisoryError.missing {
-                    let package=try await transport.package(a,c,revision:request["revision"] as? Int)
-                    guard epoch==generation,connection==c else { return }
-                    guard package.digest==digest else { throw AdvisoryError.state("CONCEPT_OR_CONTEXT_CHANGED") }
-                    _ = try await transport.approve(a,c,body:body,packet:package)
-                    value=try await transport.operation(a,c,id:id,expectedDigest:digest)
-                }
-                guard epoch==generation else { return };approval=value
-                if value.state=="COMPLETE" { try store.clear(p.key);pending=nil;phase=value.presentationState }
-                else { phase="pending" }
-            } catch { if epoch==generation { fail(error) } }
+            await resumeApproval(body, intent: p, connection: c)
             return
         }
         guard let request=p.refine else { return }

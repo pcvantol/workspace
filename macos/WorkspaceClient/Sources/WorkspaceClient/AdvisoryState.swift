@@ -71,23 +71,26 @@ import Combine
               text.unicodeScalars.count<=1000 else { return false }
         return true
     }
+    private func setFailurePhase(_ code: String) {
+        switch code {
+        case "CONVERSATION_BUSY":phase="adviceBusy"
+        case "TURN_BUDGET_EXHAUSTED","TRANSCRIPT_CAPACITY_EXHAUSTED","CONVERSATION_CAPACITY_EXHAUSTED":phase="adviceBudget"
+        case "INVOCATION_UNRESOLVED":phase="adviceUncertain"
+        case "CONVERSATION_OR_CONTEXT_STALE","CONTEXT_STALE","TURN_PAYLOAD_CONFLICT","CANCEL_PRECONDITION_CHANGED","ADVISORY_CONFLICT":phase="adviceStale"
+        case "ADVISOR_UNSUPPORTED":phase="adviceUnsupported"
+        case "ADVISORY_NOT_FOUND":phase=pending==nil ? "adviceUnsupported":"adviceUncertain"
+        case "INVALID_REQUEST","ADVISORY_REQUEST_INVALID":phase="adviceInvalid"
+        default:phase="adviceOffline"
+        }
+    }
+
     private func fail(_ error:Error) {
         clearPresentation()
         switch error {
         case AdvisoryError.denied:hasGrant=false;phase="adviceDenied"
         case AdvisoryError.missing:phase=pending==nil ? "adviceUnsupported":"adviceUncertain"
         case AdvisoryError.invalid:phase="adviceInvalid"
-        case AdvisoryError.state(let code):
-            switch code {
-            case "CONVERSATION_BUSY":phase="adviceBusy"
-            case "TURN_BUDGET_EXHAUSTED","TRANSCRIPT_CAPACITY_EXHAUSTED","CONVERSATION_CAPACITY_EXHAUSTED":phase="adviceBudget"
-            case "INVOCATION_UNRESOLVED":phase="adviceUncertain"
-            case "CONVERSATION_OR_CONTEXT_STALE","CONTEXT_STALE","TURN_PAYLOAD_CONFLICT","CANCEL_PRECONDITION_CHANGED","ADVISORY_CONFLICT":phase="adviceStale"
-            case "ADVISOR_UNSUPPORTED":phase="adviceUnsupported"
-            case "ADVISORY_NOT_FOUND":phase=pending==nil ? "adviceUnsupported":"adviceUncertain"
-            case "INVALID_REQUEST","ADVISORY_REQUEST_INVALID":phase="adviceInvalid"
-            default:phase="adviceOffline"
-            }
+        case AdvisoryError.state(let code): setFailurePhase(code)
         default:phase=pending==nil ? "adviceOffline":"adviceUncertain"
         }
     }
@@ -100,6 +103,38 @@ import Combine
             if pending==intent { try credentials.forgetIntent();pending=nil }
         }
     }
+    private func refreshHistory(_ a: AdvisoryAccess, _ c: AdvisoryConnection, preservePage: Bool) async throws -> (AdvisoryHistory?, [AdvisoryTurnRecord], Int?) {
+        var page:AdvisoryHistory?
+        do { page=try await transport.history(a,c) }
+        catch AdvisoryError.missing {
+            // Pinned Forge does not allocate a transcript until first send.
+            // Absence is not an empty canonical transcript or an auto send.
+            guard pending==nil,revision==0,latest==nil else { throw AdvisoryError.missing }
+        }
+        var turns=page?.turns ?? [];var cursor=page?.next_cursor
+        if preservePage,let next=cursor,let first=page {
+            let tail=try await transport.history(a,c,cursor:next)
+            guard tail.revision==first.revision,turns.count+tail.turns.count<=8,
+                  Set((turns+tail.turns).map{$0.request.turn_id}).count==turns.count+tail.turns.count else { throw AdvisoryError.state("CONVERSATION_OR_CONTEXT_STALE") }
+            turns+=tail.turns;cursor=tail.next_cursor
+        }
+        return (page, turns, cursor)
+    }
+
+    private func recoverPendingTurn(_ a: AdvisoryAccess, _ c: AdvisoryConnection, epoch: Int) async throws -> Bool {
+        if let p=pending,p.matches(a,connection:c) {
+            let value=try await transport.turn(a,c,request:p.request)
+            guard epoch==generation else { return false };try accept(value,intent:p)
+        }
+        return true
+    }
+
+    private func updateHistoryPhase(_ page: AdvisoryHistory?) {
+        if inspectedTurnID != nil && inspectedTurn==nil { closeInspector() }
+        if pending==nil { phase=page==nil ? "adviceNew":latest?.turn.status=="COMPLETE" ? "adviceComplete":"adviceCurrent" }
+        else if !pendingForSelection { phase="adviceOtherPending" }
+    }
+
     func refresh(_ new:AdvisoryConnection?) async {
         guard admit(new),!busy,let c=new else { return }
         let epoch=generation;let preservePage=inspectedTurnID != nil && (history.count>4 || inspectorNeedsTail)
@@ -108,31 +143,13 @@ import Combine
             pending=try credentials.loadIntent()
             guard try credentials.loadAccess() != nil else { clearPresentation();hasGrant=false;phase="adviceReadOnly";return }
             let a=try access(c);hasGrant=true
-            if let p=pending,p.matches(a,connection:c) {
-                let value=try await transport.turn(a,c,request:p.request)
-                guard epoch==generation else { return };try accept(value,intent:p)
-            }
+            guard try await recoverPendingTurn(a, c, epoch: epoch) else { return }
             let cap=try await transport.capability(a,c,sources:selectedSources)
             guard epoch==generation else { return }
-            var page:AdvisoryHistory?
-            do { page=try await transport.history(a,c) }
-            catch AdvisoryError.missing {
-                // Pinned Forge does not allocate a transcript until first send.
-                // Absence is not an empty canonical transcript or an auto send.
-                guard pending==nil,revision==0,latest==nil else { throw AdvisoryError.missing }
-            }
-            var turns=page?.turns ?? [];var cursor=page?.next_cursor
-            if preservePage,let next=cursor,let first=page {
-                let tail=try await transport.history(a,c,cursor:next)
-                guard tail.revision==first.revision,turns.count+tail.turns.count<=8,
-                      Set((turns+tail.turns).map{$0.request.turn_id}).count==turns.count+tail.turns.count else { throw AdvisoryError.state("CONVERSATION_OR_CONTEXT_STALE") }
-                turns+=tail.turns;cursor=tail.next_cursor
-            }
+            let (page, turns, cursor) = try await refreshHistory(a, c, preservePage: preservePage)
             guard epoch==generation else { return }
             capability=cap;history=turns;revision=page?.revision ?? 0;nextCursor=cursor
-            if inspectedTurnID != nil && inspectedTurn==nil { closeInspector() }
-            if pending==nil { phase=page==nil ? "adviceNew":latest?.turn.status=="COMPLETE" ? "adviceComplete":"adviceCurrent" }
-            else if !pendingForSelection { phase="adviceOtherPending" }
+            updateHistoryPhase(page)
         } catch { if epoch==generation { fail(error) } }
     }
     func saveGrant(_ token:String,connection c:AdvisoryConnection?) async {
@@ -188,6 +205,16 @@ import Combine
             busy=false;await refresh(c)
         } catch { if epoch==generation { fail(error) } }
     }
+    private func validateRecoveryContext(_ a: AdvisoryAccess, _ c: AdvisoryConnection, intent p: AdvisoryIntent) async throws {
+            let cap=try await transport.capability(a,c,sources:p.request.selected_sources)
+            var currentRevision:Int
+            do { currentRevision=try await transport.history(a,c).revision }
+            catch AdvisoryError.missing {
+                guard p.request.expected_revision==0 else { throw AdvisoryError.missing };currentRevision=0
+            }
+            guard cap.context_revision==p.request.context_revision,currentRevision==p.request.expected_revision else { throw AdvisoryError.state("CONVERSATION_OR_CONTEXT_STALE") }
+    }
+
     func resume(_ c:AdvisoryConnection?) async {
         guard let c,c==connection,!busy,let p=pending else { return }
         let epoch=generation;busy=true;defer { if epoch==generation { busy=false } }
@@ -196,13 +223,7 @@ import Combine
             var value:AdvisoryObservation?
             do { value=try await transport.turn(a,c,request:p.request) }
             catch AdvisoryError.missing {
-                let cap=try await transport.capability(a,c,sources:p.request.selected_sources)
-                var currentRevision:Int
-                do { currentRevision=try await transport.history(a,c).revision }
-                catch AdvisoryError.missing {
-                    guard p.request.expected_revision==0 else { throw AdvisoryError.missing };currentRevision=0
-                }
-                guard cap.context_revision==p.request.context_revision,currentRevision==p.request.expected_revision else { throw AdvisoryError.state("CONVERSATION_OR_CONTEXT_STALE") }
+                try await validateRecoveryContext(a, c, intent: p)
             }
             guard epoch==generation else { return }
             if let cancel=p.cancel {

@@ -62,17 +62,13 @@ enum WorklistProjection {
         let installation = try text(top["installation_id"])
         try require(WorklistWire.identifier(installation))
         let scope = try object(top["scope"], keys: ["kind", "principal_id", "workset_id", "project_id"])
-        try require(try text(scope["kind"]) == "EXPLICIT_WORKSET" && text(scope["principal_id"]) == access.actorID && text(scope["workset_id"]) == worksetID && scope["project_id"] is NSNull)
+        try validateScope(scope, access: access, worksetID: worksetID)
         let memberRevision = try text(top["membership_revision"])
         let selectorRevision = try text(top["selector_revision"])
         let snapshotRevision = try text(top["snapshot_revision"])
         try require([memberRevision, selectorRevision, snapshotRevision].allSatisfy(WorklistWire.digest))
         let worksetRevision = try integer(top["workset_revision"], minimum: 1)
-        let observedAt = try text(top["observed_at"])
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        let validTime = formatter.date(from: observedAt) != nil || ISO8601DateFormatter().date(from: observedAt) != nil
-        try require(observedAt.count <= 64 && validTime && (observedAt.hasSuffix("Z") || observedAt.hasSuffix("+00:00")))
+        let observedAt = try checkedObservationTime(top["observed_at"])
         let completeness = try text(top["completeness"])
         let activation = try text(top["activation_support"])
         try require(try text(top["freshness"]) == "CURRENT_READBACK" && ["COMPLETE_WITHIN_SCOPE", "PARTIAL"].contains(completeness) && ["NOT_YET_QUALIFIED", "QUALIFIED_SERIAL_APPROVED_WORKLIST"].contains(activation))
@@ -82,7 +78,28 @@ enum WorklistProjection {
         try require(Set(items.map(\.key.memberID)).count == items.count && Set(items.map(\.committedPosition)).count == items.count)
         let complete = completeness == "COMPLETE_WITHIN_SCOPE"
         try validateMemberOrder(items, complete: complete)
-        let continuation = try object(top["continuation"], keys: ["state", "candidate_id", "mission_id", "committed_order", "reason_codes"])
+        let (state, reasons, next) = try checkedContinuation(top["continuation"], items: items, complete: complete)
+        let canonical = try JSONSerialization.data(withJSONObject: top.filter { boundFields.contains($0.key) }, options: [.sortedKeys, .withoutEscapingSlashes])
+        let digest = "sha256:" + SHA256.hash(data: canonical).map { String(format: "%02x", $0) }.joined()
+        try require(digest == snapshotRevision)
+        return ApprovedWorklistSnapshot(scope: scoped, membershipRevision: memberRevision, selectorRevision: selectorRevision, snapshotRevision: snapshotRevision, observedAt: observedAt, completeWithinScope: complete, freshness: .current, continuation: state == "READY" ? .ready : state == "BLOCKED" ? .blocked : state == "IDLE" ? .idle : .unknown, nextMemberID: next, items: items, installationID: installation, worksetRevision: worksetRevision, activationSupport: activation, continuationReasons: reasons)
+    }
+
+    private static func validateScope(_ scope: [String:Any], access: WorklistAccess, worksetID: String) throws {
+        try require(try text(scope["kind"]) == "EXPLICIT_WORKSET" && text(scope["principal_id"]) == access.actorID && text(scope["workset_id"]) == worksetID && scope["project_id"] is NSNull)
+    }
+
+    private static func checkedObservationTime(_ value: Any?) throws -> String {
+        let observedAt = try text(value)
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        let validTime = formatter.date(from: observedAt) != nil || ISO8601DateFormatter().date(from: observedAt) != nil
+        try require(observedAt.count <= 64 && validTime && (observedAt.hasSuffix("Z") || observedAt.hasSuffix("+00:00")))
+        return observedAt
+    }
+
+    private static func checkedContinuation(_ value: Any?, items: [ApprovedWorklistItem], complete: Bool) throws -> (String, [String], String?) {
+        let continuation = try object(value, keys: ["state", "candidate_id", "mission_id", "committed_order", "reason_codes"])
         let state = try text(continuation["state"])
         try require(["READY", "BLOCKED", "IDLE", "UNKNOWN"].contains(state))
         let reasons = try codes(continuation["reason_codes"])
@@ -94,10 +111,7 @@ enum WorklistProjection {
         } else {
             try require(mission == nil && continuation["committed_order"] is NSNull && ["IDLE", "UNKNOWN"].contains(state) && (state != "IDLE" || complete))
         }
-        let canonical = try JSONSerialization.data(withJSONObject: top.filter { boundFields.contains($0.key) }, options: [.sortedKeys, .withoutEscapingSlashes])
-        let digest = "sha256:" + SHA256.hash(data: canonical).map { String(format: "%02x", $0) }.joined()
-        try require(digest == snapshotRevision)
-        return ApprovedWorklistSnapshot(scope: scoped, membershipRevision: memberRevision, selectorRevision: selectorRevision, snapshotRevision: snapshotRevision, observedAt: observedAt, completeWithinScope: complete, freshness: .current, continuation: state == "READY" ? .ready : state == "BLOCKED" ? .blocked : state == "IDLE" ? .idle : .unknown, nextMemberID: next, items: items, installationID: installation, worksetRevision: worksetRevision, activationSupport: activation, continuationReasons: reasons)
+        return (state, reasons, next)
     }
 
     private static func validateMemberOrder(_ items: [ApprovedWorklistItem], complete: Bool) throws {

@@ -28,32 +28,7 @@ struct IsolatedTestDocument: Decodable {
     let control_forge_instance: String?
     let control_workset_ids: [String]?
 
-    static func load() throws -> IsolatedTestDocument {
-        guard let path = ProcessInfo.processInfo.environment["WORKSPACE_ISOLATED_CREDENTIALS_FILE"],
-              path.hasPrefix("/"), !path.contains("/../") else {
-            throw ConversationError.invalidResponse
-        }
-        let values = try URL(fileURLWithPath: path).resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey])
-        let attributes = try FileManager.default.attributesOfItem(atPath: path)
-        guard values.isRegularFile == true, values.isSymbolicLink != true,
-              attributes[.ownerAccountID] as? Int == Int(getuid()),
-              ((attributes[.posixPermissions] as? Int) ?? 0o777) & 0o077 == 0 else {
-            throw ConversationError.invalidResponse
-        }
-        guard let data = FileManager.default.contents(atPath: path), data.count <= 4096 else {
-            throw ConversationError.invalidResponse
-        }
-        let document = try JSONDecoder().decode(Self.self, from: data)
-        let endpoint = try ServerEndpoint(document.endpoint)
-        guard endpoint.url.absoluteString == document.endpoint, endpoint.url.scheme == "http",
-              ["127.0.0.1", "localhost", "::1"].contains(endpoint.url.host ?? ""),
-              document.instance_id.range(of: "^[0-9a-f]{32}$", options: .regularExpression) != nil,
-              !document.read_token.isEmpty, document.read_token.count <= 256,
-              document.draft_grant.range(of: "^[A-Za-z0-9_-]{43}$", options: .regularExpression) != nil,
-              !document.project_id.isEmpty, document.project_id.count <= 120,
-              document.local_root.hasPrefix("/"), !document.local_root.contains("/../") else {
-            throw ConversationError.invalidResponse
-        }
+    private static func validateOptionalAccess(_ document: IsolatedTestDocument) throws {
         let reviewFields = [document.review_grant != nil, document.review_actor != nil,
                             document.review_forge_instance != nil, document.review_mission_ids != nil]
         if reviewFields.contains(true) {
@@ -103,6 +78,35 @@ struct IsolatedTestDocument: Decodable {
             guard candidate.valid,candidate.endpoint==document.endpoint,candidate.workspaceInstanceID==document.instance_id,
                   candidate.workspaceProjectID==document.project_id else { throw ConversationError.invalidResponse }
         }
+    }
+
+    static func load() throws -> IsolatedTestDocument {
+        guard let path = ProcessInfo.processInfo.environment["WORKSPACE_ISOLATED_CREDENTIALS_FILE"],
+              path.hasPrefix("/"), !path.contains("/../") else {
+            throw ConversationError.invalidResponse
+        }
+        let values = try URL(fileURLWithPath: path).resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey])
+        let attributes = try FileManager.default.attributesOfItem(atPath: path)
+        guard values.isRegularFile == true, values.isSymbolicLink != true,
+              attributes[.ownerAccountID] as? Int == Int(getuid()),
+              ((attributes[.posixPermissions] as? Int) ?? 0o777) & 0o077 == 0 else {
+            throw ConversationError.invalidResponse
+        }
+        guard let data = FileManager.default.contents(atPath: path), data.count <= 4096 else {
+            throw ConversationError.invalidResponse
+        }
+        let document = try JSONDecoder().decode(Self.self, from: data)
+        let endpoint = try ServerEndpoint(document.endpoint)
+        guard endpoint.url.absoluteString == document.endpoint, endpoint.url.scheme == "http",
+              ["127.0.0.1", "localhost", "::1"].contains(endpoint.url.host ?? ""),
+              document.instance_id.range(of: "^[0-9a-f]{32}$", options: .regularExpression) != nil,
+              !document.read_token.isEmpty, document.read_token.count <= 256,
+              document.draft_grant.range(of: "^[A-Za-z0-9_-]{43}$", options: .regularExpression) != nil,
+              !document.project_id.isEmpty, document.project_id.count <= 120,
+              document.local_root.hasPrefix("/"), !document.local_root.contains("/../") else {
+            throw ConversationError.invalidResponse
+        }
+        try validateOptionalAccess(document)
         return document
     }
 }

@@ -116,43 +116,57 @@ struct LiveMissionWorkspaceView: View {
         guard generation==selection.selectionGeneration,state.items.contains(where: { $0.object_id==card.id && $0.revision==card.revision }) else { return }
         await state.prepare(card,connection:c)
     }
+    private func ensureOwnConversation(_ text: String, lens: String, selectionGeneration: Int) async -> Bool {
+        let original=[client.savedEndpoint,client.savedInstance,conversations.projectID,conversations.observedActorID ?? ""]
+        if selection.ownConversationID==nil {
+            guard !conversations.dirty else { return false }
+            conversations.newDraft()
+            guard conversations.selectedID==nil else { return false }
+            conversations.title=String(text.trimmingCharacters(in:.whitespacesAndNewlines).prefix(120))
+            conversations.focus=String(text.prefix(240));conversations.draft=text;conversations.mode=lens
+            await conversations.save(client:client)
+            guard !conversations.dirty,let selected=conversations.selectedConversation,
+                  selectionGeneration==selection.selectionGeneration,original==[client.savedEndpoint,client.savedInstance,conversations.projectID,conversations.observedActorID ?? ""] else { return false }
+            selection.ownConversationID=selected.id
+        }
+        return true
+    }
+
+    private func refineNewConversation(_ text: String, lens: String, selectionGeneration: Int) async {
+        guard await ensureOwnConversation(text, lens: lens, selectionGeneration: selectionGeneration) else { return }
+        guard let own=await conversations.missionWorkspaceConnection(client:client),own.conversationID==selection.ownConversationID,
+              let source=await state.resolveWorkspace(own) else { return }
+        guard selectionGeneration==selection.selectionGeneration else { return }
+        activeConversationID=source.conversationID
+        await state.refresh(source)
+        guard selectionGeneration==selection.selectionGeneration,activeConversationID==source.conversationID,state.isCurrent(source) else { return }
+        await state.refine(text,lens:lens,connection:source)
+        if state.pending==nil,!state.history.isEmpty {
+            selection.newDraft=false;selection.draftMessage="";selection.sceneID &+= 1
+            if let card=state.presentation(project:projectName)?.cards.first(where: { shown in state.items.contains(where: { $0.object_id==shown.id && $0.conversation_id==source.conversationID }) }) { await state.prepare(card,connection:source) }
+        }
+    }
+
+    private func selectRefinementCard(_ card: MissionDefinitionCard, selectionGeneration: Int) async -> Bool {
+        guard let item=state.items.first(where: { $0.object_id==card.id && $0.revision==card.revision }),
+              let own=await conversations.missionWorkspaceConnection(client:client),selectionGeneration==selection.selectionGeneration,state.producerConnection(own,id:item.conversation_id) != nil else { return false }
+        activeConversationID=item.conversation_id
+        guard let intended=await connection(),selectionGeneration==selection.selectionGeneration,activeConversationID==intended.conversationID else { return false }
+        await state.refresh(intended)
+        guard selectionGeneration==selection.selectionGeneration,activeConversationID==intended.conversationID,state.isCurrent(intended) else { return false }
+        guard state.items.contains(where: { $0.object_id==card.id && $0.revision==card.revision }) else { return false }
+        return true
+    }
+
     func refine(_ text:String,lens:String,card:MissionDefinitionCard?) async {
         guard state.canRefine(text,lens:lens) else { return }
         let selectionGeneration=selection.selectionGeneration
         if selection.newDraft || card==nil && activeConversationID==nil && state.capability?.workspace_reference_resolution_supported==true {
-            let original=[client.savedEndpoint,client.savedInstance,conversations.projectID,conversations.observedActorID ?? ""]
-            if selection.ownConversationID==nil {
-                guard !conversations.dirty else { return }
-                conversations.newDraft()
-                guard conversations.selectedID==nil else { return }
-                conversations.title=String(text.trimmingCharacters(in:.whitespacesAndNewlines).prefix(120))
-                conversations.focus=String(text.prefix(240));conversations.draft=text;conversations.mode=lens
-                await conversations.save(client:client)
-                guard !conversations.dirty,let selected=conversations.selectedConversation,
-                      selectionGeneration==selection.selectionGeneration,original==[client.savedEndpoint,client.savedInstance,conversations.projectID,conversations.observedActorID ?? ""] else { return }
-                selection.ownConversationID=selected.id
-            }
-            guard let own=await conversations.missionWorkspaceConnection(client:client),own.conversationID==selection.ownConversationID,
-                  let source=await state.resolveWorkspace(own) else { return }
-            guard selectionGeneration==selection.selectionGeneration else { return }
-            activeConversationID=source.conversationID
-            await state.refresh(source)
-            guard selectionGeneration==selection.selectionGeneration,activeConversationID==source.conversationID,state.isCurrent(source) else { return }
-            await state.refine(text,lens:lens,connection:source)
-            if state.pending==nil,!state.history.isEmpty {
-                selection.newDraft=false;selection.draftMessage="";selection.sceneID &+= 1
-                if let card=state.presentation(project:projectName)?.cards.first(where: { shown in state.items.contains(where: { $0.object_id==shown.id && $0.conversation_id==source.conversationID }) }) { await state.prepare(card,connection:source) }
-            }
+            await refineNewConversation(text, lens: lens, selectionGeneration: selectionGeneration)
             return
         }
         if let card {
-            guard let item=state.items.first(where: { $0.object_id==card.id && $0.revision==card.revision }),
-                  let own=await conversations.missionWorkspaceConnection(client:client),selectionGeneration==selection.selectionGeneration,state.producerConnection(own,id:item.conversation_id) != nil else { return }
-            activeConversationID=item.conversation_id
-            guard let intended=await connection(),selectionGeneration==selection.selectionGeneration,activeConversationID==intended.conversationID else { return }
-            await state.refresh(intended)
-            guard selectionGeneration==selection.selectionGeneration,activeConversationID==intended.conversationID,state.isCurrent(intended) else { return }
-            guard state.items.contains(where: { $0.object_id==card.id && $0.revision==card.revision }) else { return }
+            guard await selectRefinementCard(card, selectionGeneration: selectionGeneration) else { return }
         }
         let c=await connection()
         guard selectionGeneration==selection.selectionGeneration,let c,activeConversationID==c.conversationID,state.isCurrent(c) else { return }

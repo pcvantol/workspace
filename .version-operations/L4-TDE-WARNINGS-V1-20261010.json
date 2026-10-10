@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "L4-owner-TDE-warnings-20261010",
+  "determined_version": "2.8.15",
+  "event_lineage": "L4-owner-TDE-warnings-20261010",
+  "expected_source_revision": "c9c01fee21d12e5dc9640e344360e29b7af1ac13",
+  "expected_version": "2.8.14",
+  "operation_id": "L4-TDE-WARNINGS-V1-20261010",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}
