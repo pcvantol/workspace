@@ -47,7 +47,9 @@ final class ConversationState: ObservableObject {
     @Published var grantEntry = ""
     @Published private(set) var conversations: [Conversation] = []
     @Published private(set) var observedActorID:String?
-    @Published private(set) var state = "UNAVAILABLE"
+    @Published private(set) var state = "UNAVAILABLE" {
+        didSet { if ["UNAUTHORIZED", "GRANT_REQUIRED", "UNAVAILABLE", "OFFLINE", "STALE"].contains(state) { worksetReleases.invalidate() } }
+    }
     @Published private(set) var detail = "Connect a Workspace Server and enter a project draft grant."
     @Published private(set) var savedRevision: Int?
     @Published private(set) var savedFields: DraftFields?
@@ -60,6 +62,7 @@ final class ConversationState: ObservableObject {
     let advisory: AdvisoryState
     let candidates: CandidateState
     let missionConcepts: MissionConceptState
+    let worksetReleases: WorksetReleaseState
     let missionSelection=MissionWorkspaceSelection()
 
     private let grants: DraftGrantWorker
@@ -72,7 +75,9 @@ final class ConversationState: ObservableObject {
     private var localTask: Task<Void, Never>?
     private var localVersion = 0
     private var creatingNewDraft = false
-    private var authorizationSuspended = false
+    private var authorizationSuspended = false {
+        didSet { if authorizationSuspended { worksetReleases.invalidate() } }
+    }
     private var pendingArchiveOperation: PendingArchiveOperation?
 
     init(grants: any DraftGrantStore = DraftGrantKeychain(),
@@ -80,10 +85,12 @@ final class ConversationState: ObservableObject {
          transport: ConversationTransport = ConversationTransport(),
          advisory: AdvisoryState? = nil,
          candidates: CandidateState? = nil,
-         missionConcepts: MissionConceptState? = nil) {
+         missionConcepts: MissionConceptState? = nil,
+         worksetReleases: WorksetReleaseState? = nil) {
         self.advisory = advisory ?? AdvisoryState()
         self.candidates = candidates ?? CandidateState()
         self.missionConcepts = missionConcepts ?? MissionConceptState()
+        self.worksetReleases = worksetReleases ?? WorksetReleaseState()
         self.grants = DraftGrantWorker(grants)
         self.localDrafts = LocalDraftWorker(localDrafts)
         self.transport = transport
@@ -102,7 +109,10 @@ final class ConversationState: ObservableObject {
         guard !authorizationSuspended,!preparingServerForget,let access,let actor=observedActorID,
               access.projectID==projectID,access.endpoint==client.savedEndpoint,access.instanceID==client.savedInstance,
               client.phase=="CONNECTED",state=="AVAILABLE" else { return nil }
-        guard let token=try? await client.draftReadToken(),self.access==access else { return nil }
+        let epoch = scopeEpoch
+        guard let token=try? await client.draftReadToken(),self.access==access,
+              epoch==scopeEpoch,!authorizationSuspended,!preparingServerForget,
+              client.phase=="CONNECTED",state=="AVAILABLE",observedActorID==actor,projectID==access.projectID else { return nil }
         return AdvisoryConnection(endpoint:access.endpoint,workspaceInstanceID:access.instanceID,actorID:actor,workspaceProjectID:projectID,
             conversationID:selectedConversation?.id ?? "",bearer:token,draftGrant:access.token)
     }
@@ -776,6 +786,7 @@ final class ConversationState: ObservableObject {
     }
 
     private func clearScope() {
+        worksetReleases.invalidate()
         scopeEpoch += 1
         localTask?.cancel()
         localVersion += 1

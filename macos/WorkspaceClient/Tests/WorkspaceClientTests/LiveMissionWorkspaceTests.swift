@@ -70,6 +70,11 @@ final class LiveMissionWorkspaceTests:XCTestCase {
         let host=NSHostingView(rootView:view.environment(\.locale,Locale(identifier:"nl")))
         host.frame=NSRect(x:0,y:0,width:1280,height:720);host.layoutSubtreeIfNeeded()
         XCTAssertGreaterThan(host.fittingSize.height,0)
+        // Mounting starts the real view's read task; wait for it before testing another interaction.
+        for _ in 0..<100 where mission.busy || conversations.missionSelection.refreshing {
+            try await Task.sleep(for:.milliseconds(10))
+        }
+        XCTAssertFalse(mission.busy);XCTAssertFalse(conversations.missionSelection.refreshing)
         XCTAssertTrue(peer.requests.allSatisfy { $0.httpMethod=="GET" })
         // An unsupported perspective never reaches a provider.
         await view.refine("Do not invent UX permission",lens:"UX",card:card)

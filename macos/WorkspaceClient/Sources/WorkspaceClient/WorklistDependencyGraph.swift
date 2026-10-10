@@ -5,6 +5,8 @@ struct WorklistDependencyGraph: View {
     let snapshot: ApprovedWorklistSnapshot
     let matching: Set<ApprovedWorklistKey>
     @Binding var selection: ApprovedWorklistKey?
+    var showScopeMetadata = true
+    var humanNames: [String: String] = [:]
     @Environment(\.locale) private var locale
     @State private var viewport = WorklistGraphViewport()
 
@@ -25,7 +27,7 @@ struct WorklistDependencyGraph: View {
             Text(copy("graphLegend")).font(.caption)
             Text(copy("graphContext")).font(.caption).foregroundStyle(.secondary)
             if !layout.unresolvedDependencies.isEmpty {
-                Text(copy("graphMissing") + ": " + layout.unresolvedDependencies.joined(separator: ", "))
+                Text(copy("graphMissing") + (showScopeMetadata ? ": " + layout.unresolvedDependencies.joined(separator: ", ") : ""))
                     .font(.caption).accessibilityIdentifier("worklist.graph.missing")
             }
             GeometryReader { geometry in
@@ -99,11 +101,11 @@ struct WorklistDependencyGraph: View {
         return Button { selection = item.key } label: {
             VStack(alignment: .leading, spacing: 6) {
                 Text(item.displayTitle).font(.headline).lineLimit(2)
-                Text(item.key.memberID).font(.caption).lineLimit(1)
+                if showScopeMetadata { Text(item.key.memberID).font(.caption).lineLimit(1) }
                 Text("\(copy("committedPosition")): \(item.committedPosition + 1)").font(.caption)
                 Text("\(copy("active")): \(copy(item.facts.active.rawValue)) · \(copy("completed")): \(copy(item.facts.completed.rawValue))").font(.caption)
                 Text("\(copy("eligible")): \(copy(item.facts.eligible.rawValue))").font(.caption)
-                Text(item.blockers.map(\.code).joined(separator: ", ")).font(.caption).lineLimit(2)
+                Text(item.blockers.map { showScopeMetadata ? $0.code : copy($0.kind.rawValue) }.joined(separator: ", ")).font(.caption).lineLimit(2)
                 if node.contextOnly { Text(copy("graphFiltered")).font(.caption).italic() }
             }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading).padding(10)
                 .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 8))
@@ -111,14 +113,16 @@ struct WorklistDependencyGraph: View {
         }
         .buttonStyle(.plain)
         .opacity(node.contextOnly ? 0.65 : 1)
-        .accessibilityLabel(Self.nodeLabel(node, language: locale.language.languageCode?.identifier ?? "en"))
+        .accessibilityLabel(Self.nodeLabel(node, language: locale.language.languageCode?.identifier ?? "en", showScopeMetadata: showScopeMetadata, humanNames: humanNames))
         .accessibilityIdentifier("worklist.graph.node.\(item.key.memberID)")
     }
 
-    static func nodeLabel(_ node: WorklistGraphNode, language: String) -> String {
+    static func nodeLabel(_ node: WorklistGraphNode, language: String, showScopeMetadata: Bool = true, humanNames: [String: String] = [:]) -> String {
         let item = node.item
         func text(_ key: String) -> String { WorklistCopy.text(key, language: language) }
-        return "\(item.displayTitle), \(text("committedPosition")) \(item.committedPosition + 1), \(text("active")) \(text(item.facts.active.rawValue)), \(text("completed")) \(text(item.facts.completed.rawValue)), \(text("dependencies")): \(item.dependencies.joined(separator: ", ")), \(item.blockers.map(\.code).joined(separator: ", "))" + (node.contextOnly ? ", " + text("graphFiltered") : "")
+        let dependencies = item.dependencies.map { showScopeMetadata ? $0 : humanNames[$0] ?? text("graphMissing") }
+        let reasons = item.blockers.map { showScopeMetadata ? $0.code : text($0.kind.rawValue) }
+        return "\(item.displayTitle), \(text("committedPosition")) \(item.committedPosition + 1), \(text("active")) \(text(item.facts.active.rawValue)), \(text("completed")) \(text(item.facts.completed.rawValue)), \(text("dependencies")): \(dependencies.joined(separator: ", ")), \(reasons.joined(separator: ", "))" + (node.contextOnly ? ", " + text("graphFiltered") : "")
     }
 
     private func x(_ node: WorklistGraphNode) -> Double { 16 + Double(node.column) * WorklistGraphLayout.columnStride + WorklistGraphLayout.nodeWidth / 2 }

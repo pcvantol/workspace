@@ -41,7 +41,7 @@ enum WorklistCopy {
         "sort": ["Display order", "Weergavevolgorde", "Anzeigereihenfolge", "Ordre d’affichage", "Orden de visualización"],
         "sortHint": ["Display sorting does not change committed execution order.", "Sorteren verandert de vastgelegde uitvoeringsvolgorde niet.", "Die Anzeigesortierung ändert die festgelegte Ausführungsreihenfolge nicht.", "Le tri d’affichage ne modifie pas l’ordre d’exécution fixé.", "El orden visual no cambia el orden de ejecución establecido."],
         "all": ["All", "Alles", "Alle", "Tous", "Todos"],
-        "eligible": ["Eligible", "Uitvoerbaar", "Ausführbar", "Éligible", "Elegible"],
+        "eligible": ["Eligible for selection", "Selecteerbaar", "Zur Auswahl berechtigt", "Sélectionnable", "Elegible para selección"],
         "active": ["Active", "Actief", "Aktiv", "Actif", "Activo"],
         "blocked": ["Blocked", "Geblokkeerd", "Blockiert", "Bloqué", "Bloqueado"],
         "completed": ["Completed", "Afgerond", "Abgeschlossen", "Terminé", "Completado"],
@@ -115,6 +115,8 @@ enum WorklistCopy {
 }
 
 struct ApprovedWorklistView: View {
+    let showScopeMetadata: Bool
+    let humanNames: [String: String]
     let cache: WorklistObservationCache
     let controlContent: AnyView?
     let onOpenReviews: ((ApprovedWorklistItem) -> Void)?
@@ -127,11 +129,13 @@ struct ApprovedWorklistView: View {
     @State private var sort: WorklistSort
     @FocusState private var searchFocused: Bool
 
-    init(cache: WorklistObservationCache = WorklistObservationCache(),
+    init(cache: WorklistObservationCache = WorklistObservationCache(), showScopeMetadata: Bool = true, humanNames: [String: String] = [:],
          selected: ApprovedWorklistKey? = nil, search: String = "",
          filter: WorklistFilter = .all, sort: WorklistSort = .committed, graphMode: Bool = false,
          controlContent: AnyView? = nil, onOpenReviews: ((ApprovedWorklistItem) -> Void)? = nil) {
         _graphMode = State(initialValue: graphMode)
+        self.showScopeMetadata = showScopeMetadata
+        self.humanNames = humanNames
         self.cache = cache
         self.onOpenReviews = onOpenReviews
         self.controlContent = controlContent
@@ -161,8 +165,10 @@ struct ApprovedWorklistView: View {
                         .accessibilityIdentifier("worklist.cached")
                 }
                 if let snapshot = cache.snapshot {
+                    if showScopeMetadata {
                     LabeledContent(copy("workset"), value: snapshot.scope.worksetID)
                     LabeledContent(copy("actor"), value: snapshot.scope.actorID)
+                    }
                     HStack {
                         TextField(copy("search"), text: $search)
                             .textFieldStyle(.roundedBorder).focused($searchFocused)
@@ -176,18 +182,20 @@ struct ApprovedWorklistView: View {
                         VStack(alignment: .leading) { filterPicker; sortPicker }
                     }
                     Text(copy("sortHint")).font(.caption).foregroundStyle(.secondary)
+                    if showScopeMetadata {
                     LabeledContent(copy("membershipRevision"), value: snapshot.membershipRevision)
                     LabeledContent(copy("selectorRevision"), value: snapshot.selectorRevision)
                     LabeledContent(copy("snapshotRevision"), value: snapshot.snapshotRevision)
-                    LabeledContent(copy("observedAt"), value: snapshot.observedAt)
                     LabeledContent(copy("installation"), value: snapshot.installationID)
                     LabeledContent(copy("worksetRevision"), value: String(snapshot.worksetRevision))
                     LabeledContent(copy("activationSupport"), value: snapshot.activationSupport)
                     ForEach(snapshot.continuationReasons, id: \.self) { Text($0).font(.caption) }
+                    }
+                    LabeledContent(copy("observedAt"), value: WorksetReleaseWire.date(snapshot.observedAt)?.formatted(date: .abbreviated, time: .shortened) ?? snapshot.observedAt)
                     LabeledContent(copy("freshness"), value: copy(cache.usingLastObservation ? "stale" : freshnessKey(snapshot.freshness)))
                     LabeledContent(copy("continuation"), value: copy(continuationKey(snapshot.continuation)))
                     if let next = snapshot.nextMemberID {
-                        LabeledContent(copy("nextMember"), value: next)
+                        LabeledContent(copy("nextMember"), value: showScopeMetadata ? next : humanName(next))
                     }
                 }
                 emptyMessage
@@ -197,7 +205,7 @@ struct ApprovedWorklistView: View {
                         Text(copy("graph")).tag(true)
                     }.pickerStyle(.segmented).accessibilityIdentifier("worklist.display-mode")
                     if graphMode {
-                        WorklistDependencyGraph(snapshot: snapshot, matching: Set(visible.map(\.key)), selection: $selectedKey)
+                        WorklistDependencyGraph(snapshot: snapshot, matching: Set(visible.map(\.key)), selection: $selectedKey, showScopeMetadata: showScopeMetadata, humanNames: humanNames)
                     }
                 }
                 if !graphMode {
@@ -205,7 +213,7 @@ struct ApprovedWorklistView: View {
                     Button { selectedKey = item.key } label: {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(item.displayTitle).font(.headline)
-                            Text("\(copy("committedPosition")): \(item.committedPosition + 1) · \(item.key.memberID)")
+                            Text("\(copy("committedPosition")): \(item.committedPosition + 1)"+(showScopeMetadata ? " · "+item.key.memberID : ""))
                                 .font(.caption).foregroundStyle(.secondary)
                             Text("\(copy("eligible")): \(copy(item.facts.eligible.rawValue)) · \(copy("active")): \(copy(item.facts.active.rawValue))")
                                 .font(.caption)
@@ -259,23 +267,10 @@ struct ApprovedWorklistView: View {
 
     private func detail(_ item: ApprovedWorklistItem) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            LabeledContent(copy("member"), value: item.key.memberID)
-            LabeledContent(copy("subject"), value: item.subjectID)
-            LabeledContent(copy("subjectRevision"), value: item.subjectRevision)
-            LabeledContent(copy("sourceRevision"), value: item.sourceRevision)
-            LabeledContent(copy("project"), value: item.projectID ?? copy("noProject"))
-            LabeledContent(copy(item.missionBindingVerified ? "mission" : "unverifiedMissionRef"), value: item.missionID ?? copy("noMission"))
-            LabeledContent(copy("executionState"), value: item.executionState)
-            LabeledContent(copy("reviewState"), value: item.reviewState)
-            LabeledContent(copy("effectMode"), value: item.effectMode)
+            if showScopeMetadata { technicalDetail(item) }
+            Text(item.displayTitle).font(.headline)
             Text(copy("dependencies")).font(.headline)
-            ForEach(item.dependencies, id: \.self) { Text($0) }
-            ForEach(item.evidence, id: \.self) { reference in
-                VStack(alignment: .leading) {
-                    Text("\(reference.kind) · \(reference.subjectID)")
-                    Text(reference.digest).font(.caption)
-                }
-            }
+            ForEach(item.dependencies, id: \.self) { Text(showScopeMetadata ? $0 : humanName($0)) }
             Text(copy("facts")).font(.headline)
             ForEach(factRows(item), id: \.0) { key, fact in
                 LabeledContent(copy(key), value: copy(fact.rawValue))
@@ -284,7 +279,7 @@ struct ApprovedWorklistView: View {
             if item.blockers.isEmpty { Text(copy("noBlockers")).foregroundStyle(.secondary) }
             ForEach(Array(item.blockers.enumerated()), id: \.offset) { _, reason in
                 VStack(alignment: .leading) {
-                    Text("\(copy(reason.kind.rawValue)) · \(reason.code)").font(.subheadline)
+                    Text(copy(reason.kind.rawValue)+(showScopeMetadata ? " · "+reason.code : "")).font(.subheadline)
                     if let explanation = reason.explanation { Text(explanation) }
                     else if reason.kind != .unknown { Text(copy(reason.kind.rawValue + "Explanation")) }
                 }
@@ -295,6 +290,29 @@ struct ApprovedWorklistView: View {
                     .accessibilityIdentifier("worklist.open-reviews")
             }
         }.textSelection(.enabled)
+    }
+
+    private func humanName(_ id: String) -> String {
+        humanNames[id] ?? cache.snapshot?.items.first(where: { $0.subjectID == id })?.displayTitle ?? copy("graphMissing")
+    }
+    private func technicalDetail(_ item: ApprovedWorklistItem) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            LabeledContent(copy("member"), value: item.key.memberID)
+            LabeledContent(copy("subject"), value: item.subjectID)
+            LabeledContent(copy("subjectRevision"), value: item.subjectRevision)
+            LabeledContent(copy("sourceRevision"), value: item.sourceRevision)
+            LabeledContent(copy("project"), value: item.projectID ?? copy("noProject"))
+            LabeledContent(copy(item.missionBindingVerified ? "mission" : "unverifiedMissionRef"), value: item.missionID ?? copy("noMission"))
+            LabeledContent(copy("executionState"), value: item.executionState)
+            LabeledContent(copy("reviewState"), value: item.reviewState)
+            LabeledContent(copy("effectMode"), value: item.effectMode)
+            ForEach(item.evidence, id: \.self) { reference in
+                VStack(alignment: .leading) {
+                    Text("\(reference.kind) · \(reference.subjectID)")
+                    Text(reference.digest).font(.caption)
+                }
+            }
+        }
     }
 
     private func factRows(_ item: ApprovedWorklistItem) -> [(String, WorklistFact)] {

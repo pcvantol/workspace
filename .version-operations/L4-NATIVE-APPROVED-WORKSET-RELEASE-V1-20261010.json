@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "forge-issue208-comment6095863974-r81-plan96",
+  "determined_version": "2.8.16",
+  "event_lineage": "forge-issue208-comment6095863974-r81-plan96",
+  "expected_source_revision": "d42ec0021e5c6970064801b2acdaaab69c1b9b50",
+  "expected_version": "2.8.15",
+  "operation_id": "L4-NATIVE-APPROVED-WORKSET-RELEASE-V1-20261010",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

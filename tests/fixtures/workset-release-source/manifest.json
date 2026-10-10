@@ -1,0 +1,16 @@
+{
+  "boundary": "Genuine product-service-created synthetic A/B approval/admission followed by actual native release/disarm on early source Workspace; static consumer regression data, never final installed acceptance.",
+  "producer_version": "2.12.1",
+  "producer_source": "9875333acc4258a20fc0180a9ae09c980802d5b1",
+  "producer_wheel_sha256": "9b192e7a3cb5d503e795639a2b25b584b178c8bd2ef81af9ef96117af772ec33",
+  "definition_provider_turns": 3,
+  "maximum_definition_turns": 8,
+  "maximum_releases": 1,
+  "maximum_activations": 2,
+  "file_sha256": {
+    "operation-released.json": "96f8172254ebdd915853ba28e7810fc38075c332039c8eb3794a23f5f286fd5d",
+    "prepared.json": "559aaf47dcfa3dbb15ee5a8f932eab84eec842eaffd915e3677ded2c5b4a563b",
+    "operation-original-withdrawn.json": "5668338676b116f5d80a70dba2627096f1e83eff77c551a0ee215d73df747ebe",
+    "operation-disarmed.json": "88c6d27584e7fb15f7e830a72a593045ef1d214244414efe9dd2a4df95134eb2"
+  }
+}

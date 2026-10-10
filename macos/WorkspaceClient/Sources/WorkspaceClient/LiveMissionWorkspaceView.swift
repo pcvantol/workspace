@@ -12,17 +12,21 @@ import SwiftUI
 }
 
 struct LiveMissionWorkspaceView: View {
+    var onOpenReviews: ((ApprovedWorklistItem) -> Void)? = nil
     @ObservedObject var client: ClientState
     @ObservedObject var conversations: ConversationState
     @ObservedObject var state: MissionConceptState
+    @ObservedObject var releases: WorksetReleaseState
+    @State private var showRelease = false
     @Environment(\.locale) private var locale
     @ObservedObject private var selection:MissionWorkspaceSelection
     private var activeConversationID:String? {
         get { selection.conversationID }
         nonmutating set { selection.conversationID=newValue }
     }
-    init(client:ClientState,conversations:ConversationState) {
-        self.client=client;self.conversations=conversations;self.state=conversations.missionConcepts;self.selection=conversations.missionSelection
+    init(client:ClientState,conversations:ConversationState,onOpenReviews:((ApprovedWorklistItem)->Void)?=nil) {
+        self.onOpenReviews=onOpenReviews
+        self.client=client;self.conversations=conversations;self.state=conversations.missionConcepts;self.selection=conversations.missionSelection;self.releases=conversations.worksetReleases
     }
     private var connectionScope:[String] { [client.savedEndpoint,client.savedInstance,client.phase] }
     private func copy(_ key:String)->String { MissionWorkspaceCopy.text(key,language:locale.language.languageCode?.identifier ?? "en") }
@@ -43,6 +47,8 @@ struct LiveMissionWorkspaceView: View {
                 if state.pending != nil {
                     Button(copy("resume")) { Task { await resume() } }.disabled(state.busy)
                 }
+                Button(WorksetReleaseCopy.text("list", language: locale.language.languageCode?.identifier ?? "en")+" (\(releases.selected.count))") { showRelease=true }
+                    .accessibilityIdentifier("mission.release-list")
                 if state.busy { ProgressView().controlSize(.small) }
             }.buttonStyle(.glass).padding(10)
                 .glassEffect(.regular,in:RoundedRectangle(cornerRadius:18))
@@ -51,16 +57,27 @@ struct LiveMissionWorkspaceView: View {
 
                 canRefine:state.capability != nil && !state.busy && state.pending == nil,canApprove:!selection.newDraft && state.packet?.packageData != nil && !state.busy && state.pending == nil && state.approval?.state != "COMPLETE",
                 selectedID:selection.newDraft ? nil:state.items.first(where: { $0.conversation_id==activeConversationID })?.object_id,draftMessage:selection.draftMessage,
+                releaseEligible:Set(state.items.filter { releases.subject($0) != nil }.map(\.object_id)),
+                releaseSelected:Set(state.items.filter { item in releases.subject(item).map { releases.selected.contains($0) } ?? false }.map(\.object_id)),
+                onReleaseToggle:{ card in if let item=state.items.first(where: { $0.object_id==card.id }),let subject=releases.subject(item) { releases.toggle(subject) } },
                 onRefine:{ text,lens,card in Task { await refine(text,lens:lens,card:card) } },
                 onApprove:{ card in Task { await state.approve(card,connection:await connection()) } },
                 onSelect:{ card in Task { await prepare(card) } },onSeparate:{ result,card in prepareSeparate(result,from:card) }).id(selection.sceneID)
         }
+        .sheet(isPresented:$showRelease) {
+            WorksetReleaseView(state:releases,items:state.items,onRefresh:{ Task { await refreshRelease() } },onOpenReviews:onOpenReviews)
+        }
         .onChange(of:[client.savedEndpoint,client.savedInstance,conversations.projectID,conversations.observedActorID ?? ""]) { _, _ in
-            activeConversationID=nil;selection.ownConversationID=nil;state.invalidate()
+            activeConversationID=nil;selection.ownConversationID=nil;state.invalidate();releases.invalidate()
         }
         // Authority reads publish project/actor themselves; they cannot key their own task.
         .task(id:connectionScope) { await refresh() }
+        .onChange(of:client.phase) { _, value in
+            if value != "CONNECTED" { releases.invalidate() }
+        }
         .onChange(of:conversations.state) { _, value in
+            if ["UNAUTHORIZED", "GRANT_REQUIRED", "UNAVAILABLE", "OFFLINE", "STALE"].contains(value) { releases.invalidate() }
+            if value=="AVAILABLE",client.phase=="CONNECTED",!selection.refreshing { Task { await refreshReleaseIfNeeded() } }
             if value=="AVAILABLE",!selection.refreshing,!state.busy,state.capability==nil,state.pending==nil,client.phase=="CONNECTED" {
                 Task { await refreshKnownScope() }
             }
@@ -94,13 +111,30 @@ struct LiveMissionWorkspaceView: View {
               let known=state.producerConnection(own,id:activeConversationID) else { return }
         // Automatic availability observes existing granted slots; it never resolves a new binding.
         await state.refresh(known)
+        await refreshReleaseIfNeeded()
     }
     func refresh() async {
+        guard client.phase=="CONNECTED" else { activeConversationID=nil;selection.ownConversationID=nil;selection.newDraft=false;state.invalidate();releases.invalidate();return }
         guard !selection.refreshing,!state.busy else { return }
         selection.refreshing=true;defer { selection.refreshing=false }
-        guard client.phase=="CONNECTED" else { activeConversationID=nil;selection.ownConversationID=nil;selection.newDraft=false;state.invalidate();return }
         await conversations.prepare(client:client)
         await state.refresh(await connection())
+        await refreshReleaseIfNeeded()
+    }
+    func releaseConnection() async -> AdvisoryConnection? {
+        let epoch = releases.authorityEpoch
+        guard let own = await conversations.missionWorkspaceConnection(client:client),
+              epoch == releases.authorityEpoch, client.phase == "CONNECTED",
+              conversations.state == "AVAILABLE", !conversations.preparingServerForget else { return nil }
+        return own
+    }
+    func refreshReleaseIfNeeded() async {
+        guard client.phase=="CONNECTED",let own=await releaseConnection(),!releases.hasAttempted(own) else { return }
+        await releases.refresh(own)
+    }
+    func refreshRelease() async {
+        guard client.phase=="CONNECTED" else { releases.invalidate();return }
+        await releases.refresh(await releaseConnection())
     }
     func resume() async { await state.resume(await connection()) }
     func prepare(_ card:MissionDefinitionCard) async {

@@ -21,6 +21,7 @@ struct IsolatedTestDocument: Decodable {
 
     let advisory_access: AdvisoryAccess?
     let mission_access:AdvisoryAccess?
+    let workset_release_access: WorksetReleaseAccess?
     let candidate_access: CandidateAccess?
 
     let control_grant: String?
@@ -74,9 +75,17 @@ struct IsolatedTestDocument: Decodable {
             guard mission.validForMission,mission.endpoint==document.endpoint,mission.workspaceInstanceID==document.instance_id,
                   mission.workspaceProjectID==document.project_id else { throw ConversationError.invalidResponse }
         }
+        try validateReleaseAccess(document)
         if let candidate=document.candidate_access {
             guard candidate.valid,candidate.endpoint==document.endpoint,candidate.workspaceInstanceID==document.instance_id,
                   candidate.workspaceProjectID==document.project_id else { throw ConversationError.invalidResponse }
+        }
+    }
+
+    private static func validateReleaseAccess(_ document: IsolatedTestDocument) throws {
+        if let release = document.workset_release_access {
+            guard release.valid, release.endpoint == document.endpoint, release.workspaceInstanceID == document.instance_id,
+                  release.workspaceProjectID == document.project_id else { throw ConversationError.invalidResponse }
         }
     }
 
@@ -249,4 +258,13 @@ final class IsolatedCandidateCredentials:CandidateCredentials,@unchecked Sendabl
     func save(_ value:CandidateAccess) throws { lock.withLock { access=value } }
     func forget() throws { lock.withLock { access=nil } }
 }
+final class IsolatedWorksetReleaseCredentials: WorksetReleaseCredentials, @unchecked Sendable {
+    private let lock = NSLock()
+    private var access: WorksetReleaseAccess?
+    init(_ document: IsolatedTestDocument) { access = document.workset_release_access }
+    func load() throws -> WorksetReleaseAccess? { lock.withLock { access } }
+    func save(_ value: WorksetReleaseAccess) throws { lock.withLock { access = value } }
+    func forget() throws { lock.withLock { access = nil } }
+}
+
 #endif

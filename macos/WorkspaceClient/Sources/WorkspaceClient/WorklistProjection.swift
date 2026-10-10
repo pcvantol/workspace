@@ -54,15 +54,26 @@ enum WorklistProjection {
         value == yes ? .yes : value == no ? .no : .unknown
     }
 
+    struct ObservedScope {
+        let instanceID: String
+        let actorID: String
+        let worksetID: String
+    }
     static func decode(_ data: Data, access: WorklistAccess, worksetID: String) throws -> ApprovedWorklistSnapshot {
-        try require(access.valid && access.worksetIDs.contains(worksetID) && data.count <= 1_000_000)
+        try require(access.valid && access.worksetIDs.contains(worksetID))
+        return try decode(data, scope: ObservedScope(instanceID: access.forgeInstanceID, actorID: access.actorID, worksetID: worksetID))
+    }
+    // Pure validation of an already authenticated release response; this creates no read grant.
+    static func decode(_ data: Data, scope observed: ObservedScope) throws -> ApprovedWorklistSnapshot {
+        try require(data.count <= 1_000_000)
+        let worksetID = observed.worksetID
         let raw = try JSONSerialization.jsonObject(with: data)
         let top = try object(raw, keys: boundFields.union(["snapshot_revision", "observed_at", "freshness", "read_only"]))
-        try require(try text(top["contract_version"]) == "forge-workspace-worklist/v1" && text(top["instance_id"]) == access.forgeInstanceID && boolean(top["read_only"]))
+        try require(try text(top["contract_version"]) == "forge-workspace-worklist/v1" && text(top["instance_id"]) == observed.instanceID && boolean(top["read_only"]))
         let installation = try text(top["installation_id"])
         try require(WorklistWire.identifier(installation))
         let scope = try object(top["scope"], keys: ["kind", "principal_id", "workset_id", "project_id"])
-        try validateScope(scope, access: access, worksetID: worksetID)
+        try validateScope(scope, observed: observed)
         let memberRevision = try text(top["membership_revision"])
         let selectorRevision = try text(top["selector_revision"])
         let snapshotRevision = try text(top["snapshot_revision"])
@@ -73,7 +84,7 @@ enum WorklistProjection {
         let activation = try text(top["activation_support"])
         try require(try text(top["freshness"]) == "CURRENT_READBACK" && ["COMPLETE_WITHIN_SCOPE", "PARTIAL"].contains(completeness) && ["NOT_YET_QUALIFIED", "QUALIFIED_SERIAL_APPROVED_WORKLIST"].contains(activation))
         guard let rawItems = top["items"] as? [Any], rawItems.count <= 64 else { throw WorklistTransportError.inconsistentSnapshot }
-        let scoped = ApprovedWorklistScope(forgeInstanceID: access.forgeInstanceID, actorID: access.actorID, worksetID: worksetID)
+        let scoped = ApprovedWorklistScope(forgeInstanceID: observed.instanceID, actorID: observed.actorID, worksetID: worksetID)
         let items = try rawItems.map { try item($0, scope: scoped, installation: installation, revision: snapshotRevision) }
         try require(Set(items.map(\.key.memberID)).count == items.count && Set(items.map(\.committedPosition)).count == items.count)
         let complete = completeness == "COMPLETE_WITHIN_SCOPE"
@@ -85,8 +96,8 @@ enum WorklistProjection {
         return ApprovedWorklistSnapshot(scope: scoped, membershipRevision: memberRevision, selectorRevision: selectorRevision, snapshotRevision: snapshotRevision, observedAt: observedAt, completeWithinScope: complete, freshness: .current, continuation: state == "READY" ? .ready : state == "BLOCKED" ? .blocked : state == "IDLE" ? .idle : .unknown, nextMemberID: next, items: items, installationID: installation, worksetRevision: worksetRevision, activationSupport: activation, continuationReasons: reasons)
     }
 
-    private static func validateScope(_ scope: [String:Any], access: WorklistAccess, worksetID: String) throws {
-        try require(try text(scope["kind"]) == "EXPLICIT_WORKSET" && text(scope["principal_id"]) == access.actorID && text(scope["workset_id"]) == worksetID && scope["project_id"] is NSNull)
+    private static func validateScope(_ scope: [String:Any], observed: ObservedScope) throws {
+        try require(try text(scope["kind"]) == "EXPLICIT_WORKSET" && text(scope["principal_id"]) == observed.actorID && text(scope["workset_id"]) == observed.worksetID && scope["project_id"] is NSNull)
     }
 
     private static func checkedObservationTime(_ value: Any?) throws -> String {

@@ -7,6 +7,9 @@ struct MissionWorkspaceView: View {
     let canApprove: Bool
     let onRefine: (String, String, MissionDefinitionCard?) -> Void
     let onApprove: (MissionDefinitionCard) -> Void
+    let releaseEligible: Set<String>
+    let releaseSelected: Set<String>
+    let onReleaseToggle: (MissionDefinitionCard) -> Void
     let onSelect:(MissionDefinitionCard)->Void
     let onSeparate:(MissionSuggestedResult,MissionDefinitionCard)->Void
     @State private var selection: String?
@@ -24,7 +27,9 @@ struct MissionWorkspaceView: View {
 
     init(observation: MissionWorkspaceObservation?, canRefine: Bool, canApprove: Bool,
          selectedID: String? = nil, draftMessage:String="", activePanel: String = "chat", showGraph: Bool = false,
+         releaseEligible: Set<String> = [], releaseSelected: Set<String> = [], onReleaseToggle: @escaping (MissionDefinitionCard) -> Void = { _ in },
          onRefine: @escaping (String, String, MissionDefinitionCard?) -> Void, onApprove: @escaping (MissionDefinitionCard) -> Void, onSelect:@escaping(MissionDefinitionCard)->Void = { _ in },onSeparate:@escaping(MissionSuggestedResult,MissionDefinitionCard)->Void = { _, _ in }) {
+        self.releaseEligible=releaseEligible; self.releaseSelected=releaseSelected; self.onReleaseToggle=onReleaseToggle
         self.selectedID=selectedID
         self.observation = observation; self.canRefine = canRefine; self.canApprove = canApprove
         self.onRefine = onRefine; self.onApprove = onApprove;self.onSelect=onSelect;self.onSeparate=onSeparate
@@ -89,6 +94,9 @@ struct MissionWorkspaceView: View {
     private var overview: some View {
         VStack(alignment: .leading, spacing: 12) {
             TextField(copy("search"), text: $search).accessibilityIdentifier("mission.search")
+            if !releaseEligible.isEmpty {
+                Text(WorksetReleaseCopy.text("empty", language: locale.language.languageCode?.identifier ?? "en")).font(.caption).foregroundStyle(.secondary)
+            }
             Text(copy("display")).font(.caption).foregroundStyle(.secondary)
             Picker(copy("display"), selection: $graph) {
                 Text(copy("list")).tag(false)
@@ -238,12 +246,22 @@ struct MissionWorkspaceView: View {
         }
         if let card {
             Divider()
+            if releaseEligible.contains(card.id) {
+                Button(WorksetReleaseCopy.text(releaseSelected.contains(card.id) ? "remove" : "include", language: locale.language.languageCode?.identifier ?? "en")) { onReleaseToggle(card) }
+                    .buttonStyle(.glass).accessibilityIdentifier("mission.release-select")
+            }
             Text(card.title + " · " + copy("revision") + " " + String(card.revision)).font(.caption.bold())
+            if card.canonicalHistory?.contains(where: { $0.definition_revision == card.revision && $0.subject_current && $0.mission_id != nil }) == true {
+                Text(copy("APPROVED_WAITING")).font(.callout).foregroundStyle(.secondary)
+            } else {
             Button(copy("approve")) { onApprove(card) }
                 .buttonStyle(.glassProminent)
                 .disabled(!canApprove || card.consequences == nil || card.risks == nil || card.remainingDecisions == nil || !card.questions.isEmpty)
                 .accessibilityIdentifier("mission.approve")
-            Text(copy("approvalEffect")).font(.caption).foregroundStyle(.secondary)
+            }
+            if card.canonicalHistory?.contains(where: { $0.definition_revision == card.revision && $0.subject_current && $0.mission_id != nil }) != true {
+                Text(copy("approvalEffect")).font(.caption).foregroundStyle(.secondary)
+            }
             if !canApprove {
                 let recorded = card.canonicalHistory?.contains { $0.definition_revision == card.revision } == true
                 Text(copy(recorded ? card.status : "approveUnavailable")).font(.caption).foregroundStyle(.secondary)
@@ -298,7 +316,7 @@ struct MissionWorkspaceView: View {
                             }
                         }.accessibilityHidden(true)
                         ForEach(Array(observation.cards.enumerated()), id: \.element.id) { index, item in
-                            Button { selection = item.id;onSelect(item) } label: {
+                            Button { selection = item.id; panel = "definition";onSelect(item) } label: {
                                 VStack(alignment: .leading, spacing: 6) {
                                     Text(item.title).font(.headline)
                                     Text(copy(item.status)).font(.caption)
@@ -308,7 +326,7 @@ struct MissionWorkspaceView: View {
                             }.buttonStyle(.plain)
                                 .focusable(interactions: .edit)
                                 .onKeyPress(keys: [.return, .space]) { _ in
-                                    selection = item.id; onSelect(item)
+                                    selection = item.id; panel = "definition"; onSelect(item)
                                     return .handled
                                 }
                                 .position(x: 20 + width / 2,

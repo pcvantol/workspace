@@ -272,6 +272,7 @@ class Service:
             from .advisory_peer import AdvisoryTransport
             from .candidate_peer import CandidateTransport
             from .mission_peer import MissionConceptTransport
+            from .workset_release_peer import WorksetReleaseTransport
             self.conversations = ConversationStore(self.root, self._root_fd)
             self.reviews = ReviewTransport(self.root, self._root_fd)
             self.worklists = WorklistReadTransport(self.root, self._root_fd)
@@ -279,6 +280,7 @@ class Service:
             self.advisory = AdvisoryTransport(self.root, self._root_fd, self.conversations)
             self.mission_concepts = MissionConceptTransport(self.root, self._root_fd, self.conversations)
             self.candidates = CandidateTransport(self.root, self._root_fd, self.conversations)
+            self.workset_releases = WorksetReleaseTransport(self.root, self._root_fd)
         except Exception:
             self.close()
             raise
@@ -406,6 +408,15 @@ class Service:
 
     def revoke_mission(self,binding_id):
         return self.mission_concepts.revoke(binding_id)
+
+    def provision_workset_release(self, actor, project, endpoint, forge_token_file, client_token_file):
+        catalogue = self.projects()
+        if catalogue['state'] not in ('AVAILABLE', 'PARTIAL') or project not in {p['id'] for p in catalogue['projects']}:
+            raise ValueError('current Workspace project required')
+        return self.workset_releases.provision(actor, project, endpoint, forge_token_file, client_token_file)
+
+    def revoke_workset_release(self, binding_id):
+        return self.workset_releases.revoke(binding_id)
 
     def provision_candidate(self, actor, project, endpoint, receipt_file, token_file, client_file):
         catalogue=self.projects()

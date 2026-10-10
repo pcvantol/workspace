@@ -26,3 +26,10 @@ swift=(root/'macos/WorkspaceClient/Sources/WorkspaceClient/MissionConceptWire.sw
 match=re.search(r'Data\(base64Encoded: "([A-Za-z0-9+/=]+)"\)',swift)
 if match is None or base64.b64decode(match[1])!=mission:raise ValueError('native mission concept schema preview drift')
 print('Actual producer mission concept preview matches; final qualification pending.')
+
+release=(root/'workspace_control/approved-workset-release-v1.json').read_bytes()
+if sha256(release).hexdigest()!='c25d46e51f3f076542e289e55aa147a0e0cf0c80a1c28a57d87943dcfcc92309':raise ValueError('workset release producer schema pin drift')
+swift=(root/'macos/WorkspaceClient/Sources/WorkspaceClient/WorksetReleaseWire.swift').read_text()
+match=re.search(r'Data\(###"(.+?)"###\.utf8\)',swift)
+if match is None or json.loads(match[1])!=json.loads(release):raise ValueError('native workset release schema projection drift')
+print('Exact Forge2.12.1/9875333 workset-release wire projections match; consumer installed qualification remains separate.')

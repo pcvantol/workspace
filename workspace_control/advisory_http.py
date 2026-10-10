@@ -8,7 +8,7 @@ from .review_peer import _unique_pairs
 from .worklist_peer import WorklistError
 from .advisory_contract import validate
 
-def request(binding, method, path, body=None, *, gate=None, error_validator=validate):
+def request(binding, method, path, body=None, *, gate=None, error_validator=validate, maximum_bytes=65536):
     scheme,host,port=_endpoint(binding['endpoint'])
     connection=(http.client.HTTPSConnection(host,port,timeout=60,context=ssl.create_default_context()) if scheme=='https' else http.client.HTTPConnection(host,port,timeout=60))
     try:
@@ -19,9 +19,9 @@ def request(binding, method, path, body=None, *, gate=None, error_validator=vali
         if response.status in (401,403):raise WorklistError('DENIED')
         if response.getheader('Content-Type','').split(';',1)[0].lower()!='application/json':raise WorklistError('INVALID_RESPONSE')
         length=response.getheader('Content-Length')
-        if length is not None and (not length.isdecimal() or int(length)>65536):raise WorklistError('INVALID_RESPONSE')
-        raw=response.read(65537)
-        if len(raw)>65536:raise WorklistError('INVALID_RESPONSE')
+        if length is not None and (not length.isdecimal() or int(length)>maximum_bytes):raise WorklistError('INVALID_RESPONSE')
+        raw=response.read(maximum_bytes+1)
+        if len(raw)>maximum_bytes:raise WorklistError('INVALID_RESPONSE')
         value=json.loads(raw,object_pairs_hook=_unique_pairs)
         if response.status!=200:
             error_validator(value,'error');raise WorklistError(value['error']['code'])

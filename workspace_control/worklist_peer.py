@@ -107,7 +107,7 @@ def _valid_binding(binding):
 
 class WorklistReadTransport:
     def __init__(self, root, root_fd, *, namespace="worklist"):
-        if namespace not in ("worklist", "worklist-control", "advisory", "candidate", "mission"):
+        if namespace not in ("worklist", "worklist-control", "advisory", "candidate", "mission", "workset-release"):
             raise ValueError("unsupported binding namespace")
         self.namespace = namespace
         self.root = Path(root)

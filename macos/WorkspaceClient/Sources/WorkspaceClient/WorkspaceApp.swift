@@ -68,21 +68,29 @@ struct WorkspaceApp: App {
         guard let document = try? IsolatedTestDocument.load() else {
             fatalError("Isolated test credential file is absent or invalid")
         }
-        _client = StateObject(wrappedValue: ClientState(keychain: IsolatedServerCredentials(document)))
-        _conversations = StateObject(wrappedValue: ConversationState(
+        let ownClient = ClientState(keychain: IsolatedServerCredentials(document))
+        _client = StateObject(wrappedValue: ownClient)
+        let ownConversations = ConversationState(
             grants: IsolatedDraftGrant(document),
             localDrafts: PrivateLocalDraftCache(root: URL(fileURLWithPath: document.local_root)),
             advisory: AdvisoryState(credentials: IsolatedAdvisoryCredentials(document)),
             candidates:CandidateState(credentials:IsolatedCandidateCredentials(document),
                 store:PrivateCandidateLocalStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("candidate-drafts"))),
-            missionConcepts:MissionConceptState(credentials:IsolatedAdvisoryCredentials(document,mission:true),store:PrivateMissionIntentStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("mission-intents")))))
+            missionConcepts:MissionConceptState(credentials:IsolatedAdvisoryCredentials(document,mission:true),store:PrivateMissionIntentStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("mission-intents"))),
+            worksetReleases:WorksetReleaseState(credentials:IsolatedWorksetReleaseCredentials(document),
+                store:PrivateWorksetReleaseStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("workset-release-intents"))))
+        _conversations = StateObject(wrappedValue: ownConversations)
+        ownClient.bindReleaseAuthority(ownConversations.worksetReleases)
         _reviews = StateObject(wrappedValue: MissionReviewState(credentials: IsolatedReviewGrant(document)))
         _worklists = StateObject(wrappedValue: WorklistState(credentials: IsolatedWorklistGrant(document),
             controls: WorklistControlState(credentials: IsolatedWorklistControlGrant(document))))
         IsolatedWindowEvidence.capture(in: document.local_root)
         #else
-        _client = StateObject(wrappedValue: ClientState())
-        _conversations = StateObject(wrappedValue: ConversationState())
+        let ownClient = ClientState()
+        _client = StateObject(wrappedValue: ownClient)
+        let ownConversations = ConversationState()
+        _conversations = StateObject(wrappedValue: ownConversations)
+        ownClient.bindReleaseAuthority(ownConversations.worksetReleases)
         _reviews = StateObject(wrappedValue: MissionReviewState())
         _worklists = StateObject(wrappedValue: WorklistState())
         #endif
@@ -160,7 +168,7 @@ struct ContentView: View {
                 if let preview=missionObservation {
                     MissionWorkspaceView(observation:preview,canRefine:false,canApprove:false,onRefine:{ _, _, _ in },onApprove:{ _ in })
                 } else {
-                    LiveMissionWorkspaceView(client:client,conversations:conversations)
+                    LiveMissionWorkspaceView(client:client,conversations:conversations,onOpenReviews:openReview)
                 }
             }
                 .environment(\.nativeTabCommandsActive, selectedTab == 4)
@@ -303,8 +311,8 @@ struct ServerOverviewView: View {
         }
         .padding(24)
         .onAppear { client.reconnect() }
-        .onChange(of: scenePhase) { _, phase in if phase == .active { client.reconnect() } }
-        .onReceive(refresh) { _ in client.reconnect() }
+        .onChange(of: scenePhase) { _, phase in if phase == .active, !client.releaseInteractionActive { client.reconnect() } }
+        .onReceive(refresh) { _ in if !client.releaseInteractionActive { client.reconnect() } }
     }
 }
 
@@ -354,6 +362,9 @@ struct SettingsView: View {
             }
             Section(MissionWorkspaceCopy.text("setupTitle",language:WorkspaceLanguage.current)) {
                 MissionSetupView(client:client,conversations:conversations,state:conversations.missionConcepts)
+            }
+            Section(WorksetReleaseCopy.text("setup", language: WorkspaceLanguage.current)) {
+                WorksetReleaseSetupView(client:client,conversations:conversations,state:conversations.worksetReleases)
             }
             Section(WorkspaceCopy.text("Binding")) {
                 LabeledContent(WorkspaceCopy.text("Pinned instance"), value: client.savedInstance.isEmpty ? WorkspaceCopy.text("None") : client.savedInstance)

@@ -115,7 +115,15 @@ private actor CredentialWorker {
 
 @MainActor
 final class ClientState: ObservableObject {
-    @Published private(set) var phase = "UNCONFIGURED"
+    @Published private(set) var phase = "UNCONFIGURED" {
+        didSet { if phase != "CONNECTED" { releaseAuthority?.invalidate() } }
+    }
+    private weak var releaseAuthority: WorksetReleaseState?
+    var releaseInteractionActive: Bool { releaseAuthority?.interactionActive == true }
+    func bindReleaseAuthority(_ state: WorksetReleaseState) {
+        releaseAuthority = state
+        if phase != "CONNECTED" { state.invalidate() }
+    }
     @Published private(set) var detail = "Set a Server address and token in Settings."
     @Published private(set) var snapshot: ServerSnapshot?
     @Published private(set) var savedEndpoint = ""
@@ -215,8 +223,9 @@ final class ClientState: ObservableObject {
 
     func draftReadToken() async throws -> String {
         guard phase == "CONNECTED", snapshot != nil else { throw ConversationError.unavailable }
+        let epoch = attempt
         let stored = try await credentials.load()
-        guard stored.binding?.endpoint == savedEndpoint,
+        guard epoch == attempt, phase == "CONNECTED", snapshot != nil, stored.binding?.endpoint == savedEndpoint,
               stored.binding?.instanceID == savedInstance,
               let token = stored.token, !token.isEmpty else { throw ConversationError.unavailable }
         return token
