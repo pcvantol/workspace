@@ -1,3 +1,11 @@
+## Plan96 protected source and ordinary documentary finalization
+
+Protected implementation PR147/mainb11b4c719cdd5672046ae29140aa330e7060dfde is delivered at Workspace2.8.16. Its tree equals independently reviewed head669a64c8a2cc28d5fdcd448910ab2aeed1a5b0db. Complete whole-delta Quality PASS and Security PASS, all5exactheadCI PASS; native192+1/strict perfile>80.2/standardTDEPASS0rules/QUALIFIED actual evidence retained. Specific decision6098479853 only raised this existing correction ceiling: consumed4/max4/remaining0, prior3/history/failed pairs retained. No fifth or operational-limit extension.
+
+New matching candidate native/Server669a64c/exactForge2.12.1/9875333 genuine GUI proves C excluded, readable B-only missing/B→A order blocked previews, explicit reorder and ONE release, COMPLETE receipt/current readback, immediate empty Newselection without reconnect, A/B toggle accumulation and original history. Actual3initial definitioncalls/zero EPstarts from consumer release. Real producer changed selected revision is DENIED outside finite approvedgrant; explicit changed-gap consumer handling is separately declared unittransport proof, never fabricated canonical approval.
+
+This ordinary nonempty NO_BUMP finalization changes only owning documentation, preserves the sole sourcewriter/session/assignment/original PATCH and closes source admission with explicit remaining proof gates. Finalization review/CI/protectedmerge and NEW exact-final-main matching noneditable native/Server/pinnedForge/runtime/recovery/fullUX/screens/immutable reachable evidence remain mandatory and unqualified until actually completed. Earlier9d A→B/905disarm/ed mixed-provenance proofs remain candidate history, and unexecuted905accept1 remains NOT_EXECUTED. PrimaryiCloud/oldplans/credentials/budgets untouched.
+
 ## Selected native approved-workset release — r81 plan96
 
 Owner mandate#208/6095863974 selects L4-NATIVE-APPROVED-WORKSET-RELEASE-V1-20261010 under existing assignment/session/solewriter and JOINL3-L4-APPROVED-WORKSET-RELEASE-V1-20261009. Actualcleanprotectedbase d42ec0021e5c6970064801b2acdaaab69c1b9b50/Workspace2.8.15, branchcodex/r81-native-workset-release. Plan93/94/95 and PR143–146 remain CLOSED; their terminal receipts reconcile historical pending snapshots below. No budget/history/sourcewriter reset; primaryiCloud untouched.
