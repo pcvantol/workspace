@@ -233,7 +233,7 @@ extension WorksetReleaseWire {
         let planning = subject["planning"] as! [String: Any]
         try require((canonical["gates"] as! [String]).sorted() == (planning["human_gates"] as! [String]).sorted())
         if kind == "ARCHITECTURE" {
-            try require(try self.canonical(planning) == (canonical["evidence"] as! [String: Any])["planning_digest"] as? String)
+            try require(try AdvisoryWire.digest(planning) == (canonical["evidence"] as! [String: Any])["planning_digest"] as? String)
         }
     }
 }

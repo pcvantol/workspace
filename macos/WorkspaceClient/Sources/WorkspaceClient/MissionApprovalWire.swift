@@ -96,7 +96,7 @@ enum MissionApprovalWire {
                   decision["installation_id"] as? String==signer["installation_id"] as? String,
                   decision["operator_binding_version"] as? Int==signer["operator_binding_version"] as? Int,
                   try AdvisoryWire.digest(decision["canonical_decision"]!)==decision["canonical_decision_digest"] as? String,
-                  try AdvisoryWire.digest(decision["lifecycle_evidence"]!)==decision["lifecycle_evidence_digest"] as? String else { throw AdvisoryError.invalid }
+                  try AdvisoryWire.digest(decision["lifecycle_evidence"]!, ascii: false)==decision["lifecycle_evidence_digest"] as? String else { throw AdvisoryError.invalid }
             let canonical=decision["canonical_decision"] as! [String:Any],evidence=decision["lifecycle_evidence"] as! [String:Any]
             guard canonical["decision_id"] as? String==decision["decision_id"] as? String,
                   canonical["subject_id"] as? String==candidate["id"] as? String,canonical["subject_revision"] as? String==package["subject_revision"] as? String,

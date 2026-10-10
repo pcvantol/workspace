@@ -1,5 +1,7 @@
 {
+  "additional_model_calls": 0,
   "contract_version": "forge-approved-workset-release/v1",
+  "gaps": [],
   "package": {
     "additional_model_calls": 0,
     "contract_version": "forge-approved-workset-release/v1",
@@ -104,7 +106,7 @@
               "write_paths": []
             },
             "human_gates": [
-              "dépôt approuvé 😀"
+              "d\u00e9p\u00f4t approuv\u00e9 \ud83d\ude00"
             ],
             "maximum_actions": 4,
             "maximum_consecutive_no_progress_actions": 2,
@@ -127,7 +129,7 @@
           },
           "progression_policy": {
             "higher_scope_obligations": [
-              "dépôt approuvé 😀"
+              "d\u00e9p\u00f4t approuv\u00e9 \ud83d\ude00"
             ],
             "mode": "continuous",
             "policy_revision": "1",
@@ -306,7 +308,7 @@
         }
       ],
       "profile_id": "solo",
-      "workset_id": "released-af0d07af4db1eb9e20f7779d9aaf3c4a32e68005"
+      "workset_id": "released-ad05f9420d9a75c9a08a46646f8b96b238f89227"
     },
     "effect_boundary": "FUTURE_SELECTION_ONLY",
     "execution_ready": false,
@@ -319,7 +321,7 @@
       "operator_id": "606a849359f4df4c"
     },
     "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
-    "release_key": "sha256:af0d07af4db1eb9e20f7779d9aaf3c4a32e680052c3180b16c7c155b5a4229b5",
+    "release_key": "sha256:ad05f9420d9a75c9a08a46646f8b96b238f8922744703d098aa1a2fb926a56cf",
     "scope": {
       "instance_id": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9",
       "project_id": "isolated-project",
@@ -352,10 +354,10 @@
               "decision": "approved",
               "decision_id": "candidate-architecture-60d19ca34b5bcd104056866d",
               "evidence": {
-                "planning_digest": "sha256:aa4e38bd7fbca28c246c32de504314e41d0c90bae9700280a2f86d115949f5b2"
+                "planning_digest": "sha256:1eb0afe3f934ff0905eba7ad076109e5e6b61ab525ef9afe8e8a910123568d74"
               },
               "gates": [
-                "dépôt approuvé 😀"
+                "d\u00e9p\u00f4t approuv\u00e9 \ud83d\ude00"
               ],
               "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
               "occurred_at": "2026-10-10T09:37:54Z",
@@ -367,7 +369,7 @@
               "subject_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
               "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
             },
-            "canonical_decision_digest": "sha256:0718a992a50c7c6a7164e24774b33ff81cdc1b6b323ea9647348751ced052856",
+            "canonical_decision_digest": "sha256:8494f58261bc5446c5bdde0a16180808c1381789874042f5f35b2f6884c59164",
             "contract_version": "forge-candidate-decisions/v1",
             "decision_id": "candidate-architecture-60d19ca34b5bcd104056866d",
             "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
@@ -387,11 +389,12 @@
                 "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
                 "sha256:3951fd423d6f052a8f072beac7b34cb6383b93c1a6a6fb80f042434ca6e5638b",
                 "sha256:6603d2466d4526fb94e213dbe2af223cb7f8b711ad672f462aba05a1ff54f7f5",
-                "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+                "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36",
+                "sha256:1eb0afe3f934ff0905eba7ad076109e5e6b61ab525ef9afe8e8a910123568d74"
               ],
               "selected_recommendation_id": null
             },
-            "lifecycle_evidence_digest": "sha256:d079baba55de24d8c6c013fbc9809eae6837959742d463e800be6166e19201cd",
+            "lifecycle_evidence_digest": "sha256:69fabcd2d5428329cd807a96f85873ca3afafce992cc27855484b512926aec5d",
             "operation_id": "concept-architecture-92163b95d186864005cce8f86f0c8520",
             "operator_binding_version": 1,
             "operator_id": "606a849359f4df4c",
@@ -411,7 +414,7 @@
               "decision_id": "candidate-business-60d19ca34b5bcd104056866d",
               "evidence": {},
               "gates": [
-                "dépôt approuvé 😀"
+                "d\u00e9p\u00f4t approuv\u00e9 \ud83d\ude00"
               ],
               "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
               "occurred_at": "2026-10-10T09:37:54Z",
@@ -581,7 +584,7 @@
             "write_paths": []
           },
           "human_gates": [
-            "dépôt approuvé 😀"
+            "d\u00e9p\u00f4t approuv\u00e9 \ud83d\ude00"
           ],
           "maximum_actions": 4,
           "maximum_consecutive_no_progress_actions": 2,
@@ -915,9 +918,7 @@
       }
     ]
   },
-  "package_digest": "sha256:7bfc96f9a54fed90abb3c6bb26f9d49ce3c6ddd463964f25e851f0d64df0dc80",
-  "release_supported": true,
-  "gaps": [],
+  "package_digest": "sha256:00baec06f7e00a8051be4c93d53c8a78fb99e2b0ee304b4bb9bf3f5458bb1bd6",
   "read_only": true,
-  "additional_model_calls": 0
+  "release_supported": true
 }

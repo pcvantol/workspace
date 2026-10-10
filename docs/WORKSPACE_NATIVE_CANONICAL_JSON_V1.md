@@ -7,7 +7,8 @@ Same r81-plan96 assignment, sole writer and Forge2.12.1/9875333. Specific decisi
 | Native caller | Pinned producer contract | Encoding |
 | --- | --- | --- |
 | Advice request/context/output/history; Mission definition/catalog/package/resolve | forge.advisory_contract.digest | ASCII escaped |
-| Candidate proposal/registration/current candidate; decision/lifecycle/planning receipts | forge.advisory_contract.digest | ASCII escaped |
+| Candidate proposal/registration/current candidate; decision/planning receipts | forge.advisory_contract.digest | ASCII escaped |
+| Lifecycle evidence content_digest | forge.lifecycle.store._dump | UTF-8 |
 | Mission candidate subject_revision and mission_spec_digest | forge.models.criterion_observation.canonical_digest | UTF-8 |
 | Workset package/release key | forge.advisory_contract.digest | ASCII escaped |
 | Workset definition/membership revision; worklist projection and control request | existing canonical workset/worklist contract | UTF-8 |
@@ -24,7 +25,9 @@ Original new regression was red on unchanged a905 source: five digest mismatches
 
 ## Actual repair validation
 
-Four focused tests PASS; independent byte/caller matrix PASS on matching production SHA256s. Fault reintroduction with the original sorting route fails the genuine preserved graph case. Full owning validate PASS196native+1isolated, new CanonicalJSON100% executable-line coverage and all gated files strictly>80.2%. Standard TDE PASS/zero triggered rules and repositoryQUALIFIED under unchanged policy/runtime. All failed setup/test logs remain preserved.
+Initial four focused tests PASS; final11 linked canonical/Mission/Unicodeplanning tests PASS. Independent byte/caller matrix PASS on final matching production SHA256s, including31 explicit pinned-producer checks for the completed declared Unicode fixture. Fault reintroduction with the original sorting route fails the genuine preserved graph case. Final full owning validate PASS198native+1isolated, new CanonicalJSON100% executable-line coverage and all gated files strictly>80.2%. Standard TDE PASS/zero triggered rules and repositoryQUALIFIED under unchanged policy/runtime. All failed setup/test logs remain preserved.
+
+The small caller review discovered Workset Architecture planning wrongly using UTF8; new declared Unicodeplanning regression was first red2failures and then green using required ASCII. Mission lifecycle receipts now use pinned UTF8. Workset lifecycle receipts already use UTF8. Existing declared Unicodeplanning unit fixture was corrected to the actual pinned algorithm and complete lifecycle references, with old original retained; this is unit data, not a new canonical decision. Earlier196+1/ee63 Quality/Security PASS remains historical and is superseded for source admission by fresh reviews on final bytes. Failed198-test run (old golden contract plus unchanged short timer scheduling) retained; final full198+1 succeeds with no assertion/timeout/coverage weakening.
 
 ## Delivery boundary
 

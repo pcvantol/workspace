@@ -69,4 +69,21 @@ final class MissionApprovalWireTests:XCTestCase {
         XCTAssertThrowsError(try MissionApprovalWire.compound(JSONSerialization.data(withJSONObject:bad),access:a,conversation:c))
     }
 
+    // Declared unit receipt transformation; not a new canonical decision or installed proof.
+    func testUnicodeLifecycleReceiptUsesPinnedUTF8Digest() throws {
+        let (access,conversation)=try self.access()
+        var raw=try AdvisoryWire.object(fixture("operation-current"))
+        var receipt=raw["business_decision"] as! [String:Any]
+        var evidence=receipt["lifecycle_evidence"] as! [String:Any]
+        let rationale="Évaluation explicite du périmètre déjà approuvé."
+        receipt["rationale"]=rationale;evidence["rationale"]=rationale
+        receipt["lifecycle_evidence"]=evidence
+        receipt["lifecycle_evidence_digest"]=try AdvisoryWire.digest(evidence,ascii:false)
+        raw["business_decision"]=receipt
+        XCTAssertEqual(try MissionApprovalWire.compound(JSONSerialization.data(withJSONObject:raw),access:access,conversation:conversation).state,"COMPLETE")
+        receipt["lifecycle_evidence_digest"]=try AdvisoryWire.digest(evidence)
+        raw["business_decision"]=receipt
+        XCTAssertThrowsError(try MissionApprovalWire.compound(JSONSerialization.data(withJSONObject:raw),access:access,conversation:conversation))
+    }
+
 }
