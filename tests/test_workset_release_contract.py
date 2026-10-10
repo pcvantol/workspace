@@ -100,3 +100,26 @@ class WorksetReleasePreparedTests(unittest.TestCase):
                        lambda v: v.update(state='PENDING')]:
             bad=deepcopy(value);mutate(bad)
             with self.assertRaises(WorklistError):wire.operation(bad,self.binding,expected=request)
+
+    def testApprovedMissionAndDisplayedDefinitionCannotDiverge(self):
+        for target, key, value in [('mission', 'effect_policy', None),
+                                   ('mission', 'title', 'Unapproved'),
+                                   ('definition', 'expected_result', 'Unapproved result'),
+                                   ('definition', 'title', 'Unapproved title'),
+                                   ('planning', 'provenance_revision', 'sha256:'+'0'*64)]:
+            bad=deepcopy(self.value); packet=bad['package']; subject=packet['subjects'][0]
+            subject[target][key]=value
+            packet['definition']['members'][0]['mission']=deepcopy(subject['mission'])
+            packet['definition']['members'][0]['planning']=deepcopy(subject['planning'])
+            with self.assertRaises(WorklistError): wire._subject_proofs(packet,self.binding)
+
+    def testCurrentMissionInstallationAndRevisionJoin(self):
+        import json
+        from pathlib import Path
+        value=json.loads((Path(__file__).parent/'fixtures/workset-release-source/operation-released.json').read_text())
+        for mutate in [lambda v:v['original_receipt'].update(applied_revision=999),
+                       lambda v:v['frozen_package']['operator_binding'].update(installation_id='foreign')]:
+            bad=deepcopy(value);mutate(bad)
+            with self.assertRaises(WorklistError):wire.operation(bad,self.binding)
+        bad=deepcopy(value);bad['current']['items'][0]['mission_id']='unrelated-mission'
+        with self.assertRaises(WorklistError):wire.operation(bad,self.binding)

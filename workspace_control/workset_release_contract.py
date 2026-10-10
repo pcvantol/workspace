@@ -107,6 +107,7 @@ def _subject_proofs(value, binding):
     signer = value['operator_binding']
     for subject, member in zip(value['subjects'], value['definition']['members']):
         scope(subject['source'], binding)
+        _mission_join(subject)
         require(subject['mission']['candidate_id'] == subject['candidate_id'])
         require(member['mission'] == subject['mission'] and member['planning'] == subject['planning'])
         require(member['dependencies'] == [d['candidate_id'] for d in subject['dependency_bindings']])
@@ -123,6 +124,27 @@ def _subject_proofs(value, binding):
             require(digest(decision['canonical_decision']) == decision['canonical_decision_digest'])
             require(_canonical(decision['lifecycle_evidence']) == decision['lifecycle_evidence_digest'])
             _decision_join(decision, subject, kind, signer)
+
+
+def _mission_join(subject):
+    mission, planning, definition = (subject[k] for k in ('mission', 'planning', 'definition'))
+    require(_canonical(mission) == planning['mission_spec_digest'])
+    require(planning['provenance_revision'] == subject['subject_revision'])
+    require(isinstance(mission.get('effect_policy'), dict))
+    for key in ('effect_policy', 'dependencies', 'scope', 'criterion_assessment_contracts',
+                'maximum_actions', 'maximum_consecutive_no_progress_actions', 'repository_evidence_source'):
+        require(mission.get(key) == planning.get(key))
+    for key, target in [('title', 'title'), ('objective', 'business_objective'),
+                        ('objective', 'summary'), ('business_value', 'business_value'),
+                        ('acceptance_criteria', 'acceptance_criteria'), ('risks', 'risks'),
+                        ('dependencies', 'dependencies')]:
+        require(definition[key] == mission[target])
+    require(definition['exclusions'] == planning['non_goals'])
+    constraints = mission['engineering_constraints']
+    required = (['EXPECTED RESULT: ' + definition['expected_result']] +
+                ['IN SCOPE: ' + item for item in definition['scope']] +
+                ['EXCLUDED: ' + item for item in definition['exclusions']] + definition['architecture_choices'])
+    require(all(item in constraints for item in required))
 
 
 def _decision_join(receipt, subject, kind, signer):
@@ -171,6 +193,10 @@ def operation(value, binding, expected=None, operation_id=None):
         _receipt(record, packet, request)
     if value['current'] is not None:
         current = validate_projection(value['current'], binding, value['workset_id'])
+        require(current['installation_id'] == packet['operator_binding']['installation_id'])
+        require(record is None or current['workset_revision'] >= record['applied_revision'])
+        require(all(i['mission_id'] is None or i['mission_id'] == subject['mission_id']
+                    for i, subject in zip(current['items'], packet['subjects'])))
         require(current['membership_revision'] == _canonical(packet['definition']))
         require([(i['candidate_id'], i['subject_revision']) for i in current['items']] ==
                 [(s['candidate_id'], s['subject_revision']) for s in packet['subjects']])

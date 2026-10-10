@@ -80,6 +80,7 @@ extension WorksetReleaseWire {
     }
     private static func member(_ subject: [String: Any], member: [String: Any], selected: WorksetReleaseSubject, mode: String, access: WorksetReleaseAccess) throws -> WorksetReleaseMember {
         try scope(subject["source"] as! [String: Any], access: access)
+        let effectMode = try missionJoin(subject)
         try require(subject["candidate_id"] as? String == selected.candidate_id && subject["subject_revision"] as? String == selected.subject_revision)
         try require(member["candidate_id"] as? String == selected.candidate_id && member["subject_revision"] as? String == selected.subject_revision)
         try require(try AdvisoryWire.digest(member["mission"]!) == AdvisoryWire.digest(subject["mission"]!))
@@ -91,7 +92,27 @@ extension WorksetReleaseWire {
         return .init(subject: selected, missionID: subject["mission_id"] as! String,
                      definition: try MissionConceptWire.definition(subject["definition"]!),
                      dependencies: dependencies, humanGates: planning["human_gates"] as! [String],
-                     effectMode: ((subject["mission"] as! [String: Any])["effect_policy"] as! [String: Any])["mode"] as! String)
+                     effectMode: effectMode)
+    }
+    private static func missionJoin(_ subject: [String: Any]) throws -> String {
+        let mission = subject["mission"] as! [String: Any], planning = subject["planning"] as! [String: Any]
+        let definition = subject["definition"] as! [String: Any]
+        try require(try canonical(mission) == planning["mission_spec_digest"] as? String)
+        try require(planning["provenance_revision"] as? String == subject["subject_revision"] as? String)
+        guard let effect = mission["effect_policy"] as? [String: Any], let mode = effect["mode"] as? String else { throw AdvisoryError.invalid }
+        for key in ["effect_policy", "dependencies", "scope", "criterion_assessment_contracts", "maximum_actions", "maximum_consecutive_no_progress_actions", "repository_evidence_source"] {
+            try require(try AdvisoryWire.digest([mission[key] ?? NSNull()]) == AdvisoryWire.digest([planning[key] ?? NSNull()]))
+        }
+        for (key, target) in [("title","title"), ("objective","business_objective"), ("objective","summary"), ("business_value","business_value"), ("acceptance_criteria","acceptance_criteria"), ("risks","risks"), ("dependencies","dependencies")] {
+            try require(try AdvisoryWire.digest([definition[key]!]) == AdvisoryWire.digest([mission[target]!]))
+        }
+        try require(try AdvisoryWire.digest(definition["exclusions"]!) == AdvisoryWire.digest(planning["non_goals"]!))
+        let constraints = mission["engineering_constraints"] as! [String]
+        let required = ["EXPECTED RESULT: "+(definition["expected_result"] as! String)] +
+            (definition["scope"] as! [String]).map { "IN SCOPE: "+$0 } +
+            (definition["exclusions"] as! [String]).map { "EXCLUDED: "+$0 } + (definition["architecture_choices"] as! [String])
+        try require(required.allSatisfy { constraints.contains($0) })
+        return mode
     }
     private static func semanticKey(_ raw: [String: Any], members: [[String: Any]], subjects: [[String: Any]]) throws {
         var semantic = raw["scope"] as! [String: Any]
@@ -121,6 +142,10 @@ extension WorksetReleaseWire {
         let currentData = try current.map { try JSONSerialization.data(withJSONObject: $0) }
         let snapshot = try currentData.map { try WorklistProjection.decode($0, scope: .init(instanceID: access.forgeInstanceID, actorID: access.actorID, worksetID: preview.worksetID)) }
         if let snapshot {
+            let packet = raw["frozen_package"] as! [String: Any], signer = packet["operator_binding"] as! [String: Any]
+            try require(snapshot.installationID == signer["installation_id"] as? String)
+            if let receipt { try require(snapshot.worksetRevision >= (receipt["applied_revision"] as! Int)) }
+            try require(zip(snapshot.items, preview.members).allSatisfy { item, member in item.missionID == nil || item.missionID == member.missionID })
             try require(snapshot.items.map(\.subjectID) == preview.members.map(\.id))
             try require(snapshot.items.map(\.subjectRevision) == preview.members.map { $0.subject.subject_revision })
             let definition = (raw["frozen_package"] as! [String: Any])["definition"]!

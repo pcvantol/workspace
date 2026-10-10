@@ -72,7 +72,11 @@ struct LiveMissionWorkspaceView: View {
         }
         // Authority reads publish project/actor themselves; they cannot key their own task.
         .task(id:connectionScope) { await refresh() }
+        .onChange(of:client.phase) { _, value in
+            if value != "CONNECTED" { releases.invalidate() }
+        }
         .onChange(of:conversations.state) { _, value in
+            if value != "AVAILABLE" { releases.invalidate() }
             if value=="AVAILABLE",!selection.refreshing,!state.busy,state.capability==nil,state.pending==nil,client.phase=="CONNECTED" {
                 Task { await refreshKnownScope() }
             }
@@ -106,11 +110,12 @@ struct LiveMissionWorkspaceView: View {
               let known=state.producerConnection(own,id:activeConversationID) else { return }
         // Automatic availability observes existing granted slots; it never resolves a new binding.
         await state.refresh(known)
+        await refreshReleaseIfNeeded()
     }
     func refresh() async {
         guard !selection.refreshing,!state.busy else { return }
         selection.refreshing=true;defer { selection.refreshing=false }
-        guard client.phase=="CONNECTED" else { activeConversationID=nil;selection.ownConversationID=nil;selection.newDraft=false;state.invalidate();return }
+        guard client.phase=="CONNECTED" else { activeConversationID=nil;selection.ownConversationID=nil;selection.newDraft=false;state.invalidate();releases.invalidate();return }
         await conversations.prepare(client:client)
         await state.refresh(await connection())
         await refreshReleaseIfNeeded()

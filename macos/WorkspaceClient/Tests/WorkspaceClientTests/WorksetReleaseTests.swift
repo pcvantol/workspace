@@ -135,12 +135,16 @@ private actor ReleaseReplayPeer: WorksetReleaseServing {
     var lostAfterApply = false
     var lostBeforeApply = false
     var deny = false
+    var delay = false
     init(released: Data, disarmed: Data) { self.released=released;self.disarmed=disarmed }
     func configure(after: Bool = false, before: Bool = false, denied: Bool = false) {
         lostAfterApply=after;lostBeforeApply=before;deny=denied
     }
+    func setDelay(_ value: Bool) { delay = value }
+    private func waitIfDelayed() async { if delay { try? await Task.sleep(for: .milliseconds(100)) } }
     func probe(_ connection: AdvisoryConnection, token: String) async throws -> WorksetReleaseAccess { throw AdvisoryError.denied }
     func capability(_ access: WorksetReleaseAccess, _ connection: AdvisoryConnection) async throws -> WorksetReleaseCapability {
+        await waitIfDelayed()
         if deny { throw AdvisoryError.denied }
         let raw=try WorksetReleaseWire.object(released), packet=raw["frozen_package"] as! [String:Any]
         let selection=try AdvisoryWire.decode(packet["selection"]!,as:WorksetReleaseSelection.self)
@@ -150,12 +154,14 @@ private actor ReleaseReplayPeer: WorksetReleaseServing {
             release_supported:true,disarm_supported:true,read_only:true,additional_model_calls:0)
     }
     func prepare(_ access: WorksetReleaseAccess, _ connection: AdvisoryConnection, selection: WorksetReleaseSelection) async throws -> WorksetReleasePreview {
+        await waitIfDelayed()
         if deny { throw AdvisoryError.denied }
         let raw=try WorksetReleaseWire.object(released)
         let packet=try WorksetReleaseWire.package(raw["frozen_package"] as! [String:Any],access:access)
         guard packet.selection==selection else { throw AdvisoryError.invalid };return packet
     }
     func submit(_ access: WorksetReleaseAccess, _ connection: AdvisoryConnection, command: WorksetReleaseCommand) async throws -> WorksetReleaseObservation {
+        await waitIfDelayed()
         if deny { throw AdvisoryError.denied }
         sends.append(command)
         if lostBeforeApply { lostBeforeApply=false;throw AdvisoryError.unavailable }
@@ -165,6 +171,7 @@ private actor ReleaseReplayPeer: WorksetReleaseServing {
     }
     func operation(_ access: WorksetReleaseAccess, _ connection: AdvisoryConnection, intent: WorksetReleaseIntent) async throws -> WorksetReleaseObservation {
         reads+=1
+        await waitIfDelayed()
         if deny { throw AdvisoryError.denied }
         guard let command=replies[intent.command.operation_id] else { throw AdvisoryError.missing }
         return try response(command,access:access)
@@ -365,5 +372,63 @@ extension WorksetReleaseTests {
         let host=NSHostingView(rootView:WorksetReleaseSetupView(client:ClientState(),conversations:ConversationState(),state:state))
         host.frame=NSRect(x:0,y:0,width:640,height:400);host.layoutSubtreeIfNeeded()
         XCTAssertGreaterThan(host.fittingSize.height,0)
+    }
+}
+
+extension WorksetReleaseTests {
+    func testApprovedMissionDigestDefinitionAndOptionalEffectReject() throws {
+        let raw = try prepared(), packet = raw["package"] as! [String: Any], access = access(packet)
+        for target in ["mission", "definition"] {
+            var changed = packet, subjects = packet["subjects"] as! [[String: Any]]
+            var value = subjects[0][target] as! [String: Any]
+            value["title"] = "Unapproved title"; subjects[0][target] = value
+            changed["subjects"] = subjects
+            XCTAssertThrowsError(try WorksetReleaseWire.package(changed, access: access))
+        }
+        var changed = packet, subjects = packet["subjects"] as! [[String: Any]]
+        var mission = subjects[0]["mission"] as! [String: Any]; mission.removeValue(forKey: "effect_policy")
+        subjects[0]["mission"] = mission; changed["subjects"] = subjects
+        XCTAssertThrowsError(try WorksetReleaseWire.package(changed, access: access))
+    }
+    @MainActor func testAuthorityInvalidationClearsProtectedPreviewAndExpires() async throws {
+        let raw = try prepared(), packet = raw["package"] as! [String:Any], access = access(packet)
+        let directory=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/workset-release-source")
+        let peer=ReleaseReplayPeer(released:try Data(contentsOf:directory.appendingPathComponent("operation-released.json")),
+                                  disarmed:try Data(contentsOf:directory.appendingPathComponent("operation-disarmed.json")))
+        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:ReleaseTestStore(),transport:peer)
+        let connection=AdvisoryConnection(endpoint:access.endpoint,workspaceInstanceID:access.workspaceInstanceID,actorID:access.actorID,workspaceProjectID:access.workspaceProjectID,conversationID:"a",bearer:"read",draftGrant:String(repeating:"c",count:43))
+        await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare()
+        XCTAssertNotNil(state.preview)
+        state.expirePreview(now:WorksetReleaseWire.date(state.capability!.expires_at)!.addingTimeInterval(1))
+        XCTAssertNil(state.preview);XCTAssertNil(state.capability);XCTAssertEqual(state.phase,"denied")
+        await state.confirmRelease();let sends=await peer.sends;XCTAssertTrue(sends.isEmpty)
+        await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare();await state.confirmRelease()
+        XCTAssertNotNil(state.observation);XCTAssertEqual(state.history.count,1)
+        state.beginSelection();XCTAssertNil(state.observation);XCTAssertEqual(state.history.count,1)
+        await state.refresh(connection);XCTAssertNil(state.observation);await state.prepare();XCTAssertNotNil(state.preview)
+        state.invalidate();XCTAssertNil(state.preview);XCTAssertNil(state.observation)
+    }
+}
+
+extension WorksetReleaseTests {
+    @MainActor func testDelayedPrepareSubmitAndReadCannotRestoreInvalidatedAuthority() async throws {
+        let raw=try prepared(), packet=raw["package"] as! [String:Any], access=access(packet)
+        let dir=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/workset-release-source")
+        let peer=ReleaseReplayPeer(released:try Data(contentsOf:dir.appendingPathComponent("operation-released.json")),disarmed:try Data(contentsOf:dir.appendingPathComponent("operation-disarmed.json")))
+        let store=ReleaseTestStore()
+        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:store,transport:peer)
+        let connection=AdvisoryConnection(endpoint:access.endpoint,workspaceInstanceID:access.workspaceInstanceID,actorID:access.actorID,workspaceProjectID:access.workspaceProjectID,conversationID:"a",bearer:"read",draftGrant:String(repeating:"c",count:43))
+        await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await peer.setDelay(true)
+        let preparing=Task { await state.prepare() };await Task.yield();state.invalidate();await preparing.value
+        XCTAssertNil(state.preview);XCTAssertNil(state.capability)
+        await peer.setDelay(false);await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare()
+        await peer.setDelay(true);let submitting=Task { await state.confirmRelease() };await Task.yield();state.invalidate();await submitting.value
+        XCTAssertNil(state.observation);XCTAssertNil(state.preview)
+        let sends=await peer.sends;XCTAssertTrue(sends.isEmpty)
+        await peer.setDelay(false);await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare();await state.confirmRelease()
+        XCTAssertEqual(store.journal.history.count,1)
+        await peer.setDelay(true);let reading=Task { await state.refresh(connection) };await Task.yield();state.invalidate();await reading.value
+        XCTAssertNil(state.observation);XCTAssertNil(state.capability);XCTAssertTrue(state.history.isEmpty)
+        XCTAssertEqual(store.journal.history.count,1)
     }
 }

@@ -16,6 +16,7 @@ import Foundation
     private var connection: AdvisoryConnection?
     private var attemptedScope: [String]?
     private var generation = 0
+    private var selecting = false
     private var journal = WorksetReleaseJournal()
     init(credentials: any WorksetReleaseCredentials = WorksetReleaseKeychain(),
          store: any WorksetReleaseIntentStorage = PrivateWorksetReleaseStore(),
@@ -23,7 +24,7 @@ import Foundation
         self.credentials = credentials; self.store = store; self.transport = transport
     }
     func invalidate() {
-        generation &+= 1; attemptedScope = nil; connection = nil; access = nil; busy = false
+        generation &+= 1; selecting = false; attemptedScope = nil; connection = nil; access = nil; busy = false
         capability = nil; preview = nil; observation = nil; selected = []; pending = nil; history = []; phase = "unconfigured"
     }
     func saveGrant(_ token: String, connection: AdvisoryConnection?) async {
@@ -51,7 +52,7 @@ import Foundation
     }
     func refresh(_ connection: AdvisoryConnection?) async {
         guard !busy else { return }
-        let previousAccess = access, previousSelection = selected
+        let previousAccess = access, previousSelection = selected, wasSelecting = selecting
         invalidate()
         guard let connection else { return }
         attemptedScope = Self.scope(connection)
@@ -62,21 +63,25 @@ import Foundation
             let cap = try await transport.capability(access, connection)
             guard ticket == generation else { return }
             self.connection = connection; self.access = access; capability = cap
+            selecting = wasSelecting && previousAccess == access
             if previousAccess == access { selected = previousSelection.filter { cap.subjects.contains($0) } }
             journal = try store.load(access.scopeKey); history = journal.history
             guard journal.pending?.matches(access) != false else { throw AdvisoryError.denied }
             pending = journal.pending; phase = "current"
-            if let intent = pending ?? history.last, intent.matches(access) {
-                do {
-                    let result = try await transport.operation(access, connection, intent: intent)
-                    guard ticket == generation else { return }
-                    try accept(result, intent: intent, access: access)
-                } catch AdvisoryError.missing {
-                    guard journal.pending == intent else { throw AdvisoryError.missing }
-                    try await recoverMissing(intent, access: access, connection: connection, ticket: ticket)
-                }
+            if let intent = pending ?? (selecting ? nil : history.last), intent.matches(access) {
+                try await readOriginal(intent, access: access, connection: connection, ticket: ticket)
             }
         } catch { failed(error, ticket: ticket) }
+    }
+    private func readOriginal(_ intent: WorksetReleaseIntent, access: WorksetReleaseAccess, connection: AdvisoryConnection, ticket: Int) async throws {
+        do {
+            let result = try await transport.operation(access, connection, intent: intent)
+            guard ticket == generation else { return }
+            try accept(result, intent: intent, access: access)
+        } catch AdvisoryError.missing {
+            guard journal.pending == intent else { throw AdvisoryError.missing }
+            try await recoverMissing(intent, access: access, connection: connection, ticket: ticket)
+        }
     }
     private func recoverMissing(_ intent: WorksetReleaseIntent, access: WorksetReleaseAccess, connection: AdvisoryConnection, ticket: Int) async throws {
         let packet: WorksetReleasePreview
@@ -117,9 +122,17 @@ import Foundation
     }
     func toggle(_ subject: WorksetReleaseSubject) {
         guard !busy, pending == nil, capability?.subjects.contains(subject) == true else { return }
-        preview = nil
+        beginSelection()
         if let index = selected.firstIndex(of: subject) { selected.remove(at: index) }
         else { selected.append(subject) }
+    }
+    func beginSelection() {
+        guard !busy, pending == nil else { return }
+        selecting = true; observation = nil; preview = nil; phase = "current"
+    }
+    func expirePreview(now: Date = Date()) {
+        guard let cap = capability, let expiry = WorksetReleaseWire.date(cap.expires_at), expiry <= now else { return }
+        invalidate(); phase = "denied"
     }
     func move(_ subject: WorksetReleaseSubject, offset: Int) {
         guard !busy, pending == nil, let index = selected.firstIndex(of: subject), selected.indices.contains(index+offset), abs(offset) == 1 else { return }
@@ -188,7 +201,7 @@ import Foundation
     }
     private func accept(_ result: WorksetReleaseObservation, intent: WorksetReleaseIntent, access: WorksetReleaseAccess) throws {
         guard result.operationID == intent.command.operation_id else { throw AdvisoryError.invalid }
-        observation = result; preview = nil
+        selecting = false; observation = result; preview = nil
         if result.state == "COMPLETE", journal.pending == intent {
             var next = journal; next.pending = nil
             if !next.history.contains(intent) { next.history.append(intent) }

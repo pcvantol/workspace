@@ -43,6 +43,7 @@ enum WorksetReleaseCopy {
         "refresh": ["Refresh current status", "Actuele status vernieuwen", "Aktuellen Status aktualisieren", "Actualiser l’état actuel", "Actualizar estado actual"],
         "up": ["Move earlier", "Eerder plaatsen", "Nach vorne verschieben", "Déplacer plus tôt", "Mover antes"],
         "down": ["Move later", "Later plaatsen", "Nach hinten verschieben", "Déplacer plus tard", "Mover después"],
+        "newSelection": ["New selection", "Nieuwe selectie", "Neue Auswahl", "Nouvelle sélection", "Nueva selección"],
         "close": ["Close", "Sluiten", "Schließen", "Fermer", "Cerrar"],
         "PREDECESSOR_NOT_SELECTED": ["A required predecessor is missing from your selection.", "Een vereiste voorganger ontbreekt in je selectie.", "Ein erforderlicher Vorgänger fehlt in Ihrer Auswahl.", "Un prédécesseur requis manque dans votre sélection.", "Falta un predecesor necesario en tu selección."],
         "DEPENDENCY_ORDER_CONFLICT": ["A dependency appears after the mission that needs it.", "Een afhankelijkheid staat na de missie die erop wacht.", "Eine Abhängigkeit steht nach der Mission, die sie benötigt.", "Une dépendance apparaît après la mission qui en a besoin.", "Una dependencia aparece después de la misión que la necesita."],

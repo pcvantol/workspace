@@ -23,6 +23,10 @@ struct WorksetReleaseView: View {
             }
             HStack {
                 Button(copy("refresh"), action: onRefresh).disabled(state.busy).accessibilityIdentifier("release.refresh")
+                if state.observation != nil {
+                    Button(copy("newSelection")) { state.beginSelection() }.disabled(state.busy || state.pending != nil)
+                        .accessibilityIdentifier("release.new-selection")
+                }
                 if state.busy { ProgressView().controlSize(.small) }
             }.buttonStyle(.borderless)
             if state.pending != nil {
@@ -34,6 +38,7 @@ struct WorksetReleaseView: View {
             if let observation = state.observation { current(observation) }
             else { selection }
         }.onReceive(timer) { _ in
+            state.expirePreview()
             if state.observation != nil, !state.busy { onRefresh() }
         }.padding(20).frame(minWidth: 480, idealWidth: 860, minHeight: 560, idealHeight: 760)
     }
