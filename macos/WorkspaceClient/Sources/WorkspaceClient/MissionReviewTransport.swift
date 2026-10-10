@@ -284,16 +284,20 @@ struct ForgeReviewOperationResponse: Decodable, Sendable {
             missionID: intent.key.missionID) else { return false }
         return contract_version == "forge-workspace-review-operation/v1" &&
         access.actorID == intent.actorID &&
+        matchesOperation(intent, expectedDigest: expectedDigest) &&
+        current.mission_id == intent.key.missionID && current.valid(for: access) &&
+        current.mission_state_revision >= intent.missionStateRevision &&
+        (isReadback ? read_only == true : recorded != nil)
+    }
+    private func matchesOperation(_ intent: MissionReviewIntent, expectedDigest: String) -> Bool {
         operation.operation_id == intent.operationID.uuidString.lowercased() &&
         operation.mission_id == intent.key.missionID &&
         operation.requirement_id == intent.key.requirementID &&
         operation.subject_digest == intent.subjectDigest &&
         operation.decision == intent.outcome.rawValue &&
-        operation.request_digest == expectedDigest &&
-        current.mission_id == intent.key.missionID && current.valid(for: access) &&
-        current.mission_state_revision >= intent.missionStateRevision &&
-        (isReadback ? read_only == true : recorded != nil)
+        operation.request_digest == expectedDigest
     }
+
 }
 
 struct ForgeReviewDecisionRequest: Encodable, Sendable {

@@ -41,10 +41,15 @@ struct AdvisoryIntent: Codable, Equatable, Sendable {
     let actorID: String
     let request: AdvisoryRequest
     var cancel: AdvisoryCancelRequest?
-    func matches(_ access:AdvisoryAccess, connection:AdvisoryConnection) -> Bool {
+    func matches(_ access: AdvisoryAccess, connection: AdvisoryConnection) -> Bool {
+        matchesAccess(access) && matchesConnection(connection)
+    }
+    private func matchesAccess(_ access: AdvisoryAccess) -> Bool {
         access.valid && fingerprint==access.fingerprint && endpoint==access.endpoint && workspaceInstanceID==access.workspaceInstanceID &&
         workspaceProjectID==access.workspaceProjectID && actorID==access.actorID && request.instance_id==access.forgeInstanceID &&
-        request.project_id==access.forgeProjectID && request.repository_id==access.repositoryID && access.conversationIDs.contains(request.conversation_id) &&
+        request.project_id==access.forgeProjectID && request.repository_id==access.repositoryID && access.conversationIDs.contains(request.conversation_id)
+    }
+    private func matchesConnection(_ connection: AdvisoryConnection) -> Bool {
         connection.conversationID==request.conversation_id && connection.actorID==actorID && connection.workspaceProjectID==workspaceProjectID &&
         connection.endpoint==endpoint && connection.workspaceInstanceID==workspaceInstanceID
     }

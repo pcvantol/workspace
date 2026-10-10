@@ -31,11 +31,7 @@ enum AdvisoryWire {
 
     private static func checkValueConstraints(_ value: Any, _ rules: [String:Any], definitions: [String:Any]) throws {
         if let obj=value as? [String:Any] {
-            guard obj.count >= (rules["minProperties"] as? Int ?? 0), obj.count <= (rules["maxProperties"] as? Int ?? 256) else { throw AdvisoryError.invalid }
-            let properties=rules["properties"] as? [String:[String:Any]] ?? [:]
-            guard Set(rules["required"] as? [String] ?? []).isSubset(of:Set(obj.keys)),
-                (rules["additionalProperties"] as? Bool) != false || Set(obj.keys).isSubset(of:Set(properties.keys)) else { throw AdvisoryError.invalid }
-            for (k,v) in obj { try check(v,properties[k] ?? (rules["additionalProperties"] as? [String:Any] ?? [:]),definitions:definitions) }
+            try checkObjectConstraints(obj, rules, definitions: definitions)
         } else if let items=value as? [Any] {
             guard items.count >= (rules["minItems"] as? Int ?? 0), items.count <= (rules["maxItems"] as? Int ?? 64) else { throw AdvisoryError.invalid }
             for v in items { try check(v,rules["items"] as? [String:Any] ?? [:],definitions:definitions) }
@@ -47,6 +43,14 @@ enum AdvisoryWire {
             guard number.int64Value >= (rules["minimum"] as? Int64 ?? Int64.min), number.int64Value <= (rules["maximum"] as? Int64 ?? Int64.max) else { throw AdvisoryError.invalid }
         }
     }
+    private static func checkObjectConstraints(_ obj: [String:Any], _ rules: [String:Any], definitions: [String:Any]) throws {
+        guard obj.count >= (rules["minProperties"] as? Int ?? 0), obj.count <= (rules["maxProperties"] as? Int ?? 256) else { throw AdvisoryError.invalid }
+        let properties=rules["properties"] as? [String:[String:Any]] ?? [:]
+        guard Set(rules["required"] as? [String] ?? []).isSubset(of:Set(obj.keys)),
+            (rules["additionalProperties"] as? Bool) != false || Set(obj.keys).isSubset(of:Set(properties.keys)) else { throw AdvisoryError.invalid }
+        for (k,v) in obj { try check(v,properties[k] ?? (rules["additionalProperties"] as? [String:Any] ?? [:]),definitions:definitions) }
+    }
+
     private static func boolean(_ value: Any) -> Bool { guard let n=value as? NSNumber else { return false };return CFGetTypeID(n)==CFBooleanGetTypeID() }
     private static func scalar(_ value: Any, _ type: String) throws {
         let valid: Bool

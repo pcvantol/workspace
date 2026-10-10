@@ -89,18 +89,21 @@ import Combine
         guard !busy else { return }
         do { try credentials.forget();suspend();phase="candidateReadOnly" } catch { fail(error) }
     }
+    private func setFailurePhase(_ code: String) {
+        if code.contains("CAPACITY") || code.contains("BUDGET") || code.contains("KEY_LIMIT") { phase="candidateCapacity" }
+        else if code.contains("PENDING") { phase="candidatePending" }
+        else if code.contains("STALE") || code.contains("CONFLICT") || code.contains("CONTEXT_CHANGED") { phase="candidateConflict" }
+        else if code.contains("UNSUPPORTED") || code.contains("NOT_COMPLETE") { phase="candidateUnsupported" }
+        else { phase=pending ? "candidateUncertain":"candidateOffline" }
+    }
+
     private func fail(_ error:Error) {
         clear()
         switch error {
         case AdvisoryError.denied:hasGrant=false;phase="candidateDenied"
         case AdvisoryError.invalid:phase="candidateInvalid"
         case AdvisoryError.missing:phase=pending ? "candidateUncertain":"candidateMissing"
-        case AdvisoryError.state(let code):
-            if code.contains("CAPACITY") || code.contains("BUDGET") || code.contains("KEY_LIMIT") { phase="candidateCapacity" }
-            else if code.contains("PENDING") { phase="candidatePending" }
-            else if code.contains("STALE") || code.contains("CONFLICT") || code.contains("CONTEXT_CHANGED") { phase="candidateConflict" }
-            else if code.contains("UNSUPPORTED") || code.contains("NOT_COMPLETE") { phase="candidateUnsupported" }
-            else { phase=pending ? "candidateUncertain":"candidateOffline" }
+        case AdvisoryError.state(let code): setFailurePhase(code)
         default:phase=pending ? "candidateUncertain":"candidateOffline"
         }
     }
@@ -108,6 +111,35 @@ import Combine
         var v=local;v.registrationPending=false;try persist(v);registration=value
         phase="candidateRegistered"
     }
+    private func refreshPreview(_ a: CandidateAccess, _ c: AdvisoryConnection, generation e: Int) async throws -> Bool {
+        if let r=local.saveIntent {
+            do {
+                let p=try await transport.preview(a,c,id:r.proposal_id,revision:r.expected_revision+1)
+                guard e==epoch else { return false }
+                guard CandidateWire.matches(p.proposal,r) else { throw AdvisoryError.state("PROPOSAL_CONFLICT") }
+                var v=local;v.revision=p.proposal.proposal_revision;v.saveIntent=nil;try persist(v);preview=p;phase="candidateSaved"
+            } catch AdvisoryError.missing { phase="candidateUncertain" }
+        } else if let id=local.proposalID {
+            do {
+                let p=try await transport.preview(a,c,id:id,revision:max(1,local.revision))
+                guard e==epoch else { return false }
+                guard p.proposal.source.turn_id==local.turnID else { throw AdvisoryError.state("PROPOSAL_CONFLICT") }
+                var v=local;if v.revision==0 { v.revision=p.proposal.proposal_revision };try persist(v);preview=p;registration=p.registration;phase="candidateSaved"
+            } catch AdvisoryError.missing { preview=nil;registration=nil;phase="candidateEditing" }
+        } else { phase="candidateEditing" }
+        return true
+    }
+
+    private func refreshRegistration(_ a: CandidateAccess, _ c: AdvisoryConnection, generation e: Int) async throws {
+        if let r=local.registrationIntent {
+            do {
+                let value=try await transport.operation(a,c,body:r)
+                guard e==epoch else { return }
+                if let value { try observe(value) } else { phase="candidatePending" }
+            } catch AdvisoryError.missing { phase=local.registrationPending ? "candidateUncertain":phase }
+        }
+    }
+
     func refresh(_ new:AdvisoryConnection?) async {
         let c:AdvisoryConnection
         do { c=try admit(new) } catch { fail(error);return }
@@ -120,28 +152,8 @@ import Combine
                 let s=try await transport.source(a,c,turn:t)
                 guard e==epoch else { return };source=s
             }
-            if let r=local.saveIntent {
-                do {
-                    let p=try await transport.preview(a,c,id:r.proposal_id,revision:r.expected_revision+1)
-                    guard e==epoch else { return }
-                    guard CandidateWire.matches(p.proposal,r) else { throw AdvisoryError.state("PROPOSAL_CONFLICT") }
-                    var v=local;v.revision=p.proposal.proposal_revision;v.saveIntent=nil;try persist(v);preview=p;phase="candidateSaved"
-                } catch AdvisoryError.missing { phase="candidateUncertain" }
-            } else if let id=local.proposalID {
-                do {
-                    let p=try await transport.preview(a,c,id:id,revision:max(1,local.revision))
-                    guard e==epoch else { return }
-                    guard p.proposal.source.turn_id==local.turnID else { throw AdvisoryError.state("PROPOSAL_CONFLICT") }
-                    var v=local;if v.revision==0 { v.revision=p.proposal.proposal_revision };try persist(v);preview=p;registration=p.registration;phase="candidateSaved"
-                } catch AdvisoryError.missing { preview=nil;registration=nil;phase="candidateEditing" }
-            } else { phase="candidateEditing" }
-            if let r=local.registrationIntent {
-                do {
-                    let value=try await transport.operation(a,c,body:r)
-                    guard e==epoch else { return }
-                    if let value { try observe(value) } else { phase="candidatePending" }
-                } catch AdvisoryError.missing { phase=local.registrationPending ? "candidateUncertain":phase }
-            }
+            guard try await refreshPreview(a, c, generation: e) else { return }
+            try await refreshRegistration(a, c, generation: e)
         } catch { if e==epoch { fail(error) } }
     }
     var canSave:Bool {

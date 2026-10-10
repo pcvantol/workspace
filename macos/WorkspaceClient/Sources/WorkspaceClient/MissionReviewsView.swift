@@ -201,28 +201,32 @@ struct MissionReviewsView: View {
         }
     }
 
+    @ViewBuilder private func detailMetadata(_ item: MissionReviewItem) -> some View {
+        LabeledContent(copy("mission"), value: item.key.missionID)
+        LabeledContent(copy("requirement"), value: item.key.requirementID)
+        LabeledContent(copy("subject"), value: item.subjectID)
+        LabeledContent(copy("revision"), value: item.subjectRevision)
+        LabeledContent(copy("subjectDigest"), value: item.subjectDigest.isEmpty ? copy("unknown") : item.subjectDigest)
+        LabeledContent(copy("missionRevision"), value: item.currentMissionRevision > 0 ?
+                       String(item.currentMissionRevision) : copy("unknown"))
+        LabeledContent(copy("evidenceDigest"), value: item.evidenceDigest.isEmpty ? copy("unknown") : item.evidenceDigest)
+        if let projectID = item.projectID { LabeledContent(copy("project"), value: projectID) }
+        LabeledContent(copy("action"), value: item.actionResult ?? copy("unknown"))
+        LabeledContent(copy("reason"), value: item.waitingReason ?? copy("unknown"))
+        LabeledContent(copy("role"), value: item.requiredRole ?? copy("unknown"))
+        LabeledContent(copy("scope"), value: item.blockingScope ?? copy("unknown"))
+        LabeledContent(copy("policy"), value: item.policySource ?? copy("unknown"))
+        LabeledContent(copy("observed"), value: item.observedAt ?? copy("unknown"))
+        LabeledContent(copy("freshness"), value: copy(item.freshness == .unavailable ?
+                                                       "freshUnavailable" : item.freshness.rawValue))
+        LabeledContent(copy("authority"), value: copy(item.authority.rawValue))
+        LabeledContent(copy("phase"), value: copy(item.phase.rawValue))
+        LabeledContent(copy("lifecycle"), value: item.lifecycleState.isEmpty ? copy("unknown") : item.lifecycleState)
+    }
+
     private func detail(_ item: MissionReviewItem) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            LabeledContent(copy("mission"), value: item.key.missionID)
-            LabeledContent(copy("requirement"), value: item.key.requirementID)
-            LabeledContent(copy("subject"), value: item.subjectID)
-            LabeledContent(copy("revision"), value: item.subjectRevision)
-            LabeledContent(copy("subjectDigest"), value: item.subjectDigest.isEmpty ? copy("unknown") : item.subjectDigest)
-            LabeledContent(copy("missionRevision"), value: item.currentMissionRevision > 0 ?
-                           String(item.currentMissionRevision) : copy("unknown"))
-            LabeledContent(copy("evidenceDigest"), value: item.evidenceDigest.isEmpty ? copy("unknown") : item.evidenceDigest)
-            if let projectID = item.projectID { LabeledContent(copy("project"), value: projectID) }
-            LabeledContent(copy("action"), value: item.actionResult ?? copy("unknown"))
-            LabeledContent(copy("reason"), value: item.waitingReason ?? copy("unknown"))
-            LabeledContent(copy("role"), value: item.requiredRole ?? copy("unknown"))
-            LabeledContent(copy("scope"), value: item.blockingScope ?? copy("unknown"))
-            LabeledContent(copy("policy"), value: item.policySource ?? copy("unknown"))
-            LabeledContent(copy("observed"), value: item.observedAt ?? copy("unknown"))
-            LabeledContent(copy("freshness"), value: copy(item.freshness == .unavailable ?
-                                                           "freshUnavailable" : item.freshness.rawValue))
-            LabeledContent(copy("authority"), value: copy(item.authority.rawValue))
-            LabeledContent(copy("phase"), value: copy(item.phase.rawValue))
-            LabeledContent(copy("lifecycle"), value: item.lifecycleState.isEmpty ? copy("unknown") : item.lifecycleState)
+            detailMetadata(item)
             if let outcome = item.decisionOutcome {
                 let label = switch outcome {
                 case .approve: "approveDecision"
