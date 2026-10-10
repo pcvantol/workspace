@@ -330,6 +330,21 @@ def review_openapi_contract():
                           "get": operation("reviews.operation")}}}
 
 
+for key, method, path in [('access', 'GET', '/v1/workset-releases/access'),
+                          ('capability', 'GET', '/v1/workset-releases/capability'),
+                          ('prepare', 'POST', '/v1/workset-releases/prepare'),
+                          ('command', 'POST', '/v1/workset-releases/commands'),
+                          ('operation', 'GET', '/v1/workset-releases/operations/{operation_id}')]:
+    OPERATIONS['workset-releases.' + key] = {'exposure': 'HTTP_EXPOSED', 'method': method,
+        'path': path, 'auth': 'BEARER_PINNED_AND_DRAFT_AND_WORKSET_RELEASE_GRANT',
+        'contract': 'workset-release', 'local_cli': 'workset-release-' + key, 'summary': 'exact bounded approved workset future release, never Mission start'}
+
+for key in ('issue', 'revoke'):
+    OPERATIONS['workset-releases.bind.' + key] = {'exposure': 'LOCAL_ONLY_ADMIN',
+        'local_cli': 'workset-release-bind-' + key, 'auth': 'PRIVATE_ROOT_OWNER',
+        'summary': 'private owner pairing to an existing finite Forge workset release grant'}
+
+
 def worklist_openapi_contract():
     document = {"openapi": "3.0.3", "info": {"title": "Workspace scoped worklist read V1", "version": "1"},
             "components": {"securitySchemes": {
@@ -765,6 +780,9 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_GET(self):
             if not self._trusted_origin():
                 return
+            if self.path.startswith('/v1/workset-releases/'):
+                from .workset_release_http import route
+                return route(self, service, self.path, 'GET')
             target = self.requestline.split()[1]
             if target.startswith("/v1/advisory-candidates/"):
                 parsed=urlsplit(target);ident=r"[A-Za-z0-9][A-Za-z0-9._:-]{0,127}"
@@ -863,6 +881,9 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_POST(self):
             if not self._trusted_origin():
                 return
+            if self.path.startswith('/v1/workset-releases/'):
+                from .workset_release_http import route
+                return route(self, service, self.path, 'POST')
             if re.fullmatch(r"/v1/advisory-candidates/[0-9a-f]{32}/proposals(?:/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/registrations)?",self.path):
                 return self._candidate_route(write=True)
             if self.path=="/v1/mission-concepts/resolve":

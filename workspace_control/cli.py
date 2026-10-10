@@ -42,6 +42,19 @@ def main(argv=None):
     worklist_issue.add_argument("--client-token-file", required=True)
     worklist_revoke = commands.add_parser("worklist-bind-revoke")
     worklist_revoke.add_argument("--binding-id", required=True)
+    release_issue = commands.add_parser("workset-release-bind-issue")
+    for name in ("actor", "project", "forge-endpoint", "forge-token-file", "client-token-file"):
+        release_issue.add_argument("--" + name, required=True)
+    release_revoke = commands.add_parser("workset-release-bind-revoke")
+    release_revoke.add_argument("--binding-id", required=True)
+    for name in ("access", "capability", "prepare", "command", "operation"):
+        item = commands.add_parser("workset-release-" + name)
+        item.add_argument("--release-token-file", required=True)
+        item.add_argument("--draft-grant-file", required=True)
+        if name in ("prepare", "command"):
+            item.add_argument("--request-file", required=True)
+        if name == "operation":
+            item.add_argument("--operation-id", required=True)
     control_issue = commands.add_parser("worklist-control-bind-issue")
     control_issue.add_argument("--actor", required=True)
     control_issue.add_argument("--forge-endpoint", required=True)
@@ -125,6 +138,20 @@ def main(argv=None):
         elif args.command == "worklist-bind-revoke":
             with Service(args.root) as service:
                 result = service.revoke_worklist(args.binding_id)
+            print(json.dumps(result, sort_keys=True))
+        elif args.command == "workset-release-bind-issue":
+            with Service(args.root) as service:
+                result = service.provision_workset_release(args.actor, args.project, args.forge_endpoint,
+                    args.forge_token_file, args.client_token_file)
+            print(json.dumps(result, sort_keys=True))
+        elif args.command == "workset-release-bind-revoke":
+            with Service(args.root) as service:
+                result = service.revoke_workset_release(args.binding_id)
+            print(json.dumps(result, sort_keys=True))
+        elif args.command.startswith("workset-release-"):
+            from .workset_release_cli import execute
+            with Service(args.root) as service:
+                result = execute(service, args)
             print(json.dumps(result, sort_keys=True))
         elif args.command == "worklist-control-bind-issue":
             with Service(args.root) as service:

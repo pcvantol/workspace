@@ -75,7 +75,9 @@ struct WorkspaceApp: App {
             advisory: AdvisoryState(credentials: IsolatedAdvisoryCredentials(document)),
             candidates:CandidateState(credentials:IsolatedCandidateCredentials(document),
                 store:PrivateCandidateLocalStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("candidate-drafts"))),
-            missionConcepts:MissionConceptState(credentials:IsolatedAdvisoryCredentials(document,mission:true),store:PrivateMissionIntentStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("mission-intents")))))
+            missionConcepts:MissionConceptState(credentials:IsolatedAdvisoryCredentials(document,mission:true),store:PrivateMissionIntentStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("mission-intents"))),
+            worksetReleases:WorksetReleaseState(credentials:IsolatedWorksetReleaseCredentials(document),
+                store:PrivateWorksetReleaseStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("workset-release-intents")))))
         _reviews = StateObject(wrappedValue: MissionReviewState(credentials: IsolatedReviewGrant(document)))
         _worklists = StateObject(wrappedValue: WorklistState(credentials: IsolatedWorklistGrant(document),
             controls: WorklistControlState(credentials: IsolatedWorklistControlGrant(document))))
@@ -160,7 +162,7 @@ struct ContentView: View {
                 if let preview=missionObservation {
                     MissionWorkspaceView(observation:preview,canRefine:false,canApprove:false,onRefine:{ _, _, _ in },onApprove:{ _ in })
                 } else {
-                    LiveMissionWorkspaceView(client:client,conversations:conversations)
+                    LiveMissionWorkspaceView(client:client,conversations:conversations,onOpenReviews:openReview)
                 }
             }
                 .environment(\.nativeTabCommandsActive, selectedTab == 4)
@@ -354,6 +356,9 @@ struct SettingsView: View {
             }
             Section(MissionWorkspaceCopy.text("setupTitle",language:WorkspaceLanguage.current)) {
                 MissionSetupView(client:client,conversations:conversations,state:conversations.missionConcepts)
+            }
+            Section(WorksetReleaseCopy.text("setup", language: WorkspaceLanguage.current)) {
+                WorksetReleaseSetupView(client:client,conversations:conversations,state:conversations.worksetReleases)
             }
             Section(WorkspaceCopy.text("Binding")) {
                 LabeledContent(WorkspaceCopy.text("Pinned instance"), value: client.savedInstance.isEmpty ? WorkspaceCopy.text("None") : client.savedInstance)

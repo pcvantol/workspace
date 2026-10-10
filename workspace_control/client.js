@@ -179,6 +179,13 @@ function validProjectCatalogue(catalogue) {
     typeof catalogue.observed_at === 'string' && catalogue.observed_at.length > 0;
 }
 const ownOperations = {
+  "workset-releases.access": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_WORKSET_RELEASE_GRANT", "method": "GET", "path": "/v1/workset-releases/access", "local_cli": "workset-release-access"},
+  "workset-releases.capability": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_WORKSET_RELEASE_GRANT", "method": "GET", "path": "/v1/workset-releases/capability", "local_cli": "workset-release-capability"},
+  "workset-releases.prepare": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_WORKSET_RELEASE_GRANT", "method": "POST", "path": "/v1/workset-releases/prepare", "local_cli": "workset-release-prepare"},
+  "workset-releases.command": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_WORKSET_RELEASE_GRANT", "method": "POST", "path": "/v1/workset-releases/commands", "local_cli": "workset-release-command"},
+  "workset-releases.operation": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_WORKSET_RELEASE_GRANT", "method": "GET", "path": "/v1/workset-releases/operations/{operation_id}", "local_cli": "workset-release-operation"},
+  "workset-releases.bind.issue": {"exposure": "LOCAL_ONLY_ADMIN", "auth": "PRIVATE_ROOT_OWNER", "local_cli": "workset-release-bind-issue"},
+  "workset-releases.bind.revoke": {"exposure": "LOCAL_ONLY_ADMIN", "auth": "PRIVATE_ROOT_OWNER", "local_cli": "workset-release-bind-revoke"},
   'identity.read': {exposure: 'HTTP_EXPOSED', auth: 'PUBLIC', method: 'GET', path: '/v1/identity'},
   'status.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/status', local_cli: 'status'},
   'projects.read': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED', method: 'GET', path: '/v1/projects', local_cli: 'projects'},

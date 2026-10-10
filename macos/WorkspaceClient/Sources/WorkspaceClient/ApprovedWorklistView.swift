@@ -41,7 +41,7 @@ enum WorklistCopy {
         "sort": ["Display order", "Weergavevolgorde", "Anzeigereihenfolge", "Ordre d’affichage", "Orden de visualización"],
         "sortHint": ["Display sorting does not change committed execution order.", "Sorteren verandert de vastgelegde uitvoeringsvolgorde niet.", "Die Anzeigesortierung ändert die festgelegte Ausführungsreihenfolge nicht.", "Le tri d’affichage ne modifie pas l’ordre d’exécution fixé.", "El orden visual no cambia el orden de ejecución establecido."],
         "all": ["All", "Alles", "Alle", "Tous", "Todos"],
-        "eligible": ["Eligible", "Uitvoerbaar", "Ausführbar", "Éligible", "Elegible"],
+        "eligible": ["Eligible for selection", "Selecteerbaar", "Zur Auswahl berechtigt", "Sélectionnable", "Elegible para selección"],
         "active": ["Active", "Actief", "Aktiv", "Actif", "Activo"],
         "blocked": ["Blocked", "Geblokkeerd", "Blockiert", "Bloqué", "Bloqueado"],
         "completed": ["Completed", "Afgerond", "Abgeschlossen", "Terminé", "Completado"],
@@ -115,6 +115,7 @@ enum WorklistCopy {
 }
 
 struct ApprovedWorklistView: View {
+    let showScopeMetadata: Bool
     let cache: WorklistObservationCache
     let controlContent: AnyView?
     let onOpenReviews: ((ApprovedWorklistItem) -> Void)?
@@ -127,11 +128,12 @@ struct ApprovedWorklistView: View {
     @State private var sort: WorklistSort
     @FocusState private var searchFocused: Bool
 
-    init(cache: WorklistObservationCache = WorklistObservationCache(),
+    init(cache: WorklistObservationCache = WorklistObservationCache(), showScopeMetadata: Bool = true,
          selected: ApprovedWorklistKey? = nil, search: String = "",
          filter: WorklistFilter = .all, sort: WorklistSort = .committed, graphMode: Bool = false,
          controlContent: AnyView? = nil, onOpenReviews: ((ApprovedWorklistItem) -> Void)? = nil) {
         _graphMode = State(initialValue: graphMode)
+        self.showScopeMetadata = showScopeMetadata
         self.cache = cache
         self.onOpenReviews = onOpenReviews
         self.controlContent = controlContent
@@ -161,8 +163,10 @@ struct ApprovedWorklistView: View {
                         .accessibilityIdentifier("worklist.cached")
                 }
                 if let snapshot = cache.snapshot {
+                    if showScopeMetadata {
                     LabeledContent(copy("workset"), value: snapshot.scope.worksetID)
                     LabeledContent(copy("actor"), value: snapshot.scope.actorID)
+                    }
                     HStack {
                         TextField(copy("search"), text: $search)
                             .textFieldStyle(.roundedBorder).focused($searchFocused)

@@ -17,4 +17,4 @@ workspace-client = "workspace_control.cli:client_main"
 packages = ["workspace_control"]
 
 [tool.setuptools.package-data]
-workspace_control = ["client.html", "client.js", "client.css", "advisory-conversation-v1.json", "advisory-candidate-v1.json", "mission-concepts-v1.json"]
+workspace_control = ["client.html", "client.js", "client.css", "advisory-conversation-v1.json", "advisory-candidate-v1.json", "mission-concepts-v1.json", "approved-workset-release-v1.json"]

@@ -60,6 +60,7 @@ final class ConversationState: ObservableObject {
     let advisory: AdvisoryState
     let candidates: CandidateState
     let missionConcepts: MissionConceptState
+    let worksetReleases: WorksetReleaseState
     let missionSelection=MissionWorkspaceSelection()
 
     private let grants: DraftGrantWorker
@@ -80,10 +81,12 @@ final class ConversationState: ObservableObject {
          transport: ConversationTransport = ConversationTransport(),
          advisory: AdvisoryState? = nil,
          candidates: CandidateState? = nil,
-         missionConcepts: MissionConceptState? = nil) {
+         missionConcepts: MissionConceptState? = nil,
+         worksetReleases: WorksetReleaseState? = nil) {
         self.advisory = advisory ?? AdvisoryState()
         self.candidates = candidates ?? CandidateState()
         self.missionConcepts = missionConcepts ?? MissionConceptState()
+        self.worksetReleases = worksetReleases ?? WorksetReleaseState()
         self.grants = DraftGrantWorker(grants)
         self.localDrafts = LocalDraftWorker(localDrafts)
         self.transport = transport

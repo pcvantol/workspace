@@ -1,0 +1,51 @@
+{
+  "assignment": "L4-WORKSPACE-NATIVE-CLIENT-HTTP-V1-20261002",
+  "directive_id": "L4-NATIVE-APPROVED-WORKSET-RELEASE-V1-20261010",
+  "join": "L3-L4-APPROVED-WORKSET-RELEASE-V1-20261009",
+  "revision": "r81-plan96",
+  "base": "d42ec0021e5c6970064801b2acdaaab69c1b9b50",
+  "branch": "codex/r81-native-workset-release",
+  "producer_version": "2.12.1",
+  "producer_source": "9875333acc4258a20fc0180a9ae09c980802d5b1",
+  "producer_wheel_sha256": "9b192e7a3cb5d503e795639a2b25b584b178c8bd2ef81af9ef96117af772ec33",
+  "wire_schema_sha256": "c25d46e51f3f076542e289e55aa147a0e0cf0c80a1c28a57d87943dcfcc92309",
+  "formal_integrated_correction_budget": {
+    "consumed": 0,
+    "maximum": 3,
+    "remaining": 3,
+    "starts_after_first_complete_independent_quality_security_pair": true
+  },
+  "state": "SOURCE_VALIDATED_INDEPENDENT_REVIEWS_PENDING",
+  "prior_plans_93_95_closed": true,
+  "users_credentials_retained": true,
+  "consumer_version": "2.8.16",
+  "source_validation": {
+    "full_command": "bash scripts/validate.sh",
+    "result": "PASS",
+    "native_tests": 170,
+    "isolated_tests": 1,
+    "strict_per_changed_production_file_percent_greater_than": 80.2,
+    "new_native_minimum_percent": 83.33,
+    "new_python_minimum_percent": 84.29
+  },
+  "tde": {
+    "profile": "standard",
+    "policy": "PASS",
+    "product_maximum": 14,
+    "triggered_rules": [],
+    "policy_unchanged": true
+  },
+  "qualification_boundary": "Early native A/B release and future-only disarm are genuine source/package experiments, not final-main installed qualification; producer remains exact Forge2.12.1/9875333.",
+  "early_ux": {
+    "first": "BLOCKER_preserved",
+    "second": "ACCEPTABLE_TO_CONTINUE_EARLY_ONLY"
+  },
+  "pending_gates": [
+    "full_exact_head_independent_UX_Quality_Security",
+    "noneditable_candidate_integration_and_targeted_runtime_EP_HTTP_simulator",
+    "protected_source_merge",
+    "nonempty_finalization",
+    "new_exact_final_main_installed_native_Server_pinned_Forge",
+    "fresh_five_language_theme_narrow_keyboard_screenshots_and_reachable_manifest"
+  ]
+}

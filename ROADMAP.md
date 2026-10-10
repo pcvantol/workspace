@@ -1,3 +1,11 @@
+## Selected native approved-workset release — r81 plan96
+
+Owner mandate#208/6095863974 selects L4-NATIVE-APPROVED-WORKSET-RELEASE-V1-20261010 under existing assignment/session/solewriter and JOINL3-L4-APPROVED-WORKSET-RELEASE-V1-20261009. Actualcleanprotectedbase d42ec0021e5c6970064801b2acdaaab69c1b9b50/Workspace2.8.15, branchcodex/r81-native-workset-release. Plan93/94/95 and PR143–146 remain CLOSED; their terminal receipts reconcile historical pending snapshots below. No budget/history/sourcewriter reset; primaryiCloud untouched.
+
+Build native existingmission selection→humanpreview→onefutureexecutionrelease→actualstatus→future-onlydisarm against exactForge2.12.1/9875333. Separatefiniteactor/project/subject RELEASE/DISARM capability, no wideningchat/read/hold authority or Candidatecontent reapproval/directstart. ExecutionresourcesNOT_OBSERVED/execution_readyfalse stay visible. Entire fullsource/tests/strictperfilecoverage/independentUX+Quality+Security/protectedmerge/nonemptyfinalization/NEWexactfinalmaininstalledGUI/screenshotmanifest DoD required. Formalintegratedcorrectionadmission0/max3/remaining3 afterfirstfullindependentQ/Spair; oldbudgethistory remainsclosed. Only separatetemporarysynthetic qualificationroots supported; no retainedplan93data/usercredentials/limits/releases changes, liveEP/signing/paidmodel/peerwriter needed.
+
+Firstmaterielstep: pinned API schema projected into ownpackage; closed capability/selection/command/package validators added. Three meaningful tests PASS for exactscope/actor/currentexpiry, no extra subjects or widenedquota, and explicit release/disarm distinct confirmation requirements. No actualrelease qualification claimed. See docs/WORKSPACE_NATIVE_WORKSET_RELEASE_V1.json.
+
 ## Active remaining TDE-warning maintenance — r81 plan95
 
 Owner explicitly selected removal of remaining warnings after completed plan94/PR145/terminal6093104482. Same Worksession/solewriter; protected basec9c01fee21d12e5dc9640e344360e29b7af1ac13/2.8.14, branchcodex/workspace-tde-warnings. One newPATCH operationL4-TDE-WARNINGS-V1-20261010 selects2.8.15. Oldplan93/94/source/producer/failed-proof/budget history remains closed and preserved.
