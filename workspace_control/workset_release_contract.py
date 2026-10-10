@@ -104,6 +104,7 @@ def _canonical(value):
 
 
 def _subject_proofs(value, binding):
+    _dependency_proofs(value['subjects'])
     signer = value['operator_binding']
     for subject, member in zip(value['subjects'], value['definition']['members']):
         scope(subject['source'], binding)
@@ -125,6 +126,16 @@ def _subject_proofs(value, binding):
             require(digest(decision['canonical_decision']) == decision['canonical_decision_digest'])
             require(_canonical(decision['lifecycle_evidence']) == decision['lifecycle_evidence_digest'])
             _decision_join(decision, subject, kind, signer)
+
+
+def _dependency_proofs(subjects):
+    selected = {s['candidate_id']: s for s in subjects}
+    for subject in subjects:
+        for binding in subject['dependency_bindings']:
+            predecessor = selected.get(binding['candidate_id'])
+            if predecessor is not None:
+                require(binding['subject_revision'] == predecessor['subject_revision'])
+                require(binding['object_id'] == predecessor['source']['object_id'])
 
 
 def _mission_join(subject):
@@ -198,6 +209,10 @@ def operation(value, binding, expected=None, operation_id=None):
         require(record is None or current['workset_revision'] >= record['applied_revision'])
         require(all(i['mission_id'] is None or i['mission_id'] == subject['mission_id']
                     for i, subject in zip(current['items'], packet['subjects'])))
+        for index, (item, member) in enumerate(zip(current['items'], packet['definition']['members'])):
+            require(item['committed_order'] == index)
+            if item['execution_state'] != 'UNAVAILABLE':
+                require(item['dependencies'] == member['dependencies'])
         require(current['membership_revision'] == _canonical(packet['definition']))
         require([(i['candidate_id'], i['subject_revision']) for i in current['items']] ==
                 [(s['candidate_id'], s['subject_revision']) for s in packet['subjects']])

@@ -10,19 +10,19 @@
   "producer_wheel_sha256": "9b192e7a3cb5d503e795639a2b25b584b178c8bd2ef81af9ef96117af772ec33",
   "wire_schema_sha256": "c25d46e51f3f076542e289e55aa147a0e0cf0c80a1c28a57d87943dcfcc92309",
   "formal_integrated_correction_budget": {
-    "consumed": 2,
+    "consumed": 3,
     "maximum": 3,
-    "remaining": 1,
+    "remaining": 0,
     "starts_after_first_complete_independent_quality_security_pair": true
   },
-  "state": "CORRECTION_ROUND_2_INSPECTION_FIX_VALIDATED_GUI_RETEST_PENDING",
+  "state": "CORRECTION_ROUND_3_VALIDATED_FINAL_INDEPENDENT_REVIEWS_PENDING",
   "prior_plans_93_95_closed": true,
   "users_credentials_retained": true,
   "consumer_version": "2.8.16",
   "source_validation": {
     "full_command": "bash scripts/validate.sh",
-    "result": "PASS_AFTER_CORRECTION_ROUND_2",
-    "native_tests": 179,
+    "result": "PASS_AFTER_CORRECTION_ROUND_3",
+    "native_tests": 185,
     "isolated_tests": 1,
     "strict_per_changed_production_file_percent_greater_than": 80.2,
     "new_native_minimum_percent": 83.33,
@@ -70,5 +70,27 @@
     "early_independent_UX": "BLOCKER_PRESERVED_periodic_refresh_lost_inspection",
     "empty_selection_and_human_status_prior_fixes": "LIVE_VERIFIED",
     "GUI_only_retest_uses_unchanged_Server_production_bytes_and_original_finite_scope": true
+  },
+  "independent_review_third_pair": {
+    "source": "34d33e87ab5da8e43a7097656e7d9a4582a4e954",
+    "quality": "FAIL_4_FINDINGS",
+    "security": "FAIL_3_BLOCKING_AND_1_NONBLOCKING",
+    "reports_retained": true
+  },
+  "candidate_34d33e8_boundary": {
+    "early_independent_UX": "BLOCKER_PRESERVED_historical_operation_changed_on_periodic_refresh",
+    "list_graph_scroll_and_empty_selection": "LIVE_VERIFIED",
+    "final_main_proof_required": true
+  },
+  "correction_round_3": {
+    "recovery": "originating epoch, connection, access and original pending intent fenced before dispatch; complete original-read task cancelled on invalidation",
+    "expiry": "state-owned deadline task independent of visible sheet; action admission and late callback deadline checks",
+    "dependency_proofs": "selected predecessor exact revision and source-object join; available current dependency topology and committed order joined to frozen definition",
+    "history": "scoped original-operation cursor survives automatic refresh; only initial restoration defaults to latest",
+    "targeted_regressions": {
+      "python": 11,
+      "native": 23
+    },
+    "standard_tde": "PASS_ZERO_RULES_UNCHANGED_POLICY"
   }
 }

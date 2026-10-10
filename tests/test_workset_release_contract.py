@@ -145,3 +145,26 @@ class WorksetReleasePreparedTests(unittest.TestCase):
         packet['subjects'][1]['dependency_bindings']=[]
         packet['definition']['members'][1]['dependencies']=[]
         with self.assertRaises(WorklistError):wire._subject_proofs(packet,self.binding)
+
+    def testSelectedPredecessorExactRevisionAndSourceObjectJoin(self):
+        for key, invalid in [('subject_revision', 'sha256:'+'0'*64), ('object_id', 'different-object')]:
+            bad=deepcopy(self.value)
+            bad['package']['subjects'][1]['dependency_bindings'][0][key]=invalid
+            bad['package_digest']=wire.digest(bad['package'])
+            with self.assertRaises(WorklistError):
+                wire.prepared(bad,self.binding,bad['package']['selection'])
+
+    def testRehashedCurrentDependenciesAndOrderMustMatchFrozenMembership(self):
+        import json
+        from pathlib import Path
+        from workspace_control.worklist_contract import snapshot_digest
+        value=json.loads((Path(__file__).parent/'fixtures/workset-release-source/operation-released.json').read_text())
+        for mutation in ('dependencies', 'order'):
+            bad=deepcopy(value)
+            if mutation=='dependencies':bad['current']['items'][1]['dependencies']=[]
+            else:
+                bad['current']['items'][0]['committed_order']=1
+                bad['current']['items'][1]['committed_order']=0
+                bad['current']['items'][1]['dependencies']=[]
+            bad['current']['snapshot_revision']=snapshot_digest(bad['current'])
+            with self.assertRaises(WorklistError):wire.operation(bad,self.binding)

@@ -68,6 +68,7 @@ extension WorksetReleaseWire {
         try require(subjects.count == selected.subjects.count && members.count == subjects.count)
         try require(definition["workset_id"] as? String == "released-"+String((raw["release_key"] as! String).dropFirst(7).prefix(40)))
         try require(definition["expires_at"] as? String == selected.expires_at && definition["maximum_activations"] as? Int == selected.maximum_activations)
+        try dependencyProofs(subjects)
         try proofs(raw, access: access)
         var rendered: [WorksetReleaseMember] = []
         for index in subjects.indices {
@@ -77,6 +78,16 @@ extension WorksetReleaseWire {
         let gaps = (raw["gaps"] as! [[String: Any]]).map { $0["code"] as! String }
         return .init(packageData: try JSONSerialization.data(withJSONObject: raw), digest: try AdvisoryWire.digest(raw),
                      selection: selected, members: rendered, gaps: gaps, supported: gaps.isEmpty, worksetID: definition["workset_id"] as! String)
+    }
+    private static func dependencyProofs(_ subjects: [[String: Any]]) throws {
+        for subject in subjects {
+            for binding in subject["dependency_bindings"] as! [[String: Any]] {
+                guard let predecessor = subjects.first(where: { $0["candidate_id"] as? String == binding["candidate_id"] as? String }) else { continue }
+                try require(binding["subject_revision"] as? String == predecessor["subject_revision"] as? String)
+                let source = predecessor["source"] as! [String: Any]
+                try require(binding["object_id"] as? String == source["object_id"] as? String)
+            }
+        }
     }
     private static func member(_ subject: [String: Any], member: [String: Any], selected: WorksetReleaseSubject, mode: String, access: WorksetReleaseAccess) throws -> WorksetReleaseMember {
         try scope(subject["source"] as! [String: Any], access: access)
@@ -147,6 +158,10 @@ extension WorksetReleaseWire {
             try require(snapshot.installationID == signer["installation_id"] as? String)
             if let receipt { try require(snapshot.worksetRevision >= (receipt["applied_revision"] as! Int)) }
             try require(zip(snapshot.items, preview.members).allSatisfy { item, member in item.missionID == nil || item.missionID == member.missionID })
+            for (index, pair) in zip(snapshot.items, preview.members).enumerated() {
+                try require(pair.0.committedPosition == index)
+                if pair.0.executionState != "UNAVAILABLE" { try require(pair.0.dependencies == pair.1.dependencies) }
+            }
             try require(snapshot.items.map(\.subjectID) == preview.members.map(\.id))
             try require(snapshot.items.map(\.subjectRevision) == preview.members.map { $0.subject.subject_revision })
             let definition = (raw["frozen_package"] as! [String: Any])["definition"]!

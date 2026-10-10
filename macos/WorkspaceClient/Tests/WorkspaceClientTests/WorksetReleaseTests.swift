@@ -1,9 +1,18 @@
 import Foundation
 import Security
+import CryptoKit
 import SwiftUI
 import AppKit
 import XCTest
 @testable import WorkspaceClient
+
+private func releaseFixtureTime() -> Date {
+    // Historic captured packet tests use their original finite authority window.
+    let path=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/workset-release-source/operation-released.json")
+    let raw=try! WorksetReleaseWire.object(Data(contentsOf:path))
+    let packet=raw["frozen_package"] as! [String:Any],selection=packet["selection"] as! [String:Any]
+    return WorksetReleaseWire.date(selection["expires_at"] as! String)!.addingTimeInterval(-60)
+}
 
 final class WorksetReleaseTests: XCTestCase {
     private func prepared() throws -> [String: Any] {
@@ -97,7 +106,7 @@ extension WorksetReleaseTests {
         defer { WorklistStubProtocol.handler = nil }
         let config = URLSessionConfiguration.ephemeral; config.protocolClasses = [WorklistStubProtocol.self]
         let state = WorksetReleaseState(credentials: ReleaseTestCredentials(access: access), store: ReleaseTestStore(),
-            transport: WorksetReleaseTransport(configuration: config, clock: { WorksetReleaseWire.date(selected.expires_at)!.addingTimeInterval(-60) }))
+            transport: WorksetReleaseTransport(configuration: config, clock: { WorksetReleaseWire.date(selected.expires_at)!.addingTimeInterval(-60) }), clock: { releaseFixtureTime() })
         await state.refresh(connection)
         XCTAssertEqual(state.phase, "current")
         access.subjects.forEach { state.toggle($0) }
@@ -132,16 +141,23 @@ private actor ReleaseReplayPeer: WorksetReleaseServing {
     let disarmed: Data
     var replies: [String: WorksetReleaseCommand] = [:]
     var sends: [WorksetReleaseCommand] = []
+    var holdNextMissing = false
+    var missingHeld = false
+    private var missingContinuation: CheckedContinuation<Void, Never>?
+    func holdMissing() { holdNextMissing = true }
+    func finishMissing() { missingContinuation?.resume(); missingContinuation = nil }
     var reads = 0
     var lostAfterApply = false
     var lostBeforeApply = false
     var deny = false
     var delay = false
+    var deadline: Date?
     var delaySubmit = false
     init(released: Data, disarmed: Data) { self.released=released;self.disarmed=disarmed }
     func configure(after: Bool = false, before: Bool = false, denied: Bool = false) {
         lostAfterApply=after;lostBeforeApply=before;deny=denied
     }
+    func setDeadline(_ value: Date) { deadline = value }
     func setSubmitDelay(_ value: Bool) { delaySubmit = value }
     func setDelay(_ value: Bool) { delay = value }
     private func waitIfDelayed() async { if delay { try? await Task.sleep(for: .milliseconds(100)) } }
@@ -153,7 +169,7 @@ private actor ReleaseReplayPeer: WorksetReleaseServing {
         let selection=try AdvisoryWire.decode(packet["selection"]!,as:WorksetReleaseSelection.self)
         return .init(contract_version:WorksetReleaseWire.contract,scope:try AdvisoryWire.decode(packet["scope"]!,as:AdvisoryScope.self),
             principal_id:access.actorID,permissions:["READ","RELEASE","DISARM"],subjects:access.subjects,
-            limits:.init(maximum_releases:1,maximum_activations:2),expires_at:selection.expires_at,
+            limits:.init(maximum_releases:1,maximum_activations:2),expires_at:deadline.map { ISO8601DateFormatter().string(from: $0) } ?? selection.expires_at,
             release_supported:true,disarm_supported:true,read_only:true,additional_model_calls:0)
     }
     func prepare(_ access: WorksetReleaseAccess, _ connection: AdvisoryConnection, selection: WorksetReleaseSelection) async throws -> WorksetReleasePreview {
@@ -178,7 +194,14 @@ private actor ReleaseReplayPeer: WorksetReleaseServing {
         reads+=1
         await waitIfDelayed()
         if deny { throw AdvisoryError.denied }
-        guard let command=replies[intent.command.operation_id] else { throw AdvisoryError.missing }
+        guard let command=replies[intent.command.operation_id] else {
+            if holdNextMissing {
+                holdNextMissing = false; missingHeld = true
+                await withCheckedContinuation { missingContinuation = $0 }
+                missingHeld = false
+            }
+            throw AdvisoryError.missing
+        }
         return try response(command,access:access)
     }
     private func response(_ command: WorksetReleaseCommand, access: WorksetReleaseAccess) throws -> WorksetReleaseObservation {
@@ -216,7 +239,7 @@ extension WorksetReleaseTests {
     }
     @MainActor func testOriginalIntentBeforeSendLostReplyRestartAndFutureDisarm() async throws {
         let (access,connection,peer)=try replayFixture(), credentials=ReleaseMutableCredentials(access),store=ReleaseFailingStore()
-        let state=WorksetReleaseState(credentials:credentials,store:store,transport:peer)
+        let state=WorksetReleaseState(credentials:credentials,store:store,transport:peer, clock: { releaseFixtureTime() })
         await state.refresh(connection);XCTAssertTrue(state.hasAttempted(connection))
         access.subjects.forEach { state.toggle($0) }
         state.move(access.subjects[1],offset:-1);XCTAssertEqual(state.selected.first,access.subjects[1])
@@ -226,7 +249,7 @@ extension WorksetReleaseTests {
         let original=try XCTUnwrap(store.journal.pending)
         let captured1 = await peer.sends.count; XCTAssertEqual(captured1,1);XCTAssertNil(state.observation)
         await state.confirmRelease();let captured2 = await peer.sends.count; XCTAssertEqual(captured2,1)
-        let restarted=WorksetReleaseState(credentials:credentials,store:store,transport:peer)
+        let restarted=WorksetReleaseState(credentials:credentials,store:store,transport:peer, clock: { releaseFixtureTime() })
         await restarted.refresh(connection)
         XCTAssertNil(restarted.pending);XCTAssertEqual(restarted.history.first?.command.operation_id,original.command.operation_id)
         XCTAssertEqual(restarted.phase,"released");let captured3 = await peer.sends.count; XCTAssertEqual(captured3,1)
@@ -239,7 +262,7 @@ extension WorksetReleaseTests {
     }
     @MainActor func testBeforeApplyFailureOnlyExplicitRecoveryReusesOriginalIDAndSaveFailureNeverPosts() async throws {
         let (access,connection,peer)=try replayFixture(), credentials=ReleaseMutableCredentials(access),store=ReleaseFailingStore()
-        let state=WorksetReleaseState(credentials:credentials,store:store,transport:peer)
+        let state=WorksetReleaseState(credentials:credentials,store:store,transport:peer, clock: { releaseFixtureTime() })
         await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare()
         await peer.configure(before:true);await state.confirmRelease()
         let original=try XCTUnwrap(store.journal.pending)
@@ -248,7 +271,7 @@ extension WorksetReleaseTests {
         await state.resume();XCTAssertEqual(state.phase,"released")
         let sends=await peer.sends;XCTAssertEqual(sends.map(\.operation_id),[original.command.operation_id,original.command.operation_id])
         let unsavedStore=ReleaseFailingStore();unsavedStore.failure=true
-        let unsaved=WorksetReleaseState(credentials:credentials,store:unsavedStore,transport:peer)
+        let unsaved=WorksetReleaseState(credentials:credentials,store:unsavedStore,transport:peer, clock: { releaseFixtureTime() })
         await unsaved.refresh(connection);access.subjects.forEach { unsaved.toggle($0) };await unsaved.prepare();await unsaved.confirmRelease()
         let captured7 = await peer.sends.count; XCTAssertEqual(captured7,2);XCTAssertEqual(unsaved.phase,"unavailable");XCTAssertNil(unsaved.pending)
         credentials.failure=true;unsaved.forgetGrant();XCTAssertEqual(unsaved.phase,"unavailable")
@@ -304,7 +327,7 @@ extension WorksetReleaseTests {
     }
     @MainActor func testHumanPreviewAndCurrentViewsInFiveLanguagesThemesAndWidthsNeverExecuteOnRender() async throws {
         let (access,connection,peer)=try replayFixture(),credentials=ReleaseMutableCredentials(access),store=ReleaseFailingStore()
-        let state=WorksetReleaseState(credentials:credentials,store:store,transport:peer)
+        let state=WorksetReleaseState(credentials:credentials,store:store,transport:peer, clock: { releaseFixtureTime() })
         func render() {
             for language in WorksetReleaseCopy.languages {
                 for width in [640.0,1280.0] {
@@ -373,7 +396,7 @@ extension WorksetReleaseTests {
         let before=paths.count
         do { _=try await transport.probe(connection,token:"not-a-private-grant");XCTFail() } catch {}
         XCTAssertEqual(paths.count,before)
-        let state=WorksetReleaseState(credentials:ReleaseMutableCredentials(access),store:ReleaseFailingStore(),transport:transport)
+        let state=WorksetReleaseState(credentials:ReleaseMutableCredentials(access),store:ReleaseFailingStore(),transport:transport, clock: { releaseFixtureTime() })
         let host=NSHostingView(rootView:WorksetReleaseSetupView(client:ClientState(),conversations:ConversationState(),state:state))
         host.frame=NSRect(x:0,y:0,width:640,height:400);host.layoutSubtreeIfNeeded()
         XCTAssertGreaterThan(host.fittingSize.height,0)
@@ -400,7 +423,7 @@ extension WorksetReleaseTests {
         let directory=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/workset-release-source")
         let peer=ReleaseReplayPeer(released:try Data(contentsOf:directory.appendingPathComponent("operation-released.json")),
                                   disarmed:try Data(contentsOf:directory.appendingPathComponent("operation-disarmed.json")))
-        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:ReleaseTestStore(),transport:peer)
+        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:ReleaseTestStore(),transport:peer, clock: { releaseFixtureTime() })
         let connection=AdvisoryConnection(endpoint:access.endpoint,workspaceInstanceID:access.workspaceInstanceID,actorID:access.actorID,workspaceProjectID:access.workspaceProjectID,conversationID:"a",bearer:"read",draftGrant:String(repeating:"c",count:43))
         await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare()
         XCTAssertNotNil(state.preview)
@@ -424,7 +447,7 @@ extension WorksetReleaseTests {
         let dir=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/workset-release-source")
         let peer=ReleaseReplayPeer(released:try Data(contentsOf:dir.appendingPathComponent("operation-released.json")),disarmed:try Data(contentsOf:dir.appendingPathComponent("operation-disarmed.json")))
         let store=ReleaseTestStore()
-        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:store,transport:peer)
+        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:store,transport:peer, clock: { releaseFixtureTime() })
         let connection=AdvisoryConnection(endpoint:access.endpoint,workspaceInstanceID:access.workspaceInstanceID,actorID:access.actorID,workspaceProjectID:access.workspaceProjectID,conversationID:"a",bearer:"read",draftGrant:String(repeating:"c",count:43))
         await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await peer.setDelay(true)
         let preparing=Task { await state.prepare() };await Task.yield();state.invalidate();await preparing.value
@@ -446,7 +469,7 @@ extension WorksetReleaseTests {
         let raw=try prepared(),packet=raw["package"] as! [String:Any],access=access(packet)
         let dir=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/workset-release-source")
         let peer=ReleaseReplayPeer(released:try Data(contentsOf:dir.appendingPathComponent("operation-released.json")),disarmed:try Data(contentsOf:dir.appendingPathComponent("operation-disarmed.json")))
-        let store=ReleaseTestStore(),state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:store,transport:peer)
+        let store=ReleaseTestStore(),state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:store,transport:peer, clock: { releaseFixtureTime() })
         let connection=AdvisoryConnection(endpoint:access.endpoint,workspaceInstanceID:access.workspaceInstanceID,actorID:access.actorID,workspaceProjectID:access.workspaceProjectID,conversationID:"a",bearer:"read",draftGrant:String(repeating:"c",count:43))
         await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare();await peer.setSubmitDelay(true)
         let saved=expectation(description:"Original intent durably saved")
@@ -483,7 +506,7 @@ extension WorksetReleaseTests {
         defer { WorklistStubProtocol.handler=nil }
         let config=URLSessionConfiguration.ephemeral;config.protocolClasses=[WorklistStubProtocol.self]
         let store=ReleaseTestStore()
-        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:store,transport:WorksetReleaseTransport(configuration:config,clock:{WorksetReleaseWire.date(selection.expires_at)!.addingTimeInterval(-60)}))
+        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:store,transport:WorksetReleaseTransport(configuration:config,clock:{WorksetReleaseWire.date(selection.expires_at)!.addingTimeInterval(-60)}), clock: { releaseFixtureTime() })
         let connection=AdvisoryConnection(endpoint:access.endpoint,workspaceInstanceID:access.workspaceInstanceID,actorID:access.actorID,workspaceProjectID:access.workspaceProjectID,conversationID:"a",bearer:"read",draftGrant:String(repeating:"c",count:43))
         await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare()
         let confirming=Task { await state.confirmRelease() }
@@ -523,5 +546,141 @@ extension WorksetReleaseTests {
         await peer.configure(denied:true);let denied=Task { await state.refresh(connection) };await Task.yield()
         state.invalidate();await denied.value
         XCTAssertNil(state.observation);XCTAssertNil(state.capability);XCTAssertTrue(state.history.isEmpty)
+    }
+}
+
+extension WorksetReleaseTests {
+    func testCoherentlyRehashedDependencyRevisionObjectAndCurrentTopologyReject() throws {
+        let raw=try prepared(),packet=raw["package"] as! [String:Any],access=access(packet)
+        let selection=try AdvisoryWire.decode(packet["selection"]!,as:WorksetReleaseSelection.self)
+        for (key,value) in [("subject_revision","sha256:"+String(repeating:"0",count:64)),("object_id","different-object")] {
+            var bad=raw,changed=packet,subjects=packet["subjects"] as! [[String:Any]]
+            var bindings=subjects[1]["dependency_bindings"] as! [[String:Any]]
+            bindings[0][key]=value;subjects[1]["dependency_bindings"]=bindings;changed["subjects"]=subjects
+            bad["package"]=changed;bad["package_digest"]=try AdvisoryWire.digest(changed)
+            XCTAssertThrowsError(try WorksetReleaseWire.prepared(JSONSerialization.data(withJSONObject:bad),access:access,selection:selection))
+        }
+        let dir=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/workset-release-source")
+        var operation=try WorksetReleaseWire.object(Data(contentsOf:dir.appendingPathComponent("operation-released.json")))
+        let command=try AdvisoryWire.decode(operation["original_request"]!,as:WorksetReleaseCommand.self)
+        var current=operation["current"] as! [String:Any],items=current["items"] as! [[String:Any]]
+        items[1]["dependencies"]=[];current["items"]=items
+        current.removeValue(forKey:"snapshot_revision")
+        let canonical=try JSONSerialization.data(withJSONObject:current,options:[.sortedKeys,.withoutEscapingSlashes])
+        current["snapshot_revision"]="sha256:"+SHA256.hash(data:canonical).map { String(format:"%02x",$0) }.joined()
+        operation["current"]=current
+        XCTAssertThrowsError(try WorksetReleaseWire.operation(JSONSerialization.data(withJSONObject:operation),access:access,expected:command))
+    }
+    @MainActor func testHistoricalReleaseCursorSurvivesDisarmRepeatedRefreshAndNewSelection() async throws {
+        let (access,connection,peer)=try replayFixture(),store=ReleaseTestStore()
+        let packet=try prepared()["package"] as! [String:Any]
+        let selection=try AdvisoryWire.decode(packet["selection"]!,as:WorksetReleaseSelection.self)
+        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:store,transport:peer,clock:{WorksetReleaseWire.date(selection.expires_at)!.addingTimeInterval(-60)})
+        await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare();await state.confirmRelease()
+        let original=try XCTUnwrap(state.history.first)
+        await state.disarm();XCTAssertEqual(state.history.count,2)
+        await state.observe(original)
+        for _ in 0..<3 { await state.refresh(connection);XCTAssertEqual(state.observation?.operationID,original.command.operation_id) }
+        state.beginSelection();await state.refresh(connection);XCTAssertNil(state.observation)
+        await state.observe(original);await state.refresh(connection)
+        XCTAssertEqual(state.observation?.operationID,original.command.operation_id)
+    }
+    @MainActor func testClosedSheetKnownExpiryClearsStateWithoutRefresh() async throws {
+        let (access,connection,peer)=try replayFixture()
+        // Round up to a whole second because the fixture peer formats ISO timestamps.
+        let deadline=Date(timeIntervalSince1970:ceil(Date().timeIntervalSince1970)+1)
+        await peer.setDeadline(deadline)
+        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:ReleaseTestStore(),transport:peer,clock:{Date()})
+        await state.refresh(connection);state.toggle(access.subjects[0])
+        XCTAssertNotNil(state.capability);XCTAssertFalse(state.selected.isEmpty)
+        XCTAssertTrue(state.interactionActive)
+        try await Task.sleep(for:.seconds(deadline.timeIntervalSinceNow+0.08))
+        XCTAssertEqual(state.phase,"denied");XCTAssertNil(state.capability);XCTAssertTrue(state.selected.isEmpty)
+        XCTAssertNil(state.observation);XCTAssertTrue(state.history.isEmpty)
+        let sends=await peer.sends;XCTAssertEqual(sends.count,0)
+    }
+}
+
+extension WorksetReleaseTests {
+    @MainActor func testOldMissingRecoveryCannotDispatchAfterFreshRecoveryRestoresPreview() async throws {
+        let (access,connection,peer)=try replayFixture(),store=ReleaseTestStore()
+        let packet=try prepared()["package"] as! [String:Any]
+        let selection=try AdvisoryWire.decode(packet["selection"]!,as:WorksetReleaseSelection.self)
+        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:store,transport:peer,clock:{WorksetReleaseWire.date(selection.expires_at)!.addingTimeInterval(-60)})
+        await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare()
+        await peer.configure(before:true);await state.confirmRelease()
+        let original=try XCTUnwrap(store.journal.pending)
+        await state.refresh(connection);XCTAssertNotNil(state.preview)
+        await peer.holdMissing()
+        let oldResume=Task { await state.resume() }
+        for _ in 0..<100 { if await peer.missingHeld { break };await Task.yield() }
+        let held=await peer.missingHeld;XCTAssertTrue(held)
+        state.invalidate()
+        await state.refresh(connection)
+        XCTAssertEqual(state.pending,original);XCTAssertEqual(state.preview?.digest,original.command.package_digest)
+        let before=await peer.sends.count
+        await peer.finishMissing();await oldResume.value
+        let after=await peer.sends.count
+        XCTAssertEqual(after,before);XCTAssertEqual(store.journal.pending,original)
+        await state.resume()
+        let explicit=await peer.sends
+        XCTAssertEqual(explicit.count,before+1);XCTAssertEqual(explicit.last?.operation_id,original.command.operation_id)
+    }
+}
+
+private final class ReleaseTestClock: @unchecked Sendable {
+    private let lock=NSLock()
+    private var value: Date
+    init(_ value: Date) { self.value=value }
+    func now() -> Date { lock.lock();defer { lock.unlock() };return value }
+    func advance(_ seconds: TimeInterval) { lock.lock();value=value.addingTimeInterval(seconds);lock.unlock() }
+}
+extension WorksetReleaseTests {
+    @MainActor func testResponseSpanningKnownExpiryCannotRestoreProtectedState() async throws {
+        let (access,connection,peer)=try replayFixture(),clock=ReleaseTestClock(releaseFixtureTime())
+        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:ReleaseTestStore(),transport:peer,clock:{clock.now()})
+        await state.refresh(connection);access.subjects.forEach { state.toggle($0) }
+        await peer.setDelay(true)
+        let delayed=Task { await state.prepare() }
+        for _ in 0..<30 { if state.busy { break };await Task.yield() }
+        XCTAssertTrue(state.busy)
+        clock.advance(61)
+        await delayed.value
+        XCTAssertEqual(state.phase,"denied");XCTAssertNil(state.preview);XCTAssertNil(state.capability);XCTAssertFalse(state.busy)
+        let sends=await peer.sends;XCTAssertTrue(sends.isEmpty)
+    }
+    @MainActor func testRealTransportMissingReadCancelledAcrossReconnectRequiresNewExplicitResume() async throws {
+        let raw=try prepared(),packet=raw["package"] as! [String:Any],access=access(packet)
+        let dir=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/workset-release-source")
+        let original=try WorksetReleaseWire.object(Data(contentsOf:dir.appendingPathComponent("operation-released.json")))
+        let command=try AdvisoryWire.decode(original["original_request"]!,as:WorksetReleaseCommand.self)
+        let cap:[String:Any]=["contract_version":WorksetReleaseWire.contract,"scope":packet["scope"]!,"principal_id":access.actorID,"permissions":["READ","RELEASE","DISARM"],"subjects":(packet["selection"] as! [String:Any])["subjects"]!,"limits":["maximum_releases":1,"maximum_activations":2],"expires_at":command.selection.expires_at,"release_supported":true,"disarm_supported":true,"read_only":true,"additional_model_calls":0]
+        let delayedMissing=expectation(description:"Real transport old missing-operation lookup reached")
+        var reads=0,posts=0
+        WorklistStubProtocol.handler={request in
+            let path=request.url!.path
+            if path.hasSuffix("capability") { return (200,try JSONSerialization.data(withJSONObject:cap),"application/json") }
+            if path.contains("/operations/") {
+                reads+=1
+                if reads==2 { delayedMissing.fulfill();Thread.sleep(forTimeInterval:0.15) }
+                return (404,Data("{}".utf8),"application/json")
+            }
+            if path.hasSuffix("commands") { posts+=1;return (200,try JSONSerialization.data(withJSONObject:original),"application/json") }
+            return (200,try JSONSerialization.data(withJSONObject:raw),"application/json")
+        }
+        defer { WorklistStubProtocol.handler=nil }
+        let config=URLSessionConfiguration.ephemeral;config.protocolClasses=[WorklistStubProtocol.self]
+        let transport=WorksetReleaseTransport(configuration:config,clock:{releaseFixtureTime()})
+        let store=ReleaseTestStore()
+        store.journal.pending=WorksetReleaseIntent(accessFingerprint:access.fingerprint,scopeKey:access.scopeKey,command:command)
+        let connection=AdvisoryConnection(endpoint:access.endpoint,workspaceInstanceID:access.workspaceInstanceID,actorID:access.actorID,workspaceProjectID:access.workspaceProjectID,conversationID:"a",bearer:"read",draftGrant:String(repeating:"c",count:43))
+        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:store,transport:transport,clock:{releaseFixtureTime()})
+        await state.refresh(connection);XCTAssertNotNil(state.preview)
+        let old=Task { await state.resume() }
+        await fulfillment(of:[delayedMissing],timeout:2)
+        state.invalidate();await state.refresh(connection);await old.value
+        XCTAssertEqual(posts,0);XCTAssertEqual(state.pending?.command,command);XCTAssertNotNil(state.preview)
+        await state.resume()
+        XCTAssertEqual(posts,1);XCTAssertEqual(state.observation?.operationID,command.operation_id);XCTAssertNil(store.journal.pending)
     }
 }

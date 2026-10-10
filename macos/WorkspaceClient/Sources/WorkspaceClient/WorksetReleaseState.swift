@@ -16,13 +16,15 @@ import Foundation
     private var access: WorksetReleaseAccess?
     private var connection: AdvisoryConnection?
     private var attemptedScope: [String]?
+    private var observedIntent: WorksetReleaseIntent?
+    private var expiryTask: Task<Void, Never>?
     private var commandTask: Task<WorksetReleaseObservation, Error>?
     private var generation = 0
     var authorityEpoch: Int { generation }
     var interactionActive: Bool { inspections > 0 || selecting || busy || preview != nil || pending != nil || (observation == nil && !selected.isEmpty) }
     private var selecting = false
     private var inspections = 0
-    func inspect(_ visible: Bool) { inspections = max(0, inspections + (visible ? 1 : -1)) }
+    func inspect(_ visible: Bool) { expirePreview(now: clock()); inspections = max(0, inspections + (visible ? 1 : -1)) }
     private var journal = WorksetReleaseJournal()
     init(credentials: any WorksetReleaseCredentials = WorksetReleaseKeychain(),
          store: any WorksetReleaseIntentStorage = PrivateWorksetReleaseStore(),
@@ -31,12 +33,12 @@ import Foundation
         self.credentials = credentials; self.store = store; self.transport = transport; self.clock = clock
     }
     func invalidate() {
-        commandTask?.cancel(); commandTask = nil
+        commandTask?.cancel(); commandTask = nil; expiryTask?.cancel(); expiryTask = nil
         generation &+= 1; selecting = false; attemptedScope = nil; connection = nil; access = nil; busy = false
         clearPresentation()
     }
     private func clearPresentation() {
-        capability = nil; preview = nil; observation = nil; selected = []; pending = nil; history = []; phase = "unconfigured"
+        observedIntent = nil; capability = nil; preview = nil; observation = nil; selected = []; pending = nil; history = []; phase = "unconfigured"
     }
     private func beginRefresh(_ connection: AdvisoryConnection?) {
         guard let connection, access?.matches(connection) == true,
@@ -56,7 +58,7 @@ import Foundation
         defer { if ticket == generation { busy = false } }
         do {
             let access = try await transport.probe(connection, token: token)
-            guard ticket == generation else { return }
+            guard current(ticket) else { return }
             try credentials.save(access)
             busy = false; await refresh(connection)
         } catch { failed(error, ticket: ticket) }
@@ -84,14 +86,15 @@ import Foundation
             guard let access = try credentials.load(), access.matches(connection) else { throw AdvisoryError.denied }
             discardChangedCredential(access)
             let cap = try await transport.capability(access, connection)
-            guard ticket == generation else { return }
+            guard current(ticket) else { return }
             self.connection = connection; self.access = access; capability = cap
+            try scheduleExpiry(cap)
             selecting = wasSelecting && previousAccess == access
             if previousAccess == access { selected = previousSelection.filter { cap.subjects.contains($0) } }
             journal = try store.load(access.scopeKey); history = journal.history
             guard journal.pending?.matches(access) != false else { throw AdvisoryError.denied }
             pending = journal.pending; phase = "current"
-            if let intent = pending ?? (selecting ? nil : history.last), intent.matches(access) {
+            if let intent = pending ?? (selecting ? nil : history.first(where: { $0 == observedIntent }) ?? history.last), intent.matches(access) {
                 try await readOriginal(intent, access: access, connection: connection, ticket: ticket)
             }
         } catch { failed(error, ticket: ticket) }
@@ -99,9 +102,10 @@ import Foundation
     private func readOriginal(_ intent: WorksetReleaseIntent, access: WorksetReleaseAccess, connection: AdvisoryConnection, ticket: Int) async throws {
         do {
             let result = try await transport.operation(access, connection, intent: intent)
-            guard ticket == generation else { return }
+            guard current(ticket) else { return }
             try accept(result, intent: intent, access: access)
         } catch AdvisoryError.missing {
+            guard current(ticket), self.access == access, self.connection == connection else { return }
             guard journal.pending == intent else { throw AdvisoryError.missing }
             try await recoverMissing(intent, access: access, connection: connection, ticket: ticket)
         }
@@ -114,25 +118,29 @@ import Foundation
             guard let original = journal.history.last(where: { $0.command.intent == "release" && $0.command.package_digest == intent.command.package_digest }) else { throw AdvisoryError.invalid }
             packet = try await transport.operation(access, connection, intent: original).preview
         }
-        guard ticket == generation else { return }
+        guard current(ticket) else { return }
         guard packet.digest == intent.command.package_digest else { throw AdvisoryError.invalid }
         preview = packet; selected = packet.selection.subjects; phase = "pending"
     }
     func resume() async {
+        expirePreview(now: clock())
         guard !busy, let pending, let access, let connection else { return }
         let ticket = generation; busy = true
         defer { if ticket == generation { busy = false } }
         do {
             do {
-                let result = try await transport.operation(access, connection, intent: pending)
-                guard ticket == generation else { return }
+                let result = try await trackedOriginal(pending, access: access, connection: connection)
+                guard current(ticket) else { return }
                 if result.state == "COMPLETE" { try accept(result, intent: pending, access: access); return }
             } catch AdvisoryError.missing {
+                guard current(ticket), self.access == access, self.connection == connection, self.pending == pending else { return }
                 guard preview?.digest == pending.command.package_digest else { throw AdvisoryError.invalid }
             }
+            guard current(ticket), self.access == access, self.connection == connection, self.pending == pending else { return }
+            try Task.checkCancellation()
             // Explicit recovery sends only the durable original request, after a current authorized read.
             let result = try await submit(access, connection, command: pending.command)
-            guard ticket == generation else { return }
+            guard current(ticket) else { return }
             try accept(result, intent: pending, access: access)
         } catch { failed(error, ticket: ticket) }
     }
@@ -144,24 +152,28 @@ import Foundation
         return capability.subjects.contains(subject) ? subject : nil
     }
     func toggle(_ subject: WorksetReleaseSubject) {
+        expirePreview(now: clock())
         guard !busy, pending == nil, capability?.subjects.contains(subject) == true else { return }
         beginSelection()
         if let index = selected.firstIndex(of: subject) { selected.remove(at: index) }
         else { selected.append(subject) }
     }
     func beginSelection() {
+        expirePreview(now: clock())
         guard !busy, pending == nil else { return }
-        selecting = true; observation = nil; preview = nil; phase = "current"
+        observedIntent = nil; selecting = true; observation = nil; preview = nil; phase = "current"
     }
     func expirePreview(now: Date = Date()) {
         guard let cap = capability, let expiry = WorksetReleaseWire.date(cap.expires_at), expiry <= now else { return }
         invalidate(); phase = "denied"
     }
     func move(_ subject: WorksetReleaseSubject, offset: Int) {
+        expirePreview(now: clock())
         guard !busy, pending == nil, let index = selected.firstIndex(of: subject), selected.indices.contains(index+offset), abs(offset) == 1 else { return }
         selected.swapAt(index, index+offset); preview = nil
     }
     func prepare() async {
+        expirePreview(now: clock())
         guard !busy, pending == nil, !selected.isEmpty, let cap = capability,
               let access, let connection else { return }
         let selection = WorksetReleaseSelection(contract_version: WorksetReleaseWire.contract, subjects: selected,
@@ -170,10 +182,11 @@ import Foundation
         defer { if ticket == generation { busy = false } }
         do {
             let packet = try await transport.prepare(access, connection, selection: selection)
-            guard ticket == generation else { return }; preview = packet; phase = "preview"
+            guard current(ticket) else { return }; preview = packet; phase = "preview"
         } catch { failed(error, ticket: ticket) }
     }
     func confirmRelease() async {
+        expirePreview(now: clock())
         guard !busy, pending == nil, let preview, preview.supported, !preview.members.isEmpty,
               capability?.release_supported == true else { return }
         guard let access, let connection else { return }
@@ -181,7 +194,7 @@ import Foundation
         defer { if ticket == generation { busy = false } }
         do {
             let fresh = try await transport.prepare(access, connection, selection: preview.selection)
-            guard ticket == generation else { return }
+            guard current(ticket) else { return }
             guard fresh.digest == preview.digest && fresh.supported else {
                 self.preview = fresh; phase = "preview"; return
             }
@@ -191,16 +204,18 @@ import Foundation
         } catch { failed(error, ticket: ticket) }
     }
     func observe(_ intent: WorksetReleaseIntent) async {
+        expirePreview(now: clock())
         guard !busy, pending == nil, history.contains(intent), let access, let connection else { return }
         let ticket = generation; busy = true
         defer { if ticket == generation { busy = false } }
         do {
             let result = try await transport.operation(access, connection, intent: intent)
-            guard ticket == generation else { return }
+            guard current(ticket) else { return }
             try accept(result, intent: intent, access: access)
         } catch { failed(error, ticket: ticket) }
     }
     func disarm() async {
+        expirePreview(now: clock())
         guard !busy, pending == nil, let observation, let revision = observation.currentRevision,
               capability?.disarm_supported == true else { return }
         await execute(preview: observation.preview, intent: "disarm", revision: revision)
@@ -218,9 +233,31 @@ import Foundation
             var next = journal; next.pending = record; try store.save(next, key: access.scopeKey)
             journal = next; pending = record
             let result = try await submit(access, connection, command: command)
-            guard ticket == generation else { return }
+            guard current(ticket) else { return }
             try accept(result, intent: record, access: access)
         } catch { failed(error, ticket: ticket) }
+    }
+    private func current(_ ticket: Int) -> Bool {
+        expirePreview(now: clock())
+        return ticket == generation
+    }
+    private func scheduleExpiry(_ cap: WorksetReleaseCapability) throws {
+        expiryTask?.cancel()
+        guard let deadline = WorksetReleaseWire.date(cap.expires_at), deadline > clock() else {
+            invalidate(); phase = "denied"; throw AdvisoryError.denied
+        }
+        let delay = deadline.timeIntervalSince(clock())
+        expiryTask = Task { [weak self] in
+            do { try await Task.sleep(for: .seconds(delay)) } catch { return }
+            self?.expirePreview(now: self?.clock() ?? deadline)
+        }
+    }
+    private func trackedOriginal(_ intent: WorksetReleaseIntent, access: WorksetReleaseAccess, connection: AdvisoryConnection) async throws -> WorksetReleaseObservation {
+        let ticket = generation, transport = self.transport
+        let task = Task { try Task.checkCancellation(); return try await transport.operation(access, connection, intent: intent) }
+        commandTask = task
+        defer { if ticket == generation { commandTask = nil } }
+        return try await task.value
     }
     private func submit(_ access: WorksetReleaseAccess, _ connection: AdvisoryConnection, command: WorksetReleaseCommand) async throws -> WorksetReleaseObservation {
         let ticket = generation, transport = self.transport
@@ -231,7 +268,7 @@ import Foundation
     }
     private func accept(_ result: WorksetReleaseObservation, intent: WorksetReleaseIntent, access: WorksetReleaseAccess) throws {
         guard result.operationID == intent.command.operation_id else { throw AdvisoryError.invalid }
-        selecting = false; observation = result; preview = nil
+        observedIntent = intent; selecting = false; observation = result; preview = nil
         if result.state == "COMPLETE", journal.pending == intent {
             var next = journal; next.pending = nil
             if !next.history.contains(intent) { next.history.append(intent) }
@@ -247,7 +284,7 @@ import Foundation
         return "released"
     }
     private func failed(_ error: Error, ticket: Int) {
-        guard ticket == generation else { return }
+        guard current(ticket) else { return }
         capability = nil; preview = nil; observation = nil; selected = []
         switch error {
         case AdvisoryError.denied: phase = "denied"; pending = nil; history = []

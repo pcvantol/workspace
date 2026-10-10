@@ -1,3 +1,9 @@
+## Plan96 last integrated correction — current delivery gates
+
+Third complete independent Quality/Security pair on34d33e8 both FAIL; full reports and genuine historical-navigation UX blocker preserved. Formal budget consumed3/max3/remaining0: last allowed round, no fourth correction or reset. Originating recovery epoch/access/connection/original intent now fenced and its complete read task cancellable. State-owned finite expiry clears protected state outside a mounted sheet and rejects responses spanning deadline. Selected predecessor revision/source-object and available current topology/order join frozen authority. Explicit history cursor survives refresh.
+
+Actual owning validation PASS185native+1isolated, changed production coverage strictly>80.2%; targeted11Python/23native tests PASS. Historic captured-packet tests use their explicit original clock; real closed-sheet expiry uses current time. Standard TDE PASS/zero triggered rules, runtime1.1.1/policy1.4.0 unchanged; repository QUALIFIED. Final exact-head independent Quality/Security/real UX, protected merges/nonempty finalization and NEW exact-final-main installed evidence remain pending. Same writer/session/assignment/version2.8.16/exactForge2.12.1/9875333; old plans/records/budgets closed and preserved.
+
 ## Selected native approved-workset release — r81 plan96
 
 Owner mandate#208/6095863974 selects L4-NATIVE-APPROVED-WORKSET-RELEASE-V1-20261010 under existing assignment/session/solewriter and JOINL3-L4-APPROVED-WORKSET-RELEASE-V1-20261009. Actualcleanprotectedbase d42ec0021e5c6970064801b2acdaaab69c1b9b50/Workspace2.8.15, branchcodex/r81-native-workset-release. Plan93/94/95 and PR143–146 remain CLOSED; their terminal receipts reconcile historical pending snapshots below. No budget/history/sourcewriter reset; primaryiCloud untouched.
