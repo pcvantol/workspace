@@ -103,7 +103,7 @@ final class ConversationState: ObservableObject {
               access.projectID==projectID,access.endpoint==client.savedEndpoint,access.instanceID==client.savedInstance,
               client.phase=="CONNECTED",state=="AVAILABLE" else { return nil }
         guard let token=try? await client.draftReadToken(),self.access==access else { return nil }
-        return .init(endpoint:access.endpoint,workspaceInstanceID:access.instanceID,actorID:actor,workspaceProjectID:projectID,
+        return AdvisoryConnection(endpoint:access.endpoint,workspaceInstanceID:access.instanceID,actorID:actor,workspaceProjectID:projectID,
             conversationID:selectedConversation?.id ?? "",bearer:token,draftGrant:access.token)
     }
 
@@ -609,45 +609,50 @@ final class ConversationState: ObservableObject {
         persistLocal()
     }
 
-    func save(client: ClientState) async {
-        guard !loadingGrant, !isBusy else { return }
+    private func draftSaveAccess(client: ClientState) -> DraftAccess? {
         guard !authorizationSuspended else {
             state = "GRANT_REQUIRED"
             detail = "Reconnect and enter this project's draft grant. Unsaved local text is retained."
-            return
+            return nil
         }
         guard serverConflict == nil else {
             state = "CONFLICT"
-            return
+            return nil
         }
         guard let access, access.projectID == projectID,
               access.endpoint == client.savedEndpoint, access.instanceID == client.savedInstance else {
             state = "GRANT_REQUIRED"
             detail = "Enter this project's separate draft grant."
-            return
+            return nil
         }
         if let selectedID, !conversations.contains(where: { $0.id == selectedID }) {
             state = "PENDING"
             detail = "The selected draft is no longer in your authorized list. Keep the local text or discard it."
-            return
+            return nil
         }
         guard client.phase == "CONNECTED" else {
             state = "OFFLINE"
             detail = "Server offline. Your text remains in this window; save after reconnecting."
-            return
+            return nil
         }
         if let snapshot = client.snapshot, case .success(let catalogue) = snapshot.projects,
            catalogue.stale {
             state = "STALE"
             detail = "Project source is stale; drafts are not saved until it is current."
-            return
+            return nil
         }
         guard !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
               title.count <= 120, focus.count <= 240, draft.count <= 10_000 else {
             state = "INVALID"
             detail = ConversationError.invalidDraft.localizedDescription
-            return
+            return nil
         }
+        return access
+    }
+
+    func save(client: ClientState) async {
+        guard !loadingGrant, !isBusy else { return }
+        guard let access = draftSaveAccess(client: client) else { return }
         let fields = DraftFields(title: title, focus: focus, mode: mode, draft: draft,
                                  expected_revision: savedRevision,
                                  request_id: selectedID == nil ? requestID : nil)

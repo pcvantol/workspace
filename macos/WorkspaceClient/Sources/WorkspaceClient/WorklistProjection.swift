@@ -81,14 +81,7 @@ enum WorklistProjection {
         let items = try rawItems.map { try item($0, scope: scoped, installation: installation, revision: snapshotRevision) }
         try require(Set(items.map(\.key.memberID)).count == items.count && Set(items.map(\.committedPosition)).count == items.count)
         let complete = completeness == "COMPLETE_WITHIN_SCOPE"
-        if complete { try require(Set(items.map(\.committedPosition)) == Set(0..<items.count) && items.allSatisfy { $0.executionState != "UNAVAILABLE" }) }
-        for item in items {
-            for dependency in item.dependencies {
-                if let preceding = items.first(where: { $0.key.memberID == dependency }) {
-                    try require(preceding.committedPosition < item.committedPosition)
-                } else { try require(!complete) }
-            }
-        }
+        try validateMemberOrder(items, complete: complete)
         let continuation = try object(top["continuation"], keys: ["state", "candidate_id", "mission_id", "committed_order", "reason_codes"])
         let state = try text(continuation["state"])
         try require(["READY", "BLOCKED", "IDLE", "UNKNOWN"].contains(state))
@@ -105,6 +98,17 @@ enum WorklistProjection {
         let digest = "sha256:" + SHA256.hash(data: canonical).map { String(format: "%02x", $0) }.joined()
         try require(digest == snapshotRevision)
         return ApprovedWorklistSnapshot(scope: scoped, membershipRevision: memberRevision, selectorRevision: selectorRevision, snapshotRevision: snapshotRevision, observedAt: observedAt, completeWithinScope: complete, freshness: .current, continuation: state == "READY" ? .ready : state == "BLOCKED" ? .blocked : state == "IDLE" ? .idle : .unknown, nextMemberID: next, items: items, installationID: installation, worksetRevision: worksetRevision, activationSupport: activation, continuationReasons: reasons)
+    }
+
+    private static func validateMemberOrder(_ items: [ApprovedWorklistItem], complete: Bool) throws {
+        if complete { try require(Set(items.map(\.committedPosition)) == Set(0..<items.count) && items.allSatisfy { $0.executionState != "UNAVAILABLE" }) }
+        for item in items {
+            for dependency in item.dependencies {
+                if let preceding = items.first(where: { $0.key.memberID == dependency }) {
+                    try require(preceding.committedPosition < item.committedPosition)
+                } else { try require(!complete) }
+            }
+        }
     }
 
     static func reasonKind(_ code: String) -> WorklistReasonKind {

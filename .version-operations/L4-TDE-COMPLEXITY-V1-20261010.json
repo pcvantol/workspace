@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "L4-owner-TDE-fix-20261010",
+  "determined_version": "2.8.14",
+  "event_lineage": "L4-owner-TDE-fix-20261010",
+  "expected_source_revision": "25002017b15ae4efef01fa85cb4b569df07d2f88",
+  "expected_version": "2.8.13",
+  "operation_id": "L4-TDE-COMPLEXITY-V1-20261010",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

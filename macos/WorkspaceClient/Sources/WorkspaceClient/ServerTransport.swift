@@ -281,18 +281,7 @@ struct ServerTransport: Sendable {
         }
         async let projectRead: Result<ProjectCatalogue, ClientError> = optionalRead(
             ProjectCatalogue.self, endpoint: endpoint, path: "/v1/projects", token: token,
-            pin: identity.instance_id, validate: { catalogue in
-                guard catalogue.projects.count <= 100,
-                      Set(catalogue.projects.map(\.id)).count == catalogue.projects.count else { return false }
-                if catalogue.state == "UNCONFIGURED" {
-                    return catalogue.projects.isEmpty && catalogue.source == nil &&
-                        catalogue.observed_at == nil && !catalogue.partial && !catalogue.stale
-                }
-                let expected = catalogue.stale ? "STALE" : catalogue.partial ? "PARTIAL" :
-                    (catalogue.projects.isEmpty ? "EMPTY" : "AVAILABLE")
-                return catalogue.state == expected && ["LOCAL", "DEMO"].contains(catalogue.source ?? "") &&
-                    !(catalogue.observed_at ?? "").isEmpty
-            })
+            pin: identity.instance_id, validate: Self.validProjectCatalogue)
         async let capabilityRead: Result<CapabilityInventory, ClientError> = optionalRead(
             CapabilityInventory.self, endpoint: endpoint, path: "/v1/capabilities", token: token,
             pin: identity.instance_id, validate: { inventory in
@@ -314,6 +303,19 @@ struct ServerTransport: Sendable {
         if case .failure(.wrongInstance) = forge { throw ClientError.wrongInstance }
         return ServerSnapshot(identity: identity, status: status, projects: projects,
                               capabilities: capabilities, forge: forge, observedAt: Date())
+    }
+
+    private static func validProjectCatalogue(_ catalogue: ProjectCatalogue) -> Bool {
+        guard catalogue.projects.count <= 100,
+              Set(catalogue.projects.map(\.id)).count == catalogue.projects.count else { return false }
+        if catalogue.state == "UNCONFIGURED" {
+            return catalogue.projects.isEmpty && catalogue.source == nil &&
+                catalogue.observed_at == nil && !catalogue.partial && !catalogue.stale
+        }
+        let expected = catalogue.stale ? "STALE" : catalogue.partial ? "PARTIAL" :
+            (catalogue.projects.isEmpty ? "EMPTY" : "AVAILABLE")
+        return catalogue.state == expected && ["LOCAL", "DEMO"].contains(catalogue.source ?? "") &&
+            !(catalogue.observed_at ?? "").isEmpty
     }
 
     private func optionalRead<T: Decodable & Sendable>(_ type: T.Type, endpoint: ServerEndpoint,

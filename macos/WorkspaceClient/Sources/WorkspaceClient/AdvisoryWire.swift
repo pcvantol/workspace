@@ -26,6 +26,10 @@ enum AdvisoryWire {
             guard NSDictionary(dictionary:["v":value]).isEqual(to:["v":constant]), boolean(value)==boolean(constant) else { throw AdvisoryError.invalid }
         }
         if let values=rules["enum"] as? [String] { guard let v=value as? String, values.contains(v) else { throw AdvisoryError.invalid };return }
+        try checkValueConstraints(value, rules, definitions: definitions)
+    }
+
+    private static func checkValueConstraints(_ value: Any, _ rules: [String:Any], definitions: [String:Any]) throws {
         if let obj=value as? [String:Any] {
             guard obj.count >= (rules["minProperties"] as? Int ?? 0), obj.count <= (rules["maxProperties"] as? Int ?? 256) else { throw AdvisoryError.invalid }
             let properties=rules["properties"] as? [String:[String:Any]] ?? [:]
