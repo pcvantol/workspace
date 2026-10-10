@@ -1,3 +1,11 @@
+## Plan96 specific round5 — native canonicalization repair
+
+Decision6101549357/pickup6101630168 books consumed5/max5/remaining0 before source/test edits; original4 and every operational budget retained. PR147/148 remain closed. Same assignment/session/sole writer; repair branch codex/r81-plan96-native-canonicalization starts at a905771. Forge remains exact2.12.1/9875333. Separate canonical PATCH2.8.16→2.8.17 operation L4-PLAN96-CORRECTION-ROUND5-20261010 preserves old release artifacts.
+
+[Contract repair matrix](docs/WORKSPACE_NATIVE_CANONICAL_JSON_V1.md): recursively ordered canonical JSON preserves Unicode scalar lexical keys, arrays and supported types, with explicitly distinct ASCII/UTF8 contracts. Exact original real capability mismatch reused, red5digestfailures retained; current4targetedtestsPASS. Reintroduced original faulty sorting still fails the original graph case. Independent bounded byte/caller matrix PASS with actual producer vectors and additional Unicode/scalar cases; this is not whole Quality/Security acceptance.
+
+Full owning bashscripts/validate.sh PASS196native+1isolated. All gated productionfiles strictly>80.2%; new CanonicalJSON100%, AdvisoryWire98.16%, MissionApprovalWire98.55%, WorklistControlContract94.67%, WorklistProjection100%, WorksetReleaseWire98.92%. Standard TDE PASS/zero rules under unchanged policy1.4.0/runtime1.1.1, repositoryQUALIFIED. Earlier expiry/dependency/Newselection regressions retained. Full independent whole-delta Quality/Security, required CI, protected repair and nonempty finalization, NEW exactfinalmain matching installed/recovery/fullUX/screens remain pending. Old stopped roots/grants/unusedbudgets stay closed; no source-only delivery PASS.
+
 ## Plan96 protected source and ordinary documentary finalization
 
 Protected implementation PR147/mainb11b4c719cdd5672046ae29140aa330e7060dfde is delivered at Workspace2.8.16. Its tree equals independently reviewed head669a64c8a2cc28d5fdcd448910ab2aeed1a5b0db. Complete whole-delta Quality PASS and Security PASS, all5exactheadCI PASS; native192+1/strict perfile>80.2/standardTDEPASS0rules/QUALIFIED actual evidence retained. Specific decision6098479853 only raised this existing correction ceiling: consumed4/max4/remaining0, prior3/history/failed pairs retained. No fifth or operational-limit extension.

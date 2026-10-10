@@ -186,7 +186,7 @@ extension WorksetReleaseWire {
                      currentData: currentData, currentRevision: snapshot?.worksetRevision, snapshot: snapshot)
     }
     private static func canonical(_ value: Any) throws -> String {
-        let data = try JSONSerialization.data(withJSONObject: value, options: [.sortedKeys, .withoutEscapingSlashes])
+        let data = try CanonicalJSON.data(value, ascii: false)
         return "sha256:"+SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
     }
     private static func checkedReceipt(_ receipt: [String: Any], preview: WorksetReleasePreview, expected: WorksetReleaseCommand, access: WorksetReleaseAccess) throws {

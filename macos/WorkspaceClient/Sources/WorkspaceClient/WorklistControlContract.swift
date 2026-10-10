@@ -63,7 +63,7 @@ struct WorklistControlRequest: Codable, Equatable {
             "definition_revision": definition_revision, "expected_revision": expected_revision,
             "hold_operation_id": hold_operation_id as Any? ?? NSNull(),
             "expected_hold_revision": expected_hold_revision as Any? ?? NSNull(), "reason_code": reason_code]
-        return try JSONSerialization.data(withJSONObject: value, options: [.sortedKeys, .withoutEscapingSlashes])
+        return try CanonicalJSON.data(value, ascii: false)
     }
     var digest: String { (try? data()).map { "sha256:" + SHA256.hash(data: $0).map { String(format: "%02x", $0) }.joined() } ?? "" }
 }

@@ -37,7 +37,7 @@ enum MissionApprovalWire {
               bindings.allSatisfy({ d.dependency_reasons[$0["candidate_id"] as! String]==$0["reason"] as? String }) else { throw AdvisoryError.invalid }
         let candidate=p["candidate"] as! [String:Any],preview=p["mission_preview"] as! [String:Any]
         let planning=p["planning"] as! [String:Any],effects=p["consequences"] as! [String:Any]
-        guard try AdvisoryWire.digest(candidate)==p["subject_revision"] as? String,
+        guard try AdvisoryWire.digest(candidate, ascii: false)==p["subject_revision"] as? String,
               candidate["title"] as? String==d.title,candidate["objective"] as? String==d.objective,
               Set(candidate["acceptance_criteria"] as! [String])==Set(d.acceptance_criteria),
               Set(candidate["dependencies"] as! [String])==Set(d.dependencies),
@@ -49,7 +49,7 @@ enum MissionApprovalWire {
               effects["exclusions"] as? [String]==d.exclusions,effects["risks"] as? [String]==d.risks,
               preview["candidate_id"] as? String==candidate["id"] as? String,preview["title"] as? String==d.title,
               preview["business_value"] as? String==d.business_value,
-              try AdvisoryWire.digest(preview)==planning["mission_spec_digest"] as? String,
+              try AdvisoryWire.digest(preview, ascii: false)==planning["mission_spec_digest"] as? String,
               planning["provenance_revision"] as? String==p["subject_revision"] as? String,
               NSDictionary(dictionary:planning["effect_policy"] as! [String:Any]).isEqual(to:candidate["effect_policy"] as! [String:Any]),
               planning["human_gates"] as? [String]==effects["human_gates"] as? [String] else { throw AdvisoryError.invalid }
