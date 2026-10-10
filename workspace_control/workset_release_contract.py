@@ -89,7 +89,7 @@ def package(value, binding, expected=None):
 def prepared(value, binding, expected):
     validate(value, 'prepared')
     package(value['package'], binding, expected)
-    _subject_proofs(value['package'], binding)
+    _subject_proofs(value['package'], binding, allow_blocked=True)
     _semantic_key(value['package'])
     require(value['gaps'] == value['package']['gaps'])
     require(value['package_digest'] == digest(value['package']))
@@ -103,8 +103,8 @@ def _canonical(value):
                                                 separators=(',', ':')).encode()).hexdigest()
 
 
-def _subject_proofs(value, binding):
-    _dependency_proofs(value['subjects'])
+def _subject_proofs(value, binding, allow_blocked=False):
+    _dependency_proofs(value, allow_blocked)
     signer = value['operator_binding']
     for subject, member in zip(value['subjects'], value['definition']['members']):
         scope(subject['source'], binding)
@@ -128,14 +128,31 @@ def _subject_proofs(value, binding):
             _decision_join(decision, subject, kind, signer)
 
 
-def _dependency_proofs(subjects):
-    selected = {s['candidate_id']: s for s in subjects}
-    for subject in subjects:
+def _dependency_proofs(packet, allow_blocked):
+    from collections import Counter
+    subjects = packet['subjects']
+    selected = {s['candidate_id']: (index, s) for index, s in enumerate(subjects)}
+    needed = []
+    for index, subject in enumerate(subjects):
         for binding in subject['dependency_bindings']:
             predecessor = selected.get(binding['candidate_id'])
-            if predecessor is not None:
-                require(binding['subject_revision'] == predecessor['subject_revision'])
-                require(binding['object_id'] == predecessor['source']['object_id'])
+            code = _dependency_gap(binding, predecessor, index)
+            if code is not None:
+                needed.append((code, binding['candidate_id']))
+    codes = {'PREDECESSOR_NOT_SELECTED', 'DEPENDENCY_SUBJECT_CHANGED', 'DEPENDENCY_ORDER_CONFLICT'}
+    supplied = [(g['code'], g['candidate_id']) for g in packet['gaps'] if g['code'] in codes]
+    require(Counter(supplied) == Counter(needed))
+    require(allow_blocked or not packet['gaps'])
+
+
+def _dependency_gap(binding, predecessor, index):
+    if predecessor is None:
+        return 'PREDECESSOR_NOT_SELECTED'
+    position, subject = predecessor
+    require(binding['object_id'] == subject['source']['object_id'])
+    if binding['subject_revision'] != subject['subject_revision']:
+        return 'DEPENDENCY_SUBJECT_CHANGED'
+    return 'DEPENDENCY_ORDER_CONFLICT' if position >= index else None
 
 
 def _mission_join(subject):

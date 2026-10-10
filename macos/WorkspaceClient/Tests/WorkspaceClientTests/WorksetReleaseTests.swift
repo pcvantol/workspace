@@ -150,6 +150,12 @@ private actor ReleaseReplayPeer: WorksetReleaseServing {
     var lostAfterApply = false
     var lostBeforeApply = false
     var deny = false
+    var failRead = false
+    var failCapability = false
+    var nextReadSignal: (@Sendable () -> Void)?
+    func readFailure(_ value: Bool) { failRead=value }
+    func capabilityFailure(_ value: Bool) { failCapability=value }
+    func signalNextRead(_ value: @escaping @Sendable () -> Void) { nextReadSignal=value }
     var delay = false
     var deadline: Date?
     var delaySubmit = false
@@ -165,6 +171,7 @@ private actor ReleaseReplayPeer: WorksetReleaseServing {
     func capability(_ access: WorksetReleaseAccess, _ connection: AdvisoryConnection) async throws -> WorksetReleaseCapability {
         await waitIfDelayed()
         if deny { throw AdvisoryError.denied }
+        if failCapability { throw AdvisoryError.unavailable }
         let raw=try WorksetReleaseWire.object(released), packet=raw["frozen_package"] as! [String:Any]
         let selection=try AdvisoryWire.decode(packet["selection"]!,as:WorksetReleaseSelection.self)
         return .init(contract_version:WorksetReleaseWire.contract,scope:try AdvisoryWire.decode(packet["scope"]!,as:AdvisoryScope.self),
@@ -192,7 +199,9 @@ private actor ReleaseReplayPeer: WorksetReleaseServing {
     }
     func operation(_ access: WorksetReleaseAccess, _ connection: AdvisoryConnection, intent: WorksetReleaseIntent) async throws -> WorksetReleaseObservation {
         reads+=1
+        let signal=nextReadSignal;nextReadSignal=nil;signal?()
         await waitIfDelayed()
+        if failRead { throw AdvisoryError.unavailable }
         if deny { throw AdvisoryError.denied }
         guard let command=replies[intent.command.operation_id] else {
             if holdNextMissing {
@@ -433,7 +442,9 @@ extension WorksetReleaseTests {
         await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare();await state.confirmRelease()
         XCTAssertNotNil(state.observation);XCTAssertEqual(state.history.count,1)
         state.beginSelection();XCTAssertNil(state.observation);XCTAssertEqual(state.history.count,1)
-        await state.refresh(connection);XCTAssertNil(state.observation);await state.prepare();XCTAssertNotNil(state.preview)
+        await state.refresh(connection);XCTAssertNil(state.observation);XCTAssertTrue(state.selected.isEmpty)
+        await state.prepare();XCTAssertNil(state.preview)
+        access.subjects.forEach { state.toggle($0) };await state.prepare();XCTAssertNotNil(state.preview)
         access.subjects.forEach { state.toggle($0) }
         XCTAssertTrue(state.selected.isEmpty);XCTAssertTrue(state.interactionActive)
         await state.refresh(connection);XCTAssertNil(state.observation);XCTAssertTrue(state.interactionActive)
@@ -682,5 +693,131 @@ extension WorksetReleaseTests {
         XCTAssertEqual(posts,0);XCTAssertEqual(state.pending?.command,command);XCTAssertNotNil(state.preview)
         await state.resume()
         XCTAssertEqual(posts,1);XCTAssertEqual(state.observation?.operationID,command.operation_id);XCTAssertNil(store.journal.pending)
+    }
+}
+
+extension WorksetReleaseTests {
+    func testRound4PreparedDependencyGapsRemainReadableButOmittedOrWrongGapsReject() throws {
+        let dir=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/workset-release-unit")
+        let matrix=try WorksetReleaseWire.object(Data(contentsOf:dir.appendingPathComponent("dependency-matrix.json")))
+        for name in ["valid","missing","order","changed"] {
+            let value=matrix[name] as! [String:Any],packet=value["package"] as! [String:Any],access=access(packet)
+            let selection=try AdvisoryWire.decode(packet["selection"]!,as:WorksetReleaseSelection.self)
+            do {
+                let result=try WorksetReleaseWire.prepared(JSONSerialization.data(withJSONObject:value),access:access,selection:selection)
+                XCTAssertEqual(result.supported,name=="valid")
+                XCTAssertEqual(result.gaps,(value["gaps"] as! [[String:Any]]).map { $0["code"] as! String })
+            } catch { XCTFail("Legitimate "+name+" preparation rejected: "+String(describing:error)) }
+            if name=="valid" { continue }
+            for mutation in ["omitted","wrong_candidate","wrong_code"] {
+                var bad=value,p=packet,gaps=packet["gaps"] as! [[String:Any]]
+                if mutation=="omitted" { gaps=[];bad["release_supported"]=true }
+                else if mutation=="wrong_candidate" { gaps[0]["candidate_id"]=(packet["subjects"] as! [[String:Any]]).first { !($0["dependency_bindings"] as! [[String:Any]]).isEmpty }!["candidate_id"] }
+                else { gaps[0]["code"]="ANOTHER_WORKSET_ARMED" }
+                p["gaps"]=gaps;bad["package"]=p;bad["gaps"]=gaps;bad["package_digest"]=try AdvisoryWire.digest(p)
+                XCTAssertThrowsError(try WorksetReleaseWire.prepared(JSONSerialization.data(withJSONObject:bad),access:access,selection:selection),name+" "+mutation)
+            }
+        }
+    }
+    @MainActor func testRound4ImmediateNewSelectionIsEmptyThenToggleAccumulatesAndHistorySurvives() async throws {
+        let (access,connection,peer)=try replayFixture(),store=ReleaseTestStore()
+        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:store,transport:peer,clock:{releaseFixtureTime()})
+        await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare();await state.confirmRelease()
+        let original=try XCTUnwrap(state.history.first)
+        XCTAssertEqual(state.selected.count,2)
+        state.beginSelection()
+        XCTAssertTrue(state.selected.isEmpty);XCTAssertNil(state.observation);XCTAssertEqual(state.history,[original])
+        await state.refresh(connection);XCTAssertTrue(state.selected.isEmpty);XCTAssertNil(state.observation)
+        state.toggle(access.subjects[0]);state.toggle(access.subjects[1]);XCTAssertEqual(state.selected,access.subjects)
+        let sent=await peer.sends;XCTAssertEqual(sent.count,1)
+        await state.observe(original);await state.disarm()
+        state.beginSelection();XCTAssertTrue(state.selected.isEmpty);XCTAssertEqual(state.history.count,2)
+    }
+    @MainActor func testRound4TransientReadFailureDoesNotEraseKnownExpiryOrDurableHistory() async throws {
+        let (access,connection,peer)=try replayFixture(),store=ReleaseTestStore(),clock=ReleaseTestClock(releaseFixtureTime())
+        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:store,transport:peer,clock:{clock.now()})
+        await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare();await state.confirmRelease()
+        let original=try XCTUnwrap(state.history.first)
+        await peer.readFailure(true);await state.refresh(connection)
+        XCTAssertNil(state.capability);XCTAssertEqual(state.history,[original])
+        clock.advance(61);state.expirePreview(now:clock.now())
+        XCTAssertEqual(state.phase,"denied");XCTAssertTrue(state.history.isEmpty)
+        XCTAssertEqual(store.journal.history,[original]);XCTAssertNil(state.observation)
+        let count=await peer.reads;await state.observe(original);let after=await peer.reads;XCTAssertEqual(after,count)
+    }
+    @MainActor func testRound4HistoricalResponseAfterFailureAcrossDeadlineCannotRestoreProtectedState() async throws {
+        let (access,connection,peer)=try replayFixture(),store=ReleaseTestStore(),clock=ReleaseTestClock(releaseFixtureTime())
+        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:store,transport:peer,clock:{clock.now()})
+        await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare();await state.confirmRelease()
+        let original=try XCTUnwrap(state.history.first)
+        await peer.readFailure(true);await state.refresh(connection);XCTAssertNil(state.capability)
+        await peer.readFailure(false);await peer.setDelay(true)
+        let started=expectation(description:"Historical read began after transient failure")
+        await peer.signalNextRead { started.fulfill() }
+        let response=Task { await state.observe(original) }
+        await fulfillment(of:[started],timeout:2);clock.advance(61)
+        await response.value
+        XCTAssertEqual(state.phase,"denied");XCTAssertNil(state.observation);XCTAssertTrue(state.history.isEmpty)
+        XCTAssertEqual(store.journal.history,[original])
+    }
+    @MainActor func testRound4RealClosedSheetTimerExpiresAfterCapabilityWasClearedByFailure() async throws {
+        let (access,connection,peer)=try replayFixture()
+        let deadline=Date(timeIntervalSince1970:ceil(Date().timeIntervalSince1970)+1)
+        await peer.setDeadline(deadline)
+        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:ReleaseTestStore(),transport:peer,clock:{Date()})
+        await state.refresh(connection);state.toggle(access.subjects[0])
+        await peer.capabilityFailure(true);await state.refresh(connection)
+        XCTAssertNil(state.capability);XCTAssertEqual(state.phase,"unavailable");let epoch=state.authorityEpoch
+        try await Task.sleep(for:.seconds(deadline.timeIntervalSinceNow+0.08))
+        XCTAssertEqual(state.phase,"denied");XCTAssertGreaterThan(state.authorityEpoch,epoch)
+    }
+}
+
+private final class ReleaseStepClock: @unchecked Sendable {
+    private let lock=NSLock()
+    private var reads=0
+    let deadline: Date
+    init(_ deadline: Date) { self.deadline=deadline }
+    func now() -> Date {
+        lock.lock();defer { lock.unlock() };reads+=1
+        return deadline.addingTimeInterval(reads<=2 ? -1:1)
+    }
+}
+extension WorksetReleaseTests {
+    @MainActor func testRound4ValidRecoveryBeforeExpiryAndNoImplicitSameGrantExtension() async throws {
+        let (access,connection,peer)=try replayFixture(),store=ReleaseTestStore(),clock=ReleaseTestClock(releaseFixtureTime())
+        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:store,transport:peer,clock:{clock.now()})
+        await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare();await state.confirmRelease()
+        let original=try XCTUnwrap(state.history.first)
+        await peer.readFailure(true);await state.refresh(connection)
+        XCTAssertNil(state.capability);XCTAssertEqual(state.history,[original])
+        await peer.readFailure(false);await state.refresh(connection)
+        XCTAssertEqual(state.observation?.operationID,original.command.operation_id);XCTAssertEqual(state.history,[original])
+        let expiry=try XCTUnwrap(state.capability.flatMap { WorksetReleaseWire.date($0.expires_at) })
+        await peer.setDeadline(expiry.addingTimeInterval(60));await state.refresh(connection)
+        XCTAssertNil(state.capability);XCTAssertNil(state.observation);XCTAssertEqual(state.phase,"unavailable")
+        clock.advance(61);state.expirePreview(now:clock.now())
+        XCTAssertEqual(state.phase,"denied");XCTAssertEqual(store.journal.history,[original])
+    }
+    @MainActor func testRound4KnownExpiryRecheckedImmediatelyBeforeActualCommandRequest() async throws {
+        let raw=try prepared(),packet=raw["package"] as! [String:Any],access=access(packet)
+        let dir=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/workset-release-source")
+        let original=try WorksetReleaseWire.object(Data(contentsOf:dir.appendingPathComponent("operation-released.json")))
+        let command=try AdvisoryWire.decode(original["original_request"]!,as:WorksetReleaseCommand.self)
+        let cap:[String:Any]=["contract_version":WorksetReleaseWire.contract,"scope":packet["scope"]!,"principal_id":access.actorID,"permissions":["READ","RELEASE","DISARM"],"subjects":(packet["selection"] as! [String:Any])["subjects"]!,"limits":["maximum_releases":1,"maximum_activations":2],"expires_at":command.selection.expires_at,"release_supported":true,"disarm_supported":true,"read_only":true,"additional_model_calls":0]
+        var posts=0
+        WorklistStubProtocol.handler={request in
+            if request.url!.path.hasSuffix("commands") { posts+=1 }
+            return (200,try JSONSerialization.data(withJSONObject:request.url!.path.hasSuffix("capability") ? cap:original),"application/json")
+        }
+        defer { WorklistStubProtocol.handler=nil }
+        let config=URLSessionConfiguration.ephemeral;config.protocolClasses=[WorklistStubProtocol.self]
+        let clock=ReleaseStepClock(WorksetReleaseWire.date(command.selection.expires_at)!)
+        let transport=WorksetReleaseTransport(configuration:config,clock:{clock.now()})
+        let connection=AdvisoryConnection(endpoint:access.endpoint,workspaceInstanceID:access.workspaceInstanceID,actorID:access.actorID,workspaceProjectID:access.workspaceProjectID,conversationID:"a",bearer:"read",draftGrant:String(repeating:"c",count:43))
+        do { _=try await transport.submit(access,connection,command:command);XCTFail("Post dispatched after known expiry") }
+        catch AdvisoryError.denied {}
+        catch { XCTFail("Unexpected expiry error: "+String(describing:error)) }
+        XCTAssertEqual(posts,0)
     }
 }

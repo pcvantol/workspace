@@ -17,6 +17,7 @@ import Foundation
     private var connection: AdvisoryConnection?
     private var attemptedScope: [String]?
     private var observedIntent: WorksetReleaseIntent?
+    private var authorityDeadline: Date?
     private var expiryTask: Task<Void, Never>?
     private var commandTask: Task<WorksetReleaseObservation, Error>?
     private var generation = 0
@@ -33,7 +34,7 @@ import Foundation
         self.credentials = credentials; self.store = store; self.transport = transport; self.clock = clock
     }
     func invalidate() {
-        commandTask?.cancel(); commandTask = nil; expiryTask?.cancel(); expiryTask = nil
+        commandTask?.cancel(); commandTask = nil; expiryTask?.cancel(); expiryTask = nil; authorityDeadline = nil
         generation &+= 1; selecting = false; attemptedScope = nil; connection = nil; access = nil; busy = false
         clearPresentation()
     }
@@ -42,12 +43,13 @@ import Foundation
     }
     private func beginRefresh(_ connection: AdvisoryConnection?) {
         guard let connection, access?.matches(connection) == true,
-              let expiry = capability.flatMap({ WorksetReleaseWire.date($0.expires_at) }), expiry > clock() else { invalidate(); return }
+              let expiry = authorityDeadline, expiry > clock() else { invalidate(); return }
         generation &+= 1; preview = nil; phase = "refreshing"
         // Keep the same authorized observation subtree while reading; expiry/loss still invalidates immediately.
     }
     private func discardChangedCredential(_ next: WorksetReleaseAccess) {
         if let access, access != next {
+            expiryTask?.cancel(); expiryTask = nil; authorityDeadline = nil
             clearPresentation(); self.access = nil; connection = nil; selecting = false
         }
     }
@@ -154,17 +156,20 @@ import Foundation
     func toggle(_ subject: WorksetReleaseSubject) {
         expirePreview(now: clock())
         guard !busy, pending == nil, capability?.subjects.contains(subject) == true else { return }
-        beginSelection()
+        activateSelection()
         if let index = selected.firstIndex(of: subject) { selected.remove(at: index) }
         else { selected.append(subject) }
     }
     func beginSelection() {
         expirePreview(now: clock())
-        guard !busy, pending == nil else { return }
+        guard !busy, pending == nil, capability != nil else { return }
+        activateSelection(); selected = []
+    }
+    private func activateSelection() {
         observedIntent = nil; selecting = true; observation = nil; preview = nil; phase = "current"
     }
     func expirePreview(now: Date = Date()) {
-        guard let cap = capability, let expiry = WorksetReleaseWire.date(cap.expires_at), expiry <= now else { return }
+        guard let expiry = authorityDeadline, expiry <= now else { return }
         invalidate(); phase = "denied"
     }
     func move(_ subject: WorksetReleaseSubject, offset: Int) {
@@ -242,10 +247,11 @@ import Foundation
         return ticket == generation
     }
     private func scheduleExpiry(_ cap: WorksetReleaseCapability) throws {
-        expiryTask?.cancel()
         guard let deadline = WorksetReleaseWire.date(cap.expires_at), deadline > clock() else {
             invalidate(); phase = "denied"; throw AdvisoryError.denied
         }
+        guard authorityDeadline == nil || deadline <= authorityDeadline! else { throw AdvisoryError.invalid }
+        authorityDeadline = deadline; expiryTask?.cancel()
         let delay = deadline.timeIntervalSince(clock())
         expiryTask = Task { [weak self] in
             do { try await Task.sleep(for: .seconds(delay)) } catch { return }
@@ -261,6 +267,7 @@ import Foundation
     }
     private func submit(_ access: WorksetReleaseAccess, _ connection: AdvisoryConnection, command: WorksetReleaseCommand) async throws -> WorksetReleaseObservation {
         let ticket = generation, transport = self.transport
+        guard current(ticket), self.access == access, self.connection == connection else { throw AdvisoryError.denied }
         let task = Task { try Task.checkCancellation(); return try await transport.submit(access, connection, command: command) }
         commandTask = task
         defer { if ticket == generation { commandTask = nil } }

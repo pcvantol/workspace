@@ -50,7 +50,7 @@ extension WorksetReleaseWire {
     static func prepared(_ data: Data, access: WorksetReleaseAccess, selection: WorksetReleaseSelection) throws -> WorksetReleasePreview {
         let raw = try object(data); try validate(raw, kind: "prepared")
         let packet = raw["package"] as! [String: Any]
-        let preview = try package(packet, access: access)
+        let preview = try package(packet, access: access, allowBlocked: true)
         try require(preview.selection == selection && raw["package_digest"] as? String == preview.digest)
         try require(try AdvisoryWire.digest(raw["gaps"]!) == AdvisoryWire.digest(packet["gaps"]!))
         let supported = raw["release_supported"] as! Bool
@@ -58,7 +58,7 @@ extension WorksetReleaseWire {
         return .init(packageData: preview.packageData, digest: preview.digest, selection: preview.selection,
                      members: preview.members, gaps: preview.gaps, supported: supported, worksetID: preview.worksetID)
     }
-    static func package(_ raw: [String: Any], access: WorksetReleaseAccess) throws -> WorksetReleasePreview {
+    static func package(_ raw: [String: Any], access: WorksetReleaseAccess, allowBlocked: Bool = false) throws -> WorksetReleasePreview {
         try validate(raw, kind: "package"); try scope(raw["scope"] as! [String: Any], access: access)
         guard raw["principal_reference"] as? String == access.forgeInstanceID+":"+access.actorID else { throw AdvisoryError.denied }
         let selected = try AdvisoryWire.decode(raw["selection"]!, as: WorksetReleaseSelection.self)
@@ -68,7 +68,7 @@ extension WorksetReleaseWire {
         try require(subjects.count == selected.subjects.count && members.count == subjects.count)
         try require(definition["workset_id"] as? String == "released-"+String((raw["release_key"] as! String).dropFirst(7).prefix(40)))
         try require(definition["expires_at"] as? String == selected.expires_at && definition["maximum_activations"] as? Int == selected.maximum_activations)
-        try dependencyProofs(subjects)
+        try dependencyProofs(subjects, gaps: raw["gaps"] as! [[String: Any]], allowBlocked: allowBlocked)
         try proofs(raw, access: access)
         var rendered: [WorksetReleaseMember] = []
         for index in subjects.indices {
@@ -79,15 +79,29 @@ extension WorksetReleaseWire {
         return .init(packageData: try JSONSerialization.data(withJSONObject: raw), digest: try AdvisoryWire.digest(raw),
                      selection: selected, members: rendered, gaps: gaps, supported: gaps.isEmpty, worksetID: definition["workset_id"] as! String)
     }
-    private static func dependencyProofs(_ subjects: [[String: Any]]) throws {
-        for subject in subjects {
+    private static func dependencyProofs(_ subjects: [[String: Any]], gaps: [[String: Any]], allowBlocked: Bool) throws {
+        var needed: [String] = []
+        for (index, subject) in subjects.enumerated() {
             for binding in subject["dependency_bindings"] as! [[String: Any]] {
-                guard let predecessor = subjects.first(where: { $0["candidate_id"] as? String == binding["candidate_id"] as? String }) else { continue }
-                try require(binding["subject_revision"] as? String == predecessor["subject_revision"] as? String)
-                let source = predecessor["source"] as! [String: Any]
-                try require(binding["object_id"] as? String == source["object_id"] as? String)
+                let predecessor = subjects.enumerated().first { $0.element["candidate_id"] as? String == binding["candidate_id"] as? String }
+                if let code = try dependencyGap(binding, predecessor: predecessor, index: index) {
+                    needed.append(code+"|"+(binding["candidate_id"] as! String))
+                }
             }
         }
+        let codes = ["PREDECESSOR_NOT_SELECTED", "DEPENDENCY_SUBJECT_CHANGED", "DEPENDENCY_ORDER_CONFLICT"]
+        let supplied = gaps.filter { codes.contains($0["code"] as! String) }.map {
+            ($0["code"] as! String)+"|"+(($0["candidate_id"] as? String) ?? "")
+        }
+        try require(supplied.sorted() == needed.sorted())
+        try require(allowBlocked || gaps.isEmpty)
+    }
+    private static func dependencyGap(_ binding: [String: Any], predecessor: (offset: Int, element: [String: Any])?, index: Int) throws -> String? {
+        guard let predecessor else { return "PREDECESSOR_NOT_SELECTED" }
+        let source = predecessor.element["source"] as! [String: Any]
+        try require(binding["object_id"] as? String == source["object_id"] as? String)
+        if binding["subject_revision"] as? String != predecessor.element["subject_revision"] as? String { return "DEPENDENCY_SUBJECT_CHANGED" }
+        return predecessor.offset >= index ? "DEPENDENCY_ORDER_CONFLICT" : nil
     }
     private static func member(_ subject: [String: Any], member: [String: Any], selected: WorksetReleaseSubject, mode: String, access: WorksetReleaseAccess) throws -> WorksetReleaseMember {
         try scope(subject["source"] as! [String: Any], access: access)

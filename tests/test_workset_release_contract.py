@@ -168,3 +168,25 @@ class WorksetReleasePreparedTests(unittest.TestCase):
                 bad['current']['items'][1]['dependencies']=[]
             bad['current']['snapshot_revision']=snapshot_digest(bad['current'])
             with self.assertRaises(WorklistError):wire.operation(bad,self.binding)
+
+    def testRound4BlockedDependencyMatrixAndCoherentlyOmittedOrWrongGaps(self):
+        import json
+        from pathlib import Path
+        matrix=json.loads((Path(__file__).parent/'fixtures/workset-release-unit/dependency-matrix.json').read_text())
+        for name,value in matrix.items():
+            with self.subTest(valid_packet=name):
+                result=wire.prepared(value,self.binding,value['package']['selection'])
+                self.assertEqual(result['release_supported'],name=='valid')
+            if name=='valid':continue
+            for mutation in ('omitted','wrong_candidate','wrong_code'):
+                bad=deepcopy(value)
+                if mutation=='omitted':
+                    bad['package']['gaps']=[];bad['release_supported']=True
+                elif mutation=='wrong_candidate':
+                    bad['package']['gaps'][0]['candidate_id']=next(s['candidate_id'] for s in value['package']['subjects'] if s['dependency_bindings'])
+                else:bad['package']['gaps'][0]['code']='ANOTHER_WORKSET_ARMED'
+                bad['gaps']=deepcopy(bad['package']['gaps'])
+                bad['package_digest']=wire.digest(bad['package'])
+                with self.subTest(invalid_packet=(name,mutation)):
+                    with self.assertRaises(WorklistError):
+                        wire.prepared(bad,self.binding,bad['package']['selection'])

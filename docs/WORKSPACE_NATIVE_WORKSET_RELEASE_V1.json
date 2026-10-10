@@ -10,19 +10,19 @@
   "producer_wheel_sha256": "9b192e7a3cb5d503e795639a2b25b584b178c8bd2ef81af9ef96117af772ec33",
   "wire_schema_sha256": "c25d46e51f3f076542e289e55aa147a0e0cf0c80a1c28a57d87943dcfcc92309",
   "formal_integrated_correction_budget": {
-    "consumed": 3,
-    "maximum": 3,
+    "consumed": 4,
+    "maximum": 4,
     "remaining": 0,
     "starts_after_first_complete_independent_quality_security_pair": true
   },
-  "state": "CORRECTION_ROUND_3_VALIDATED_FINAL_INDEPENDENT_REVIEWS_PENDING",
+  "state": "CORRECTION_ROUND_4_VALIDATED_FULL_INDEPENDENT_REVIEWS_AND_MATCHING_INSTALLED_GUI_PENDING",
   "prior_plans_93_95_closed": true,
   "users_credentials_retained": true,
   "consumer_version": "2.8.16",
   "source_validation": {
     "full_command": "bash scripts/validate.sh",
-    "result": "PASS_AFTER_CORRECTION_ROUND_3",
-    "native_tests": 185,
+    "result": "PASS_AFTER_CORRECTION_ROUND_4",
+    "native_tests": 192,
     "isolated_tests": 1,
     "strict_per_changed_production_file_percent_greater_than": 80.2,
     "new_native_minimum_percent": 83.33,
@@ -92,5 +92,34 @@
       "native": 23
     },
     "standard_tde": "PASS_ZERO_RULES_UNCHANGED_POLICY"
+  },
+  "correction_round_4_decision": {
+    "decision_id": "L4-PLAN96-CORRECTION-ROUND4-20261010",
+    "register_comment": 6098479853,
+    "pickup_comment": 6098543092,
+    "no_operational_budget_extension": true,
+    "prior_consumed_rounds_retained": 3,
+    "no_automatic_fifth": true
+  },
+  "independent_review_fourth_pair": {
+    "source": "ed060443b2603c5f149a9d1fc2ea5eb4402f3d10",
+    "quality": "FAIL_2_P2",
+    "security": "FAIL_2_MEDIUM",
+    "reports_retained": true
+  },
+  "correction_round_4": {
+    "deadline": "authority deadline independent of presentation capability, bound to existing access lifecycle; no same-grant extension; action/callback/timer and immediate actual HTTP send checks",
+    "dependencies": "exact producer precedence and candidate-specific required missing/revision/order gap multiset; blocked preparation remains readable; source-object joins and immutable operation stay strict",
+    "selection": "explicit new-selection clears members, accumulation via toggle retained; private history/pending intent retained",
+    "targeted_native_tests": 30,
+    "targeted_python_tests": 12,
+    "initial_joint_red_evidence_retained": true,
+    "targeted_fault_reintroduction": {
+      "native_expiry": "DETECTED",
+      "native_selection": "DETECTED",
+      "native_dependencies": "DETECTED",
+      "python_dependencies": "DETECTED",
+      "boundary": "unit mutation artifacts, not canonical or installed qualification"
+    }
   }
 }

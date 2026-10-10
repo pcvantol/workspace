@@ -1,0 +1,3298 @@
+{
+  "valid": {
+    "additional_model_calls": 0,
+    "contract_version": "forge-approved-workset-release/v1",
+    "gaps": [],
+    "package": {
+      "additional_model_calls": 0,
+      "contract_version": "forge-approved-workset-release/v1",
+      "definition": {
+        "contract_version": "forge-approved-worklist/v1",
+        "expires_at": "2026-10-10T11:37:56.667616+00:00",
+        "maximum_activations": 2,
+        "members": [
+          {
+            "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+            "dependencies": [],
+            "mission": {
+              "acceptance_criteria": [
+                "Explain the deployment boundary with source evidence."
+              ],
+              "architecture_review_reference": "candidate-architecture-60d19ca34b5bcd104056866d",
+              "business_objective": "Assess the approved deployment boundary A.",
+              "business_value": "Clients can track their payments.",
+              "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+              "criterion_assessment_contracts": [
+                {
+                  "criterion": "Explain the deployment boundary with source evidence.",
+                  "requirements": [
+                    {
+                      "kind": "effect_report",
+                      "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                    }
+                  ],
+                  "schema_version": "1.0",
+                  "validity_policy": "current_revision"
+                }
+              ],
+              "dependencies": [],
+              "effect_policy": {
+                "contract_version": "1.0",
+                "delivery": "EVIDENCE_ONLY",
+                "mode": "READ_ONLY_ASSESSMENT",
+                "read_paths": [
+                  "docs/design.md"
+                ],
+                "write_paths": []
+              },
+              "engineering_constraints": [
+                "COMPONENT: Deployment boundary: Assess the existing deployment boundary.",
+                "EXCLUDED: Do not perform effects outside the approved mode.",
+                "EXPECTED RESULT: A portal with current invoice status.",
+                "IN SCOPE: Deployment boundary",
+                "Preserve the approved repository effect boundary."
+              ],
+              "id": "MISSION-PREVIEW",
+              "maximum_actions": 4,
+              "maximum_consecutive_no_progress_actions": 2,
+              "mission_recommendation_reference": "concept-recommendation-dc4e779bb37050523570a3ad4d545f2a",
+              "repository_evidence_source": {
+                "github_repository": "synthetic-owner/synthetic-repository",
+                "repository_id": "synthetic-repository"
+              },
+              "required_capabilities": [
+                "synthetic-host"
+              ],
+              "required_disciplines": [
+                "platform_architecture"
+              ],
+              "risks": [
+                "scope-drift"
+              ],
+              "schema_version": "1.0",
+              "scope": [
+                "synthetic-repository"
+              ],
+              "status": "approved_for_engineering",
+              "summary": "Assess the approved deployment boundary A.",
+              "technical_assumptions": [
+                "Use existing source evidence and canonical runtime."
+              ],
+              "title": "Assessment A"
+            },
+            "planning": {
+              "context_input_bound": 40000,
+              "context_output_bound": 8000,
+              "criterion_assessment_contracts": [
+                {
+                  "criterion": "Explain the deployment boundary with source evidence.",
+                  "requirements": [
+                    {
+                      "kind": "effect_report",
+                      "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                    }
+                  ],
+                  "schema_version": "1.0",
+                  "validity_policy": "current_revision"
+                }
+              ],
+              "dependencies": [],
+              "effect_policy": {
+                "contract_version": "1.0",
+                "delivery": "EVIDENCE_ONLY",
+                "mode": "READ_ONLY_ASSESSMENT",
+                "read_paths": [
+                  "docs/design.md"
+                ],
+                "write_paths": []
+              },
+              "human_gates": [
+                "protected-delivery"
+              ],
+              "maximum_actions": 4,
+              "maximum_consecutive_no_progress_actions": 2,
+              "mission_spec_digest": "sha256:6603d2466d4526fb94e213dbe2af223cb7f8b711ad672f462aba05a1ff54f7f5",
+              "non_goals": [
+                "Do not perform effects outside the approved mode."
+              ],
+              "provenance_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36",
+              "repository_evidence_source": {
+                "github_repository": "synthetic-owner/synthetic-repository",
+                "repository_id": "synthetic-repository"
+              },
+              "risk_inputs": [
+                "scope-drift"
+              ],
+              "scope": [
+                "synthetic-repository"
+              ],
+              "write_scopes": []
+            },
+            "progression_policy": {
+              "higher_scope_obligations": [
+                "protected-delivery"
+              ],
+              "mode": "continuous",
+              "policy_revision": "1",
+              "profile_id": "solo",
+              "profile_revision": "1",
+              "required_decision_role": "platform_architect"
+            },
+            "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36",
+            "truth": {
+              "evidence": [
+                {
+                  "content_digest": "sha256:8123fe8dbfd4a30296e38d89c4f8d77e89b1cc6bbaea13e58bc48dacf578b342",
+                  "id": "execution-source",
+                  "kind": "repository_document",
+                  "locator": "https://github.com/synthetic-owner/synthetic-repository/blob/ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920/docs/design.md",
+                  "revision": "ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920"
+                }
+              ],
+              "id": "published-context-execution-source",
+              "observed_at": "2026-10-10T09:37:53.626707+00:00",
+              "repository_id": "synthetic-repository",
+              "repository_revision": "ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920",
+              "schema_version": "1.0"
+            }
+          },
+          {
+            "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+            "dependencies": [
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+            ],
+            "mission": {
+              "acceptance_criteria": [
+                "Explain the deployment boundary with source evidence."
+              ],
+              "architecture_review_reference": "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+              "business_objective": "Assess the approved deployment boundary B.",
+              "business_value": "Clients can track their payments.",
+              "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+              "criterion_assessment_contracts": [
+                {
+                  "criterion": "Explain the deployment boundary with source evidence.",
+                  "requirements": [
+                    {
+                      "kind": "effect_report",
+                      "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                    }
+                  ],
+                  "schema_version": "1.0",
+                  "validity_policy": "current_revision"
+                }
+              ],
+              "dependencies": [
+                "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+              ],
+              "effect_policy": {
+                "contract_version": "1.0",
+                "delivery": "EVIDENCE_ONLY",
+                "mode": "READ_ONLY_ASSESSMENT",
+                "read_paths": [
+                  "docs/design.md"
+                ],
+                "write_paths": []
+              },
+              "engineering_constraints": [
+                "COMPONENT: Deployment boundary: Assess the existing deployment boundary.",
+                "EXCLUDED: Do not perform effects outside the approved mode.",
+                "EXPECTED RESULT: A portal with current invoice status.",
+                "IN SCOPE: Deployment boundary",
+                "Preserve the approved repository effect boundary."
+              ],
+              "id": "MISSION-PREVIEW",
+              "maximum_actions": 4,
+              "maximum_consecutive_no_progress_actions": 2,
+              "mission_recommendation_reference": "concept-recommendation-433f5ed31765b561a6a912522f272897",
+              "repository_evidence_source": {
+                "github_repository": "synthetic-owner/synthetic-repository",
+                "repository_id": "synthetic-repository"
+              },
+              "required_capabilities": [
+                "synthetic-host"
+              ],
+              "required_disciplines": [
+                "platform_architecture"
+              ],
+              "risks": [
+                "scope-drift"
+              ],
+              "schema_version": "1.0",
+              "scope": [
+                "synthetic-repository"
+              ],
+              "status": "approved_for_engineering",
+              "summary": "Assess the approved deployment boundary B.",
+              "technical_assumptions": [
+                "Use existing source evidence and canonical runtime."
+              ],
+              "title": "Assessment B"
+            },
+            "planning": {
+              "context_input_bound": 40000,
+              "context_output_bound": 8000,
+              "criterion_assessment_contracts": [
+                {
+                  "criterion": "Explain the deployment boundary with source evidence.",
+                  "requirements": [
+                    {
+                      "kind": "effect_report",
+                      "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                    }
+                  ],
+                  "schema_version": "1.0",
+                  "validity_policy": "current_revision"
+                }
+              ],
+              "dependencies": [
+                "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+              ],
+              "effect_policy": {
+                "contract_version": "1.0",
+                "delivery": "EVIDENCE_ONLY",
+                "mode": "READ_ONLY_ASSESSMENT",
+                "read_paths": [
+                  "docs/design.md"
+                ],
+                "write_paths": []
+              },
+              "human_gates": [
+                "protected-delivery"
+              ],
+              "maximum_actions": 4,
+              "maximum_consecutive_no_progress_actions": 2,
+              "mission_spec_digest": "sha256:b89f85a2350283e43fd0c8b5f247696461f8737e2d67ede1b387bd585fbc6ea3",
+              "non_goals": [
+                "Do not perform effects outside the approved mode."
+              ],
+              "provenance_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484",
+              "repository_evidence_source": {
+                "github_repository": "synthetic-owner/synthetic-repository",
+                "repository_id": "synthetic-repository"
+              },
+              "risk_inputs": [
+                "scope-drift"
+              ],
+              "scope": [
+                "synthetic-repository"
+              ],
+              "write_scopes": []
+            },
+            "progression_policy": {
+              "higher_scope_obligations": [
+                "protected-delivery"
+              ],
+              "mode": "continuous",
+              "policy_revision": "1",
+              "profile_id": "solo",
+              "profile_revision": "1",
+              "required_decision_role": "platform_architect"
+            },
+            "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484",
+            "truth": {
+              "evidence": [
+                {
+                  "content_digest": "sha256:8123fe8dbfd4a30296e38d89c4f8d77e89b1cc6bbaea13e58bc48dacf578b342",
+                  "id": "execution-source",
+                  "kind": "repository_document",
+                  "locator": "https://github.com/synthetic-owner/synthetic-repository/blob/ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920/docs/design.md",
+                  "revision": "ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920"
+                }
+              ],
+              "id": "published-context-execution-source",
+              "observed_at": "2026-10-10T09:37:53.626707+00:00",
+              "repository_id": "synthetic-repository",
+              "repository_revision": "ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920",
+              "schema_version": "1.0"
+            }
+          }
+        ],
+        "profile_id": "solo",
+        "workset_id": "released-0e58370ab6fc888b383072dc856883cd098f0006"
+      },
+      "effect_boundary": "FUTURE_SELECTION_ONLY",
+      "execution_ready": false,
+      "execution_resources": "NOT_OBSERVED",
+      "gaps": [],
+      "ongoing_work_cancelled": false,
+      "operator_binding": {
+        "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+        "operator_binding_version": 1,
+        "operator_id": "606a849359f4df4c"
+      },
+      "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
+      "release_key": "sha256:0e58370ab6fc888b383072dc856883cd098f00061a4c38e06ea355c5a58f023e",
+      "scope": {
+        "instance_id": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9",
+        "project_id": "isolated-project",
+        "repository_id": "synthetic-repository"
+      },
+      "selection": {
+        "contract_version": "forge-approved-workset-release/v1",
+        "expires_at": "2026-10-10T11:37:56.667616+00:00",
+        "maximum_activations": 2,
+        "progression_mode": "continuous",
+        "subjects": [
+          {
+            "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+            "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+          },
+          {
+            "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+            "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+          }
+        ]
+      },
+      "subjects": [
+        {
+          "candidate_decisions": {
+            "architecture": {
+              "admitted_at": "2026-10-10T09:37:54.077390+00:00",
+              "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+              "canonical_decision": {
+                "capability": "ARCHITECTURE_APPROVAL",
+                "decision": "approved",
+                "decision_id": "candidate-architecture-60d19ca34b5bcd104056866d",
+                "evidence": {
+                  "planning_digest": "sha256:3951fd423d6f052a8f072beac7b34cb6383b93c1a6a6fb80f042434ca6e5638b"
+                },
+                "gates": [
+                  "protected-delivery"
+                ],
+                "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+                "occurred_at": "2026-10-10T09:37:54Z",
+                "operator_id": "606a849359f4df4c",
+                "predecessor_digest": null,
+                "scope": [
+                  "synthetic-repository"
+                ],
+                "subject_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+                "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+              },
+              "canonical_decision_digest": "sha256:ebe35899810ab2a3fff55f24d018fa5693ddef641aa6fb26d60d6aa7edbfc78d",
+              "contract_version": "forge-candidate-decisions/v1",
+              "decision_id": "candidate-architecture-60d19ca34b5bcd104056866d",
+              "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+              "kind": "ARCHITECTURE",
+              "lifecycle_evidence": {
+                "actor": "primary_operator",
+                "confidence": null,
+                "decision_type": "LIFECYCLE",
+                "id": "decision-architecture_decision-e25c2d6d72bdef4f",
+                "kind": "architecture_decision",
+                "occurred_at": "2026-10-10T09:37:54.077390+00:00",
+                "ranked_alternatives": [],
+                "rationale": "Explicit approval of the exact frozen Mission definition.",
+                "recommendation_id": "concept-recommendation-dc4e779bb37050523570a3ad4d545f2a",
+                "references": [
+                  "candidate-architecture-60d19ca34b5bcd104056866d",
+                  "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+                  "sha256:3951fd423d6f052a8f072beac7b34cb6383b93c1a6a6fb80f042434ca6e5638b",
+                  "sha256:6603d2466d4526fb94e213dbe2af223cb7f8b711ad672f462aba05a1ff54f7f5",
+                  "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+                ],
+                "selected_recommendation_id": null
+              },
+              "lifecycle_evidence_digest": "sha256:d079baba55de24d8c6c013fbc9809eae6837959742d463e800be6166e19201cd",
+              "operation_id": "concept-architecture-92163b95d186864005cce8f86f0c8520",
+              "operator_binding_version": 1,
+              "operator_id": "606a849359f4df4c",
+              "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
+              "profile_id": "solo",
+              "rationale": "Explicit approval of the exact frozen Mission definition.",
+              "request_digest": "sha256:3503f9979d696186b62a117191dc5eb5bc781f9f9f67d7329f1e8b7d522517c9",
+              "source_digest": "sha256:950a905687f1eb33f0697f4b2e64592e17314b3739bb8db8efcc15e570f06b97",
+              "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+            },
+            "business": {
+              "admitted_at": "2026-10-10T09:37:54.077390+00:00",
+              "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+              "canonical_decision": {
+                "capability": "BUSINESS_APPROVAL",
+                "decision": "approved",
+                "decision_id": "candidate-business-60d19ca34b5bcd104056866d",
+                "evidence": {},
+                "gates": [
+                  "protected-delivery"
+                ],
+                "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+                "occurred_at": "2026-10-10T09:37:54Z",
+                "operator_id": "606a849359f4df4c",
+                "predecessor_digest": null,
+                "scope": [
+                  "synthetic-repository"
+                ],
+                "subject_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+                "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+              },
+              "canonical_decision_digest": "sha256:694329d0632b9733aba49c8acc69fae502f6a6d0f0dafa38fd3919f3f9d533a1",
+              "contract_version": "forge-candidate-decisions/v1",
+              "decision_id": "candidate-business-60d19ca34b5bcd104056866d",
+              "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+              "kind": "BUSINESS",
+              "lifecycle_evidence": {
+                "actor": "primary_operator",
+                "confidence": null,
+                "decision_type": "LIFECYCLE",
+                "id": "decision-business_decision-1def506be0faf3b1",
+                "kind": "business_decision",
+                "occurred_at": "2026-10-10T09:37:54.077390+00:00",
+                "ranked_alternatives": [],
+                "rationale": "Explicit approval of the exact frozen Mission definition.",
+                "recommendation_id": "concept-recommendation-dc4e779bb37050523570a3ad4d545f2a",
+                "references": [
+                  "candidate-business-60d19ca34b5bcd104056866d",
+                  "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+                  "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+                ],
+                "selected_recommendation_id": null
+              },
+              "lifecycle_evidence_digest": "sha256:9e5f86a09ef9e652e81e8106796d527205314b107dc4f313c3fb2bbbc2fe0f1b",
+              "operation_id": "concept-business-92163b95d186864005cce8f86f0c8520",
+              "operator_binding_version": 1,
+              "operator_id": "606a849359f4df4c",
+              "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
+              "profile_id": "solo",
+              "rationale": "Explicit approval of the exact frozen Mission definition.",
+              "request_digest": "sha256:7adb474a6ff78230f7ccc23ec92870308e618cea0e8ed60d240dafe9f8939a09",
+              "source_digest": "sha256:950a905687f1eb33f0697f4b2e64592e17314b3739bb8db8efcc15e570f06b97",
+              "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+            }
+          },
+          "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+          "definition": {
+            "acceptance_criteria": [
+              "Explain the deployment boundary with source evidence."
+            ],
+            "architecture_choices": [],
+            "business_value": "Clients can track their payments.",
+            "change_summary": "Initial proposed definition.",
+            "components": [
+              "Deployment boundary"
+            ],
+            "dependencies": [],
+            "dependency_reasons": {},
+            "exclusions": [
+              "Do not perform effects outside the approved mode."
+            ],
+            "expected_result": "A portal with current invoice status.",
+            "objective": "Assess the approved deployment boundary A.",
+            "possible_subresults": [],
+            "questions": [],
+            "risks": [
+              "scope-drift"
+            ],
+            "scope": [
+              "Deployment boundary"
+            ],
+            "title": "Assessment A",
+            "work_kind": "INVESTIGATE"
+          },
+          "dependency_bindings": [],
+          "mission": {
+            "acceptance_criteria": [
+              "Explain the deployment boundary with source evidence."
+            ],
+            "architecture_review_reference": "candidate-architecture-60d19ca34b5bcd104056866d",
+            "business_objective": "Assess the approved deployment boundary A.",
+            "business_value": "Clients can track their payments.",
+            "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+            "criterion_assessment_contracts": [
+              {
+                "criterion": "Explain the deployment boundary with source evidence.",
+                "requirements": [
+                  {
+                    "kind": "effect_report",
+                    "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                  }
+                ],
+                "schema_version": "1.0",
+                "validity_policy": "current_revision"
+              }
+            ],
+            "dependencies": [],
+            "effect_policy": {
+              "contract_version": "1.0",
+              "delivery": "EVIDENCE_ONLY",
+              "mode": "READ_ONLY_ASSESSMENT",
+              "read_paths": [
+                "docs/design.md"
+              ],
+              "write_paths": []
+            },
+            "engineering_constraints": [
+              "COMPONENT: Deployment boundary: Assess the existing deployment boundary.",
+              "EXCLUDED: Do not perform effects outside the approved mode.",
+              "EXPECTED RESULT: A portal with current invoice status.",
+              "IN SCOPE: Deployment boundary",
+              "Preserve the approved repository effect boundary."
+            ],
+            "id": "MISSION-PREVIEW",
+            "maximum_actions": 4,
+            "maximum_consecutive_no_progress_actions": 2,
+            "mission_recommendation_reference": "concept-recommendation-dc4e779bb37050523570a3ad4d545f2a",
+            "repository_evidence_source": {
+              "github_repository": "synthetic-owner/synthetic-repository",
+              "repository_id": "synthetic-repository"
+            },
+            "required_capabilities": [
+              "synthetic-host"
+            ],
+            "required_disciplines": [
+              "platform_architecture"
+            ],
+            "risks": [
+              "scope-drift"
+            ],
+            "schema_version": "1.0",
+            "scope": [
+              "synthetic-repository"
+            ],
+            "status": "approved_for_engineering",
+            "summary": "Assess the approved deployment boundary A.",
+            "technical_assumptions": [
+              "Use existing source evidence and canonical runtime."
+            ],
+            "title": "Assessment A"
+          },
+          "mission_id": "MISSION-0001",
+          "planning": {
+            "context_input_bound": 40000,
+            "context_output_bound": 8000,
+            "criterion_assessment_contracts": [
+              {
+                "criterion": "Explain the deployment boundary with source evidence.",
+                "requirements": [
+                  {
+                    "kind": "effect_report",
+                    "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                  }
+                ],
+                "schema_version": "1.0",
+                "validity_policy": "current_revision"
+              }
+            ],
+            "dependencies": [],
+            "effect_policy": {
+              "contract_version": "1.0",
+              "delivery": "EVIDENCE_ONLY",
+              "mode": "READ_ONLY_ASSESSMENT",
+              "read_paths": [
+                "docs/design.md"
+              ],
+              "write_paths": []
+            },
+            "human_gates": [
+              "protected-delivery"
+            ],
+            "maximum_actions": 4,
+            "maximum_consecutive_no_progress_actions": 2,
+            "mission_spec_digest": "sha256:6603d2466d4526fb94e213dbe2af223cb7f8b711ad672f462aba05a1ff54f7f5",
+            "non_goals": [
+              "Do not perform effects outside the approved mode."
+            ],
+            "provenance_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36",
+            "repository_evidence_source": {
+              "github_repository": "synthetic-owner/synthetic-repository",
+              "repository_id": "synthetic-repository"
+            },
+            "risk_inputs": [
+              "scope-drift"
+            ],
+            "scope": [
+              "synthetic-repository"
+            ],
+            "write_scopes": []
+          },
+          "source": {
+            "context_revision": "sha256:cc12152ab83da995feca93674f4c9578f0fd1a6db9917fa34028d27a40041166",
+            "conversation_id": "a",
+            "conversation_revision": 3,
+            "instance_id": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9",
+            "invocation_id": "advice-invocation-67402cc2d5a8474490414b14441b3268",
+            "object_id": "concept-62ea6a99c0662cc7a1a12a02bd2e7c21",
+            "project_id": "isolated-project",
+            "repository_id": "synthetic-repository",
+            "request_digest": "sha256:ef4c944d8574ef7ccd5c8e2d97e5bc78ac646bd96e7d36412dfd398305d77930",
+            "result_digest": "sha256:643ecd75183010c54b67186d6084e3688efec8123620e6a1d4d23bbbe16a4ec7",
+            "revision": 1,
+            "session_id": "advice-session-282931ac92d74a1c8f8458161241b092",
+            "turn_id": "initial"
+          },
+          "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+        },
+        {
+          "candidate_decisions": {
+            "architecture": {
+              "admitted_at": "2026-10-10T09:37:55.538930+00:00",
+              "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+              "canonical_decision": {
+                "capability": "ARCHITECTURE_APPROVAL",
+                "decision": "approved",
+                "decision_id": "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+                "evidence": {
+                  "planning_digest": "sha256:cfe120ccdf4f8753e19f9eba78745b0c1842c643b9a8fd00b7f5c2b5b8bb5b4b"
+                },
+                "gates": [
+                  "protected-delivery"
+                ],
+                "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+                "occurred_at": "2026-10-10T09:37:56Z",
+                "operator_id": "606a849359f4df4c",
+                "predecessor_digest": null,
+                "scope": [
+                  "synthetic-repository"
+                ],
+                "subject_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+                "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+              },
+              "canonical_decision_digest": "sha256:4372acd001befef00503f0f835d0874bd17f2ff81b3c186eac06490431ee4481",
+              "contract_version": "forge-candidate-decisions/v1",
+              "decision_id": "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+              "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+              "kind": "ARCHITECTURE",
+              "lifecycle_evidence": {
+                "actor": "primary_operator",
+                "confidence": null,
+                "decision_type": "LIFECYCLE",
+                "id": "decision-architecture_decision-4786e65a4f601fda",
+                "kind": "architecture_decision",
+                "occurred_at": "2026-10-10T09:37:55.538930+00:00",
+                "ranked_alternatives": [],
+                "rationale": "Explicit approval of the exact frozen Mission definition.",
+                "recommendation_id": "concept-recommendation-433f5ed31765b561a6a912522f272897",
+                "references": [
+                  "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+                  "concept-candidate-433f5ed31765b561a6a912522f272897",
+                  "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484",
+                  "sha256:b89f85a2350283e43fd0c8b5f247696461f8737e2d67ede1b387bd585fbc6ea3",
+                  "sha256:cfe120ccdf4f8753e19f9eba78745b0c1842c643b9a8fd00b7f5c2b5b8bb5b4b"
+                ],
+                "selected_recommendation_id": null
+              },
+              "lifecycle_evidence_digest": "sha256:2eea978683f058f64dc5a579e6f93dd9717a354b684297992f25690026a69306",
+              "operation_id": "concept-architecture-e2697ccaaa20091a756646a4b450d40f",
+              "operator_binding_version": 1,
+              "operator_id": "606a849359f4df4c",
+              "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
+              "profile_id": "solo",
+              "rationale": "Explicit approval of the exact frozen Mission definition.",
+              "request_digest": "sha256:53621a857edf722754eb0a7323c5f627a1bbbdb4297b4aef233c22bfebedcf1c",
+              "source_digest": "sha256:a1b737653f6ef4412fcc55160809358762296e027d10f49aed2c89509f452111",
+              "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+            },
+            "business": {
+              "admitted_at": "2026-10-10T09:37:55.538930+00:00",
+              "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+              "canonical_decision": {
+                "capability": "BUSINESS_APPROVAL",
+                "decision": "approved",
+                "decision_id": "candidate-business-12d7f946b1b0e8cbf7570fe8",
+                "evidence": {},
+                "gates": [
+                  "protected-delivery"
+                ],
+                "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+                "occurred_at": "2026-10-10T09:37:55Z",
+                "operator_id": "606a849359f4df4c",
+                "predecessor_digest": null,
+                "scope": [
+                  "synthetic-repository"
+                ],
+                "subject_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+                "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+              },
+              "canonical_decision_digest": "sha256:d017dea3034014b4803890a26fbe35360922489b9262a0aad09f91d1b5ed1107",
+              "contract_version": "forge-candidate-decisions/v1",
+              "decision_id": "candidate-business-12d7f946b1b0e8cbf7570fe8",
+              "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+              "kind": "BUSINESS",
+              "lifecycle_evidence": {
+                "actor": "primary_operator",
+                "confidence": null,
+                "decision_type": "LIFECYCLE",
+                "id": "decision-business_decision-544e6b17fa354405",
+                "kind": "business_decision",
+                "occurred_at": "2026-10-10T09:37:55.538930+00:00",
+                "ranked_alternatives": [],
+                "rationale": "Explicit approval of the exact frozen Mission definition.",
+                "recommendation_id": "concept-recommendation-433f5ed31765b561a6a912522f272897",
+                "references": [
+                  "candidate-business-12d7f946b1b0e8cbf7570fe8",
+                  "concept-candidate-433f5ed31765b561a6a912522f272897",
+                  "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+                ],
+                "selected_recommendation_id": null
+              },
+              "lifecycle_evidence_digest": "sha256:e6db9095a7778194e5eeb0e33a64da40995c989f59cb8f2dad3058a09973fc77",
+              "operation_id": "concept-business-e2697ccaaa20091a756646a4b450d40f",
+              "operator_binding_version": 1,
+              "operator_id": "606a849359f4df4c",
+              "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
+              "profile_id": "solo",
+              "rationale": "Explicit approval of the exact frozen Mission definition.",
+              "request_digest": "sha256:3a3e7eaaeec07c04caa0d7db05cdad0c60782016b884ca1c15eab4556996ce0f",
+              "source_digest": "sha256:a1b737653f6ef4412fcc55160809358762296e027d10f49aed2c89509f452111",
+              "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+            }
+          },
+          "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+          "definition": {
+            "acceptance_criteria": [
+              "Explain the deployment boundary with source evidence."
+            ],
+            "architecture_choices": [],
+            "business_value": "Clients can track their payments.",
+            "change_summary": "Initial proposed definition.",
+            "components": [
+              "Deployment boundary"
+            ],
+            "dependencies": [
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+            ],
+            "dependency_reasons": {
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a": "B requires the accepted source evidence from A."
+            },
+            "exclusions": [
+              "Do not perform effects outside the approved mode."
+            ],
+            "expected_result": "A portal with current invoice status.",
+            "objective": "Assess the approved deployment boundary B.",
+            "possible_subresults": [],
+            "questions": [],
+            "risks": [
+              "scope-drift"
+            ],
+            "scope": [
+              "Deployment boundary"
+            ],
+            "title": "Assessment B",
+            "work_kind": "INVESTIGATE"
+          },
+          "dependency_bindings": [
+            {
+              "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+              "kind": "REQUIRES",
+              "object_id": "concept-62ea6a99c0662cc7a1a12a02bd2e7c21",
+              "reason": "B requires the accepted source evidence from A.",
+              "state": "PROPOSED",
+              "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+            }
+          ],
+          "mission": {
+            "acceptance_criteria": [
+              "Explain the deployment boundary with source evidence."
+            ],
+            "architecture_review_reference": "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+            "business_objective": "Assess the approved deployment boundary B.",
+            "business_value": "Clients can track their payments.",
+            "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+            "criterion_assessment_contracts": [
+              {
+                "criterion": "Explain the deployment boundary with source evidence.",
+                "requirements": [
+                  {
+                    "kind": "effect_report",
+                    "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                  }
+                ],
+                "schema_version": "1.0",
+                "validity_policy": "current_revision"
+              }
+            ],
+            "dependencies": [
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+            ],
+            "effect_policy": {
+              "contract_version": "1.0",
+              "delivery": "EVIDENCE_ONLY",
+              "mode": "READ_ONLY_ASSESSMENT",
+              "read_paths": [
+                "docs/design.md"
+              ],
+              "write_paths": []
+            },
+            "engineering_constraints": [
+              "COMPONENT: Deployment boundary: Assess the existing deployment boundary.",
+              "EXCLUDED: Do not perform effects outside the approved mode.",
+              "EXPECTED RESULT: A portal with current invoice status.",
+              "IN SCOPE: Deployment boundary",
+              "Preserve the approved repository effect boundary."
+            ],
+            "id": "MISSION-PREVIEW",
+            "maximum_actions": 4,
+            "maximum_consecutive_no_progress_actions": 2,
+            "mission_recommendation_reference": "concept-recommendation-433f5ed31765b561a6a912522f272897",
+            "repository_evidence_source": {
+              "github_repository": "synthetic-owner/synthetic-repository",
+              "repository_id": "synthetic-repository"
+            },
+            "required_capabilities": [
+              "synthetic-host"
+            ],
+            "required_disciplines": [
+              "platform_architecture"
+            ],
+            "risks": [
+              "scope-drift"
+            ],
+            "schema_version": "1.0",
+            "scope": [
+              "synthetic-repository"
+            ],
+            "status": "approved_for_engineering",
+            "summary": "Assess the approved deployment boundary B.",
+            "technical_assumptions": [
+              "Use existing source evidence and canonical runtime."
+            ],
+            "title": "Assessment B"
+          },
+          "mission_id": "MISSION-0002",
+          "planning": {
+            "context_input_bound": 40000,
+            "context_output_bound": 8000,
+            "criterion_assessment_contracts": [
+              {
+                "criterion": "Explain the deployment boundary with source evidence.",
+                "requirements": [
+                  {
+                    "kind": "effect_report",
+                    "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                  }
+                ],
+                "schema_version": "1.0",
+                "validity_policy": "current_revision"
+              }
+            ],
+            "dependencies": [
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+            ],
+            "effect_policy": {
+              "contract_version": "1.0",
+              "delivery": "EVIDENCE_ONLY",
+              "mode": "READ_ONLY_ASSESSMENT",
+              "read_paths": [
+                "docs/design.md"
+              ],
+              "write_paths": []
+            },
+            "human_gates": [
+              "protected-delivery"
+            ],
+            "maximum_actions": 4,
+            "maximum_consecutive_no_progress_actions": 2,
+            "mission_spec_digest": "sha256:b89f85a2350283e43fd0c8b5f247696461f8737e2d67ede1b387bd585fbc6ea3",
+            "non_goals": [
+              "Do not perform effects outside the approved mode."
+            ],
+            "provenance_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484",
+            "repository_evidence_source": {
+              "github_repository": "synthetic-owner/synthetic-repository",
+              "repository_id": "synthetic-repository"
+            },
+            "risk_inputs": [
+              "scope-drift"
+            ],
+            "scope": [
+              "synthetic-repository"
+            ],
+            "write_scopes": []
+          },
+          "source": {
+            "context_revision": "sha256:00a1eb9937d7b716f5b8eb8843ef15de52af9ee3782c0dd68031f05a7cda217c",
+            "conversation_id": "b",
+            "conversation_revision": 3,
+            "instance_id": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9",
+            "invocation_id": "advice-invocation-318c82f1f2a14ed4b82c148271d3d680",
+            "object_id": "concept-6a88c71e3a7f05f8b9f5bcd62f8f8a09",
+            "project_id": "isolated-project",
+            "repository_id": "synthetic-repository",
+            "request_digest": "sha256:dc44c1695d0dd72b94dc6649291dcd0177040c56d3642c71b968c4a2982f0843",
+            "result_digest": "sha256:08bd45e392606c8602b3b003a82253c6379f90e85a6661b1b99e621d44d0163a",
+            "revision": 1,
+            "session_id": "advice-session-c2b7176d4b21461b95a4d2a034fc7303",
+            "turn_id": "initial"
+          },
+          "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+        }
+      ]
+    },
+    "package_digest": "sha256:90da7919c86150f8f5a45245df8953148a33b3d63f0e9f277c9a67c96735fd21",
+    "read_only": true,
+    "release_supported": true
+  },
+  "missing": {
+    "additional_model_calls": 0,
+    "contract_version": "forge-approved-workset-release/v1",
+    "gaps": [
+      {
+        "code": "PREDECESSOR_NOT_SELECTED",
+        "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+      }
+    ],
+    "package": {
+      "additional_model_calls": 0,
+      "contract_version": "forge-approved-workset-release/v1",
+      "definition": {
+        "contract_version": "forge-approved-worklist/v1",
+        "expires_at": "2026-10-10T11:37:56.667616+00:00",
+        "maximum_activations": 1,
+        "members": [
+          {
+            "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+            "dependencies": [
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+            ],
+            "mission": {
+              "acceptance_criteria": [
+                "Explain the deployment boundary with source evidence."
+              ],
+              "architecture_review_reference": "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+              "business_objective": "Assess the approved deployment boundary B.",
+              "business_value": "Clients can track their payments.",
+              "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+              "criterion_assessment_contracts": [
+                {
+                  "criterion": "Explain the deployment boundary with source evidence.",
+                  "requirements": [
+                    {
+                      "kind": "effect_report",
+                      "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                    }
+                  ],
+                  "schema_version": "1.0",
+                  "validity_policy": "current_revision"
+                }
+              ],
+              "dependencies": [
+                "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+              ],
+              "effect_policy": {
+                "contract_version": "1.0",
+                "delivery": "EVIDENCE_ONLY",
+                "mode": "READ_ONLY_ASSESSMENT",
+                "read_paths": [
+                  "docs/design.md"
+                ],
+                "write_paths": []
+              },
+              "engineering_constraints": [
+                "COMPONENT: Deployment boundary: Assess the existing deployment boundary.",
+                "EXCLUDED: Do not perform effects outside the approved mode.",
+                "EXPECTED RESULT: A portal with current invoice status.",
+                "IN SCOPE: Deployment boundary",
+                "Preserve the approved repository effect boundary."
+              ],
+              "id": "MISSION-PREVIEW",
+              "maximum_actions": 4,
+              "maximum_consecutive_no_progress_actions": 2,
+              "mission_recommendation_reference": "concept-recommendation-433f5ed31765b561a6a912522f272897",
+              "repository_evidence_source": {
+                "github_repository": "synthetic-owner/synthetic-repository",
+                "repository_id": "synthetic-repository"
+              },
+              "required_capabilities": [
+                "synthetic-host"
+              ],
+              "required_disciplines": [
+                "platform_architecture"
+              ],
+              "risks": [
+                "scope-drift"
+              ],
+              "schema_version": "1.0",
+              "scope": [
+                "synthetic-repository"
+              ],
+              "status": "approved_for_engineering",
+              "summary": "Assess the approved deployment boundary B.",
+              "technical_assumptions": [
+                "Use existing source evidence and canonical runtime."
+              ],
+              "title": "Assessment B"
+            },
+            "planning": {
+              "context_input_bound": 40000,
+              "context_output_bound": 8000,
+              "criterion_assessment_contracts": [
+                {
+                  "criterion": "Explain the deployment boundary with source evidence.",
+                  "requirements": [
+                    {
+                      "kind": "effect_report",
+                      "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                    }
+                  ],
+                  "schema_version": "1.0",
+                  "validity_policy": "current_revision"
+                }
+              ],
+              "dependencies": [
+                "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+              ],
+              "effect_policy": {
+                "contract_version": "1.0",
+                "delivery": "EVIDENCE_ONLY",
+                "mode": "READ_ONLY_ASSESSMENT",
+                "read_paths": [
+                  "docs/design.md"
+                ],
+                "write_paths": []
+              },
+              "human_gates": [
+                "protected-delivery"
+              ],
+              "maximum_actions": 4,
+              "maximum_consecutive_no_progress_actions": 2,
+              "mission_spec_digest": "sha256:b89f85a2350283e43fd0c8b5f247696461f8737e2d67ede1b387bd585fbc6ea3",
+              "non_goals": [
+                "Do not perform effects outside the approved mode."
+              ],
+              "provenance_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484",
+              "repository_evidence_source": {
+                "github_repository": "synthetic-owner/synthetic-repository",
+                "repository_id": "synthetic-repository"
+              },
+              "risk_inputs": [
+                "scope-drift"
+              ],
+              "scope": [
+                "synthetic-repository"
+              ],
+              "write_scopes": []
+            },
+            "progression_policy": {
+              "higher_scope_obligations": [
+                "protected-delivery"
+              ],
+              "mode": "continuous",
+              "policy_revision": "1",
+              "profile_id": "solo",
+              "profile_revision": "1",
+              "required_decision_role": "platform_architect"
+            },
+            "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484",
+            "truth": {
+              "evidence": [
+                {
+                  "content_digest": "sha256:8123fe8dbfd4a30296e38d89c4f8d77e89b1cc6bbaea13e58bc48dacf578b342",
+                  "id": "execution-source",
+                  "kind": "repository_document",
+                  "locator": "https://github.com/synthetic-owner/synthetic-repository/blob/ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920/docs/design.md",
+                  "revision": "ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920"
+                }
+              ],
+              "id": "published-context-execution-source",
+              "observed_at": "2026-10-10T09:37:53.626707+00:00",
+              "repository_id": "synthetic-repository",
+              "repository_revision": "ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920",
+              "schema_version": "1.0"
+            }
+          }
+        ],
+        "profile_id": "solo",
+        "workset_id": "released-3ca95c391a1cc17a3d01b369c4590af62d4c870d"
+      },
+      "effect_boundary": "FUTURE_SELECTION_ONLY",
+      "execution_ready": false,
+      "execution_resources": "NOT_OBSERVED",
+      "gaps": [
+        {
+          "code": "PREDECESSOR_NOT_SELECTED",
+          "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+        }
+      ],
+      "ongoing_work_cancelled": false,
+      "operator_binding": {
+        "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+        "operator_binding_version": 1,
+        "operator_id": "606a849359f4df4c"
+      },
+      "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
+      "release_key": "sha256:3ca95c391a1cc17a3d01b369c4590af62d4c870dcbf27d305d57f13ab0e32637",
+      "scope": {
+        "instance_id": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9",
+        "project_id": "isolated-project",
+        "repository_id": "synthetic-repository"
+      },
+      "selection": {
+        "contract_version": "forge-approved-workset-release/v1",
+        "expires_at": "2026-10-10T11:37:56.667616+00:00",
+        "maximum_activations": 1,
+        "progression_mode": "continuous",
+        "subjects": [
+          {
+            "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+            "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+          }
+        ]
+      },
+      "subjects": [
+        {
+          "candidate_decisions": {
+            "architecture": {
+              "admitted_at": "2026-10-10T09:37:55.538930+00:00",
+              "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+              "canonical_decision": {
+                "capability": "ARCHITECTURE_APPROVAL",
+                "decision": "approved",
+                "decision_id": "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+                "evidence": {
+                  "planning_digest": "sha256:cfe120ccdf4f8753e19f9eba78745b0c1842c643b9a8fd00b7f5c2b5b8bb5b4b"
+                },
+                "gates": [
+                  "protected-delivery"
+                ],
+                "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+                "occurred_at": "2026-10-10T09:37:56Z",
+                "operator_id": "606a849359f4df4c",
+                "predecessor_digest": null,
+                "scope": [
+                  "synthetic-repository"
+                ],
+                "subject_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+                "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+              },
+              "canonical_decision_digest": "sha256:4372acd001befef00503f0f835d0874bd17f2ff81b3c186eac06490431ee4481",
+              "contract_version": "forge-candidate-decisions/v1",
+              "decision_id": "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+              "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+              "kind": "ARCHITECTURE",
+              "lifecycle_evidence": {
+                "actor": "primary_operator",
+                "confidence": null,
+                "decision_type": "LIFECYCLE",
+                "id": "decision-architecture_decision-4786e65a4f601fda",
+                "kind": "architecture_decision",
+                "occurred_at": "2026-10-10T09:37:55.538930+00:00",
+                "ranked_alternatives": [],
+                "rationale": "Explicit approval of the exact frozen Mission definition.",
+                "recommendation_id": "concept-recommendation-433f5ed31765b561a6a912522f272897",
+                "references": [
+                  "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+                  "concept-candidate-433f5ed31765b561a6a912522f272897",
+                  "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484",
+                  "sha256:b89f85a2350283e43fd0c8b5f247696461f8737e2d67ede1b387bd585fbc6ea3",
+                  "sha256:cfe120ccdf4f8753e19f9eba78745b0c1842c643b9a8fd00b7f5c2b5b8bb5b4b"
+                ],
+                "selected_recommendation_id": null
+              },
+              "lifecycle_evidence_digest": "sha256:2eea978683f058f64dc5a579e6f93dd9717a354b684297992f25690026a69306",
+              "operation_id": "concept-architecture-e2697ccaaa20091a756646a4b450d40f",
+              "operator_binding_version": 1,
+              "operator_id": "606a849359f4df4c",
+              "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
+              "profile_id": "solo",
+              "rationale": "Explicit approval of the exact frozen Mission definition.",
+              "request_digest": "sha256:53621a857edf722754eb0a7323c5f627a1bbbdb4297b4aef233c22bfebedcf1c",
+              "source_digest": "sha256:a1b737653f6ef4412fcc55160809358762296e027d10f49aed2c89509f452111",
+              "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+            },
+            "business": {
+              "admitted_at": "2026-10-10T09:37:55.538930+00:00",
+              "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+              "canonical_decision": {
+                "capability": "BUSINESS_APPROVAL",
+                "decision": "approved",
+                "decision_id": "candidate-business-12d7f946b1b0e8cbf7570fe8",
+                "evidence": {},
+                "gates": [
+                  "protected-delivery"
+                ],
+                "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+                "occurred_at": "2026-10-10T09:37:55Z",
+                "operator_id": "606a849359f4df4c",
+                "predecessor_digest": null,
+                "scope": [
+                  "synthetic-repository"
+                ],
+                "subject_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+                "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+              },
+              "canonical_decision_digest": "sha256:d017dea3034014b4803890a26fbe35360922489b9262a0aad09f91d1b5ed1107",
+              "contract_version": "forge-candidate-decisions/v1",
+              "decision_id": "candidate-business-12d7f946b1b0e8cbf7570fe8",
+              "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+              "kind": "BUSINESS",
+              "lifecycle_evidence": {
+                "actor": "primary_operator",
+                "confidence": null,
+                "decision_type": "LIFECYCLE",
+                "id": "decision-business_decision-544e6b17fa354405",
+                "kind": "business_decision",
+                "occurred_at": "2026-10-10T09:37:55.538930+00:00",
+                "ranked_alternatives": [],
+                "rationale": "Explicit approval of the exact frozen Mission definition.",
+                "recommendation_id": "concept-recommendation-433f5ed31765b561a6a912522f272897",
+                "references": [
+                  "candidate-business-12d7f946b1b0e8cbf7570fe8",
+                  "concept-candidate-433f5ed31765b561a6a912522f272897",
+                  "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+                ],
+                "selected_recommendation_id": null
+              },
+              "lifecycle_evidence_digest": "sha256:e6db9095a7778194e5eeb0e33a64da40995c989f59cb8f2dad3058a09973fc77",
+              "operation_id": "concept-business-e2697ccaaa20091a756646a4b450d40f",
+              "operator_binding_version": 1,
+              "operator_id": "606a849359f4df4c",
+              "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
+              "profile_id": "solo",
+              "rationale": "Explicit approval of the exact frozen Mission definition.",
+              "request_digest": "sha256:3a3e7eaaeec07c04caa0d7db05cdad0c60782016b884ca1c15eab4556996ce0f",
+              "source_digest": "sha256:a1b737653f6ef4412fcc55160809358762296e027d10f49aed2c89509f452111",
+              "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+            }
+          },
+          "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+          "definition": {
+            "acceptance_criteria": [
+              "Explain the deployment boundary with source evidence."
+            ],
+            "architecture_choices": [],
+            "business_value": "Clients can track their payments.",
+            "change_summary": "Initial proposed definition.",
+            "components": [
+              "Deployment boundary"
+            ],
+            "dependencies": [
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+            ],
+            "dependency_reasons": {
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a": "B requires the accepted source evidence from A."
+            },
+            "exclusions": [
+              "Do not perform effects outside the approved mode."
+            ],
+            "expected_result": "A portal with current invoice status.",
+            "objective": "Assess the approved deployment boundary B.",
+            "possible_subresults": [],
+            "questions": [],
+            "risks": [
+              "scope-drift"
+            ],
+            "scope": [
+              "Deployment boundary"
+            ],
+            "title": "Assessment B",
+            "work_kind": "INVESTIGATE"
+          },
+          "dependency_bindings": [
+            {
+              "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+              "kind": "REQUIRES",
+              "object_id": "concept-62ea6a99c0662cc7a1a12a02bd2e7c21",
+              "reason": "B requires the accepted source evidence from A.",
+              "state": "PROPOSED",
+              "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+            }
+          ],
+          "mission": {
+            "acceptance_criteria": [
+              "Explain the deployment boundary with source evidence."
+            ],
+            "architecture_review_reference": "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+            "business_objective": "Assess the approved deployment boundary B.",
+            "business_value": "Clients can track their payments.",
+            "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+            "criterion_assessment_contracts": [
+              {
+                "criterion": "Explain the deployment boundary with source evidence.",
+                "requirements": [
+                  {
+                    "kind": "effect_report",
+                    "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                  }
+                ],
+                "schema_version": "1.0",
+                "validity_policy": "current_revision"
+              }
+            ],
+            "dependencies": [
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+            ],
+            "effect_policy": {
+              "contract_version": "1.0",
+              "delivery": "EVIDENCE_ONLY",
+              "mode": "READ_ONLY_ASSESSMENT",
+              "read_paths": [
+                "docs/design.md"
+              ],
+              "write_paths": []
+            },
+            "engineering_constraints": [
+              "COMPONENT: Deployment boundary: Assess the existing deployment boundary.",
+              "EXCLUDED: Do not perform effects outside the approved mode.",
+              "EXPECTED RESULT: A portal with current invoice status.",
+              "IN SCOPE: Deployment boundary",
+              "Preserve the approved repository effect boundary."
+            ],
+            "id": "MISSION-PREVIEW",
+            "maximum_actions": 4,
+            "maximum_consecutive_no_progress_actions": 2,
+            "mission_recommendation_reference": "concept-recommendation-433f5ed31765b561a6a912522f272897",
+            "repository_evidence_source": {
+              "github_repository": "synthetic-owner/synthetic-repository",
+              "repository_id": "synthetic-repository"
+            },
+            "required_capabilities": [
+              "synthetic-host"
+            ],
+            "required_disciplines": [
+              "platform_architecture"
+            ],
+            "risks": [
+              "scope-drift"
+            ],
+            "schema_version": "1.0",
+            "scope": [
+              "synthetic-repository"
+            ],
+            "status": "approved_for_engineering",
+            "summary": "Assess the approved deployment boundary B.",
+            "technical_assumptions": [
+              "Use existing source evidence and canonical runtime."
+            ],
+            "title": "Assessment B"
+          },
+          "mission_id": "MISSION-0002",
+          "planning": {
+            "context_input_bound": 40000,
+            "context_output_bound": 8000,
+            "criterion_assessment_contracts": [
+              {
+                "criterion": "Explain the deployment boundary with source evidence.",
+                "requirements": [
+                  {
+                    "kind": "effect_report",
+                    "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                  }
+                ],
+                "schema_version": "1.0",
+                "validity_policy": "current_revision"
+              }
+            ],
+            "dependencies": [
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+            ],
+            "effect_policy": {
+              "contract_version": "1.0",
+              "delivery": "EVIDENCE_ONLY",
+              "mode": "READ_ONLY_ASSESSMENT",
+              "read_paths": [
+                "docs/design.md"
+              ],
+              "write_paths": []
+            },
+            "human_gates": [
+              "protected-delivery"
+            ],
+            "maximum_actions": 4,
+            "maximum_consecutive_no_progress_actions": 2,
+            "mission_spec_digest": "sha256:b89f85a2350283e43fd0c8b5f247696461f8737e2d67ede1b387bd585fbc6ea3",
+            "non_goals": [
+              "Do not perform effects outside the approved mode."
+            ],
+            "provenance_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484",
+            "repository_evidence_source": {
+              "github_repository": "synthetic-owner/synthetic-repository",
+              "repository_id": "synthetic-repository"
+            },
+            "risk_inputs": [
+              "scope-drift"
+            ],
+            "scope": [
+              "synthetic-repository"
+            ],
+            "write_scopes": []
+          },
+          "source": {
+            "context_revision": "sha256:00a1eb9937d7b716f5b8eb8843ef15de52af9ee3782c0dd68031f05a7cda217c",
+            "conversation_id": "b",
+            "conversation_revision": 3,
+            "instance_id": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9",
+            "invocation_id": "advice-invocation-318c82f1f2a14ed4b82c148271d3d680",
+            "object_id": "concept-6a88c71e3a7f05f8b9f5bcd62f8f8a09",
+            "project_id": "isolated-project",
+            "repository_id": "synthetic-repository",
+            "request_digest": "sha256:dc44c1695d0dd72b94dc6649291dcd0177040c56d3642c71b968c4a2982f0843",
+            "result_digest": "sha256:08bd45e392606c8602b3b003a82253c6379f90e85a6661b1b99e621d44d0163a",
+            "revision": 1,
+            "session_id": "advice-session-c2b7176d4b21461b95a4d2a034fc7303",
+            "turn_id": "initial"
+          },
+          "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+        }
+      ]
+    },
+    "package_digest": "sha256:a56dd6e49486cda3a0b67335b242e4ef7c7f5f61e83ab84ce1be44375eac014c",
+    "read_only": true,
+    "release_supported": false
+  },
+  "order": {
+    "additional_model_calls": 0,
+    "contract_version": "forge-approved-workset-release/v1",
+    "gaps": [
+      {
+        "code": "DEPENDENCY_ORDER_CONFLICT",
+        "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+      }
+    ],
+    "package": {
+      "additional_model_calls": 0,
+      "contract_version": "forge-approved-workset-release/v1",
+      "definition": {
+        "contract_version": "forge-approved-worklist/v1",
+        "expires_at": "2026-10-10T11:37:56.667616+00:00",
+        "maximum_activations": 2,
+        "members": [
+          {
+            "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+            "dependencies": [
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+            ],
+            "mission": {
+              "acceptance_criteria": [
+                "Explain the deployment boundary with source evidence."
+              ],
+              "architecture_review_reference": "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+              "business_objective": "Assess the approved deployment boundary B.",
+              "business_value": "Clients can track their payments.",
+              "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+              "criterion_assessment_contracts": [
+                {
+                  "criterion": "Explain the deployment boundary with source evidence.",
+                  "requirements": [
+                    {
+                      "kind": "effect_report",
+                      "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                    }
+                  ],
+                  "schema_version": "1.0",
+                  "validity_policy": "current_revision"
+                }
+              ],
+              "dependencies": [
+                "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+              ],
+              "effect_policy": {
+                "contract_version": "1.0",
+                "delivery": "EVIDENCE_ONLY",
+                "mode": "READ_ONLY_ASSESSMENT",
+                "read_paths": [
+                  "docs/design.md"
+                ],
+                "write_paths": []
+              },
+              "engineering_constraints": [
+                "COMPONENT: Deployment boundary: Assess the existing deployment boundary.",
+                "EXCLUDED: Do not perform effects outside the approved mode.",
+                "EXPECTED RESULT: A portal with current invoice status.",
+                "IN SCOPE: Deployment boundary",
+                "Preserve the approved repository effect boundary."
+              ],
+              "id": "MISSION-PREVIEW",
+              "maximum_actions": 4,
+              "maximum_consecutive_no_progress_actions": 2,
+              "mission_recommendation_reference": "concept-recommendation-433f5ed31765b561a6a912522f272897",
+              "repository_evidence_source": {
+                "github_repository": "synthetic-owner/synthetic-repository",
+                "repository_id": "synthetic-repository"
+              },
+              "required_capabilities": [
+                "synthetic-host"
+              ],
+              "required_disciplines": [
+                "platform_architecture"
+              ],
+              "risks": [
+                "scope-drift"
+              ],
+              "schema_version": "1.0",
+              "scope": [
+                "synthetic-repository"
+              ],
+              "status": "approved_for_engineering",
+              "summary": "Assess the approved deployment boundary B.",
+              "technical_assumptions": [
+                "Use existing source evidence and canonical runtime."
+              ],
+              "title": "Assessment B"
+            },
+            "planning": {
+              "context_input_bound": 40000,
+              "context_output_bound": 8000,
+              "criterion_assessment_contracts": [
+                {
+                  "criterion": "Explain the deployment boundary with source evidence.",
+                  "requirements": [
+                    {
+                      "kind": "effect_report",
+                      "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                    }
+                  ],
+                  "schema_version": "1.0",
+                  "validity_policy": "current_revision"
+                }
+              ],
+              "dependencies": [
+                "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+              ],
+              "effect_policy": {
+                "contract_version": "1.0",
+                "delivery": "EVIDENCE_ONLY",
+                "mode": "READ_ONLY_ASSESSMENT",
+                "read_paths": [
+                  "docs/design.md"
+                ],
+                "write_paths": []
+              },
+              "human_gates": [
+                "protected-delivery"
+              ],
+              "maximum_actions": 4,
+              "maximum_consecutive_no_progress_actions": 2,
+              "mission_spec_digest": "sha256:b89f85a2350283e43fd0c8b5f247696461f8737e2d67ede1b387bd585fbc6ea3",
+              "non_goals": [
+                "Do not perform effects outside the approved mode."
+              ],
+              "provenance_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484",
+              "repository_evidence_source": {
+                "github_repository": "synthetic-owner/synthetic-repository",
+                "repository_id": "synthetic-repository"
+              },
+              "risk_inputs": [
+                "scope-drift"
+              ],
+              "scope": [
+                "synthetic-repository"
+              ],
+              "write_scopes": []
+            },
+            "progression_policy": {
+              "higher_scope_obligations": [
+                "protected-delivery"
+              ],
+              "mode": "continuous",
+              "policy_revision": "1",
+              "profile_id": "solo",
+              "profile_revision": "1",
+              "required_decision_role": "platform_architect"
+            },
+            "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484",
+            "truth": {
+              "evidence": [
+                {
+                  "content_digest": "sha256:8123fe8dbfd4a30296e38d89c4f8d77e89b1cc6bbaea13e58bc48dacf578b342",
+                  "id": "execution-source",
+                  "kind": "repository_document",
+                  "locator": "https://github.com/synthetic-owner/synthetic-repository/blob/ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920/docs/design.md",
+                  "revision": "ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920"
+                }
+              ],
+              "id": "published-context-execution-source",
+              "observed_at": "2026-10-10T09:37:53.626707+00:00",
+              "repository_id": "synthetic-repository",
+              "repository_revision": "ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920",
+              "schema_version": "1.0"
+            }
+          },
+          {
+            "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+            "dependencies": [],
+            "mission": {
+              "acceptance_criteria": [
+                "Explain the deployment boundary with source evidence."
+              ],
+              "architecture_review_reference": "candidate-architecture-60d19ca34b5bcd104056866d",
+              "business_objective": "Assess the approved deployment boundary A.",
+              "business_value": "Clients can track their payments.",
+              "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+              "criterion_assessment_contracts": [
+                {
+                  "criterion": "Explain the deployment boundary with source evidence.",
+                  "requirements": [
+                    {
+                      "kind": "effect_report",
+                      "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                    }
+                  ],
+                  "schema_version": "1.0",
+                  "validity_policy": "current_revision"
+                }
+              ],
+              "dependencies": [],
+              "effect_policy": {
+                "contract_version": "1.0",
+                "delivery": "EVIDENCE_ONLY",
+                "mode": "READ_ONLY_ASSESSMENT",
+                "read_paths": [
+                  "docs/design.md"
+                ],
+                "write_paths": []
+              },
+              "engineering_constraints": [
+                "COMPONENT: Deployment boundary: Assess the existing deployment boundary.",
+                "EXCLUDED: Do not perform effects outside the approved mode.",
+                "EXPECTED RESULT: A portal with current invoice status.",
+                "IN SCOPE: Deployment boundary",
+                "Preserve the approved repository effect boundary."
+              ],
+              "id": "MISSION-PREVIEW",
+              "maximum_actions": 4,
+              "maximum_consecutive_no_progress_actions": 2,
+              "mission_recommendation_reference": "concept-recommendation-dc4e779bb37050523570a3ad4d545f2a",
+              "repository_evidence_source": {
+                "github_repository": "synthetic-owner/synthetic-repository",
+                "repository_id": "synthetic-repository"
+              },
+              "required_capabilities": [
+                "synthetic-host"
+              ],
+              "required_disciplines": [
+                "platform_architecture"
+              ],
+              "risks": [
+                "scope-drift"
+              ],
+              "schema_version": "1.0",
+              "scope": [
+                "synthetic-repository"
+              ],
+              "status": "approved_for_engineering",
+              "summary": "Assess the approved deployment boundary A.",
+              "technical_assumptions": [
+                "Use existing source evidence and canonical runtime."
+              ],
+              "title": "Assessment A"
+            },
+            "planning": {
+              "context_input_bound": 40000,
+              "context_output_bound": 8000,
+              "criterion_assessment_contracts": [
+                {
+                  "criterion": "Explain the deployment boundary with source evidence.",
+                  "requirements": [
+                    {
+                      "kind": "effect_report",
+                      "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                    }
+                  ],
+                  "schema_version": "1.0",
+                  "validity_policy": "current_revision"
+                }
+              ],
+              "dependencies": [],
+              "effect_policy": {
+                "contract_version": "1.0",
+                "delivery": "EVIDENCE_ONLY",
+                "mode": "READ_ONLY_ASSESSMENT",
+                "read_paths": [
+                  "docs/design.md"
+                ],
+                "write_paths": []
+              },
+              "human_gates": [
+                "protected-delivery"
+              ],
+              "maximum_actions": 4,
+              "maximum_consecutive_no_progress_actions": 2,
+              "mission_spec_digest": "sha256:6603d2466d4526fb94e213dbe2af223cb7f8b711ad672f462aba05a1ff54f7f5",
+              "non_goals": [
+                "Do not perform effects outside the approved mode."
+              ],
+              "provenance_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36",
+              "repository_evidence_source": {
+                "github_repository": "synthetic-owner/synthetic-repository",
+                "repository_id": "synthetic-repository"
+              },
+              "risk_inputs": [
+                "scope-drift"
+              ],
+              "scope": [
+                "synthetic-repository"
+              ],
+              "write_scopes": []
+            },
+            "progression_policy": {
+              "higher_scope_obligations": [
+                "protected-delivery"
+              ],
+              "mode": "continuous",
+              "policy_revision": "1",
+              "profile_id": "solo",
+              "profile_revision": "1",
+              "required_decision_role": "platform_architect"
+            },
+            "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36",
+            "truth": {
+              "evidence": [
+                {
+                  "content_digest": "sha256:8123fe8dbfd4a30296e38d89c4f8d77e89b1cc6bbaea13e58bc48dacf578b342",
+                  "id": "execution-source",
+                  "kind": "repository_document",
+                  "locator": "https://github.com/synthetic-owner/synthetic-repository/blob/ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920/docs/design.md",
+                  "revision": "ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920"
+                }
+              ],
+              "id": "published-context-execution-source",
+              "observed_at": "2026-10-10T09:37:53.626707+00:00",
+              "repository_id": "synthetic-repository",
+              "repository_revision": "ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920",
+              "schema_version": "1.0"
+            }
+          }
+        ],
+        "profile_id": "solo",
+        "workset_id": "released-2ac21866f3f2b01e10de012b35d3350e1dc8b6bc"
+      },
+      "effect_boundary": "FUTURE_SELECTION_ONLY",
+      "execution_ready": false,
+      "execution_resources": "NOT_OBSERVED",
+      "gaps": [
+        {
+          "code": "DEPENDENCY_ORDER_CONFLICT",
+          "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+        }
+      ],
+      "ongoing_work_cancelled": false,
+      "operator_binding": {
+        "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+        "operator_binding_version": 1,
+        "operator_id": "606a849359f4df4c"
+      },
+      "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
+      "release_key": "sha256:2ac21866f3f2b01e10de012b35d3350e1dc8b6bca09e897c3884ca8354e88ce8",
+      "scope": {
+        "instance_id": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9",
+        "project_id": "isolated-project",
+        "repository_id": "synthetic-repository"
+      },
+      "selection": {
+        "contract_version": "forge-approved-workset-release/v1",
+        "expires_at": "2026-10-10T11:37:56.667616+00:00",
+        "maximum_activations": 2,
+        "progression_mode": "continuous",
+        "subjects": [
+          {
+            "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+            "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+          },
+          {
+            "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+            "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+          }
+        ]
+      },
+      "subjects": [
+        {
+          "candidate_decisions": {
+            "architecture": {
+              "admitted_at": "2026-10-10T09:37:55.538930+00:00",
+              "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+              "canonical_decision": {
+                "capability": "ARCHITECTURE_APPROVAL",
+                "decision": "approved",
+                "decision_id": "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+                "evidence": {
+                  "planning_digest": "sha256:cfe120ccdf4f8753e19f9eba78745b0c1842c643b9a8fd00b7f5c2b5b8bb5b4b"
+                },
+                "gates": [
+                  "protected-delivery"
+                ],
+                "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+                "occurred_at": "2026-10-10T09:37:56Z",
+                "operator_id": "606a849359f4df4c",
+                "predecessor_digest": null,
+                "scope": [
+                  "synthetic-repository"
+                ],
+                "subject_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+                "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+              },
+              "canonical_decision_digest": "sha256:4372acd001befef00503f0f835d0874bd17f2ff81b3c186eac06490431ee4481",
+              "contract_version": "forge-candidate-decisions/v1",
+              "decision_id": "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+              "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+              "kind": "ARCHITECTURE",
+              "lifecycle_evidence": {
+                "actor": "primary_operator",
+                "confidence": null,
+                "decision_type": "LIFECYCLE",
+                "id": "decision-architecture_decision-4786e65a4f601fda",
+                "kind": "architecture_decision",
+                "occurred_at": "2026-10-10T09:37:55.538930+00:00",
+                "ranked_alternatives": [],
+                "rationale": "Explicit approval of the exact frozen Mission definition.",
+                "recommendation_id": "concept-recommendation-433f5ed31765b561a6a912522f272897",
+                "references": [
+                  "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+                  "concept-candidate-433f5ed31765b561a6a912522f272897",
+                  "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484",
+                  "sha256:b89f85a2350283e43fd0c8b5f247696461f8737e2d67ede1b387bd585fbc6ea3",
+                  "sha256:cfe120ccdf4f8753e19f9eba78745b0c1842c643b9a8fd00b7f5c2b5b8bb5b4b"
+                ],
+                "selected_recommendation_id": null
+              },
+              "lifecycle_evidence_digest": "sha256:2eea978683f058f64dc5a579e6f93dd9717a354b684297992f25690026a69306",
+              "operation_id": "concept-architecture-e2697ccaaa20091a756646a4b450d40f",
+              "operator_binding_version": 1,
+              "operator_id": "606a849359f4df4c",
+              "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
+              "profile_id": "solo",
+              "rationale": "Explicit approval of the exact frozen Mission definition.",
+              "request_digest": "sha256:53621a857edf722754eb0a7323c5f627a1bbbdb4297b4aef233c22bfebedcf1c",
+              "source_digest": "sha256:a1b737653f6ef4412fcc55160809358762296e027d10f49aed2c89509f452111",
+              "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+            },
+            "business": {
+              "admitted_at": "2026-10-10T09:37:55.538930+00:00",
+              "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+              "canonical_decision": {
+                "capability": "BUSINESS_APPROVAL",
+                "decision": "approved",
+                "decision_id": "candidate-business-12d7f946b1b0e8cbf7570fe8",
+                "evidence": {},
+                "gates": [
+                  "protected-delivery"
+                ],
+                "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+                "occurred_at": "2026-10-10T09:37:55Z",
+                "operator_id": "606a849359f4df4c",
+                "predecessor_digest": null,
+                "scope": [
+                  "synthetic-repository"
+                ],
+                "subject_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+                "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+              },
+              "canonical_decision_digest": "sha256:d017dea3034014b4803890a26fbe35360922489b9262a0aad09f91d1b5ed1107",
+              "contract_version": "forge-candidate-decisions/v1",
+              "decision_id": "candidate-business-12d7f946b1b0e8cbf7570fe8",
+              "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+              "kind": "BUSINESS",
+              "lifecycle_evidence": {
+                "actor": "primary_operator",
+                "confidence": null,
+                "decision_type": "LIFECYCLE",
+                "id": "decision-business_decision-544e6b17fa354405",
+                "kind": "business_decision",
+                "occurred_at": "2026-10-10T09:37:55.538930+00:00",
+                "ranked_alternatives": [],
+                "rationale": "Explicit approval of the exact frozen Mission definition.",
+                "recommendation_id": "concept-recommendation-433f5ed31765b561a6a912522f272897",
+                "references": [
+                  "candidate-business-12d7f946b1b0e8cbf7570fe8",
+                  "concept-candidate-433f5ed31765b561a6a912522f272897",
+                  "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+                ],
+                "selected_recommendation_id": null
+              },
+              "lifecycle_evidence_digest": "sha256:e6db9095a7778194e5eeb0e33a64da40995c989f59cb8f2dad3058a09973fc77",
+              "operation_id": "concept-business-e2697ccaaa20091a756646a4b450d40f",
+              "operator_binding_version": 1,
+              "operator_id": "606a849359f4df4c",
+              "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
+              "profile_id": "solo",
+              "rationale": "Explicit approval of the exact frozen Mission definition.",
+              "request_digest": "sha256:3a3e7eaaeec07c04caa0d7db05cdad0c60782016b884ca1c15eab4556996ce0f",
+              "source_digest": "sha256:a1b737653f6ef4412fcc55160809358762296e027d10f49aed2c89509f452111",
+              "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+            }
+          },
+          "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+          "definition": {
+            "acceptance_criteria": [
+              "Explain the deployment boundary with source evidence."
+            ],
+            "architecture_choices": [],
+            "business_value": "Clients can track their payments.",
+            "change_summary": "Initial proposed definition.",
+            "components": [
+              "Deployment boundary"
+            ],
+            "dependencies": [
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+            ],
+            "dependency_reasons": {
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a": "B requires the accepted source evidence from A."
+            },
+            "exclusions": [
+              "Do not perform effects outside the approved mode."
+            ],
+            "expected_result": "A portal with current invoice status.",
+            "objective": "Assess the approved deployment boundary B.",
+            "possible_subresults": [],
+            "questions": [],
+            "risks": [
+              "scope-drift"
+            ],
+            "scope": [
+              "Deployment boundary"
+            ],
+            "title": "Assessment B",
+            "work_kind": "INVESTIGATE"
+          },
+          "dependency_bindings": [
+            {
+              "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+              "kind": "REQUIRES",
+              "object_id": "concept-62ea6a99c0662cc7a1a12a02bd2e7c21",
+              "reason": "B requires the accepted source evidence from A.",
+              "state": "PROPOSED",
+              "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+            }
+          ],
+          "mission": {
+            "acceptance_criteria": [
+              "Explain the deployment boundary with source evidence."
+            ],
+            "architecture_review_reference": "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+            "business_objective": "Assess the approved deployment boundary B.",
+            "business_value": "Clients can track their payments.",
+            "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+            "criterion_assessment_contracts": [
+              {
+                "criterion": "Explain the deployment boundary with source evidence.",
+                "requirements": [
+                  {
+                    "kind": "effect_report",
+                    "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                  }
+                ],
+                "schema_version": "1.0",
+                "validity_policy": "current_revision"
+              }
+            ],
+            "dependencies": [
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+            ],
+            "effect_policy": {
+              "contract_version": "1.0",
+              "delivery": "EVIDENCE_ONLY",
+              "mode": "READ_ONLY_ASSESSMENT",
+              "read_paths": [
+                "docs/design.md"
+              ],
+              "write_paths": []
+            },
+            "engineering_constraints": [
+              "COMPONENT: Deployment boundary: Assess the existing deployment boundary.",
+              "EXCLUDED: Do not perform effects outside the approved mode.",
+              "EXPECTED RESULT: A portal with current invoice status.",
+              "IN SCOPE: Deployment boundary",
+              "Preserve the approved repository effect boundary."
+            ],
+            "id": "MISSION-PREVIEW",
+            "maximum_actions": 4,
+            "maximum_consecutive_no_progress_actions": 2,
+            "mission_recommendation_reference": "concept-recommendation-433f5ed31765b561a6a912522f272897",
+            "repository_evidence_source": {
+              "github_repository": "synthetic-owner/synthetic-repository",
+              "repository_id": "synthetic-repository"
+            },
+            "required_capabilities": [
+              "synthetic-host"
+            ],
+            "required_disciplines": [
+              "platform_architecture"
+            ],
+            "risks": [
+              "scope-drift"
+            ],
+            "schema_version": "1.0",
+            "scope": [
+              "synthetic-repository"
+            ],
+            "status": "approved_for_engineering",
+            "summary": "Assess the approved deployment boundary B.",
+            "technical_assumptions": [
+              "Use existing source evidence and canonical runtime."
+            ],
+            "title": "Assessment B"
+          },
+          "mission_id": "MISSION-0002",
+          "planning": {
+            "context_input_bound": 40000,
+            "context_output_bound": 8000,
+            "criterion_assessment_contracts": [
+              {
+                "criterion": "Explain the deployment boundary with source evidence.",
+                "requirements": [
+                  {
+                    "kind": "effect_report",
+                    "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                  }
+                ],
+                "schema_version": "1.0",
+                "validity_policy": "current_revision"
+              }
+            ],
+            "dependencies": [
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+            ],
+            "effect_policy": {
+              "contract_version": "1.0",
+              "delivery": "EVIDENCE_ONLY",
+              "mode": "READ_ONLY_ASSESSMENT",
+              "read_paths": [
+                "docs/design.md"
+              ],
+              "write_paths": []
+            },
+            "human_gates": [
+              "protected-delivery"
+            ],
+            "maximum_actions": 4,
+            "maximum_consecutive_no_progress_actions": 2,
+            "mission_spec_digest": "sha256:b89f85a2350283e43fd0c8b5f247696461f8737e2d67ede1b387bd585fbc6ea3",
+            "non_goals": [
+              "Do not perform effects outside the approved mode."
+            ],
+            "provenance_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484",
+            "repository_evidence_source": {
+              "github_repository": "synthetic-owner/synthetic-repository",
+              "repository_id": "synthetic-repository"
+            },
+            "risk_inputs": [
+              "scope-drift"
+            ],
+            "scope": [
+              "synthetic-repository"
+            ],
+            "write_scopes": []
+          },
+          "source": {
+            "context_revision": "sha256:00a1eb9937d7b716f5b8eb8843ef15de52af9ee3782c0dd68031f05a7cda217c",
+            "conversation_id": "b",
+            "conversation_revision": 3,
+            "instance_id": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9",
+            "invocation_id": "advice-invocation-318c82f1f2a14ed4b82c148271d3d680",
+            "object_id": "concept-6a88c71e3a7f05f8b9f5bcd62f8f8a09",
+            "project_id": "isolated-project",
+            "repository_id": "synthetic-repository",
+            "request_digest": "sha256:dc44c1695d0dd72b94dc6649291dcd0177040c56d3642c71b968c4a2982f0843",
+            "result_digest": "sha256:08bd45e392606c8602b3b003a82253c6379f90e85a6661b1b99e621d44d0163a",
+            "revision": 1,
+            "session_id": "advice-session-c2b7176d4b21461b95a4d2a034fc7303",
+            "turn_id": "initial"
+          },
+          "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+        },
+        {
+          "candidate_decisions": {
+            "architecture": {
+              "admitted_at": "2026-10-10T09:37:54.077390+00:00",
+              "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+              "canonical_decision": {
+                "capability": "ARCHITECTURE_APPROVAL",
+                "decision": "approved",
+                "decision_id": "candidate-architecture-60d19ca34b5bcd104056866d",
+                "evidence": {
+                  "planning_digest": "sha256:3951fd423d6f052a8f072beac7b34cb6383b93c1a6a6fb80f042434ca6e5638b"
+                },
+                "gates": [
+                  "protected-delivery"
+                ],
+                "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+                "occurred_at": "2026-10-10T09:37:54Z",
+                "operator_id": "606a849359f4df4c",
+                "predecessor_digest": null,
+                "scope": [
+                  "synthetic-repository"
+                ],
+                "subject_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+                "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+              },
+              "canonical_decision_digest": "sha256:ebe35899810ab2a3fff55f24d018fa5693ddef641aa6fb26d60d6aa7edbfc78d",
+              "contract_version": "forge-candidate-decisions/v1",
+              "decision_id": "candidate-architecture-60d19ca34b5bcd104056866d",
+              "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+              "kind": "ARCHITECTURE",
+              "lifecycle_evidence": {
+                "actor": "primary_operator",
+                "confidence": null,
+                "decision_type": "LIFECYCLE",
+                "id": "decision-architecture_decision-e25c2d6d72bdef4f",
+                "kind": "architecture_decision",
+                "occurred_at": "2026-10-10T09:37:54.077390+00:00",
+                "ranked_alternatives": [],
+                "rationale": "Explicit approval of the exact frozen Mission definition.",
+                "recommendation_id": "concept-recommendation-dc4e779bb37050523570a3ad4d545f2a",
+                "references": [
+                  "candidate-architecture-60d19ca34b5bcd104056866d",
+                  "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+                  "sha256:3951fd423d6f052a8f072beac7b34cb6383b93c1a6a6fb80f042434ca6e5638b",
+                  "sha256:6603d2466d4526fb94e213dbe2af223cb7f8b711ad672f462aba05a1ff54f7f5",
+                  "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+                ],
+                "selected_recommendation_id": null
+              },
+              "lifecycle_evidence_digest": "sha256:d079baba55de24d8c6c013fbc9809eae6837959742d463e800be6166e19201cd",
+              "operation_id": "concept-architecture-92163b95d186864005cce8f86f0c8520",
+              "operator_binding_version": 1,
+              "operator_id": "606a849359f4df4c",
+              "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
+              "profile_id": "solo",
+              "rationale": "Explicit approval of the exact frozen Mission definition.",
+              "request_digest": "sha256:3503f9979d696186b62a117191dc5eb5bc781f9f9f67d7329f1e8b7d522517c9",
+              "source_digest": "sha256:950a905687f1eb33f0697f4b2e64592e17314b3739bb8db8efcc15e570f06b97",
+              "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+            },
+            "business": {
+              "admitted_at": "2026-10-10T09:37:54.077390+00:00",
+              "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+              "canonical_decision": {
+                "capability": "BUSINESS_APPROVAL",
+                "decision": "approved",
+                "decision_id": "candidate-business-60d19ca34b5bcd104056866d",
+                "evidence": {},
+                "gates": [
+                  "protected-delivery"
+                ],
+                "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+                "occurred_at": "2026-10-10T09:37:54Z",
+                "operator_id": "606a849359f4df4c",
+                "predecessor_digest": null,
+                "scope": [
+                  "synthetic-repository"
+                ],
+                "subject_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+                "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+              },
+              "canonical_decision_digest": "sha256:694329d0632b9733aba49c8acc69fae502f6a6d0f0dafa38fd3919f3f9d533a1",
+              "contract_version": "forge-candidate-decisions/v1",
+              "decision_id": "candidate-business-60d19ca34b5bcd104056866d",
+              "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+              "kind": "BUSINESS",
+              "lifecycle_evidence": {
+                "actor": "primary_operator",
+                "confidence": null,
+                "decision_type": "LIFECYCLE",
+                "id": "decision-business_decision-1def506be0faf3b1",
+                "kind": "business_decision",
+                "occurred_at": "2026-10-10T09:37:54.077390+00:00",
+                "ranked_alternatives": [],
+                "rationale": "Explicit approval of the exact frozen Mission definition.",
+                "recommendation_id": "concept-recommendation-dc4e779bb37050523570a3ad4d545f2a",
+                "references": [
+                  "candidate-business-60d19ca34b5bcd104056866d",
+                  "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+                  "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+                ],
+                "selected_recommendation_id": null
+              },
+              "lifecycle_evidence_digest": "sha256:9e5f86a09ef9e652e81e8106796d527205314b107dc4f313c3fb2bbbc2fe0f1b",
+              "operation_id": "concept-business-92163b95d186864005cce8f86f0c8520",
+              "operator_binding_version": 1,
+              "operator_id": "606a849359f4df4c",
+              "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
+              "profile_id": "solo",
+              "rationale": "Explicit approval of the exact frozen Mission definition.",
+              "request_digest": "sha256:7adb474a6ff78230f7ccc23ec92870308e618cea0e8ed60d240dafe9f8939a09",
+              "source_digest": "sha256:950a905687f1eb33f0697f4b2e64592e17314b3739bb8db8efcc15e570f06b97",
+              "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+            }
+          },
+          "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+          "definition": {
+            "acceptance_criteria": [
+              "Explain the deployment boundary with source evidence."
+            ],
+            "architecture_choices": [],
+            "business_value": "Clients can track their payments.",
+            "change_summary": "Initial proposed definition.",
+            "components": [
+              "Deployment boundary"
+            ],
+            "dependencies": [],
+            "dependency_reasons": {},
+            "exclusions": [
+              "Do not perform effects outside the approved mode."
+            ],
+            "expected_result": "A portal with current invoice status.",
+            "objective": "Assess the approved deployment boundary A.",
+            "possible_subresults": [],
+            "questions": [],
+            "risks": [
+              "scope-drift"
+            ],
+            "scope": [
+              "Deployment boundary"
+            ],
+            "title": "Assessment A",
+            "work_kind": "INVESTIGATE"
+          },
+          "dependency_bindings": [],
+          "mission": {
+            "acceptance_criteria": [
+              "Explain the deployment boundary with source evidence."
+            ],
+            "architecture_review_reference": "candidate-architecture-60d19ca34b5bcd104056866d",
+            "business_objective": "Assess the approved deployment boundary A.",
+            "business_value": "Clients can track their payments.",
+            "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+            "criterion_assessment_contracts": [
+              {
+                "criterion": "Explain the deployment boundary with source evidence.",
+                "requirements": [
+                  {
+                    "kind": "effect_report",
+                    "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                  }
+                ],
+                "schema_version": "1.0",
+                "validity_policy": "current_revision"
+              }
+            ],
+            "dependencies": [],
+            "effect_policy": {
+              "contract_version": "1.0",
+              "delivery": "EVIDENCE_ONLY",
+              "mode": "READ_ONLY_ASSESSMENT",
+              "read_paths": [
+                "docs/design.md"
+              ],
+              "write_paths": []
+            },
+            "engineering_constraints": [
+              "COMPONENT: Deployment boundary: Assess the existing deployment boundary.",
+              "EXCLUDED: Do not perform effects outside the approved mode.",
+              "EXPECTED RESULT: A portal with current invoice status.",
+              "IN SCOPE: Deployment boundary",
+              "Preserve the approved repository effect boundary."
+            ],
+            "id": "MISSION-PREVIEW",
+            "maximum_actions": 4,
+            "maximum_consecutive_no_progress_actions": 2,
+            "mission_recommendation_reference": "concept-recommendation-dc4e779bb37050523570a3ad4d545f2a",
+            "repository_evidence_source": {
+              "github_repository": "synthetic-owner/synthetic-repository",
+              "repository_id": "synthetic-repository"
+            },
+            "required_capabilities": [
+              "synthetic-host"
+            ],
+            "required_disciplines": [
+              "platform_architecture"
+            ],
+            "risks": [
+              "scope-drift"
+            ],
+            "schema_version": "1.0",
+            "scope": [
+              "synthetic-repository"
+            ],
+            "status": "approved_for_engineering",
+            "summary": "Assess the approved deployment boundary A.",
+            "technical_assumptions": [
+              "Use existing source evidence and canonical runtime."
+            ],
+            "title": "Assessment A"
+          },
+          "mission_id": "MISSION-0001",
+          "planning": {
+            "context_input_bound": 40000,
+            "context_output_bound": 8000,
+            "criterion_assessment_contracts": [
+              {
+                "criterion": "Explain the deployment boundary with source evidence.",
+                "requirements": [
+                  {
+                    "kind": "effect_report",
+                    "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                  }
+                ],
+                "schema_version": "1.0",
+                "validity_policy": "current_revision"
+              }
+            ],
+            "dependencies": [],
+            "effect_policy": {
+              "contract_version": "1.0",
+              "delivery": "EVIDENCE_ONLY",
+              "mode": "READ_ONLY_ASSESSMENT",
+              "read_paths": [
+                "docs/design.md"
+              ],
+              "write_paths": []
+            },
+            "human_gates": [
+              "protected-delivery"
+            ],
+            "maximum_actions": 4,
+            "maximum_consecutive_no_progress_actions": 2,
+            "mission_spec_digest": "sha256:6603d2466d4526fb94e213dbe2af223cb7f8b711ad672f462aba05a1ff54f7f5",
+            "non_goals": [
+              "Do not perform effects outside the approved mode."
+            ],
+            "provenance_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36",
+            "repository_evidence_source": {
+              "github_repository": "synthetic-owner/synthetic-repository",
+              "repository_id": "synthetic-repository"
+            },
+            "risk_inputs": [
+              "scope-drift"
+            ],
+            "scope": [
+              "synthetic-repository"
+            ],
+            "write_scopes": []
+          },
+          "source": {
+            "context_revision": "sha256:cc12152ab83da995feca93674f4c9578f0fd1a6db9917fa34028d27a40041166",
+            "conversation_id": "a",
+            "conversation_revision": 3,
+            "instance_id": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9",
+            "invocation_id": "advice-invocation-67402cc2d5a8474490414b14441b3268",
+            "object_id": "concept-62ea6a99c0662cc7a1a12a02bd2e7c21",
+            "project_id": "isolated-project",
+            "repository_id": "synthetic-repository",
+            "request_digest": "sha256:ef4c944d8574ef7ccd5c8e2d97e5bc78ac646bd96e7d36412dfd398305d77930",
+            "result_digest": "sha256:643ecd75183010c54b67186d6084e3688efec8123620e6a1d4d23bbbe16a4ec7",
+            "revision": 1,
+            "session_id": "advice-session-282931ac92d74a1c8f8458161241b092",
+            "turn_id": "initial"
+          },
+          "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+        }
+      ]
+    },
+    "package_digest": "sha256:111a015799c5db380dd4e475103d577009996e30deea4176ff2136618213136c",
+    "read_only": true,
+    "release_supported": false
+  },
+  "changed": {
+    "additional_model_calls": 0,
+    "contract_version": "forge-approved-workset-release/v1",
+    "gaps": [
+      {
+        "code": "DEPENDENCY_SUBJECT_CHANGED",
+        "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+      }
+    ],
+    "package": {
+      "additional_model_calls": 0,
+      "contract_version": "forge-approved-workset-release/v1",
+      "definition": {
+        "contract_version": "forge-approved-worklist/v1",
+        "expires_at": "2026-10-10T11:37:56.667616+00:00",
+        "maximum_activations": 2,
+        "members": [
+          {
+            "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+            "dependencies": [],
+            "mission": {
+              "acceptance_criteria": [
+                "Explain the deployment boundary with source evidence."
+              ],
+              "architecture_review_reference": "candidate-architecture-60d19ca34b5bcd104056866d",
+              "business_objective": "Assess the approved deployment boundary A.",
+              "business_value": "Clients can track their payments.",
+              "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+              "criterion_assessment_contracts": [
+                {
+                  "criterion": "Explain the deployment boundary with source evidence.",
+                  "requirements": [
+                    {
+                      "kind": "effect_report",
+                      "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                    }
+                  ],
+                  "schema_version": "1.0",
+                  "validity_policy": "current_revision"
+                }
+              ],
+              "dependencies": [],
+              "effect_policy": {
+                "contract_version": "1.0",
+                "delivery": "EVIDENCE_ONLY",
+                "mode": "READ_ONLY_ASSESSMENT",
+                "read_paths": [
+                  "docs/design.md"
+                ],
+                "write_paths": []
+              },
+              "engineering_constraints": [
+                "COMPONENT: Deployment boundary: Assess the existing deployment boundary.",
+                "EXCLUDED: Do not perform effects outside the approved mode.",
+                "EXPECTED RESULT: A portal with current invoice status.",
+                "IN SCOPE: Deployment boundary",
+                "Preserve the approved repository effect boundary."
+              ],
+              "id": "MISSION-PREVIEW",
+              "maximum_actions": 4,
+              "maximum_consecutive_no_progress_actions": 2,
+              "mission_recommendation_reference": "concept-recommendation-dc4e779bb37050523570a3ad4d545f2a",
+              "repository_evidence_source": {
+                "github_repository": "synthetic-owner/synthetic-repository",
+                "repository_id": "synthetic-repository"
+              },
+              "required_capabilities": [
+                "synthetic-host"
+              ],
+              "required_disciplines": [
+                "platform_architecture"
+              ],
+              "risks": [
+                "scope-drift"
+              ],
+              "schema_version": "1.0",
+              "scope": [
+                "synthetic-repository"
+              ],
+              "status": "approved_for_engineering",
+              "summary": "Assess the approved deployment boundary A.",
+              "technical_assumptions": [
+                "Use existing source evidence and canonical runtime."
+              ],
+              "title": "Assessment A"
+            },
+            "planning": {
+              "context_input_bound": 40000,
+              "context_output_bound": 8000,
+              "criterion_assessment_contracts": [
+                {
+                  "criterion": "Explain the deployment boundary with source evidence.",
+                  "requirements": [
+                    {
+                      "kind": "effect_report",
+                      "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                    }
+                  ],
+                  "schema_version": "1.0",
+                  "validity_policy": "current_revision"
+                }
+              ],
+              "dependencies": [],
+              "effect_policy": {
+                "contract_version": "1.0",
+                "delivery": "EVIDENCE_ONLY",
+                "mode": "READ_ONLY_ASSESSMENT",
+                "read_paths": [
+                  "docs/design.md"
+                ],
+                "write_paths": []
+              },
+              "human_gates": [
+                "protected-delivery"
+              ],
+              "maximum_actions": 4,
+              "maximum_consecutive_no_progress_actions": 2,
+              "mission_spec_digest": "sha256:6603d2466d4526fb94e213dbe2af223cb7f8b711ad672f462aba05a1ff54f7f5",
+              "non_goals": [
+                "Do not perform effects outside the approved mode."
+              ],
+              "provenance_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36",
+              "repository_evidence_source": {
+                "github_repository": "synthetic-owner/synthetic-repository",
+                "repository_id": "synthetic-repository"
+              },
+              "risk_inputs": [
+                "scope-drift"
+              ],
+              "scope": [
+                "synthetic-repository"
+              ],
+              "write_scopes": []
+            },
+            "progression_policy": {
+              "higher_scope_obligations": [
+                "protected-delivery"
+              ],
+              "mode": "continuous",
+              "policy_revision": "1",
+              "profile_id": "solo",
+              "profile_revision": "1",
+              "required_decision_role": "platform_architect"
+            },
+            "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36",
+            "truth": {
+              "evidence": [
+                {
+                  "content_digest": "sha256:8123fe8dbfd4a30296e38d89c4f8d77e89b1cc6bbaea13e58bc48dacf578b342",
+                  "id": "execution-source",
+                  "kind": "repository_document",
+                  "locator": "https://github.com/synthetic-owner/synthetic-repository/blob/ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920/docs/design.md",
+                  "revision": "ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920"
+                }
+              ],
+              "id": "published-context-execution-source",
+              "observed_at": "2026-10-10T09:37:53.626707+00:00",
+              "repository_id": "synthetic-repository",
+              "repository_revision": "ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920",
+              "schema_version": "1.0"
+            }
+          },
+          {
+            "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+            "dependencies": [
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+            ],
+            "mission": {
+              "acceptance_criteria": [
+                "Explain the deployment boundary with source evidence."
+              ],
+              "architecture_review_reference": "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+              "business_objective": "Assess the approved deployment boundary B.",
+              "business_value": "Clients can track their payments.",
+              "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+              "criterion_assessment_contracts": [
+                {
+                  "criterion": "Explain the deployment boundary with source evidence.",
+                  "requirements": [
+                    {
+                      "kind": "effect_report",
+                      "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                    }
+                  ],
+                  "schema_version": "1.0",
+                  "validity_policy": "current_revision"
+                }
+              ],
+              "dependencies": [
+                "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+              ],
+              "effect_policy": {
+                "contract_version": "1.0",
+                "delivery": "EVIDENCE_ONLY",
+                "mode": "READ_ONLY_ASSESSMENT",
+                "read_paths": [
+                  "docs/design.md"
+                ],
+                "write_paths": []
+              },
+              "engineering_constraints": [
+                "COMPONENT: Deployment boundary: Assess the existing deployment boundary.",
+                "EXCLUDED: Do not perform effects outside the approved mode.",
+                "EXPECTED RESULT: A portal with current invoice status.",
+                "IN SCOPE: Deployment boundary",
+                "Preserve the approved repository effect boundary."
+              ],
+              "id": "MISSION-PREVIEW",
+              "maximum_actions": 4,
+              "maximum_consecutive_no_progress_actions": 2,
+              "mission_recommendation_reference": "concept-recommendation-433f5ed31765b561a6a912522f272897",
+              "repository_evidence_source": {
+                "github_repository": "synthetic-owner/synthetic-repository",
+                "repository_id": "synthetic-repository"
+              },
+              "required_capabilities": [
+                "synthetic-host"
+              ],
+              "required_disciplines": [
+                "platform_architecture"
+              ],
+              "risks": [
+                "scope-drift"
+              ],
+              "schema_version": "1.0",
+              "scope": [
+                "synthetic-repository"
+              ],
+              "status": "approved_for_engineering",
+              "summary": "Assess the approved deployment boundary B.",
+              "technical_assumptions": [
+                "Use existing source evidence and canonical runtime."
+              ],
+              "title": "Assessment B"
+            },
+            "planning": {
+              "context_input_bound": 40000,
+              "context_output_bound": 8000,
+              "criterion_assessment_contracts": [
+                {
+                  "criterion": "Explain the deployment boundary with source evidence.",
+                  "requirements": [
+                    {
+                      "kind": "effect_report",
+                      "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                    }
+                  ],
+                  "schema_version": "1.0",
+                  "validity_policy": "current_revision"
+                }
+              ],
+              "dependencies": [
+                "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+              ],
+              "effect_policy": {
+                "contract_version": "1.0",
+                "delivery": "EVIDENCE_ONLY",
+                "mode": "READ_ONLY_ASSESSMENT",
+                "read_paths": [
+                  "docs/design.md"
+                ],
+                "write_paths": []
+              },
+              "human_gates": [
+                "protected-delivery"
+              ],
+              "maximum_actions": 4,
+              "maximum_consecutive_no_progress_actions": 2,
+              "mission_spec_digest": "sha256:b89f85a2350283e43fd0c8b5f247696461f8737e2d67ede1b387bd585fbc6ea3",
+              "non_goals": [
+                "Do not perform effects outside the approved mode."
+              ],
+              "provenance_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484",
+              "repository_evidence_source": {
+                "github_repository": "synthetic-owner/synthetic-repository",
+                "repository_id": "synthetic-repository"
+              },
+              "risk_inputs": [
+                "scope-drift"
+              ],
+              "scope": [
+                "synthetic-repository"
+              ],
+              "write_scopes": []
+            },
+            "progression_policy": {
+              "higher_scope_obligations": [
+                "protected-delivery"
+              ],
+              "mode": "continuous",
+              "policy_revision": "1",
+              "profile_id": "solo",
+              "profile_revision": "1",
+              "required_decision_role": "platform_architect"
+            },
+            "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484",
+            "truth": {
+              "evidence": [
+                {
+                  "content_digest": "sha256:8123fe8dbfd4a30296e38d89c4f8d77e89b1cc6bbaea13e58bc48dacf578b342",
+                  "id": "execution-source",
+                  "kind": "repository_document",
+                  "locator": "https://github.com/synthetic-owner/synthetic-repository/blob/ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920/docs/design.md",
+                  "revision": "ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920"
+                }
+              ],
+              "id": "published-context-execution-source",
+              "observed_at": "2026-10-10T09:37:53.626707+00:00",
+              "repository_id": "synthetic-repository",
+              "repository_revision": "ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920",
+              "schema_version": "1.0"
+            }
+          }
+        ],
+        "profile_id": "solo",
+        "workset_id": "released-0e58370ab6fc888b383072dc856883cd098f0006"
+      },
+      "effect_boundary": "FUTURE_SELECTION_ONLY",
+      "execution_ready": false,
+      "execution_resources": "NOT_OBSERVED",
+      "gaps": [
+        {
+          "code": "DEPENDENCY_SUBJECT_CHANGED",
+          "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+        }
+      ],
+      "ongoing_work_cancelled": false,
+      "operator_binding": {
+        "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+        "operator_binding_version": 1,
+        "operator_id": "606a849359f4df4c"
+      },
+      "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
+      "release_key": "sha256:0e58370ab6fc888b383072dc856883cd098f00061a4c38e06ea355c5a58f023e",
+      "scope": {
+        "instance_id": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9",
+        "project_id": "isolated-project",
+        "repository_id": "synthetic-repository"
+      },
+      "selection": {
+        "contract_version": "forge-approved-workset-release/v1",
+        "expires_at": "2026-10-10T11:37:56.667616+00:00",
+        "maximum_activations": 2,
+        "progression_mode": "continuous",
+        "subjects": [
+          {
+            "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+            "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+          },
+          {
+            "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+            "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+          }
+        ]
+      },
+      "subjects": [
+        {
+          "candidate_decisions": {
+            "architecture": {
+              "admitted_at": "2026-10-10T09:37:54.077390+00:00",
+              "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+              "canonical_decision": {
+                "capability": "ARCHITECTURE_APPROVAL",
+                "decision": "approved",
+                "decision_id": "candidate-architecture-60d19ca34b5bcd104056866d",
+                "evidence": {
+                  "planning_digest": "sha256:3951fd423d6f052a8f072beac7b34cb6383b93c1a6a6fb80f042434ca6e5638b"
+                },
+                "gates": [
+                  "protected-delivery"
+                ],
+                "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+                "occurred_at": "2026-10-10T09:37:54Z",
+                "operator_id": "606a849359f4df4c",
+                "predecessor_digest": null,
+                "scope": [
+                  "synthetic-repository"
+                ],
+                "subject_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+                "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+              },
+              "canonical_decision_digest": "sha256:ebe35899810ab2a3fff55f24d018fa5693ddef641aa6fb26d60d6aa7edbfc78d",
+              "contract_version": "forge-candidate-decisions/v1",
+              "decision_id": "candidate-architecture-60d19ca34b5bcd104056866d",
+              "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+              "kind": "ARCHITECTURE",
+              "lifecycle_evidence": {
+                "actor": "primary_operator",
+                "confidence": null,
+                "decision_type": "LIFECYCLE",
+                "id": "decision-architecture_decision-e25c2d6d72bdef4f",
+                "kind": "architecture_decision",
+                "occurred_at": "2026-10-10T09:37:54.077390+00:00",
+                "ranked_alternatives": [],
+                "rationale": "Explicit approval of the exact frozen Mission definition.",
+                "recommendation_id": "concept-recommendation-dc4e779bb37050523570a3ad4d545f2a",
+                "references": [
+                  "candidate-architecture-60d19ca34b5bcd104056866d",
+                  "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+                  "sha256:3951fd423d6f052a8f072beac7b34cb6383b93c1a6a6fb80f042434ca6e5638b",
+                  "sha256:6603d2466d4526fb94e213dbe2af223cb7f8b711ad672f462aba05a1ff54f7f5",
+                  "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+                ],
+                "selected_recommendation_id": null
+              },
+              "lifecycle_evidence_digest": "sha256:d079baba55de24d8c6c013fbc9809eae6837959742d463e800be6166e19201cd",
+              "operation_id": "concept-architecture-92163b95d186864005cce8f86f0c8520",
+              "operator_binding_version": 1,
+              "operator_id": "606a849359f4df4c",
+              "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
+              "profile_id": "solo",
+              "rationale": "Explicit approval of the exact frozen Mission definition.",
+              "request_digest": "sha256:3503f9979d696186b62a117191dc5eb5bc781f9f9f67d7329f1e8b7d522517c9",
+              "source_digest": "sha256:950a905687f1eb33f0697f4b2e64592e17314b3739bb8db8efcc15e570f06b97",
+              "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+            },
+            "business": {
+              "admitted_at": "2026-10-10T09:37:54.077390+00:00",
+              "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+              "canonical_decision": {
+                "capability": "BUSINESS_APPROVAL",
+                "decision": "approved",
+                "decision_id": "candidate-business-60d19ca34b5bcd104056866d",
+                "evidence": {},
+                "gates": [
+                  "protected-delivery"
+                ],
+                "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+                "occurred_at": "2026-10-10T09:37:54Z",
+                "operator_id": "606a849359f4df4c",
+                "predecessor_digest": null,
+                "scope": [
+                  "synthetic-repository"
+                ],
+                "subject_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+                "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+              },
+              "canonical_decision_digest": "sha256:694329d0632b9733aba49c8acc69fae502f6a6d0f0dafa38fd3919f3f9d533a1",
+              "contract_version": "forge-candidate-decisions/v1",
+              "decision_id": "candidate-business-60d19ca34b5bcd104056866d",
+              "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+              "kind": "BUSINESS",
+              "lifecycle_evidence": {
+                "actor": "primary_operator",
+                "confidence": null,
+                "decision_type": "LIFECYCLE",
+                "id": "decision-business_decision-1def506be0faf3b1",
+                "kind": "business_decision",
+                "occurred_at": "2026-10-10T09:37:54.077390+00:00",
+                "ranked_alternatives": [],
+                "rationale": "Explicit approval of the exact frozen Mission definition.",
+                "recommendation_id": "concept-recommendation-dc4e779bb37050523570a3ad4d545f2a",
+                "references": [
+                  "candidate-business-60d19ca34b5bcd104056866d",
+                  "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+                  "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+                ],
+                "selected_recommendation_id": null
+              },
+              "lifecycle_evidence_digest": "sha256:9e5f86a09ef9e652e81e8106796d527205314b107dc4f313c3fb2bbbc2fe0f1b",
+              "operation_id": "concept-business-92163b95d186864005cce8f86f0c8520",
+              "operator_binding_version": 1,
+              "operator_id": "606a849359f4df4c",
+              "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
+              "profile_id": "solo",
+              "rationale": "Explicit approval of the exact frozen Mission definition.",
+              "request_digest": "sha256:7adb474a6ff78230f7ccc23ec92870308e618cea0e8ed60d240dafe9f8939a09",
+              "source_digest": "sha256:950a905687f1eb33f0697f4b2e64592e17314b3739bb8db8efcc15e570f06b97",
+              "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+            }
+          },
+          "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+          "definition": {
+            "acceptance_criteria": [
+              "Explain the deployment boundary with source evidence."
+            ],
+            "architecture_choices": [],
+            "business_value": "Clients can track their payments.",
+            "change_summary": "Initial proposed definition.",
+            "components": [
+              "Deployment boundary"
+            ],
+            "dependencies": [],
+            "dependency_reasons": {},
+            "exclusions": [
+              "Do not perform effects outside the approved mode."
+            ],
+            "expected_result": "A portal with current invoice status.",
+            "objective": "Assess the approved deployment boundary A.",
+            "possible_subresults": [],
+            "questions": [],
+            "risks": [
+              "scope-drift"
+            ],
+            "scope": [
+              "Deployment boundary"
+            ],
+            "title": "Assessment A",
+            "work_kind": "INVESTIGATE"
+          },
+          "dependency_bindings": [],
+          "mission": {
+            "acceptance_criteria": [
+              "Explain the deployment boundary with source evidence."
+            ],
+            "architecture_review_reference": "candidate-architecture-60d19ca34b5bcd104056866d",
+            "business_objective": "Assess the approved deployment boundary A.",
+            "business_value": "Clients can track their payments.",
+            "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+            "criterion_assessment_contracts": [
+              {
+                "criterion": "Explain the deployment boundary with source evidence.",
+                "requirements": [
+                  {
+                    "kind": "effect_report",
+                    "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                  }
+                ],
+                "schema_version": "1.0",
+                "validity_policy": "current_revision"
+              }
+            ],
+            "dependencies": [],
+            "effect_policy": {
+              "contract_version": "1.0",
+              "delivery": "EVIDENCE_ONLY",
+              "mode": "READ_ONLY_ASSESSMENT",
+              "read_paths": [
+                "docs/design.md"
+              ],
+              "write_paths": []
+            },
+            "engineering_constraints": [
+              "COMPONENT: Deployment boundary: Assess the existing deployment boundary.",
+              "EXCLUDED: Do not perform effects outside the approved mode.",
+              "EXPECTED RESULT: A portal with current invoice status.",
+              "IN SCOPE: Deployment boundary",
+              "Preserve the approved repository effect boundary."
+            ],
+            "id": "MISSION-PREVIEW",
+            "maximum_actions": 4,
+            "maximum_consecutive_no_progress_actions": 2,
+            "mission_recommendation_reference": "concept-recommendation-dc4e779bb37050523570a3ad4d545f2a",
+            "repository_evidence_source": {
+              "github_repository": "synthetic-owner/synthetic-repository",
+              "repository_id": "synthetic-repository"
+            },
+            "required_capabilities": [
+              "synthetic-host"
+            ],
+            "required_disciplines": [
+              "platform_architecture"
+            ],
+            "risks": [
+              "scope-drift"
+            ],
+            "schema_version": "1.0",
+            "scope": [
+              "synthetic-repository"
+            ],
+            "status": "approved_for_engineering",
+            "summary": "Assess the approved deployment boundary A.",
+            "technical_assumptions": [
+              "Use existing source evidence and canonical runtime."
+            ],
+            "title": "Assessment A"
+          },
+          "mission_id": "MISSION-0001",
+          "planning": {
+            "context_input_bound": 40000,
+            "context_output_bound": 8000,
+            "criterion_assessment_contracts": [
+              {
+                "criterion": "Explain the deployment boundary with source evidence.",
+                "requirements": [
+                  {
+                    "kind": "effect_report",
+                    "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                  }
+                ],
+                "schema_version": "1.0",
+                "validity_policy": "current_revision"
+              }
+            ],
+            "dependencies": [],
+            "effect_policy": {
+              "contract_version": "1.0",
+              "delivery": "EVIDENCE_ONLY",
+              "mode": "READ_ONLY_ASSESSMENT",
+              "read_paths": [
+                "docs/design.md"
+              ],
+              "write_paths": []
+            },
+            "human_gates": [
+              "protected-delivery"
+            ],
+            "maximum_actions": 4,
+            "maximum_consecutive_no_progress_actions": 2,
+            "mission_spec_digest": "sha256:6603d2466d4526fb94e213dbe2af223cb7f8b711ad672f462aba05a1ff54f7f5",
+            "non_goals": [
+              "Do not perform effects outside the approved mode."
+            ],
+            "provenance_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36",
+            "repository_evidence_source": {
+              "github_repository": "synthetic-owner/synthetic-repository",
+              "repository_id": "synthetic-repository"
+            },
+            "risk_inputs": [
+              "scope-drift"
+            ],
+            "scope": [
+              "synthetic-repository"
+            ],
+            "write_scopes": []
+          },
+          "source": {
+            "context_revision": "sha256:cc12152ab83da995feca93674f4c9578f0fd1a6db9917fa34028d27a40041166",
+            "conversation_id": "a",
+            "conversation_revision": 3,
+            "instance_id": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9",
+            "invocation_id": "advice-invocation-67402cc2d5a8474490414b14441b3268",
+            "object_id": "concept-62ea6a99c0662cc7a1a12a02bd2e7c21",
+            "project_id": "isolated-project",
+            "repository_id": "synthetic-repository",
+            "request_digest": "sha256:ef4c944d8574ef7ccd5c8e2d97e5bc78ac646bd96e7d36412dfd398305d77930",
+            "result_digest": "sha256:643ecd75183010c54b67186d6084e3688efec8123620e6a1d4d23bbbe16a4ec7",
+            "revision": 1,
+            "session_id": "advice-session-282931ac92d74a1c8f8458161241b092",
+            "turn_id": "initial"
+          },
+          "subject_revision": "sha256:96c9243417642e2d3253f7419d307ca8222fff5b532a7b9ad6d8ad10fa015e36"
+        },
+        {
+          "candidate_decisions": {
+            "architecture": {
+              "admitted_at": "2026-10-10T09:37:55.538930+00:00",
+              "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+              "canonical_decision": {
+                "capability": "ARCHITECTURE_APPROVAL",
+                "decision": "approved",
+                "decision_id": "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+                "evidence": {
+                  "planning_digest": "sha256:cfe120ccdf4f8753e19f9eba78745b0c1842c643b9a8fd00b7f5c2b5b8bb5b4b"
+                },
+                "gates": [
+                  "protected-delivery"
+                ],
+                "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+                "occurred_at": "2026-10-10T09:37:56Z",
+                "operator_id": "606a849359f4df4c",
+                "predecessor_digest": null,
+                "scope": [
+                  "synthetic-repository"
+                ],
+                "subject_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+                "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+              },
+              "canonical_decision_digest": "sha256:4372acd001befef00503f0f835d0874bd17f2ff81b3c186eac06490431ee4481",
+              "contract_version": "forge-candidate-decisions/v1",
+              "decision_id": "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+              "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+              "kind": "ARCHITECTURE",
+              "lifecycle_evidence": {
+                "actor": "primary_operator",
+                "confidence": null,
+                "decision_type": "LIFECYCLE",
+                "id": "decision-architecture_decision-4786e65a4f601fda",
+                "kind": "architecture_decision",
+                "occurred_at": "2026-10-10T09:37:55.538930+00:00",
+                "ranked_alternatives": [],
+                "rationale": "Explicit approval of the exact frozen Mission definition.",
+                "recommendation_id": "concept-recommendation-433f5ed31765b561a6a912522f272897",
+                "references": [
+                  "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+                  "concept-candidate-433f5ed31765b561a6a912522f272897",
+                  "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484",
+                  "sha256:b89f85a2350283e43fd0c8b5f247696461f8737e2d67ede1b387bd585fbc6ea3",
+                  "sha256:cfe120ccdf4f8753e19f9eba78745b0c1842c643b9a8fd00b7f5c2b5b8bb5b4b"
+                ],
+                "selected_recommendation_id": null
+              },
+              "lifecycle_evidence_digest": "sha256:2eea978683f058f64dc5a579e6f93dd9717a354b684297992f25690026a69306",
+              "operation_id": "concept-architecture-e2697ccaaa20091a756646a4b450d40f",
+              "operator_binding_version": 1,
+              "operator_id": "606a849359f4df4c",
+              "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
+              "profile_id": "solo",
+              "rationale": "Explicit approval of the exact frozen Mission definition.",
+              "request_digest": "sha256:53621a857edf722754eb0a7323c5f627a1bbbdb4297b4aef233c22bfebedcf1c",
+              "source_digest": "sha256:a1b737653f6ef4412fcc55160809358762296e027d10f49aed2c89509f452111",
+              "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+            },
+            "business": {
+              "admitted_at": "2026-10-10T09:37:55.538930+00:00",
+              "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+              "canonical_decision": {
+                "capability": "BUSINESS_APPROVAL",
+                "decision": "approved",
+                "decision_id": "candidate-business-12d7f946b1b0e8cbf7570fe8",
+                "evidence": {},
+                "gates": [
+                  "protected-delivery"
+                ],
+                "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+                "occurred_at": "2026-10-10T09:37:55Z",
+                "operator_id": "606a849359f4df4c",
+                "predecessor_digest": null,
+                "scope": [
+                  "synthetic-repository"
+                ],
+                "subject_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+                "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+              },
+              "canonical_decision_digest": "sha256:d017dea3034014b4803890a26fbe35360922489b9262a0aad09f91d1b5ed1107",
+              "contract_version": "forge-candidate-decisions/v1",
+              "decision_id": "candidate-business-12d7f946b1b0e8cbf7570fe8",
+              "installation_id": "2170a094-741e-4d91-872a-9c7d6cba27aa",
+              "kind": "BUSINESS",
+              "lifecycle_evidence": {
+                "actor": "primary_operator",
+                "confidence": null,
+                "decision_type": "LIFECYCLE",
+                "id": "decision-business_decision-544e6b17fa354405",
+                "kind": "business_decision",
+                "occurred_at": "2026-10-10T09:37:55.538930+00:00",
+                "ranked_alternatives": [],
+                "rationale": "Explicit approval of the exact frozen Mission definition.",
+                "recommendation_id": "concept-recommendation-433f5ed31765b561a6a912522f272897",
+                "references": [
+                  "candidate-business-12d7f946b1b0e8cbf7570fe8",
+                  "concept-candidate-433f5ed31765b561a6a912522f272897",
+                  "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+                ],
+                "selected_recommendation_id": null
+              },
+              "lifecycle_evidence_digest": "sha256:e6db9095a7778194e5eeb0e33a64da40995c989f59cb8f2dad3058a09973fc77",
+              "operation_id": "concept-business-e2697ccaaa20091a756646a4b450d40f",
+              "operator_binding_version": 1,
+              "operator_id": "606a849359f4df4c",
+              "principal_reference": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9:606a849359f4df4c",
+              "profile_id": "solo",
+              "rationale": "Explicit approval of the exact frozen Mission definition.",
+              "request_digest": "sha256:3a3e7eaaeec07c04caa0d7db05cdad0c60782016b884ca1c15eab4556996ce0f",
+              "source_digest": "sha256:a1b737653f6ef4412fcc55160809358762296e027d10f49aed2c89509f452111",
+              "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+            }
+          },
+          "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+          "definition": {
+            "acceptance_criteria": [
+              "Explain the deployment boundary with source evidence."
+            ],
+            "architecture_choices": [],
+            "business_value": "Clients can track their payments.",
+            "change_summary": "Initial proposed definition.",
+            "components": [
+              "Deployment boundary"
+            ],
+            "dependencies": [
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+            ],
+            "dependency_reasons": {
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a": "B requires the accepted source evidence from A."
+            },
+            "exclusions": [
+              "Do not perform effects outside the approved mode."
+            ],
+            "expected_result": "A portal with current invoice status.",
+            "objective": "Assess the approved deployment boundary B.",
+            "possible_subresults": [],
+            "questions": [],
+            "risks": [
+              "scope-drift"
+            ],
+            "scope": [
+              "Deployment boundary"
+            ],
+            "title": "Assessment B",
+            "work_kind": "INVESTIGATE"
+          },
+          "dependency_bindings": [
+            {
+              "candidate_id": "concept-candidate-dc4e779bb37050523570a3ad4d545f2a",
+              "kind": "REQUIRES",
+              "object_id": "concept-62ea6a99c0662cc7a1a12a02bd2e7c21",
+              "reason": "B requires the accepted source evidence from A.",
+              "state": "PROPOSED",
+              "subject_revision": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+            }
+          ],
+          "mission": {
+            "acceptance_criteria": [
+              "Explain the deployment boundary with source evidence."
+            ],
+            "architecture_review_reference": "candidate-architecture-12d7f946b1b0e8cbf7570fe8",
+            "business_objective": "Assess the approved deployment boundary B.",
+            "business_value": "Clients can track their payments.",
+            "candidate_id": "concept-candidate-433f5ed31765b561a6a912522f272897",
+            "criterion_assessment_contracts": [
+              {
+                "criterion": "Explain the deployment boundary with source evidence.",
+                "requirements": [
+                  {
+                    "kind": "effect_report",
+                    "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                  }
+                ],
+                "schema_version": "1.0",
+                "validity_policy": "current_revision"
+              }
+            ],
+            "dependencies": [
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+            ],
+            "effect_policy": {
+              "contract_version": "1.0",
+              "delivery": "EVIDENCE_ONLY",
+              "mode": "READ_ONLY_ASSESSMENT",
+              "read_paths": [
+                "docs/design.md"
+              ],
+              "write_paths": []
+            },
+            "engineering_constraints": [
+              "COMPONENT: Deployment boundary: Assess the existing deployment boundary.",
+              "EXCLUDED: Do not perform effects outside the approved mode.",
+              "EXPECTED RESULT: A portal with current invoice status.",
+              "IN SCOPE: Deployment boundary",
+              "Preserve the approved repository effect boundary."
+            ],
+            "id": "MISSION-PREVIEW",
+            "maximum_actions": 4,
+            "maximum_consecutive_no_progress_actions": 2,
+            "mission_recommendation_reference": "concept-recommendation-433f5ed31765b561a6a912522f272897",
+            "repository_evidence_source": {
+              "github_repository": "synthetic-owner/synthetic-repository",
+              "repository_id": "synthetic-repository"
+            },
+            "required_capabilities": [
+              "synthetic-host"
+            ],
+            "required_disciplines": [
+              "platform_architecture"
+            ],
+            "risks": [
+              "scope-drift"
+            ],
+            "schema_version": "1.0",
+            "scope": [
+              "synthetic-repository"
+            ],
+            "status": "approved_for_engineering",
+            "summary": "Assess the approved deployment boundary B.",
+            "technical_assumptions": [
+              "Use existing source evidence and canonical runtime."
+            ],
+            "title": "Assessment B"
+          },
+          "mission_id": "MISSION-0002",
+          "planning": {
+            "context_input_bound": 40000,
+            "context_output_bound": 8000,
+            "criterion_assessment_contracts": [
+              {
+                "criterion": "Explain the deployment boundary with source evidence.",
+                "requirements": [
+                  {
+                    "kind": "effect_report",
+                    "requirement_id": "criterion-897ac2f04ff37cd7d3ec91eecf6ac19b"
+                  }
+                ],
+                "schema_version": "1.0",
+                "validity_policy": "current_revision"
+              }
+            ],
+            "dependencies": [
+              "concept-candidate-dc4e779bb37050523570a3ad4d545f2a"
+            ],
+            "effect_policy": {
+              "contract_version": "1.0",
+              "delivery": "EVIDENCE_ONLY",
+              "mode": "READ_ONLY_ASSESSMENT",
+              "read_paths": [
+                "docs/design.md"
+              ],
+              "write_paths": []
+            },
+            "human_gates": [
+              "protected-delivery"
+            ],
+            "maximum_actions": 4,
+            "maximum_consecutive_no_progress_actions": 2,
+            "mission_spec_digest": "sha256:b89f85a2350283e43fd0c8b5f247696461f8737e2d67ede1b387bd585fbc6ea3",
+            "non_goals": [
+              "Do not perform effects outside the approved mode."
+            ],
+            "provenance_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484",
+            "repository_evidence_source": {
+              "github_repository": "synthetic-owner/synthetic-repository",
+              "repository_id": "synthetic-repository"
+            },
+            "risk_inputs": [
+              "scope-drift"
+            ],
+            "scope": [
+              "synthetic-repository"
+            ],
+            "write_scopes": []
+          },
+          "source": {
+            "context_revision": "sha256:00a1eb9937d7b716f5b8eb8843ef15de52af9ee3782c0dd68031f05a7cda217c",
+            "conversation_id": "b",
+            "conversation_revision": 3,
+            "instance_id": "forge-runtime-57aa9d26-15b3-4411-9412-d2ee4ebacfe9",
+            "invocation_id": "advice-invocation-318c82f1f2a14ed4b82c148271d3d680",
+            "object_id": "concept-6a88c71e3a7f05f8b9f5bcd62f8f8a09",
+            "project_id": "isolated-project",
+            "repository_id": "synthetic-repository",
+            "request_digest": "sha256:dc44c1695d0dd72b94dc6649291dcd0177040c56d3642c71b968c4a2982f0843",
+            "result_digest": "sha256:08bd45e392606c8602b3b003a82253c6379f90e85a6661b1b99e621d44d0163a",
+            "revision": 1,
+            "session_id": "advice-session-c2b7176d4b21461b95a4d2a034fc7303",
+            "turn_id": "initial"
+          },
+          "subject_revision": "sha256:14696d562c64bc3e8c15a543ba2d92492001584dba89d3611761d935c91cd484"
+        }
+      ]
+    },
+    "package_digest": "sha256:c4b0ed1eb92c2d1c9229f68001be3f0346c577c356a6c53057cd6abc26478b22",
+    "read_only": true,
+    "release_supported": false
+  }
+}

@@ -17,11 +17,11 @@ final class WorksetReleaseTransport: WorksetReleaseServing, @unchecked Sendable 
         configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
         session = URLSession(configuration: configuration, delegate: redirects, delegateQueue: nil)
     }
-    private func request(_ access: WorksetReleaseAccess, _ connection: AdvisoryConnection, suffix: String, body: Data? = nil) async throws -> Data {
+    private func request(_ access: WorksetReleaseAccess, _ connection: AdvisoryConnection, suffix: String, body: Data? = nil, validUntil: Date? = nil) async throws -> Data {
         guard access.matches(connection) else { throw AdvisoryError.denied }
-        return try await request(connection, token: access.token, suffix: suffix, body: body)
+        return try await request(connection, token: access.token, suffix: suffix, body: body, validUntil: validUntil)
     }
-    private func request(_ connection: AdvisoryConnection, token: String, suffix: String, body: Data? = nil) async throws -> Data {
+    private func request(_ connection: AdvisoryConnection, token: String, suffix: String, body: Data? = nil, validUntil: Date? = nil) async throws -> Data {
         guard token.range(of: "^[A-Za-z0-9_-]{43}$", options: .regularExpression) != nil else { throw AdvisoryError.denied }
         let endpoint = try ServerEndpoint(connection.endpoint)
         guard let url = URL(string: "/v1/workset-releases/"+suffix, relativeTo: endpoint.url)?.absoluteURL else { throw AdvisoryError.invalid }
@@ -33,6 +33,7 @@ final class WorksetReleaseTransport: WorksetReleaseServing, @unchecked Sendable 
         request.setValue(token, forHTTPHeaderField: "X-Workspace-Workset-Release-Grant")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         try Task.checkCancellation()
+        guard validUntil.map({ $0 > clock() }) ?? true else { throw AdvisoryError.denied }
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse, data.count <= 1_000_000,
               http.value(forHTTPHeaderField: "Content-Type")?.lowercased().hasPrefix("application/json") == true else { throw AdvisoryError.invalid }
@@ -73,17 +74,17 @@ final class WorksetReleaseTransport: WorksetReleaseServing, @unchecked Sendable 
         let cap = try await capability(access, connection)
         try WorksetReleaseWire.selection(selection, capability: cap, now: clock())
         let data = try JSONEncoder().encode(selection)
-        return try WorksetReleaseWire.prepared(await request(access, connection, suffix: "prepare", body: data), access: access, selection: selection)
+        return try WorksetReleaseWire.prepared(await request(access, connection, suffix: "prepare", body: data, validUntil: WorksetReleaseWire.date(cap.expires_at)), access: access, selection: selection)
     }
     func submit(_ access: WorksetReleaseAccess, _ connection: AdvisoryConnection, command: WorksetReleaseCommand) async throws -> WorksetReleaseObservation {
         let cap = try await capability(access, connection)
         try WorksetReleaseWire.selection(command.selection, capability: cap, now: clock())
         guard command.intent == "release" ? cap.release_supported : cap.disarm_supported else { throw AdvisoryError.denied }
-        return try WorksetReleaseWire.operation(await request(access, connection, suffix: "commands", body: command.data()), access: access, expected: command)
+        return try WorksetReleaseWire.operation(await request(access, connection, suffix: "commands", body: command.data(), validUntil: WorksetReleaseWire.date(cap.expires_at)), access: access, expected: command)
     }
     func operation(_ access: WorksetReleaseAccess, _ connection: AdvisoryConnection, intent: WorksetReleaseIntent) async throws -> WorksetReleaseObservation {
         guard intent.matches(access), WorklistWire.identifier(intent.command.operation_id) else { throw AdvisoryError.denied }
-        _ = try await capability(access, connection)
-        return try WorksetReleaseWire.operation(await request(access, connection, suffix: "operations/"+intent.command.operation_id), access: access, expected: intent.command)
+        let cap = try await capability(access, connection)
+        return try WorksetReleaseWire.operation(await request(access, connection, suffix: "operations/"+intent.command.operation_id, validUntil: WorksetReleaseWire.date(cap.expires_at)), access: access, expected: intent.command)
     }
 }
