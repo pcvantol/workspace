@@ -1,3 +1,13 @@
+## Plan93 protected source and controlled continuity finalization
+
+Workspace2.8.13 protected implementation PR143/main54ec235e2ad42f6f85c4c74d87c351b32d7b048f is delivered. Same sole writer/session/assignment and one original version allocation; PR142/plan92 and all earlier evidence remain closed history. Owner explicitly authorized the remaining consumer handoff to qualified Forge2.12.1/9875333acc4258a20fc0180a9ae09c980802d5b1. Exact wheel SHA2569b192e7a3cb5d503e795639a2b25b584b178c8bd2ef81af9ef96117af772ec33, unchanged schema0311529ca95451a99f4fd8a35127707310252c96324b42f3230e8c79fcfa6124; earlier Forge2.11/source evidence remains time-bound history.
+
+Fresh noneditable own main54 and producer2.12.1 isolated consumer readback passes: existing Account foundation v2 and Client portal v1 retain COMPLETE operations, original package and separate canonical decisions; source_fresh=true/current_definition_state=APPROVED_WAITING with actual current readiness. Account requires explicit workset release; portal also DEPENDENCY_NOT_PROVEN. No release controls or execution rights added. Six deny/stale HTTP controls and actual packaged graph card-click A→B pass. Equivalent temporary access preserves original8 total turns/3consumed/5remaining and maximum2Missions; original data/grants/approvals unchanged, zero new generation/approval/admission. Earlier conservative5 continuation remains failed evidence, not rewritten. Current/current-original revocation and semantic limits remain producer-authoritative.
+
+Full source validation160native+1isolated/own Python/wheel/browser/package gates PASS; changed productionfiles each>80.2% (ConceptState96.85%, MissionView89.90%). Exactc5 independent Quality/Security PASS and genuine bounded deterministic-model UX/task walkthrough PASS with nonblocking findings retained. Source native five-language/theme/640–1440/zoom/pan/focus/keyboard/newchat/refresh proof is immutable in prior manifests. Minimum macOS26/SDK>=26, native Liquid Glass/dark mode/responsive panes and sunset palette delivered. TDE37925629465 workflowSUCCESS with policyqualificationFAIL stays separate.
+
+This documentary finalization changes no production code or version. Normal independent finalization review, protected merge and NEW exact-final-main noneditable/native/current-readback/GUI/screenshots are mandatory remaining gates; their final SHA/public receipt will be recorded after the protected merge. No live EP/signing/paid-model/public operation/full product-family acceptance is claimed.
+
 # Workspace Backlog
 
 ## Selected native advice to Candidate — 8 October 2026, r81 plan91
