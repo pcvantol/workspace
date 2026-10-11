@@ -179,6 +179,10 @@ private actor ReleaseReplayPeer: WorksetReleaseServing {
     private var missingContinuation: CheckedContinuation<Void, Never>?
     func holdMissing() { holdNextMissing = true }
     func finishMissing() { missingContinuation?.resume(); missingContinuation = nil }
+    private var holdNextRead = false
+    private var readContinuation: CheckedContinuation<Void, Never>?
+    func holdRead() { holdNextRead = true }
+    func finishRead() { readContinuation?.resume(); readContinuation = nil }
     var reads = 0
     var lostAfterApply = false
     var lostBeforeApply = false
@@ -233,6 +237,10 @@ private actor ReleaseReplayPeer: WorksetReleaseServing {
     func operation(_ access: WorksetReleaseAccess, _ connection: AdvisoryConnection, intent: WorksetReleaseIntent) async throws -> WorksetReleaseObservation {
         reads+=1
         let signal=nextReadSignal;nextReadSignal=nil;signal?()
+        if holdNextRead {
+            holdNextRead = false
+            await withCheckedContinuation { readContinuation = $0 }
+        }
         await waitIfDelayed()
         if failRead { throw AdvisoryError.unavailable }
         if deny { throw AdvisoryError.denied }
@@ -852,5 +860,59 @@ extension WorksetReleaseTests {
         catch AdvisoryError.denied {}
         catch { XCTFail("Unexpected expiry error: "+String(describing:error)) }
         XCTAssertEqual(posts,0)
+    }
+}
+
+
+extension WorksetReleaseTests {
+    @MainActor func testRound8EarlyTimerWakeRearmsAfterReadLossWithoutErasingDurableIntent() async throws {
+        let (access,connection,peer)=try replayFixture(),store=ReleaseTestStore()
+        let raw=try WorksetReleaseWire.object(peer.released)
+        let packet=raw["frozen_package"] as! [String:Any]
+        let selection=try AdvisoryWire.decode(packet["selection"]!,as:WorksetReleaseSelection.self)
+        let deadline=try XCTUnwrap(WorksetReleaseWire.date(selection.expires_at))
+        let clock=ReleaseTestClock(deadline.addingTimeInterval(-0.04))
+        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:store,transport:peer,clock:{clock.now()})
+        await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare();await state.confirmRelease()
+        let original=try XCTUnwrap(state.history.first)
+        await peer.readFailure(true);await state.refresh(connection)
+        XCTAssertNil(state.capability);XCTAssertEqual(state.history,[original])
+        // A monotonic wake can precede wall-clock expiry; it must not abandon the deadline.
+        try await Task.sleep(for:.milliseconds(120),tolerance:.zero)
+        XCTAssertEqual(state.history,[original]);XCTAssertEqual(state.phase,"unavailable")
+        clock.advance(0.05)
+        try await Task.sleep(for:.milliseconds(100),tolerance:.zero)
+        XCTAssertEqual(state.phase,"denied");XCTAssertTrue(state.history.isEmpty)
+        XCTAssertNil(state.observation);XCTAssertNil(state.pending);XCTAssertEqual(store.journal.history,[original])
+        let sends=await peer.sends;XCTAssertEqual(sends.count,1)
+    }
+}
+
+extension WorksetReleaseTests {
+    @MainActor func testRound8ExpiryClearsWhileOriginalReadIsHeldAndLateResponseCannotRestore() async throws {
+        let (access,connection,peer)=try replayFixture(),store=ReleaseTestStore()
+        let raw=try WorksetReleaseWire.object(peer.released),packet=raw["frozen_package"] as! [String:Any]
+        let selection=try AdvisoryWire.decode(packet["selection"]!,as:WorksetReleaseSelection.self)
+        let deadline=try XCTUnwrap(WorksetReleaseWire.date(selection.expires_at))
+        let clock=ReleaseTestClock(deadline.addingTimeInterval(-0.04))
+        let state=WorksetReleaseState(credentials:ReleaseTestCredentials(access:access),store:store,transport:peer,clock:{clock.now()})
+        await state.refresh(connection);access.subjects.forEach { state.toggle($0) };await state.prepare();await state.confirmRelease()
+        let original=try XCTUnwrap(state.history.first)
+        await peer.readFailure(true);await state.refresh(connection);await peer.readFailure(false)
+        XCTAssertNil(state.capability);XCTAssertEqual(state.history,[original])
+        await peer.holdRead()
+        let started=expectation(description:"Original response remains held across expiry")
+        await peer.signalNextRead { started.fulfill() }
+        let response=Task { await state.observe(original) }
+        await fulfillment(of:[started],timeout:2)
+        try await Task.sleep(for:.milliseconds(120),tolerance:.zero)
+        XCTAssertTrue(state.busy);XCTAssertEqual(state.history,[original])
+        clock.advance(0.05)
+        try await Task.sleep(for:.milliseconds(100),tolerance:.zero)
+        XCTAssertEqual(state.phase,"denied");XCTAssertTrue(state.history.isEmpty);XCTAssertFalse(state.busy)
+        await peer.finishRead();await response.value
+        XCTAssertTrue(state.history.isEmpty);XCTAssertNil(state.observation);XCTAssertEqual(state.phase,"denied")
+        XCTAssertEqual(store.journal.history,[original]);XCTAssertNil(store.journal.pending)
+        let sends=await peer.sends;XCTAssertEqual(sends.count,1)
     }
 }
