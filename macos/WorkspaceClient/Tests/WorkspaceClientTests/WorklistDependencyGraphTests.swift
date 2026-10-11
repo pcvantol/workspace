@@ -157,3 +157,78 @@ extension WorklistDependencyGraphTests {
         XCTAssertGreaterThan(host.fittingSize.height,0)
     }
 }
+
+
+extension WorklistDependencyGraphTests {
+    @MainActor func testCardFocusRevealsEveryNestedClipAndRepeatsAfterPan() {
+        let outer = NSScrollView(frame: NSRect(x: 0, y: 0, width: 404, height: 330))
+        let document = NSView(frame: NSRect(x: 0, y: 0, width: 404, height: 1400))
+        outer.documentView = document
+        let inner = NSScrollView(frame: NSRect(x: 0, y: 700, width: 404, height: 300))
+        document.addSubview(inner)
+        let canvas = NSView(frame: NSRect(x: 0, y: 0, width: 1100, height: 500))
+        inner.documentView = canvas
+        let card = WorklistGraphFocusMarker(frame: NSRect(x: 700, y: 140, width: 330, height: 240))
+        canvas.addSubview(card)
+        func visible() -> Bool {
+            [inner.contentView, outer.contentView].allSatisfy { clip in
+                clip.bounds.contains(card.convert(card.bounds, to: clip))
+            }
+        }
+        XCTAssertFalse(visible())
+        WorklistGraphFocusMarker.reveal(card)
+        XCTAssertTrue(visible(), "A fitting card must be inside BOTH clip rects, including its title")
+        inner.contentView.scroll(to: .zero)
+        outer.contentView.scroll(to: .zero)
+        XCTAssertFalse(visible())
+        WorklistGraphFocusMarker.reveal(card)
+        XCTAssertTrue(visible(), "Repeated focus of the unchanged selection must reveal it again")
+        card.frame.origin.x = 16
+        WorklistGraphFocusMarker.reveal(card)
+        XCTAssertTrue(visible(), "The other selected card must have a distinct actual scroll target")
+        outer.frame.size.width = 380
+        inner.frame.size.width = 380
+        WorklistGraphFocusMarker.reveal(card)
+        XCTAssertTrue(visible(), "Resize must use current clip geometry")
+        XCTAssertNil(card.hitTest(.zero))
+        XCTAssertFalse(card.isAccessibilityElement())
+        XCTAssertTrue(card.isFlipped)
+    }
+
+    @MainActor func testOversizedCardKeepsZoomAndScrollableContent() {
+        let scroll = NSScrollView(frame: NSRect(x: 0, y: 0, width: 180, height: 120))
+        let canvas = NSView(frame: NSRect(x: 0, y: 0, width: 1100, height: 600))
+        scroll.documentView = canvas
+        let card = WorklistGraphFocusMarker(frame: NSRect(x: 650, y: 150, width: 496, height: 356))
+        canvas.addSubview(card)
+        let original = card.frame.size
+        WorklistGraphFocusMarker.reveal(card)
+        XCTAssertEqual(card.frame.size, original)
+        XCTAssertGreaterThan(scroll.contentView.bounds.origin.x, 0)
+        scroll.contentView.scroll(to: .zero)
+        XCTAssertEqual(scroll.contentView.bounds.origin, .zero)
+        WorklistGraphFocusMarker.reveal(NSView()) // Detached harmless target.
+    }
+
+    @MainActor func testRenderedFocusMarkerDefersAndRejectsSupersededRequest() {
+        let host = NSHostingView(rootView: WorklistGraphFocusTarget(request: 1))
+        host.frame = NSRect(x: 0, y: 0, width: 330, height: 240)
+        host.layoutSubtreeIfNeeded()
+        func marker(_ view: NSView) -> WorklistGraphFocusMarker? {
+            if let found = view as? WorklistGraphFocusMarker { return found }
+            return view.subviews.compactMap(marker).first
+        }
+        guard let card = marker(host) else { XCTFail("Real representable marker missing"); return }
+        card.request = 0
+        RunLoop.main.run(until: Date().addingTimeInterval(0.02))
+        XCTAssertEqual(card.completedRequest, 0)
+        host.rootView = WorklistGraphFocusTarget(request: 2)
+        host.layoutSubtreeIfNeeded()
+        RunLoop.main.run(until: Date().addingTimeInterval(0.02))
+        XCTAssertEqual(card.completedRequest, 2)
+        host.rootView = WorklistGraphFocusTarget(request: 2)
+        host.layoutSubtreeIfNeeded()
+        RunLoop.main.run(until: Date().addingTimeInterval(0.02))
+        XCTAssertEqual(card.completedRequest, 2)
+    }
+}

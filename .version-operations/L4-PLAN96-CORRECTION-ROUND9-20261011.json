@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "r81 plan96 selected graph-focus round9 decision6108192512",
+  "determined_version": "2.8.20",
+  "event_lineage": "r81 plan96 selected graph-focus round9 decision6108192512",
+  "expected_source_revision": "1c340e9e1ab5779d0ba05d9bb9a469b196d83353",
+  "expected_version": "2.8.19",
+  "operation_id": "L4-PLAN96-CORRECTION-ROUND9-20261011",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}
