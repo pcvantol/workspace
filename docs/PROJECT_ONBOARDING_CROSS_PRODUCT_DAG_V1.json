@@ -1355,37 +1355,40 @@
       {
         "id": "D97-DESIGN",
         "depends_on": [],
-        "status": "IN_PROGRESS"
+        "status": "PASS_SOURCE_DESIGN"
       },
       {
         "id": "D97-REVIEW",
         "depends_on": [
           "D97-DESIGN"
         ],
-        "status": "PLANNED"
+        "status": "PASS_SOURCE_DESIGN"
       },
       {
         "id": "D97-CHECKS",
         "depends_on": [
           "D97-REVIEW"
         ],
-        "status": "PLANNED"
+        "status": "PASS_SOURCE_DESIGN"
       },
       {
         "id": "D97-PROTECTED",
         "depends_on": [
           "D97-CHECKS"
         ],
-        "status": "PLANNED"
+        "status": "SOURCE_MERGED_FINALIZATION_PENDING"
       },
       {
         "id": "D97-READBACK",
         "depends_on": [
           "D97-PROTECTED"
         ],
-        "status": "PLANNED"
+        "status": "PENDING_POST_FINALIZATION_MERGE"
       }
     ],
-    "separate_from_EP_execution_DAG": true
+    "separate_from_EP_execution_DAG": true,
+    "source_protected_main": "dd71ac5fe027ffc5baae9073d31120f0719812f6",
+    "protected_scope": "Source and ordinary finalization protected deliveries; no executable product admission",
+    "readback_receipt_owner": "Post-final-merge immutable main/tree/hashes in terminal Forge issue208, not preclaimed here"
   }
 }

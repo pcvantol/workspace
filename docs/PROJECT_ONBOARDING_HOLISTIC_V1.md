@@ -498,5 +498,15 @@ retained overall documentary FAIL because ROADMAP/BACKLOG current headings repor
 old allowance. Last formal integrated round3 booked6113020691 once before correction:
 consumed3/max3/remaining0. Current BOOTSTRAP, ROADMAP, BACKLOG and owning DAG now agree;
 earlier budget/review entries above are historical and remain preserved. No product or
-contract semantics changed in this round; fresh exact-head acceptance is pending. There
+contract semantics changed in this round; complete e4cda7a Quality/Security/UX accepted the design. There
 is no automatic fourth correction round, renamed assignment or reopened plan96 budget.
+
+
+### Ordinary source-bound finalization
+
+Protected source [PR158](https://github.com/pcvantol/workspace/pull/158)/main `dd71ac5fe027ffc5baae9073d31120f0719812f6`
+retains the exact e4cda7a reviewed tree; allfive sourceCI passed first attempt and all38 artifacts
+were reread. [Finalization receipt](PROJECT_ONBOARDING_DESIGN_FINALIZATION_V1.md) records
+actual review/check/TDE source evidence and the separate current receipt/protected/final-main
+gates. Documentary source design is accepted; final full delivery is not preclaimed. Product
+implementation remains NOT_SELECTED/PLANNED and all new peer contracts PROPOSED/unbound.

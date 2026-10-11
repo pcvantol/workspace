@@ -1,0 +1,431 @@
+{
+  "schema_version": 1,
+  "document_kind": "OWNING_NO_BUMP_DOCUMENTARY_FINALIZATION_RECEIPT",
+  "assignment": "L4-HOLISTIC-PROJECT-ONBOARDING-DESIGN-DAG-V1-20261011",
+  "plan_revision": 97,
+  "scope": "DESIGN_ONLY_NO_IMPLEMENTATION",
+  "source_protected_delivery": {
+    "pr": "https://github.com/pcvantol/workspace/pull/158",
+    "reviewed_head": "e4cda7af48032bca4821d533bd091909f0109b25",
+    "main": "dd71ac5fe027ffc5baae9073d31120f0719812f6",
+    "merged_at": "2026-10-11T19:59:33Z",
+    "squash_tree_equal": true,
+    "own_source_readback_files": 38
+  },
+  "source_observations": {
+    "workspace_base": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+    "forge": "f819196e9c025163be40c8e71693a3def4b78bc2",
+    "engineering-platform": "05e530d6339cb1c16b1e8f4814347578c5fd761c",
+    "runtime_pin_changed": false
+  },
+  "version": {
+    "product": "workspace",
+    "version": "2.8.20",
+    "operation": "NO_BUMP",
+    "product_test_driver_policy_version_bytes_changed": false
+  },
+  "independent_source_reviews": [
+    {
+      "role": "Quality",
+      "scope": "COMPLETE_DESIGN_PACKAGE",
+      "head": "e4cda7af48032bca4821d533bd091909f0109b25",
+      "verdict": "PASS",
+      "full_private_report_sha256": "9a30d9c7a467c828c4e135acc1071d753ffdbb8e54f6bb9134a39886f7ffb19b",
+      "github_reviewer_approval_claimed": false
+    },
+    {
+      "role": "Security/privacy",
+      "scope": "COMPLETE_DESIGN_PACKAGE",
+      "head": "e4cda7af48032bca4821d533bd091909f0109b25",
+      "verdict": "PASS",
+      "full_private_report_sha256": "f1f543984c6480f9c4c0b6f1ce435a26da39d20035c5bd5c4a887e71bb9efe7c",
+      "github_reviewer_approval_claimed": false
+    },
+    {
+      "role": "UX",
+      "scope": "COMPLETE_DESIGN_PACKAGE",
+      "head": "e4cda7af48032bca4821d533bd091909f0109b25",
+      "verdict": "PASS",
+      "full_private_report_sha256": "9d1e1f261bb08696f982bb6eb830e2455c32d57664ab52b83aa911b39ab481e8",
+      "github_reviewer_approval_claimed": false
+    }
+  ],
+  "review_history": {
+    "8c7e78b": "INITIAL_FULL_QUALITY_SECURITY_UX_FAIL_RETAINED",
+    "43e3bee": "ROUND1_COMPLETE_REVIEW_FAIL_RETAINED_TWO_CONSENT_CONTRADICTIONS",
+    "1c10500": "ROUND2_CONTENT_SECURITY_UX_PASS_OVERALL_DOCUMENTARY_FAIL_BUDGET_HEADERS_RETAINED",
+    "e4cda7a": "ROUND3_COMPLETE_QUALITY_SECURITY_UX_PASS"
+  },
+  "design_budget": {
+    "consumed": 3,
+    "max": 3,
+    "remaining": 0,
+    "bookings": [
+      6112577103,
+      6112979707,
+      6113020691
+    ],
+    "fourth_round_authorized": false
+  },
+  "closed_predecessor": {
+    "plan": 96,
+    "state": "CLOSED",
+    "source_budget": "9/9/0",
+    "recovery_budget": "2/2/0",
+    "evidence_retained": true
+  },
+  "owning_source_validation": {
+    "head": "e4cda7af48032bca4821d533bd091909f0109b25",
+    "command": "bash scripts/validate.sh",
+    "outcome": "PASS",
+    "native_tests": 203,
+    "isolated_native_tests": 1,
+    "required_per_production_file_executable_line_coverage": ">80.2%",
+    "full_private_log_sha256": "e31f674613c7a2259cdbe932cd2b880865759ac01f25bd8e7477cb773af2f677",
+    "boundary": "Existing development checks and local ad-hoc validation bundle, not new onboarding installation, release signing or GUI qualification"
+  },
+  "source_ci_checks": [
+    {
+      "link": "https://github.com/pcvantol/workspace/actions/runs/38169834666/job/114559930836",
+      "name": "Native app build and transport tests",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/pcvantol/workspace/actions/runs/38169834667/job/114559930936",
+      "name": "TDE observe (non-blocking)",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/pcvantol/workspace/actions/runs/38169834690/job/114559931126",
+      "name": "Foundation validation",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/pcvantol/workspace/actions/runs/38169834690/job/114559930955",
+      "name": "Python 3.14 installed Server",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/pcvantol/workspace/actions/runs/38169831348/job/114559921223",
+      "name": "validate-version-source",
+      "state": "SUCCESS"
+    }
+  ],
+  "source_ci_runs": [
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "databaseId": 38169834667,
+      "event": "pull_request",
+      "headSha": "e4cda7af48032bca4821d533bd091909f0109b25",
+      "name": "TDE observe",
+      "status": "completed"
+    },
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "databaseId": 38169834690,
+      "event": "pull_request",
+      "headSha": "e4cda7af48032bca4821d533bd091909f0109b25",
+      "name": "Workspace CI",
+      "status": "completed"
+    },
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "databaseId": 38169834666,
+      "event": "pull_request",
+      "headSha": "e4cda7af48032bca4821d533bd091909f0109b25",
+      "name": "Workspace native macOS Client",
+      "status": "completed"
+    },
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "databaseId": 38169831348,
+      "event": "push",
+      "headSha": "e4cda7af48032bca4821d533bd091909f0109b25",
+      "name": "Canonical product versioning",
+      "status": "completed"
+    }
+  ],
+  "tde_source_observation": {
+    "head": "e4cda7af48032bca4821d533bd091909f0109b25",
+    "run": 38169834667,
+    "assessment_decision": "PASS",
+    "policy": {
+      "hash": "sha256:e20a38e862615021eeedb081e362d2261859d86f2eafc87c653638ab09d02590",
+      "identifier": "tde.generation-1.default",
+      "source": "generation-1.json",
+      "version": "1.4.0"
+    },
+    "qualification": "QUALIFIED",
+    "runtime": "1.1.1",
+    "assessment_sha256": "ba586151103dc36373e69dd9d13c9d39fd8d057899c47d240d3be315b29f35b3",
+    "qualification_sha256": "18bec38edf556898210f6e336bcf2bb8812c779d7d6619c2b29dbb96042dde70",
+    "finding_count": 52,
+    "triggered_policy_rules": 0,
+    "limitations": [
+      {
+        "cause": "analyzer limitation",
+        "description": "cloc does not provide logical line counts.",
+        "id": "code_size.logical_lines.unavailable"
+      },
+      {
+        "cause": "artifact unavailable",
+        "description": "No coverage artifact was found in configured or standard locations.",
+        "id": "coverage.artifact.unavailable"
+      }
+    ]
+  },
+  "offline_documentary_checks": {
+    "closed_schemas": 54,
+    "positive_examples": 20,
+    "rejected_schema_variants": 14,
+    "semantic_expectations": 9,
+    "standard_validator": "jsonschema Draft202012+FormatChecker",
+    "owning_nodes": 18,
+    "cross_product_nodes": 46,
+    "acyclic": true,
+    "requirements": 20,
+    "synthetic_future_walkthroughs": 18,
+    "preserved_PB_cases": 40,
+    "static_wireframes": 11,
+    "base_W0_core_unchanged": true,
+    "product_qualification_claimed": false
+  },
+  "approved_source_artifacts": [
+    {
+      "path": "BACKLOG.md",
+      "sha256": "1b4a54e960a3a5d4e34696d8669d5508b5ab4195f3d64b8dbc6162ec65fc7b0f",
+      "git_blob": "00b4f8f29d14df747ed537846e892bcf639e63e3"
+    },
+    {
+      "path": "BOOTSTRAP.md",
+      "sha256": "8ad5c665886f74e099f0274f185c38ea52672020d547de7479fcee92ee2485c4",
+      "git_blob": "4628b18d09fae7a8c20512f974d4dfbbedceb54d"
+    },
+    {
+      "path": "ROADMAP.md",
+      "sha256": "0562eb63260723ce629f5fbd23d2745b42342b49571ff0616aa96effb2021c31",
+      "git_blob": "ba57f1569d5c4a28d9868e4e81289ccaeec94ffb"
+    },
+    {
+      "path": "docs/PROJECT_BOOTSTRAP_V1.md",
+      "sha256": "b20aefadcdfe1db866a83ad14c4fed70eb0c83d2d10730dc4f1833416338280e",
+      "git_blob": "10e887f0b7dbce93c9b7108024445ae1908a3908"
+    },
+    {
+      "path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "sha256": "33fd54ed0a629a8dad238e3fe5e88f75a45f82430b69c7a9d91a12807aa01238",
+      "git_blob": "262a66d4d7c45adb3fa72c34d088c7776c151bd0"
+    },
+    {
+      "path": "docs/PROJECT_BOOTSTRAP_V1_ROADMAP.md",
+      "sha256": "a4d8b0e778c0ff3276bd3bdf5cb116346050d644ea8345fc6c1e13cee5fc7cb1",
+      "git_blob": "bf82657b42ebcf8567f6f44a467b7cc8ef016d09"
+    },
+    {
+      "path": "docs/PROJECT_BOOTSTRAP_W0_CONTRACT_V1.json",
+      "sha256": "7987ef928febf4789d0938ebcd130516ceb1dd50bbe953a2cb6c52e873191f63",
+      "git_blob": "ee83c884c00fb64755f40b70728f39edea998fd9"
+    },
+    {
+      "path": "docs/PROJECT_BOOTSTRAP_W0_CONTRACT_V1.md",
+      "sha256": "42dc95367cd12250208bb459020bd99bd8adfcb2c8946b6f327d7abc6986ce2a",
+      "git_blob": "4a3c228d3552ed041c172b734117bdc2c6561bb6"
+    },
+    {
+      "path": "docs/PROJECT_ONBOARDING_CONTRACT_PROPOSALS_V1.json",
+      "sha256": "7530bef53029a5dc9a49dae8b6efa9e0e3096309b93464080577b159cb7a54c9",
+      "git_blob": "5cd1d616da21dd8570683471469838f7086f9249"
+    },
+    {
+      "path": "docs/PROJECT_ONBOARDING_CROSS_PRODUCT_DAG_V1.json",
+      "sha256": "82d404d478ed80511d1b43f16eb2022d7d2636a831e5a27fb485074a844716ec",
+      "git_blob": "bdccf451dc0b5a2f38c49e22ea83598f215f818e"
+    },
+    {
+      "path": "docs/PROJECT_ONBOARDING_HOLISTIC_V1.md",
+      "sha256": "83f0020b54014676f466ed772740de7ad377e367bc33d4b0c2b2c13073ad33f2",
+      "git_blob": "cc3d35ee3032528e41e4939699695bc9af2a2519"
+    },
+    {
+      "path": "docs/PROJECT_ONBOARDING_SCENARIOS_V1.json",
+      "sha256": "0948454b9431b0148a086541baaa6189e3a2c02ccc2b4052f09bd1c3ef3a563d",
+      "git_blob": "9bebea155b20c4c5393203905859bc3ab413df5c"
+    },
+    {
+      "path": "docs/REPOSITORY_ONBOARDING.md",
+      "sha256": "0f6c67e9be44a44a587bc51714de17c524c1e57a83127cfb627791d21d027fd4",
+      "git_blob": "69abe8b57b541627bbce284435573b7394b1f950"
+    },
+    {
+      "path": "docs/onboarding-design/01-overview.png",
+      "sha256": "360db37e69d3e2e02b681e81dcc648a13e843a828fd7e3a919d8e1b2a718f3c1",
+      "git_blob": "bbedbbbb3249571d212f0610970a2ab36b227a61"
+    },
+    {
+      "path": "docs/onboarding-design/01-overview.svg",
+      "sha256": "6686e76112119eeda5d0fe9b27976949b33ae7a3cb04d1d61069a1f7632fed57",
+      "git_blob": "7c8d4318ddae7578b0f97c36f6623a7a738b807d"
+    },
+    {
+      "path": "docs/onboarding-design/02-new.png",
+      "sha256": "636bb89e1e6a900b1a5e2e4e551e025a605b230fd16b84420c9f39a5588bc0c1",
+      "git_blob": "3d91547a4814e76eabeb47a630969f33698cdc1c"
+    },
+    {
+      "path": "docs/onboarding-design/02-new.svg",
+      "sha256": "4be58aa00caa4de7c0c3b9021498cdf0fef2b814baf1c10de6726ae0dc95d1eb",
+      "git_blob": "5e9ebeeca6f9ebfbd727b48afcba2fc12dad4c14"
+    },
+    {
+      "path": "docs/onboarding-design/03-link.png",
+      "sha256": "35dc12784319ebbf4d3645b4949c305197e2f880c1fd7c6c484aed3caec303ce",
+      "git_blob": "bde89c106cc44401128b94952798ea1cb0d4254d"
+    },
+    {
+      "path": "docs/onboarding-design/03-link.svg",
+      "sha256": "a57926f7b22d1c3f226de53858aff5112587a075eac942896bf608df9f5ec69c",
+      "git_blob": "6d8a4f4210fd669cf78b0301d2e6949cc2ecf9cf"
+    },
+    {
+      "path": "docs/onboarding-design/04-adopt.png",
+      "sha256": "09a80204ba59d0859741d99ac2428f700a2273a00d4cfbca0d9086859b83e5ce",
+      "git_blob": "cbc23bed22d99cf8a36e7236e4cf775f3f7982be"
+    },
+    {
+      "path": "docs/onboarding-design/04-adopt.svg",
+      "sha256": "87f75f44461ef757ef724c401f053f1b53913511bb2cb79c2a43d1256fa1d6fd",
+      "git_blob": "16ff08dc2c03316f57a9d76a5f38b1b3696f14a3"
+    },
+    {
+      "path": "docs/onboarding-design/05-repositories.png",
+      "sha256": "0e7105fdd69f3eb3da546d90151c7e4ec9fa03dcda97afbac7ce865333e5d12a",
+      "git_blob": "6329ddf57465325d79ec7f48117674bd6ef5f72c"
+    },
+    {
+      "path": "docs/onboarding-design/05-repositories.svg",
+      "sha256": "4e8fdbd37d8f384197a57b2e6542beefbaa50663c77453d99841f98e4b27d990",
+      "git_blob": "4fea3cbaafb91be79bb53903d51ed0e6854e822b"
+    },
+    {
+      "path": "docs/onboarding-design/06-analysis.png",
+      "sha256": "d262c81b392ad4b7c115b41d0eddd3eb432219fba5aaee3800cd2e66aa9764e2",
+      "git_blob": "8cfe0fbd924c487b5a434151d6c64ea9262e4c2f"
+    },
+    {
+      "path": "docs/onboarding-design/06-analysis.svg",
+      "sha256": "d2b7c76969b17cbd3c8176a60dbd4c887725ee9c576803ca060826f9c3fc7f6b",
+      "git_blob": "81c516eca660b5e915edd19a6a0a6364b109e443"
+    },
+    {
+      "path": "docs/onboarding-design/06a-analysis-plan.png",
+      "sha256": "15aec555d074ae278d6b07e883e2fe4ca823b87ea9f6e6b598d4c6cf680b500e",
+      "git_blob": "3b464ffe5ffb343086cb3f945029a476136da132"
+    },
+    {
+      "path": "docs/onboarding-design/06a-analysis-plan.svg",
+      "sha256": "f57941b416981206cf661b856760ef33324b68abf8dffb834bf464541c983fde",
+      "git_blob": "688d765111ccf99b3061a860a4a1d1fb9c1555e1"
+    },
+    {
+      "path": "docs/onboarding-design/07-finding.png",
+      "sha256": "16018fda5b140e9f85374d77faafd7126c3a5a8ccdff1fb9eb7efca337981fe2",
+      "git_blob": "bd60df2bbc4ab914d21b4129f7dbbf21e24864ba"
+    },
+    {
+      "path": "docs/onboarding-design/07-finding.svg",
+      "sha256": "bae6a4e564f7537ff96b08fde64b6722c7712f4c950f6588c1839234bb191d10",
+      "git_blob": "083965f6f20eb784a0dcf0bd27955543d2511b33"
+    },
+    {
+      "path": "docs/onboarding-design/08-approval.png",
+      "sha256": "7102d9e82ccfb79d62ddf984292d6a444ec57c94c702290392fa29dad288801b",
+      "git_blob": "17cd2f82a879a58df4a9e7ff1494425fef24f666"
+    },
+    {
+      "path": "docs/onboarding-design/08-approval.svg",
+      "sha256": "a7b311d6a3a3f1d20473a541f3977f81cb359095745e00dac104c7986f5762e8",
+      "git_blob": "d98e3235735ceaee7bd3404106bfe70ef29e2377"
+    },
+    {
+      "path": "docs/onboarding-design/09-add-repository.png",
+      "sha256": "1dac342dfc7733636fb2a503f3d3ed3cb7b67d96dbe1052c07b50990fe24754c",
+      "git_blob": "367cccc7ccd51b579d0f0f1924f5b827d249e93c"
+    },
+    {
+      "path": "docs/onboarding-design/09-add-repository.svg",
+      "sha256": "92f832ab55ae9e49c20e672f65ec1f6f7ed826641b0d40840b2509cd8aada1c3",
+      "git_blob": "dd674ea5a5665d22ef5599a68ca186e652ec2062"
+    },
+    {
+      "path": "docs/onboarding-design/10-narrow.png",
+      "sha256": "9c024d90088a526d4a6edfba2161f1d3e294a7476cc74005209d644f54f4da4b",
+      "git_blob": "1e62e1be53d3797a3afcb6f6dfb8c8f27787549b"
+    },
+    {
+      "path": "docs/onboarding-design/10-narrow.svg",
+      "sha256": "939d5bf51a18eb307895cf9617d935234187923ec4efc0ea7cc8080da597316e",
+      "git_blob": "afcf295249b8607ac7aa7f9ea91f5e2af963832e"
+    },
+    {
+      "path": "docs/onboarding-design/README.md",
+      "sha256": "c3105ecf9530e97536679561ce90aca9be59944f0569579d8d84bf1a862637c3",
+      "git_blob": "c7cd2d3fcbcc0e55f93d5a75e4a0d1dcd024b825"
+    },
+    {
+      "path": "docs/onboarding-design/index.html",
+      "sha256": "962744a1a261e0f7f0949bc3dbc86475664aafe230012f010e4b828797bca1cd",
+      "git_blob": "7f86fdc5aab729e2ef8192bc940c297385bcd412"
+    },
+    {
+      "path": "docs/onboarding-design/manifest.json",
+      "sha256": "ce24d741a90dcd5eb962ad8a76a42691d485ac99e4531d2c3fbebaacb02445f5",
+      "git_blob": "c45d7854c0e87fbdddfa550c5c912a207f6d7c7a"
+    }
+  ],
+  "peer_contracts": {
+    "status": "PROPOSED_NOT_BOUND_NOT_IMPLEMENTED",
+    "proposal_version": "hob-proposal/1.1",
+    "families": [
+      "HOB-W01",
+      "HOB-EP01",
+      "HOB-EP02",
+      "HOB-EP03",
+      "HOB-EP04",
+      "HOB-F01",
+      "HOB-F02",
+      "HOB-F03",
+      "HOB-F04"
+    ],
+    "operations": 24,
+    "owning_selection_required": true,
+    "peer_writer_allocated": false,
+    "minimum_first_slice": "EP HOB-EP01 finite authorized B8R discovery/topology snapshot + Workspace own project reference; Forge HOB-F01 optional",
+    "recommended_not_selected": [
+      "PB-W1-LINK",
+      "PB-WQ-LINK"
+    ]
+  },
+  "finalization_gate": {
+    "status": "RECEIPT_PREPARED_REVIEW_AND_PROTECTED_DELIVERY_PENDING",
+    "nonempty": true,
+    "source_branch_closed": true,
+    "current_receipt_reviews_and_CI": "SEPARATE_EXACT_HEAD_GATES",
+    "exact_final_main_readback": "REQUIRED_POST_MERGE_EXTERNAL_RECEIPT",
+    "terminal_registry": "Forge issue208 after actual final main verification",
+    "full_delivery_preclaimed": false
+  },
+  "non_effects": [
+    "NO_PRODUCT_CODE",
+    "NO_LIVE_REPOSITORY_SCANS",
+    "NO_PRODUCT_PROVIDER_CALLS",
+    "NO_NEW_GRANTS_OR_CREDENTIALS",
+    "NO_NEW_PEER_IMPLEMENTATION",
+    "NO_ONBOARDING_INSTALLATION_OR_RELEASE_SIGNING",
+    "NO_UNCHANGED_GUI_MATRIX_REPLAY",
+    "PRIMARY_ICLOUD_CHECKOUT_UNTOUCHED"
+  ]
+}
