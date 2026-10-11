@@ -8,7 +8,7 @@ Actual base `889eb61d487b1374a63107e46e7d124ae67b77e3`; own branch
 `codex/plan97-holistic-project-onboarding-design`.
 Read-only peer source observations: Forge `f819196e9c025163be40c8e71693a3def4b78bc2`,
 EP `05e530d6339cb1c16b1e8f4814347578c5fd761c`; these are documentary refs,
-not changed runtime pins. Design corrections consumed1/max3/remaining2.
+not changed runtime pins. Design corrections consumed2/max3/remaining1.
 Historical source9/9 and recovery2/2 remain closed and consumed.
 
 DESIGN_ONLY in progress: coherent journeys, static wireframes, explicit proposed
@@ -17,7 +17,10 @@ HTTP/authority contracts and non-executable refinement of existing PB nodes.
 First full frozen8c7e78b reviews retained as FAIL (Q1/Q2, SEC97-01/02, UX-01).
 Integrated formal design round1 booked once before correction via6112577103.
 Typed discovery/snapshots/GET bindings, explicit decisions and bounded analysis/transfer
-records plus consistent one-repository/two-document wireframes are being corrected together.
+records plus consistent one-repository/two-document wireframes were corrected together.
+Full43e3bee reviews retained as FAIL for two remaining consent wire contradictions.
+Integrated round2 booked once before correction via6112979707: goal-only requests and
+EP approval/refusal receipts now align, with positive/negative offline fixtures. Fresh review pending.
 
 No product code/version/policy changes, scans, grants, installation or signing.
 First material document step: register coherent entry journeys and an independent

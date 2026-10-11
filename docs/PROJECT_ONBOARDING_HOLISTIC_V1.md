@@ -472,3 +472,20 @@ decisions are included. Same key/bytes reconciles original result under current 
 conflict. Forge's proposed original-intent GET reads original outcome/result evidence without model
 call. Tool/model budget is reserved once per original operation and never reset by retry or uncertain
 provider effect. Workspace retains only its own draft/intent/references, not a second owner work queue.
+
+
+### Integrated round2 — exact transfer decisions
+
+Full43e3bee independent reviews remain FAIL history. Round2 is booked6112979707 once
+before documentary correction (consumed2/max3/remaining1). Goal-only MODEL consent now
+has a satisfiable DRAFT_ADVICE/USER_DECLARED_GOAL request, restricted to an actually empty
+source vector; repository material or an external scanner cannot use that branch. SOURCE_ONLY
+and local draft/static questions still need no transfer consent or dummy EP identity.
+
+Both proposed owning transfer-decision routes return TransferConsentDecisionResult: explicit
+APPROVE with an owner-stamped ACTIVE record, or REJECT/ABSTAIN with retained receipt and
+null consent. Current owning role/admission and matching request/actor/source/payload/recipient/
+expiry/cost are semantic prerequisites, never minted by a fixture or client. EP retains its
+source-bearing assessment/disclosure prerequisite; goal-only preproject model advice belongs
+to the separately qualified Forge own-draft scope. New synthetic positive and refusal/malformed
+fixtures are offline documentary validation only. Product implementation remains unselected.

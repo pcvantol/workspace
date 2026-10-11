@@ -448,7 +448,7 @@
             "body": "JSON_ONLY",
             "required_scope": "Current EP data-owner disclosure role and existing assessment scope; network permission alone is not source transfer authority"
           },
-          "response_schema": "TransferConsent",
+          "response_schema": "TransferConsentDecisionResult",
           "refusals": {
             "400": "SCHEMA_UNKNOWN_FIELD_OR_MALFORMED_REF",
             "401": "UNAUTHENTICATED_OR_REVOKED",
@@ -2432,6 +2432,33 @@
               },
               "purpose": {
                 "const": "DRAFT_ADVICE"
+              },
+              "payload_classes": {
+                "type": "array",
+                "items": {
+                  "const": "USER_DECLARED_GOAL"
+                },
+                "minItems": 1,
+                "maxItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "purpose": {
+                "const": "DRAFT_ADVICE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "source_revision_vector": {
+                "maxItems": 0
+              },
+              "consumer_kind": {
+                "const": "MODEL"
               },
               "payload_classes": {
                 "type": "array",
@@ -4656,7 +4683,8 @@
             "enum": [
               "PUBLIC_METADATA",
               "AUTHORIZED_REDACTED_REPORT",
-              "AUTHORIZED_REDACTED_SOURCE"
+              "AUTHORIZED_REDACTED_SOURCE",
+              "USER_DECLARED_GOAL"
             ]
           },
           "minItems": 1,
@@ -4679,7 +4707,8 @@
           "enum": [
             "BASELINE_INTERPRETATION",
             "FROZEN_PLAN_PROPOSAL",
-            "EXTERNAL_ASSESSMENT"
+            "EXTERNAL_ASSESSMENT",
+            "DRAFT_ADVICE"
           ]
         },
         "retention_mode": {
@@ -4848,6 +4877,33 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "purpose": {
+                "const": "DRAFT_ADVICE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "source_revision_vector": {
+                "maxItems": 0
+              },
+              "consumer_kind": {
+                "const": "MODEL"
+              },
+              "payload_classes": {
+                "type": "array",
+                "items": {
+                  "const": "USER_DECLARED_GOAL"
+                },
+                "minItems": 1,
+                "maxItems": 1
+              }
+            }
+          }
         }
       ]
     },
@@ -4872,7 +4928,78 @@
             }
           ]
         }
-      }
+      },
+      "allOf": [
+        {
+          "properties": {
+            "decision_receipt": {
+              "properties": {
+                "decision_kind": {
+                  "const": "DATA_TRANSFER_CONSENT"
+                },
+                "disposition_payload": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "decision_receipt": {
+                "properties": {
+                  "decision": {
+                    "const": "APPROVE"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "consent_record": {
+                "allOf": [
+                  {
+                    "$ref": "#/schemas/TransferConsent"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "const": "ACTIVE"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "decision_receipt": {
+                "properties": {
+                  "decision": {
+                    "enum": [
+                      "REJECT",
+                      "ABSTAIN"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "consent_record": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
     },
     "UserStatement": {
       "type": "object",
@@ -5079,7 +5206,7 @@
             "project_id": "atlas",
             "authority_repository_id": "atlas-core",
             "topology_revision": 1,
-            "display_name": "Atlas \u2014 synthetic example",
+            "display_name": "Atlas — synthetic example",
             "declaration_evidence_ref": {
               "owner_ref": {
                 "owner": "engineering-platform",
@@ -5134,7 +5261,7 @@
           "project_id": "atlas",
           "authority_repository_id": "atlas-core",
           "topology_revision": 1,
-          "display_name": "Atlas \u2014 synthetic example",
+          "display_name": "Atlas — synthetic example",
           "declaration_evidence_ref": {
             "owner_ref": {
               "owner": "engineering-platform",
@@ -5240,7 +5367,7 @@
           "project_id": "atlas",
           "authority_repository_id": "atlas-core",
           "topology_revision": 1,
-          "display_name": "Atlas \u2014 synthetic example",
+          "display_name": "Atlas — synthetic example",
           "declaration_evidence_ref": {
             "owner_ref": {
               "owner": "engineering-platform",
@@ -5346,7 +5473,7 @@
           "project_id": "atlas",
           "authority_repository_id": "atlas-core",
           "topology_revision": 1,
-          "display_name": "Atlas \u2014 synthetic example",
+          "display_name": "Atlas — synthetic example",
           "declaration_evidence_ref": {
             "owner_ref": {
               "owner": "engineering-platform",
@@ -5746,7 +5873,7 @@
             "project_id": "atlas",
             "authority_repository_id": "atlas-core",
             "topology_revision": 1,
-            "display_name": "Atlas \u2014 synthetic example",
+            "display_name": "Atlas — synthetic example",
             "declaration_evidence_ref": {
               "owner_ref": {
                 "owner": "engineering-platform",
@@ -5934,6 +6061,341 @@
         "interpretation_mode": "SOURCE_ONLY",
         "transfer_consent_ref": null
       }
+    },
+    {
+      "id": "goal-only-transfer-request",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "schema": "TransferConsentDecisionRequest",
+      "value": {
+        "data_owner_transfer_scope_ref": "synthetic-data-transfer-scope",
+        "source_revision_vector": [],
+        "source_vector_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "redacted_payload_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "payload_classes": [
+          "USER_DECLARED_GOAL"
+        ],
+        "recipient_registry_ref": "synthetic-recipient",
+        "model_class_ref": "synthetic-model-class",
+        "purpose": "DRAFT_ADVICE",
+        "retention_mode": "NONE",
+        "maximum_retention_seconds": 0,
+        "maximum_cost_minor_units": 0,
+        "consumer_kind": "MODEL",
+        "target_tool_ref": null,
+        "decision": "APPROVE",
+        "requested_expiry": "2030-01-01T11:00:00Z",
+        "operation_id": "synthetic-goal-consent-1",
+        "idempotency_key": "synthetic-goal-consent-key-1"
+      }
+    },
+    {
+      "id": "forge-goal-consent-approve",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "schema": "TransferConsentDecisionResult",
+      "value": {
+        "decision_receipt": {
+          "owner_ref": {
+            "owner": "forge",
+            "instance_ref": "synthetic-forge",
+            "contract_version": "hob-proposal/1.1"
+          },
+          "decision_id": "synthetic-goal-approve",
+          "decision_kind": "DATA_TRANSFER_CONSENT",
+          "subject_digest": "a554f6b2a977583cb09970fd13f34617dd5f4bb04dabe8fc82448bf719699bca",
+          "subject_revision": 1,
+          "verified_actor_ref": "synthetic-viewer",
+          "verified_role_ref": "synthetic-current-data-owner-role",
+          "decision": "APPROVE",
+          "decision_payload_digest": "a554f6b2a977583cb09970fd13f34617dd5f4bb04dabe8fc82448bf719699bca",
+          "disposition_payload": null,
+          "expires_at": "2030-01-01T11:00:00Z",
+          "supersedes_ref": null,
+          "operation_id": "synthetic-goal-consent-1",
+          "request_digest": "a554f6b2a977583cb09970fd13f34617dd5f4bb04dabe8fc82448bf719699bca"
+        },
+        "consent_record": {
+          "consent_ref": "synthetic-transfer-consent",
+          "owner_ref": {
+            "owner": "forge",
+            "instance_ref": "synthetic-forge",
+            "contract_version": "hob-proposal/1.1"
+          },
+          "verified_actor_ref": "synthetic-viewer",
+          "data_owner_transfer_scope_ref": "synthetic-data-transfer-scope",
+          "source_revision_vector": [],
+          "source_vector_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "redacted_payload_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+          "payload_classes": [
+            "USER_DECLARED_GOAL"
+          ],
+          "recipient_registry_ref": "synthetic-recipient",
+          "model_class_ref": "synthetic-model-class",
+          "purpose": "DRAFT_ADVICE",
+          "retention_mode": "NONE",
+          "maximum_retention_seconds": 0,
+          "maximum_cost_minor_units": 0,
+          "expiry": "2030-01-01T11:00:00Z",
+          "state": "ACTIVE",
+          "consumer_kind": "MODEL",
+          "target_tool_ref": null
+        }
+      }
+    },
+    {
+      "id": "forge-goal-consent-reject",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "schema": "TransferConsentDecisionResult",
+      "value": {
+        "decision_receipt": {
+          "owner_ref": {
+            "owner": "forge",
+            "instance_ref": "synthetic-forge",
+            "contract_version": "hob-proposal/1.1"
+          },
+          "decision_id": "synthetic-goal-reject",
+          "decision_kind": "DATA_TRANSFER_CONSENT",
+          "subject_digest": "68dc07fe6657aff748cde7b8252f04d6e5deeaed281320de77ba8658e4cc714e",
+          "subject_revision": 1,
+          "verified_actor_ref": "synthetic-viewer",
+          "verified_role_ref": "synthetic-current-data-owner-role",
+          "decision": "REJECT",
+          "decision_payload_digest": "68dc07fe6657aff748cde7b8252f04d6e5deeaed281320de77ba8658e4cc714e",
+          "disposition_payload": null,
+          "expires_at": "2030-01-01T11:00:00Z",
+          "supersedes_ref": null,
+          "operation_id": "synthetic-goal-reject",
+          "request_digest": "68dc07fe6657aff748cde7b8252f04d6e5deeaed281320de77ba8658e4cc714e"
+        },
+        "consent_record": null
+      }
+    },
+    {
+      "id": "ep-transfer-request-approve",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "schema": "TransferConsentDecisionRequest",
+      "value": {
+        "data_owner_transfer_scope_ref": "synthetic-data-transfer-scope",
+        "source_revision_vector": [
+          {
+            "repository_ref": "atlas-core",
+            "identity_kind": "COMMITTED",
+            "revision_kind": "COMMIT",
+            "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "source_snapshot_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "source_vector_digest": "0482ba168aa2f0a440fe9cda106b0dfbcd66685f0422fa1c346ea3addf01ff38",
+        "redacted_payload_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "payload_classes": [
+          "AUTHORIZED_REDACTED_REPORT"
+        ],
+        "recipient_registry_ref": "synthetic-recipient",
+        "model_class_ref": null,
+        "purpose": "EXTERNAL_ASSESSMENT",
+        "retention_mode": "NONE",
+        "maximum_retention_seconds": 0,
+        "maximum_cost_minor_units": 0,
+        "consumer_kind": "EXTERNAL_SCANNER",
+        "target_tool_ref": "synthetic-scanner-1",
+        "decision": "APPROVE",
+        "requested_expiry": "2030-01-01T11:00:00Z",
+        "operation_id": "synthetic-ep-transfer-approve",
+        "idempotency_key": "synthetic-ep-transfer-key-approve"
+      }
+    },
+    {
+      "id": "ep-transfer-result-approve",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "schema": "TransferConsentDecisionResult",
+      "value": {
+        "decision_receipt": {
+          "owner_ref": {
+            "owner": "engineering-platform",
+            "instance_ref": "synthetic-ep",
+            "contract_version": "hob-proposal/1.1"
+          },
+          "decision_id": "synthetic-ep-approve",
+          "decision_kind": "DATA_TRANSFER_CONSENT",
+          "subject_digest": "e3f70e08f3e8d1e674d0b028b8beffc55199af6e0e6cf6185a4479c94350e83c",
+          "subject_revision": 1,
+          "verified_actor_ref": "synthetic-viewer",
+          "verified_role_ref": "synthetic-current-data-owner-role",
+          "decision": "APPROVE",
+          "decision_payload_digest": "e3f70e08f3e8d1e674d0b028b8beffc55199af6e0e6cf6185a4479c94350e83c",
+          "disposition_payload": null,
+          "expires_at": "2030-01-01T11:00:00Z",
+          "supersedes_ref": null,
+          "operation_id": "synthetic-ep-transfer-approve",
+          "request_digest": "e3f70e08f3e8d1e674d0b028b8beffc55199af6e0e6cf6185a4479c94350e83c"
+        },
+        "consent_record": {
+          "consent_ref": "synthetic-transfer-consent",
+          "owner_ref": {
+            "owner": "engineering-platform",
+            "instance_ref": "synthetic-ep",
+            "contract_version": "hob-proposal/1.1"
+          },
+          "verified_actor_ref": "synthetic-viewer",
+          "data_owner_transfer_scope_ref": "synthetic-data-transfer-scope",
+          "source_revision_vector": [
+            {
+              "repository_ref": "atlas-core",
+              "identity_kind": "COMMITTED",
+              "revision_kind": "COMMIT",
+              "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "source_snapshot_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            }
+          ],
+          "source_vector_digest": "0482ba168aa2f0a440fe9cda106b0dfbcd66685f0422fa1c346ea3addf01ff38",
+          "redacted_payload_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+          "payload_classes": [
+            "AUTHORIZED_REDACTED_REPORT"
+          ],
+          "recipient_registry_ref": "synthetic-recipient",
+          "model_class_ref": null,
+          "purpose": "EXTERNAL_ASSESSMENT",
+          "retention_mode": "NONE",
+          "maximum_retention_seconds": 0,
+          "maximum_cost_minor_units": 0,
+          "expiry": "2030-01-01T11:00:00Z",
+          "state": "ACTIVE",
+          "consumer_kind": "EXTERNAL_SCANNER",
+          "target_tool_ref": "synthetic-scanner-1"
+        }
+      }
+    },
+    {
+      "id": "ep-transfer-request-reject",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "schema": "TransferConsentDecisionRequest",
+      "value": {
+        "data_owner_transfer_scope_ref": "synthetic-data-transfer-scope",
+        "source_revision_vector": [
+          {
+            "repository_ref": "atlas-core",
+            "identity_kind": "COMMITTED",
+            "revision_kind": "COMMIT",
+            "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "source_snapshot_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "source_vector_digest": "0482ba168aa2f0a440fe9cda106b0dfbcd66685f0422fa1c346ea3addf01ff38",
+        "redacted_payload_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "payload_classes": [
+          "AUTHORIZED_REDACTED_REPORT"
+        ],
+        "recipient_registry_ref": "synthetic-recipient",
+        "model_class_ref": null,
+        "purpose": "EXTERNAL_ASSESSMENT",
+        "retention_mode": "NONE",
+        "maximum_retention_seconds": 0,
+        "maximum_cost_minor_units": 0,
+        "consumer_kind": "EXTERNAL_SCANNER",
+        "target_tool_ref": "synthetic-scanner-1",
+        "decision": "REJECT",
+        "requested_expiry": "2030-01-01T11:00:00Z",
+        "operation_id": "synthetic-ep-transfer-reject",
+        "idempotency_key": "synthetic-ep-transfer-key-reject"
+      }
+    },
+    {
+      "id": "ep-transfer-result-reject",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "schema": "TransferConsentDecisionResult",
+      "value": {
+        "decision_receipt": {
+          "owner_ref": {
+            "owner": "engineering-platform",
+            "instance_ref": "synthetic-ep",
+            "contract_version": "hob-proposal/1.1"
+          },
+          "decision_id": "synthetic-ep-reject",
+          "decision_kind": "DATA_TRANSFER_CONSENT",
+          "subject_digest": "738c1dad68600e604f237081bcf621c23a21e463bd66f229137b546e5a8f80e6",
+          "subject_revision": 1,
+          "verified_actor_ref": "synthetic-viewer",
+          "verified_role_ref": "synthetic-current-data-owner-role",
+          "decision": "REJECT",
+          "decision_payload_digest": "738c1dad68600e604f237081bcf621c23a21e463bd66f229137b546e5a8f80e6",
+          "disposition_payload": null,
+          "expires_at": "2030-01-01T11:00:00Z",
+          "supersedes_ref": null,
+          "operation_id": "synthetic-ep-transfer-reject",
+          "request_digest": "738c1dad68600e604f237081bcf621c23a21e463bd66f229137b546e5a8f80e6"
+        },
+        "consent_record": null
+      }
+    },
+    {
+      "id": "ep-transfer-request-abstain",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "schema": "TransferConsentDecisionRequest",
+      "value": {
+        "data_owner_transfer_scope_ref": "synthetic-data-transfer-scope",
+        "source_revision_vector": [
+          {
+            "repository_ref": "atlas-core",
+            "identity_kind": "COMMITTED",
+            "revision_kind": "COMMIT",
+            "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "source_snapshot_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "source_vector_digest": "0482ba168aa2f0a440fe9cda106b0dfbcd66685f0422fa1c346ea3addf01ff38",
+        "redacted_payload_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "payload_classes": [
+          "AUTHORIZED_REDACTED_REPORT"
+        ],
+        "recipient_registry_ref": "synthetic-recipient",
+        "model_class_ref": null,
+        "purpose": "EXTERNAL_ASSESSMENT",
+        "retention_mode": "NONE",
+        "maximum_retention_seconds": 0,
+        "maximum_cost_minor_units": 0,
+        "consumer_kind": "EXTERNAL_SCANNER",
+        "target_tool_ref": "synthetic-scanner-1",
+        "decision": "ABSTAIN",
+        "requested_expiry": "2030-01-01T11:00:00Z",
+        "operation_id": "synthetic-ep-transfer-abstain",
+        "idempotency_key": "synthetic-ep-transfer-key-abstain"
+      }
+    },
+    {
+      "id": "ep-transfer-result-abstain",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "schema": "TransferConsentDecisionResult",
+      "value": {
+        "decision_receipt": {
+          "owner_ref": {
+            "owner": "engineering-platform",
+            "instance_ref": "synthetic-ep",
+            "contract_version": "hob-proposal/1.1"
+          },
+          "decision_id": "synthetic-ep-abstain",
+          "decision_kind": "DATA_TRANSFER_CONSENT",
+          "subject_digest": "3795c467f9349db10f8ffd9ee1a77ddefc82c1dd35547048f6dfd50cd2ac01e7",
+          "subject_revision": 1,
+          "verified_actor_ref": "synthetic-viewer",
+          "verified_role_ref": "synthetic-current-data-owner-role",
+          "decision": "ABSTAIN",
+          "decision_payload_digest": "3795c467f9349db10f8ffd9ee1a77ddefc82c1dd35547048f6dfd50cd2ac01e7",
+          "disposition_payload": null,
+          "expires_at": "2030-01-01T11:00:00Z",
+          "supersedes_ref": null,
+          "operation_id": "synthetic-ep-transfer-abstain",
+          "request_digest": "3795c467f9349db10f8ffd9ee1a77ddefc82c1dd35547048f6dfd50cd2ac01e7"
+        },
+        "consent_record": null
+      }
     }
   ],
   "binding_rules": [
@@ -5951,10 +6413,10 @@
   "schema_semantics": {
     "digest": "New HOB source-vector digest is SHA256 of UTF8 canonical JSON: object keys sorted, no whitespace, ensure_ascii=false; vector ordered by exact repository_ref, no name/path-derived identity. Existing Forge manifest/plan digests retain their qualified owner algorithm and are opaque refs, not recomputed with HOB rules.",
     "refs": "All opaque refs resolved only against configured authenticated owning instance/contract/caller scope; never arbitrary URLs/SSRF, caller supplied actor roles, self-issued receipts or peer filesystem.",
-    "basic_link": "DiscoverySnapshot\u2192TopologySnapshot. Current access and exactly one committed authority verified; save own reference, no fabricated operation/plan/Mission. For pure project read snapshots operation_ref/plan_ref are null.",
+    "basic_link": "DiscoverySnapshot→TopologySnapshot. Current access and exactly one committed authority verified; save own reference, no fabricated operation/plan/Mission. For pure project read snapshots operation_ref/plan_ref are null.",
     "inspection": "INSPECT_READ resolves AnalysisPlan with scripts/network/transfer forbidden and zero external cost; ASSESSMENT resolves separately accepted tools/profile/version/isolation/budget. Request plan/source digest must match immutable owner record; client cannot amend limits through an arbitrary object.",
     "limits": "Absolute owner expiry and fixed maximum elapsed time include pauses/restarts. Limits cannot exceed current accepted authorization/owner budget; attempts do not reset on retry. Unknown nested field/tool/profile/ref refused before effects.",
-    "model_transfer": "EXPLICIT_MODEL_CONSENT requires resolvable current TransferConsent; exact verified actor/data-owner-transfer scope/vector/payload digest/classes/recipient/model/purpose/retention/cost/expiry all match. Different recipient/content, absent/expired/revoked consent \u2192 403 or SOURCE_ONLY only when explicitly selected; never silent model upload or network fallback. Reuse prior valid exact consent; no redundant harmless read confirmation.",
+    "model_transfer": "EXPLICIT_MODEL_CONSENT requires resolvable current TransferConsent; exact verified actor/data-owner-transfer scope/vector/payload digest/classes/recipient/model/purpose/retention/cost/expiry all match. Different recipient/content, absent/expired/revoked consent → 403 or SOURCE_ONLY only when explicitly selected; never silent model upload or network fallback. Reuse prior valid exact consent; no redundant harmless read confirmation.",
     "decisions": "APPROVE/REJECT/ABSTAIN explicit; verified roles derive from current auth. Payload digest binds exact subject and decision contents. Disposition preserves decline/supersedes/history; accepted risk expires and cannot waive applicable current acceptance. Deferral trigger mandatory; resolved proof mandatory.",
     "topology": "Exactly one authority repository equals project.authority_repository_id; every listed repo shares same project/authority, attachments only refer listed repos, no duplicated IDs or paths as identity. A malformed/conflicting set is CONFLICT, not closest match.",
     "joins": "OwnerRef/ReadScope owner+instance must match configured authenticated peer and viewer; source vector digest exact; references share logical project/plan/source/operation. Per-owner monotone revisions; no global atomic snapshot. Relay preserves original EP digest/vector/observed_at and current EP permitted disclosure; fetched_at does not refresh evidence.",
@@ -6023,6 +6485,155 @@
         "hidden_unlimited_network"
       ],
       "replacement": true,
+      "expected": "SCHEMA_REJECT"
+    },
+    {
+      "id": "empty-goal-source-material",
+      "base": "goal-only-transfer-request",
+      "path": [
+        "payload_classes"
+      ],
+      "replacement": [
+        "AUTHORIZED_REDACTED_SOURCE"
+      ],
+      "expected": "SCHEMA_REJECT"
+    },
+    {
+      "id": "empty-goal-scanner",
+      "base": "goal-only-transfer-request",
+      "path": [
+        "consumer_kind"
+      ],
+      "replacement": "EXTERNAL_SCANNER",
+      "expected": "SCHEMA_REJECT"
+    },
+    {
+      "id": "empty-goal-wrong-purpose",
+      "base": "goal-only-transfer-request",
+      "path": [
+        "purpose"
+      ],
+      "replacement": "BASELINE_INTERPRETATION",
+      "expected": "SCHEMA_REJECT"
+    },
+    {
+      "id": "draft-advice-repository-vector",
+      "base": "goal-only-transfer-request",
+      "path": [
+        "source_revision_vector"
+      ],
+      "replacement": [
+        {
+          "repository_ref": "atlas-core",
+          "identity_kind": "COMMITTED",
+          "revision_kind": "COMMIT",
+          "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "source_snapshot_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        }
+      ],
+      "expected": "SCHEMA_REJECT"
+    },
+    {
+      "id": "reject-must-not-issue-consent",
+      "base": "ep-transfer-result-reject",
+      "path": [
+        "consent_record"
+      ],
+      "replacement": {
+        "consent_ref": "synthetic-transfer-consent",
+        "owner_ref": {
+          "owner": "engineering-platform",
+          "instance_ref": "synthetic-ep",
+          "contract_version": "hob-proposal/1.1"
+        },
+        "verified_actor_ref": "synthetic-viewer",
+        "data_owner_transfer_scope_ref": "synthetic-data-transfer-scope",
+        "source_revision_vector": [
+          {
+            "repository_ref": "atlas-core",
+            "identity_kind": "COMMITTED",
+            "revision_kind": "COMMIT",
+            "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "source_snapshot_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "source_vector_digest": "0482ba168aa2f0a440fe9cda106b0dfbcd66685f0422fa1c346ea3addf01ff38",
+        "redacted_payload_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "payload_classes": [
+          "AUTHORIZED_REDACTED_REPORT"
+        ],
+        "recipient_registry_ref": "synthetic-recipient",
+        "model_class_ref": null,
+        "purpose": "EXTERNAL_ASSESSMENT",
+        "retention_mode": "NONE",
+        "maximum_retention_seconds": 0,
+        "maximum_cost_minor_units": 0,
+        "expiry": "2030-01-01T11:00:00Z",
+        "state": "ACTIVE",
+        "consumer_kind": "EXTERNAL_SCANNER",
+        "target_tool_ref": "synthetic-scanner-1"
+      },
+      "expected": "SCHEMA_REJECT"
+    },
+    {
+      "id": "abstain-must-not-issue-consent",
+      "base": "ep-transfer-result-abstain",
+      "path": [
+        "consent_record"
+      ],
+      "replacement": {
+        "consent_ref": "synthetic-transfer-consent",
+        "owner_ref": {
+          "owner": "forge",
+          "instance_ref": "synthetic-forge",
+          "contract_version": "hob-proposal/1.1"
+        },
+        "verified_actor_ref": "synthetic-viewer",
+        "data_owner_transfer_scope_ref": "synthetic-data-transfer-scope",
+        "source_revision_vector": [
+          {
+            "repository_ref": "atlas-core",
+            "identity_kind": "COMMITTED",
+            "revision_kind": "COMMIT",
+            "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "source_snapshot_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "source_vector_digest": "0482ba168aa2f0a440fe9cda106b0dfbcd66685f0422fa1c346ea3addf01ff38",
+        "redacted_payload_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+        "payload_classes": [
+          "AUTHORIZED_REDACTED_REPORT"
+        ],
+        "recipient_registry_ref": "synthetic-recipient",
+        "model_class_ref": "synthetic-model-class",
+        "purpose": "BASELINE_INTERPRETATION",
+        "retention_mode": "NONE",
+        "maximum_retention_seconds": 0,
+        "maximum_cost_minor_units": 0,
+        "expiry": "2030-01-01T11:00:00Z",
+        "state": "ACTIVE",
+        "consumer_kind": "MODEL",
+        "target_tool_ref": null
+      },
+      "expected": "SCHEMA_REJECT"
+    },
+    {
+      "id": "approval-requires-consent",
+      "base": "ep-transfer-result-approve",
+      "path": [
+        "consent_record"
+      ],
+      "replacement": null,
+      "expected": "SCHEMA_REJECT"
+    },
+    {
+      "id": "approval-cannot-issue-expired-consent",
+      "base": "ep-transfer-result-approve",
+      "path": [
+        "consent_record",
+        "state"
+      ],
+      "replacement": "EXPIRED",
       "expected": "SCHEMA_REJECT"
     }
   ],
@@ -6100,7 +6711,8 @@
     "All POST intents, including plan/interpretation/decision/consent preparation, use stable operation_id/idempotency_key and immutable request digest. Owner atomically records original intent before effect, reserves bounded model/tool budget once per original operation, and serves original result after lost reply; unknown provider effect does not authorize another call. Readback never issues a grant or increments budget.",
     "Prepared/accepted record is not new authority. Current owner verifies preexisting actor/role/source/disclosure/admission scope; no client-stamped actor/ACTIVE owner record accepted. Actual issuer/pre-project scope qualification remains a concrete missing producer edge, not a global project initialization prerequisite.",
     "EP evidence GET is a proposed scoped redacted structured view, not widening current accepted-consumer artifact bearer or arbitrary raw report download. Forge finding GET resolves exact baseline/vector under own read scope. Preserve original issue/tool owner/status/ref, no issue close on read.",
-    "Consumers may retain only bounded short-lived authorized display cache and durable refs, not a second canonical engineering store; no raw source/secret/prompt/hostpath export. Provenance and redaction transforms retain original owner evidence refs/digests separately."
+    "Consumers may retain only bounded short-lived authorized display cache and durable refs, not a second canonical engineering store; no raw source/secret/prompt/hostpath export. Provenance and redaction transforms retain original owner evidence refs/digests separately.",
+    "Both Forge and EP transfer decision results bind the current authenticated owning data-owner role, exact original request/payload digest, actor, operation and source vector. APPROVE yields an owner-stamped ACTIVE consent only after current disclosure admission; REJECT/ABSTAIN persist the real decision receipt with consent_record=null. Matching owner/actor/expiry/source/recipient/cost values are server semantic checks, not caller-issued authority. Goal-only empty-vector DRAFT_ADVICE is exclusively the separately qualified Forge own-draft/model path; EP assessment disclosure still requires its real nonempty authorized source vector and current assessment scope. Offline examples do not establish any actual scope or decision."
   ],
   "original_intent_readback": {
     "owner": "forge",
