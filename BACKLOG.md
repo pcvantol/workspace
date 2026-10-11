@@ -16,8 +16,11 @@ new grant after interruption, driver patch or authority bypass occurred.
 
 Genuine durable original intent survived an app interruption before dispatch,
 then explicit Resume forwarded the same original request. The real productHTTP200
-was lost; two own app/Server restarts reconciled that same COMPLETE operation
-without a second release. Current native history and canonical request/receipt
+was lost; two native app OS-process restarts and two cold Workspace Service/HTTP
+listener reconstructions reconciled that same COMPLETE operation without a second
+release. The service/listener reconstructions occurred within the unchanged
+qualification process; separate Server OS-process replacement or interpreter
+crash resilience is not claimed. Current native history and canonical request/receipt
 agree. ActiveA future-only withdrawal retained A; separate final acceptance and
 idle ticks never started B. Scope2 used3synthetic definitions/2Missions/1release/
 1simulatorstart; own temporary Forge grants and Workspace bindings were revoked,

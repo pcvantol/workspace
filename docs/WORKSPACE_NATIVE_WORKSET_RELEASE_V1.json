@@ -797,7 +797,6 @@
     "fixed_test_deadline_margin": "PASS_E_GTE_D_PLUS15MIN",
     "original_intent_before_and_after_effect": "EXACT_SAME_ORIGINAL_COMMAND_SCOPE_AND_OPERATION_ID",
     "actual_HTTP200_lost": "REAL_FORWARDED_ORIGINAL_RELEASE_REPLY",
-    "workspace_Server_restarts": 2,
     "release_effects": 1,
     "definition_calls": 3,
     "formed_Missions": 2,
@@ -821,6 +820,9 @@
     "new_recovery_manifest": "docs/evidence/lane4-plan96-recovery-scope2-0bbb06f/manifest.json",
     "earlier_GUI_manifest": "https://github.com/pcvantol/workspace/blob/ad4404c3647f0756eea5bd3a84bc0f7f3fe758c0/docs/evidence/lane4-plan96-final-main-0bbb06f/manifest.json",
     "full_DoD": "PENDING_PROTECTED_EVIDENCE_MERGE_AND_TERMINAL_READBACK",
-    "original_CI_timer_findings_retained": true
+    "original_CI_timer_findings_retained": true,
+    "native_app_OS_process_restarts": 2,
+    "Workspace_Service_HTTP_listener_reconstructions": 2,
+    "restart_evidence_boundary": "Two native app OS-process restarts and two cold Workspace Service/HTTP listener reconstructions within the unchanged qualification process. Separate Server OS-process replacement or interpreter crash resilience is not claimed."
   }
 }

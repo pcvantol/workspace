@@ -144,5 +144,6 @@
     "aggregate_installed_task_UX": "PASS_WITH_FINDINGS",
     "VoiceOver_speech_certification": "NOT_CLAIMED",
     "recurring_CI_timer_finding": "RETAINED"
-  }
+  },
+  "restart_evidence_boundary": "Two native app OS-process restarts and two cold Workspace Service/HTTP listener reconstructions within the unchanged qualification process. Separate Server OS-process replacement or interpreter crash resilience is not claimed."
 }

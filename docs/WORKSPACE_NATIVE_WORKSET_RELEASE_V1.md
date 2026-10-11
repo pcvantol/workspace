@@ -16,8 +16,11 @@ new grant after interruption, driver patch or authority bypass occurred.
 
 Genuine durable original intent survived an app interruption before dispatch,
 then explicit Resume forwarded the same original request. The real productHTTP200
-was lost; two own app/Server restarts reconciled that same COMPLETE operation
-without a second release. Current native history and canonical request/receipt
+was lost; two native app OS-process restarts and two cold Workspace Service/HTTP
+listener reconstructions reconciled that same COMPLETE operation without a second
+release. The service/listener reconstructions occurred within the unchanged
+qualification process; separate Server OS-process replacement or interpreter
+crash resilience is not claimed. Current native history and canonical request/receipt
 agree. ActiveA future-only withdrawal retained A; separate final acceptance and
 idle ticks never started B. Scope2 used3synthetic definitions/2Missions/1release/
 1simulatorstart; own temporary Forge grants and Workspace bindings were revoked,
@@ -55,7 +58,7 @@ confirmation. No protected merge or full delivery is preclaimed here.
 | Focus, repeated pan/refocus, Previous/Next, shared selection/detail/search, keyboard | Independent actual native7cases plus owner6keyboard/2ordinary cases | Whole fitting card inside all clips; no VoiceOver speech certification |
 | Five languages, themes and narrow window | Earlier0bbb five-language focused-card manifest including actual640px | Product chrome translated; original authored fixture text retained |
 | Deadline/denial, held authorized response after expiry | Earlier0bbb actual expiry/late-response proof and new native revocation image | Measured post-deadline clearing, no atomic zero-time claim |
-| Durable original intent before/after interruption, original response loss, app/Server restart | New scope2 same complete intent/request/receipt and one actual forwarded200 release | No replacement UUID, duplicate admission or grant reissue |
+| Durable original intent before/after interruption, original response loss, native OS restart and cold Service/HTTP reconstruction | New scope2 same complete intent/request/receipt and one actual forwarded200 release | No replacement UUID, duplicate admission or grant reissue |
 | Future-only withdrawal while Aactive and no later Bstart | New scope2 withdrawal/current image, separate Aacceptance and idle readbacks | A not cancelled; stale pre-withdrawal image excluded as fresh proof |
 | Independent current Quality/Security/UX | Whole-feature source pair and targeted scope2 pair; aggregate UX PASS_WITH_FINDINGS | Immutable unchanged product; no suite substitution |
 | Source tests/coverage and TDE | ProtectedPR155/156,203+1/allrequiredprod>80.2/graph94.67, actual standard TDE artifacts | Original CI FAIL/retry and recurring risk retained |
