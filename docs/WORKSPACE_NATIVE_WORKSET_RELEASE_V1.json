@@ -18,7 +18,7 @@
     "prior_consumption_preserved": true,
     "operation_budgets_unchanged": true
   },
-  "state": "ROUND9_PROTECTED_SOURCE_DELIVERED_FINALIZATION_PENDING",
+  "state": "INSTALLED_ACCEPTANCE_PASS_PROTECTED_EVIDENCE_FINALIZATION_PENDING",
   "prior_plans_93_95_closed": true,
   "users_credentials_retained": true,
   "consumer_version": "2.8.20",
@@ -39,18 +39,15 @@
     "runtime_version": "1.1.1",
     "repository_qualification": "QUALIFIED"
   },
-  "qualification_boundary": "Early native A/B release and future-only disarm are genuine source/package experiments, not final-main installed qualification; producer remains exact Forge2.12.1/9875333.",
+  "qualification_boundary": "Actual packaged native/noneditableServer exact product0bbb06f and Forge2.12.1/9875333; deterministic external model/OS/repository/EPHTTP fixtures. No liveEP/signing/paid-provider/user-deployment claim. Productbytes unchanged; old attempts retained.",
   "early_ux": {
     "first": "BLOCKER_preserved",
     "second": "ACCEPTABLE_TO_CONTINUE_EARLY_ONLY"
   },
   "pending_gates": [
-    "independent_finalization_review_CI_protected_merge",
-    "NEW_exact_final_main_matching_native_Server_pinned_Forge",
-    "targeted_runtime_A_to_B_actual_final_acceptance_finite_quota_idle",
-    "actual_lost_response_restart_denied_future_disarm",
-    "full_independent_UX_five_language_theme_narrow_keyboard_screens_reachable_manifest",
-    "final_register_readback_safe_own_cleanup"
+    "independent_documentary_reviews_required_evidence_checks_CI_protected_merge",
+    "immutable_reachable_byte_verification",
+    "terminal_register_current_main_all_scope_disposition_readback"
   ],
   "independent_review_first_pair": {
     "source": "440b5276567744b9efb7b877d1d5557f8e63bb75",
@@ -740,5 +737,90 @@
     "original_pending_preserved": true,
     "operational_scope_not_restarted": true,
     "full_dod": "PARTIAL"
+  },
+  "historical_before_recovery_scope2": {
+    "state": "ROUND9_PROTECTED_SOURCE_DELIVERED_FINALIZATION_PENDING",
+    "pending_gates": [
+      "independent_finalization_review_CI_protected_merge",
+      "NEW_exact_final_main_matching_native_Server_pinned_Forge",
+      "targeted_runtime_A_to_B_actual_final_acceptance_finite_quota_idle",
+      "actual_lost_response_restart_denied_future_disarm",
+      "full_independent_UX_five_language_theme_narrow_keyboard_screens_reachable_manifest",
+      "final_register_readback_safe_own_cleanup"
+    ],
+    "qualification_boundary": "Early native A/B release and future-only disarm are genuine source/package experiments, not final-main installed qualification; producer remains exact Forge2.12.1/9875333.",
+    "round9_delivery": {
+      "source_pr": 155,
+      "source_reviewed_head": "15c5bb0fe44ac8b0ba1d61e09d35570dc5a936b1",
+      "source_protected_merge": "fda4630bb86e17de7ee4798b8d458bb2e2531f05",
+      "complete_original_feature_quality": "PASS",
+      "complete_original_feature_security": "PASS",
+      "bounded_source_rendered_ux": "PASS",
+      "native_ci_attempt1": "FAIL_TWO_EXISTING_80MS_EXPIRY_TESTS",
+      "native_ci_attempt2": "PASS_ONE_UNCHANGED_DIAGNOSTIC_RETRY",
+      "recurring_timer_risk_preserved": true,
+      "timer_rootcause": "NOT_PROVEN",
+      "tde_run": 38134867973,
+      "tde_policy": "PASS",
+      "runtime_qualification": "QUALIFIED",
+      "source_probe_actual_keyboard_cases": 6,
+      "source_probe_actual_resize_width": 640,
+      "new_exact_final_main_installed": "PENDING",
+      "original_recovery_scope": "NOT_QUALIFIED_ORIGINAL_ONE_HOUR_WINDOW_ENDED",
+      "original_pending_preserved": true,
+      "operational_scope_not_restarted": true,
+      "full_dod": "PARTIAL"
+    }
+  },
+  "scope2_recovery_delivery": {
+    "decisions": [
+      6110290741,
+      6110489559
+    ],
+    "pickup": 6110574249,
+    "base": "0bbb06f35cfbbb7609b32aeab197a52092b000ce",
+    "branch": "codex/r81-plan96-recovery-scope2-evidence",
+    "version_operation": "NO_BUMP_EVIDENCE_ONLY_PRODUCT_OPERATION_RETAINED",
+    "product_changes": 0,
+    "driver_changes": 0,
+    "additional_scopes": {
+      "consumed": 2,
+      "maximum": 2,
+      "remaining": 0
+    },
+    "source_corrections": {
+      "consumed": 9,
+      "maximum": 9,
+      "remaining": 0
+    },
+    "actual_predefinition_scope_expiry_readback": "PASS_STANDARD_READ_ONLY_PDB",
+    "fixed_test_deadline_margin": "PASS_E_GTE_D_PLUS15MIN",
+    "original_intent_before_and_after_effect": "EXACT_SAME_ORIGINAL_COMMAND_SCOPE_AND_OPERATION_ID",
+    "actual_HTTP200_lost": "REAL_FORWARDED_ORIGINAL_RELEASE_REPLY",
+    "workspace_Server_restarts": 2,
+    "release_effects": 1,
+    "definition_calls": 3,
+    "formed_Missions": 2,
+    "simulator_starts": 1,
+    "runtime_provider_calls": 1,
+    "allocations": 2,
+    "governance_decisions": 8,
+    "native_history": 2,
+    "pending": false,
+    "active_A_future_withdrawal": "PASS_A_RETAINED_B_NEVER_STARTED",
+    "separate_A_acceptance": "PASS",
+    "scope2_Quality": "PASS",
+    "scope2_Security": "PASS",
+    "aggregate_installed_task_UX": "PASS_WITH_FINDINGS",
+    "all_own_new_access_revoked": "PASS_FORGE_AND_WORKSPACE",
+    "own_processes_stopped_before_original_deadline": true,
+    "old_ENOSPC": "INCONCLUSIVE_INFRA_EXPIRED_RETAINED_NOT_RESTARTABLE_UNDER_ORIGINAL_BUDGET",
+    "old_pending_preserved_and_not_copied": true,
+    "first_additional": "SETUP_REJECTED_GRANT_WINDOW_MISMATCH_RETAINED_NOT_QUALIFIED",
+    "historical_first_additional_calls": 3,
+    "new_recovery_manifest": "docs/evidence/lane4-plan96-recovery-scope2-0bbb06f/manifest.json",
+    "earlier_GUI_manifest": "https://github.com/pcvantol/workspace/blob/ad4404c3647f0756eea5bd3a84bc0f7f3fe758c0/docs/evidence/lane4-plan96-final-main-0bbb06f/manifest.json",
+    "full_DoD": "PENDING_PROTECTED_EVIDENCE_MERGE_AND_TERMINAL_READBACK",
+    "original_CI_timer_findings_retained": true
   }
 }

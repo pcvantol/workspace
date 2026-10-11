@@ -1,3 +1,51 @@
+## Plan96 scope2 — installed recovery acceptance and evidence finalization
+
+Same r81 assignment, Work session and sole Workspace writer; product source remains
+`0bbb06f35cfbbb7609b32aeab197a52092b000ce`, Workspace2.8.20, exact
+Forge2.12.1/9875333acc4258a20fc0180a9ae09c980802d5b1. Protected sourcePR155
+and ordinary finalizationPR156 remain closed. This is NO_BUMP evidence-only
+registration: product, tests, driver, policy, version and version-operation bytes
+are unchanged. The historical receipts below retain their original states.
+
+Selected scope2 and amended expiry contract6110290741/6110489559 were independently
+checked. Scope2 booked once under pickup6110574249; additional scopes consumed2/max2/0,
+source corrections9/9/0. Actual issued grant and scope were read before first
+definitions through ordinary read-only debugger process control; earliest required
+expiry covers the original fixed test deadline plus15minutes. No deadline reset,
+new grant after interruption, driver patch or authority bypass occurred.
+
+Genuine durable original intent survived an app interruption before dispatch,
+then explicit Resume forwarded the same original request. The real productHTTP200
+was lost; two own app/Server restarts reconciled that same COMPLETE operation
+without a second release. Current native history and canonical request/receipt
+agree. ActiveA future-only withdrawal retained A; separate final acceptance and
+idle ticks never started B. Scope2 used3synthetic definitions/2Missions/1release/
+1simulatorstart; own temporary Forge grants and Workspace bindings were revoked,
+and own processes stopped within the original fixed deadline.
+
+Targeted independent QualityPASS/SecurityPASS; aggregate installed taskUX
+PASS_WITH_FINDINGS combines this recovery with existing exact-product focus,
+keyboard, five-language/themes/narrow, A→B/acceptance/quota/idle and expiry proof.
+No unchanged GUI matrix or producer matrix was repeated. VoiceOver speech and
+signing/liveEP/user deployment are not certified; recurring CI timing observations
+remain preserved. The busy/stale pre-withdrawal image is context only, not fresh
+active-A evidence.
+
+[New recovery manifest](docs/evidence/lane4-plan96-recovery-scope2-0bbb06f/manifest.json)
+(in the evidence directory, use its immutable Git commit after protected merge)
+and [retained earlier installed GUI manifest](https://github.com/pcvantol/workspace/blob/ad4404c3647f0756eea5bd3a84bc0f7f3fe758c0/docs/evidence/lane4-plan96-final-main-0bbb06f/manifest.json)
+remain separate source-bound receipts. Original ENOSPC attempt stays
+INCONCLUSIVE_INFRA_EXPIRED/RETAINED/NOT_RESTARTABLE_UNDER_ORIGINAL_BUDGET;
+its pending intent and hashes remain unchanged. First additional attempt stays
+SETUP_REJECTED_GRANT_WINDOW_MISMATCH/RETAINED/NOT_QUALIFIED, including its3calls.
+Neither failure is reclassified as a successful operation.
+
+Installed acceptance is closed within the declared simulator/test boundaries.
+FullDoD terminal closure still requires this frozen evidence-only receipt to pass
+normal independent documentary reviews, owning checks/CI and protected merge,
+followed by immutable byte readback and final register/current-main cleanup
+confirmation. No protected merge or full delivery is preclaimed here.
+
 ## Plan96 round9 — protected selected-card focus repair
 
 PR155 normally protected match-head squash merged reviewed15c5bb0fe44ac8b0ba1d61e09d35570dc5a936b1 to mainfda4630bb86e17de7ee4798b8d458bb2e2531f05; exact trees equal. Workspace2.8.20 canonical PATCH operation L4-PLAN96-CORRECTION-ROUND9-20261011 retained. Fresh COMPLETE ORIGINAL-feature QualityPASS/SecurityPASS and bounded source-rendered UX PASS. Full owning validate203native+1isolated/allrequiredproduction>80.2%, changedgraph320/338=94.67%; allfive sourceCI PASS. Actual downloaded sourceTDE38134867973 standardpolicy1.4.0PASS0rules/runtime1.1.1QUALIFIED.
