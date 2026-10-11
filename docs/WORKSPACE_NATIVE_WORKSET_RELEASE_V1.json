@@ -18,7 +18,7 @@
     "prior_consumption_preserved": true,
     "operation_budgets_unchanged": true
   },
-  "state": "ROUND7_FROZEN_SOURCE_REVIEW_PENDING",
+  "state": "ROUND7_PROTECTED_SOURCE_DELIVERED_FINALIZATION_PENDING",
   "prior_plans_93_95_closed": true,
   "users_credentials_retained": true,
   "consumer_version": "2.8.17",
@@ -226,6 +226,23 @@
     "source_validation": "198native+1isolated PASS; requiredperfile>80.2; mission_contract97.22%",
     "independent_bounded_contract": "PASS",
     "mutation_detection": "all3 originalASCII regressions detected with sourcebytes unchanged",
-    "tde": "standard policy1.4.0 PASS0rules; runtime1.1.1/repository QUALIFIED"
+    "tde": "standard policy1.4.0 PASS0rules; runtime1.1.1/repository QUALIFIED",
+    "pr": 151,
+    "reviewed_source": "53155f85cf84f6ff642f018b34fbca372ee8d570",
+    "protected_main": "d262cf8e8c6a2e8908edceea8629166845dda730",
+    "trees_equal": true,
+    "quality": "fresh complete originalfeature PASS",
+    "security": "fresh complete originalfeature PASS",
+    "ci": "allfivePASS",
+    "ci_tde_run": 38121016961,
+    "ci_tde": "downloaded standardPASS0rules/QUALIFIED policy1.4.0 runtime1.1.1"
+  },
+  "mission_utf8_finalization": {
+    "classification": "ordinary nonempty NO_BUMP",
+    "product_bytes": "UNCHANGED",
+    "scope": "five owning documents only",
+    "base": "d262cf8e8c6a2e8908edceea8629166845dda730",
+    "review_ci_merge": "PENDING",
+    "full_DoD": "NOT_DELIVERED_PENDING_NEW_EXACT_FINAL_MAIN_INSTALLED_UX"
   }
 }
