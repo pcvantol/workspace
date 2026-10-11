@@ -132,10 +132,17 @@ class WorksetReleasePreparedTests(unittest.TestCase):
         packet['definition']['members'][0]['progression_policy']['higher_scope_obligations']=subject['planning']['human_gates']
         for role,receipt in subject['candidate_decisions'].items():
             receipt['canonical_decision']['gates']=subject['planning']['human_gates']
-            if role=='architecture':receipt['canonical_decision']['evidence']['planning_digest']=wire._canonical(subject['planning'])
+            if role=='architecture':receipt['canonical_decision']['evidence']['planning_digest']=wire.digest(subject['planning'])
             receipt['canonical_decision_digest']=wire.digest(receipt['canonical_decision'])
         wire._subject_proofs(packet,self.binding)
         receipt=subject['candidate_decisions']['architecture']
+        valid_digest=receipt['canonical_decision']['evidence']['planning_digest']
+        incorrect_utf8=wire._canonical(subject['planning'])
+        self.assertNotEqual(valid_digest,incorrect_utf8)
+        receipt['canonical_decision']['evidence']['planning_digest']=incorrect_utf8
+        receipt['canonical_decision_digest']=wire.digest(receipt['canonical_decision'])
+        with self.assertRaises(WorklistError):wire._subject_proofs(packet,self.binding)
+        receipt['canonical_decision']['evidence']['planning_digest']=valid_digest
         receipt['canonical_decision']['evidence'].pop('planning_digest')
         receipt['canonical_decision_digest']=wire.digest(receipt['canonical_decision'])
         with self.assertRaises(WorklistError):wire._subject_proofs(packet,self.binding)

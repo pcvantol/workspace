@@ -69,6 +69,39 @@ final class WorksetReleaseTests: XCTestCase {
         }
         XCTAssertEqual(WorksetReleaseCopy.text("release", language: "unknown"), "Release for execution")
     }
+    // Declared unit package transformation; does not fabricate installed governance evidence.
+    func testUnicodePlanningRequiresPinnedASCIIArchitectureProof() throws {
+        let raw=try prepared(),original=raw["package"] as! [String:Any],access=access(original)
+        func packet(ascii: Bool) throws -> [String:Any] {
+            var changed=original,subjects=original["subjects"] as! [[String:Any]]
+            var definition=original["definition"] as! [String:Any],members=definition["members"] as! [[String:Any]]
+            var planning=subjects[0]["planning"] as! [String:Any]
+            planning["risk_inputs"]=["Évaluation précise du périmètre."]
+            subjects[0]["planning"]=planning;members[0]["planning"]=planning
+            var decisions=subjects[0]["candidate_decisions"] as! [String:[String:Any]]
+            var receipt=decisions["architecture"]!,canonical=receipt["canonical_decision"] as! [String:Any]
+            var evidence=canonical["evidence"] as! [String:Any]
+            evidence["planning_digest"]=try AdvisoryWire.digest(planning,ascii:ascii)
+            canonical["evidence"]=evidence;receipt["canonical_decision"]=canonical
+            receipt["canonical_decision_digest"]=try AdvisoryWire.digest(canonical)
+            decisions["architecture"]=receipt;subjects[0]["candidate_decisions"]=decisions
+            changed["subjects"]=subjects
+            var semantic=original["scope"] as! [String:Any]
+            for key in ["principal_reference","selection","operator_binding"] { semantic[key]=original[key] }
+            semantic["members"]=members
+            semantic["candidate_decisions"]=subjects.map { subject in
+                let d=subject["candidate_decisions"] as! [String:[String:Any]]
+                return ["business":d["business"]!["canonical_decision_digest"]!,"architecture":d["architecture"]!["canonical_decision_digest"]!]
+            }
+            let key=try AdvisoryWire.digest(semantic);changed["release_key"]=key
+            definition["members"]=members;definition["workset_id"]="released-"+String(key.dropFirst(7).prefix(40))
+            changed["definition"]=definition
+            return changed
+        }
+        XCTAssertEqual(try WorksetReleaseWire.package(packet(ascii:true),access:access).members.count,2)
+        XCTAssertThrowsError(try WorksetReleaseWire.package(packet(ascii:false),access:access))
+    }
+
 }
 
 private struct ReleaseTestCredentials: WorksetReleaseCredentials {

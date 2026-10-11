@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "r81 plan96 specific round5 canonicalization repair decision6101549357; previous version artifacts retained",
+  "determined_version": "2.8.17",
+  "event_lineage": "r81 plan96 specific round5 canonicalization repair decision6101549357; previous version artifacts retained",
+  "expected_source_revision": "a905771713c794bbd69638a9ae118854bfe0d7e7",
+  "expected_version": "2.8.16",
+  "operation_id": "L4-PLAN96-CORRECTION-ROUND5-20261010",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

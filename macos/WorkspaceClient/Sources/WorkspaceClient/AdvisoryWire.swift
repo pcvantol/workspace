@@ -72,14 +72,11 @@ enum AdvisoryWire {
         return (text.hasSuffix("Z") || text.hasSuffix("+00:00")) && (ISO8601DateFormatter().date(from:text) != nil || fractional.date(from:text) != nil)
     }
     static func digest(_ raw: Any) throws -> String {
-        let data=try JSONSerialization.data(withJSONObject:raw,options:[.sortedKeys,.withoutEscapingSlashes])
-        let ascii=String(decoding:data,as:UTF8.self).unicodeScalars.map { scalar -> String in
-            let v=scalar.value
-            if v<127 { return String(scalar) }
-            if v<=0xffff { return String(format:"\\u%04x",v) }
-            return String(format:"\\u%04x\\u%04x",0xd800+((v-0x10000)>>10),0xdc00+((v-0x10000)&0x3ff))
-        }.joined()
-        return "sha256:"+SHA256.hash(data:Data(ascii.utf8)).map{String(format:"%02x",$0)}.joined()
+        try digest(raw, ascii: true)
+    }
+    static func digest(_ raw: Any, ascii: Bool) throws -> String {
+        let data = try CanonicalJSON.data(raw, ascii: ascii)
+        return "sha256:"+SHA256.hash(data:data).map { String(format:"%02x",$0) }.joined()
     }
     static func decode<T:Decodable>(_ raw: Any, as type:T.Type) throws -> T {
         try JSONDecoder().decode(type,from:JSONSerialization.data(withJSONObject:raw))

@@ -1,0 +1,351 @@
+{
+  "producer": "2.12.1/9875333",
+  "vectors": [
+    {
+      "value": {
+        "candidate-22f": [],
+        "candidate-8d": [
+          "candidate-22f"
+        ],
+        "candidate-02": [],
+        "candidate-2": []
+      },
+      "ascii": "{\"candidate-02\":[],\"candidate-2\":[],\"candidate-22f\":[],\"candidate-8d\":[\"candidate-22f\"]}",
+      "utf8": "{\"candidate-02\":[],\"candidate-2\":[],\"candidate-22f\":[],\"candidate-8d\":[\"candidate-22f\"]}",
+      "ascii_digest": "sha256:4b8b76d34c94df4821dd7abc4a30596da913951fb27a000344bc73b1108342ef",
+      "utf8_digest": "sha256:4b8b76d34c94df4821dd7abc4a30596da913951fb27a000344bc73b1108342ef"
+    },
+    {
+      "value": {
+        "a": 1,
+        "A": 2,
+        "a1": 3,
+        "a10": 4,
+        "a2": 5,
+        "a01": 6,
+        "a_": 7
+      },
+      "ascii": "{\"A\":2,\"a\":1,\"a01\":6,\"a1\":3,\"a10\":4,\"a2\":5,\"a_\":7}",
+      "utf8": "{\"A\":2,\"a\":1,\"a01\":6,\"a1\":3,\"a10\":4,\"a2\":5,\"a_\":7}",
+      "ascii_digest": "sha256:074c520a415c04d83ea7cc87e7a086a53aa7f3a261ea7bb718b7413b986685a8",
+      "utf8_digest": "sha256:074c520a415c04d83ea7cc87e7a086a53aa7f3a261ea7bb718b7413b986685a8"
+    },
+    {
+      "value": {
+        "nested": {
+          "10": false,
+          "2": true,
+          "01": null
+        },
+        "array": [
+          {
+            "8": 1,
+            "22": 2
+          },
+          0,
+          -7,
+          null,
+          true,
+          false
+        ]
+      },
+      "ascii": "{\"array\":[{\"22\":2,\"8\":1},0,-7,null,true,false],\"nested\":{\"01\":null,\"10\":false,\"2\":true}}",
+      "utf8": "{\"array\":[{\"22\":2,\"8\":1},0,-7,null,true,false],\"nested\":{\"01\":null,\"10\":false,\"2\":true}}",
+      "ascii_digest": "sha256:9ce864f71085d94a89b76a40be79658e2376100b77736053c2cd3538e894c947",
+      "utf8_digest": "sha256:9ce864f71085d94a89b76a40be79658e2376100b77736053c2cd3538e894c947"
+    },
+    {
+      "value": {
+        "unicode": "\u00e9\\n\\t\\r\\b\\f\\u0000 \" / \\\\ \ud83d\ude00",
+        "\u00e9": 1,
+        "e\u0301": 2,
+        "\u03a9": 3
+      },
+      "ascii": "{\"e\\u0301\":2,\"unicode\":\"\\u00e9\\\\n\\\\t\\\\r\\\\b\\\\f\\\\u0000 \\\" / \\\\\\\\ \\ud83d\\ude00\",\"\\u00e9\":1,\"\\u03a9\":3}",
+      "utf8": "{\"e\u0301\":2,\"unicode\":\"\u00e9\\\\n\\\\t\\\\r\\\\b\\\\f\\\\u0000 \\\" / \\\\\\\\ \ud83d\ude00\",\"\u00e9\":1,\"\u03a9\":3}",
+      "ascii_digest": "sha256:779758bfa3f98f811f3b4930388e992595093027fa72e8fc77684a15fa018352",
+      "utf8_digest": "sha256:bdfe4bfae7723ce6894883f8adf1a993bd6f3dfe6e1e28cba77ddc87289047ce"
+    },
+    {
+      "value": {
+        "prefix": {
+          "a": 1,
+          "aa": 2,
+          "a0": 3
+        },
+        "ints": [
+          -9223372036854775808,
+          9223372036854775807,
+          0
+        ]
+      },
+      "ascii": "{\"ints\":[-9223372036854775808,9223372036854775807,0],\"prefix\":{\"a\":1,\"a0\":3,\"aa\":2}}",
+      "utf8": "{\"ints\":[-9223372036854775808,9223372036854775807,0],\"prefix\":{\"a\":1,\"a0\":3,\"aa\":2}}",
+      "ascii_digest": "sha256:3e56f4b55d5b4bf3529bca8941473168ab0e214986fc4273d5593b6e4055b3c1",
+      "utf8_digest": "sha256:3e56f4b55d5b4bf3529bca8941473168ab0e214986fc4273d5593b6e4055b3c1"
+    },
+    {
+      "value": {
+        "concept_configuration_revision": "sha256:db32b88f052ec463bdb0830da582027132444365da530901457a3e31ee477280",
+        "concept_dependency_catalog": [
+          {
+            "candidate_id": "concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1",
+            "concept_revision": 1,
+            "dependencies": [],
+            "object_id": "concept-1377b70076574c0a4a30feb85124748f",
+            "recommendation_status": "MISSION_ALLOCATED",
+            "subject_revision": "sha256:ffce5a8d4dd67f28ddc280ad615cf7168c106416989a46a2550816cd36006c46",
+            "title": "Assessment A"
+          },
+          {
+            "candidate_id": "concept-candidate-8d7ae9b2c53a0e68c579fa2d5a9ce129",
+            "concept_revision": 1,
+            "dependencies": [
+              "concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1"
+            ],
+            "object_id": "concept-7c881360372f66cbca250412cf002d4c",
+            "recommendation_status": "MISSION_ALLOCATED",
+            "subject_revision": "sha256:bfb9487dd210723b9b16021452a08c7458ecc0c5a15f7ad92638947004857d4f",
+            "title": "Assessment B"
+          }
+        ],
+        "concept_dependency_graph": {
+          "concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1": [],
+          "concept-candidate-8d7ae9b2c53a0e68c579fa2d5a9ce129": [
+            "concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1"
+          ]
+        },
+        "concept_dependency_references": [
+          "concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1",
+          "concept-candidate-8d7ae9b2c53a0e68c579fa2d5a9ce129"
+        ],
+        "concept_repository_source": {
+          "github_repository": "synthetic-owner/synthetic-repository",
+          "repository_id": "synthetic-repository"
+        },
+        "concept_work_profiles": {
+          "INVESTIGATE": {
+            "components": {
+              "Deployment boundary": {
+                "description": "Assess the existing deployment boundary.",
+                "read_paths": [
+                  "docs/design.md"
+                ],
+                "write_paths": []
+              }
+            },
+            "constraints": [
+              "Preserve the approved repository effect boundary."
+            ],
+            "effect_policy": {
+              "contract_version": "1.0",
+              "delivery": "EVIDENCE_ONLY",
+              "mode": "READ_ONLY_ASSESSMENT",
+              "read_paths": [
+                "docs/"
+              ],
+              "write_paths": []
+            },
+            "human_gates": [
+              "protected-delivery"
+            ],
+            "maximum_actions": 4,
+            "maximum_consecutive_no_progress_actions": 2,
+            "required_capabilities": [
+              "synthetic-host"
+            ],
+            "required_disciplines": [
+              "platform_architecture"
+            ],
+            "technical_assumptions": [
+              "Use existing source evidence and canonical runtime."
+            ]
+          }
+        },
+        "dataset_generation": 0,
+        "evidence_references": [
+          "project-binding:sha256:819b7271f65aade503c8b58b260f8987860590ebc3a82f3fb08bbb89342c8f14"
+        ],
+        "freshness": "CURRENT_CONFIGURED_BINDING",
+        "included_sources": [
+          "PROJECT_BINDING"
+        ],
+        "instance_id": "forge-runtime-e65e7392-8f6a-4cc2-ac59-7a8907110ac2",
+        "limitations": [
+          "Explicit owner-published public immutable repository snapshots only; no harvesting or inferred facts."
+        ],
+        "missing_sources": [
+          "LIVE_REPOSITORY_CONTENT",
+          "CANONICAL_VISION",
+          "CANONICAL_PORTFOLIO",
+          "CANONICAL_ROADMAP"
+        ],
+        "project_id": "isolated-project",
+        "repository_id": "synthetic-repository",
+        "selected_sources": []
+      },
+      "ascii": "{\"concept_configuration_revision\":\"sha256:db32b88f052ec463bdb0830da582027132444365da530901457a3e31ee477280\",\"concept_dependency_catalog\":[{\"candidate_id\":\"concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1\",\"concept_revision\":1,\"dependencies\":[],\"object_id\":\"concept-1377b70076574c0a4a30feb85124748f\",\"recommendation_status\":\"MISSION_ALLOCATED\",\"subject_revision\":\"sha256:ffce5a8d4dd67f28ddc280ad615cf7168c106416989a46a2550816cd36006c46\",\"title\":\"Assessment A\"},{\"candidate_id\":\"concept-candidate-8d7ae9b2c53a0e68c579fa2d5a9ce129\",\"concept_revision\":1,\"dependencies\":[\"concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1\"],\"object_id\":\"concept-7c881360372f66cbca250412cf002d4c\",\"recommendation_status\":\"MISSION_ALLOCATED\",\"subject_revision\":\"sha256:bfb9487dd210723b9b16021452a08c7458ecc0c5a15f7ad92638947004857d4f\",\"title\":\"Assessment B\"}],\"concept_dependency_graph\":{\"concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1\":[],\"concept-candidate-8d7ae9b2c53a0e68c579fa2d5a9ce129\":[\"concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1\"]},\"concept_dependency_references\":[\"concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1\",\"concept-candidate-8d7ae9b2c53a0e68c579fa2d5a9ce129\"],\"concept_repository_source\":{\"github_repository\":\"synthetic-owner/synthetic-repository\",\"repository_id\":\"synthetic-repository\"},\"concept_work_profiles\":{\"INVESTIGATE\":{\"components\":{\"Deployment boundary\":{\"description\":\"Assess the existing deployment boundary.\",\"read_paths\":[\"docs/design.md\"],\"write_paths\":[]}},\"constraints\":[\"Preserve the approved repository effect boundary.\"],\"effect_policy\":{\"contract_version\":\"1.0\",\"delivery\":\"EVIDENCE_ONLY\",\"mode\":\"READ_ONLY_ASSESSMENT\",\"read_paths\":[\"docs/\"],\"write_paths\":[]},\"human_gates\":[\"protected-delivery\"],\"maximum_actions\":4,\"maximum_consecutive_no_progress_actions\":2,\"required_capabilities\":[\"synthetic-host\"],\"required_disciplines\":[\"platform_architecture\"],\"technical_assumptions\":[\"Use existing source evidence and canonical runtime.\"]}},\"dataset_generation\":0,\"evidence_references\":[\"project-binding:sha256:819b7271f65aade503c8b58b260f8987860590ebc3a82f3fb08bbb89342c8f14\"],\"freshness\":\"CURRENT_CONFIGURED_BINDING\",\"included_sources\":[\"PROJECT_BINDING\"],\"instance_id\":\"forge-runtime-e65e7392-8f6a-4cc2-ac59-7a8907110ac2\",\"limitations\":[\"Explicit owner-published public immutable repository snapshots only; no harvesting or inferred facts.\"],\"missing_sources\":[\"LIVE_REPOSITORY_CONTENT\",\"CANONICAL_VISION\",\"CANONICAL_PORTFOLIO\",\"CANONICAL_ROADMAP\"],\"project_id\":\"isolated-project\",\"repository_id\":\"synthetic-repository\",\"selected_sources\":[]}",
+      "utf8": "{\"concept_configuration_revision\":\"sha256:db32b88f052ec463bdb0830da582027132444365da530901457a3e31ee477280\",\"concept_dependency_catalog\":[{\"candidate_id\":\"concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1\",\"concept_revision\":1,\"dependencies\":[],\"object_id\":\"concept-1377b70076574c0a4a30feb85124748f\",\"recommendation_status\":\"MISSION_ALLOCATED\",\"subject_revision\":\"sha256:ffce5a8d4dd67f28ddc280ad615cf7168c106416989a46a2550816cd36006c46\",\"title\":\"Assessment A\"},{\"candidate_id\":\"concept-candidate-8d7ae9b2c53a0e68c579fa2d5a9ce129\",\"concept_revision\":1,\"dependencies\":[\"concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1\"],\"object_id\":\"concept-7c881360372f66cbca250412cf002d4c\",\"recommendation_status\":\"MISSION_ALLOCATED\",\"subject_revision\":\"sha256:bfb9487dd210723b9b16021452a08c7458ecc0c5a15f7ad92638947004857d4f\",\"title\":\"Assessment B\"}],\"concept_dependency_graph\":{\"concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1\":[],\"concept-candidate-8d7ae9b2c53a0e68c579fa2d5a9ce129\":[\"concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1\"]},\"concept_dependency_references\":[\"concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1\",\"concept-candidate-8d7ae9b2c53a0e68c579fa2d5a9ce129\"],\"concept_repository_source\":{\"github_repository\":\"synthetic-owner/synthetic-repository\",\"repository_id\":\"synthetic-repository\"},\"concept_work_profiles\":{\"INVESTIGATE\":{\"components\":{\"Deployment boundary\":{\"description\":\"Assess the existing deployment boundary.\",\"read_paths\":[\"docs/design.md\"],\"write_paths\":[]}},\"constraints\":[\"Preserve the approved repository effect boundary.\"],\"effect_policy\":{\"contract_version\":\"1.0\",\"delivery\":\"EVIDENCE_ONLY\",\"mode\":\"READ_ONLY_ASSESSMENT\",\"read_paths\":[\"docs/\"],\"write_paths\":[]},\"human_gates\":[\"protected-delivery\"],\"maximum_actions\":4,\"maximum_consecutive_no_progress_actions\":2,\"required_capabilities\":[\"synthetic-host\"],\"required_disciplines\":[\"platform_architecture\"],\"technical_assumptions\":[\"Use existing source evidence and canonical runtime.\"]}},\"dataset_generation\":0,\"evidence_references\":[\"project-binding:sha256:819b7271f65aade503c8b58b260f8987860590ebc3a82f3fb08bbb89342c8f14\"],\"freshness\":\"CURRENT_CONFIGURED_BINDING\",\"included_sources\":[\"PROJECT_BINDING\"],\"instance_id\":\"forge-runtime-e65e7392-8f6a-4cc2-ac59-7a8907110ac2\",\"limitations\":[\"Explicit owner-published public immutable repository snapshots only; no harvesting or inferred facts.\"],\"missing_sources\":[\"LIVE_REPOSITORY_CONTENT\",\"CANONICAL_VISION\",\"CANONICAL_PORTFOLIO\",\"CANONICAL_ROADMAP\"],\"project_id\":\"isolated-project\",\"repository_id\":\"synthetic-repository\",\"selected_sources\":[]}",
+      "ascii_digest": "sha256:34abf4840d5ddbb5d4e221858273f930fcbb1b82844cbbe1db7f4ab90913b421",
+      "utf8_digest": "sha256:34abf4840d5ddbb5d4e221858273f930fcbb1b82844cbbe1db7f4ab90913b421"
+    }
+  ],
+  "capability": {
+    "approval_supported": true,
+    "available_sources": [
+      {
+        "content_digest": "sha256:8123fe8dbfd4a30296e38d89c4f8d77e89b1cc6bbaea13e58bc48dacf578b342",
+        "path": "docs/design.md",
+        "repository": "synthetic-owner/synthetic-repository",
+        "revision": "ef3eb2c4a5f535ff42fb2adcd469f7f9cc2bc920",
+        "source_id": "execution-source",
+        "state": "ACTIVE",
+        "version": "sha256:99be35538db7dae56b47762b9a38311f87a2cb39e06adaea8620ab3881061083"
+      }
+    ],
+    "cancel_request_supported": true,
+    "context": {
+      "concept_configuration_revision": "sha256:db32b88f052ec463bdb0830da582027132444365da530901457a3e31ee477280",
+      "concept_dependency_catalog": [
+        {
+          "candidate_id": "concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1",
+          "concept_revision": 1,
+          "dependencies": [],
+          "object_id": "concept-1377b70076574c0a4a30feb85124748f",
+          "recommendation_status": "MISSION_ALLOCATED",
+          "subject_revision": "sha256:ffce5a8d4dd67f28ddc280ad615cf7168c106416989a46a2550816cd36006c46",
+          "title": "Assessment A"
+        },
+        {
+          "candidate_id": "concept-candidate-8d7ae9b2c53a0e68c579fa2d5a9ce129",
+          "concept_revision": 1,
+          "dependencies": [
+            "concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1"
+          ],
+          "object_id": "concept-7c881360372f66cbca250412cf002d4c",
+          "recommendation_status": "MISSION_ALLOCATED",
+          "subject_revision": "sha256:bfb9487dd210723b9b16021452a08c7458ecc0c5a15f7ad92638947004857d4f",
+          "title": "Assessment B"
+        }
+      ],
+      "concept_dependency_graph": {
+        "concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1": [],
+        "concept-candidate-8d7ae9b2c53a0e68c579fa2d5a9ce129": [
+          "concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1"
+        ]
+      },
+      "concept_dependency_references": [
+        "concept-candidate-22f0fff3885dd95ebe18be2a429ba1f1",
+        "concept-candidate-8d7ae9b2c53a0e68c579fa2d5a9ce129"
+      ],
+      "concept_repository_source": {
+        "github_repository": "synthetic-owner/synthetic-repository",
+        "repository_id": "synthetic-repository"
+      },
+      "concept_work_profiles": {
+        "INVESTIGATE": {
+          "components": {
+            "Deployment boundary": {
+              "description": "Assess the existing deployment boundary.",
+              "read_paths": [
+                "docs/design.md"
+              ],
+              "write_paths": []
+            }
+          },
+          "constraints": [
+            "Preserve the approved repository effect boundary."
+          ],
+          "effect_policy": {
+            "contract_version": "1.0",
+            "delivery": "EVIDENCE_ONLY",
+            "mode": "READ_ONLY_ASSESSMENT",
+            "read_paths": [
+              "docs/"
+            ],
+            "write_paths": []
+          },
+          "human_gates": [
+            "protected-delivery"
+          ],
+          "maximum_actions": 4,
+          "maximum_consecutive_no_progress_actions": 2,
+          "required_capabilities": [
+            "synthetic-host"
+          ],
+          "required_disciplines": [
+            "platform_architecture"
+          ],
+          "technical_assumptions": [
+            "Use existing source evidence and canonical runtime."
+          ]
+        }
+      },
+      "dataset_generation": 0,
+      "evidence_references": [
+        "project-binding:sha256:819b7271f65aade503c8b58b260f8987860590ebc3a82f3fb08bbb89342c8f14"
+      ],
+      "freshness": "CURRENT_CONFIGURED_BINDING",
+      "included_sources": [
+        "PROJECT_BINDING"
+      ],
+      "instance_id": "forge-runtime-e65e7392-8f6a-4cc2-ac59-7a8907110ac2",
+      "limitations": [
+        "Explicit owner-published public immutable repository snapshots only; no harvesting or inferred facts."
+      ],
+      "missing_sources": [
+        "LIVE_REPOSITORY_CONTENT",
+        "CANONICAL_VISION",
+        "CANONICAL_PORTFOLIO",
+        "CANONICAL_ROADMAP"
+      ],
+      "project_id": "isolated-project",
+      "repository_id": "synthetic-repository",
+      "selected_sources": []
+    },
+    "context_revision": "sha256:34abf4840d5ddbb5d4e221858273f930fcbb1b82844cbbe1db7f4ab90913b421",
+    "contract_version": "forge-chat-first-mission/v1",
+    "conversation_ids": [
+      "a",
+      "b",
+      "c"
+    ],
+    "generated_content_origin": "VALIDATED_MODEL_PROPOSAL",
+    "instance_id": "forge-runtime-e65e7392-8f6a-4cc2-ac59-7a8907110ac2",
+    "live_model_quality": "NOT_QUALIFIED",
+    "max_concurrent_invocations_per_instance": 1,
+    "maximum_missions": 2,
+    "maximum_turns": 8,
+    "project_id": "isolated-project",
+    "provider_stop_supported": false,
+    "read_only": true,
+    "readiness_qualified": false,
+    "repository_id": "synthetic-repository",
+    "retained_principal_consumed_turns": 3,
+    "supported_modes": [
+      "BUSINESS",
+      "ARCHITECTURE"
+    ],
+    "supported_operations": [
+      "REFINE",
+      "READ",
+      "CANCEL_REQUEST",
+      "PREPARE",
+      "APPROVE",
+      "READ_OPERATION"
+    ],
+    "supported_work_kinds": [
+      "INVESTIGATE"
+    ],
+    "unknown_usage": "NOT_REPORTED_AND_NOT_ACCEPTED_AS_BOUND_PROOF",
+    "unsupported": [
+      "UX",
+      "APPLY",
+      "ATTACHMENTS",
+      "EXPORT",
+      "STREAMING",
+      "PROVIDER_CANCEL"
+    ],
+    "workspace_reference_resolution_supported": true
+  }
+}
