@@ -10,33 +10,35 @@
   "producer_wheel_sha256": "9b192e7a3cb5d503e795639a2b25b584b178c8bd2ef81af9ef96117af772ec33",
   "wire_schema_sha256": "c25d46e51f3f076542e289e55aa147a0e0cf0c80a1c28a57d87943dcfcc92309",
   "formal_integrated_correction_budget": {
-    "consumed": 6,
-    "maximum": 6,
+    "consumed": 7,
+    "maximum": 7,
     "remaining": 0,
-    "authority": "specific user approval for cumulative round6 after Server planning blocker",
-    "pickup_comment": 6106126074,
+    "authority": "direct user continuation after explicit round7/max7 request6106404238",
+    "pickup_comment": 6106571737,
     "prior_consumption_preserved": true,
     "operation_budgets_unchanged": true
   },
   "state": "ROUND7_PROTECTED_SOURCE_DELIVERED_FINALIZATION_PENDING",
   "prior_plans_93_95_closed": true,
   "users_credentials_retained": true,
-  "consumer_version": "2.8.17",
+  "consumer_version": "2.8.18",
   "source_validation": {
     "full_command": "bash scripts/validate.sh",
-    "result": "PASS_AFTER_CORRECTION_ROUND_4",
-    "native_tests": 192,
+    "result": "PASS_AFTER_CORRECTION_ROUND_7",
+    "native_tests": 198,
     "isolated_tests": 1,
     "strict_per_changed_production_file_percent_greater_than": 80.2,
-    "new_native_minimum_percent": 83.33,
-    "new_python_minimum_percent": 84.29
+    "changed_mission_contract_percent": 97.22
   },
   "tde": {
     "profile": "standard",
     "policy": "PASS",
-    "product_maximum": 14,
     "triggered_rules": [],
-    "policy_unchanged": true
+    "policy_unchanged": true,
+    "policy_version": "1.4.0",
+    "runtime_version": "1.1.1",
+    "repository_qualification": "QUALIFIED",
+    "source_ci_run": 38121016961
   },
   "qualification_boundary": "Early native A/B release and future-only disarm are genuine source/package experiments, not final-main installed qualification; producer remains exact Forge2.12.1/9875333.",
   "early_ux": {
@@ -244,5 +246,33 @@
     "base": "d262cf8e8c6a2e8908edceea8629166845dda730",
     "review_ci_merge": "PENDING",
     "full_DoD": "NOT_DELIVERED_PENDING_NEW_EXACT_FINAL_MAIN_INSTALLED_UX"
+  },
+  "historical_root_status_before_round7": {
+    "consumer_version": "2.8.17",
+    "formal_integrated_correction_budget": {
+      "consumed": 6,
+      "maximum": 6,
+      "remaining": 0,
+      "authority": "specific user approval for cumulative round6 after Server planning blocker",
+      "pickup_comment": 6106126074,
+      "prior_consumption_preserved": true,
+      "operation_budgets_unchanged": true
+    },
+    "source_validation": {
+      "full_command": "bash scripts/validate.sh",
+      "result": "PASS_AFTER_CORRECTION_ROUND_4",
+      "native_tests": 192,
+      "isolated_tests": 1,
+      "strict_per_changed_production_file_percent_greater_than": 80.2,
+      "new_native_minimum_percent": 83.33,
+      "new_python_minimum_percent": 84.29
+    },
+    "tde": {
+      "profile": "standard",
+      "policy": "PASS",
+      "product_maximum": 14,
+      "triggered_rules": [],
+      "policy_unchanged": true
+    }
   }
 }
