@@ -25,3 +25,64 @@ Companions:
 - Shared scenario catalogue: Forge `docs/architecture/PROJECT_BOOTSTRAP_QUALIFICATION_V1.md`, PB-01..PB-40.
 
 All implementation is post-/parallel-autonomy productization as appropriate; no new edge blocks Mission 3. Design completion does not close FWV1-G003/G013 implementation or imply an installed onboarding UI. Existing policy/workset/priority authority remains unchanged.
+
+## Holistic refinement — plan97, implementation unselected
+
+Same PB-W0..WQ IDs/status/dependency history. These independently selectable subsets are grouping
+under the existing nodes, not requirements to complete the entire parent first. All remain PLANNED.
+Producer HOB-* proposals are exact, versioned and UNQUALIFIED; peer owner selects/qualifies them.
+
+| Subset | Existing parent | Required local inputs | Producer proposal | Deliverable |
+| --- | --- | --- | --- | --- |
+| PB-W1-LINK | PB-W1 | PB-W0 | HOB-EP01 | Link verified configured project without scan or peer write |
+| PB-W1-TOPOLOGY | PB-W1 | PB-W1-LINK | HOB-EP01, HOB-F01 | Confirm one authority and independent children |
+| PB-W1-INSPECT | PB-W1 | PB-W0 | HOB-EP02 | Inspect chosen source safely before full initialization |
+| PB-W2-BASELINE | PB-W2 | PB-W1-INSPECT | HOB-EP02, HOB-F03 | Version-bound scoped technical baseline |
+| PB-W3-FINDINGS | PB-W3 | PB-W2-BASELINE | HOB-F01, HOB-F03 | Discuss evidence and preserve disposition history |
+| PB-W2-SETUP | PB-W2 | PB-W1-INSPECT | HOB-F02, HOB-EP04 | Exact create/adopt preview and separate required decisions |
+| PB-W3-PROGRESS | PB-W3 | PB-W0 | HOB-EP03 | CENTRAL progress and same-operation recovery |
+| PB-W2-CHILD | PB-W2 | PB-W1-TOPOLOGY, PB-W1-INSPECT, PB-W2-SETUP, PB-W3-PROGRESS | HOB-F02, HOB-EP04 | Add scoped child without replacing authority or invalidating unrelated work |
+| PB-W4-PROMOTION | PB-W4 | PB-W2-SETUP, PB-W3-PROGRESS | HOB-F02, HOB-EP04 | Explicit safe history publication and mode activation |
+| PB-WQ-LINK | PB-WQ | PB-W1-LINK | HOB-EP01 | Qualify independent basic link slice |
+| PB-WQ-ASSESS | PB-WQ | PB-W2-BASELINE, PB-W3-FINDINGS, PB-W3-PROGRESS | HOB-EP02, HOB-EP03, HOB-F03 | Qualify baseline/findings with authority negatives |
+| PB-WQ-SETUP | PB-WQ | PB-W2-SETUP, PB-W3-PROGRESS | HOB-F02, HOB-EP04 | Qualify individual create/adopt slices before aggregate |
+
+**Recommended next selection:** PB-W1-LINK/PB-WQ-LINK, bounded existing configured-project visibility.
+Only a qualified EP HOB-EP01 scoped topology snapshot and own reference handling are mandatory;
+Forge context is optional. No scanner, new project/adopt/promotion, complete PB-FQ/PB-EQ, installer,
+signing or multi-repo parallelism gate. Not selected/started by plan97. Manual reference is an explicit
+UNVERIFIED fallback, not verified linking. Pre-identity inspect, scoped baseline/findings, exact setup/
+progress, child extension and promotion follow in separately qualified slices. Optional analyses do not
+block empty creation; a genuinely required profile analysis remains a scoped setup gate.
+
+```mermaid
+flowchart LR
+  Eread[EP HOB-EP01 proposed scoped B8R read] --> Wlink[PB-W1-LINK]
+  Wlink --> Qlink[PB-WQ-LINK independent slice]
+  Einspect[EP HOB-EP02 proposed pre-identity inspect] --> Winspect[PB-W1-INSPECT]
+  Winspect --> Baseline[PB-W2-BASELINE]
+  Ffind[Forge HOB-F03 proposed interpretation] --> Baseline
+  Baseline --> Discuss[PB-W3-FINDINGS]
+  Winspect --> Setup[PB-W2-SETUP]
+  Fplan[Forge HOB-F02 immutable plan] --> Setup
+  Eeffect[EP HOB-EP04 owning effects] --> Setup
+  Eprogress[EP HOB-EP03 CENTRAL snapshots] --> Progress[PB-W3-PROGRESS]
+  Wlink --> Topology[PB-W1-TOPOLOGY]
+  Topology --> Child[PB-W2-CHILD]
+  Setup --> Child
+  Progress --> Child
+  Setup --> Promote[PB-W4-PROMOTION]
+  Progress --> Promote
+```
+
+Peer boxes are requirements/proposals, not allocated work or L4 peer PASS. Dashed/optional deep
+analysis dependencies are expressed in acceptance profiles, not hidden unconditional setup edges.
+The full [machine projection](PROJECT_ONBOARDING_CROSS_PRODUCT_DAG_V1.json) preserves original
+peer graphs: EP PB-EQ→Forge PB-F0 contract; Forge PB-FQ→EP PB-EQ; Workspace full PB-WQ consumes
+both. Neither peer Q waits on Workspace. The documentary D97 graph is separate and non-executable;
+EP execution/admission DAG is not copied or changed. All graph edges point prerequisite→consumer.
+
+Traceability: [HOB-R01..20 / HOB-01..18](PROJECT_ONBOARDING_SCENARIOS_V1.json), with all PB-01..40
+IDs preserved at their immutable owning catalogue. Design finalization needs independent complete
+Quality/Security/UX, owning checks/protected delivery and exact-main document readback, not a
+functional onboarding PASS. Older runtime evidence/budgets are not reopened by this refinement.

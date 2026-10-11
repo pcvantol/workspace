@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="1080" viewBox="0 0 640 1080" role="img" aria-labelledby="title desc"><title id="title">Bronnen en gesprek — statisch onboardingontwerp</title><desc id="desc">Leesvolgorde: ontwerplabel, projectnavigatie, kop, fasekaarten, hoofdactie, beperking. Geen geleverde onboarding of live data.</desc>
+<rect width="640" height="1080" fill="#f4f6fb"/>
+<text x="28" y="36" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="15">ONTWERP · SYNTHETISCH · GEEN LIVE FUNCTIE</text>
+<text x="32" y="95" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="28">Bronnen en gesprek</text>
+<text x="32" y="138" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="22">Smal venster · één hoofdactie</text>
+<text x="32" y="196" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="15">[ Bronnen en details ]     Eigenaar en actualiteit zichtbaar</text>
+<rect x="32" y="230" width="576" height="126" rx="14" fill="#ffffff" stroke="#8392a8"/>
+<text x="54" y="264" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="20">Atlas · bronnen</text>
+<text x="54" y="294" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="17">Open repositoryboom in een sheet; selectie</text>
+<text x="54" y="320" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="17">blijft op logisch ID.</text>
+<rect x="32" y="374" width="576" height="126" rx="14" fill="#ffffff" stroke="#8392a8"/>
+<text x="54" y="408" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="20">Bespreek de bevinding</text>
+<text x="54" y="438" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="17">Chat en detail openen na elkaar met herkenbare</text>
+<text x="54" y="464" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="17">titel en terugfocus.</text>
+<rect x="32" y="518" width="576" height="126" rx="14" fill="#ffffff" stroke="#8392a8"/>
+<text x="54" y="552" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="20">Toegang ontbreekt</text>
+<text x="54" y="582" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="17">Beschermde details verborgen; intent behouden.</text>
+<text x="54" y="608" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="17">Geen automatisch nieuwe grant.</text>
+<rect x="32" y="920" width="576" height="52" rx="14" fill="#7462d8"/>
+<text x="52" y="954" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="19">Terug naar overzicht →</text>
+<text x="32" y="1008" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="15">640px ontwerpcanvas · 200% tekst: stapelen,</text>
+<text x="32" y="1034" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="15">geen verborgen goedkeuractie</text>
+</svg>

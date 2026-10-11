@@ -8,13 +8,23 @@ The detailed contract resolves the formerly unspecified artifact-preview, Genesi
 
 ## Entry points
 
-| Choice | Target outcome |
+The [holistic experience and concrete screen contract](PROJECT_ONBOARDING_HOLISTIC_V1.md#screens)
+and [static design gallery](onboarding-design/README.md) refine this canonical target design.
+The start screen has three user choices; Genesis/Managed remain explicit delivery choices inside them.
+
+| User choice | Target outcome / existing route mapping |
 | --- | --- |
-| New Genesis project | Common local product/engineering foundation in an approved missing/empty target or unborn Git; no remote effects |
-| Adopt local Genesis work | Explicitly reviewed local content/identity mapping, preserved history and local qualification |
-| New Managed repository | Approved remote birth, project foundation and verified host governance |
-| Adopt Managed repository | Actual remote inventory/drift review, protected changes and B8R attachment; no history recreation |
-| Promote Genesis to Managed | Same project/authority IDs and ancestry, explicit publication and remote-governance proof |
+| New project | Describe purpose; later explicitly NEW_GENESIS or NEW_MANAGED; no automatic publication |
+| Link configured project | Verified EP/B8R identity + own Workspace reference only; no scan, re-adoption or policy writes |
+| Adopt existing code | Existing content/history, including README-only remote; explicit ADOPT_GENESIS or ADOPT_MANAGED and exact changes |
+| Add repository, inside existing project | Same project/authority; scoped child inspection/mapping/readback, independent results |
+| Publish local project, inside existing project | Explicit PROMOTE_GENESIS history/publication/remote governance route; IDs and ancestry preserved |
+
+Fork/import as a new product, migration, authority replacement, move and removal are separate decisions.
+Child repository does not mean Git submodule; monorepo modules do not acquire repo identity implicitly.
+Basic linking does not depend on all scanners, create/adopt, promotion or whole-project qualification.
+All new consumer/peer contracts in [the proposal](PROJECT_ONBOARDING_CONTRACT_PROPOSALS_V1.json)
+are PROPOSED and unbound; this document does not ship a new onboarding endpoint.
 
 Qualification-only is an independent purpose with explicit disposable-resource retention/deletion policy, not a mode or generic cleanup authorization. The exact target/effects are approved before execution. A remote failure cannot silently change mode. A local directory is selected through the eligible EP host, not inferred from the browser machine.
 

@@ -1,0 +1,876 @@
+{
+  "schema_version": 1,
+  "status": "SYNTHETIC_OFFLINE_DESIGN_WALKTHROUGHS_NOT_RUNTIME",
+  "pb_catalogue_source": "https://github.com/pcvantol/forge/blob/f819196e9c025163be40c8e71693a3def4b78bc2/docs/architecture/PROJECT_BOOTSTRAP_QUALIFICATION_V1.md",
+  "pb_catalogue_unchanged": true,
+  "requirements": [
+    {
+      "id": "HOB-R01",
+      "requirement": "Three entrances and five preserved PB routes",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#journeys",
+      "owning_capability": "PB-W0",
+      "roadmap_node": "PB-W0",
+      "future_acceptance": "HOB-01"
+    },
+    {
+      "id": "HOB-R02",
+      "requirement": "Basic link without re-adoption",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#screens",
+      "owning_capability": "PB-W1-LINK",
+      "roadmap_node": "PB-W1-LINK",
+      "future_acceptance": "HOB-02"
+    },
+    {
+      "id": "HOB-R03",
+      "requirement": "Canonical topology and target separation",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#children",
+      "owning_capability": "PB-W1-TOPOLOGY",
+      "roadmap_node": "PB-W1-TOPOLOGY",
+      "future_acceptance": "HOB-05"
+    },
+    {
+      "id": "HOB-R04",
+      "requirement": "Chat facts assumptions proposals approved direction",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#ux",
+      "owning_capability": "PB-W3-FINDINGS",
+      "roadmap_node": "PB-W3-FINDINGS",
+      "future_acceptance": "HOB-03"
+    },
+    {
+      "id": "HOB-R05",
+      "requirement": "Bounded safe analysis plan",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#analysis",
+      "owning_capability": "PB-W1-INSPECT",
+      "roadmap_node": "PB-W1-INSPECT",
+      "future_acceptance": "HOB-17"
+    },
+    {
+      "id": "HOB-R06",
+      "requirement": "All baseline families/tool/version/coverage outcomes",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#analysis",
+      "owning_capability": "PB-W2-BASELINE",
+      "roadmap_node": "PB-W2-BASELINE",
+      "future_acceptance": "HOB-07"
+    },
+    {
+      "id": "HOB-R07",
+      "requirement": "CENTRAL snapshots and three waiting owners",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#contracts",
+      "owning_capability": "PB-W3-PROGRESS",
+      "roadmap_node": "PB-W3-PROGRESS",
+      "future_acceptance": "HOB-12"
+    },
+    {
+      "id": "HOB-R08",
+      "requirement": "Stable findings/separate priority/disposition history",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#findings",
+      "owning_capability": "PB-W3-FINDINGS",
+      "roadmap_node": "PB-W3-FINDINGS",
+      "future_acceptance": "HOB-13"
+    },
+    {
+      "id": "HOB-R09",
+      "requirement": "Exact setup preview and distinct decisions",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#screens",
+      "owning_capability": "PB-W2-SETUP",
+      "roadmap_node": "PB-W2-SETUP",
+      "future_acceptance": "HOB-18"
+    },
+    {
+      "id": "HOB-R10",
+      "requirement": "No automatic Mission or universal readiness gate",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#findings",
+      "owning_capability": "PB-WQ-SETUP",
+      "roadmap_node": "PB-WQ-SETUP",
+      "future_acceptance": "HOB-18"
+    },
+    {
+      "id": "HOB-R11",
+      "requirement": "Child extension preserves authority/unaffected work",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#children",
+      "owning_capability": "PB-W2-CHILD",
+      "roadmap_node": "PB-W2-CHILD",
+      "future_acceptance": "HOB-09"
+    },
+    {
+      "id": "HOB-R12",
+      "requirement": "Publication/ancestry promotion",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#journeys",
+      "owning_capability": "PB-W4-PROMOTION",
+      "roadmap_node": "PB-W4-PROMOTION",
+      "future_acceptance": "HOB-14"
+    },
+    {
+      "id": "HOB-R13",
+      "requirement": "Five locales/keyboard/themes/responsive static wireframes",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#ux",
+      "owning_capability": "PB-WQ-LINK",
+      "roadmap_node": "PB-WQ-LINK",
+      "future_acceptance": "HOB-16"
+    },
+    {
+      "id": "HOB-R14",
+      "requirement": "Pre-project inspect without identity/grant circle",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#analysis",
+      "owning_capability": "PB-W1-INSPECT",
+      "roadmap_node": "PB-W1-INSPECT",
+      "future_acceptance": "HOB-04"
+    },
+    {
+      "id": "HOB-R15",
+      "requirement": "Source-vector freshness and targeted reanalysis",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#findings",
+      "owning_capability": "PB-W2-BASELINE",
+      "roadmap_node": "PB-W2-BASELINE",
+      "future_acceptance": "HOB-10"
+    },
+    {
+      "id": "HOB-R16",
+      "requirement": "No peer shortcuts/credential leaks/false availability",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#contracts",
+      "owning_capability": "PB-W1-LINK",
+      "roadmap_node": "PB-W1-LINK",
+      "future_acceptance": "HOB-06"
+    },
+    {
+      "id": "HOB-R17",
+      "requirement": "No global atomicity/canonical execution datastore in WS",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#contracts",
+      "owning_capability": "PB-W3-PROGRESS",
+      "roadmap_node": "PB-W3-PROGRESS",
+      "future_acceptance": "HOB-08"
+    },
+    {
+      "id": "HOB-R18",
+      "requirement": "Same operation recovery/revoke/cleanup limits",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#sequences",
+      "owning_capability": "PB-W3-PROGRESS",
+      "roadmap_node": "PB-W3-PROGRESS",
+      "future_acceptance": "HOB-11"
+    },
+    {
+      "id": "HOB-R19",
+      "requirement": "Acyclic owner DAG/refinement/nonselection",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#roadmap",
+      "owning_capability": "PB-W0",
+      "roadmap_node": "PB-W0",
+      "future_acceptance": "HOB-09"
+    },
+    {
+      "id": "HOB-R20",
+      "requirement": "Full independent design/check/protected/readback DoD",
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#acceptance",
+      "owning_capability": "PB-W0",
+      "roadmap_node": "PB-W0",
+      "future_acceptance": "HOB-16"
+    }
+  ],
+  "walkthroughs": [
+    {
+      "id": "HOB-01",
+      "name": "New empty project",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#journeys",
+      "roadmap_node": "PB-W2-SETUP",
+      "retained_PB_ids": [
+        "PB-02",
+        "PB-03",
+        "PB-36"
+      ],
+      "synthetic_input": {
+        "project": "synthetic-example",
+        "source": "offline-described-scenario",
+        "situation": "New empty project"
+      },
+      "expected_behavior": "ABSENT/UNBORN explicit; passive inventory then frozen local/remote plan; no deep-scan or automatic Mission",
+      "result_class": "DESIGN_EXPECTATION_NOT_PASS"
+    },
+    {
+      "id": "HOB-02",
+      "name": "Existing correctly configured project",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#screens",
+      "roadmap_node": "PB-W1-LINK",
+      "retained_PB_ids": [
+        "PB-10",
+        "PB-30"
+      ],
+      "synthetic_input": {
+        "project": "synthetic-example",
+        "source": "offline-described-scenario",
+        "situation": "Existing correctly configured project"
+      },
+      "expected_behavior": "EP identity read then own reference; no scan/scaffold/adopt or duplicate IDs",
+      "result_class": "DESIGN_EXPECTATION_NOT_PASS"
+    },
+    {
+      "id": "HOB-03",
+      "name": "Legacy missing documents",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#analysis",
+      "roadmap_node": "PB-W3-FINDINGS",
+      "retained_PB_ids": [
+        "PB-04",
+        "PB-14"
+      ],
+      "synthetic_input": {
+        "project": "synthetic-example",
+        "source": "offline-described-scenario",
+        "situation": "Legacy missing documents"
+      },
+      "expected_behavior": "Existing equivalents retained; missing and contradictory docs discussed; no fabricated architecture",
+      "result_class": "DESIGN_EXPECTATION_NOT_PASS"
+    },
+    {
+      "id": "HOB-04",
+      "name": "Dirty checkout",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#analysis",
+      "roadmap_node": "PB-W1-INSPECT",
+      "retained_PB_ids": [
+        "PB-05",
+        "PB-16"
+      ],
+      "synthetic_input": {
+        "project": "synthetic-example",
+        "source": "offline-described-scenario",
+        "situation": "Dirty checkout"
+      },
+      "expected_behavior": "Read bounded metadata; staged/untracked work preserved, setup blocked until owning resolution",
+      "result_class": "DESIGN_EXPECTATION_NOT_PASS"
+    },
+    {
+      "id": "HOB-05",
+      "name": "Conflicting identity or copied fork",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#children",
+      "roadmap_node": "PB-W1-TOPOLOGY",
+      "retained_PB_ids": [
+        "PB-11",
+        "PB-30"
+      ],
+      "synthetic_input": {
+        "project": "synthetic-example",
+        "source": "offline-described-scenario",
+        "situation": "Conflicting identity or copied fork"
+      },
+      "expected_behavior": "No best-match reassignment; link/add blocked, separately choose new-product/migration",
+      "result_class": "DESIGN_EXPECTATION_NOT_PASS"
+    },
+    {
+      "id": "HOB-06",
+      "name": "Limited or denied read access",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#contracts",
+      "roadmap_node": "PB-W1-LINK",
+      "retained_PB_ids": [
+        "PB-22",
+        "PB-32"
+      ],
+      "synthetic_input": {
+        "project": "synthetic-example",
+        "source": "offline-described-scenario",
+        "situation": "Limited or denied read access"
+      },
+      "expected_behavior": "DENIED distinct EMPTY; conceal protected cache, no admin/bearer fallback",
+      "result_class": "DESIGN_EXPECTATION_NOT_PASS"
+    },
+    {
+      "id": "HOB-07",
+      "name": "Scanner or EP unavailable",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#analysis",
+      "roadmap_node": "PB-W2-BASELINE",
+      "retained_PB_ids": [
+        "PB-19",
+        "PB-40"
+      ],
+      "synthetic_input": {
+        "project": "synthetic-example",
+        "source": "offline-described-scenario",
+        "situation": "Scanner or EP unavailable"
+      },
+      "expected_behavior": "UNSUPPORTED/FAILED_TO_RUN/UNAVAILABLE explicit; reuse exact compatible old report with age or NOT_ASSESSED",
+      "result_class": "DESIGN_EXPECTATION_NOT_PASS"
+    },
+    {
+      "id": "HOB-08",
+      "name": "Partial multi-repository baseline",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#findings",
+      "roadmap_node": "PB-W2-BASELINE",
+      "retained_PB_ids": [
+        "PB-31",
+        "PB-38"
+      ],
+      "synthetic_input": {
+        "project": "synthetic-example",
+        "source": "offline-described-scenario",
+        "situation": "Partial multi-repository baseline"
+      },
+      "expected_behavior": "Separate report coverage/vector per child; no fake all-ready or projectwide atomicity",
+      "result_class": "DESIGN_EXPECTATION_NOT_PASS"
+    },
+    {
+      "id": "HOB-09",
+      "name": "Later add repository",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#children",
+      "roadmap_node": "PB-W2-CHILD",
+      "retained_PB_ids": [
+        "PB-31",
+        "PB-10"
+      ],
+      "synthetic_input": {
+        "project": "synthetic-example",
+        "source": "offline-described-scenario",
+        "situation": "Later add repository"
+      },
+      "expected_behavior": "Same project/authority; own child receipt and targeted affected-edge analysis; unrelated active work retained",
+      "result_class": "DESIGN_EXPECTATION_NOT_PASS"
+    },
+    {
+      "id": "HOB-10",
+      "name": "Source changes during analysis",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#findings",
+      "roadmap_node": "PB-W2-BASELINE",
+      "retained_PB_ids": [
+        "PB-14",
+        "PB-39"
+      ],
+      "synthetic_input": {
+        "project": "synthetic-example",
+        "source": "offline-described-scenario",
+        "situation": "Source changes during analysis"
+      },
+      "expected_behavior": "Retain old immutable report; incompatible approval invalid; scoped new run proposed, no implicit all-repo retest",
+      "result_class": "DESIGN_EXPECTATION_NOT_PASS"
+    },
+    {
+      "id": "HOB-11",
+      "name": "Revocation or expiry",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#sequences",
+      "roadmap_node": "PB-W3-PROGRESS",
+      "retained_PB_ids": [
+        "PB-22",
+        "PB-34"
+      ],
+      "synthetic_input": {
+        "project": "synthetic-example",
+        "source": "offline-described-scenario",
+        "situation": "Revocation or expiry"
+      },
+      "expected_behavior": "No further effect/read; concealed protected projection, durable redacted intent retained; no new grant",
+      "result_class": "DESIGN_EXPECTATION_NOT_PASS"
+    },
+    {
+      "id": "HOB-12",
+      "name": "Lost reply and restart",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#sequences",
+      "roadmap_node": "PB-W3-PROGRESS",
+      "retained_PB_ids": [
+        "PB-23",
+        "PB-24",
+        "PB-25"
+      ],
+      "synthetic_input": {
+        "project": "synthetic-example",
+        "source": "offline-described-scenario",
+        "situation": "Lost reply and restart"
+      },
+      "expected_behavior": "Read original operation/identity; unknown effect remains uncertain; changed retry bytes conflict, no duplicate",
+      "result_class": "DESIGN_EXPECTATION_NOT_PASS"
+    },
+    {
+      "id": "HOB-13",
+      "name": "Unknown prior history/disposition",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#findings",
+      "roadmap_node": "PB-W3-FINDINGS",
+      "retained_PB_ids": [
+        "PB-09",
+        "PB-34"
+      ],
+      "synthetic_input": {
+        "project": "synthetic-example",
+        "source": "offline-described-scenario",
+        "situation": "Unknown prior history/disposition"
+      },
+      "expected_behavior": "UNKNOWN not empty/safe; old owner states retained; publication blocked until applicable history evidence",
+      "result_class": "DESIGN_EXPECTATION_NOT_PASS"
+    },
+    {
+      "id": "HOB-14",
+      "name": "Sensitive history promotion",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#journeys",
+      "roadmap_node": "PB-W4-PROMOTION",
+      "retained_PB_ids": [
+        "PB-26",
+        "PB-27",
+        "PB-28",
+        "PB-29"
+      ],
+      "synthetic_input": {
+        "project": "synthetic-example",
+        "source": "offline-described-scenario",
+        "situation": "Sensitive history promotion"
+      },
+      "expected_behavior": "Separate publication decision/license/privacy/refs, preserve ancestry; no push/fallback on unknown",
+      "result_class": "DESIGN_EXPECTATION_NOT_PASS"
+    },
+    {
+      "id": "HOB-15",
+      "name": "README-only remote",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#journeys",
+      "roadmap_node": "PB-W2-SETUP",
+      "retained_PB_ids": [
+        "PB-09",
+        "PB-07"
+      ],
+      "synthetic_input": {
+        "project": "synthetic-example",
+        "source": "offline-described-scenario",
+        "situation": "README-only remote"
+      },
+      "expected_behavior": "Existing content means ADOPT_MANAGED, not missing resource birth",
+      "result_class": "DESIGN_EXPECTATION_NOT_PASS"
+    },
+    {
+      "id": "HOB-16",
+      "name": "Keyboard/themes/five locales/narrow",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#ux",
+      "roadmap_node": "PB-WQ-LINK",
+      "retained_PB_ids": [
+        "PB-33",
+        "PB-35"
+      ],
+      "synthetic_input": {
+        "project": "synthetic-example",
+        "source": "offline-described-scenario",
+        "situation": "Keyboard/themes/five locales/narrow"
+      },
+      "expected_behavior": "Stable focus, outline keyboard, named decisions, 640px/200%/contrast/expansion; actual qualification later",
+      "result_class": "DESIGN_EXPECTATION_NOT_PASS"
+    },
+    {
+      "id": "HOB-17",
+      "name": "Untrusted scripts/secrets/model transfer",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#analysis",
+      "roadmap_node": "PB-W1-INSPECT",
+      "retained_PB_ids": [
+        "PB-17",
+        "PB-22",
+        "PB-28"
+      ],
+      "synthetic_input": {
+        "project": "synthetic-example",
+        "source": "offline-described-scenario",
+        "situation": "Untrusted scripts/secrets/model transfer"
+      },
+      "expected_behavior": "Repo instructions cannot widen auth; scripts/provider upload separately accepted; no secret values to chat/export",
+      "result_class": "DESIGN_EXPECTATION_NOT_PASS"
+    },
+    {
+      "id": "HOB-18",
+      "name": "Distinct decisions and readiness",
+      "fixture_only": true,
+      "runtime_executed": false,
+      "design_section": "PROJECT_ONBOARDING_HOLISTIC_V1.md#findings",
+      "roadmap_node": "PB-WQ-SETUP",
+      "retained_PB_ids": [
+        "PB-20",
+        "PB-21",
+        "PB-33",
+        "PB-36"
+      ],
+      "synthetic_input": {
+        "project": "synthetic-example",
+        "source": "offline-described-scenario",
+        "situation": "Distinct decisions and readiness"
+      },
+      "expected_behavior": "Direction/architecture/effect/publication receipts not silently coalesced; mandatory current defect cannot be deferred to make pass",
+      "result_class": "DESIGN_EXPECTATION_NOT_PASS"
+    }
+  ],
+  "retained_PB_mapping": [
+    {
+      "id": "PB-01",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-02",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-01"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-03",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-01"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-04",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-03"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-05",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-04"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-06",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-07",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-15"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-08",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-09",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-13",
+        "HOB-15"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-10",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-02",
+        "HOB-09"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-11",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-05"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-12",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-13",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-14",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-03",
+        "HOB-10"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-15",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-16",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-04"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-17",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-17"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-18",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-19",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-07"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-20",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-18"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-21",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-18"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-22",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-06",
+        "HOB-11",
+        "HOB-17"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-23",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-12"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-24",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-12"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-25",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-12"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-26",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-14"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-27",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-14"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-28",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-14",
+        "HOB-17"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-29",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-14"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-30",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-02",
+        "HOB-05"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-31",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-08",
+        "HOB-09"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-32",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-06"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-33",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-16",
+        "HOB-18"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-34",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-11",
+        "HOB-13"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-35",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-16"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-36",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-01",
+        "HOB-18"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-37",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-38",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-08"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-39",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-10"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    },
+    {
+      "id": "PB-40",
+      "owner_catalogue_unchanged": true,
+      "design_section": "PROJECT_BOOTSTRAP_V1.md",
+      "related_additional_scenarios": [
+        "HOB-07"
+      ],
+      "future_acceptance": "Original owning PB case retained; individual applicable slice qualification, never run or declared peer PASS by plan97"
+    }
+  ]
+}

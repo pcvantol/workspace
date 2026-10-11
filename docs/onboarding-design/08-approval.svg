@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="940" viewBox="0 0 1240 940" role="img" aria-labelledby="title desc"><title id="title">Inrichtingsvoorstel — statisch onboardingontwerp</title><desc id="desc">Leesvolgorde: ontwerplabel, projectnavigatie, kop, fasekaarten, hoofdactie, beperking. Geen geleverde onboarding of live data.</desc>
+<rect width="1240" height="940" fill="#f4f6fb"/>
+<text x="28" y="36" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="15">ONTWERP · SYNTHETISCH · GEEN LIVE FUNCTIE</text>
+<rect x="18" y="62" width="208" height="848" rx="22" fill="#ffffff" stroke="#8392a8"/>
+<text x="38" y="105" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="24">Workspace</text>
+<text x="38" y="151" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="18">Projecten</text>
+<text x="38" y="201" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="17">Atlas · voorbeeld</text>
+<text x="38" y="260" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="17">Bronnen</text>
+<text x="38" y="305" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="17">Gesprek</text>
+<text x="38" y="350" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="17">Analyse</text>
+<text x="38" y="395" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="17">Voorstel</text>
+<text x="38" y="440" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="17">Voortgang</text>
+<text x="38" y="790" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="15">Optionele techniek</text>
+<text x="38" y="816" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="15">staat achter</text>
+<text x="38" y="842" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="15">Bronnen en details.</text>
+<text x="262" y="95" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="28">Inrichtingsvoorstel</text>
+<text x="262" y="138" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="22">Je ziet precies wat verandert</text>
+<text x="262" y="196" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="15">[ Bronnen en details ]     Eigenaar en actualiteit zichtbaar</text>
+<rect x="262" y="230" width="946" height="100" rx="14" fill="#ffffff" stroke="#8392a8"/>
+<text x="284" y="264" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="20">Bestanden · exact voorstel</text>
+<text x="284" y="294" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="17">BEHOUD docs/VISION.md TOEVOEG docs/adr/0002.md VERWIJDER niets.</text>
+<rect x="262" y="348" width="946" height="100" rx="14" fill="#ffffff" stroke="#8392a8"/>
+<text x="284" y="382" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="20">Instellingen en gegevens</text>
+<text x="284" y="412" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="17">Geen publicatie of rechtenwijziging. Alleen de getoonde inrichtingsbestanden.</text>
+<rect x="262" y="466" width="946" height="100" rx="14" fill="#ffffff" stroke="#8392a8"/>
+<text x="284" y="500" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="20">Afzonderlijke besluiten</text>
+<text x="284" y="530" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="17">Business: bevestigd · Architectuur: bevestigd · elk gekoppeld aan ditzelfde voorstel.</text>
+<rect x="262" y="584" width="946" height="126" rx="14" fill="#ffffff" stroke="#8392a8"/>
+<text x="284" y="618" fill="#1c2840" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="20">Laatste effectbesluit</text>
+<text x="284" y="648" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="17">Deze exacte inrichting toestaan. Nieuw antwoord of gewijzigd voorstel vraagt nieuwe</text>
+<text x="284" y="674" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="17">beoordeling.</text>
+<rect x="262" y="780" width="946" height="52" rx="14" fill="#7462d8"/>
+<text x="282" y="814" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="19">Dit voorstel inrichten →</text>
+<text x="262" y="868" fill="#41536b" font-family="-apple-system, BlinkMacSystemFont, Helvetica, sans-serif" font-size="15">Eén bevestiging voor deze effecten; stale/dirty/ontbrekend besluit blokkeert</text>
+</svg>

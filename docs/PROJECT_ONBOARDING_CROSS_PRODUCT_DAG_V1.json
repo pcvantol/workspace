@@ -1,0 +1,1391 @@
+{
+  "schema_version": 1,
+  "authority": "DOCUMENTARY_PROJECTION_ONLY",
+  "executable": false,
+  "execution_admission": false,
+  "source_observations": {
+    "workspace": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+    "forge": "f819196e9c025163be40c8e71693a3def4b78bc2",
+    "engineering-platform": "05e530d6339cb1c16b1e8f4814347578c5fd761c"
+  },
+  "design": "PROJECT_ONBOARDING_HOLISTIC_V1.md",
+  "nodes": [
+    {
+      "id": "workspace:PB-W0",
+      "owner": "workspace",
+      "owner_node_id": "PB-W0",
+      "status": "CONTRACT_DEFINED",
+      "user_outcome": "Five-journey UX, role and owning capability contract",
+      "input_contracts": [],
+      "depends_on": [],
+      "acceptance": "Existing five-route criterion retained; see scoped roadmap and PB-01..40; not a universal gate for subsets",
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "workspace:PB-W1",
+      "owner": "workspace",
+      "owner_node_id": "PB-W1",
+      "status": "PLANNED",
+      "user_outcome": "Typed Workspace HTTP adapters and safe draft references",
+      "input_contracts": [
+        "forge:PB-F0",
+        "engineering-platform:PB-E0",
+        "WORKSPACE_PROJECT_BOOTSTRAP_W0_V1"
+      ],
+      "depends_on": [
+        "workspace:PB-W0",
+        "forge:PB-F0",
+        "engineering-platform:PB-E0"
+      ],
+      "acceptance": "Existing five-route criterion retained; see scoped roadmap and PB-01..40; not a universal gate for subsets",
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "workspace:PB-W2",
+      "owner": "workspace",
+      "owner_node_id": "PB-W2",
+      "status": "PLANNED",
+      "user_outcome": "Genesis/Managed create/adopt and exact-plan decision UX",
+      "input_contracts": [
+        "forge:PB-F2",
+        "forge:PB-F7",
+        "engineering-platform:PB-E1",
+        "WORKSPACE_PROJECT_BOOTSTRAP_W0_V1"
+      ],
+      "depends_on": [
+        "workspace:PB-W1",
+        "forge:PB-F2",
+        "forge:PB-F7",
+        "engineering-platform:PB-E1"
+      ],
+      "acceptance": "Existing five-route criterion retained; see scoped roadmap and PB-01..40; not a universal gate for subsets",
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "workspace:PB-W3",
+      "owner": "workspace",
+      "owner_node_id": "PB-W3",
+      "status": "PLANNED",
+      "user_outcome": "Mode-correct progress, recovery, readiness and exports",
+      "input_contracts": [
+        "forge:PB-F4",
+        "forge:PB-F5",
+        "forge:PB-F7",
+        "engineering-platform:PB-E5",
+        "WORKSPACE_PROJECT_BOOTSTRAP_W0_V1"
+      ],
+      "depends_on": [
+        "workspace:PB-W1",
+        "forge:PB-F4",
+        "forge:PB-F5",
+        "forge:PB-F7",
+        "engineering-platform:PB-E5"
+      ],
+      "acceptance": "Existing five-route criterion retained; see scoped roadmap and PB-01..40; not a universal gate for subsets",
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "workspace:PB-W4",
+      "owner": "workspace",
+      "owner_node_id": "PB-W4",
+      "status": "PLANNED",
+      "user_outcome": "Explicit history-preserving Managed promotion UX",
+      "input_contracts": [
+        "forge:PB-F6",
+        "engineering-platform:PB-E4",
+        "WORKSPACE_PROJECT_BOOTSTRAP_W0_V1"
+      ],
+      "depends_on": [
+        "workspace:PB-W2",
+        "workspace:PB-W3",
+        "forge:PB-F6",
+        "engineering-platform:PB-E4"
+      ],
+      "acceptance": "Existing five-route criterion retained; see scoped roadmap and PB-01..40; not a universal gate for subsets",
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "workspace:PB-WQ",
+      "owner": "workspace",
+      "owner_node_id": "PB-WQ",
+      "status": "PLANNED",
+      "user_outcome": "Installed five-journey, accessibility and five-locale qualification",
+      "input_contracts": [
+        "forge:PB-FQ",
+        "engineering-platform:PB-EQ",
+        "WORKSPACE_PROJECT_BOOTSTRAP_W0_V1"
+      ],
+      "depends_on": [
+        "workspace:PB-W2",
+        "workspace:PB-W3",
+        "workspace:PB-W4",
+        "forge:PB-FQ",
+        "engineering-platform:PB-EQ"
+      ],
+      "acceptance": "Existing five-route criterion retained; see scoped roadmap and PB-01..40; not a universal gate for subsets",
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "workspace:PB-W1-LINK",
+      "owner": "workspace",
+      "owner_node_id": "PB-W1-LINK",
+      "status": "PLANNED",
+      "user_outcome": "Link verified configured project without scan or peer write",
+      "input_contracts": [
+        "HOB-EP01"
+      ],
+      "depends_on": [
+        "workspace:PB-W0",
+        "proposal:HOB-EP01"
+      ],
+      "acceptance": "identity/scope/ref repeat, denied/offline, no scan/duplicate/create, five locales",
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "workspace:PB-W1-TOPOLOGY",
+      "owner": "workspace",
+      "owner_node_id": "PB-W1-TOPOLOGY",
+      "status": "PLANNED",
+      "user_outcome": "Confirm one authority and independent children",
+      "input_contracts": [
+        "HOB-EP01",
+        "HOB-F01"
+      ],
+      "depends_on": [
+        "workspace:PB-W1-LINK",
+        "proposal:HOB-EP01",
+        "proposal:HOB-F01"
+      ],
+      "acceptance": "conflict/fork/module/submodule identities explicit; placements separate",
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "workspace:PB-W1-INSPECT",
+      "owner": "workspace",
+      "owner_node_id": "PB-W1-INSPECT",
+      "status": "PLANNED",
+      "user_outcome": "Inspect chosen source safely before full initialization",
+      "input_contracts": [
+        "HOB-EP02"
+      ],
+      "depends_on": [
+        "workspace:PB-W0",
+        "proposal:HOB-EP02"
+      ],
+      "acceptance": "pre-identity read scope, dirty/history/path exclusions, no hooks/write/network/provider",
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "workspace:PB-W2-BASELINE",
+      "owner": "workspace",
+      "owner_node_id": "PB-W2-BASELINE",
+      "status": "PLANNED",
+      "user_outcome": "Version-bound scoped technical baseline",
+      "input_contracts": [
+        "HOB-EP02",
+        "HOB-F03"
+      ],
+      "depends_on": [
+        "workspace:PB-W1-INSPECT",
+        "proposal:HOB-EP02",
+        "proposal:HOB-F03"
+      ],
+      "acceptance": "tool/profile/stack/vector/coverage/limits, six distinct results, changed-source targeted reanalysis",
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "workspace:PB-W3-FINDINGS",
+      "owner": "workspace",
+      "owner_node_id": "PB-W3-FINDINGS",
+      "status": "PLANNED",
+      "user_outcome": "Discuss evidence and preserve disposition history",
+      "input_contracts": [
+        "HOB-F01",
+        "HOB-F03"
+      ],
+      "depends_on": [
+        "workspace:PB-W2-BASELINE",
+        "proposal:HOB-F01",
+        "proposal:HOB-F03"
+      ],
+      "acceptance": "stable fingerprints, separate facts/inference/decisions, no issueclose/Mission on read",
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "workspace:PB-W2-SETUP",
+      "owner": "workspace",
+      "owner_node_id": "PB-W2-SETUP",
+      "status": "PLANNED",
+      "user_outcome": "Exact create/adopt preview and separate required decisions",
+      "input_contracts": [
+        "HOB-F02",
+        "HOB-EP04"
+      ],
+      "depends_on": [
+        "workspace:PB-W1-INSPECT",
+        "proposal:HOB-F02",
+        "proposal:HOB-EP04"
+      ],
+      "acceptance": "empty/README/dirty/guarded birth; preserve documents/history; current mandatory gate cannot defer",
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "workspace:PB-W3-PROGRESS",
+      "owner": "workspace",
+      "owner_node_id": "PB-W3-PROGRESS",
+      "status": "PLANNED",
+      "user_outcome": "CENTRAL progress and same-operation recovery",
+      "input_contracts": [
+        "HOB-EP03"
+      ],
+      "depends_on": [
+        "workspace:PB-W0",
+        "proposal:HOB-EP03"
+      ],
+      "acceptance": "owner scopes/source snapshots, partial/stale/waits, lost reply no second effect; relay requires HOB-F04",
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "workspace:PB-W2-CHILD",
+      "owner": "workspace",
+      "owner_node_id": "PB-W2-CHILD",
+      "status": "PLANNED",
+      "user_outcome": "Add scoped child without replacing authority or invalidating unrelated work",
+      "input_contracts": [
+        "HOB-F02",
+        "HOB-EP04"
+      ],
+      "depends_on": [
+        "workspace:PB-W1-TOPOLOGY",
+        "workspace:PB-W1-INSPECT",
+        "workspace:PB-W2-SETUP",
+        "workspace:PB-W3-PROGRESS",
+        "proposal:HOB-F02",
+        "proposal:HOB-EP04"
+      ],
+      "acceptance": "partial child, preserved project/authority/approvals, no atomicity or parallel writes",
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "workspace:PB-W4-PROMOTION",
+      "owner": "workspace",
+      "owner_node_id": "PB-W4-PROMOTION",
+      "status": "PLANNED",
+      "user_outcome": "Explicit safe history publication and mode activation",
+      "input_contracts": [
+        "HOB-F02",
+        "HOB-EP04"
+      ],
+      "depends_on": [
+        "workspace:PB-W2-SETUP",
+        "workspace:PB-W3-PROGRESS",
+        "proposal:HOB-F02",
+        "proposal:HOB-EP04"
+      ],
+      "acceptance": "history/privacy/visibility/license/ancestry, no fallback/forcepush; partial effects remain visible",
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "workspace:PB-WQ-LINK",
+      "owner": "workspace",
+      "owner_node_id": "PB-WQ-LINK",
+      "status": "PLANNED",
+      "user_outcome": "Qualify independent basic link slice",
+      "input_contracts": [
+        "HOB-EP01"
+      ],
+      "depends_on": [
+        "workspace:PB-W1-LINK",
+        "proposal:HOB-EP01"
+      ],
+      "acceptance": "real installed qualified scoped read, no deep scan/promotion/wholepeerQ prerequisite",
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "workspace:PB-WQ-ASSESS",
+      "owner": "workspace",
+      "owner_node_id": "PB-WQ-ASSESS",
+      "status": "PLANNED",
+      "user_outcome": "Qualify baseline/findings with authority negatives",
+      "input_contracts": [
+        "HOB-EP02",
+        "HOB-EP03",
+        "HOB-F03"
+      ],
+      "depends_on": [
+        "workspace:PB-W2-BASELINE",
+        "workspace:PB-W3-FINDINGS",
+        "workspace:PB-W3-PROGRESS",
+        "proposal:HOB-EP02",
+        "proposal:HOB-EP03",
+        "proposal:HOB-F03"
+      ],
+      "acceptance": "supported real tools/exact revisions; unsupported/partial/redaction/revoke/recovery honest",
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "workspace:PB-WQ-SETUP",
+      "owner": "workspace",
+      "owner_node_id": "PB-WQ-SETUP",
+      "status": "PLANNED",
+      "user_outcome": "Qualify individual create/adopt slices before aggregate",
+      "input_contracts": [
+        "HOB-F02",
+        "HOB-EP04"
+      ],
+      "depends_on": [
+        "workspace:PB-W2-SETUP",
+        "workspace:PB-W3-PROGRESS",
+        "proposal:HOB-F02",
+        "proposal:HOB-EP04"
+      ],
+      "acceptance": "one actual scoped effect/readback, separate decisions, source/hash/dirty/conflict negatives",
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "forge:PB-F0",
+      "owner": "forge",
+      "owner_node_id": "PB-F0",
+      "status": "PLANNED",
+      "user_outcome": "Versioned identity, manifest and operation contract mapping",
+      "input_contracts": [],
+      "depends_on": [],
+      "acceptance": "Owning peer roadmap qualification; L4 does not declare peer PASS",
+      "source_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "source_path": "docs/roadmap/project-bootstrap-v1.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "forge:PB-F1",
+      "owner": "forge",
+      "owner_node_id": "PB-F1",
+      "status": "PLANNED",
+      "user_outcome": "Installed baseline bundle, deterministic renderer and project contract",
+      "input_contracts": [],
+      "depends_on": [
+        "forge:PB-F0"
+      ],
+      "acceptance": "Owning peer roadmap qualification; L4 does not declare peer PASS",
+      "source_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "source_path": "docs/roadmap/project-bootstrap-v1.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "forge:PB-F2",
+      "owner": "forge",
+      "owner_node_id": "PB-F2",
+      "status": "PLANNED",
+      "user_outcome": "Immutable preview, adoption mapping and governed plan",
+      "input_contracts": [],
+      "depends_on": [
+        "forge:PB-F0",
+        "forge:PB-F1"
+      ],
+      "acceptance": "Owning peer roadmap qualification; L4 does not declare peer PASS",
+      "source_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "source_path": "docs/roadmap/project-bootstrap-v1.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "forge:PB-F3",
+      "owner": "forge",
+      "owner_node_id": "PB-F3",
+      "status": "PLANNED",
+      "user_outcome": "Existing-runtime HTTP coordinator and recovery",
+      "input_contracts": [],
+      "depends_on": [
+        "forge:PB-F2",
+        "engineering-platform:PB-E1"
+      ],
+      "acceptance": "Owning peer roadmap qualification; L4 does not declare peer PASS",
+      "source_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "source_path": "docs/roadmap/project-bootstrap-v1.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "forge:PB-F4",
+      "owner": "forge",
+      "owner_node_id": "PB-F4",
+      "status": "PLANNED",
+      "user_outcome": "Genesis readiness and reconciliation",
+      "input_contracts": [],
+      "depends_on": [
+        "forge:PB-F3",
+        "engineering-platform:PB-E2"
+      ],
+      "acceptance": "Owning peer roadmap qualification; L4 does not declare peer PASS",
+      "source_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "source_path": "docs/roadmap/project-bootstrap-v1.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "forge:PB-F5",
+      "owner": "forge",
+      "owner_node_id": "PB-F5",
+      "status": "PLANNED",
+      "user_outcome": "Managed adoption and governance readiness",
+      "input_contracts": [],
+      "depends_on": [
+        "forge:PB-F3",
+        "engineering-platform:PB-E3"
+      ],
+      "acceptance": "Owning peer roadmap qualification; L4 does not declare peer PASS",
+      "source_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "source_path": "docs/roadmap/project-bootstrap-v1.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "forge:PB-F6",
+      "owner": "forge",
+      "owner_node_id": "PB-F6",
+      "status": "PLANNED",
+      "user_outcome": "History-preserving Managed promotion",
+      "input_contracts": [],
+      "depends_on": [
+        "forge:PB-F4",
+        "forge:PB-F5",
+        "engineering-platform:PB-E4"
+      ],
+      "acceptance": "Owning peer roadmap qualification; L4 does not declare peer PASS",
+      "source_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "source_path": "docs/roadmap/project-bootstrap-v1.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "forge:PB-F7",
+      "owner": "forge",
+      "owner_node_id": "PB-F7",
+      "status": "PLANNED",
+      "user_outcome": "Qualified shared-service CLI and HTTP adapters",
+      "input_contracts": [],
+      "depends_on": [
+        "forge:PB-F3",
+        "forge:FH-SERVICES",
+        "forge:FH-HTTP",
+        "forge:FH-CLI"
+      ],
+      "acceptance": "Owning peer roadmap qualification; L4 does not declare peer PASS",
+      "source_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "source_path": "docs/roadmap/project-bootstrap-v1.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "forge:PB-FQ",
+      "owner": "forge",
+      "owner_node_id": "PB-FQ",
+      "status": "PLANNED",
+      "user_outcome": "Installed Genesis, Managed and promotion qualification",
+      "input_contracts": [],
+      "depends_on": [
+        "forge:PB-F1",
+        "forge:PB-F2",
+        "forge:PB-F3",
+        "forge:PB-F4",
+        "forge:PB-F5",
+        "forge:PB-F6",
+        "forge:PB-F7",
+        "engineering-platform:PB-EQ"
+      ],
+      "acceptance": "Owning peer roadmap qualification; L4 does not declare peer PASS",
+      "source_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "source_path": "docs/roadmap/project-bootstrap-v1.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "engineering-platform:PB-E0",
+      "owner": "engineering-platform",
+      "owner_node_id": "PB-E0",
+      "status": "PLANNED",
+      "user_outcome": "Typed operation, authority, B8R identity and receipt contracts",
+      "input_contracts": [],
+      "depends_on": [],
+      "acceptance": "Owning peer roadmap qualification; L4 does not declare peer PASS",
+      "source_ref": "05e530d6339cb1c16b1e8f4814347578c5fd761c",
+      "source_path": "docs/development/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "engineering-platform:PB-E1",
+      "owner": "engineering-platform",
+      "owner_node_id": "PB-E1",
+      "status": "PLANNED",
+      "user_outcome": "Inventory, existing lease/ledger admission and HTTP readback",
+      "input_contracts": [],
+      "depends_on": [
+        "engineering-platform:PB-E0"
+      ],
+      "acceptance": "Owning peer roadmap qualification; L4 does not declare peer PASS",
+      "source_ref": "05e530d6339cb1c16b1e8f4814347578c5fd761c",
+      "source_path": "docs/development/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "engineering-platform:PB-E2",
+      "owner": "engineering-platform",
+      "owner_node_id": "PB-E2",
+      "status": "PLANNED",
+      "user_outcome": "Local Genesis bootstrap and attachment evidence",
+      "input_contracts": [],
+      "depends_on": [
+        "engineering-platform:PB-E1"
+      ],
+      "acceptance": "Owning peer roadmap qualification; L4 does not declare peer PASS",
+      "source_ref": "05e530d6339cb1c16b1e8f4814347578c5fd761c",
+      "source_path": "docs/development/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "engineering-platform:PB-E3",
+      "owner": "engineering-platform",
+      "owner_node_id": "PB-E3",
+      "status": "PLANNED",
+      "user_outcome": "Managed birth/adoption and host governance readback",
+      "input_contracts": [],
+      "depends_on": [
+        "engineering-platform:PB-E1"
+      ],
+      "acceptance": "Owning peer roadmap qualification; L4 does not declare peer PASS",
+      "source_ref": "05e530d6339cb1c16b1e8f4814347578c5fd761c",
+      "source_path": "docs/development/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "engineering-platform:PB-E4",
+      "owner": "engineering-platform",
+      "owner_node_id": "PB-E4",
+      "status": "PLANNED",
+      "user_outcome": "History-preserving explicit Managed promotion",
+      "input_contracts": [],
+      "depends_on": [
+        "engineering-platform:PB-E2",
+        "engineering-platform:PB-E3"
+      ],
+      "acceptance": "Owning peer roadmap qualification; L4 does not declare peer PASS",
+      "source_ref": "05e530d6339cb1c16b1e8f4814347578c5fd761c",
+      "source_path": "docs/development/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "engineering-platform:PB-E5",
+      "owner": "engineering-platform",
+      "owner_node_id": "PB-E5",
+      "status": "PLANNED",
+      "user_outcome": "Operation-scoped reporting, telemetry and safe recovery",
+      "input_contracts": [],
+      "depends_on": [
+        "engineering-platform:PB-E1"
+      ],
+      "acceptance": "Owning peer roadmap qualification; L4 does not declare peer PASS",
+      "source_ref": "05e530d6339cb1c16b1e8f4814347578c5fd761c",
+      "source_path": "docs/development/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "engineering-platform:PB-EQ",
+      "owner": "engineering-platform",
+      "owner_node_id": "PB-EQ",
+      "status": "PLANNED",
+      "user_outcome": "Installed Genesis, Managed, promotion and negative-boundary qualification",
+      "input_contracts": [],
+      "depends_on": [
+        "engineering-platform:PB-E2",
+        "engineering-platform:PB-E3",
+        "engineering-platform:PB-E4",
+        "engineering-platform:PB-E5",
+        "forge:PB-F0"
+      ],
+      "acceptance": "Owning peer roadmap qualification; L4 does not declare peer PASS",
+      "source_ref": "05e530d6339cb1c16b1e8f4814347578c5fd761c",
+      "source_path": "docs/development/PROJECT_BOOTSTRAP_V1_DAG.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "proposal:HOB-W01",
+      "owner": "workspace",
+      "status": "PROPOSED_WORKSPACE_NOT_IMPLEMENTED",
+      "user_outcome": "Own draft and authorized joined read projection",
+      "input_contracts": [
+        "PB-W1"
+      ],
+      "depends_on": [],
+      "acceptance": [
+        "wrong actor/audience/project/expired/revoked denied before effects",
+        "exact source/plan revision mismatch conflicts",
+        "unknown field/version rejected",
+        "same operation with changed bytes cannot repeat effects",
+        "no secrets/rawpaths in response/export"
+      ],
+      "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "source_path": "docs/PROJECT_ONBOARDING_CONTRACT_PROPOSALS_V1.json",
+      "source_path_owner": "workspace",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "proposal:HOB-EP01",
+      "owner": "engineering-platform",
+      "status": "PROPOSED_PEER_DECISION_REQUIRED",
+      "user_outcome": "Finite B8R discovery/verified linking",
+      "input_contracts": [
+        "PB-E0/PB-E1"
+      ],
+      "depends_on": [],
+      "acceptance": [
+        "wrong actor/audience/project/expired/revoked denied before effects",
+        "exact source/plan revision mismatch conflicts",
+        "unknown field/version rejected",
+        "same operation with changed bytes cannot repeat effects",
+        "no secrets/rawpaths in response/export"
+      ],
+      "source_ref": "05e530d6339cb1c16b1e8f4814347578c5fd761c",
+      "source_path": "docs/PROJECT_ONBOARDING_CONTRACT_PROPOSALS_V1.json",
+      "source_path_owner": "workspace",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "proposal:HOB-EP02",
+      "owner": "engineering-platform",
+      "status": "PROPOSED_PEER_DECISION_REQUIRED",
+      "user_outcome": "Pre-project safe inspection and distinct optional assessment",
+      "input_contracts": [
+        "PB-E0/PB-E1"
+      ],
+      "depends_on": [],
+      "acceptance": [
+        "wrong actor/audience/project/expired/revoked denied before effects",
+        "exact source/plan revision mismatch conflicts",
+        "unknown field/version rejected",
+        "same operation with changed bytes cannot repeat effects",
+        "no secrets/rawpaths in response/export"
+      ],
+      "source_ref": "05e530d6339cb1c16b1e8f4814347578c5fd761c",
+      "source_path": "docs/PROJECT_ONBOARDING_CONTRACT_PROPOSALS_V1.json",
+      "source_path_owner": "workspace",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "proposal:HOB-EP03",
+      "owner": "engineering-platform",
+      "status": "PROPOSED_PEER_DECISION_REQUIRED",
+      "user_outcome": "Authorized CENTRAL onboarding/assessment phase and result snapshots",
+      "input_contracts": [
+        "PB-E5"
+      ],
+      "depends_on": [],
+      "acceptance": [
+        "wrong actor/audience/project/expired/revoked denied before effects",
+        "exact source/plan revision mismatch conflicts",
+        "unknown field/version rejected",
+        "same operation with changed bytes cannot repeat effects",
+        "no secrets/rawpaths in response/export"
+      ],
+      "source_ref": "05e530d6339cb1c16b1e8f4814347578c5fd761c",
+      "source_path": "docs/PROJECT_ONBOARDING_CONTRACT_PROPOSALS_V1.json",
+      "source_path_owner": "workspace",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "proposal:HOB-EP04",
+      "owner": "engineering-platform",
+      "status": "PROPOSED_PEER_DECISION_REQUIRED",
+      "user_outcome": "Create/adopt/child/promotion admission and owning readback",
+      "input_contracts": [
+        "PB-E1/PB-E2/PB-E3/PB-E4"
+      ],
+      "depends_on": [],
+      "acceptance": [
+        "wrong actor/audience/project/expired/revoked denied before effects",
+        "exact source/plan revision mismatch conflicts",
+        "unknown field/version rejected",
+        "same operation with changed bytes cannot repeat effects",
+        "no secrets/rawpaths in response/export"
+      ],
+      "source_ref": "05e530d6339cb1c16b1e8f4814347578c5fd761c",
+      "source_path": "docs/PROJECT_ONBOARDING_CONTRACT_PROPOSALS_V1.json",
+      "source_path_owner": "workspace",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "proposal:HOB-F01",
+      "owner": "forge",
+      "status": "PROPOSED_PEER_DECISION_REQUIRED",
+      "user_outcome": "Source-bound context and scoped readiness read",
+      "input_contracts": [
+        "PB-F0/Project Intelligence"
+      ],
+      "depends_on": [],
+      "acceptance": [
+        "wrong actor/audience/project/expired/revoked denied before effects",
+        "exact source/plan revision mismatch conflicts",
+        "unknown field/version rejected",
+        "same operation with changed bytes cannot repeat effects",
+        "no secrets/rawpaths in response/export"
+      ],
+      "source_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "source_path": "docs/PROJECT_ONBOARDING_CONTRACT_PROPOSALS_V1.json",
+      "source_path_owner": "workspace",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "proposal:HOB-F02",
+      "owner": "forge",
+      "status": "PROPOSED_PEER_DECISION_REQUIRED",
+      "user_outcome": "Frozen manifest/adoption/child impact plan and separate decisions",
+      "input_contracts": [
+        "PB-F0/PB-F1/PB-F2/PB-F7"
+      ],
+      "depends_on": [],
+      "acceptance": [
+        "wrong actor/audience/project/expired/revoked denied before effects",
+        "exact source/plan revision mismatch conflicts",
+        "unknown field/version rejected",
+        "same operation with changed bytes cannot repeat effects",
+        "no secrets/rawpaths in response/export"
+      ],
+      "source_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "source_path": "docs/PROJECT_ONBOARDING_CONTRACT_PROPOSALS_V1.json",
+      "source_path_owner": "workspace",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "proposal:HOB-F03",
+      "owner": "forge",
+      "status": "PROPOSED_PEER_DECISION_REQUIRED",
+      "user_outcome": "Evidence-bound interpretation and human finding disposition proposals",
+      "input_contracts": [
+        "Project Intelligence/PB-F0"
+      ],
+      "depends_on": [],
+      "acceptance": [
+        "wrong actor/audience/project/expired/revoked denied before effects",
+        "exact source/plan revision mismatch conflicts",
+        "unknown field/version rejected",
+        "same operation with changed bytes cannot repeat effects",
+        "no secrets/rawpaths in response/export"
+      ],
+      "source_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "source_path": "docs/PROJECT_ONBOARDING_CONTRACT_PROPOSALS_V1.json",
+      "source_path_owner": "workspace",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "proposal:HOB-F04",
+      "owner": "forge",
+      "status": "PROPOSED_PEER_DECISION_REQUIRED",
+      "user_outcome": "Optional qualified relay of EP CENTRAL evidence",
+      "input_contracts": [
+        "PB-F3/PB-F7"
+      ],
+      "depends_on": [],
+      "acceptance": [
+        "wrong actor/audience/project/expired/revoked denied before effects",
+        "exact source/plan revision mismatch conflicts",
+        "unknown field/version rejected",
+        "same operation with changed bytes cannot repeat effects",
+        "no secrets/rawpaths in response/export"
+      ],
+      "source_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "source_path": "docs/PROJECT_ONBOARDING_CONTRACT_PROPOSALS_V1.json",
+      "source_path_owner": "workspace",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "forge:FH-CLI",
+      "owner": "forge",
+      "status": "EXTERNAL_REFERENCE_BINDING_NOT_QUALIFIED_HERE",
+      "user_outcome": "Existing owning HTTP/service primitive required by original roadmap",
+      "input_contracts": [
+        "forge:FH-CLI"
+      ],
+      "depends_on": [],
+      "acceptance": "Owning source/installed evidence and exact consumer binding; no L4 peer PASS",
+      "source_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "source_path": "docs/roadmap/forge-http-api-v1.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "forge:FH-HTTP",
+      "owner": "forge",
+      "status": "EXTERNAL_REFERENCE_BINDING_NOT_QUALIFIED_HERE",
+      "user_outcome": "Existing owning HTTP/service primitive required by original roadmap",
+      "input_contracts": [
+        "forge:FH-HTTP"
+      ],
+      "depends_on": [],
+      "acceptance": "Owning source/installed evidence and exact consumer binding; no L4 peer PASS",
+      "source_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "source_path": "docs/roadmap/forge-http-api-v1.json",
+      "implementation_selected_by_L4": false
+    },
+    {
+      "id": "forge:FH-SERVICES",
+      "owner": "forge",
+      "status": "EXTERNAL_REFERENCE_BINDING_NOT_QUALIFIED_HERE",
+      "user_outcome": "Existing owning HTTP/service primitive required by original roadmap",
+      "input_contracts": [
+        "forge:FH-SERVICES"
+      ],
+      "depends_on": [],
+      "acceptance": "Owning source/installed evidence and exact consumer binding; no L4 peer PASS",
+      "source_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "source_path": "docs/roadmap/forge-http-api-v1.json",
+      "implementation_selected_by_L4": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "workspace:PB-W0",
+      "to": "workspace:PB-W1",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F0",
+      "to": "workspace:PB-W1",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-E0",
+      "to": "workspace:PB-W1",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W1",
+      "to": "workspace:PB-W2",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F2",
+      "to": "workspace:PB-W2",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F7",
+      "to": "workspace:PB-W2",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-E1",
+      "to": "workspace:PB-W2",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W1",
+      "to": "workspace:PB-W3",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F4",
+      "to": "workspace:PB-W3",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F5",
+      "to": "workspace:PB-W3",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F7",
+      "to": "workspace:PB-W3",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-E5",
+      "to": "workspace:PB-W3",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W2",
+      "to": "workspace:PB-W4",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W3",
+      "to": "workspace:PB-W4",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F6",
+      "to": "workspace:PB-W4",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-E4",
+      "to": "workspace:PB-W4",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W2",
+      "to": "workspace:PB-WQ",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W3",
+      "to": "workspace:PB-WQ",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W4",
+      "to": "workspace:PB-WQ",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-FQ",
+      "to": "workspace:PB-WQ",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-EQ",
+      "to": "workspace:PB-WQ",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W0",
+      "to": "workspace:PB-W1-LINK",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-EP01",
+      "to": "workspace:PB-W1-LINK",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W1-LINK",
+      "to": "workspace:PB-W1-TOPOLOGY",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-EP01",
+      "to": "workspace:PB-W1-TOPOLOGY",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-F01",
+      "to": "workspace:PB-W1-TOPOLOGY",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W0",
+      "to": "workspace:PB-W1-INSPECT",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-EP02",
+      "to": "workspace:PB-W1-INSPECT",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W1-INSPECT",
+      "to": "workspace:PB-W2-BASELINE",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-EP02",
+      "to": "workspace:PB-W2-BASELINE",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-F03",
+      "to": "workspace:PB-W2-BASELINE",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W2-BASELINE",
+      "to": "workspace:PB-W3-FINDINGS",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-F01",
+      "to": "workspace:PB-W3-FINDINGS",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-F03",
+      "to": "workspace:PB-W3-FINDINGS",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W1-INSPECT",
+      "to": "workspace:PB-W2-SETUP",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-F02",
+      "to": "workspace:PB-W2-SETUP",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-EP04",
+      "to": "workspace:PB-W2-SETUP",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W0",
+      "to": "workspace:PB-W3-PROGRESS",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-EP03",
+      "to": "workspace:PB-W3-PROGRESS",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W1-TOPOLOGY",
+      "to": "workspace:PB-W2-CHILD",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W1-INSPECT",
+      "to": "workspace:PB-W2-CHILD",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W2-SETUP",
+      "to": "workspace:PB-W2-CHILD",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W3-PROGRESS",
+      "to": "workspace:PB-W2-CHILD",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-F02",
+      "to": "workspace:PB-W2-CHILD",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-EP04",
+      "to": "workspace:PB-W2-CHILD",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W2-SETUP",
+      "to": "workspace:PB-W4-PROMOTION",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W3-PROGRESS",
+      "to": "workspace:PB-W4-PROMOTION",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-F02",
+      "to": "workspace:PB-W4-PROMOTION",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-EP04",
+      "to": "workspace:PB-W4-PROMOTION",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W1-LINK",
+      "to": "workspace:PB-WQ-LINK",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-EP01",
+      "to": "workspace:PB-WQ-LINK",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W2-BASELINE",
+      "to": "workspace:PB-WQ-ASSESS",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W3-FINDINGS",
+      "to": "workspace:PB-WQ-ASSESS",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W3-PROGRESS",
+      "to": "workspace:PB-WQ-ASSESS",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-EP02",
+      "to": "workspace:PB-WQ-ASSESS",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-EP03",
+      "to": "workspace:PB-WQ-ASSESS",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-F03",
+      "to": "workspace:PB-WQ-ASSESS",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W2-SETUP",
+      "to": "workspace:PB-WQ-SETUP",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "workspace:PB-W3-PROGRESS",
+      "to": "workspace:PB-WQ-SETUP",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-F02",
+      "to": "workspace:PB-WQ-SETUP",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "proposal:HOB-EP04",
+      "to": "workspace:PB-WQ-SETUP",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F0",
+      "to": "forge:PB-F1",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F0",
+      "to": "forge:PB-F2",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F1",
+      "to": "forge:PB-F2",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F2",
+      "to": "forge:PB-F3",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-E1",
+      "to": "forge:PB-F3",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F3",
+      "to": "forge:PB-F4",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-E2",
+      "to": "forge:PB-F4",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F3",
+      "to": "forge:PB-F5",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-E3",
+      "to": "forge:PB-F5",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F4",
+      "to": "forge:PB-F6",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F5",
+      "to": "forge:PB-F6",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-E4",
+      "to": "forge:PB-F6",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F3",
+      "to": "forge:PB-F7",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:FH-SERVICES",
+      "to": "forge:PB-F7",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:FH-HTTP",
+      "to": "forge:PB-F7",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:FH-CLI",
+      "to": "forge:PB-F7",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F1",
+      "to": "forge:PB-FQ",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F2",
+      "to": "forge:PB-FQ",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F3",
+      "to": "forge:PB-FQ",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F4",
+      "to": "forge:PB-FQ",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F5",
+      "to": "forge:PB-FQ",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F6",
+      "to": "forge:PB-FQ",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F7",
+      "to": "forge:PB-FQ",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-EQ",
+      "to": "forge:PB-FQ",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-E0",
+      "to": "engineering-platform:PB-E1",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-E1",
+      "to": "engineering-platform:PB-E2",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-E1",
+      "to": "engineering-platform:PB-E3",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-E2",
+      "to": "engineering-platform:PB-E4",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-E3",
+      "to": "engineering-platform:PB-E4",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-E1",
+      "to": "engineering-platform:PB-E5",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-E2",
+      "to": "engineering-platform:PB-EQ",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-E3",
+      "to": "engineering-platform:PB-EQ",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-E4",
+      "to": "engineering-platform:PB-EQ",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "engineering-platform:PB-E5",
+      "to": "engineering-platform:PB-EQ",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    },
+    {
+      "from": "forge:PB-F0",
+      "to": "engineering-platform:PB-EQ",
+      "kind": "REQUIRED_INPUT_EVIDENCE_NOT_EXECUTION_ORDER_AUTHORITY"
+    }
+  ],
+  "documentary_delivery_dag": {
+    "executable": false,
+    "nodes": [
+      {
+        "id": "D97-DESIGN",
+        "depends_on": [],
+        "status": "IN_PROGRESS"
+      },
+      {
+        "id": "D97-REVIEW",
+        "depends_on": [
+          "D97-DESIGN"
+        ],
+        "status": "PLANNED"
+      },
+      {
+        "id": "D97-CHECKS",
+        "depends_on": [
+          "D97-REVIEW"
+        ],
+        "status": "PLANNED"
+      },
+      {
+        "id": "D97-PROTECTED",
+        "depends_on": [
+          "D97-CHECKS"
+        ],
+        "status": "PLANNED"
+      },
+      {
+        "id": "D97-READBACK",
+        "depends_on": [
+          "D97-PROTECTED"
+        ],
+        "status": "PLANNED"
+      }
+    ],
+    "separate_from_EP_execution_DAG": true
+  }
+}

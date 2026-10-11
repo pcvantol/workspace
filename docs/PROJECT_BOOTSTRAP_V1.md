@@ -7,7 +7,18 @@ This refines [repository onboarding](REPOSITORY_ONBOARDING.md) and the onboardin
 
 Source basis on 2026-09-17: Workspace `92da171c97dc3f67cc844125b08cf8a2a0e56a1e`, Forge `eee7f8dadd5b2df9e836627b43de4928a46eeb35`, EP `d7fe0af363fb36f1f819fedc7a63919e01b88e66`. Existing Forge storage-init is not a project scaffolder. Existing EP Genesis and B8R attachment are reusable foundations, not proof that this complete UI/API journey exists. No runtime, grant, installation or Mission is changed by this design.
 
-## 1. Five distinct journeys, not a single ambiguous Init button
+## Holistic experience refinement (plan97)
+
+[The integrated screen/chat design](PROJECT_ONBOARDING_HOLISTIC_V1.md) adds configured-project
+linking, scoped first analysis, evidence/findings discussion and later child extension to this existing
+five-route contract. [Static wireframes](onboarding-design/README.md) are labeled design artifacts,
+not installed onboarding. [Exact peer proposals](PROJECT_ONBOARDING_CONTRACT_PROPOSALS_V1.json)
+and [18 offline walkthroughs with traceability](PROJECT_ONBOARDING_SCENARIOS_V1.json) distinguish
+existing primitives, unqualified composition and future implementation. Core manifest/identity/role
+boundaries below remain; the five route labels are an internal contract catalogue, not five start buttons.
+Plan96/Workspace2.8.20 evidence and producerpin/history remain unchanged.
+
+## 1. Five retained contract routes behind three understandable entrances
 
 | User choice | What the user selects | Owning outcome and important restriction |
 | --- | --- | --- |

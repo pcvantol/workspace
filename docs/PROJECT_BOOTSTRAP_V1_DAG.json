@@ -1,19 +1,420 @@
 {
-  "schema_version":"1.0",
-  "increment":"PROJECT_BOOTSTRAP_AND_ARTIFACT_MANIFEST_V1",
-  "owner":"workspace",
-  "authority":"DOCUMENTARY_DERIVED",
-  "executable":false,
-  "version_decision":"NO_BUMP",
-  "parent_lanes":["ONBOARDING_CONTROL_PLANE_V1","FWV1-G003","FWV1-G013"],
-  "architecture":"docs/PROJECT_BOOTSTRAP_V1.md",
-  "current_mission_3_dependency":false,
-  "nodes":[
-    {"id":"PB-W0","status":"CONTRACT_DEFINED","depends_on":[],"deliverable":"Five-journey UX, role and owning capability contract","contract":"docs/PROJECT_BOOTSTRAP_W0_CONTRACT_V1.json","producer_bindings":"UNQUALIFIED"},
-    {"id":"PB-W1","status":"PLANNED","depends_on":["PB-W0"],"external_evidence":["forge:PB-F0","engineering-platform:PB-E0"],"deliverable":"Typed Workspace HTTP adapters and safe draft references"},
-    {"id":"PB-W2","status":"PLANNED","depends_on":["PB-W1"],"external_evidence":["forge:PB-F2","forge:PB-F7","engineering-platform:PB-E1"],"deliverable":"Genesis/Managed create/adopt and exact-plan decision UX"},
-    {"id":"PB-W3","status":"PLANNED","depends_on":["PB-W1"],"external_evidence":["forge:PB-F4","forge:PB-F5","forge:PB-F7","engineering-platform:PB-E5"],"deliverable":"Mode-correct progress, recovery, readiness and exports"},
-    {"id":"PB-W4","status":"PLANNED","depends_on":["PB-W2","PB-W3"],"external_evidence":["forge:PB-F6","engineering-platform:PB-E4"],"deliverable":"Explicit history-preserving Managed promotion UX"},
-    {"id":"PB-WQ","status":"PLANNED","depends_on":["PB-W2","PB-W3","PB-W4"],"external_evidence":["forge:PB-FQ","engineering-platform:PB-EQ"],"deliverable":"Installed five-journey, accessibility and five-locale qualification"}
-  ]
+  "schema_version": "1.0",
+  "increment": "PROJECT_BOOTSTRAP_AND_ARTIFACT_MANIFEST_V1",
+  "owner": "workspace",
+  "authority": "DOCUMENTARY_DERIVED",
+  "executable": false,
+  "version_decision": "NO_BUMP",
+  "parent_lanes": [
+    "ONBOARDING_CONTROL_PLANE_V1",
+    "FWV1-G003",
+    "FWV1-G013"
+  ],
+  "architecture": "docs/PROJECT_BOOTSTRAP_V1.md",
+  "current_mission_3_dependency": false,
+  "nodes": [
+    {
+      "id": "PB-W0",
+      "status": "CONTRACT_DEFINED",
+      "depends_on": [],
+      "deliverable": "Five-journey UX, role and owning capability contract",
+      "contract": "docs/PROJECT_BOOTSTRAP_W0_CONTRACT_V1.json",
+      "producer_bindings": "UNQUALIFIED",
+      "owner": "workspace",
+      "user_outcome": "Five-journey UX, role and owning capability contract",
+      "input_contracts": [],
+      "acceptance": "Existing five-route criterion retained; see scoped roadmap and PB-01..40; not a universal gate for subsets"
+    },
+    {
+      "id": "PB-W1",
+      "status": "PLANNED",
+      "depends_on": [
+        "PB-W0"
+      ],
+      "external_evidence": [
+        "forge:PB-F0",
+        "engineering-platform:PB-E0"
+      ],
+      "deliverable": "Typed Workspace HTTP adapters and safe draft references",
+      "owner": "workspace",
+      "user_outcome": "Typed Workspace HTTP adapters and safe draft references",
+      "input_contracts": [
+        "forge:PB-F0",
+        "engineering-platform:PB-E0",
+        "WORKSPACE_PROJECT_BOOTSTRAP_W0_V1"
+      ],
+      "acceptance": "Existing five-route criterion retained; see scoped roadmap and PB-01..40; not a universal gate for subsets"
+    },
+    {
+      "id": "PB-W2",
+      "status": "PLANNED",
+      "depends_on": [
+        "PB-W1"
+      ],
+      "external_evidence": [
+        "forge:PB-F2",
+        "forge:PB-F7",
+        "engineering-platform:PB-E1"
+      ],
+      "deliverable": "Genesis/Managed create/adopt and exact-plan decision UX",
+      "owner": "workspace",
+      "user_outcome": "Genesis/Managed create/adopt and exact-plan decision UX",
+      "input_contracts": [
+        "forge:PB-F2",
+        "forge:PB-F7",
+        "engineering-platform:PB-E1",
+        "WORKSPACE_PROJECT_BOOTSTRAP_W0_V1"
+      ],
+      "acceptance": "Existing five-route criterion retained; see scoped roadmap and PB-01..40; not a universal gate for subsets"
+    },
+    {
+      "id": "PB-W3",
+      "status": "PLANNED",
+      "depends_on": [
+        "PB-W1"
+      ],
+      "external_evidence": [
+        "forge:PB-F4",
+        "forge:PB-F5",
+        "forge:PB-F7",
+        "engineering-platform:PB-E5"
+      ],
+      "deliverable": "Mode-correct progress, recovery, readiness and exports",
+      "owner": "workspace",
+      "user_outcome": "Mode-correct progress, recovery, readiness and exports",
+      "input_contracts": [
+        "forge:PB-F4",
+        "forge:PB-F5",
+        "forge:PB-F7",
+        "engineering-platform:PB-E5",
+        "WORKSPACE_PROJECT_BOOTSTRAP_W0_V1"
+      ],
+      "acceptance": "Existing five-route criterion retained; see scoped roadmap and PB-01..40; not a universal gate for subsets"
+    },
+    {
+      "id": "PB-W4",
+      "status": "PLANNED",
+      "depends_on": [
+        "PB-W2",
+        "PB-W3"
+      ],
+      "external_evidence": [
+        "forge:PB-F6",
+        "engineering-platform:PB-E4"
+      ],
+      "deliverable": "Explicit history-preserving Managed promotion UX",
+      "owner": "workspace",
+      "user_outcome": "Explicit history-preserving Managed promotion UX",
+      "input_contracts": [
+        "forge:PB-F6",
+        "engineering-platform:PB-E4",
+        "WORKSPACE_PROJECT_BOOTSTRAP_W0_V1"
+      ],
+      "acceptance": "Existing five-route criterion retained; see scoped roadmap and PB-01..40; not a universal gate for subsets"
+    },
+    {
+      "id": "PB-WQ",
+      "status": "PLANNED",
+      "depends_on": [
+        "PB-W2",
+        "PB-W3",
+        "PB-W4"
+      ],
+      "external_evidence": [
+        "forge:PB-FQ",
+        "engineering-platform:PB-EQ"
+      ],
+      "deliverable": "Installed five-journey, accessibility and five-locale qualification",
+      "owner": "workspace",
+      "user_outcome": "Installed five-journey, accessibility and five-locale qualification",
+      "input_contracts": [
+        "forge:PB-FQ",
+        "engineering-platform:PB-EQ",
+        "WORKSPACE_PROJECT_BOOTSTRAP_W0_V1"
+      ],
+      "acceptance": "Existing five-route criterion retained; see scoped roadmap and PB-01..40; not a universal gate for subsets"
+    },
+    {
+      "id": "PB-W1-LINK",
+      "parent": "PB-W1",
+      "owner": "workspace",
+      "status": "PLANNED",
+      "depends_on": [
+        "PB-W0"
+      ],
+      "contract_proposals": [
+        "HOB-EP01"
+      ],
+      "input_contracts": [
+        "HOB-EP01"
+      ],
+      "external_evidence": [],
+      "user_outcome": "Link verified configured project without scan or peer write",
+      "deliverable": "Link verified configured project without scan or peer write",
+      "acceptance": "identity/scope/ref repeat, denied/offline, no scan/duplicate/create, five locales",
+      "implementation_selected": false
+    },
+    {
+      "id": "PB-W1-TOPOLOGY",
+      "parent": "PB-W1",
+      "owner": "workspace",
+      "status": "PLANNED",
+      "depends_on": [
+        "PB-W1-LINK"
+      ],
+      "contract_proposals": [
+        "HOB-EP01",
+        "HOB-F01"
+      ],
+      "input_contracts": [
+        "HOB-EP01",
+        "HOB-F01"
+      ],
+      "external_evidence": [],
+      "user_outcome": "Confirm one authority and independent children",
+      "deliverable": "Confirm one authority and independent children",
+      "acceptance": "conflict/fork/module/submodule identities explicit; placements separate",
+      "implementation_selected": false
+    },
+    {
+      "id": "PB-W1-INSPECT",
+      "parent": "PB-W1",
+      "owner": "workspace",
+      "status": "PLANNED",
+      "depends_on": [
+        "PB-W0"
+      ],
+      "contract_proposals": [
+        "HOB-EP02"
+      ],
+      "input_contracts": [
+        "HOB-EP02"
+      ],
+      "external_evidence": [],
+      "user_outcome": "Inspect chosen source safely before full initialization",
+      "deliverable": "Inspect chosen source safely before full initialization",
+      "acceptance": "pre-identity read scope, dirty/history/path exclusions, no hooks/write/network/provider",
+      "implementation_selected": false
+    },
+    {
+      "id": "PB-W2-BASELINE",
+      "parent": "PB-W2",
+      "owner": "workspace",
+      "status": "PLANNED",
+      "depends_on": [
+        "PB-W1-INSPECT"
+      ],
+      "contract_proposals": [
+        "HOB-EP02",
+        "HOB-F03"
+      ],
+      "input_contracts": [
+        "HOB-EP02",
+        "HOB-F03"
+      ],
+      "external_evidence": [],
+      "user_outcome": "Version-bound scoped technical baseline",
+      "deliverable": "Version-bound scoped technical baseline",
+      "acceptance": "tool/profile/stack/vector/coverage/limits, six distinct results, changed-source targeted reanalysis",
+      "implementation_selected": false
+    },
+    {
+      "id": "PB-W3-FINDINGS",
+      "parent": "PB-W3",
+      "owner": "workspace",
+      "status": "PLANNED",
+      "depends_on": [
+        "PB-W2-BASELINE"
+      ],
+      "contract_proposals": [
+        "HOB-F01",
+        "HOB-F03"
+      ],
+      "input_contracts": [
+        "HOB-F01",
+        "HOB-F03"
+      ],
+      "external_evidence": [],
+      "user_outcome": "Discuss evidence and preserve disposition history",
+      "deliverable": "Discuss evidence and preserve disposition history",
+      "acceptance": "stable fingerprints, separate facts/inference/decisions, no issueclose/Mission on read",
+      "implementation_selected": false
+    },
+    {
+      "id": "PB-W2-SETUP",
+      "parent": "PB-W2",
+      "owner": "workspace",
+      "status": "PLANNED",
+      "depends_on": [
+        "PB-W1-INSPECT"
+      ],
+      "contract_proposals": [
+        "HOB-F02",
+        "HOB-EP04"
+      ],
+      "input_contracts": [
+        "HOB-F02",
+        "HOB-EP04"
+      ],
+      "external_evidence": [],
+      "user_outcome": "Exact create/adopt preview and separate required decisions",
+      "deliverable": "Exact create/adopt preview and separate required decisions",
+      "acceptance": "empty/README/dirty/guarded birth; preserve documents/history; current mandatory gate cannot defer",
+      "implementation_selected": false
+    },
+    {
+      "id": "PB-W3-PROGRESS",
+      "parent": "PB-W3",
+      "owner": "workspace",
+      "status": "PLANNED",
+      "depends_on": [
+        "PB-W0"
+      ],
+      "contract_proposals": [
+        "HOB-EP03"
+      ],
+      "input_contracts": [
+        "HOB-EP03"
+      ],
+      "external_evidence": [],
+      "user_outcome": "CENTRAL progress and same-operation recovery",
+      "deliverable": "CENTRAL progress and same-operation recovery",
+      "acceptance": "owner scopes/source snapshots, partial/stale/waits, lost reply no second effect; relay requires HOB-F04",
+      "implementation_selected": false
+    },
+    {
+      "id": "PB-W2-CHILD",
+      "parent": "PB-W2",
+      "owner": "workspace",
+      "status": "PLANNED",
+      "depends_on": [
+        "PB-W1-TOPOLOGY",
+        "PB-W1-INSPECT",
+        "PB-W2-SETUP",
+        "PB-W3-PROGRESS"
+      ],
+      "contract_proposals": [
+        "HOB-F02",
+        "HOB-EP04"
+      ],
+      "input_contracts": [
+        "HOB-F02",
+        "HOB-EP04"
+      ],
+      "external_evidence": [],
+      "user_outcome": "Add scoped child without replacing authority or invalidating unrelated work",
+      "deliverable": "Add scoped child without replacing authority or invalidating unrelated work",
+      "acceptance": "partial child, preserved project/authority/approvals, no atomicity or parallel writes",
+      "implementation_selected": false
+    },
+    {
+      "id": "PB-W4-PROMOTION",
+      "parent": "PB-W4",
+      "owner": "workspace",
+      "status": "PLANNED",
+      "depends_on": [
+        "PB-W2-SETUP",
+        "PB-W3-PROGRESS"
+      ],
+      "contract_proposals": [
+        "HOB-F02",
+        "HOB-EP04"
+      ],
+      "input_contracts": [
+        "HOB-F02",
+        "HOB-EP04"
+      ],
+      "external_evidence": [],
+      "user_outcome": "Explicit safe history publication and mode activation",
+      "deliverable": "Explicit safe history publication and mode activation",
+      "acceptance": "history/privacy/visibility/license/ancestry, no fallback/forcepush; partial effects remain visible",
+      "implementation_selected": false
+    },
+    {
+      "id": "PB-WQ-LINK",
+      "parent": "PB-WQ",
+      "owner": "workspace",
+      "status": "PLANNED",
+      "depends_on": [
+        "PB-W1-LINK"
+      ],
+      "contract_proposals": [
+        "HOB-EP01"
+      ],
+      "input_contracts": [
+        "HOB-EP01"
+      ],
+      "external_evidence": [],
+      "user_outcome": "Qualify independent basic link slice",
+      "deliverable": "Qualify independent basic link slice",
+      "acceptance": "real installed qualified scoped read, no deep scan/promotion/wholepeerQ prerequisite",
+      "implementation_selected": false
+    },
+    {
+      "id": "PB-WQ-ASSESS",
+      "parent": "PB-WQ",
+      "owner": "workspace",
+      "status": "PLANNED",
+      "depends_on": [
+        "PB-W2-BASELINE",
+        "PB-W3-FINDINGS",
+        "PB-W3-PROGRESS"
+      ],
+      "contract_proposals": [
+        "HOB-EP02",
+        "HOB-EP03",
+        "HOB-F03"
+      ],
+      "input_contracts": [
+        "HOB-EP02",
+        "HOB-EP03",
+        "HOB-F03"
+      ],
+      "external_evidence": [],
+      "user_outcome": "Qualify baseline/findings with authority negatives",
+      "deliverable": "Qualify baseline/findings with authority negatives",
+      "acceptance": "supported real tools/exact revisions; unsupported/partial/redaction/revoke/recovery honest",
+      "implementation_selected": false
+    },
+    {
+      "id": "PB-WQ-SETUP",
+      "parent": "PB-WQ",
+      "owner": "workspace",
+      "status": "PLANNED",
+      "depends_on": [
+        "PB-W2-SETUP",
+        "PB-W3-PROGRESS"
+      ],
+      "contract_proposals": [
+        "HOB-F02",
+        "HOB-EP04"
+      ],
+      "input_contracts": [
+        "HOB-F02",
+        "HOB-EP04"
+      ],
+      "external_evidence": [],
+      "user_outcome": "Qualify individual create/adopt slices before aggregate",
+      "deliverable": "Qualify individual create/adopt slices before aggregate",
+      "acceptance": "one actual scoped effect/readback, separate decisions, source/hash/dirty/conflict negatives",
+      "implementation_selected": false
+    }
+  ],
+  "holistic_design": "docs/PROJECT_ONBOARDING_HOLISTIC_V1.md",
+  "source_observations": {
+    "workspace": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+    "forge": "f819196e9c025163be40c8e71693a3def4b78bc2",
+    "engineering-platform": "05e530d6339cb1c16b1e8f4814347578c5fd761c"
+  },
+  "design_delivery": {
+    "plan": 97,
+    "status": "DESIGN_REVIEW_PENDING",
+    "product_implementation": "PLANNED_NOT_SELECTED",
+    "correction_budget": {
+      "consumed": 0,
+      "max": 3,
+      "remaining": 3
+    }
+  },
+  "subset_semantics": "Parent grouping is not a prerequisite edge. Aggregate PB-WQ retains original full-five-route deps; PB-WQ-LINK is independent. Required profile analyses are scoped conditional inputs, not universal initialization prerequisites."
 }

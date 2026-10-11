@@ -1,0 +1,1851 @@
+{
+  "schema_version": 1,
+  "document_kind": "NON_EXECUTABLE_PEER_CONTRACT_PROPOSALS",
+  "assignment": "L4-HOLISTIC-PROJECT-ONBOARDING-DESIGN-DAG-V1-20261011",
+  "status": "DESIGN_ONLY_PRODUCER_BINDINGS_UNQUALIFIED",
+  "source_observations": {
+    "workspace": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+    "forge": "f819196e9c025163be40c8e71693a3def4b78bc2",
+    "engineering-platform": "05e530d6339cb1c16b1e8f4814347578c5fd761c"
+  },
+  "proposal_version": "1.0",
+  "existing_route_references": [
+    {
+      "owner": "forge",
+      "routes": [
+        "GET /v1/instance",
+        "GET /v1/status"
+      ],
+      "scope": "Existing Workspace status-read bearer ONLY; not onboarding authority",
+      "source_path": "docs/architecture/FORGE_WORKSPACE_STATUS_HTTP_READ_V1.md"
+    },
+    {
+      "owner": "engineering-platform",
+      "routes": [
+        "GET /v1/producer-compatibility",
+        "GET /v1/projects/{project_id}/submissions/{submission_id}",
+        "GET /v1/projects/{project_id}/submissions/by-identity",
+        "GET /v1/projects/{project_id}/artifacts/{artifact_id}"
+      ],
+      "scope": "Compatibility public form is non-authorizing; authenticated form and readback require accepted consumer/project/authority binding. Not pre-identity or new Workspace discovery permission",
+      "source_path": "docs/engineering/EP_PRODUCER_READBACK_CONTRACT.md"
+    }
+  ],
+  "transport": "Versioned authenticated HTTP over qualified channel; Server-held separately scoped peer secrets, never Client provider credentials. Peer identity/compatibility and viewer scope checked independently. No CLI/import/SQL/Console fallback.",
+  "proposal_requests": [
+    {
+      "id": "HOB-W01",
+      "owner": "workspace",
+      "parent_capability": "PB-W1",
+      "status": "PROPOSED_NOT_BOUND_NOT_IMPLEMENTED",
+      "contract_version": "hob-proposal/1.0",
+      "proposed_routes": [
+        "POST /v1/onboarding/drafts",
+        "GET /v1/onboarding/views/{draft_id}"
+      ],
+      "user_outcome": "Own draft and authorized joined read projection",
+      "authorization": "paired own Server; exact viewer/project visibility; no forwarded peer bearer",
+      "response_contract": "OwnerSnapshot or typed refusal; exact snapshot schema below",
+      "compatibility": "Additive owner opt-in; unknown versions fail UNSUPPORTED, no widening existing grant/route. These proposals do not revise producer schemas.",
+      "idempotency_and_scope": "Own draft CAS; no canonical identity or peer writes; retrieval never schedules work",
+      "source_observation_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
+      "acceptance": [
+        "wrong actor/audience/project/expired/revoked denied before effects",
+        "exact source/plan revision mismatch conflicts",
+        "unknown field/version rejected",
+        "same operation with changed bytes cannot repeat effects",
+        "no secrets/rawpaths in response/export"
+      ],
+      "field_catalogue": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "draft_id",
+          "expected_draft_revision",
+          "journey",
+          "source_handle_refs",
+          "context_ref"
+        ],
+        "properties": {
+          "draft_id": {
+            "type": "string"
+          },
+          "expected_draft_revision": {
+            "type": "integer"
+          },
+          "journey": {
+            "type": "string"
+          },
+          "source_handle_refs": {
+            "type": "array"
+          },
+          "context_ref": {
+            "type": "string"
+          }
+        }
+      },
+      "operations": [
+        {
+          "method": "POST",
+          "path": "/v1/onboarding/drafts",
+          "status": "PROPOSED_ONLY",
+          "request": {
+            "path_parameters": {},
+            "body_schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "draft_id",
+                "expected_draft_revision",
+                "journey",
+                "source_handle_refs",
+                "context_ref"
+              ],
+              "properties": {
+                "draft_id": {
+                  "type": "string"
+                },
+                "expected_draft_revision": {
+                  "type": "integer"
+                },
+                "journey": {
+                  "type": "string"
+                },
+                "source_handle_refs": {
+                  "type": "array"
+                },
+                "context_ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "required_scope": "paired own Server; exact viewer/project visibility; no forwarded peer bearer"
+          },
+          "response_schema": "DraftReceipt",
+          "refusals": {
+            "401": "UNAUTHENTICATED_OR_REVOKED",
+            "403": "SCOPE_OR_ROLE_DENIED",
+            "409": "SOURCE_IDENTITY_PLAN_OR_IDEMPOTENCY_CONFLICT",
+            "422": "UNSUPPORTED_PROFILE_VERSION_OR_TOOL",
+            "503": "OWNER_UNAVAILABLE"
+          },
+          "success_is_execution_permission": false
+        },
+        {
+          "method": "GET",
+          "path": "/v1/onboarding/views/{draft_id}",
+          "status": "PROPOSED_ONLY",
+          "request": {
+            "path_parameters": {
+              "draft_id": "owner-scoped opaque ID"
+            },
+            "query_parameters": {
+              "cursor": "optional opaque actor/snapshot-bound page cursor",
+              "limit": "optional integer 1..100; default25"
+            },
+            "body": "FORBIDDEN",
+            "required_scope": "paired own Server; exact viewer/project visibility; no forwarded peer bearer"
+          },
+          "response_schema": "OwnerSnapshot",
+          "refusals": {
+            "401": "UNAUTHENTICATED_OR_REVOKED",
+            "403": "SCOPE_OR_ROLE_DENIED",
+            "409": "SOURCE_IDENTITY_PLAN_OR_IDEMPOTENCY_CONFLICT",
+            "422": "UNSUPPORTED_PROFILE_VERSION_OR_TOOL",
+            "503": "OWNER_UNAVAILABLE"
+          },
+          "success_is_execution_permission": false
+        }
+      ]
+    },
+    {
+      "id": "HOB-EP01",
+      "owner": "engineering-platform",
+      "parent_capability": "PB-E0/PB-E1",
+      "status": "PROPOSED_NOT_BOUND_NOT_IMPLEMENTED",
+      "contract_version": "hob-proposal/1.0",
+      "proposed_routes": [
+        "GET /v1/onboarding/projects",
+        "GET /v1/onboarding/projects/{project_id}/topology"
+      ],
+      "user_outcome": "Finite B8R discovery/verified linking",
+      "authorization": "EP-issued read-only audience=workspace; exact permitted projects/fields; no list-all/admin fallback",
+      "response_contract": "OwnerSnapshot or typed refusal; exact snapshot schema below",
+      "compatibility": "Additive owner opt-in; unknown versions fail UNSUPPORTED, no widening existing grant/route. These proposals do not revise producer schemas.",
+      "idempotency_and_scope": "Read only; project reservation/attach/create routes forbidden; opaque cursor bound to actor/scope/snapshot",
+      "source_observation_ref": "05e530d6339cb1c16b1e8f4814347578c5fd761c",
+      "acceptance": [
+        "wrong actor/audience/project/expired/revoked denied before effects",
+        "exact source/plan revision mismatch conflicts",
+        "unknown field/version rejected",
+        "same operation with changed bytes cannot repeat effects",
+        "no secrets/rawpaths in response/export"
+      ],
+      "field_catalogue": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "project_id",
+          "expected_topology_revision",
+          "cursor",
+          "limit"
+        ],
+        "properties": {
+          "project_id": {
+            "type": "string"
+          },
+          "expected_topology_revision": {
+            "type": "integer"
+          },
+          "cursor": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer"
+          }
+        }
+      },
+      "operations": [
+        {
+          "method": "GET",
+          "path": "/v1/onboarding/projects",
+          "status": "PROPOSED_ONLY",
+          "request": {
+            "path_parameters": {},
+            "query_parameters": {
+              "cursor": "optional opaque actor/snapshot-bound page cursor",
+              "limit": "optional integer 1..100; default25"
+            },
+            "body": "FORBIDDEN",
+            "required_scope": "EP-issued read-only audience=workspace; exact permitted projects/fields; no list-all/admin fallback"
+          },
+          "response_schema": "OwnerSnapshot",
+          "refusals": {
+            "401": "UNAUTHENTICATED_OR_REVOKED",
+            "403": "SCOPE_OR_ROLE_DENIED",
+            "409": "SOURCE_IDENTITY_PLAN_OR_IDEMPOTENCY_CONFLICT",
+            "422": "UNSUPPORTED_PROFILE_VERSION_OR_TOOL",
+            "503": "OWNER_UNAVAILABLE"
+          },
+          "success_is_execution_permission": false
+        },
+        {
+          "method": "GET",
+          "path": "/v1/onboarding/projects/{project_id}/topology",
+          "status": "PROPOSED_ONLY",
+          "request": {
+            "path_parameters": {
+              "project_id": "owner-scoped opaque ID"
+            },
+            "query_parameters": {
+              "cursor": "optional opaque actor/snapshot-bound page cursor",
+              "limit": "optional integer 1..100; default25"
+            },
+            "body": "FORBIDDEN",
+            "required_scope": "EP-issued read-only audience=workspace; exact permitted projects/fields; no list-all/admin fallback"
+          },
+          "response_schema": "OwnerSnapshot",
+          "refusals": {
+            "401": "UNAUTHENTICATED_OR_REVOKED",
+            "403": "SCOPE_OR_ROLE_DENIED",
+            "409": "SOURCE_IDENTITY_PLAN_OR_IDEMPOTENCY_CONFLICT",
+            "422": "UNSUPPORTED_PROFILE_VERSION_OR_TOOL",
+            "503": "OWNER_UNAVAILABLE"
+          },
+          "success_is_execution_permission": false
+        }
+      ]
+    },
+    {
+      "id": "HOB-EP02",
+      "owner": "engineering-platform",
+      "parent_capability": "PB-E0/PB-E1",
+      "status": "PROPOSED_NOT_BOUND_NOT_IMPLEMENTED",
+      "contract_version": "hob-proposal/1.0",
+      "proposed_routes": [
+        "POST /v1/onboarding/inspections",
+        "POST /v1/onboarding/assessments"
+      ],
+      "user_outcome": "Pre-project safe inspection and distinct optional assessment",
+      "authorization": "Owner-issued pre-identity source/placement scope; assessment additionally binds exact tool/profile/network/data-transfer/time/cost; not existing project submission bearer",
+      "response_contract": "OwnerSnapshot or typed refusal; exact snapshot schema below",
+      "compatibility": "Additive owner opt-in; unknown versions fail UNSUPPORTED, no widening existing grant/route. These proposals do not revise producer schemas.",
+      "idempotency_and_scope": "Split read/assessment authority: read forbids hooks/scripts/network/write; assessment admits explicitly allowed isolated effects. No provisional identity becomes committed",
+      "source_observation_ref": "05e530d6339cb1c16b1e8f4814347578c5fd761c",
+      "acceptance": [
+        "wrong actor/audience/project/expired/revoked denied before effects",
+        "exact source/plan revision mismatch conflicts",
+        "unknown field/version rejected",
+        "same operation with changed bytes cannot repeat effects",
+        "no secrets/rawpaths in response/export"
+      ],
+      "field_catalogue": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operation_id",
+          "idempotency_key",
+          "source_handle_ref",
+          "source_revision_vector",
+          "analysis_plan_digest",
+          "profile_id",
+          "tool_versions",
+          "effect_class",
+          "authorization_ref",
+          "limits",
+          "expected_source_snapshot"
+        ],
+        "properties": {
+          "operation_id": {
+            "type": "string"
+          },
+          "idempotency_key": {
+            "type": "string"
+          },
+          "source_handle_ref": {
+            "type": "string"
+          },
+          "source_revision_vector": {
+            "type": "array"
+          },
+          "analysis_plan_digest": {
+            "type": "string"
+          },
+          "profile_id": {
+            "type": "string"
+          },
+          "tool_versions": {
+            "type": "object"
+          },
+          "effect_class": {
+            "type": "string"
+          },
+          "authorization_ref": {
+            "type": "string"
+          },
+          "limits": {
+            "type": "object"
+          },
+          "expected_source_snapshot": {
+            "type": "string"
+          }
+        }
+      },
+      "operations": [
+        {
+          "method": "POST",
+          "path": "/v1/onboarding/inspections",
+          "status": "PROPOSED_ONLY",
+          "request": {
+            "path_parameters": {},
+            "body_schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "operation_id",
+                "idempotency_key",
+                "source_handle_ref",
+                "source_revision_vector",
+                "analysis_plan_digest",
+                "profile_id",
+                "tool_versions",
+                "effect_class",
+                "authorization_ref",
+                "limits",
+                "expected_source_snapshot"
+              ],
+              "properties": {
+                "operation_id": {
+                  "type": "string"
+                },
+                "idempotency_key": {
+                  "type": "string"
+                },
+                "source_handle_ref": {
+                  "type": "string"
+                },
+                "source_revision_vector": {
+                  "type": "array"
+                },
+                "analysis_plan_digest": {
+                  "type": "string"
+                },
+                "profile_id": {
+                  "type": "string"
+                },
+                "tool_versions": {
+                  "type": "object"
+                },
+                "effect_class": {
+                  "type": "string"
+                },
+                "authorization_ref": {
+                  "type": "string"
+                },
+                "limits": {
+                  "type": "object"
+                },
+                "expected_source_snapshot": {
+                  "type": "string"
+                }
+              }
+            },
+            "required_scope": "Owner-issued pre-identity source/placement scope; assessment additionally binds exact tool/profile/network/data-transfer/time/cost; not existing project submission bearer"
+          },
+          "response_schema": "AdmissionReceipt",
+          "refusals": {
+            "401": "UNAUTHENTICATED_OR_REVOKED",
+            "403": "SCOPE_OR_ROLE_DENIED",
+            "409": "SOURCE_IDENTITY_PLAN_OR_IDEMPOTENCY_CONFLICT",
+            "422": "UNSUPPORTED_PROFILE_VERSION_OR_TOOL",
+            "503": "OWNER_UNAVAILABLE"
+          },
+          "success_is_execution_permission": false
+        },
+        {
+          "method": "POST",
+          "path": "/v1/onboarding/assessments",
+          "status": "PROPOSED_ONLY",
+          "request": {
+            "path_parameters": {},
+            "body_schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "operation_id",
+                "idempotency_key",
+                "source_handle_ref",
+                "source_revision_vector",
+                "analysis_plan_digest",
+                "profile_id",
+                "tool_versions",
+                "effect_class",
+                "authorization_ref",
+                "limits",
+                "expected_source_snapshot"
+              ],
+              "properties": {
+                "operation_id": {
+                  "type": "string"
+                },
+                "idempotency_key": {
+                  "type": "string"
+                },
+                "source_handle_ref": {
+                  "type": "string"
+                },
+                "source_revision_vector": {
+                  "type": "array"
+                },
+                "analysis_plan_digest": {
+                  "type": "string"
+                },
+                "profile_id": {
+                  "type": "string"
+                },
+                "tool_versions": {
+                  "type": "object"
+                },
+                "effect_class": {
+                  "type": "string"
+                },
+                "authorization_ref": {
+                  "type": "string"
+                },
+                "limits": {
+                  "type": "object"
+                },
+                "expected_source_snapshot": {
+                  "type": "string"
+                }
+              }
+            },
+            "required_scope": "Owner-issued pre-identity source/placement scope; assessment additionally binds exact tool/profile/network/data-transfer/time/cost; not existing project submission bearer"
+          },
+          "response_schema": "AdmissionReceipt",
+          "refusals": {
+            "401": "UNAUTHENTICATED_OR_REVOKED",
+            "403": "SCOPE_OR_ROLE_DENIED",
+            "409": "SOURCE_IDENTITY_PLAN_OR_IDEMPOTENCY_CONFLICT",
+            "422": "UNSUPPORTED_PROFILE_VERSION_OR_TOOL",
+            "503": "OWNER_UNAVAILABLE"
+          },
+          "success_is_execution_permission": false
+        }
+      ]
+    },
+    {
+      "id": "HOB-EP03",
+      "owner": "engineering-platform",
+      "parent_capability": "PB-E5",
+      "status": "PROPOSED_NOT_BOUND_NOT_IMPLEMENTED",
+      "contract_version": "hob-proposal/1.0",
+      "proposed_routes": [
+        "GET /v1/onboarding/operations/{operation_id}",
+        "GET /v1/onboarding/operations/by-identity",
+        "GET /v1/onboarding/snapshots/{snapshot_id}"
+      ],
+      "user_outcome": "Authorized CENTRAL onboarding/assessment phase and result snapshots",
+      "authorization": "EP resolves accepted operation actor, audience and source/project scope; both read visibility and actual current access checked; no reuse of Forge consumer bearer",
+      "response_contract": "OwnerSnapshot or typed refusal; exact snapshot schema below",
+      "compatibility": "Additive owner opt-in; unknown versions fail UNSUPPORTED, no widening existing grant/route. These proposals do not revise producer schemas.",
+      "idempotency_and_scope": "Read original operation, including uncertainty; cursor immutable/source-bound, no admission/reissue. Existing submission contracts stay unchanged",
+      "source_observation_ref": "05e530d6339cb1c16b1e8f4814347578c5fd761c",
+      "acceptance": [
+        "wrong actor/audience/project/expired/revoked denied before effects",
+        "exact source/plan revision mismatch conflicts",
+        "unknown field/version rejected",
+        "same operation with changed bytes cannot repeat effects",
+        "no secrets/rawpaths in response/export"
+      ],
+      "field_catalogue": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operation_id",
+          "expected_plan_digest",
+          "snapshot_cursor"
+        ],
+        "properties": {
+          "operation_id": {
+            "type": "string"
+          },
+          "expected_plan_digest": {
+            "type": "string"
+          },
+          "snapshot_cursor": {
+            "type": "string"
+          }
+        }
+      },
+      "operations": [
+        {
+          "method": "GET",
+          "path": "/v1/onboarding/operations/{operation_id}",
+          "status": "PROPOSED_ONLY",
+          "request": {
+            "path_parameters": {
+              "operation_id": "owner-scoped opaque ID"
+            },
+            "query_parameters": {
+              "cursor": "optional opaque actor/snapshot-bound page cursor",
+              "limit": "optional integer 1..100; default25",
+              "expected_plan_digest": "required for by-identity reconciliation",
+              "operation_id": "required for by-identity; exact original ID"
+            },
+            "body": "FORBIDDEN",
+            "required_scope": "EP resolves accepted operation actor, audience and source/project scope; both read visibility and actual current access checked; no reuse of Forge consumer bearer"
+          },
+          "response_schema": "OwnerSnapshot",
+          "refusals": {
+            "401": "UNAUTHENTICATED_OR_REVOKED",
+            "403": "SCOPE_OR_ROLE_DENIED",
+            "409": "SOURCE_IDENTITY_PLAN_OR_IDEMPOTENCY_CONFLICT",
+            "422": "UNSUPPORTED_PROFILE_VERSION_OR_TOOL",
+            "503": "OWNER_UNAVAILABLE"
+          },
+          "success_is_execution_permission": false
+        },
+        {
+          "method": "GET",
+          "path": "/v1/onboarding/operations/by-identity",
+          "status": "PROPOSED_ONLY",
+          "request": {
+            "path_parameters": {},
+            "query_parameters": {
+              "cursor": "optional opaque actor/snapshot-bound page cursor",
+              "limit": "optional integer 1..100; default25",
+              "expected_plan_digest": "required for by-identity reconciliation",
+              "operation_id": "required for by-identity; exact original ID"
+            },
+            "body": "FORBIDDEN",
+            "required_scope": "EP resolves accepted operation actor, audience and source/project scope; both read visibility and actual current access checked; no reuse of Forge consumer bearer"
+          },
+          "response_schema": "OwnerSnapshot",
+          "refusals": {
+            "401": "UNAUTHENTICATED_OR_REVOKED",
+            "403": "SCOPE_OR_ROLE_DENIED",
+            "409": "SOURCE_IDENTITY_PLAN_OR_IDEMPOTENCY_CONFLICT",
+            "422": "UNSUPPORTED_PROFILE_VERSION_OR_TOOL",
+            "503": "OWNER_UNAVAILABLE"
+          },
+          "success_is_execution_permission": false
+        },
+        {
+          "method": "GET",
+          "path": "/v1/onboarding/snapshots/{snapshot_id}",
+          "status": "PROPOSED_ONLY",
+          "request": {
+            "path_parameters": {
+              "snapshot_id": "owner-scoped opaque ID"
+            },
+            "query_parameters": {
+              "cursor": "optional opaque actor/snapshot-bound page cursor",
+              "limit": "optional integer 1..100; default25",
+              "expected_plan_digest": "required for by-identity reconciliation",
+              "operation_id": "required for by-identity; exact original ID"
+            },
+            "body": "FORBIDDEN",
+            "required_scope": "EP resolves accepted operation actor, audience and source/project scope; both read visibility and actual current access checked; no reuse of Forge consumer bearer"
+          },
+          "response_schema": "OwnerSnapshot",
+          "refusals": {
+            "401": "UNAUTHENTICATED_OR_REVOKED",
+            "403": "SCOPE_OR_ROLE_DENIED",
+            "409": "SOURCE_IDENTITY_PLAN_OR_IDEMPOTENCY_CONFLICT",
+            "422": "UNSUPPORTED_PROFILE_VERSION_OR_TOOL",
+            "503": "OWNER_UNAVAILABLE"
+          },
+          "success_is_execution_permission": false
+        }
+      ]
+    },
+    {
+      "id": "HOB-EP04",
+      "owner": "engineering-platform",
+      "parent_capability": "PB-E1/PB-E2/PB-E3/PB-E4",
+      "status": "PROPOSED_NOT_BOUND_NOT_IMPLEMENTED",
+      "contract_version": "hob-proposal/1.0",
+      "proposed_routes": [
+        "POST /v1/onboarding/operations"
+      ],
+      "user_outcome": "Create/adopt/child/promotion admission and owning readback",
+      "authorization": "Exact accepted effect scope; actor and service identities verified separately; owning lease/current authorization at effect time",
+      "response_contract": "OwnerSnapshot or typed refusal; exact snapshot schema below",
+      "compatibility": "Additive owner opt-in; unknown versions fail UNSUPPORTED, no widening existing grant/route. These proposals do not revise producer schemas.",
+      "idempotency_and_scope": "Reuse owner ledger/leases and B8R declaration validation. Same key/different bytes conflict. Current expected hashes/settings checked. Birth and history disclosure explicitly separate",
+      "source_observation_ref": "05e530d6339cb1c16b1e8f4814347578c5fd761c",
+      "acceptance": [
+        "wrong actor/audience/project/expired/revoked denied before effects",
+        "exact source/plan revision mismatch conflicts",
+        "unknown field/version rejected",
+        "same operation with changed bytes cannot repeat effects",
+        "no secrets/rawpaths in response/export"
+      ],
+      "field_catalogue": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operation_id",
+          "idempotency_key",
+          "kind",
+          "plan_ref",
+          "plan_digest",
+          "expected_revision",
+          "source_revision_vector",
+          "identity_mapping_ref",
+          "placement_ref",
+          "decision_receipt_refs",
+          "authorization_ref",
+          "limits"
+        ],
+        "properties": {
+          "operation_id": {
+            "type": "string"
+          },
+          "idempotency_key": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "plan_ref": {
+            "type": "string"
+          },
+          "plan_digest": {
+            "type": "string"
+          },
+          "expected_revision": {
+            "type": "integer"
+          },
+          "source_revision_vector": {
+            "type": "array"
+          },
+          "identity_mapping_ref": {
+            "type": "string"
+          },
+          "placement_ref": {
+            "type": "string"
+          },
+          "decision_receipt_refs": {
+            "type": "array"
+          },
+          "authorization_ref": {
+            "type": "string"
+          },
+          "limits": {
+            "type": "object"
+          }
+        }
+      },
+      "operations": [
+        {
+          "method": "POST",
+          "path": "/v1/onboarding/operations",
+          "status": "PROPOSED_ONLY",
+          "request": {
+            "path_parameters": {},
+            "body_schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "operation_id",
+                "idempotency_key",
+                "kind",
+                "plan_ref",
+                "plan_digest",
+                "expected_revision",
+                "source_revision_vector",
+                "identity_mapping_ref",
+                "placement_ref",
+                "decision_receipt_refs",
+                "authorization_ref",
+                "limits"
+              ],
+              "properties": {
+                "operation_id": {
+                  "type": "string"
+                },
+                "idempotency_key": {
+                  "type": "string"
+                },
+                "kind": {
+                  "type": "string"
+                },
+                "plan_ref": {
+                  "type": "string"
+                },
+                "plan_digest": {
+                  "type": "string"
+                },
+                "expected_revision": {
+                  "type": "integer"
+                },
+                "source_revision_vector": {
+                  "type": "array"
+                },
+                "identity_mapping_ref": {
+                  "type": "string"
+                },
+                "placement_ref": {
+                  "type": "string"
+                },
+                "decision_receipt_refs": {
+                  "type": "array"
+                },
+                "authorization_ref": {
+                  "type": "string"
+                },
+                "limits": {
+                  "type": "object"
+                }
+              }
+            },
+            "required_scope": "Exact accepted effect scope; actor and service identities verified separately; owning lease/current authorization at effect time"
+          },
+          "response_schema": "AdmissionReceipt",
+          "refusals": {
+            "401": "UNAUTHENTICATED_OR_REVOKED",
+            "403": "SCOPE_OR_ROLE_DENIED",
+            "409": "SOURCE_IDENTITY_PLAN_OR_IDEMPOTENCY_CONFLICT",
+            "422": "UNSUPPORTED_PROFILE_VERSION_OR_TOOL",
+            "503": "OWNER_UNAVAILABLE"
+          },
+          "success_is_execution_permission": false
+        }
+      ]
+    },
+    {
+      "id": "HOB-F01",
+      "owner": "forge",
+      "parent_capability": "PB-F0/Project Intelligence",
+      "status": "PROPOSED_NOT_BOUND_NOT_IMPLEMENTED",
+      "contract_version": "hob-proposal/1.0",
+      "proposed_routes": [
+        "GET /v1/onboarding/projects/{project_id}/context"
+      ],
+      "user_outcome": "Source-bound context and scoped readiness read",
+      "authorization": "New exact project/repo context-read scope; old status bearer cannot read this route",
+      "response_contract": "OwnerSnapshot or typed refusal; exact snapshot schema below",
+      "compatibility": "Additive owner opt-in; unknown versions fail UNSUPPORTED, no widening existing grant/route. These proposals do not revise producer schemas.",
+      "idempotency_and_scope": "Read-only source/interpretation/approved direction separation; identity from EP. Forge unavailability does not block verified linking",
+      "source_observation_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "acceptance": [
+        "wrong actor/audience/project/expired/revoked denied before effects",
+        "exact source/plan revision mismatch conflicts",
+        "unknown field/version rejected",
+        "same operation with changed bytes cannot repeat effects",
+        "no secrets/rawpaths in response/export"
+      ],
+      "field_catalogue": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "project_id",
+          "source_revision_vector",
+          "evidence_snapshot_refs"
+        ],
+        "properties": {
+          "project_id": {
+            "type": "string"
+          },
+          "source_revision_vector": {
+            "type": "array"
+          },
+          "evidence_snapshot_refs": {
+            "type": "array"
+          }
+        }
+      },
+      "operations": [
+        {
+          "method": "GET",
+          "path": "/v1/onboarding/projects/{project_id}/context",
+          "status": "PROPOSED_ONLY",
+          "request": {
+            "path_parameters": {
+              "project_id": "owner-scoped opaque ID"
+            },
+            "query_parameters": {
+              "cursor": "optional opaque actor/snapshot-bound page cursor",
+              "limit": "optional integer 1..100; default25"
+            },
+            "body": "FORBIDDEN",
+            "required_scope": "New exact project/repo context-read scope; old status bearer cannot read this route"
+          },
+          "response_schema": "OwnerSnapshot",
+          "refusals": {
+            "401": "UNAUTHENTICATED_OR_REVOKED",
+            "403": "SCOPE_OR_ROLE_DENIED",
+            "409": "SOURCE_IDENTITY_PLAN_OR_IDEMPOTENCY_CONFLICT",
+            "422": "UNSUPPORTED_PROFILE_VERSION_OR_TOOL",
+            "503": "OWNER_UNAVAILABLE"
+          },
+          "success_is_execution_permission": false
+        }
+      ]
+    },
+    {
+      "id": "HOB-F02",
+      "owner": "forge",
+      "parent_capability": "PB-F0/PB-F1/PB-F2/PB-F7",
+      "status": "PROPOSED_NOT_BOUND_NOT_IMPLEMENTED",
+      "contract_version": "hob-proposal/1.0",
+      "proposed_routes": [
+        "POST /v1/onboarding/plans",
+        "GET /v1/onboarding/plans/{plan_id}",
+        "POST /v1/onboarding/plans/{plan_id}/decisions"
+      ],
+      "user_outcome": "Frozen manifest/adoption/child impact plan and separate decisions",
+      "authorization": "Planning and role-specific decision scopes separate; actual owner resolves actor roles; model/data-transfer consent separate",
+      "response_contract": "OwnerSnapshot or typed refusal; exact snapshot schema below",
+      "compatibility": "Additive owner opt-in; unknown versions fail UNSUPPORTED, no widening existing grant/route. These proposals do not revise producer schemas.",
+      "idempotency_and_scope": "Reuse Forge manifest and existing governed decisions; no second planner/template renderer. POST plan is proposal only, role receipt not bootstrap execution grant",
+      "source_observation_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "acceptance": [
+        "wrong actor/audience/project/expired/revoked denied before effects",
+        "exact source/plan revision mismatch conflicts",
+        "unknown field/version rejected",
+        "same operation with changed bytes cannot repeat effects",
+        "no secrets/rawpaths in response/export"
+      ],
+      "field_catalogue": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "plan_id",
+          "expected_plan_revision",
+          "source_revision_vector",
+          "context_ref",
+          "manifest_contract_ref",
+          "baseline_ref",
+          "mapping_proposal",
+          "effect_set",
+          "decision_kind",
+          "decision_subject_digest"
+        ],
+        "properties": {
+          "plan_id": {
+            "type": "string"
+          },
+          "expected_plan_revision": {
+            "type": "integer"
+          },
+          "source_revision_vector": {
+            "type": "array"
+          },
+          "context_ref": {
+            "type": "string"
+          },
+          "manifest_contract_ref": {
+            "type": "string"
+          },
+          "baseline_ref": {
+            "type": "string"
+          },
+          "mapping_proposal": {
+            "type": "object"
+          },
+          "effect_set": {
+            "type": "array"
+          },
+          "decision_kind": {
+            "type": "string"
+          },
+          "decision_subject_digest": {
+            "type": "string"
+          }
+        }
+      },
+      "operations": [
+        {
+          "method": "POST",
+          "path": "/v1/onboarding/plans",
+          "status": "PROPOSED_ONLY",
+          "request": {
+            "path_parameters": {},
+            "body_schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "plan_id",
+                "expected_plan_revision",
+                "source_revision_vector",
+                "context_ref",
+                "manifest_contract_ref",
+                "baseline_ref",
+                "mapping_proposal",
+                "effect_set"
+              ],
+              "properties": {
+                "plan_id": {
+                  "type": "string"
+                },
+                "expected_plan_revision": {
+                  "type": "integer"
+                },
+                "source_revision_vector": {
+                  "type": "array"
+                },
+                "context_ref": {
+                  "type": "string"
+                },
+                "manifest_contract_ref": {
+                  "type": "string"
+                },
+                "baseline_ref": {
+                  "type": "string"
+                },
+                "mapping_proposal": {
+                  "type": "object"
+                },
+                "effect_set": {
+                  "type": "array"
+                }
+              }
+            },
+            "required_scope": "Planning and role-specific decision scopes separate; actual owner resolves actor roles; model/data-transfer consent separate"
+          },
+          "response_schema": "FrozenPlan",
+          "refusals": {
+            "401": "UNAUTHENTICATED_OR_REVOKED",
+            "403": "SCOPE_OR_ROLE_DENIED",
+            "409": "SOURCE_IDENTITY_PLAN_OR_IDEMPOTENCY_CONFLICT",
+            "422": "UNSUPPORTED_PROFILE_VERSION_OR_TOOL",
+            "503": "OWNER_UNAVAILABLE"
+          },
+          "success_is_execution_permission": false
+        },
+        {
+          "method": "GET",
+          "path": "/v1/onboarding/plans/{plan_id}",
+          "status": "PROPOSED_ONLY",
+          "request": {
+            "path_parameters": {
+              "plan_id": "owner-scoped opaque ID"
+            },
+            "query_parameters": {
+              "cursor": "optional opaque actor/snapshot-bound page cursor",
+              "limit": "optional integer 1..100; default25"
+            },
+            "body": "FORBIDDEN",
+            "required_scope": "Planning and role-specific decision scopes separate; actual owner resolves actor roles; model/data-transfer consent separate"
+          },
+          "response_schema": "OwnerSnapshot",
+          "refusals": {
+            "401": "UNAUTHENTICATED_OR_REVOKED",
+            "403": "SCOPE_OR_ROLE_DENIED",
+            "409": "SOURCE_IDENTITY_PLAN_OR_IDEMPOTENCY_CONFLICT",
+            "422": "UNSUPPORTED_PROFILE_VERSION_OR_TOOL",
+            "503": "OWNER_UNAVAILABLE"
+          },
+          "success_is_execution_permission": false
+        },
+        {
+          "method": "POST",
+          "path": "/v1/onboarding/plans/{plan_id}/decisions",
+          "status": "PROPOSED_ONLY",
+          "request": {
+            "path_parameters": {
+              "plan_id": "owner-scoped opaque ID"
+            },
+            "body_schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "plan_id",
+                "expected_plan_revision",
+                "decision_kind",
+                "decision_subject_digest"
+              ],
+              "properties": {
+                "plan_id": {
+                  "type": "string"
+                },
+                "expected_plan_revision": {
+                  "type": "integer"
+                },
+                "decision_kind": {
+                  "type": "string"
+                },
+                "decision_subject_digest": {
+                  "type": "string"
+                }
+              }
+            },
+            "required_scope": "Planning and role-specific decision scopes separate; actual owner resolves actor roles; model/data-transfer consent separate"
+          },
+          "response_schema": "DecisionReceipt",
+          "refusals": {
+            "401": "UNAUTHENTICATED_OR_REVOKED",
+            "403": "SCOPE_OR_ROLE_DENIED",
+            "409": "SOURCE_IDENTITY_PLAN_OR_IDEMPOTENCY_CONFLICT",
+            "422": "UNSUPPORTED_PROFILE_VERSION_OR_TOOL",
+            "503": "OWNER_UNAVAILABLE"
+          },
+          "success_is_execution_permission": false
+        }
+      ]
+    },
+    {
+      "id": "HOB-F03",
+      "owner": "forge",
+      "parent_capability": "Project Intelligence/PB-F0",
+      "status": "PROPOSED_NOT_BOUND_NOT_IMPLEMENTED",
+      "contract_version": "hob-proposal/1.0",
+      "proposed_routes": [
+        "POST /v1/onboarding/baselines",
+        "POST /v1/onboarding/findings/{finding_id}/dispositions"
+      ],
+      "user_outcome": "Evidence-bound interpretation and human finding disposition proposals",
+      "authorization": "Source/read scope plus separate owner role decision; no external model without explicit transfer consent",
+      "response_contract": "OwnerSnapshot or typed refusal; exact snapshot schema below",
+      "compatibility": "Additive owner opt-in; unknown versions fail UNSUPPORTED, no widening existing grant/route. These proposals do not revise producer schemas.",
+      "idempotency_and_scope": "Original issue/tool facts retained. Proposal vs authorized receipt separated; risk acceptance bound to exact finding/scope/expiry and cannot override current acceptance",
+      "source_observation_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "acceptance": [
+        "wrong actor/audience/project/expired/revoked denied before effects",
+        "exact source/plan revision mismatch conflicts",
+        "unknown field/version rejected",
+        "same operation with changed bytes cannot repeat effects",
+        "no secrets/rawpaths in response/export"
+      ],
+      "field_catalogue": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "baseline_id",
+          "source_revision_vector",
+          "report_refs",
+          "finding_id",
+          "expected_disposition_revision",
+          "decision_subject_digest",
+          "proposed_disposition",
+          "supersedes_ref"
+        ],
+        "properties": {
+          "baseline_id": {
+            "type": "string"
+          },
+          "source_revision_vector": {
+            "type": "array"
+          },
+          "report_refs": {
+            "type": "array"
+          },
+          "finding_id": {
+            "type": "string"
+          },
+          "expected_disposition_revision": {
+            "type": "integer"
+          },
+          "decision_subject_digest": {
+            "type": "string"
+          },
+          "proposed_disposition": {
+            "type": "string"
+          },
+          "supersedes_ref": {
+            "type": "string"
+          }
+        }
+      },
+      "operations": [
+        {
+          "method": "POST",
+          "path": "/v1/onboarding/baselines",
+          "status": "PROPOSED_ONLY",
+          "request": {
+            "path_parameters": {},
+            "body_schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "baseline_id",
+                "source_revision_vector",
+                "report_refs"
+              ],
+              "properties": {
+                "baseline_id": {
+                  "type": "string"
+                },
+                "source_revision_vector": {
+                  "type": "array"
+                },
+                "report_refs": {
+                  "type": "array"
+                }
+              }
+            },
+            "required_scope": "Source/read scope plus separate owner role decision; no external model without explicit transfer consent"
+          },
+          "response_schema": "BaselineInterpretation",
+          "refusals": {
+            "401": "UNAUTHENTICATED_OR_REVOKED",
+            "403": "SCOPE_OR_ROLE_DENIED",
+            "409": "SOURCE_IDENTITY_PLAN_OR_IDEMPOTENCY_CONFLICT",
+            "422": "UNSUPPORTED_PROFILE_VERSION_OR_TOOL",
+            "503": "OWNER_UNAVAILABLE"
+          },
+          "success_is_execution_permission": false
+        },
+        {
+          "method": "POST",
+          "path": "/v1/onboarding/findings/{finding_id}/dispositions",
+          "status": "PROPOSED_ONLY",
+          "request": {
+            "path_parameters": {
+              "finding_id": "owner-scoped opaque ID"
+            },
+            "body_schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "finding_id",
+                "expected_disposition_revision",
+                "decision_subject_digest",
+                "proposed_disposition",
+                "supersedes_ref"
+              ],
+              "properties": {
+                "finding_id": {
+                  "type": "string"
+                },
+                "expected_disposition_revision": {
+                  "type": "integer"
+                },
+                "decision_subject_digest": {
+                  "type": "string"
+                },
+                "proposed_disposition": {
+                  "type": "string"
+                },
+                "supersedes_ref": {
+                  "type": "string"
+                }
+              }
+            },
+            "required_scope": "Source/read scope plus separate owner role decision; no external model without explicit transfer consent"
+          },
+          "response_schema": "DecisionReceipt",
+          "refusals": {
+            "401": "UNAUTHENTICATED_OR_REVOKED",
+            "403": "SCOPE_OR_ROLE_DENIED",
+            "409": "SOURCE_IDENTITY_PLAN_OR_IDEMPOTENCY_CONFLICT",
+            "422": "UNSUPPORTED_PROFILE_VERSION_OR_TOOL",
+            "503": "OWNER_UNAVAILABLE"
+          },
+          "success_is_execution_permission": false
+        }
+      ]
+    },
+    {
+      "id": "HOB-F04",
+      "owner": "forge",
+      "parent_capability": "PB-F3/PB-F7",
+      "status": "PROPOSED_NOT_BOUND_NOT_IMPLEMENTED",
+      "contract_version": "hob-proposal/1.0",
+      "proposed_routes": [
+        "GET /v1/onboarding/projects/{project_id}/progress"
+      ],
+      "user_outcome": "Optional qualified relay of EP CENTRAL evidence",
+      "authorization": "Forge verifies Workspace read visibility and EP permitted disclosure; do not pass Forge producer bearer to Workspace",
+      "response_contract": "OwnerSnapshot or typed refusal; exact snapshot schema below",
+      "compatibility": "Additive owner opt-in; unknown versions fail UNSUPPORTED, no widening existing grant/route. These proposals do not revise producer schemas.",
+      "idempotency_and_scope": "Alternative to direct EP HOB-EP03 only after producer accepts; preserve original EP snapshot/digest/source/age and permission boundary; never scrape CENTRAL or Console",
+      "source_observation_ref": "f819196e9c025163be40c8e71693a3def4b78bc2",
+      "acceptance": [
+        "wrong actor/audience/project/expired/revoked denied before effects",
+        "exact source/plan revision mismatch conflicts",
+        "unknown field/version rejected",
+        "same operation with changed bytes cannot repeat effects",
+        "no secrets/rawpaths in response/export"
+      ],
+      "field_catalogue": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "project_id",
+          "operation_ref",
+          "ep_snapshot_ref"
+        ],
+        "properties": {
+          "project_id": {
+            "type": "string"
+          },
+          "operation_ref": {
+            "type": "string"
+          },
+          "ep_snapshot_ref": {
+            "type": "string"
+          }
+        }
+      },
+      "operations": [
+        {
+          "method": "GET",
+          "path": "/v1/onboarding/projects/{project_id}/progress",
+          "status": "PROPOSED_ONLY",
+          "request": {
+            "path_parameters": {
+              "project_id": "owner-scoped opaque ID"
+            },
+            "query_parameters": {
+              "cursor": "optional opaque actor/snapshot-bound page cursor",
+              "limit": "optional integer 1..100; default25"
+            },
+            "body": "FORBIDDEN",
+            "required_scope": "Forge verifies Workspace read visibility and EP permitted disclosure; do not pass Forge producer bearer to Workspace"
+          },
+          "response_schema": "OwnerSnapshot",
+          "refusals": {
+            "401": "UNAUTHENTICATED_OR_REVOKED",
+            "403": "SCOPE_OR_ROLE_DENIED",
+            "409": "SOURCE_IDENTITY_PLAN_OR_IDEMPOTENCY_CONFLICT",
+            "422": "UNSUPPORTED_PROFILE_VERSION_OR_TOOL",
+            "503": "OWNER_UNAVAILABLE"
+          },
+          "success_is_execution_permission": false
+        }
+      ]
+    }
+  ],
+  "schemas": {
+    "OwnerSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract_version",
+        "owner",
+        "instance_ref",
+        "snapshot_id",
+        "revision",
+        "observed_at",
+        "fetched_at",
+        "authorization_scope_digest",
+        "source_revision_vector",
+        "project_ref",
+        "operation_ref",
+        "plan_ref",
+        "analysis_refs",
+        "result_kind",
+        "phase_cards",
+        "readiness",
+        "coverage",
+        "evidence_refs",
+        "next_cursor",
+        "freshness"
+      ],
+      "properties": {
+        "contract_version": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "instance_ref": {
+          "type": "string"
+        },
+        "snapshot_id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "observed_at": {
+          "type": "string"
+        },
+        "fetched_at": {
+          "type": "string"
+        },
+        "authorization_scope_digest": {
+          "type": "string"
+        },
+        "source_revision_vector": {
+          "type": "array"
+        },
+        "project_ref": {
+          "type": "object"
+        },
+        "operation_ref": {
+          "type": "object"
+        },
+        "plan_ref": {
+          "type": "object"
+        },
+        "analysis_refs": {
+          "type": "array"
+        },
+        "result_kind": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "FINDINGS",
+            "FAILED_TO_RUN",
+            "UNSUPPORTED",
+            "PARTIAL",
+            "NOT_ASSESSED"
+          ]
+        },
+        "phase_cards": {
+          "type": "array"
+        },
+        "readiness": {
+          "type": "object"
+        },
+        "coverage": {
+          "type": "object"
+        },
+        "evidence_refs": {
+          "type": "array"
+        },
+        "next_cursor": {
+          "type": "string"
+        },
+        "freshness": {
+          "type": "string",
+          "enum": [
+            "CURRENT",
+            "STALE",
+            "UNAVAILABLE",
+            "DENIED",
+            "CONFLICT",
+            "UNKNOWN"
+          ]
+        }
+      }
+    },
+    "SourceRevision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository_ref",
+        "identity_kind",
+        "revision_kind",
+        "revision",
+        "source_snapshot_digest"
+      ],
+      "properties": {
+        "repository_ref": {
+          "type": "string"
+        },
+        "identity_kind": {
+          "type": "string",
+          "enum": [
+            "COMMITTED",
+            "PROVISIONAL_SOURCE_HANDLE"
+          ]
+        },
+        "revision_kind": {
+          "type": "string",
+          "enum": [
+            "COMMIT",
+            "UNBORN",
+            "ABSENT",
+            "UNCOMMITTED_READ_SNAPSHOT"
+          ]
+        },
+        "revision": {
+          "type": "string"
+        },
+        "source_snapshot_digest": {
+          "type": "string"
+        }
+      }
+    },
+    "FindingRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner_finding_id",
+        "fingerprint",
+        "baseline_ref",
+        "source_revision_vector",
+        "component_ref",
+        "type",
+        "severity",
+        "priority",
+        "confidence",
+        "original_source_status",
+        "existing_owner",
+        "disposition_history_refs",
+        "evidence_refs",
+        "proposed_next_action",
+        "relation_refs"
+      ],
+      "properties": {
+        "owner_finding_id": {
+          "type": "string"
+        },
+        "fingerprint": {
+          "type": "string"
+        },
+        "baseline_ref": {
+          "type": "string"
+        },
+        "source_revision_vector": {
+          "type": "array"
+        },
+        "component_ref": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "string",
+          "description": "Priority is independent of severity; proposal is not approved canonical priority."
+        },
+        "confidence": {
+          "type": "string"
+        },
+        "original_source_status": {
+          "type": "string"
+        },
+        "existing_owner": {
+          "type": "string"
+        },
+        "disposition_history_refs": {
+          "type": "array"
+        },
+        "evidence_refs": {
+          "type": "array"
+        },
+        "proposed_next_action": {
+          "type": "string"
+        },
+        "relation_refs": {
+          "type": "array"
+        }
+      }
+    },
+    "DraftReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "draft_id",
+        "revision",
+        "journey",
+        "owner",
+        "authorization"
+      ],
+      "properties": {
+        "draft_id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "journey": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "authorization": {
+          "type": "string"
+        }
+      }
+    },
+    "AdmissionReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "operation_id",
+        "operation_kind",
+        "request_digest",
+        "plan_digest",
+        "accepted_effects",
+        "authority_ref",
+        "state",
+        "source_revision_vector",
+        "readback_ref",
+        "expires_at"
+      ],
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "operation_id": {
+          "type": "string"
+        },
+        "operation_kind": {
+          "type": "string"
+        },
+        "request_digest": {
+          "type": "string"
+        },
+        "plan_digest": {
+          "type": "string"
+        },
+        "accepted_effects": {
+          "type": "array"
+        },
+        "authority_ref": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "source_revision_vector": {
+          "type": "array"
+        },
+        "readback_ref": {
+          "type": "string"
+        },
+        "expires_at": {
+          "type": "string"
+        }
+      }
+    },
+    "FrozenPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "plan_id",
+        "revision",
+        "digest",
+        "manifest_contract_ref",
+        "source_revision_vector",
+        "exact_artifact_entries",
+        "identity_mapping",
+        "settings_diff",
+        "effect_set",
+        "required_decisions",
+        "applicable_gates",
+        "unresolved"
+      ],
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "plan_id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "digest": {
+          "type": "string"
+        },
+        "manifest_contract_ref": {
+          "type": "string"
+        },
+        "source_revision_vector": {
+          "type": "array"
+        },
+        "exact_artifact_entries": {
+          "type": "array"
+        },
+        "identity_mapping": {
+          "type": "object"
+        },
+        "settings_diff": {
+          "type": "array"
+        },
+        "effect_set": {
+          "type": "array"
+        },
+        "required_decisions": {
+          "type": "array"
+        },
+        "applicable_gates": {
+          "type": "array"
+        },
+        "unresolved": {
+          "type": "array"
+        }
+      }
+    },
+    "DecisionReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "decision_id",
+        "decision_kind",
+        "subject_digest",
+        "subject_revision",
+        "verified_actor_ref",
+        "verified_role",
+        "decision",
+        "expires_at",
+        "supersedes_ref"
+      ],
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "decision_id": {
+          "type": "string"
+        },
+        "decision_kind": {
+          "type": "string"
+        },
+        "subject_digest": {
+          "type": "string"
+        },
+        "subject_revision": {
+          "type": "integer"
+        },
+        "verified_actor_ref": {
+          "type": "string"
+        },
+        "verified_role": {
+          "type": "string"
+        },
+        "decision": {
+          "type": "string"
+        },
+        "expires_at": {
+          "type": "string"
+        },
+        "supersedes_ref": {
+          "type": "string"
+        }
+      }
+    },
+    "BaselineInterpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "baseline_id",
+        "revision",
+        "source_revision_vector",
+        "source_fact_refs",
+        "interpretations",
+        "finding_refs",
+        "approved_direction_refs",
+        "readiness_by_requested_action"
+      ],
+      "properties": {
+        "owner": {
+          "type": "string"
+        },
+        "baseline_id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "integer"
+        },
+        "source_revision_vector": {
+          "type": "array"
+        },
+        "source_fact_refs": {
+          "type": "array"
+        },
+        "interpretations": {
+          "type": "array"
+        },
+        "finding_refs": {
+          "type": "array"
+        },
+        "approved_direction_refs": {
+          "type": "array"
+        },
+        "readiness_by_requested_action": {
+          "type": "object"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "fixture_only": true,
+      "not_a_runtime_snapshot": true,
+      "schema": "OwnerSnapshot",
+      "value": {
+        "contract_version": "hob-proposal/1.0",
+        "owner": "engineering-platform",
+        "instance_ref": "synthetic-ep",
+        "snapshot_id": "synthetic-snapshot-1",
+        "revision": 1,
+        "observed_at": "2030-01-01T10:00:00Z",
+        "fetched_at": "2030-01-01T10:00:01Z",
+        "authorization_scope_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "source_revision_vector": [
+          {
+            "repository_ref": "repo-example-authority",
+            "identity_kind": "COMMITTED",
+            "revision_kind": "COMMIT",
+            "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "source_snapshot_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "project_ref": {
+          "id": "synthetic-project",
+          "authority_repository_id": "repo-example-authority",
+          "topology_revision": 1
+        },
+        "operation_ref": {
+          "id": "synthetic-assessment-1",
+          "kind": "ASSESSMENT",
+          "state": "COMPLETE",
+          "mission_ref": null,
+          "engineering_action_ref": null
+        },
+        "plan_ref": {
+          "id": "synthetic-analysis-plan",
+          "revision": 1,
+          "digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+        },
+        "analysis_refs": [
+          {
+            "id": "synthetic-static-report",
+            "tool": "example-static-tool",
+            "version": "1.0",
+            "profile": "source-only",
+            "status": "FINDINGS",
+            "digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        ],
+        "result_kind": "PARTIAL",
+        "phase_cards": [
+          {
+            "owner": "engineering-platform",
+            "phase": "source_read",
+            "status": "COMPLETE"
+          },
+          {
+            "owner": "engineering-platform",
+            "phase": "tests",
+            "status": "UNSUPPORTED",
+            "reason": "Stack not supported"
+          }
+        ],
+        "readiness": {
+          "identity": "VERIFIED",
+          "inspection": "PARTIAL",
+          "setup": "NOT_ASSESSED",
+          "engineering": "UNKNOWN"
+        },
+        "coverage": {
+          "repositories": [
+            "repo-example-authority"
+          ],
+          "excluded": [
+            "history",
+            "tests"
+          ],
+          "completeness": "PARTIAL"
+        },
+        "evidence_refs": [
+          {
+            "owner": "engineering-platform",
+            "artifact_ref": "synthetic-redacted-report",
+            "digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          }
+        ],
+        "next_cursor": "synthetic-scope-bound-cursor",
+        "freshness": "CURRENT"
+      }
+    },
+    {
+      "fixture_only": true,
+      "schema": "SourceRevision",
+      "value": {
+        "repository_ref": "repo-example-authority",
+        "identity_kind": "COMMITTED",
+        "revision_kind": "COMMIT",
+        "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "source_snapshot_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    {
+      "fixture_only": true,
+      "schema": "FindingRecord",
+      "value": {
+        "owner_finding_id": "synthetic-finding-1",
+        "fingerprint": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "baseline_ref": "synthetic-baseline-1",
+        "source_revision_vector": [
+          {
+            "repository_ref": "repo-example-authority",
+            "identity_kind": "COMMITTED",
+            "revision_kind": "COMMIT",
+            "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "source_snapshot_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "component_ref": "api",
+        "type": "DOCUMENTATION_CONTRADICTION",
+        "severity": "UNKNOWN",
+        "priority": "PROPOSED_MEDIUM",
+        "confidence": "LOW",
+        "original_source_status": "OPEN",
+        "existing_owner": "project-doc-owner",
+        "disposition_history_refs": [],
+        "evidence_refs": [
+          "synthetic-redacted-report"
+        ],
+        "proposed_next_action": "Discuss architecture source contradiction; no Mission",
+        "relation_refs": []
+      }
+    }
+  ],
+  "binding_rules": [
+    "principal and forwarding service derived from authenticated owner context, not trusted request actor strings",
+    "source_revision_vector contains concrete owner handles and revision kinds; no path/name identity inference",
+    "new source revision retains old immutable evidence and invalidates incompatible decisions",
+    "current source and authorization at effect moment; all required scopes cover effect and same-operation readback or stop",
+    "component snapshot revisions monotone per owner; no synthetic global atomic revision",
+    "join exact project/repo/plan/source/operation refs; fetched_at does not refresh observed_at",
+    "readiness has separate identity/setup/analysis/governance/attachment/action dimensions; no universal green flag",
+    "operator wait, Forge review and external gate distinct; no Mission/Action IDs if none actually exists",
+    "redacted report refs only, no raw secrets/prompts/hostpaths; protected cache concealed after revocation",
+    "cancel reports actual retained effects; destructive compensation needs separate owner authority"
+  ],
+  "schema_semantics": {
+    "AdmissionReceipt": "ACCEPTED is not configured/ready; expiry owner-issued not client supplied. Effect set bounded by actual owner authority.",
+    "FrozenPlan": "Each artifact entry has normalized exact path, before ABSENT or digest, after digest, ownership, byte size and mapping. Protected existing edits use owning protected route. New resource birth explicit guarded ABSENT semantics.",
+    "DecisionReceipt": "Role/kind bound to same frozen subject; actor derived by authenticated owner. Distinct decision kinds not collapsed.",
+    "SourceRevision": "UNBORN/ABSENT uses empty revision with explicit kind, not fake SHA; uncommitted snapshot cannot silently become a commit.",
+    "OwnerSnapshot": "Each phase card owner/phase/state/evidenceRef; progress fraction only known comparable units, no fake global percentage. Project ref includes verified/provisional kind; optional actual Mission/Action references only if they exist."
+  }
+}
