@@ -1,4 +1,5 @@
 """Closed producer concept preview; no approval authority from generated content."""
+import hashlib
 import json
 from pathlib import Path
 from .advisory_contract import _check, _safe, digest, scope
@@ -7,6 +8,12 @@ from .worklist_peer import WorklistError
 CONTRACT = 'forge-chat-first-mission/v1'
 SCHEMA = json.loads(Path(__file__).with_name('mission-concepts-v1.json').read_text())
 LIST_FIELDS = ('components','scope', 'exclusions', 'acceptance_criteria', 'architecture_choices', 'risks', 'dependencies', 'questions')
+
+
+def _utf8_digest(value):
+    """Pinned Candidate/MissionSpec and lifecycle content use UTF8, unlike envelopes."""
+    canonical = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+    return 'sha256:' + hashlib.sha256(canonical.encode('utf-8')).hexdigest()
 
 
 def validate(value, kind):
@@ -123,7 +130,7 @@ def frozen_package(value, binding, conversation, *, expected_digest=None):
         any(b['reason']!=d['dependency_reasons'][b['candidate_id']] for b in bindings)):
         raise WorklistError('INVALID_RESPONSE')
     candidate=value['candidate'];preview=value['mission_preview'];planning=value['planning'];effects=value['consequences']
-    if (digest(candidate) != value['subject_revision'] or candidate['title'] != d['title'] or candidate['objective'] != d['objective'] or
+    if (_utf8_digest(candidate) != value['subject_revision'] or candidate['title'] != d['title'] or candidate['objective'] != d['objective'] or
         set(candidate['acceptance_criteria']) != set(d['acceptance_criteria']) or set(candidate['dependencies']) != set(d['dependencies']) or
         not {'EXCLUDED: '+item for item in d['exclusions']} <= set(candidate['architecture_constraints']) or
         not {'IN SCOPE: '+item for item in d['scope']} <= set(candidate['architecture_constraints']) or
@@ -131,7 +138,7 @@ def frozen_package(value, binding, conversation, *, expected_digest=None):
         any(not any(c.startswith('COMPONENT: '+name+': ') for c in candidate['architecture_constraints']) for name in d['components']) or
         effects['repository_effect'] != candidate['effect_policy'] or effects['exclusions'] != d['exclusions'] or effects['risks'] != d['risks'] or
         preview['candidate_id'] != candidate['id'] or preview['title'] != candidate['title'] or preview['business_value'] != d['business_value'] or
-        digest(preview) != planning['mission_spec_digest'] or planning['provenance_revision'] != value['subject_revision'] or
+        _utf8_digest(preview) != planning['mission_spec_digest'] or planning['provenance_revision'] != value['subject_revision'] or
         planning['effect_policy'] != candidate['effect_policy'] or planning['human_gates'] != effects['human_gates']):
         raise WorklistError('INVALID_RESPONSE')
     return value
@@ -165,7 +172,7 @@ def compound(value, binding, conversation, *, expected_digest=None, operation=No
         if (decision['kind'] != kind or decision['candidate_id'] != candidate['id'] or decision['subject_revision'] != package['subject_revision'] or
             decision['principal_reference'] != authority['principal_reference'] or decision['operator_id'] != authority['signer']['operator_id'] or
             decision['installation_id'] != authority['signer']['installation_id'] or decision['operator_binding_version'] != authority['signer']['operator_binding_version'] or
-            digest(decision['canonical_decision']) != decision['canonical_decision_digest'] or digest(decision['lifecycle_evidence']) != decision['lifecycle_evidence_digest']):
+            digest(decision['canonical_decision']) != decision['canonical_decision_digest'] or _utf8_digest(decision['lifecycle_evidence']) != decision['lifecycle_evidence_digest']):
             raise WorklistError('INVALID_RESPONSE')
         canonical=decision['canonical_decision'];evidence=decision['lifecycle_evidence']
         if (canonical['decision_id']!=decision['decision_id'] or canonical['subject_id']!=candidate['id'] or canonical['subject_revision']!=package['subject_revision'] or

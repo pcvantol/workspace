@@ -63,5 +63,54 @@ class MissionApprovalContractTests(unittest.TestCase):
             with self.assertRaises(WorklistError):w.compound(bad,self.binding,self.conversation,frozen=self.package)
         with self.assertRaises(WorklistError):w.compound(self.read('operation-current.json'),self.binding,self.conversation,operation='foreign')
 
+    @staticmethod
+    def producer_hash(value, *, ascii=False):
+        """Pinned criterion/lifecycle UTF8; advisory envelope ASCII remains distinct."""
+        import hashlib
+        encoded=json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=ascii).encode('utf-8')
+        return 'sha256:'+hashlib.sha256(encoded).hexdigest()
+
+    def testUnicodeCandidateUsesPinnedUTF8NotASCII(self):
+        packet=deepcopy(self.package)
+        for value in (packet['definition'],packet['candidate'],packet['mission_preview']):
+            value['title']='Café — 東京 😀'
+        packet['subject_revision']=self.producer_hash(packet['candidate'])
+        packet['planning']['provenance_revision']=packet['subject_revision']
+        packet['planning']['mission_spec_digest']=self.producer_hash(packet['mission_preview'])
+        outer=self.producer_hash(packet,ascii=True)
+        self.assertNotEqual(outer,self.producer_hash(packet))
+        self.assertEqual(w.frozen_package(packet,self.binding,self.conversation,expected_digest=outer),packet)
+        wrong=deepcopy(packet);wrong['subject_revision']=self.producer_hash(wrong['candidate'],ascii=True)
+        wrong['planning']['provenance_revision']=wrong['subject_revision']
+        with self.assertRaises(WorklistError):
+            w.frozen_package(wrong,self.binding,self.conversation,expected_digest=self.producer_hash(wrong,ascii=True))
+        with self.assertRaises(WorklistError):
+            w.frozen_package(packet,self.binding,self.conversation,expected_digest=self.producer_hash(packet))
+
+    def testUnicodeMissionSpecUsesPinnedUTF8NotASCII(self):
+        packet=deepcopy(self.package)
+        packet['definition']['business_value']=packet['mission_preview']['business_value']='Waarde café — 東京 😀'
+        packet['planning']['mission_spec_digest']=self.producer_hash(packet['mission_preview'])
+        self.assertEqual(w.frozen_package(packet,self.binding,self.conversation),packet)
+        wrong=deepcopy(packet);wrong['planning']['mission_spec_digest']=self.producer_hash(wrong['mission_preview'],ascii=True)
+        with self.assertRaises(WorklistError):w.frozen_package(wrong,self.binding,self.conversation)
+
+    def testUnicodeLifecycleUsesPinnedUTF8WhileCanonicalDecisionRemainsASCII(self):
+        for key in ('business_decision','architecture_decision'):
+            value=self.read('operation-current.json');receipt=value[key]
+            receipt['rationale']=receipt['lifecycle_evidence']['rationale']='Expliciet café — 東京 😀'
+            receipt['lifecycle_evidence_digest']=self.producer_hash(receipt['lifecycle_evidence'])
+            self.assertNotEqual(receipt['lifecycle_evidence_digest'],self.producer_hash(receipt['lifecycle_evidence'],ascii=True))
+            self.assertEqual(w.compound(value,self.binding,self.conversation),value)
+            wrong=deepcopy(value);bad=wrong[key]
+            bad['lifecycle_evidence_digest']=self.producer_hash(bad['lifecycle_evidence'],ascii=True)
+            with self.assertRaises(WorklistError):w.compound(wrong,self.binding,self.conversation)
+            # A valid digest must not hide a mismatched authoritative rationale.
+            wrong=deepcopy(value);bad=wrong[key]
+            bad['lifecycle_evidence']['rationale']='Andere betekenis café'
+            bad['lifecycle_evidence_digest']=self.producer_hash(bad['lifecycle_evidence'])
+            with self.assertRaises(WorklistError):w.compound(wrong,self.binding,self.conversation)
+
+
 
 if __name__=='__main__':unittest.main()
