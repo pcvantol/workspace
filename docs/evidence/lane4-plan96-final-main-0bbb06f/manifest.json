@@ -1,0 +1,165 @@
+{
+  "assignment": "L4-WORKSPACE-NATIVE-CLIENT-HTTP-V1-20261002",
+  "plan": "r81-plan96",
+  "decision": "L4-PLAN96-CORRECTION-ROUND9-20261011",
+  "artifacts": {
+    "version": "2.8.20",
+    "wheel_sha256": "e4d4d01659dc3aa6c8efcbb87962fc17dbe861401a886ac3acdf39c346791d79",
+    "source_revision": "0bbb06f35cfbbb7609b32aeab197a52092b000ce",
+    "files_verified": 30,
+    "noneditable": true,
+    "native_tree_sha256": "18590a802e4eceb7416dfe3f659fea477254ae2a80b516e4df98e35310b55cde",
+    "minimum_macos": "26.0",
+    "native_version": "2.8.20",
+    "native_sdk": "macosx27.0",
+    "producer_version": "2.12.1",
+    "producer_source": "9875333acc4258a20fc0180a9ae09c980802d5b1",
+    "producer_wheel_sha256": "9b192e7a3cb5d503e795639a2b25b584b178c8bd2ef81af9ef96117af772ec33"
+  },
+  "final_main_tree": "26bfdeb3b04377d1bd729213129cc6e68676c456",
+  "protected_source_pr": 155,
+  "protected_finalization_pr": 156,
+  "qualification": "PACKAGED_NATIVE_NONEDITABLE_SERVER_WITH_EP_HTTP_SIMULATOR; AD_HOC_ISOLATED_TEST_APP",
+  "results": {
+    "whole_feature_source_quality": "PASS",
+    "whole_feature_source_security": "PASS",
+    "native_tests": 203,
+    "isolated_tests": 1,
+    "changed_production_executable_line_coverage": "320/338=94.67%",
+    "independent_actual_native_keyboard_focus_cases": 7,
+    "parent_keyboard_focus_cases": 6,
+    "parent_normal_focus_cases": 2,
+    "five_language_theme_cases": 5,
+    "canonical_A_then_B": "PASS_SEPARATE_FINAL_ACCEPTANCE_REQUIRED",
+    "idle_and_quota": "PASS_WITHIN_EXISTING_BOUNDS",
+    "prestart_disarm": "PASS_ZERO_STARTS",
+    "late_authorized_HTTP200_after_expiry": "PASS_NO_UI_RESTORE",
+    "FULL_DOD": "PARTIAL",
+    "FULL_UX": "PARTIAL",
+    "original_third_recovery": "NOT_QUALIFIED_NOT_REPLACED",
+    "CI_timer_finding": "A retained CI timing finding remains separately recorded; no claim of absent timing risk."
+  },
+  "privacy": "Only synthetic own-app window pixels and compact qualification metadata; no raw reports, logs, AX trees, host paths, tokens, grants, user records or operation IDs.",
+  "screenshots": [
+    {
+      "file": "C-unapproved-not-selectable-en-dark.png",
+      "sha256": "f90136aad7677564c167e79f72ce6a862034cd383eb3c942efefa8241a1bc8d9",
+      "scenario": "C-unapproved-not-selectable-en-dark"
+    },
+    {
+      "file": "B-only-preview-blocked-en-dark.png",
+      "sha256": "67f0c63bbc8d1306a406531b4bebe08b850b6b7891111962fed23b0d28c3fb51",
+      "scenario": "B-only-preview-blocked-en-dark"
+    },
+    {
+      "file": "B-before-A-preview-blocked-en-dark.png",
+      "sha256": "4c72a7994080d16540c3ddfc094a2f62bc0c4774d004c50ba47bc6ebc6638846",
+      "scenario": "B-before-A-preview-blocked-en-dark"
+    },
+    {
+      "file": "A-before-B-valid-preview-en-dark.png",
+      "sha256": "8b08e963abdf5446a1db1ab110e04935319c5c42f3d951bc8ac9393478049889",
+      "scenario": "A-before-B-valid-preview-en-dark"
+    },
+    {
+      "file": "single-keyboard-release-current-en-dark.png",
+      "sha256": "23d9c84a3b8f8e3d93717521c45a70c89073f17fa472079e2794c873e67b4a56",
+      "scenario": "single-keyboard-release-current-en-dark"
+    },
+    {
+      "file": "keyboard-focus-A-fully-visible-en-dark.png",
+      "sha256": "e3fdf8210fdcb97f74aea307fb91c3f265f7714e3d308c46ae91b8f043f497bb",
+      "scenario": "keyboard-focus-A-fully-visible-en-dark"
+    },
+    {
+      "file": "keyboard-focus-B-fully-visible-en-dark.png",
+      "sha256": "79dfed80c935fb660e9c7b1f343b35e498a006b06c0aee3184871e5c48907451",
+      "scenario": "keyboard-focus-B-fully-visible-en-dark"
+    },
+    {
+      "file": "keyboard-new-selection-empty-history-en-dark.png",
+      "sha256": "46fc4cbbdb950d4d25dc09b2080166d23ba84ce1d56fb69bb4f7187ba397f97b",
+      "scenario": "keyboard-new-selection-empty-history-en-dark"
+    },
+    {
+      "file": "A-final-acceptance-required-B-wait-en-dark.png",
+      "sha256": "865e136ba8f1c9f1442686876a11a314bead02b4832b0861db13b13fa9036c52",
+      "scenario": "A-final-acceptance-required-B-wait-en-dark"
+    },
+    {
+      "file": "A-accepted-B-running-en-dark.png",
+      "sha256": "71ecc8bf1b319fbad876647ae5af5c628e4e5a5ce4c5ea3f464aea72267d5e9b",
+      "scenario": "A-accepted-B-running-en-dark"
+    },
+    {
+      "file": "completed-focused-original-nl-dark.png",
+      "sha256": "1ca3f06aa27596afcf558e09b828a2d3e8c6b9abb065fec3f61ecb51346726b7",
+      "scenario": "completed-focused-original-nl-dark",
+      "language": "nl",
+      "theme": "dark",
+      "actual_window_pixels": {
+        "width": 1440,
+        "height": 850
+      },
+      "card_fully_inside_all_ancestor_clips": true
+    },
+    {
+      "file": "completed-focused-original-de-light.png",
+      "sha256": "d3f246bbfec065d2b4fc30d5ae5158f6f9fe34137ef572dbf35770b456904244",
+      "scenario": "completed-focused-original-de-light",
+      "language": "de",
+      "theme": "light",
+      "actual_window_pixels": {
+        "width": 1440,
+        "height": 850
+      },
+      "card_fully_inside_all_ancestor_clips": true
+    },
+    {
+      "file": "completed-focused-original-fr-dark.png",
+      "sha256": "88895ce741a70da2a2988773bc8fd7436b63a5fd1cd9b2fd129b6ade5e480755",
+      "scenario": "completed-focused-original-fr-dark",
+      "language": "fr",
+      "theme": "dark",
+      "actual_window_pixels": {
+        "width": 1440,
+        "height": 850
+      },
+      "card_fully_inside_all_ancestor_clips": true
+    },
+    {
+      "file": "completed-focused-original-es-light-narrow.png",
+      "sha256": "3bae92f1e72c405df098bf3fc30d10f1447d2a721d271b79176fb1d76b5a64ab",
+      "scenario": "completed-focused-original-es-light-narrow",
+      "language": "es",
+      "theme": "light",
+      "actual_window_pixels": {
+        "width": 640,
+        "height": 850
+      },
+      "card_fully_inside_all_ancestor_clips": true
+    },
+    {
+      "file": "completed-focused-original-en-dark.png",
+      "sha256": "cc13c489e63ebb1464b85196028e6eb2af32a50c3c60aa2bd75892e19567d276",
+      "scenario": "completed-focused-original-en-dark",
+      "language": "en",
+      "theme": "dark",
+      "actual_window_pixels": {
+        "width": 1440,
+        "height": 850
+      },
+      "card_fully_inside_all_ancestor_clips": true
+    },
+    {
+      "file": "late-authorized-response-after-expiry-content-stays-cleared-en-dark.png",
+      "sha256": "95c12749a64a6b888c721a03881ad762cbfe589abd12e45827fab4fcb67ee52f",
+      "scenario": "late-authorized-response-after-expiry-content-stays-cleared-en-dark"
+    },
+    {
+      "file": "independent-actual640-focus-B.png",
+      "sha256": "aae0206b84b2d1c98c8bf28b6a2dd3547d181ad85493e2b13bfc69ba303cb4aa",
+      "scenario": "independent actual native keyboard focus at 640px"
+    }
+  ]
+}
