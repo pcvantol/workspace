@@ -1,3 +1,11 @@
+## Plan96 protected canonicalization repair and ordinary finalization
+
+PR149 normally protected match-head squash merged reviewed58df198dfb1780cad46e7a442a54927509d6b5a8 to main88b19e341119c8c65c2bedbc37ddf3c371c44a0b; exact trees equal. Workspace2.8.17 single repairPATCH retained. Full original-delta independent QualityPASS/SecurityPASS, full198native+1isolated/requiredperfile>80.2%, allfiveCI PASS and downloadedexactheadstandardTDEPASS0rules/QUALIFIED under unchangedpolicy1.4.0/runtime1.1.1. Actual corrected ASCIIplanningpositive/incorrectUTF8negative and originalfault detection retained. Prior450afaFAIL and every earlier report/budget/evidence combination remain historical.
+
+Same assignment/r81-plan96/solewriter/session and exactForge2.12.1/9875333. Specific user round6/pickup6106126074 consumed6/max6/remaining0, no automatic7 or operationalextension. PR147/148 stay closed; source/code/test/policy/version/operationbytes are unchanged by this ordinary nonempty documentary NO_BUMP finalization.
+
+This closes source admission only. Separately reviewed finalization/CI/protectedmerge then NEWexact-final-main matching native/noneditableServer/pinnedForge recovery/A→B/final acceptance/quota/idle/future-onlydisarm/denial/fullUX/keyboard/five-language-theme-narrow screenshots and reachable immutable proof remain mandatory and NOT YET QUALIFIED. Existing2.8.16 installed proofs keep their original identity. Old roots/grants are closed, primaryiCloud/usercredentials/oldrecords/budgets preserved; no new operational scope started yet.
+
 ## Plan96 specific user-authorized round6 — Server planning digest
 
 User explicitly approved cumulative round6/max6 after the concrete Server blocker; pickup6106126074 booked consumed6/max6/remaining0 BEFORE first edit. Same assignment/session/sole writer/repairbranch/basea905; PR147/148 closed, PR149 remains existing repair. Candidate2.8.17 original undelivered PATCH allocation retained; no duplicate bump/reset/automatic seventh. ExactForge2.12.1/9875333 and every operational budget unchanged.

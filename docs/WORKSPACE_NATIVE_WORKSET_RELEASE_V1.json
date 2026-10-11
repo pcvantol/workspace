@@ -10,15 +10,18 @@
   "producer_wheel_sha256": "9b192e7a3cb5d503e795639a2b25b584b178c8bd2ef81af9ef96117af772ec33",
   "wire_schema_sha256": "c25d46e51f3f076542e289e55aa147a0e0cf0c80a1c28a57d87943dcfcc92309",
   "formal_integrated_correction_budget": {
-    "consumed": 4,
-    "maximum": 4,
+    "consumed": 6,
+    "maximum": 6,
     "remaining": 0,
-    "starts_after_first_complete_independent_quality_security_pair": true
+    "authority": "specific user approval for cumulative round6 after Server planning blocker",
+    "pickup_comment": 6106126074,
+    "prior_consumption_preserved": true,
+    "operation_budgets_unchanged": true
   },
-  "state": "PROTECTED_SOURCE_MERGED_DOCUMENTARY_FINALIZATION_PENDING_NEW_FINAL_MAIN_PROOF",
+  "state": "PROTECTED_CANONICALIZATION_REPAIR_MERGED_FINALIZATION_PENDING_NEW_FINAL_MAIN_PROOF",
   "prior_plans_93_95_closed": true,
   "users_credentials_retained": true,
-  "consumer_version": "2.8.16",
+  "consumer_version": "2.8.17",
   "source_validation": {
     "full_command": "bash scripts/validate.sh",
     "result": "PASS_AFTER_CORRECTION_ROUND_4",
@@ -171,5 +174,35 @@
     "product_source_unchanged": true,
     "state": "PENDING_OWN_REVIEW_CI_PROTECTED_MERGE",
     "new_final_main_qualification_required": true
+  },
+  "pre_canonicalization_repair_state": {
+    "state": "PROTECTED_SOURCE_MERGED_DOCUMENTARY_FINALIZATION_PENDING_NEW_FINAL_MAIN_PROOF",
+    "consumer_version": "2.8.16",
+    "formal_integrated_correction_budget": {
+      "consumed": 4,
+      "maximum": 4,
+      "remaining": 0,
+      "starts_after_first_complete_independent_quality_security_pair": true
+    }
+  },
+  "canonicalization_repair": {
+    "pr": 149,
+    "reviewed_source": "58df198dfb1780cad46e7a442a54927509d6b5a8",
+    "protected_main": "88b19e341119c8c65c2bedbc37ddf3c371c44a0b",
+    "trees_equal": true,
+    "quality": "PASS",
+    "security": "PASS",
+    "owning_validation": "198 native +1 isolated PASS; all required productionfiles strictly >80.2%",
+    "ci": "all five PASS",
+    "tde_run": 38117457428,
+    "tde": "standard PASS; zero triggered rules; QUALIFIED; policy/runtime unchanged",
+    "old_pr147_148_closed": true,
+    "old_source_and_evidence_retained": true
+  },
+  "canonicalization_finalization": {
+    "type": "ordinary nonempty documentary NO_BUMP",
+    "state": "REVIEWS_CI_PROTECTED_MERGE_PENDING",
+    "product_test_policy_version_operation_bytes_unchanged": true,
+    "new_exact_final_main_installed_proof": "NOT_YET_QUALIFIED"
   }
 }
