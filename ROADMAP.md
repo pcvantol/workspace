@@ -564,3 +564,7 @@ No item authorizes Workspace to implement EP execution or become Forge planning 
 | Knowledge governance surface | Present evidence-linked Knowledge lifecycle status and permitted intents. | KB export/read contracts. | Post-V1 lineage/redaction/accessibility proof. |
 
 The Forge labels are dependency references only. This roadmap remains canonical authority for whether, when and how Workspace develops its own surfaces.
+
+## Plan96 round8 protected source / ordinary finalization
+
+PR153/source aab52e73f38eed2ca49384d2ced1f7bfff5a67cc delivered at2.8.19, exact reviewed2b46 tree; complete fresh QualityPASS/SecurityPASS,200native+1isolated/allproduction>80.2/State90.34%, all5CI and actualsourceTDE38127741998PASS0rulesQUALIFIED. Specific round8 consumed8/max8/remaining0, pickup6107436414; no ninth/reset/operationalextension. Ordinary nonempty5docNO_BUMP finalization now selected, product/test/version/policy bytes unchanged. NEW exact-final-main installed expiry/late realHTTP/completekeyboard/fullUX/A→B/recovery/disarm/fivelanguage/screens evidence remains pending; prior905PARTIAL preserved. Same solewriter/session/r81/exactForge2.12.1/987, primaryiCloud/history/oldroots unchanged.
