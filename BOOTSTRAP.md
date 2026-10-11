@@ -1,3 +1,17 @@
+## Plan96 round9 — protected selected-card focus repair
+
+PR155 normally protected match-head squash merged reviewed15c5bb0fe44ac8b0ba1d61e09d35570dc5a936b1 to mainfda4630bb86e17de7ee4798b8d458bb2e2531f05; exact trees equal. Workspace2.8.20 canonical PATCH operation L4-PLAN96-CORRECTION-ROUND9-20261011 retained. Fresh COMPLETE ORIGINAL-feature QualityPASS/SecurityPASS and bounded source-rendered UX PASS. Full owning validate203native+1isolated/allrequiredproduction>80.2%, changedgraph320/338=94.67%; allfive sourceCI PASS. Actual downloaded sourceTDE38134867973 standardpolicy1.4.0PASS0rules/runtime1.1.1QUALIFIED.
+
+Original positioned graph rendered under nested outer clip: both fitting A/B cards RED. Actual-card marker with local inner-to-outer clip conversion and explicit request epoch: six geometric cases GREEN, six actual Tab/Space cases GREEN on frozen packaged source probe, actual640px resize GREEN. This is SOURCE_RENDERED/SOURCE_PACKAGED_PROBE evidence, not final-main installed consumer acceptance. Initial resize-helper title mismatch and actual900px attempt are retained separately from corrected640px evidence.
+
+NativeCI38134867999 attempt1FAIL two existing80ms expiry tests (five assertions); allnewgraph testsPASS. Independent diagnosis permitted exactlyONE unchanged failed-job diagnostic retry; attempt2PASS. OriginalFAIL/retryPASS/repeated timing risk remain separate; scheduler/load rootcause NOTPROVEN. No product/test/gate/timing relaxation.
+
+Same assignment/session/sole writer/r81-plan96/exactForge2.12.1/9875333. Round9 decision6108192512/pickup6108358316 consumed9/max9/remaining0; no tenth or operational extension. PR147–155 and historical outcomes remain closed/source-bound. This ordinary nonempty NO_BUMP finalization changes only five owning documents; product/test/version/operation/policy bytes unchanged.
+
+New output/scratch private internal Data target proved write/fsync/atomicrename/readback with initial45GiB free/planned12GiB ownpeak; shared L2 capacity directly coordinated. Historical full-volume artifacts, roots, journals and grants preserved. Original third recovery root retains exact pending intent and partialcontrol0bytes/ENOSPC log; its original one-hour window ended2026-10-11T11:21:43.766346Z. Recovery remains NOT_QUALIFIED: no scope restart, grant extension, new operation ID or quota reset.
+
+Source admission complete; FULL_DOD/FULL_UX PARTIAL. Independently reviewed finalization/CI/protectedmerge then NEW exact-final-main matching native/noneditable Server/pinned Forge/actual expiry/held response/full keyboard-focus/five-language/theme/narrow/runtime acceptance/immutable reachable screenshots remain mandatory. Earlier1c340e9 results stay bound to2.8.19, including FocusFAIL. Original recovery requires a specific authority disposition; no replacement proof or source-only completion.
+
 ## Plan96 protected expiry repair — ordinary finalization
 
 PR153 normally protected match-head squash merged reviewed2b46b93d112024a608fd93fbb45a22b01ab1af17 to mainaab52e73f38eed2ca49384d2ced1f7bfff5a67cc; exact trees equal. Workspace2.8.19 canonical round8PATCH retained. Fresh COMPLETE ORIGINAL-feature independent QualityPASS/SecurityPASS,200native+1isolated/allrequiredproduction>80.2%/changedState90.34%, allfive sourceCI PASS and downloaded exactsourceTDE38127741998 standardpolicy1.4.0PASS0rules/runtime1.1.1repositoryQUALIFIED.
