@@ -10,25 +10,25 @@
   "producer_wheel_sha256": "9b192e7a3cb5d503e795639a2b25b584b178c8bd2ef81af9ef96117af772ec33",
   "wire_schema_sha256": "c25d46e51f3f076542e289e55aa147a0e0cf0c80a1c28a57d87943dcfcc92309",
   "formal_integrated_correction_budget": {
-    "consumed": 8,
-    "maximum": 8,
+    "consumed": 9,
+    "maximum": 9,
     "remaining": 0,
-    "authority": "direct user continuation after specific round8/max8 request6107271047",
-    "pickup_comment": 6107436414,
+    "authority": "L4-PLAN96-CORRECTION-ROUND9-20261011 decision6108192512",
+    "pickup_comment": 6108358316,
     "prior_consumption_preserved": true,
     "operation_budgets_unchanged": true
   },
-  "state": "ROUND8_PROTECTED_SOURCE_DELIVERED_FINALIZATION_PENDING",
+  "state": "ROUND9_PROTECTED_SOURCE_DELIVERED_FINALIZATION_PENDING",
   "prior_plans_93_95_closed": true,
   "users_credentials_retained": true,
-  "consumer_version": "2.8.19",
+  "consumer_version": "2.8.20",
   "source_validation": {
     "full_command": "bash scripts/validate.sh",
-    "result": "PASS_AFTER_CORRECTION_ROUND_8",
-    "native_tests": 200,
+    "result": "PASS_AFTER_CORRECTION_ROUND_9",
+    "native_tests": 203,
     "isolated_tests": 1,
     "strict_per_changed_production_file_percent_greater_than": 80.2,
-    "changed_workset_release_state_percent": 90.34
+    "changed_worklist_dependency_graph_percent": 94.67
   },
   "tde": {
     "profile": "standard",
@@ -357,5 +357,388 @@
     "review_ci_merge": "PENDING",
     "new_exact_final_main_installed": "PENDING",
     "full_DoD": "NOT_DELIVERED"
+  },
+  "historical_before_round9": {
+    "assignment": "L4-WORKSPACE-NATIVE-CLIENT-HTTP-V1-20261002",
+    "directive_id": "L4-NATIVE-APPROVED-WORKSET-RELEASE-V1-20261010",
+    "join": "L3-L4-APPROVED-WORKSET-RELEASE-V1-20261009",
+    "revision": "r81-plan96",
+    "base": "d42ec0021e5c6970064801b2acdaaab69c1b9b50",
+    "branch": "codex/r81-native-workset-release",
+    "producer_version": "2.12.1",
+    "producer_source": "9875333acc4258a20fc0180a9ae09c980802d5b1",
+    "producer_wheel_sha256": "9b192e7a3cb5d503e795639a2b25b584b178c8bd2ef81af9ef96117af772ec33",
+    "wire_schema_sha256": "c25d46e51f3f076542e289e55aa147a0e0cf0c80a1c28a57d87943dcfcc92309",
+    "formal_integrated_correction_budget": {
+      "consumed": 8,
+      "maximum": 8,
+      "remaining": 0,
+      "authority": "direct user continuation after specific round8/max8 request6107271047",
+      "pickup_comment": 6107436414,
+      "prior_consumption_preserved": true,
+      "operation_budgets_unchanged": true
+    },
+    "state": "ROUND8_PROTECTED_SOURCE_DELIVERED_FINALIZATION_PENDING",
+    "prior_plans_93_95_closed": true,
+    "users_credentials_retained": true,
+    "consumer_version": "2.8.19",
+    "source_validation": {
+      "full_command": "bash scripts/validate.sh",
+      "result": "PASS_AFTER_CORRECTION_ROUND_8",
+      "native_tests": 200,
+      "isolated_tests": 1,
+      "strict_per_changed_production_file_percent_greater_than": 80.2,
+      "changed_workset_release_state_percent": 90.34
+    },
+    "tde": {
+      "profile": "standard",
+      "policy": "PASS",
+      "triggered_rules": [],
+      "policy_unchanged": true,
+      "policy_version": "1.4.0",
+      "runtime_version": "1.1.1",
+      "repository_qualification": "QUALIFIED"
+    },
+    "qualification_boundary": "Early native A/B release and future-only disarm are genuine source/package experiments, not final-main installed qualification; producer remains exact Forge2.12.1/9875333.",
+    "early_ux": {
+      "first": "BLOCKER_preserved",
+      "second": "ACCEPTABLE_TO_CONTINUE_EARLY_ONLY"
+    },
+    "pending_gates": [
+      "independent_finalization_review_CI_protected_merge",
+      "NEW_exact_final_main_matching_native_Server_pinned_Forge",
+      "targeted_runtime_A_to_B_actual_final_acceptance_finite_quota_idle",
+      "actual_lost_response_restart_denied_future_disarm",
+      "full_independent_UX_five_language_theme_narrow_keyboard_screens_reachable_manifest",
+      "final_register_readback_safe_own_cleanup"
+    ],
+    "independent_review_first_pair": {
+      "source": "440b5276567744b9efb7b877d1d5557f8e63bb75",
+      "quality": "FAIL_5_FINDINGS",
+      "security": "FAIL_4_FINDINGS",
+      "reports_retained": true
+    },
+    "independent_review_second_pair": {
+      "source": "42af04ef8e31bf0868bff4cda8d97a544083ff90",
+      "quality": "FAIL_4_FINDINGS",
+      "security": "FAIL_4_FINDINGS",
+      "reports_retained": true
+    },
+    "candidate_9d2bfa8_boundary": {
+      "native_release_and_targeted_A_to_B": "PASS_CANDIDATE_ONLY",
+      "early_independent_UX": "BLOCKER_PRESERVED_selection_reset_and_opaque_status_metadata",
+      "new_GUI_and_final_main_proof_required": true
+    },
+    "candidate_905752e_boundary": {
+      "native_release_and_active_A_future_disarm": "PASS_CANDIDATE_ONLY",
+      "early_independent_UX": "BLOCKER_PRESERVED_periodic_refresh_lost_inspection",
+      "empty_selection_and_human_status_prior_fixes": "LIVE_VERIFIED",
+      "GUI_only_retest_uses_unchanged_Server_production_bytes_and_original_finite_scope": true
+    },
+    "independent_review_third_pair": {
+      "source": "34d33e87ab5da8e43a7097656e7d9a4582a4e954",
+      "quality": "FAIL_4_FINDINGS",
+      "security": "FAIL_3_BLOCKING_AND_1_NONBLOCKING",
+      "reports_retained": true
+    },
+    "candidate_34d33e8_boundary": {
+      "early_independent_UX": "BLOCKER_PRESERVED_historical_operation_changed_on_periodic_refresh",
+      "list_graph_scroll_and_empty_selection": "LIVE_VERIFIED",
+      "final_main_proof_required": true
+    },
+    "correction_round_3": {
+      "recovery": "originating epoch, connection, access and original pending intent fenced before dispatch; complete original-read task cancelled on invalidation",
+      "expiry": "state-owned deadline task independent of visible sheet; action admission and late callback deadline checks",
+      "dependency_proofs": "selected predecessor exact revision and source-object join; available current dependency topology and committed order joined to frozen definition",
+      "history": "scoped original-operation cursor survives automatic refresh; only initial restoration defaults to latest",
+      "targeted_regressions": {
+        "python": 11,
+        "native": 23
+      },
+      "standard_tde": "PASS_ZERO_RULES_UNCHANGED_POLICY"
+    },
+    "correction_round_4_decision": {
+      "decision_id": "L4-PLAN96-CORRECTION-ROUND4-20261010",
+      "register_comment": 6098479853,
+      "pickup_comment": 6098543092,
+      "no_operational_budget_extension": true,
+      "prior_consumed_rounds_retained": 3,
+      "no_automatic_fifth": true
+    },
+    "independent_review_fourth_pair": {
+      "source": "ed060443b2603c5f149a9d1fc2ea5eb4402f3d10",
+      "quality": "FAIL_2_P2",
+      "security": "FAIL_2_MEDIUM",
+      "reports_retained": true
+    },
+    "correction_round_4": {
+      "deadline": "authority deadline independent of presentation capability, bound to existing access lifecycle; no same-grant extension; action/callback/timer and immediate actual HTTP send checks",
+      "dependencies": "exact producer precedence and candidate-specific required missing/revision/order gap multiset; blocked preparation remains readable; source-object joins and immutable operation stay strict",
+      "selection": "explicit new-selection clears members, accumulation via toggle retained; private history/pending intent retained",
+      "targeted_native_tests": 30,
+      "targeted_python_tests": 12,
+      "initial_joint_red_evidence_retained": true,
+      "targeted_fault_reintroduction": {
+        "native_expiry": "DETECTED",
+        "native_selection": "DETECTED",
+        "native_dependencies": "DETECTED",
+        "python_dependencies": "DETECTED",
+        "boundary": "unit mutation artifacts, not canonical or installed qualification"
+      }
+    },
+    "recorded_pre_merge_state": "CORRECTION_ROUND_4_VALIDATED_FULL_INDEPENDENT_REVIEWS_AND_MATCHING_INSTALLED_GUI_PENDING",
+    "protected_source": {
+      "pull_request": 147,
+      "merge_commit": "b11b4c719cdd5672046ae29140aa330e7060dfde",
+      "reviewed_head": "669a64c8a2cc28d5fdcd448910ab2aeed1a5b0db",
+      "tree": "7e9515bce6ee1464ad37ddd6c2154607c5cee3ed",
+      "tree_equal_reviewed_head": true,
+      "version": "2.8.16",
+      "original_patch_operation_retained": true
+    },
+    "independent_review_fifth_pair": {
+      "source": "669a64c8a2cc28d5fdcd448910ab2aeed1a5b0db",
+      "quality": "PASS",
+      "security": "PASS",
+      "whole_original_delta": true,
+      "nonblocking_retained": "response_size_checked_after_buffering"
+    },
+    "candidate_669a64c_boundary": {
+      "matching_native_Server_source": "669a64c8a2cc28d5fdcd448910ab2aeed1a5b0db",
+      "wheel_sha256": "533369daff4d296e8b3cc0dc606c7785668b269e9caa3cb31c28b9551134294c",
+      "native_executable_sha256": "12fe9b93e7ab3493dbf380959eedee36c157f6f9ecdcab11b5ab25de4d8eef02",
+      "independent_actual_GUI": "ACCEPTABLE_TO_CONTINUE_EARLY_ONLY",
+      "actual_tasks": [
+        "C_not_release_selectable",
+        "B_only_missing_predecessor_blocked",
+        "B_before_A_order_blocked",
+        "explicit_reorder_valid_A_to_B",
+        "one_native_release_receipt_CURRENT_COMPLETE",
+        "immediate_empty_new_selection_without_reconnect",
+        "A_then_B_toggle_accumulation_history_retained"
+      ],
+      "original_operation_current_readback": "COMPLETE",
+      "definition_calls": 3,
+      "ep_starts_at_native_release": 0,
+      "actual_pinned_prepare_matrix": {
+        "A_to_B": "SUPPORTED",
+        "B_only": "PREDECESSOR_NOT_SELECTED_BLOCKED",
+        "B_before_A": "DEPENDENCY_ORDER_CONFLICT_BLOCKED",
+        "changed_selected_predecessor_revision": "DENIED_OUTSIDE_FINITE_GRANT"
+      },
+      "legitimate_changed_gap": "declared_unit_transport_fixture_only_not_fabricated_canonical_approval",
+      "not_final_main_proof": true
+    },
+    "finalization": {
+      "classification": "NO_BUMP_DOCUMENTATION_ONLY",
+      "source_base": "b11b4c719cdd5672046ae29140aa330e7060dfde",
+      "product_source_unchanged": true,
+      "state": "PENDING_OWN_REVIEW_CI_PROTECTED_MERGE",
+      "new_final_main_qualification_required": true
+    },
+    "pre_canonicalization_repair_state": {
+      "state": "PROTECTED_SOURCE_MERGED_DOCUMENTARY_FINALIZATION_PENDING_NEW_FINAL_MAIN_PROOF",
+      "consumer_version": "2.8.16",
+      "formal_integrated_correction_budget": {
+        "consumed": 4,
+        "maximum": 4,
+        "remaining": 0,
+        "starts_after_first_complete_independent_quality_security_pair": true
+      }
+    },
+    "canonicalization_repair": {
+      "pr": 149,
+      "reviewed_source": "58df198dfb1780cad46e7a442a54927509d6b5a8",
+      "protected_main": "88b19e341119c8c65c2bedbc37ddf3c371c44a0b",
+      "trees_equal": true,
+      "quality": "PASS",
+      "security": "PASS",
+      "owning_validation": "198 native +1 isolated PASS; all required productionfiles strictly >80.2%",
+      "ci": "all five PASS",
+      "tde_run": 38117457428,
+      "tde": "standard PASS; zero triggered rules; QUALIFIED; policy/runtime unchanged",
+      "old_pr147_148_closed": true,
+      "old_source_and_evidence_retained": true
+    },
+    "canonicalization_finalization": {
+      "type": "ordinary nonempty documentary NO_BUMP",
+      "state": "REVIEWS_CI_PROTECTED_MERGE_PENDING",
+      "product_test_policy_version_operation_bytes_unchanged": true,
+      "new_exact_final_main_installed_proof": "NOT_YET_QUALIFIED"
+    },
+    "mission_utf8_repair": {
+      "pickup": 6106571737,
+      "authority": "direct user ga verder after explicit round7/max7 request6106404238",
+      "base": "d978fe92743282154bddb6b59e8cc6cab11800e6",
+      "branch": "codex/r81-plan96-mission-utf8",
+      "budget": {
+        "consumed": 7,
+        "maximum": 7,
+        "remaining": 0
+      },
+      "operation": "L4-PLAN96-CORRECTION-ROUND7-20261011",
+      "consumer_version": "2.8.18",
+      "production_delta": "Mission Candidate/MissionSpec/lifecycle UTF8 joins; ASCII envelopes unchanged",
+      "initial_red": "3 Unicode regressions fail original production",
+      "targeted": "30 Mission/workset tests PASS; unchanged real producer packet source regression PASS",
+      "installed": "PENDING_NEW_EXACT_FINAL_MAIN",
+      "previous_installed_blocker": "6106404238 retained",
+      "operational_limits": "UNCHANGED",
+      "source_validation": "198native+1isolated PASS; requiredperfile>80.2; mission_contract97.22%",
+      "independent_bounded_contract": "PASS",
+      "mutation_detection": "all3 originalASCII regressions detected with sourcebytes unchanged",
+      "tde": "standard policy1.4.0 PASS0rules; runtime1.1.1/repository QUALIFIED",
+      "pr": 151,
+      "reviewed_source": "53155f85cf84f6ff642f018b34fbca372ee8d570",
+      "protected_main": "d262cf8e8c6a2e8908edceea8629166845dda730",
+      "trees_equal": true,
+      "quality": "fresh complete originalfeature PASS",
+      "security": "fresh complete originalfeature PASS",
+      "ci": "allfivePASS",
+      "ci_tde_run": 38121016961,
+      "ci_tde": "downloaded standardPASS0rules/QUALIFIED policy1.4.0 runtime1.1.1"
+    },
+    "mission_utf8_finalization": {
+      "classification": "ordinary nonempty NO_BUMP",
+      "product_bytes": "UNCHANGED",
+      "scope": "five owning documents only",
+      "base": "d262cf8e8c6a2e8908edceea8629166845dda730",
+      "review_ci_merge": "PENDING",
+      "full_DoD": "NOT_DELIVERED_PENDING_NEW_EXACT_FINAL_MAIN_INSTALLED_UX"
+    },
+    "historical_root_status_before_round7": {
+      "consumer_version": "2.8.17",
+      "formal_integrated_correction_budget": {
+        "consumed": 6,
+        "maximum": 6,
+        "remaining": 0,
+        "authority": "specific user approval for cumulative round6 after Server planning blocker",
+        "pickup_comment": 6106126074,
+        "prior_consumption_preserved": true,
+        "operation_budgets_unchanged": true
+      },
+      "source_validation": {
+        "full_command": "bash scripts/validate.sh",
+        "result": "PASS_AFTER_CORRECTION_ROUND_4",
+        "native_tests": 192,
+        "isolated_tests": 1,
+        "strict_per_changed_production_file_percent_greater_than": 80.2,
+        "new_native_minimum_percent": 83.33,
+        "new_python_minimum_percent": 84.29
+      },
+      "tde": {
+        "profile": "standard",
+        "policy": "PASS",
+        "product_maximum": 14,
+        "triggered_rules": [],
+        "policy_unchanged": true
+      }
+    },
+    "historical_root_status_before_round8": {
+      "consumer_version": "2.8.18",
+      "formal_integrated_correction_budget": {
+        "consumed": 7,
+        "maximum": 7,
+        "remaining": 0,
+        "authority": "direct user continuation after explicit round7/max7 request6106404238",
+        "pickup_comment": 6106571737,
+        "prior_consumption_preserved": true,
+        "operation_budgets_unchanged": true
+      },
+      "source_validation": {
+        "full_command": "bash scripts/validate.sh",
+        "result": "PASS_AFTER_CORRECTION_ROUND_7",
+        "native_tests": 198,
+        "isolated_tests": 1,
+        "strict_per_changed_production_file_percent_greater_than": 80.2,
+        "changed_mission_contract_percent": 97.22
+      },
+      "tde": {
+        "profile": "standard",
+        "policy": "PASS",
+        "triggered_rules": [],
+        "policy_unchanged": true,
+        "policy_version": "1.4.0",
+        "runtime_version": "1.1.1",
+        "repository_qualification": "QUALIFIED",
+        "source_ci_run": 38121016961
+      }
+    },
+    "round7_exact_final_main_installed": {
+      "main": "905aa3b09260cc57874137e35ebcfc6f6f6aa263",
+      "version": "2.8.18",
+      "source_pr": 151,
+      "finalization_pr": 152,
+      "core_task": "PASS_WITH_FINDINGS",
+      "full_UX": "PARTIAL_NOT_ACCEPTED_AS_FULL_PASS",
+      "history_visible_after_expiry_seconds": 0.979832,
+      "history_clear_observed_after_expiry_seconds": 5.085265,
+      "late_response_nonrestoration": "BOUNDED_PASS",
+      "original_finite_scopes": 7,
+      "synthetic_definition_calls": 21,
+      "EP_starts": 3,
+      "scopes_closed": true,
+      "immutable_evidence": "cd56cc4cf2e091959418e26fb1c49740450d5c61",
+      "all_previous_failures_preserved": true
+    },
+    "expiry_deadline_repair": {
+      "pickup": 6107436414,
+      "base": "905aa3b09260cc57874137e35ebcfc6f6f6aa263",
+      "branch": "codex/r81-plan96-expiry-deadline",
+      "operation": "L4-PLAN96-CORRECTION-ROUND8-20261011",
+      "budget": {
+        "consumed": 8,
+        "maximum": 8,
+        "remaining": 0
+      },
+      "initial_red": "2 meaningful early-wake/held-read tests,5 assertion failures on old source",
+      "targeted": "33 Workset tests PASS",
+      "bounded_contract_review": "PASS",
+      "original_deadline_unchanged": true,
+      "new_installed": "PENDING_NEW_EXACT_FINAL_MAIN",
+      "complete_keyboard_UX": "PENDING",
+      "source_validation": "200native+1isolated PASS/allrequiredproduction>80.2/state90.34%",
+      "tde": "standard policy1.4.0 PASS0rules/runtime1.1.1 QUALIFIED",
+      "pr": 153,
+      "reviewed_source": "2b46b93d112024a608fd93fbb45a22b01ab1af17",
+      "protected_main": "aab52e73f38eed2ca49384d2ced1f7bfff5a67cc",
+      "trees_equal": true,
+      "quality": "fresh complete ORIGINAL-feature PASS",
+      "security": "fresh complete ORIGINAL-feature PASS",
+      "ci": "allfivePASS",
+      "ci_tde_run": 38127741998,
+      "ci_tde": "downloaded standardPASS0rules/QUALIFIED policy1.4.0/runtime1.1.1"
+    },
+    "expiry_deadline_finalization": {
+      "classification": "ordinary nonempty NO_BUMP",
+      "scope": "five owning documents only",
+      "base": "aab52e73f38eed2ca49384d2ced1f7bfff5a67cc",
+      "product_test_policy_version_operation_bytes_unchanged": true,
+      "review_ci_merge": "PENDING",
+      "new_exact_final_main_installed": "PENDING",
+      "full_DoD": "NOT_DELIVERED"
+    }
+  },
+  "round9_delivery": {
+    "source_pr": 155,
+    "source_reviewed_head": "15c5bb0fe44ac8b0ba1d61e09d35570dc5a936b1",
+    "source_protected_merge": "fda4630bb86e17de7ee4798b8d458bb2e2531f05",
+    "complete_original_feature_quality": "PASS",
+    "complete_original_feature_security": "PASS",
+    "bounded_source_rendered_ux": "PASS",
+    "native_ci_attempt1": "FAIL_TWO_EXISTING_80MS_EXPIRY_TESTS",
+    "native_ci_attempt2": "PASS_ONE_UNCHANGED_DIAGNOSTIC_RETRY",
+    "recurring_timer_risk_preserved": true,
+    "timer_rootcause": "NOT_PROVEN",
+    "tde_run": 38134867973,
+    "tde_policy": "PASS",
+    "runtime_qualification": "QUALIFIED",
+    "source_probe_actual_keyboard_cases": 6,
+    "source_probe_actual_resize_width": 640,
+    "new_exact_final_main_installed": "PENDING",
+    "original_recovery_scope": "NOT_QUALIFIED_ORIGINAL_ONE_HOUR_WINDOW_ENDED",
+    "original_pending_preserved": true,
+    "operational_scope_not_restarted": true,
+    "full_dod": "PARTIAL"
   }
 }
