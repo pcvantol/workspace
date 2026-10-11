@@ -33,7 +33,7 @@ active-A evidence.
 
 [New recovery manifest](evidence/lane4-plan96-recovery-scope2-0bbb06f/manifest.json)
 (in the evidence directory, use its immutable Git commit after protected merge)
-and [retained earlier installed GUI manifest](https://github.com/pcvantol/workspace/blob/ad4404c3647f0756eea5bd3a84bc0f7f3fe758c0/evidence/lane4-plan96-final-main-0bbb06f/manifest.json)
+and [retained earlier installed GUI manifest](https://github.com/pcvantol/workspace/blob/ad4404c3647f0756eea5bd3a84bc0f7f3fe758c0/docs/evidence/lane4-plan96-final-main-0bbb06f/manifest.json)
 remain separate source-bound receipts. Original ENOSPC attempt stays
 INCONCLUSIVE_INFRA_EXPIRED/RETAINED/NOT_RESTARTABLE_UNDER_ORIGINAL_BUDGET;
 its pending intent and hashes remain unchanged. First additional attempt stays
