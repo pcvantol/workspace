@@ -1,3 +1,11 @@
+## Plan96 protected expiry repair — ordinary finalization
+
+PR153 normally protected match-head squash merged reviewed2b46b93d112024a608fd93fbb45a22b01ab1af17 to mainaab52e73f38eed2ca49384d2ced1f7bfff5a67cc; exact trees equal. Workspace2.8.19 canonical round8PATCH retained. Fresh COMPLETE ORIGINAL-feature independent QualityPASS/SecurityPASS,200native+1isolated/allrequiredproduction>80.2%/changedState90.34%, allfive sourceCI PASS and downloaded exactsourceTDE38127741998 standardpolicy1.4.0PASS0rules/runtime1.1.1repositoryQUALIFIED.
+
+Same assignment/session/solewriter/exactForge2.12.1/987. Specific userround8/pickup6107436414 consumed8/max8/remaining0; no automatic ninth or operational extension. PR147–153/historicalpartial results stay closed/source-bound. Ordinary nonempty NO_BUMP finalization changes only five owning documents; product/test/version/operation/policy bytes unchanged.
+
+Source admission complete, FULL_DOD NOT_DELIVERED. Independently reviewed finalization/CI/protectedmerge then NEW matching exact-final-main packaged native/noneditableServer/pinnedForge with actual expiry/held200/fullgraph-orderkeyboard, A→B/finalacceptance/quota/idle/recovery/future-onlydisarm/denied/fivelanguage/theme/narrow/screens/immutable reachable proof remain mandatory and pending. Prior905 actual+0.98s/+5.09s history latency/fullUX PARTIAL remain historical. PrimaryiCloud/usercredentials/oldroots/grants/budgets unchanged; no new qualifier scope at finalization admission.
+
 ## Plan96 specific user-authorized round8 — protected expiry deadline
 
 Direct user continuation after concrete installed UX finding6107271047 authorizes the specific integrated round8/max8; pickup6107436414 booked consumed8/max8/remaining0 BEFORE source/test edits. Same sole writer/session/r81-plan96 and exact Forge2.12.1/9875333. Base905aa3b; PR147–152 remain closed. Canonical PATCH2.8.18→2.8.19 operation L4-PLAN96-CORRECTION-ROUND8-20261011 preserves prior versions, roots, outcomes and all operational budgets.

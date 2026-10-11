@@ -18,7 +18,7 @@
     "prior_consumption_preserved": true,
     "operation_budgets_unchanged": true
   },
-  "state": "ROUND8_VALIDATED_FULL_INDEPENDENT_REVIEWS_PENDING",
+  "state": "ROUND8_PROTECTED_SOURCE_DELIVERED_FINALIZATION_PENDING",
   "prior_plans_93_95_closed": true,
   "users_credentials_retained": true,
   "consumer_version": "2.8.19",
@@ -338,6 +338,24 @@
     "new_installed": "PENDING_NEW_EXACT_FINAL_MAIN",
     "complete_keyboard_UX": "PENDING",
     "source_validation": "200native+1isolated PASS/allrequiredproduction>80.2/state90.34%",
-    "tde": "standard policy1.4.0 PASS0rules/runtime1.1.1 QUALIFIED"
+    "tde": "standard policy1.4.0 PASS0rules/runtime1.1.1 QUALIFIED",
+    "pr": 153,
+    "reviewed_source": "2b46b93d112024a608fd93fbb45a22b01ab1af17",
+    "protected_main": "aab52e73f38eed2ca49384d2ced1f7bfff5a67cc",
+    "trees_equal": true,
+    "quality": "fresh complete ORIGINAL-feature PASS",
+    "security": "fresh complete ORIGINAL-feature PASS",
+    "ci": "allfivePASS",
+    "ci_tde_run": 38127741998,
+    "ci_tde": "downloaded standardPASS0rules/QUALIFIED policy1.4.0/runtime1.1.1"
+  },
+  "expiry_deadline_finalization": {
+    "classification": "ordinary nonempty NO_BUMP",
+    "scope": "five owning documents only",
+    "base": "aab52e73f38eed2ca49384d2ced1f7bfff5a67cc",
+    "product_test_policy_version_operation_bytes_unchanged": true,
+    "review_ci_merge": "PENDING",
+    "new_exact_final_main_installed": "PENDING",
+    "full_DoD": "NOT_DELIVERED"
   }
 }
