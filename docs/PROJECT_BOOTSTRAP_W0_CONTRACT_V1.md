@@ -29,3 +29,28 @@ what the UI needs to know and which owner must supply it, while PB-W1 remains
 blocked on compatible Forge PB-F0 and EP PB-E0 contracts. No producer API,
 runtime, UI, provider, credentials, public repository or installation is
 implemented by PB-W0.
+
+## Additive holistic design extension — hob-design/1.1
+
+The base WORKSPACE_PROJECT_BOOTSTRAP_W0_V1 schema1 and five journey IDs/phase boundaries remain
+unchanged. Its optional holistic_extension records the three visible entrances, verified read-only
+LINK_CONFIGURED and later scoped ADD_REPOSITORY/PUBLISH_LOCAL choices. These are not extra base
+creation journeys or widened capabilities. Older consumers may ignore the extension; future consumers
+must explicitly negotiate qualified producer bindings before using it. No new runtime endpoint or grant.
+
+[Holistic screen/data design](PROJECT_ONBOARDING_HOLISTIC_V1.md),
+[non-executable exact proposals](PROJECT_ONBOARDING_CONTRACT_PROPOSALS_V1.json),
+[walkthroughs](PROJECT_ONBOARDING_SCENARIOS_V1.json) and
+[refined owning DAG](PROJECT_BOOTSTRAP_V1_DAG.json) define its proposed semantics.
+Existing submit/identity examples remain identical; additional walkthroughs are a separate fixture
+catalogue, not changes to PB-01..40 or a declaration that any owning operation is available.
+
+Pre-identity source inspection requires an EP-owned scoped source handle, not a committed project or
+borrowed execution bearer. Deep analysis has separate accepted tool/network/data-transfer/time/cost
+scope. Snapshot joins are owner-specific, source-bound and non-atomic; Workspace stores references,
+not engineering evidence or a second scheduler. Facts, Forge interpretations and governed decisions
+remain separate. No Mission/action is created to make an inspection or progress card work.
+
+The unpublished first1.0 design is retained at frozen8c7e78b as failed review history.
+Design1.1 closes nested source/snapshot contracts and decision/transfer contents; base W0
+contract/schema/five routes and old fixtures are unchanged. These are still unbound proposals.

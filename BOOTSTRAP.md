@@ -1,3 +1,34 @@
+## Selected holistic onboarding design — plan97
+
+Assignment `L4-HOLISTIC-PROJECT-ONBOARDING-DESIGN-DAG-V1-20261011`,
+mandate [6112225840](https://github.com/pcvantol/forge/issues/208#issuecomment-6112225840).
+Same Work session and sole Workspace writer. Plan96 remains CLOSED via
+[6111284541](https://github.com/pcvantol/forge/issues/208#issuecomment-6111284541).
+Actual base `889eb61d487b1374a63107e46e7d124ae67b77e3`; own branch
+`codex/plan97-holistic-project-onboarding-design`.
+Read-only peer source observations: Forge `f819196e9c025163be40c8e71693a3def4b78bc2`,
+EP `05e530d6339cb1c16b1e8f4814347578c5fd761c`; these are documentary refs,
+not changed runtime pins. Design corrections consumed3/max3/remaining0.
+Historical source9/9 and recovery2/2 remain closed and consumed.
+
+DESIGN_ONLY in progress: coherent journeys, static wireframes, explicit proposed
+HTTP/authority contracts and non-executable refinement of existing PB nodes.
+
+First full frozen8c7e78b reviews retained as FAIL (Q1/Q2, SEC97-01/02, UX-01).
+Integrated formal design round1 booked once before correction via6112577103.
+Typed discovery/snapshots/GET bindings, explicit decisions and bounded analysis/transfer
+records plus consistent one-repository/two-document wireframes were corrected together.
+Full43e3bee reviews retained as FAIL for two remaining consent wire contradictions.
+Integrated round2 booked once before correction via6112979707: goal-only requests and
+EP approval/refusal receipts now align, with positive/negative offline fixtures.
+Full1c10500 content/UX accepted; overall documentary FAIL for stale roadmap/backlog budget.
+Final integrated round3 booked6113020691 before correction: current owning summaries now
+agree consumed3/max3/remaining0; fresh exact-head review pending. No fourth round authorized.
+
+No product code/version/policy changes, scans, grants, installation or signing.
+First material document step: register coherent entry journeys and an independent
+basic-link slice rather than coupling visibility to deep analysis or promotion.
+
 ## Plan96 scope2 — installed recovery acceptance and evidence finalization
 
 Same r81 assignment, Work session and sole Workspace writer; product source remains

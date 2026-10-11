@@ -1,3 +1,37 @@
+## Selected plan97 — holistic project onboarding design
+
+[Mandate6112225840](https://github.com/pcvantol/forge/issues/208#issuecomment-6112225840),
+assignment L4-HOLISTIC-PROJECT-ONBOARDING-DESIGN-DAG-V1-20261011;
+pickup6112280197, same session/sole writer. Design-only NO_BUMP; correctionbudget3/3 (remaining0).
+Plan96 is CLOSED via6111284541; old source9/9, recovery2/2, evidence and runtimepins retained.
+
+[Integrated journeys/screen contracts](docs/PROJECT_ONBOARDING_HOLISTIC_V1.md),
+[static light/dark/narrow wireframes](docs/onboarding-design/README.md),
+[exact proposed peer contracts](docs/PROJECT_ONBOARDING_CONTRACT_PROPOSALS_V1.json),
+[offline traceability/walkthroughs](docs/PROJECT_ONBOARDING_SCENARIOS_V1.json) and the
+[refined existing PB roadmap](docs/PROJECT_BOOTSTRAP_V1_ROADMAP.md) form one delivery.
+Three primary entrances: new project, configured project linking and code adoption; later child
+addition and explicit local-to-managed publication preserve identities and history.
+
+PB-W0 remains CONTRACT_DEFINED/producer UNQUALIFIED; PB-W1..WQ and new grouped subsets
+remain PLANNED, implementation NOT_SELECTED. Independent basic linking does not wait for deep
+analysis/setup/promotion/full-peer-Q. Recommended future first slice PB-W1-LINK/PB-WQ-LINK has
+one minimum missing EP scoped B8R snapshot/read grant contract; Forge context is optional.
+Exact peer proposals are change requests through the coordinator, not L2/L3 allocations.
+
+
+First full frozen8c7e78b reviews retained as FAIL (Q1/Q2, SEC97-01/02, UX-01).
+Integrated formal design round1 booked once before correction via6112577103.
+Typed discovery/snapshots/GET bindings, explicit decisions and bounded analysis/transfer
+records plus consistent one-repository/two-document wireframes were corrected together.
+Historical round2 booked6112979707: goal-only consent and EP refusal envelopes are coherent.
+Full1c10500 content/UX accepted; total documentary review failed only on current budget summaries.
+Final integrated round3 booked6113020691 before documentary correction: current summaries
+now agree consumed3/max3/remaining0. Fresh exact-head review pending; no fourth round authorized.
+
+Current design/check/review/protected/finalization/readback gates IN_PROGRESS. No productcode,
+scan, credential/grant, provider, install/signing, execution-DAG or product-version change.
+
 ## Plan96 scope2 — installed recovery acceptance and evidence finalization
 
 Same r81 assignment, Work session and sole Workspace writer; product source remains
