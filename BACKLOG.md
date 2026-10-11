@@ -2,7 +2,7 @@
 
 [Mandate6112225840](https://github.com/pcvantol/forge/issues/208#issuecomment-6112225840),
 assignment L4-HOLISTIC-PROJECT-ONBOARDING-DESIGN-DAG-V1-20261011;
-pickup6112280197, same session/sole writer. Design-only NO_BUMP; correctionbudget0/3.
+pickup6112280197, same session/sole writer. Design-only NO_BUMP; correctionbudget1/3 (remaining2).
 Plan96 is CLOSED via6111284541; old source9/9, recovery2/2, evidence and runtimepins retained.
 
 [Integrated journeys/screen contracts](docs/PROJECT_ONBOARDING_HOLISTIC_V1.md),
@@ -18,6 +18,12 @@ remain PLANNED, implementation NOT_SELECTED. Independent basic linking does not 
 analysis/setup/promotion/full-peer-Q. Recommended future first slice PB-W1-LINK/PB-WQ-LINK has
 one minimum missing EP scoped B8R snapshot/read grant contract; Forge context is optional.
 Exact peer proposals are change requests through the coordinator, not L2/L3 allocations.
+
+
+First full frozen8c7e78b reviews retained as FAIL (Q1/Q2, SEC97-01/02, UX-01).
+Integrated formal design round1 booked once before correction via6112577103.
+Typed discovery/snapshots/GET bindings, explicit decisions and bounded analysis/transfer
+records plus consistent one-repository/two-document wireframes are being corrected together.
 
 Current design/check/review/protected/finalization/readback gates IN_PROGRESS. No productcode,
 scan, credential/grant, provider, install/signing, execution-DAG or product-version change.

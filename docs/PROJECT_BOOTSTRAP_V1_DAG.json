@@ -408,13 +408,15 @@
   },
   "design_delivery": {
     "plan": 97,
-    "status": "DESIGN_REVIEW_PENDING",
+    "status": "INTEGRATED_ROUND1_REVIEW_PENDING",
     "product_implementation": "PLANNED_NOT_SELECTED",
     "correction_budget": {
-      "consumed": 0,
+      "consumed": 1,
       "max": 3,
-      "remaining": 3
-    }
+      "remaining": 2
+    },
+    "first_review": "8c7e78b_FAIL_RETAINED_Q1_Q2_SEC9701_SEC9702_UX01",
+    "round1_booking": 6112577103
   },
   "subset_semantics": "Parent grouping is not a prerequisite edge. Aggregate PB-WQ retains original full-five-route deps; PB-WQ-LINK is independent. Required profile analyses are scoped conditional inputs, not universal initialization prerequisites."
 }

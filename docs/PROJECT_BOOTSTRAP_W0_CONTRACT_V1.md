@@ -30,7 +30,7 @@ blocked on compatible Forge PB-F0 and EP PB-E0 contracts. No producer API,
 runtime, UI, provider, credentials, public repository or installation is
 implemented by PB-W0.
 
-## Additive holistic design extension — hob-design/1.0
+## Additive holistic design extension — hob-design/1.1
 
 The base WORKSPACE_PROJECT_BOOTSTRAP_W0_V1 schema1 and five journey IDs/phase boundaries remain
 unchanged. Its optional holistic_extension records the three visible entrances, verified read-only
@@ -50,3 +50,7 @@ borrowed execution bearer. Deep analysis has separate accepted tool/network/data
 scope. Snapshot joins are owner-specific, source-bound and non-atomic; Workspace stores references,
 not engineering evidence or a second scheduler. Facts, Forge interpretations and governed decisions
 remain separate. No Mission/action is created to make an inspection or progress card work.
+
+The unpublished first1.0 design is retained at frozen8c7e78b as failed review history.
+Design1.1 closes nested source/snapshot contracts and decision/transfer contents; base W0
+contract/schema/five routes and old fixtures are unchanged. These are still unbound proposals.

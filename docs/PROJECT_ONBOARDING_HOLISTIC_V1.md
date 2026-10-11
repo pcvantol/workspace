@@ -100,7 +100,7 @@ context and suggestions; it never serves as an invisible approval collector. Exa
 - User: “Deze service bestaat al; ik wil begrijpen wat ontbreekt.”
 - Assistant: “Ik heb de README en drie architectuurbesluiten als bron. Twee beweringen spreken elkaar tegen.
   Wil je eerst de bronnen bespreken of de voorgestelde analyse bekijken?”
-- Analysis card: “Bronnen lezen — 2 repositories, revisies vastgelegd. Geen scripts of externe upload.”
+- Analysis card: “Bronnen lezen — 1 geselecteerde repository, twee documenten; child uitgesloten. Geen scripts of externe upload.”
 - Optional deeper card: “Tests uitvoeren — EP, maximaal 10 minuten, geïsoleerd; repositoryscripts kunnen
   code uitvoeren. Externe toegang uit. Niet ondersteund op deze stack.” No Start is enabled for it.
 - Finding: “Authenticatie: README zegt sessies; codebeschrijving toont API-sleutels. Waargenomen bron,
@@ -408,3 +408,67 @@ inspection authority, assessment isolation/admission, CENTRAL onboarding snapsho
 Forge interpretation/disposition, immutable plan/child mapping and promotion publication. No unknown
 critical semantic is hidden behind an unspecified universal init. All proposed endpoints/schemas and
 peer changes need owning selection/qualification; L4 writes no peer source or register allocation.
+
+## Integrated design1.1 contract resolution
+
+The first frozen8c7e78b Quality/Security/UX failures remain retained. Formal integrated round1
+(consumed1/max3/remaining2) is booked6112577103; no plan96 allowance is reopened. All new peer
+proposals now say hob-proposal/1.1; this is an unpublished design revision, not a producer upgrade.
+
+Project list returns **DiscoverySnapshot**, topology returns **TopologySnapshot** (committed project,
+exactly one authority, independent repository declarations, scoped attachment availability, cursor and
+revision). A verified link needs these and saves only an own reference; its plan_ref/operation_ref and
+Mission/Action references are absent/null, never invented to satisfy a generic progress envelope.
+
+Every security-critical nested vector/phase/evidence/owner/plan/scope/coverage/limit/tool/isolation
+structure uses closed schemas. SourceRevision is the item schema. Semantic validation additionally
+requires matching owner instance/viewer scope, exact vector digest, one authority, valid attachment
+membership, coherent per-owner monotone revisions and original EP provenance. Schema syntax alone
+is not authority. Late callbacks cannot restore protected data after viewer epoch/scope/expiry changes.
+
+GET carries typed path/query bindings, no body: expected_topology_revision, context source-vector
+digest/evidence-bundle reference, exact relay operation/EP snapshot and vector. Required refs resolve
+only at the configured authenticated owner under current caller visibility; not caller-provided URLs,
+source-file lookups or fallback digests. Current discovery is an authorized finite page, not list-all.
+
+Plan decisions carry explicit APPROVE/REJECT/ABSTAIN and reason, subject revision/digest and
+supersedes. Finding disposition carries kind, exact finding/source digest, reason, deferral trigger,
+bounded accepted-risk scope/expiry or resolution evidence. Receipt binds the actual payload digest
+and verified current actor/role; decline is preserved. A bare chat yes or unresolvable subject digest
+cannot manufacture any decision details or waive the requested action's hard acceptance gates.
+
+INSPECT_READ and ASSESSMENT are separate route/plan effect classes. Each resolves an immutable
+AnalysisPlan, exact tools/profile/version, isolation, absolute expiry and fixed time/cost/output/source/
+attempt caps; caller input cannot enlarge them. Read plans forbid scripts/network/model transfer and
+external cost. Model interpretation requires an owner-resolvable current TransferConsent binding data
+owner rights, verified actor, source vector, redacted payload digest/classes, approved recipient/model,
+purpose, retention, cost and expiry. Unknown nested fields, wrong vector/recipient, missing/expired/
+revoked consent reject before transfer. Explicit SOURCE_ONLY means authorized facts/existing reports
+or a qualified non-model producer primitive; unsupported non-model capability is shown as such.
+No silent model fallback and no extra confirmation for harmless reads or an already valid exact consent.
+
+The scenario's S2→S4→S5 selected source stays atlas-core: one repository, two documentary sources.
+atlas-client remains excluded/unassessed; projectwide API completeness remains partial. The model
+fixtures use the same scoped core vector/child exclusions rather than silently increasing read access.
+
+Goal-only chat before any project/target has its own proposed HOB-F01 draft-context operation.
+It uses an authenticated own-draft reference and qualified draft-advice scope; no EP project ID,
+repository grant or invented source handle. SourceVector[] means genuinely no repository input;
+inspection, baseline and setup still require actual nonempty owner source vectors. Missing advice
+capability keeps the own draft/static questions usable and labels Forge advice unavailable.
+Source-only mode performs no model invocation or data upload. User-declared statements are never
+approved direction, role evidence or instructions; secret/unclassified content is redacted/withheld.
+
+Exact proposed owner preparation routes are also specified: EP analysis-plan proposal then separate
+accepted scope decision, and Forge/EP data-transfer consent decisions. Preparation does not grant
+execution or disclosure; the owning service verifies CURRENT preexisting actor/role/source/data-owner/
+admission rights and stores immutable bounded records. REJECT/ABSTAIN preserve receipt with no
+active consent. Client cannot stamp owner/actor/ACTIVE or issue a bearer. Network permission is not
+external scanner disclosure permission. Actual issuer/role/profile qualification remains a concrete
+missing implementation edge; these routes are PROPOSED, not L4 allocations or grants.
+
+Every POST intent includes stable operation_id/idempotency_key; paid interpretation, preparation and
+decisions are included. Same key/bytes reconciles original result under current access; different bytes
+conflict. Forge's proposed original-intent GET reads original outcome/result evidence without model
+call. Tool/model budget is reserved once per original operation and never reset by retry or uncertain
+provider effect. Workspace retains only its own draft/intent/references, not a second owner work queue.

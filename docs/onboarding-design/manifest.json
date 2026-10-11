@@ -97,9 +97,9 @@
       "kind": "STATIC_DESIGN_ONLY",
       "reading_order": "label \u2192 navigation \u2192 heading \u2192 cards \u2192 action \u2192 boundary",
       "section": "screens",
-      "svg_sha256": "9b2605092956003038ea3908f9332d8110ea818e2617c15ea63614a37263b65f",
+      "svg_sha256": "d2b7c76969b17cbd3c8176a60dbd4c887725ee9c576803ca060826f9c3fc7f6b",
       "preview_file": "06-analysis.png",
-      "preview_sha256": "38084cf4267d582355781961738096b44cbc4c0fbe2be7516293f0bf1d4edbe3",
+      "preview_sha256": "d262c81b392ad4b7c115b41d0eddd3eb432219fba5aaee3800cd2e66aa9764e2",
       "preview_width": 1400,
       "preview_height": 1061,
       "render_method": "Native QuickLook temporary square padding; padding only removed; full original SVG canvas preserved"
@@ -114,9 +114,9 @@
       "kind": "STATIC_DESIGN_ONLY",
       "reading_order": "label \u2192 navigation \u2192 heading \u2192 cards \u2192 action \u2192 boundary",
       "section": "screens",
-      "svg_sha256": "7cac13c3b8574bcf442baf667e2027987d9e07da5b3885ebb383ec87818fa35b",
+      "svg_sha256": "f57941b416981206cf661b856760ef33324b68abf8dffb834bf464541c983fde",
       "preview_file": "06a-analysis-plan.png",
-      "preview_sha256": "700f254548dcdd77f060c69704079476385064d4bc68783682f70a02355c10a3",
+      "preview_sha256": "15aec555d074ae278d6b07e883e2fe4ca823b87ea9f6e6b598d4c6cf680b500e",
       "preview_width": 1400,
       "preview_height": 1061,
       "render_method": "Native QuickLook temporary square padding; padding only removed; full original SVG canvas preserved"
@@ -190,5 +190,16 @@
       "render_method": "Native QuickLook temporary square padding; padding only removed; full original SVG canvas preserved"
     }
   ],
-  "no_product_GUI_or_live_data": true
+  "no_product_GUI_or_live_data": true,
+  "selected_source_story": {
+    "repository": "atlas-core",
+    "documentary_sources": 2,
+    "excluded_child": "atlas-client",
+    "consistent_screens": [
+      "05-repositories",
+      "06a-analysis-plan",
+      "06-analysis"
+    ]
+  },
+  "design_revision": "hob-design/1.1"
 }

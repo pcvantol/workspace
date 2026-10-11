@@ -179,7 +179,7 @@
     "mission_selection_is_separate": true
   },
   "holistic_extension": {
-    "version": "hob-design/1.0",
+    "version": "hob-design/1.1",
     "compatibility": "ADDITIVE_OPTIONAL_EXTENSION_BASE_FIVE_JOURNEYS_UNCHANGED",
     "status": "DESIGN_ONLY_PRODUCER_BINDINGS_UNQUALIFIED",
     "primary_entries": {
@@ -202,6 +202,7 @@
     "proposal_file": "PROJECT_ONBOARDING_CONTRACT_PROPOSALS_V1.json",
     "snapshot_kind": "OWNER_SCOPED_NON_ATOMIC_JOIN",
     "mission_start": "FORBIDDEN_BY_ONBOARDING",
-    "inspection_before_committed_identity": "OWNER_SCOPED_SOURCE_HANDLE_NOT_PROJECT_GRANT"
+    "inspection_before_committed_identity": "OWNER_SCOPED_SOURCE_HANDLE_NOT_PROJECT_GRANT",
+    "proposal_version": "hob-proposal/1.1"
   }
 }
