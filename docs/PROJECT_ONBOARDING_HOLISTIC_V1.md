@@ -409,7 +409,7 @@ Forge interpretation/disposition, immutable plan/child mapping and promotion pub
 critical semantic is hidden behind an unspecified universal init. All proposed endpoints/schemas and
 peer changes need owning selection/qualification; L4 writes no peer source or register allocation.
 
-## Integrated design1.1 contract resolution
+## Historical integrated design1.1 contract resolution
 
 The first frozen8c7e78b Quality/Security/UX failures remain retained. Formal integrated round1
 (consumed1/max3/remaining2) is booked6112577103; no plan96 allowance is reopened. All new peer
@@ -474,7 +474,7 @@ call. Tool/model budget is reserved once per original operation and never reset 
 provider effect. Workspace retains only its own draft/intent/references, not a second owner work queue.
 
 
-### Integrated round2 — exact transfer decisions
+### Historical integrated round2 — exact transfer decisions
 
 Full43e3bee independent reviews remain FAIL history. Round2 is booked6112979707 once
 before documentary correction (consumed2/max3/remaining1). Goal-only MODEL consent now
@@ -489,3 +489,14 @@ expiry/cost are semantic prerequisites, never minted by a fixture or client. EP 
 source-bearing assessment/disclosure prerequisite; goal-only preproject model advice belongs
 to the separately qualified Forge own-draft scope. New synthetic positive and refusal/malformed
 fixtures are offline documentary validation only. Product implementation remains unselected.
+
+
+### Current integrated round3 — owning documentary consistency
+
+Round2 full reviews on1c10500 accepted the complete design/contract/UX content but
+retained overall documentary FAIL because ROADMAP/BACKLOG current headings reported an
+old allowance. Last formal integrated round3 booked6113020691 once before correction:
+consumed3/max3/remaining0. Current BOOTSTRAP, ROADMAP, BACKLOG and owning DAG now agree;
+earlier budget/review entries above are historical and remain preserved. No product or
+contract semantics changed in this round; fresh exact-head acceptance is pending. There
+is no automatic fourth correction round, renamed assignment or reopened plan96 budget.
