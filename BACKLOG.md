@@ -27,10 +27,15 @@ records plus consistent one-repository/two-document wireframes were corrected to
 Historical round2 booked6112979707: goal-only consent and EP refusal envelopes are coherent.
 Full1c10500 content/UX accepted; total documentary review failed only on current budget summaries.
 Final integrated round3 booked6113020691 before documentary correction: current summaries
-now agree consumed3/max3/remaining0. Fresh exact-head review pending; no fourth round authorized.
+now agree consumed3/max3/remaining0. Complete exact-head Quality/Security/UX PASS at e4cda7a; no fourth round authorized.
 
-Current design/check/review/protected/finalization/readback gates IN_PROGRESS. No productcode,
+Design/source checks/reviews and source protected merge PASS; ordinary finalization/readback pending. No productcode,
 scan, credential/grant, provider, install/signing, execution-DAG or product-version change.
+
+Protected design source PR158/main `dd71ac5fe027ffc5baae9073d31120f0719812f6`, exact reviewed e4cda7a tree.
+[Ordinary nonempty finalization](docs/PROJECT_ONBOARDING_DESIGN_FINALIZATION_V1.md)
+records actual source checks/reviews/TDE and the remaining final receipt/protected/readback gates.
+Implementation NOT_SELECTED; proposals unbound. Terminal issue208 closes only after final main readback.
 
 ## Plan96 scope2 — installed recovery acceptance and evidence finalization
 
