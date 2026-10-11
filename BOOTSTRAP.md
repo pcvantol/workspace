@@ -4,8 +4,9 @@ Assignment `L4-HOLISTIC-PROJECT-ONBOARDING-DESIGN-DAG-V1-20261011`,
 mandate [6112225840](https://github.com/pcvantol/forge/issues/208#issuecomment-6112225840).
 Same Work session and sole Workspace writer. Plan96 remains CLOSED via
 [6111284541](https://github.com/pcvantol/forge/issues/208#issuecomment-6111284541).
-Actual base `889eb61d487b1374a63107e46e7d124ae67b77e3`; own branch
-`codex/plan97-holistic-project-onboarding-design`.
+Original design base `889eb61d487b1374a63107e46e7d124ae67b77e3`; protected/closed source branch
+`codex/plan97-holistic-project-onboarding-design`. Current ordinary finalization branch
+`codex/plan97-onboarding-design-finalization`, base protected source-main dd71ac5fe027ffc5baae9073d31120f0719812f6.
 Read-only peer source observations: Forge `f819196e9c025163be40c8e71693a3def4b78bc2`,
 EP `05e530d6339cb1c16b1e8f4814347578c5fd761c`; these are documentary refs,
 not changed runtime pins. Design corrections consumed3/max3/remaining0.

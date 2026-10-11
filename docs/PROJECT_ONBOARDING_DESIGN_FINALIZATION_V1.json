@@ -10,7 +10,8 @@
     "main": "dd71ac5fe027ffc5baae9073d31120f0719812f6",
     "merged_at": "2026-10-11T19:59:33Z",
     "squash_tree_equal": true,
-    "own_source_readback_files": 38
+    "own_source_readback_files": 38,
+    "closed_source_branch": "codex/plan97-holistic-project-onboarding-design"
   },
   "source_observations": {
     "workspace_base": "889eb61d487b1374a63107e46e7d124ae67b77e3",
@@ -416,7 +417,8 @@
     "current_receipt_reviews_and_CI": "SEPARATE_EXACT_HEAD_GATES",
     "exact_final_main_readback": "REQUIRED_POST_MERGE_EXTERNAL_RECEIPT",
     "terminal_registry": "Forge issue208 after actual final main verification",
-    "full_delivery_preclaimed": false
+    "full_delivery_preclaimed": false,
+    "branch": "codex/plan97-onboarding-design-finalization"
   },
   "non_effects": [
     "NO_PRODUCT_CODE",
