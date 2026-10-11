@@ -18,7 +18,7 @@
     "prior_consumption_preserved": true,
     "operation_budgets_unchanged": true
   },
-  "state": "PROTECTED_CANONICALIZATION_REPAIR_MERGED_FINALIZATION_PENDING_NEW_FINAL_MAIN_PROOF",
+  "state": "ROUND7_FROZEN_SOURCE_REVIEW_PENDING",
   "prior_plans_93_95_closed": true,
   "users_credentials_retained": true,
   "consumer_version": "2.8.17",
@@ -204,5 +204,28 @@
     "state": "REVIEWS_CI_PROTECTED_MERGE_PENDING",
     "product_test_policy_version_operation_bytes_unchanged": true,
     "new_exact_final_main_installed_proof": "NOT_YET_QUALIFIED"
+  },
+  "mission_utf8_repair": {
+    "pickup": 6106571737,
+    "authority": "direct user ga verder after explicit round7/max7 request6106404238",
+    "base": "d978fe92743282154bddb6b59e8cc6cab11800e6",
+    "branch": "codex/r81-plan96-mission-utf8",
+    "budget": {
+      "consumed": 7,
+      "maximum": 7,
+      "remaining": 0
+    },
+    "operation": "L4-PLAN96-CORRECTION-ROUND7-20261011",
+    "consumer_version": "2.8.18",
+    "production_delta": "Mission Candidate/MissionSpec/lifecycle UTF8 joins; ASCII envelopes unchanged",
+    "initial_red": "3 Unicode regressions fail original production",
+    "targeted": "30 Mission/workset tests PASS; unchanged real producer packet source regression PASS",
+    "installed": "PENDING_NEW_EXACT_FINAL_MAIN",
+    "previous_installed_blocker": "6106404238 retained",
+    "operational_limits": "UNCHANGED",
+    "source_validation": "198native+1isolated PASS; requiredperfile>80.2; mission_contract97.22%",
+    "independent_bounded_contract": "PASS",
+    "mutation_detection": "all3 originalASCII regressions detected with sourcebytes unchanged",
+    "tde": "standard policy1.4.0 PASS0rules; runtime1.1.1/repository QUALIFIED"
   }
 }
