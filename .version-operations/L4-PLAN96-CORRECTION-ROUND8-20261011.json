@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "r81 plan96 user-authorized round8 after installed UX finding6107271047 pickup6107436414",
+  "determined_version": "2.8.19",
+  "event_lineage": "r81 plan96 user-authorized round8 after installed UX finding6107271047 pickup6107436414",
+  "expected_source_revision": "905aa3b09260cc57874137e35ebcfc6f6f6aa263",
+  "expected_version": "2.8.18",
+  "operation_id": "L4-PLAN96-CORRECTION-ROUND8-20261011",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

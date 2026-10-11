@@ -252,10 +252,15 @@ import Foundation
         }
         guard authorityDeadline == nil || deadline <= authorityDeadline! else { throw AdvisoryError.invalid }
         authorityDeadline = deadline; expiryTask?.cancel()
-        let delay = deadline.timeIntervalSince(clock())
         expiryTask = Task { [weak self] in
-            do { try await Task.sleep(for: .seconds(delay)) } catch { return }
-            self?.expirePreview(now: self?.clock() ?? deadline)
+            // A monotonic wake may precede wall-clock expiry; retain the original deadline and rearm.
+            while !Task.isCancelled {
+                guard let now = self?.clock() else { return }
+                let remaining = deadline.timeIntervalSince(now)
+                if remaining <= 0 { self?.expirePreview(now: now); return }
+                do { try await Task.sleep(for: .seconds(min(remaining, 1)), tolerance: .zero) }
+                catch { return }
+            }
         }
     }
     private func trackedOriginal(_ intent: WorksetReleaseIntent, access: WorksetReleaseAccess, connection: AdvisoryConnection) async throws -> WorksetReleaseObservation {
