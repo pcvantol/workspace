@@ -1,0 +1,187 @@
+{
+  "assignment": "L4-WORKSPACE-NATIVE-CLIENT-HTTP-V1-20261002",
+  "plan": "r81-plan96",
+  "qualification": "PARTIAL_NOT_FULL_DOD",
+  "workspace_version": "2.8.18",
+  "workspace_exact_final_main": "905aa3b09260cc57874137e35ebcfc6f6f6aa263",
+  "workspace_wheel_sha256": "06720fa0b0cbd79322a32841b7355cbd97724ebef3de47bd1ebde51f27ee18fe",
+  "app_tree_sha256": "ac34447554781cad0d7c95cce8600b295f5bfd3f3da1abccdc2398c163b2b8d1",
+  "app_tree_algorithm": "sorted relative file path UTF8 + NUL + raw file SHA256, SHA256 aggregate",
+  "minimum_macos": "26.0",
+  "sdk": "macosx27.0",
+  "installation": "isolated test adapter; noneditable Server; local ad-hoc packaged native app",
+  "forge_version": "2.12.1",
+  "forge_producer_pin": "9875333acc4258a20fc0180a9ae09c980802d5b1",
+  "forge_wheel_sha256": "9b192e7a3cb5d503e795639a2b25b584b178c8bd2ef81af9ef96117af772ec33",
+  "correction_budget": {
+    "consumed": 7,
+    "maximum": 7,
+    "remaining": 0
+  },
+  "accepted_bounded_cases": [
+    "one native release, actual A completion/final acceptance before B starts, two starts total, no extra idle starts",
+    "same original intent recovery across lost replies and server restart",
+    "future-only withdrawal leaves active A intact and prevents B start",
+    "prestart withdrawal with zero starts",
+    "revoked access hides protected release content",
+    "known expiry after failed read clears protected release content",
+    "five languages, dark/light, actual narrow Spanish640px",
+    "observed native keyboard shortcuts and standard Tab traversal",
+    "genuine authorized HTTP200 held before expiry, protected content cleared by observed deadline+5s, actual response released after expiry cannot restore it; zero starts"
+  ],
+  "incomplete": [
+    "known expiry history label remained visible at deadline+1s in two cases; cleared by observed deadline+5s in final bounded case; exact-instant hiding not certified",
+    "no full VoiceOver or every-control keyboard certification",
+    "temporary app CommandQ did not terminate; actual window close and verified process cleanup separately evidenced"
+  ],
+  "screenshots": [
+    {
+      "file": "A-before-B-valid-preview-en-dark.png",
+      "sha256": "dc39490992daae7ed5a4f30bc7af3b79cabaaf8c5f0e802c8bd75651568c177d",
+      "boundary": "actual own synthetic packaged GUI; external EP HTTP simulator; no physical EP claim",
+      "language": "en",
+      "theme": "dark",
+      "png_pixels": [
+        3104,
+        1924
+      ],
+      "scenario": "A-before-B-valid-preview-en-dark",
+      "viewport_AX_points": "not separately recorded for this capture"
+    },
+    {
+      "file": "A-accepted-B-running-en-dark.png",
+      "sha256": "b2e58601e092d8c7eac495ad837a04a722dbbbc328dc6878a7dc51a078179a6a",
+      "boundary": "actual own synthetic packaged GUI; external EP HTTP simulator; no physical EP claim",
+      "language": "en",
+      "theme": "dark",
+      "png_pixels": [
+        3104,
+        1924
+      ],
+      "scenario": "A-accepted-B-running-en-dark",
+      "viewport_AX_points": "not separately recorded for this capture"
+    },
+    {
+      "file": "completed-original-nl-dark.png",
+      "sha256": "d42a4482e6dba11ae8ff0ffd8ea6f3dd0d566f79dabc1356f8a3fb814d267664",
+      "boundary": "actual own synthetic packaged GUI; external EP HTTP simulator; no physical EP claim",
+      "language": "nl",
+      "theme": "dark",
+      "png_pixels": [
+        3104,
+        1924
+      ],
+      "scenario": "completed-original-nl-dark",
+      "viewport_AX_points": "1440.0 850.0"
+    },
+    {
+      "file": "completed-original-de-light.png",
+      "sha256": "eb2769c2c79bc33f69cf8ef0b2e9b2b41d90e06ce6ff206009b17ca593de45a4",
+      "boundary": "actual own synthetic packaged GUI; external EP HTTP simulator; no physical EP claim",
+      "language": "de",
+      "theme": "light",
+      "png_pixels": [
+        3104,
+        1924
+      ],
+      "scenario": "completed-original-de-light",
+      "viewport_AX_points": "1440.0 850.0"
+    },
+    {
+      "file": "completed-original-fr-dark.png",
+      "sha256": "1a91e6d8d214e5d350a910652343f1d149602cb3e6e737976b502d28676581bb",
+      "boundary": "actual own synthetic packaged GUI; external EP HTTP simulator; no physical EP claim",
+      "language": "fr",
+      "theme": "dark",
+      "png_pixels": [
+        3104,
+        1924
+      ],
+      "scenario": "completed-original-fr-dark",
+      "viewport_AX_points": "1440.0 850.0"
+    },
+    {
+      "file": "completed-original-es-light-narrow.png",
+      "sha256": "9b9b31c1fdb217357b4c421b7659a5db99d791f2bd14779286a2778b22ce417d",
+      "boundary": "actual own synthetic packaged GUI; external EP HTTP simulator; no physical EP claim",
+      "language": "es",
+      "theme": "light",
+      "png_pixels": [
+        1504,
+        1924
+      ],
+      "scenario": "completed-original-es-light-narrow",
+      "viewport_AX_points": "640.0 850.0"
+    },
+    {
+      "file": "completed-original-en-dark.png",
+      "sha256": "b18267b561bf929371ae56b377204671c8bb84fc17b999d055447e8451715200",
+      "boundary": "actual own synthetic packaged GUI; external EP HTTP simulator; no physical EP claim",
+      "language": "en",
+      "theme": "dark",
+      "png_pixels": [
+        3104,
+        1924
+      ],
+      "scenario": "completed-original-en-dark",
+      "viewport_AX_points": "1440.0 850.0"
+    },
+    {
+      "file": "withdrawal-actual-refreshed-original-current-en-dark.png",
+      "sha256": "bd1bfff29f3db04acebd02470548d9569a1148084efce7899a4b279962e02ca8",
+      "boundary": "actual own synthetic packaged GUI; external EP HTTP simulator; no physical EP claim",
+      "language": "en",
+      "theme": "dark",
+      "png_pixels": [
+        3104,
+        1924
+      ],
+      "scenario": "withdrawal-actual-refreshed-original-current-en-dark",
+      "viewport_AX_points": "not separately recorded for this capture"
+    },
+    {
+      "file": "expired-known-authority-after-read-loss-en-dark.png",
+      "sha256": "b888b58e979eeb5d18c9348a5826b70cb8eeeb306d9fc6b17828b68d9240d730",
+      "boundary": "actual own synthetic packaged GUI; external EP HTTP simulator; no physical EP claim",
+      "language": "en",
+      "theme": "dark",
+      "png_pixels": [
+        3104,
+        1924
+      ],
+      "scenario": "expired-known-authority-after-read-loss-en-dark",
+      "viewport_AX_points": "not separately recorded for this capture"
+    },
+    {
+      "file": "late-authorized-response-after-expiry-content-stays-cleared-en-dark.png",
+      "sha256": "95c12749a64a6b888c721a03881ad762cbfe589abd12e45827fab4fcb67ee52f",
+      "boundary": "actual own synthetic packaged GUI after genuine delayed HTTP200 release; no physical EP claim",
+      "language": "en",
+      "theme": "dark",
+      "png_pixels": [
+        3104,
+        1924
+      ],
+      "scenario": "late response cannot restore expired protected content",
+      "viewport_AX_points": "1440.0 850.0"
+    }
+  ],
+  "qualification_usage_new_final_main_scopes": {
+    "finite_original_scopes": 7,
+    "synthetic_definition_calls": 21,
+    "EP_starts_total": 3,
+    "paid_model_calls": 0,
+    "old_roots_grants_limits_changed": false,
+    "failed_or_incomplete_attempts_retained": true
+  },
+  "workspace_source_tree": "bf2057b7ce9b0139eb4c81cc2be7ea9f746b29e8",
+  "expiry_observation": {
+    "original_deadline_utc": "2026-10-11T08:42:41.516347+00:00",
+    "history_label_still_visible_at_seconds_after_deadline": 0.979832,
+    "protected_content_observed_cleared_at_seconds_after_deadline": 5.085265,
+    "actual_held_response_released_seconds_after_deadline": 5.125199,
+    "response_nonrestoration": "PASS within this bounded actual scenario",
+    "exact_instant_clearing": "NOT_CERTIFIED",
+    "raw_attempts_and_overbroad_boolean_retained_privately": "not treated as exact-instant proof"
+  }
+}
