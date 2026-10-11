@@ -1,3 +1,11 @@
+## Plan96 specific user-authorized round6 — Server planning digest
+
+User explicitly approved cumulative round6/max6 after the concrete Server blocker; pickup6106126074 booked consumed6/max6/remaining0 BEFORE first edit. Same assignment/session/sole writer/repairbranch/basea905; PR147/148 closed, PR149 remains existing repair. Candidate2.8.17 original undelivered PATCH allocation retained; no duplicate bump/reset/automatic seventh. ExactForge2.12.1/9875333 and every operational budget unchanged.
+
+Server Architecture planning_digest now uses existing ASCII advisory digest, matching native/pinned producer; inner UTF8 Mission/definition/lifecycle contracts preserved. First new positive ASCII regression redINVALID_RESPONSE on old source; correctASCIIpositive/wrongUTF8negative/missingproofnegative nowPASS, full12PythoncontracttestsPASS. Reintroducing the original fault in an isolated unittest process is detected, actual productfile hash unchanged. Independent bounded consumer/native/producer matrix PASS actual12vector comparisons and updated Unicode test.
+
+Full owning validate PASS198native+1isolated, all required productionfiles strictly>80.2%, modified Pythoncontract99.50%. Actual standard TDE PASS0rules/repositoryQUALIFIED under unchangedpolicy1.4.0/runtime1.1.1. All previous complete reports/failures/usage retained, including450afa QualityPASS/SecurityFAIL. Fresh complete exact-head Quality/Security andCI/protectedrepair/nonemptyfinalization/NEWmatchingfinalmaininstalled/recovery/fullUX/screens remain mandatory and pending. No new operational qualification scope started at source admission.
+
 ## Plan96 specific round5 — native canonicalization repair
 
 Decision6101549357/pickup6101630168 books consumed5/max5/remaining0 before source/test edits; original4 and every operational budget retained. PR147/148 remain closed. Same assignment/session/sole writer; repair branch codex/r81-plan96-native-canonicalization starts at a905771. Forge remains exact2.12.1/9875333. Separate canonical PATCH2.8.16→2.8.17 operation L4-PLAN96-CORRECTION-ROUND5-20261010 preserves old release artifacts.

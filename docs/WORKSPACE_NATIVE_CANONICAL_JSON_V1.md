@@ -32,3 +32,9 @@ The small caller review discovered Workset Architecture planning wrongly using U
 ## Delivery boundary
 
 Independent small vector/caller review, full validation/coverage, independent whole-delta Quality/Security, required CI, protected repair merge, nonempty reviewed finalization and NEW exact-final-main installed/GUI/recovery acceptance remain mandatory. Earlier2.8.16 proofs retain their original identity. No producer upgrade, live EP, paid model, signing, credentials, old roots/grants or operational budgets changed.
+
+## Specific round6 continuation
+
+Direct user authorization after specific cumulative-max6 request, pickup6106126074; consumed6/max6/remaining0 before source edit, original5 and all operation budgets retained. Existing repair PR149/candidate2.8.17 remains, no new allocation or duplicate version bump. Server Architecture planning_digest joins now use existing ASCII digest, aligned with native and exact pinned Forge. The former Python positive Unicode test mirrored incorrect UTF8; it now uses actual ASCII and explicitly rejects incorrect UTF8 and missing proof.
+
+New red INVALID_RESPONSE preserved; full12contracttestsPASS, isolated original-fault reintroduction detected with unchanged productbytes. Independent bounded full consumer/native/producer encoding matrix PASS. Full validate198+1PASS/allrequiredproduction>80.2%, Pythoncontract99.50%; standardTDEPASS0rules/QUALIFIED unchanged. Prior450afa complete SecurityFAIL remains historical. Fresh complete head-bound reviews and all remaining delivery/installed/UX gates remain required; no source-only completion claim.
