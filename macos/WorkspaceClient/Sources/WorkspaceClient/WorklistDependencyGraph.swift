@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 // The graph receives the same atomic observation and selection as the list.
 struct WorklistDependencyGraph: View {
@@ -9,6 +10,7 @@ struct WorklistDependencyGraph: View {
     var humanNames: [String: String] = [:]
     @Environment(\.locale) private var locale
     @State private var viewport = WorklistGraphViewport()
+    @State private var focusRequest = 0
 
     private func copy(_ key: String) -> String {
         WorklistCopy.text(key, language: locale.language.languageCode?.identifier)
@@ -31,15 +33,15 @@ struct WorklistDependencyGraph: View {
                     .font(.caption).accessibilityIdentifier("worklist.graph.missing")
             }
             GeometryReader { geometry in
-                ScrollViewReader { reader in
                     VStack(alignment: .leading) {
-                        controls(layout, reader: reader, size: geometry.size)
+                        controls(layout, size: geometry.size)
                         ScrollView([.horizontal, .vertical]) {
                             ZStack(alignment: .topLeading) {
                                 connections(layout)
                                 ForEach(layout.nodes, id: \.item.key) { node in
                                     nodeButton(node)
                                         .frame(width: WorklistGraphLayout.nodeWidth, height: WorklistGraphLayout.nodeHeight)
+                                        .background(WorklistGraphFocusTarget(request: selection == node.item.key ? focusRequest : 0))
                                         .position(x: x(node), y: y(node, layout: layout))
                                         .id(node.item.key)
                                 }
@@ -51,15 +53,14 @@ struct WorklistDependencyGraph: View {
                         .accessibilityLabel(copy("graphPan"))
                         .accessibilityIdentifier("worklist.graph.canvas")
                     }
-                }
             }.frame(height: 420)
         }
     }
 
-    private func controls(_ layout: WorklistGraphLayout, reader: ScrollViewProxy, size: CGSize) -> some View {
+    private func controls(_ layout: WorklistGraphLayout, size: CGSize) -> some View {
         ViewThatFits(in: .horizontal) {
-            HStack { zoomControls(layout, size: size); navigation(layout, reader: reader) }
-            VStack(alignment: .leading) { zoomControls(layout, size: size); navigation(layout, reader: reader) }
+            HStack { zoomControls(layout, size: size); navigation(layout) }
+            VStack(alignment: .leading) { zoomControls(layout, size: size); navigation(layout) }
         }
     }
 
@@ -75,25 +76,25 @@ struct WorklistDependencyGraph: View {
         }
     }
 
-    private func navigation(_ layout: WorklistGraphLayout, reader: ScrollViewProxy) -> some View {
+    private func navigation(_ layout: WorklistGraphLayout) -> some View {
         HStack {
-            Button(copy("graphPrevious")) { select(layout.adjacent(to: selection, direction: -1), reader: reader) }
+            Button(copy("graphPrevious")) { select(layout.adjacent(to: selection, direction: -1)) }
                 .disabled(layout.nodes.isEmpty).accessibilityIdentifier("worklist.graph.previous")
-            Button(copy("graphNext")) { select(layout.adjacent(to: selection, direction: 1), reader: reader) }
+            Button(copy("graphNext")) { select(layout.adjacent(to: selection, direction: 1)) }
                 .disabled(layout.nodes.isEmpty).accessibilityIdentifier("worklist.graph.next")
-            Button(copy("graphFocus")) { focus(reader) }
+            Button(copy("graphFocus")) { focus() }
                 .disabled(!layout.nodes.contains(where: { $0.item.key == selection }))
                 .accessibilityIdentifier("worklist.graph.focus")
         }
     }
 
-    private func select(_ key: ApprovedWorklistKey?, reader: ScrollViewProxy) {
+    private func select(_ key: ApprovedWorklistKey?) {
         selection = key
-        focus(reader)
+        focus()
     }
 
-    private func focus(_ reader: ScrollViewProxy) {
-        if let selection { reader.scrollTo(selection, anchor: .center) }
+    private func focus() {
+        if selection != nil { focusRequest += 1 }
     }
 
     private func nodeButton(_ node: WorklistGraphNode) -> some View {
@@ -142,5 +143,47 @@ struct WorklistDependencyGraph: View {
                 }
             }
         }.accessibilityHidden(true)
+    }
+}
+
+// A positioned SwiftUI canvas target can describe the canvas instead of its card.
+// Resolve the actual card through its local AppKit geometry, including outer clips.
+struct WorklistGraphFocusTarget: NSViewRepresentable {
+    let request: Int
+    func makeNSView(context: Context) -> WorklistGraphFocusMarker { WorklistGraphFocusMarker() }
+    func updateNSView(_ view: WorklistGraphFocusMarker, context: Context) {
+        view.request = request
+        guard request > 0, request != view.completedRequest else { return }
+        DispatchQueue.main.async { [weak view] in
+            guard let view, view.request == request else { return }
+            view.layoutSubtreeIfNeeded()
+            WorklistGraphFocusMarker.reveal(view)
+            view.completedRequest = request
+        }
+    }
+}
+
+final class WorklistGraphFocusMarker: NSView {
+    var request = 0
+    var completedRequest = 0
+    override var isFlipped: Bool { true }
+    override func hitTest(_ point: NSPoint) -> NSView? { nil }
+    override func isAccessibilityElement() -> Bool { false }
+
+    static func reveal(_ card: NSView) {
+        var ancestor = card.superview
+        while let view = ancestor {
+            if let clip = view as? NSClipView {
+                let target = card.convert(card.bounds, to: clip)
+                var bounds = clip.bounds
+                // Keep oversized cards scrollable; centering never changes zoom.
+                bounds.origin = CGPoint(x: target.midX - bounds.width / 2,
+                                        y: target.midY - bounds.height / 2)
+                let constrained = clip.constrainBoundsRect(bounds)
+                clip.scroll(to: constrained.origin)
+                clip.enclosingScrollView?.reflectScrolledClipView(clip)
+            }
+            ancestor = view.superview
+        }
     }
 }
