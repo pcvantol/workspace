@@ -49,7 +49,8 @@ final class ProjectConceptLibraryTests:XCTestCase {
         let read=Task {await s.refresh(current:{c})};for _ in 0..<100 where peer.hold==nil {await Task.yield()}
         s.searchQuery="Missing";s.libraryTab="ARCHIVED";peer.hold?.resume(returning:peer.items.map(\.summary));await read.value
         XCTAssertEqual(s.selected?.id,id);XCTAssertEqual(s.notes,"Unsaved own text");XCTAssertEqual(s.libraryEmptyMessage,"noTitles")
-        peer.readHeld=false;peer.items=[];s.searchQuery="";await s.refresh(current:{c});XCTAssertEqual(s.libraryEmptyMessage,"archiveEmpty")
+        peer.readHeld=false;peer.items=[];s.searchQuery="";await s.refresh(current:{c});XCTAssertEqual(s.phase,"conflict");XCTAssertNil(s.libraryEmptyMessage);XCTAssertEqual(s.notes,"Unsaved own text")
+        s.invalidate();await s.refresh(current:{c});s.libraryTab="ARCHIVED";XCTAssertEqual(s.libraryEmptyMessage,"archiveEmpty")
         s.libraryTab="ACTIVE";XCTAssertEqual(s.libraryEmptyMessage,"activeEmpty")
         s.concealAuthorization();XCTAssertNil(s.libraryEmptyMessage);XCTAssertEqual(s.searchQuery,"");XCTAssertEqual(s.notes,"")
     }
@@ -81,6 +82,24 @@ final class ProjectConceptLibraryTests:XCTestCase {
         var invalid=record();invalid.lifecycle="DELETED";XCTAssertThrowsError(try invalid.validate("own-context"))
         let broken=root.appendingPathComponent("file");try Data().write(to:broken)
         let b=ProjectConceptState(transport:peer,root:broken);await b.refresh(current:{c});XCTAssertEqual(b.phase,"offline")
+    }
+    @MainActor func testFreshLifecycleMetadataReconcilesCleanDirtyAndOriginalRecovery() async throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
+        let peer=LibraryFixture();peer.items=[record()];let c=connection,s=ProjectConceptState(transport:peer,root:root)
+        await s.refresh(current:{c});await s.open(peer.items[0].id,current:{c})
+        let original=peer.items[0]
+        peer.items[0]=ProjectConcept(id:original.id,actor_id:original.actor_id,context_id:original.context_id,title:original.title,notes:original.notes,revision:2,created_at:original.created_at,updated_at:original.updated_at,state:original.state,lifecycle:"ARCHIVED",library_version:original.library_version)
+        await s.refresh(current:{c});XCTAssertEqual(s.phase,"conflict");XCTAssertTrue(s.selectedIsArchived);XCTAssertEqual(s.selected?.revision,1);XCTAssertEqual(s.notes,original.notes)
+        let count=peer.moves.count;await s.move(current:{c});await s.save(current:{c});XCTAssertEqual(peer.moves.count,count)
+        s.notes="Eligible local text remains";await s.refresh(current:{c});XCTAssertEqual(s.phase,"conflict");XCTAssertEqual(s.notes,"Eligible local text remains")
+        s.clientPhaseChanged("UNAVAILABLE");XCTAssertTrue(s.selectedIsArchived);XCTAssertEqual(s.notes,"Eligible local text remains")
+        await s.refresh(current:{c});await s.open(original.id,discard:true,current:{c});XCTAssertEqual(s.selected?.revision,2);XCTAssertTrue(s.selectedIsArchived)
+        peer.items[0]=original;await s.refresh(current:{c});XCTAssertEqual(s.phase,"conflict");XCTAssertTrue(s.selectedIsArchived)
+        await s.open(original.id,discard:true,current:{c});XCTAssertFalse(s.selectedIsArchived)
+        peer.drop=true;await s.move(current:{c});let pending=try XCTUnwrap(s.pendingLifecycle)
+        await s.refresh(current:{c});XCTAssertEqual(s.phase,"lifecycleRetry");XCTAssertEqual(s.pendingLifecycle?.command,pending.command);XCTAssertEqual(s.selected?.revision,1)
+        peer.drop=false;await s.move(current:{c});XCTAssertEqual(s.selected?.revision,2);XCTAssertTrue(s.selectedIsArchived)
+        s.concealAuthorization();XCTAssertNil(s.selectedLifecycleHint);XCTAssertFalse(s.selectedIsArchived)
     }
     @MainActor func testFiveLanguageLibraryViewActiveArchiveConflictAndNarrow() throws {
         let peer=LibraryFixture();peer.items=[record(),record("d",life:"ARCHIVED")]

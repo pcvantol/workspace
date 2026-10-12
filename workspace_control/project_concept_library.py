@@ -12,7 +12,7 @@ TABLE = 'project_concept_lifecycle_v1'
 MARKER = 'project-concept-library-schema-v1.json'
 
 
-def schema(base, db, *, write=False):
+def allocation(base):
     try:
         marker = _private_json(MARKER, dir_fd=base.root_fd)
     except FileNotFoundError:
@@ -21,24 +21,41 @@ def schema(base, db, *, write=False):
         raise ConceptStorageUnavailable('library allocation unavailable') from error
     if marker is not None and marker != {'library_version': VERSION}:
         raise ConceptStorageUnavailable('incompatible library allocation')
-    exists = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (TABLE,)).fetchone() is not None
-    if exists:
-        if {r[1]:r[5] for r in db.execute('PRAGMA table_info('+TABLE+')')} != {'concept_id':1,'lifecycle':0}:
-            raise ConceptStorageUnavailable('incompatible library schema')
-        if db.execute('SELECT 1 FROM '+TABLE+' l LEFT JOIN project_concepts_v1 c ON c.id=l.concept_id WHERE c.id IS NULL OR l.lifecycle NOT IN (\'ACTIVE\',\'ARCHIVED\') LIMIT 1').fetchone():
-            raise ConceptStorageUnavailable('invalid library source')
-    elif marker is not None:
+    return marker
+
+
+def preflight(base):
+    # This evidence must precede the legacy first-empty and SQLite create paths.
+    if allocation(base) is not None and not (base.root / 'conversations.sqlite3').exists():
         raise ConceptStorageUnavailable('initialized library source lost')
+
+
+def schema(base, db, *, write=False):
+    marker = allocation(base)
+    tables = {r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+    exists = TABLE in tables
+    # Preserved immutable lifecycle receipts also prove earlier allocation when
+    # both marker and overlay disappeared. Never rewrite those historical bytes.
+    history = False
+    if marker is None and not exists and 'project_concept_operations_v1' in tables:
+        history = db.execute("SELECT 1 FROM project_concept_operations_v1 WHERE json_extract(response,'$.library_version')=? LIMIT 1",(VERSION,)).fetchone() is not None
+    if (marker is None and (exists or history)) or (marker is not None and not exists):
+        raise ConceptStorageUnavailable('incomplete initialized library allocation')
+    if exists:
+        signature = {r[1]:(r[2],r[3],r[5]) for r in db.execute('PRAGMA table_info('+TABLE+')')}
+        if signature != {'concept_id':('TEXT',0,1),'lifecycle':('TEXT',1,0)}:
+            raise ConceptStorageUnavailable('incompatible library schema')
+        if db.execute('SELECT 1 FROM '+TABLE+' l LEFT JOIN project_concepts_v1 c ON c.id=l.concept_id WHERE c.id IS NULL OR l.lifecycle IS NULL OR l.lifecycle NOT IN (\'ACTIVE\',\'ARCHIVED\') LIMIT 1').fetchone():
+            raise ConceptStorageUnavailable('invalid library source')
     elif write:
         # Explicit authorized lifecycle-write allocation. Never invoked by a GET.
         with db:
             db.execute('CREATE TABLE '+TABLE+' (concept_id TEXT PRIMARY KEY, lifecycle TEXT NOT NULL CHECK(lifecycle IN (\'ACTIVE\',\'ARCHIVED\')))')
-        exists = True
-    if write and marker is None:
         fd = os.open(MARKER, os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW, 0o600, dir_fd=base.root_fd)
         with os.fdopen(fd,'w') as stream:
             json.dump({'library_version':VERSION},stream); stream.flush(); os.fsync(stream.fileno())
         os.fsync(base.root_fd)
+        exists = True
     return exists
 
 

@@ -1,6 +1,6 @@
 # Own project concept library V1 — plan100
 
-Selected [6123101178](https://github.com/pcvantol/forge/issues/208#issuecomment-6123101178), librarybudget0/3, actual merged base5e354a5 (2.8.22), normal PATCH2.8.23. Plan99 remains closed; PR160 and LINK2/3/1 parked. Only title search, Active ideas/Archive, durable archive and restore of the same concept. No EP/Forge/provider, configured project, repository, scan, Mission or execution effect.
+Selected [6123101178](https://github.com/pcvantol/forge/issues/208#issuecomment-6123101178), librarybudget1/3 after integrated round6123731480, actual merged base5e354a5 (2.8.22), normal PATCH2.8.23. Plan99 remains closed; PR160 and LINK2/3/1 parked. Only title search, Active ideas/Archive, durable archive and restore of the same concept. No EP/Forge/provider, configured project, repository, scan, Mission or execution effect.
 
 ## Explicit HTTP compatibility
 
@@ -23,3 +23,7 @@ One explicit Archive/Restore action; no destructive confirmation wizard or combi
 ## Required acceptance
 
 Actual source/HTTP migration+legacy-receipt/schema/read-only tests; total/receipt quotas, stale Save/Archive/Restore/opposite-after-original-replay, actor/context/revocation and commit/publication fence. Native dirty/pending/query/filter/duplicate titles/focus/late reads and durable original recovery; all five languages/theme/narrow retain finite layout. Strict executable coverage>80.2% per changed production file. One meaningful private installed stale/lifecycle guard refault must make coupled test red. Whole new independent Q/S/UX on frozen candidate; mandatory owning validation/packaging/current CI and actual TDE artifact, protected match-head delivery, ordinary nonempty reviewed NO_BUMP finalization. NEW exact-final-main own noneditable Server/packaged native/real GUI, archive across separate OS restarts, original-response-loss replay, Restore/currentreadback, negative cases, fresh privacy-reviewed reachable screenshots, independent proof and cleanup. No fixture/plan99-PASS relabeling. Raw private proof and failures retained; both own pairings revoked and own processes stopped before closure.
+
+## Integrated correction history
+
+Initial ad324 full Quality/Security/UX FAIL and mandatory217native/1failure retained. Round1 booked before corrections,1/max3/remaining2: all retained allocation evidence checked before empty/open/create, marker/overlay-loss with durable original lifecycle receipts and NULL/schema corruption fail closed; metadata refresh marks selected stale/read-only without changing local content; source presenter .task state isolated from independent command-state assertions without weakened assertions/deadlines. New full exacthead qualification remains required.

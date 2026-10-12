@@ -91,4 +91,44 @@ class ProjectConceptLibraryTests(unittest.TestCase):
             self.assertFalse(revoked.wait(.1));finish.set();request.join(3);revoker.join(3)
         self.assertTrue(revoked.is_set());self.assertEqual(result[0][0],200);self.assertEqual(self.detail(item)[0],403)
 
+
+class LibraryAllocationRegressionTests(unittest.TestCase):
+    setUp=ProjectConceptLibraryTests.setUp
+    tearDown=ProjectConceptLibraryTests.tearDown
+    request=ProjectConceptLibraryTests.request
+    fields=ProjectConceptLibraryTests.fields
+    create=ProjectConceptLibraryTests.create
+    move=ProjectConceptLibraryTests.move
+    detail=ProjectConceptLibraryTests.detail
+    receipts=ProjectConceptLibraryTests.receipts
+    def test_retained_library_marker_blocks_missing_database_before_every_open(self):
+        item=self.create();self.move(item)
+        db=self.root/'conversations.sqlite3';original_db=db.read_bytes();old=self.root/'project-concepts-schema-v1.json';original_old=old.read_bytes()
+        db.unlink();old.unlink()
+        for path,method,body in [('/v2/project-concepts','GET',None),('/v2/project-concepts/'+item['id'],'GET',None),('/v2/project-concepts/'+item['id']+'/lifecycle','POST',{'operation_id':'c'*32,'expected_revision':2,'lifecycle':'ACTIVE'}),('/v1/project-concepts','GET',None),('/v1/project-concepts','POST',self.fields(operation_id='c'*32))]:
+            self.assertEqual(self.request(path,method,body)[0],503);self.assertFalse(db.exists());self.assertFalse(old.exists())
+        (self.root/MARKER).write_text('{bad')
+        self.assertEqual(self.request('/v2/project-concepts')[0],503);self.assertFalse(db.exists())
+        db.write_bytes(original_db);db.chmod(0o600);old.write_bytes(original_old);old.chmod(0o600)
+    def test_missing_overlay_and_marker_preserved_receipts_never_reactivate(self):
+        item=self.create();self.move(item);db=self.root/'conversations.sqlite3';marker=self.root/MARKER;original=db.read_bytes();original_marker=marker.read_bytes();receipts=self.receipts()
+        for drop in [False,True]:
+            marker.unlink()
+            if drop:
+                with closing(sqlite3.connect(db)) as conn,conn:conn.execute('DROP TABLE '+TABLE)
+            before=db.read_bytes()
+            self.assertEqual(self.request('/v2/project-concepts')[0],503)
+            self.assertEqual(self.request('/v1/project-concepts/'+item['id'],'PATCH',self.fields(expected_revision=2,operation_id='c'*32))[0],503)
+            self.assertEqual(self.move(item,'ACTIVE','c'*32,revision=2)[0],503)
+            self.assertEqual(db.read_bytes(),before);self.assertFalse(marker.exists());self.assertEqual(self.receipts(),receipts)
+            db.write_bytes(original);db.chmod(0o600);marker.write_bytes(original_marker);marker.chmod(0o600)
+        self.assertEqual(self.detail(item)[1]['lifecycle'],'ARCHIVED')
+    def test_nullable_wrong_type_invalid_orphaned_overlay_fail_without_normalizing(self):
+        item=self.create();self.move(item);db=self.root/'conversations.sqlite3';original=db.read_bytes()
+        for definition,identity,life in [('concept_id TEXT PRIMARY KEY,lifecycle TEXT',item['id'],None),('concept_id TEXT PRIMARY KEY,lifecycle INTEGER NOT NULL',item['id'],1),('concept_id TEXT PRIMARY KEY,lifecycle TEXT NOT NULL',None,'ACTIVE'),('concept_id TEXT PRIMARY KEY,lifecycle TEXT NOT NULL',item['id'],'DELETED')]:
+            with closing(sqlite3.connect(db)) as conn,conn:
+                conn.execute('DROP TABLE '+TABLE);conn.execute('CREATE TABLE '+TABLE+' ('+definition+')');conn.execute('INSERT INTO '+TABLE+' VALUES (?,?)',(identity,life))
+            before=db.read_bytes();self.assertEqual(self.request('/v2/project-concepts')[0],503);self.assertEqual(self.move(item,'ACTIVE','c'*32,revision=2)[0],503);self.assertEqual(db.read_bytes(),before)
+            db.write_bytes(original);db.chmod(0o600)
+
 if __name__=='__main__':unittest.main()

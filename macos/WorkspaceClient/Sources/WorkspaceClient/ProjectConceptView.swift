@@ -93,14 +93,14 @@ struct ProjectConceptView: View {
                     }.frame(maxHeight:160)
                 }
                 TextField(text("title"),text:$state.title).textFieldStyle(.roundedBorder).focused($titleFocused)
-                    .disabled(state.busy || state.pending != nil || state.pendingLifecycle != nil || state.selected?.lifecycle == "ARCHIVED").accessibilityIdentifier("concept-title")
+                    .disabled(state.busy || state.pending != nil || state.pendingLifecycle != nil || state.selectedIsArchived).accessibilityIdentifier("concept-title")
                 Text(text("notes")).font(.headline)
                 TextEditor(text:$state.notes).frame(height:180).overlay(RoundedRectangle(cornerRadius:8).stroke(.quaternary))
-                    .disabled(state.busy || state.pending != nil || state.pendingLifecycle != nil || state.selected?.lifecycle == "ARCHIVED").accessibilityLabel(text("notes")).accessibilityIdentifier("concept-notes")
+                    .disabled(state.busy || state.pending != nil || state.pendingLifecycle != nil || state.selectedIsArchived).accessibilityLabel(text("notes")).accessibilityIdentifier("concept-notes")
                 Button(text(state.pending == nil ? "save" : "retry")) { Task { await state.save(current:current) } }
-                    .buttonStyle(.borderedProminent).disabled(state.busy || state.pendingLifecycle != nil || (state.pending == nil && state.selected?.lifecycle == "ARCHIVED") || (state.selected != nil && !state.dirty && state.pending == nil)).keyboardShortcut(commandsActive ? KeyboardShortcut("s",modifiers:.command) : nil).accessibilityIdentifier("concept-save")
+                    .buttonStyle(.borderedProminent).disabled(state.busy || state.phase == "conflict" || state.pendingLifecycle != nil || (state.pending == nil && state.selectedIsArchived) || (state.selected != nil && !state.dirty && state.pending == nil)).keyboardShortcut(commandsActive ? KeyboardShortcut("s",modifiers:.command) : nil).accessibilityIdentifier("concept-save")
                 if let selected = state.selected {
-                    if selected.lifecycle == "ARCHIVED" { Text(text("archived")).foregroundStyle(.secondary) }
+                    if state.selectedIsArchived { Text(text("archived")).foregroundStyle(.secondary) }
                     Button(text(state.pendingLifecycle != nil ? "lifecycleRetry" : selected.lifecycle == "ARCHIVED" ? "restoreAction" : "archiveAction")) {
                         Task { await state.move(current:current) }
                     }.disabled(state.lifecycleBlocked).accessibilityIdentifier("concept-lifecycle")

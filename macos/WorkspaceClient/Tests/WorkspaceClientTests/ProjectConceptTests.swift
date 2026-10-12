@@ -103,9 +103,11 @@ final class ProjectConceptTests:XCTestCase {
         let root=temporary();defer{try? FileManager.default.removeItem(at:root)}
         let fixture=ConceptFixture(),binding=connection;let state=ProjectConceptState(transport:fixture,root:root)
         let client=ClientState(keychain:ConceptMemoryServer());let grants=ConceptMemoryGrant()
+        // Hosting .task must not race the independent command-state assertions.
+        let presentation=ProjectConceptState(transport:fixture,root:temporary())
         for language in ["en","nl","de","fr","es"] {
             for key in ProjectConceptCopy.values.keys {XCTAssertNotEqual(ProjectConceptCopy.text(key,language:language),key)}
-            let view=NSHostingView(rootView:ProjectConceptView(state:state,client:client,grants:grants).environment(\.locale,Locale(identifier:language)))
+            let view=NSHostingView(rootView:ProjectConceptView(state:presentation,client:client,grants:grants).environment(\.locale,Locale(identifier:language)))
             view.frame=NSRect(x:0,y:0,width:560,height:780);view.layoutSubtreeIfNeeded()
         }
         XCTAssertEqual(ProjectConceptCopy.text("unknown",language:"nl"),"unknown")
@@ -113,8 +115,9 @@ final class ProjectConceptTests:XCTestCase {
         await state.refresh(current:{binding});state.new(defaultTitle:"Idea");await state.save(current:{binding})
         let item=try XCTUnwrap(state.selected);try item.validate("own-context")
         XCTAssertThrowsError(try item.validate("wrong"))
-        let view=NSHostingView(rootView:ProjectConceptView(state:state,client:client,grants:grants));view.frame=NSRect(x:0,y:0,width:560,height:780);view.layoutSubtreeIfNeeded()
-        state.notes="conflict";fixture.fail = .conflict;await state.save(current:{binding});view.layoutSubtreeIfNeeded()
+        state.notes="conflict";fixture.fail = .conflict;await state.save(current:{binding})
+        presentation.selected=item;presentation.title=item.title;presentation.notes="conflict";presentation.phase="conflict"
+        let view=NSHostingView(rootView:ProjectConceptView(state:presentation,client:client,grants:grants));view.frame=NSRect(x:0,y:0,width:560,height:780);view.layoutSubtreeIfNeeded()
         XCTAssertEqual(state.phase,"conflict")
     }
 }

@@ -36,6 +36,8 @@ class ProjectConceptStore:
 
     def _connect(self, *, write=False):
         # Read absence is empty, never bootstraps or replaces a failed store.
+        from .project_concept_library import preflight, schema
+        preflight(self.base)
         try:
             marker = _private_json('project-concepts-schema-v1.json', dir_fd=self.base.root_fd)
         except FileNotFoundError:
@@ -55,6 +57,7 @@ class ProjectConceptStore:
             raise ConceptStorageUnavailable('invalid existing private store') from error
         try:
             tables = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+            schema(self.base,db)
             if 'project_concepts_v1' in tables:
                 columns = {row[1] for row in db.execute('PRAGMA table_info(project_concepts_v1)')}
                 if columns != COLUMNS:

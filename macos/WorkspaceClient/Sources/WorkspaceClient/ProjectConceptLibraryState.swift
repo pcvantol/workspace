@@ -14,6 +14,7 @@ struct ConceptLifecycleJournal: Codable, Sendable {
     var completed: Bool
 }
 extension ProjectConceptState {
+    var selectedIsArchived: Bool { selected?.lifecycle == "ARCHIVED" || selectedLifecycleHint == "ARCHIVED" }
     var visibleItems: [ProjectConceptSummary] {
         items.filter { ($0.lifecycle ?? "ACTIVE") == libraryTab && (searchQuery.isEmpty || $0.title.range(of:searchQuery,options:[.caseInsensitive,.diacriticInsensitive],locale:.current) != nil) }
     }
@@ -69,7 +70,7 @@ extension ProjectConceptState {
             guard ticket == generation else { return }
             try settleLifecycle(journal); pendingLifecycle = nil
             if latest.revision != receipt.revision || latest.lifecycle != receipt.lifecycle { phase = "conflict"; return }
-            selected = latest; title = latest.title; notes = latest.notes; libraryTab = latest.lifecycle ?? "ACTIVE"
+            selected = latest; selectedLifecycleHint = latest.lifecycle; title = latest.title; notes = latest.notes; libraryTab = latest.lifecycle ?? "ACTIVE"
             items.removeAll { $0.id == latest.id }; items.insert(latest.summary,at:0); phase = "saved"
         } catch ConceptError.conflict {
             if ticket == generation {
