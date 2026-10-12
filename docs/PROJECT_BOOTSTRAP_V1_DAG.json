@@ -433,14 +433,15 @@
   "verified_link_delivery": {
     "plan": 98,
     "budget": {
-      "consumed": 1,
+      "consumed": 2,
       "max": 3,
-      "remaining": 2
+      "remaining": 1
     },
     "state": "INITIAL_OWN_COMPONENTS_PRODUCER_JOIN_PENDING",
     "join": "L2-L4-HOB-EP01-VERIFIED-LINK-V1-20261012",
     "contract": "docs/WORKSPACE_VERIFIED_PROJECT_LINK_V1.md",
     "installed_ep_qualification": "NOT_RUN_UNBOUND",
-    "correction_round1_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6118203275"
+    "correction_round1_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6118203275",
+    "correction_round2_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6118282617"
   }
 }

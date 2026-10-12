@@ -3,7 +3,7 @@
 Assignment `L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012`,
 mandate [6117331312](https://github.com/pcvantol/forge/issues/208#issuecomment-6117331312).
 Same sole Workspace writer/Work session; actual base a6aad520bed9f1c2f7119b393435b8c739f030b3,
-branch `codex/plan98-verified-project-link`. New feature budget consumed1/max3/remaining2.
+branch `codex/plan98-verified-project-link`. New feature budget consumed2/max3/remaining1.
 Plan96 and plan97 are CLOSED; old budgets/evidence/version history retained.
 Forge2.12.1/9875333 consumer pin unchanged.
 

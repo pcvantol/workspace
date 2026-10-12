@@ -3,7 +3,7 @@
 Assignment L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012, selected6117331312.
 Only PB-W1-LINK/PB-WQ-LINK. Same sole writer/session; initial base a6aad520.
 Plan96/97 CLOSED, budgets/evidence retained, Forge2.12.1/9875333 unchanged.
-New feature budget consumed1/max3/remaining2. Candidate2.8.21 is not a release.
+New feature budget consumed2/max3/remaining1. Candidate2.8.21 is not a release.
 
 ## Current boundary
 
@@ -97,3 +97,11 @@ Native opens current saved references before mutation. A definitive absent/refus
 old intent can be archived before a newly inspected explicit confirmation; unknown
 outcomes retain the original operation. Availability is shown in all five languages;
 closed HTTP expiry is distinguished from denial. Producer JOIN remains unqualified.
+
+## Documentary correction round2
+
+Booked once before edits via6118282617 after all complete73594c2 reviews:
+own code Quality/Security/UX PASS, candidate FAIL solely for current0/3
+ROADMAP/BACKLOG headers. These current labels now match consumed2/max3/remaining1;
+round1/admission and every previous failure remain historical. No production or
+test bytes changed in this round. Real producer JOIN and installed proof pending.

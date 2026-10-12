@@ -1,7 +1,8 @@
 ## Selected plan98 — verified existing project link
 
 Mandate6117331312 / L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012.
-Only PB-W1-LINK/PB-WQ-LINK selected; feature budget0/3, same sole writer/session.
+Only PB-W1-LINK/PB-WQ-LINK selected; current feature budget consumed2/max3/remaining1, same sole writer/session.
+Admission0/3 and round1 consumed1/max3/remaining2 retained; round2 booked6118282617.
 [Own implementation boundary/matrix](docs/WORKSPACE_VERIFIED_PROJECT_LINK_V1.md):
 durable scoped reference/intent deduplication, normalized own IPC and native chooser.
 Actual EP producer JOIN pending after L2r34; fixtures are not LINK-COMPLETE.
