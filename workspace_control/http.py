@@ -1,3 +1,4 @@
+from .project_concept_http import handle as handle_project_concept
 """Authenticated and versioned Workspace HTTP ingress with explicit TLS binding."""
 
 import fcntl
@@ -132,6 +133,10 @@ for key, method, path in [
     ("cancel", "POST", "/v1/mission-concepts/{conversation_id}/turns/{turn_id}/cancel")]:
     OPERATIONS["mission-concepts."+key]={"exposure":"HTTP_EXPOSED","method":method,"path":path,
         "auth":"BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT","contract":"mission","summary":"scoped versioned mission concept"}
+for key,method,path in [("list","GET","/v1/project-concepts"),("create","POST","/v1/project-concepts"),("get","GET","/v1/project-concepts/{id}"),("update","PATCH","/v1/project-concepts/{id}")]:
+    OPERATIONS["project_concepts."+key] = {"exposure":"HTTP_EXPOSED","method":method,"path":path,
+        "auth":"BEARER_PINNED_AND_DRAFT_GRANT","contract":"project_concept","summary":"own project concept; no peer effects"}
+
 for key,method,path in [("context","GET","/v1/mission-concepts/{conversation_id}/context"),("resolve","POST","/v1/mission-concepts/resolve"),("package","GET","/v1/mission-concepts/{conversation_id}/package"),("approve","POST","/v1/mission-concepts/{conversation_id}/approve"),("operation","GET","/v1/mission-concepts/{conversation_id}/operations/{operation_id}")]:
     OPERATIONS["mission-concepts."+key]={"exposure":"HTTP_EXPOSED","method":method,"path":path,"auth":"BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT","contract":"mission","summary":"exact frozen approval and separate current operation readback"}
 OPERATIONS["mission-concepts.contract.read"]={"exposure":"HTTP_EXPOSED","method":"GET","path":"/v1/mission-concepts/openapi.json","auth":"BEARER_PINNED","contract":"mission","summary":"closed versioned mission transport contract"}
@@ -780,6 +785,7 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_GET(self):
             if not self._trusted_origin():
                 return
+            if handle_project_concept(self, service): return
             if self.path.startswith('/v1/workset-releases/'):
                 from .workset_release_http import route
                 return route(self, service, self.path, 'GET')
@@ -881,6 +887,7 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_POST(self):
             if not self._trusted_origin():
                 return
+            if handle_project_concept(self, service): return
             if self.path.startswith('/v1/workset-releases/'):
                 from .workset_release_http import route
                 return route(self, service, self.path, 'POST')
@@ -911,6 +918,7 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_PATCH(self):
             if not self._trusted_origin():
                 return
+            if handle_project_concept(self, service): return
             if re.fullmatch(r"/v1/conversations/[0-9a-f]{32}", self.path):
                 return self._conversation_write(self.path)
             self._reply(405, {"error": "READ_ONLY"})

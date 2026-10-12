@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "plan99 mandate6118583726 independent own concepts; 2.8.21 remains reserved by parked PR160; bounded exact PATCH target2.8.22 avoids allocation collision",
+  "determined_version": "2.8.22",
+  "event_lineage": "plan99 mandate6118583726 independent own concepts; 2.8.21 remains reserved by parked PR160; bounded exact PATCH target2.8.22 avoids allocation collision",
+  "expected_source_revision": "a6aad520bed9f1c2f7119b393435b8c739f030b3",
+  "expected_version": "2.8.20",
+  "operation_id": "L4-PLAN99-PROJECT-CONCEPTS-20261012",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "EXACT",
+  "requested": {
+    "exact_version": "2.8.22"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

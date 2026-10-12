@@ -274,6 +274,8 @@ class Service:
             from .mission_peer import MissionConceptTransport
             from .workset_release_peer import WorksetReleaseTransport
             self.conversations = ConversationStore(self.root, self._root_fd)
+            from .project_concepts import ProjectConceptStore
+            self.project_concepts = ProjectConceptStore(self.conversations)
             self.reviews = ReviewTransport(self.root, self._root_fd)
             self.worklists = WorklistReadTransport(self.root, self._root_fd)
             self.worklist_controls = WorklistControlTransport(self.root, self._root_fd)
