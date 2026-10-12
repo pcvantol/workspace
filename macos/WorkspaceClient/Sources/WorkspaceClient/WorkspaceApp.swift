@@ -121,6 +121,7 @@ struct ContentView: View {
     @StateObject private var conversations: ConversationState
     @StateObject private var reviews: MissionReviewState
     @StateObject private var worklists: WorklistState
+    @StateObject private var projectLinks = ProjectLinkState()
     @State private var selectedTab = 4
     @State private var requestedReview: MissionReviewKey?
     @State private var reviewNavigationStatus = ""
@@ -164,6 +165,8 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
+            ProjectLinkView(state: projectLinks)
+                .tabItem { Label(ProjectLinkCopy.text("title", language: locale.language.languageCode?.identifier ?? "en"), systemImage: "folder") }.tag(5)
             Group {
                 if let preview=missionObservation {
                     MissionWorkspaceView(observation:preview,canRefine:false,canApprove:false,onRefine:{ _, _, _ in },onApprove:{ _ in })
@@ -186,6 +189,7 @@ struct ContentView: View {
             ServerOverviewView(client: client)
                 .tabItem { Label(WorkspaceCopy.text("Server",language:locale.language.languageCode?.identifier), systemImage: "server.rack") }.tag(3)
         }
+        .onChange(of: client.phase) { _, phase in if phase != "CONNECTED" { projectLinks.invalidate() } }
         .tabViewStyle(.sidebarAdaptable)
         .tint(WorkspaceAppearance.accent(for:colorScheme))
         .background(WorkspaceAppearance.backdrop(for:colorScheme))

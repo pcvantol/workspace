@@ -179,6 +179,11 @@ function validProjectCatalogue(catalogue) {
     typeof catalogue.observed_at === 'string' && catalogue.observed_at.length > 0;
 }
 const ownOperations = {
+  "project_link.access": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/project-links/access", "auth": "BEARER_PINNED_AND_EXISTING_ACTOR_PAIRING"},
+  "project_link.projects": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/project-links/projects", "auth": "BEARER_PINNED_AND_EXISTING_ACTOR_PAIRING"},
+  "project_link.inspect": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/project-links/{project_id}/inspect", "auth": "BEARER_PINNED_AND_EXISTING_ACTOR_PAIRING"},
+  "project_link.link": {"exposure": "HTTP_EXPOSED", "method": "POST", "path": "/v1/project-links/{project_id}/link", "auth": "BEARER_PINNED_AND_EXISTING_ACTOR_PAIRING"},
+  "project_link.open": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/project-links/{project_id}/open", "auth": "BEARER_PINNED_AND_EXISTING_ACTOR_PAIRING"},
   "workset-releases.access": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_WORKSET_RELEASE_GRANT", "method": "GET", "path": "/v1/workset-releases/access", "local_cli": "workset-release-access"},
   "workset-releases.capability": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_WORKSET_RELEASE_GRANT", "method": "GET", "path": "/v1/workset-releases/capability", "local_cli": "workset-release-capability"},
   "workset-releases.prepare": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_WORKSET_RELEASE_GRANT", "method": "POST", "path": "/v1/workset-releases/prepare", "local_cli": "workset-release-prepare"},

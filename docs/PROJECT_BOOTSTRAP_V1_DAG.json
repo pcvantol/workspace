@@ -138,7 +138,7 @@
       "id": "PB-W1-LINK",
       "parent": "PB-W1",
       "owner": "workspace",
-      "status": "PLANNED",
+      "status": "IN_PROGRESS_PRODUCER_JOIN_PENDING",
       "depends_on": [
         "PB-W0"
       ],
@@ -152,7 +152,8 @@
       "user_outcome": "Link verified configured project without scan or peer write",
       "deliverable": "Link verified configured project without scan or peer write",
       "acceptance": "identity/scope/ref repeat, denied/offline, no scan/duplicate/create, five locales",
-      "implementation_selected": false
+      "implementation_selected": true,
+      "selected_assignment": "L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012"
     },
     {
       "id": "PB-W1-TOPOLOGY",
@@ -334,7 +335,7 @@
       "id": "PB-WQ-LINK",
       "parent": "PB-WQ",
       "owner": "workspace",
-      "status": "PLANNED",
+      "status": "IN_PROGRESS_PRODUCER_JOIN_PENDING",
       "depends_on": [
         "PB-W1-LINK"
       ],
@@ -348,7 +349,8 @@
       "user_outcome": "Qualify independent basic link slice",
       "deliverable": "Qualify independent basic link slice",
       "acceptance": "real installed qualified scoped read, no deep scan/promotion/wholepeerQ prerequisite",
-      "implementation_selected": false
+      "implementation_selected": true,
+      "selected_assignment": "L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012"
     },
     {
       "id": "PB-WQ-ASSESS",
@@ -427,5 +429,17 @@
     "finalization_receipt": "docs/PROJECT_ONBOARDING_DESIGN_FINALIZATION_V1.json",
     "exact_final_main_readback": "REQUIRED_POST_FINALIZATION_MERGE_EXTERNAL_REGISTER"
   },
-  "subset_semantics": "Parent grouping is not a prerequisite edge. Aggregate PB-WQ retains original full-five-route deps; PB-WQ-LINK is independent. Required profile analyses are scoped conditional inputs, not universal initialization prerequisites."
+  "subset_semantics": "Parent grouping is not a prerequisite edge. Aggregate PB-WQ retains original full-five-route deps; PB-WQ-LINK is independent. Required profile analyses are scoped conditional inputs, not universal initialization prerequisites.",
+  "verified_link_delivery": {
+    "plan": 98,
+    "budget": {
+      "consumed": 0,
+      "max": 3,
+      "remaining": 3
+    },
+    "state": "INITIAL_OWN_COMPONENTS_PRODUCER_JOIN_PENDING",
+    "join": "L2-L4-HOB-EP01-VERIFIED-LINK-V1-20261012",
+    "contract": "docs/WORKSPACE_VERIFIED_PROJECT_LINK_V1.md",
+    "installed_ep_qualification": "NOT_RUN_UNBOUND"
+  }
 }

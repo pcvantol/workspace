@@ -1,3 +1,25 @@
+## Selected verified existing project link — plan98
+
+Assignment `L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012`,
+mandate [6117331312](https://github.com/pcvantol/forge/issues/208#issuecomment-6117331312).
+Same sole Workspace writer/Work session; actual base a6aad520bed9f1c2f7119b393435b8c739f030b3,
+branch `codex/plan98-verified-project-link`. New feature budget consumed0/max3/remaining3.
+Plan96 and plan97 are CLOSED; old budgets/evidence/version history retained.
+Forge2.12.1/9875333 consumer pin unchanged.
+
+Only PB-W1-LINK/PB-WQ-LINK selected: choose existing verified project, inspect canonical
+authority/repositories, save own reference, open with current authorization. No create/adopt/
+scan/attachment/provider/Mission effect. First source step: owning normalized link identity,
+durable actor-scoped deduplication and a small producer adapter boundary; no route is
+claimed qualified from a design fixture.
+
+JOIN L2-L4-HOB-EP01-VERIFIED-LINK-V1-20261012: companion6117340909 after L2 r34.
+Actual producer HTTP/auth/schema/wheel binding remains unaccepted and unqualified;
+source fixtures and native source tests cannot close PB-WQ-LINK. Installed final-main
+real EP/Server/Client and new five-language/narrow GUI proof remain mandatory.
+
+## Historical closed plan97 receipt snapshot
+
 ## Selected holistic onboarding design — plan97
 
 Assignment `L4-HOLISTIC-PROJECT-ONBOARDING-DESIGN-DAG-V1-20261011`,

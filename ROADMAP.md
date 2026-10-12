@@ -1,3 +1,14 @@
+## Selected plan98 — verified existing project link
+
+Mandate6117331312 / L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012.
+Only PB-W1-LINK/PB-WQ-LINK selected; feature budget0/3, same sole writer/session.
+[Own implementation boundary/matrix](docs/WORKSPACE_VERIFIED_PROJECT_LINK_V1.md):
+durable scoped reference/intent deduplication, normalized own IPC and native chooser.
+Actual EP producer JOIN pending after L2r34; fixtures are not LINK-COMPLETE.
+Plan96/97 remain CLOSED; all earlier budgets/evidence and Forgepin retained.
+
+## Historical closed plan97 snapshot
+
 ## Selected plan97 — holistic project onboarding design
 
 [Mandate6112225840](https://github.com/pcvantol/forge/issues/208#issuecomment-6112225840),
