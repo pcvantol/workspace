@@ -350,6 +350,18 @@ for key in ('issue', 'revoke'):
         'summary': 'private owner pairing to an existing finite Forge workset release grant'}
 
 
+for key,path in [('access','/v1/workset-activity'),
+                 ('page','/v1/workset-activity/{workset_id}/pages'),
+                 ('continue','/v1/workset-activity/{workset_id}/pages/{cursor}'),
+                 ('event','/v1/workset-activity/{workset_id}/events/{event_id}')]:
+    OPERATIONS['workset-activity.'+key] = {'exposure':'HTTP_EXPOSED','method':'GET',
+        'path':path,'auth':'BEARER_PINNED_AND_DRAFT_AND_ACTIVITY_GRANT',
+        'contract':'workset-activity','summary':'Finite authorized retained activity read; no execution effect'}
+for key in ('issue','revoke'):
+    OPERATIONS['workset-activity.bind.'+key] = {'exposure':'LOCAL_ONLY_ADMIN',
+        'local_cli':'workset-activity-bind-'+key,'auth':'PRIVATE_ROOT_OWNER',
+        'summary':'Pair an existing finite READ grant; never issue Forge authority'}
+
 def worklist_openapi_contract():
     document = {"openapi": "3.0.3", "info": {"title": "Workspace scoped worklist read V1", "version": "1"},
             "components": {"securitySchemes": {
@@ -786,6 +798,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
             if not self._trusted_origin():
                 return
             if handle_project_concept(self, service): return
+            from .workset_activity_http import route as activity_route
+            if activity_route(self,service):return
             if self.path.startswith('/v1/workset-releases/'):
                 from .workset_release_http import route
                 return route(self, service, self.path, 'GET')

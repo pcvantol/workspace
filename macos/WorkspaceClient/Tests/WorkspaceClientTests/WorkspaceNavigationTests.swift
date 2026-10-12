@@ -10,7 +10,7 @@ final class WorkspaceNavigationTests: XCTestCase {
         XCTAssertEqual(WorkspaceDestination.finite(760,fallback:560),760)
         for language in ["en","nl","de","fr","es"] {
             let destinations=WorkspaceDestination.items(language:language)
-            XCTAssertEqual(Set(destinations.map(\.id)),[0,1,2,3,4,5])
+            XCTAssertEqual(Set(destinations.map(\.id)),[0,1,2,3,4,5,6])
             XCTAssertEqual(destinations.first?.id,5)
             XCTAssertTrue(destinations.allSatisfy { !$0.title.isEmpty && !$0.symbol.isEmpty })
             var selected=4

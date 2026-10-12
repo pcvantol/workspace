@@ -6,6 +6,7 @@ import sys
 
 
 SOURCES = {
+    "WorksetActivityCopy.swift", "WorksetActivityModels.swift", "WorksetActivityTransport.swift", "WorksetActivityStorage.swift", "WorksetActivityState.swift", "WorksetActivityView.swift", "WorksetActivitySchema.swift",
     "WorkspaceNavigationShell.swift", "ProjectConceptState.swift", "ProjectConceptLibraryState.swift", "ProjectConceptTransport.swift", "ProjectConceptView.swift",
     "CanonicalJSON.swift",
     "ClientState.swift", "WorksetReleaseModels.swift", "WorksetReleaseWire.swift", "WorksetReleaseTransport.swift", "WorksetReleaseStorage.swift", "WorksetReleaseState.swift", "WorksetReleaseCopy.swift", "WorksetReleaseView.swift",

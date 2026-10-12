@@ -1,0 +1,1 @@
+Unit fixtures derived from actual installed R49 reads at exact989132660997909e74800ddc8648be11262be8d4. Cursor replaced by a non-authorizing placeholder; capability expiry synthetic. No fixture is installed consumer evidence. Original private actual read and revoked grant retained separately.

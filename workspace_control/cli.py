@@ -20,6 +20,11 @@ def main(argv=None):
     commands.add_parser("projects")
     commands.add_parser("capabilities")
     commands.add_parser("openapi")
+    activity_issue=commands.add_parser("workset-activity-bind-issue")
+    for flag in ["actor","project","forge-endpoint","forge-grant-receipt-file","forge-token-file","client-token-file"]:
+        activity_issue.add_argument("--"+flag,required=True)
+    activity_revoke=commands.add_parser("workset-activity-bind-revoke")
+    activity_revoke.add_argument("--binding-id",required=True)
     conversation_grant = commands.add_parser("conversation-grant-issue")
     conversation_grant.add_argument("--actor", required=True)
     conversation_grant.add_argument("--project", required=True)
@@ -119,6 +124,13 @@ def main(argv=None):
                     expected_repository_id=args.expected_current_repository,
                     expected_revision=args.expected_current_revision)
             print(json.dumps(result, sort_keys=True))
+        elif args.command == "workset-activity-bind-issue":
+            with Service(args.root) as service:
+                result=service.activities.provision(args.actor,args.project,args.forge_endpoint,args.forge_grant_receipt_file,args.forge_token_file,args.client_token_file)
+            print(json.dumps(result,sort_keys=True))
+        elif args.command == "workset-activity-bind-revoke":
+            with Service(args.root) as service: result=service.activities.revoke(args.binding_id)
+            print(json.dumps(result,sort_keys=True))
         elif args.command == "conversation-grant-issue":
             with Service(args.root) as service:
                 token = service.issue_conversation_grant(args.actor, args.project)

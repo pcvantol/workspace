@@ -10,6 +10,7 @@ struct WorkspaceDestination: Identifiable, Equatable {
          Self(id:0,title:ConversationCopy.text("nav",language:language),symbol:"bubble.left.and.bubble.right"),
          Self(id:1,title:MissionReviewCopy.text("nav",language:language),symbol:"checkmark.seal"),
          Self(id:2,title:WorklistCopy.text("nav",language:language),symbol:"list.bullet.rectangle"),
+         Self(id:6,title:ActivityCopy.text("nav",language),symbol:"clock.arrow.circlepath"),
          Self(id:3,title:WorkspaceCopy.text("Server",language:language),symbol:"server.rack")]
     }
     static func finite(_ value: CGFloat, fallback: CGFloat) -> CGFloat {

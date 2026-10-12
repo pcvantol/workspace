@@ -8,7 +8,7 @@ from .review_peer import _unique_pairs
 from .worklist_peer import WorklistError
 from .advisory_contract import validate
 
-def request(binding, method, path, body=None, *, gate=None, error_validator=validate, maximum_bytes=65536):
+def request(binding, method, path, body=None, *, gate=None, error_validator=validate, maximum_bytes=65536, missing_as_state=None):
     scheme,host,port=_endpoint(binding['endpoint'])
     connection=(http.client.HTTPSConnection(host,port,timeout=60,context=ssl.create_default_context()) if scheme=='https' else http.client.HTTPConnection(host,port,timeout=60))
     try:
@@ -17,6 +17,7 @@ def request(binding, method, path, body=None, *, gate=None, error_validator=vali
             connection.request(method,path,body=payload,headers={'Authorization':'Bearer '+binding['forge_token'],'Content-Type':'application/json','Accept':'application/json'})
         response=connection.getresponse()
         if response.status in (401,403):raise WorklistError('DENIED')
+        if response.status==404 and missing_as_state:raise WorklistError(missing_as_state)
         if response.getheader('Content-Type','').split(';',1)[0].lower()!='application/json':raise WorklistError('INVALID_RESPONSE')
         length=response.getheader('Content-Length')
         if length is not None and (not length.isdecimal() or int(length)>maximum_bytes):raise WorklistError('INVALID_RESPONSE')

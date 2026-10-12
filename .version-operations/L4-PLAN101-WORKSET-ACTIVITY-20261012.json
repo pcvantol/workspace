@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "Selected6126033363 own native workset activity consumer of qualified ForgeR49; plan100closed and parkedLINK unchanged",
+  "determined_version": "2.8.24",
+  "event_lineage": "Selected6126033363 own native workset activity consumer of qualified ForgeR49; plan100closed and parkedLINK unchanged",
+  "expected_source_revision": "1622840e147d718b00d77264cfeb2185e495fe91",
+  "expected_version": "2.8.23",
+  "operation_id": "L4-PLAN101-WORKSET-ACTIVITY-20261012",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

@@ -33,3 +33,10 @@ swift=(root/'macos/WorkspaceClient/Sources/WorkspaceClient/WorksetReleaseWire.sw
 match=re.search(r'Data\(###"(.+?)"###\.utf8\)',swift)
 if match is None or json.loads(match[1])!=json.loads(release):raise ValueError('native workset release schema projection drift')
 print('Exact Forge2.12.1/9875333 workset-release wire projections match; consumer installed qualification remains separate.')
+
+activity=(root/'workspace_control/workset-activity-v1.json').read_bytes()
+if sha256(activity).hexdigest()!='e8d38fb5eeaec73691d6d6e78ab484d0d708c985ce1b2446470b4cda58f10c27':raise ValueError('exact R49 activity schema pin drift')
+swift=(root/'macos/WorkspaceClient/Sources/WorkspaceClient/WorksetActivitySchema.swift').read_text()
+match=re.search(r'Data\(###"(.+?)"###\.utf8\)',swift)
+if match is None or json.loads(match[1])!=json.loads(activity):raise ValueError('native activity schema projection drift')
+print('Exact Forge2.15.0/98913266 activity wire projections match; new consumer runtime qualification remains separate.')
