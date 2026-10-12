@@ -168,11 +168,14 @@ class ConversationStore:
             connection = sqlite3.connect(path, timeout=5)
         connection.row_factory = sqlite3.Row
         if read_only:
-            columns = {row[1] for row in connection.execute("PRAGMA table_info(conversations)")}
-            if not {"id", "actor_id", "project_id", "draft", "revision", "archived"}.issubset(columns):
+            try:
+                columns = {row[1] for row in connection.execute("PRAGMA table_info(conversations)")}
+                if not {"id", "actor_id", "project_id", "draft", "revision", "archived"}.issubset(columns):
+                    raise ValueError("incompatible existing conversation schema")
+                return connection
+            except Exception:
                 connection.close()
-                raise ValueError("incompatible existing conversation schema")
-            return connection
+                raise
         if create:
             connection.execute("""CREATE TABLE IF NOT EXISTS conversations (
                 id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, project_id TEXT NOT NULL,

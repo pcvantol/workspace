@@ -40,6 +40,8 @@ class ProjectConceptStore:
             marker = _private_json('project-concepts-schema-v1.json', dir_fd=self.base.root_fd)
         except FileNotFoundError:
             marker = None
+        except (ValueError, OSError, UnicodeError) as error:
+            raise ConceptStorageUnavailable('concept allocation unavailable') from error
         if marker is not None and (not isinstance(marker,dict) or set(marker) != {'schema_version'} or type(marker['schema_version']) is not int or marker['schema_version'] != 1):
             raise ConceptStorageUnavailable('incompatible concept allocation')
         existing = (self.base.root / 'conversations.sqlite3').exists()
@@ -49,7 +51,7 @@ class ProjectConceptStore:
             raise FileNotFoundError('concept store not yet created')
         try:
             db = self.base._connect(create=not existing and write, read_only=not write, existing_only=True)
-        except (ValueError, sqlite3.Error) as error:
+        except (ValueError, OSError, sqlite3.Error) as error:
             raise ConceptStorageUnavailable('invalid existing private store') from error
         try:
             tables = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}

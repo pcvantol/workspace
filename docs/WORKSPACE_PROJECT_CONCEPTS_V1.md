@@ -1,7 +1,7 @@
 # Workspace Projectconcepten V1 — plan99
 
 Assignment L4-PROJECT-CONCEPTS-V1-20261012 / mandate6118583726.
-Current concept budget consumed1/max3/remaining2. Initial implementation.
+Current concept budget consumed2/max3/remaining1. Initial implementation.
 Same writer/session; merged basea6aad520bed9f1c2f7119b393435b8c739f030b3.
 Plan98/PR160 PARKED on0212f898bb049c7019e4f8c602decc09b891c595,
 LINK consumed2/max3/remaining1; not closed or merged. Predecessors96/97 CLOSED.
@@ -114,3 +114,13 @@ now has explicit read-only/existing-only URI modes for concepts. Controlled loss
 at the actual open cannot create a replacement; legacy default callsites retain
 their behavior. Repeated completed Save without edits is a native no-op (same
 concept/revision), alongside immutable pending replay. No new correction booked.
+
+## Integrated correction round2
+
+Booked once before edits via6119365819 after completec89369b reviews failed.
+Current consumed2/max3/remaining1; previous rounds/admission and failures retained.
+Shared Client exposes a typed authorizationLost observation from actual401/403/
+wrong-instance/binding-change errors, distinct from transport UNAVAILABLE. Concept
+state subscribes even while its pane is hidden; denial clears protected content.
+Stat/open errors after known allocation are storage unavailable, never healthy
+empty. Read-only helper closes failures; legitimate first-empty remains distinct.

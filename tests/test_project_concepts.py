@@ -1,5 +1,6 @@
 """Actual own HTTP/private storage; no EP, Forge, provider or project creation."""
 import json
+from contextlib import closing
 import os
 from pathlib import Path
 import sqlite3
@@ -54,7 +55,7 @@ class ProjectConceptTests(unittest.TestCase):
         summary=self.request()[1]['concepts'][0]
         self.assertEqual(summary,{k:v for k,v in updated.items() if k != 'notes'})
         self.assertNotIn('notes',summary)
-        with sqlite3.connect(self.root/'conversations.sqlite3') as db:
+        with closing(sqlite3.connect(self.root/'conversations.sqlite3')) as db, db:
             self.assertEqual(db.execute('SELECT count(*) FROM project_concepts_v1').fetchone()[0],1)
             self.assertEqual(db.execute('SELECT count(*) FROM conversations').fetchone()[0],0)
     def test_scoped_actor_revocation_and_closed_ingress(self):
@@ -83,9 +84,28 @@ class ProjectConceptTests(unittest.TestCase):
         self.assertEqual(self.request('/v1/project-concepts/'+item['id'])[0],200)
         db.chmod(0o644);self.assertEqual(self.request()[0],503)
         db.chmod(0o600)
-        with sqlite3.connect(db) as connection:connection.execute('ALTER TABLE project_concepts_v1 ADD COLUMN unauthorized TEXT')
+        with closing(sqlite3.connect(db)) as connection, connection:connection.execute('ALTER TABLE project_concepts_v1 ADD COLUMN unauthorized TEXT')
         self.assertEqual(self.request()[0],503)
         self.assertEqual(self.request(method='POST',body=self.fields(operation_id='e'*32))[0],503)
+    def test_source_loss_before_stat_is_unavailable_not_healthy_empty(self):
+        self.request(method='POST',body=self.fields())
+        db=self.root/'conversations.sqlite3';original=db.read_bytes();connect=self.service.conversations._connect
+        for method in ['GET','POST']:
+            def disappear(*args,**kwargs):
+                db.unlink()
+                return connect(*args,**kwargs)
+            with patch.object(self.service.conversations,'_connect',side_effect=disappear):
+                code,value=self.request(method=method,body=self.fields(operation_id='e'*32) if method=='POST' else None)
+            self.assertEqual(code,503);self.assertNotIn('concepts',value);self.assertFalse(db.exists())
+            db.write_bytes(original);db.chmod(0o600)
+        marker=self.root/'project-concepts-schema-v1.json'
+        marker.write_text('{invalid')
+        self.assertEqual(self.request()[0],503)
+        self.assertEqual(self.request(method='POST',body=self.fields(operation_id='e'*32))[0],503)
+        marker.write_text('{"schema_version":1}');marker.chmod(0o600)
+        db.write_bytes(b'not sqlite');db.chmod(0o600)
+        self.assertEqual(self.request()[0],503)
+
     def test_source_loss_at_actual_sqlite_open_has_no_replacement_effect(self):
         self.request(method='POST',body=self.fields())
         db=self.root/'conversations.sqlite3';original=db.read_bytes();connect=sqlite3.connect
@@ -121,7 +141,7 @@ class ProjectConceptTests(unittest.TestCase):
         chat=base.create(('alice','own-context'),{'title':'Existing chat','focus':'','mode':'UX','draft':'Untouched','request_id':'f'*32})
         self.request(method='POST',body=self.fields())
         self.assertEqual(base.get(('alice','own-context'),chat['id'])['draft'],'Untouched')
-        with sqlite3.connect(self.root/'conversations.sqlite3') as db:
+        with closing(sqlite3.connect(self.root/'conversations.sqlite3')) as db, db:
             db.executemany('INSERT INTO project_concept_operations_v1 VALUES (?,?,?,?,?)',[('alice','own-context',str(i),'digest','{}') for i in range(4095)])
         self.assertEqual(self.request(method='POST',body=self.fields(operation_id='e'*32))[0],400)
         with self.service.project_concepts.authorized(self.other) as scope:

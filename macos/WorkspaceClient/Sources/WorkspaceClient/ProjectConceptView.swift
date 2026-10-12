@@ -38,6 +38,7 @@ struct ProjectConceptView: View {
     private var language:String { locale.language.languageCode?.identifier ?? "en" }
     private func text(_ key:String) -> String { ProjectConceptCopy.text(key,language:language) }
     private func current() async throws -> ConceptConnection {
+        guard !client.authorizationLost else { throw ConceptError.denied }
         guard client.phase == "CONNECTED" else { throw ConceptError.unavailable }
         let store = grants
         guard let access = try await Task.detached { try store.load() }.value,
@@ -89,9 +90,10 @@ struct ProjectConceptView: View {
                 if state.busy { ProgressView() }
             }.padding(24).frame(maxWidth:850,alignment:.leading)
         }
-        .task { await state.refresh(current:current) }
+        .task { state.bindAuthorization(client); await state.refresh(current:current) }
         .onChange(of:client.phase) { _,phase in
             if phase == "CONNECTED" { Task { await state.refresh(current:current) } }
+            else if client.authorizationLost { state.concealAuthorization() }
             else { state.clientPhaseChanged(phase) }
         }
         .onDisappear { state.cancelReads() }

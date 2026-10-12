@@ -79,7 +79,7 @@ final class ProjectConceptTests:XCTestCase {
         state.notes="Unsent edit";XCTAssertEqual(state.displayPhase,"unsaved")
         state.clientPhaseChanged("UNAVAILABLE");XCTAssertEqual(state.notes,"Unsent edit")
         await state.refresh(current:{binding});XCTAssertEqual(state.displayPhase,"unsaved");XCTAssertEqual(state.notes,"Unsent edit")
-        state.clientPhaseChanged("UNAUTHORIZED");XCTAssertEqual(state.notes,"");XCTAssertNil(state.selected);XCTAssertEqual(state.phase,"denied")
+        state.concealAuthorization();XCTAssertEqual(state.notes,"");XCTAssertNil(state.selected);XCTAssertEqual(state.phase,"denied")
         state.clientPhaseChanged("CONNECTED");XCTAssertEqual(state.phase,"denied")
     }
     @MainActor func testBoundedInputCurrentPairingAndPrivateStorageFailures() async throws {
@@ -133,6 +133,27 @@ private final class ConceptHTTPProtocol:URLProtocol,@unchecked Sendable {
     override func stopLoading(){}
 }
 extension ProjectConceptTests {
+    @MainActor func testActualSharedClientDenialObservationVersusNetworkUnavailability() async throws {
+        let configuration=URLSessionConfiguration.ephemeral;configuration.protocolClasses=[ConceptHTTPProtocol.self]
+        for code in [401,403,409,503] {
+            let root=temporary();defer {try? FileManager.default.removeItem(at:root)}
+            let fixture=ConceptFixture(),binding=connection
+            let state=ProjectConceptState(transport:fixture,root:root)
+            await state.refresh(current:{binding});state.new(defaultTitle:"Protected own idea");state.notes="Retained only with authority"
+            await state.save(current:{binding});state.notes="Private unsaved edit"
+            ConceptHTTPProtocol.code=code;ConceptHTTPProtocol.value=["error":"SYNTHETIC_NEGATIVE"]
+            let client=ClientState(keychain:ConceptBoundServer(access:binding.access),transport:ServerTransport(configuration:configuration))
+            state.bindAuthorization(client)
+            for _ in 0..<100 where client.phase != "UNAVAILABLE" {try? await Task.sleep(for:.milliseconds(10))}
+            XCTAssertEqual(client.phase,"UNAVAILABLE") // Real legacy phase unchanged.
+            if code == 503 {
+                XCTAssertFalse(client.authorizationLost);state.clientPhaseChanged(client.phase)
+                XCTAssertEqual(state.notes,"Private unsaved edit");XCTAssertNotNil(state.selected);XCTAssertEqual(state.displayPhase,"offline")
+            } else {
+                XCTAssertTrue(client.authorizationLost);XCTAssertEqual(state.notes,"");XCTAssertNil(state.selected);XCTAssertEqual(state.phase,"denied")
+            }
+        }
+    }
     func testHTTPProjectionHeaderRevisionErrorsAndInvalidIdentities() async throws {
         let configuration=URLSessionConfiguration.ephemeral;configuration.protocolClasses=[ConceptHTTPProtocol.self]
         let transport=ProjectConceptTransport(configuration:configuration)
@@ -165,6 +186,14 @@ extension ProjectConceptTests {
 private struct ConceptMemoryServer:CredentialStore {
     func binding() throws -> ServerBinding? {nil}
     func token() throws -> String? {nil}
+    func save(binding:ServerBinding,token:String) throws {}
+    func forget() throws {}
+}
+
+private struct ConceptBoundServer:CredentialStore {
+    let access:DraftAccess
+    func binding() throws -> ServerBinding? {.init(endpoint:access.endpoint,instanceID:access.instanceID)}
+    func token() throws -> String? {"synthetic-own-bearer"}
     func save(binding:ServerBinding,token:String) throws {}
     func forget() throws {}
 }

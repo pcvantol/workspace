@@ -3,7 +3,7 @@
 Assignment `L4-PROJECT-CONCEPTS-V1-20261012`, mandate6118583726.
 Same sole writer/session; branch `codex/plan99-project-concepts`, actual merged
 base a6aad520bed9f1c2f7119b393435b8c739f030b3. Current concept budget
-consumed1/max3/remaining2. Plan96/97 CLOSED. Plan98/PR160 parked, not closed,
+consumed2/max3/remaining1. Plan96/97 CLOSED. Plan98/PR160 parked, not closed,
 head0212f898bb049c7019e4f8c602decc09b891c595; LINK consumed2/max3/remaining1.
 Only own concept create/list/open/edit, stable identity and durable revisioned
 storage. No EP/Forge dependency or scan/repository/Mission/provider effects.

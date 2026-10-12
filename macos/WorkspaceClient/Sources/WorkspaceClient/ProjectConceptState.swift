@@ -83,6 +83,7 @@ final class ProjectConceptState: ObservableObject {
     @Published private(set) var pending: ConceptJournal?
     private let transport: any ConceptServing
     private let records: PrivateLocalRecordStore
+    private var authorizationObservation: AnyCancellable?
     private var generation = 0
     private var connection: ConceptConnection?
     var dirty: Bool { title != (selected?.title ?? "") || notes != (selected?.notes ?? "") }
@@ -92,9 +93,16 @@ final class ProjectConceptState: ObservableObject {
     var displayPhase: String {
         dirty && ["saved", "ready", "empty"].contains(phase) ? "unsaved" : phase
     }
+    func concealAuthorization() { invalidate(); phase = "denied" }
+    func bindAuthorization(_ client: ClientState) {
+        authorizationObservation?.cancel()
+        authorizationObservation = client.$authorizationLost.sink { [weak self] lost in
+            if lost { self?.concealAuthorization() }
+        }
+    }
     func clientPhaseChanged(_ value: String) {
         guard value != "CONNECTED" else { return }
-        if ["UNAUTHORIZED", "FORGETTING"].contains(value) {
+        if value == "FORGETTING" {
             invalidate(); phase = "denied"
         } else {
             // Unknown transport health is not proof of lost actor authority.

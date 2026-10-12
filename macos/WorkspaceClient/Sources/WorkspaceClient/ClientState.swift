@@ -125,6 +125,7 @@ final class ClientState: ObservableObject {
         if phase != "CONNECTED" { state.invalidate() }
     }
     @Published private(set) var detail = "Set a Server address and token in Settings."
+    @Published private(set) var authorizationLost = false
     @Published private(set) var snapshot: ServerSnapshot?
     @Published private(set) var savedEndpoint = ""
     @Published private(set) var savedInstance = ""
@@ -202,11 +203,17 @@ final class ClientState: ObservableObject {
                 savedInstance = newBinding.instanceID
                 canForgetBinding = true
                 snapshot = result
+                authorizationLost = false
                 phase = "CONNECTED"
                 detail = "Fresh Server read at \(result.observedAt.formatted(date: .abbreviated, time: .standard))."
             } catch {
                 guard !Task.isCancelled, current == attempt else { return }
                 if error is CredentialError { canForgetBinding = true }
+                switch error {
+                case ClientError.unauthorized, ClientError.wrongInstance, ClientError.bindingChanged, ClientError.server(403):
+                    authorizationLost = true
+                default: break
+                }
                 phase = "UNAVAILABLE"
                 let prior = snapshot.map { " Last successful read: \($0.observedAt.formatted(date: .abbreviated, time: .standard)); displayed data is cached." } ?? ""
                 detail = error.localizedDescription + prior
@@ -249,6 +256,7 @@ final class ClientState: ObservableObject {
         activeTask?.cancel()
         attempt += 1
         let current = attempt
+        authorizationLost = true
         phase = "FORGETTING"
         detail = "Removing the saved Server binding."
         activeTask = Task {
