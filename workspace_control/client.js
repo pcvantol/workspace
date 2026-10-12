@@ -179,6 +179,9 @@ function validProjectCatalogue(catalogue) {
     typeof catalogue.observed_at === 'string' && catalogue.observed_at.length > 0;
 }
 const ownOperations = {
+  'project_concepts.library_list': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'GET', path: '/v2/project-concepts'},
+  'project_concepts.library_get': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'GET', path: '/v2/project-concepts/{id}'},
+  'project_concepts.lifecycle': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'POST', path: '/v2/project-concepts/{id}/lifecycle'},
   'project_concepts.list': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'GET', path: '/v1/project-concepts'},
   'project_concepts.create': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'POST', path: '/v1/project-concepts'},
   'project_concepts.get': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'GET', path: '/v1/project-concepts/{id}'},

@@ -432,6 +432,40 @@
       "deliverable": "Own native/Server GUI/restart/negative qualification",
       "input_contracts": [],
       "acceptance": "No EP/Forge prerequisites; exact-main installed GUI and strict owning DoD"
+    },
+    {
+      "id": "PB-W1-CONCEPT-LIBRARY",
+      "parent": "PB-W1",
+      "owner": "workspace",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "PB-W1-CONCEPTS"
+      ],
+      "new_scoped_node": true,
+      "selected_assignment": "L4-PROJECT-CONCEPT-LIBRARY-V1-20261012",
+      "implementation_selected": true,
+      "user_outcome": "Own title search and durable reversible archive",
+      "deliverable": "Versioned Server lifecycle and existing native concept library",
+      "input_contracts": [
+        "project-concept-library/1"
+      ],
+      "acceptance": "docs/WORKSPACE_PROJECT_CONCEPT_LIBRARY_V1.md"
+    },
+    {
+      "id": "PB-WQ-CONCEPT-LIBRARY",
+      "parent": "PB-WQ",
+      "owner": "workspace",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "PB-W1-CONCEPT-LIBRARY"
+      ],
+      "new_scoped_node": true,
+      "selected_assignment": "L4-PROJECT-CONCEPT-LIBRARY-V1-20261012",
+      "implementation_selected": true,
+      "user_outcome": "New exact-final-main own installed library acceptance",
+      "deliverable": "Own Server/native GUI/OSrestart/lifecycle replay/negative qualification",
+      "input_contracts": [],
+      "acceptance": "Strict owning DoD; no peer prerequisites"
     }
   ],
   "holistic_design": "docs/PROJECT_ONBOARDING_HOLISTIC_V1.md",
@@ -479,7 +513,9 @@
     "source_main": "0fc818a3b54395fa71a216dcf4246be941781c60",
     "source_pr": 161,
     "finalization_receipt": "docs/WORKSPACE_PROJECT_CONCEPTS_FINALIZATION_V1.json",
-    "exact_final_main": "REQUIRED_POST_FINALIZATION_MERGE_EXTERNAL_REGISTER"
+    "exact_final_main": "REQUIRED_POST_FINALIZATION_MERGE_EXTERNAL_REGISTER",
+    "terminal_registration": "https://github.com/pcvantol/forge/issues/208#issuecomment-6122145258",
+    "terminal_state": "CLOSED"
   },
   "parked_link_delivery": {
     "plan": 98,
@@ -491,5 +527,18 @@
       "max": 3,
       "remaining": 1
     }
+  },
+  "concept_library_delivery": {
+    "plan": 100,
+    "base": "5e354a5e3571e6a8b1fb45a51b1280b296833cc7",
+    "budget": {
+      "consumed": 0,
+      "max": 3,
+      "remaining": 3
+    },
+    "pickup": "https://github.com/pcvantol/forge/issues/208#issuecomment-6123273197",
+    "state": "INITIAL_IMPLEMENTATION",
+    "contract": "docs/WORKSPACE_PROJECT_CONCEPT_LIBRARY_V1.md",
+    "installed": "PENDING_NEW_QUALIFICATION"
   }
 }

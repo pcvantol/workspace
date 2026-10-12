@@ -133,7 +133,7 @@ for key, method, path in [
     ("cancel", "POST", "/v1/mission-concepts/{conversation_id}/turns/{turn_id}/cancel")]:
     OPERATIONS["mission-concepts."+key]={"exposure":"HTTP_EXPOSED","method":method,"path":path,
         "auth":"BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT","contract":"mission","summary":"scoped versioned mission concept"}
-for key,method,path in [("list","GET","/v1/project-concepts"),("create","POST","/v1/project-concepts"),("get","GET","/v1/project-concepts/{id}"),("update","PATCH","/v1/project-concepts/{id}")]:
+for key,method,path in [("list","GET","/v1/project-concepts"),("create","POST","/v1/project-concepts"),("get","GET","/v1/project-concepts/{id}"),("update","PATCH","/v1/project-concepts/{id}"),("library_list","GET","/v2/project-concepts"),("library_get","GET","/v2/project-concepts/{id}"),("lifecycle","POST","/v2/project-concepts/{id}/lifecycle")]:
     OPERATIONS["project_concepts."+key] = {"exposure":"HTTP_EXPOSED","method":method,"path":path,
         "auth":"BEARER_PINNED_AND_DRAFT_GRANT","contract":"project_concept","summary":"own project concept; no peer effects"}
 

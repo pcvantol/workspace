@@ -1,3 +1,9 @@
+## Selected concept library — r81-plan100
+
+[Mandate6123101178](https://github.com/pcvantol/forge/issues/208#issuecomment-6123101178), assignment L4-PROJECT-CONCEPT-LIBRARY-V1-20261012. Same session/sole writer, actual base5e354a5e3571e6a8b1fb45a51b1280b296833cc7, branchcodex/plan100-concept-library. New library budget0/max3/remaining3, normal PATCH allocation2.8.23. [Versioned own contract](docs/WORKSPACE_PROJECT_CONCEPT_LIBRARY_V1.md): title metadata search, Active/Archive, archive and restore same concept with durable original lifecycle intents; no peer/project/Mission effects.
+
+Plan99 CLOSED via [terminal6122145258](https://github.com/pcvantol/forge/issues/208#issuecomment-6122145258); older pre-merge document snapshots below remain historical. Plan96/97 closed, plan98/PR160 safely parked0212f898/LINK2/3/1; no EP-companion binding delivered at pickup. Source/tests/independent Quality/Security/UX/protected/nonempty finalization/NEW exact-final-main installed GUI and fresh reachable screenshots remain mandatory.
+
 ## Plan99 protected source — ordinary finalization
 
 Projectconcepten source [PR161](https://github.com/pcvantol/workspace/pull/161) merged at `0fc818a3b54395fa71a216dcf4246be941781c60`, exact reviewed787891b tree, product2.8.22. Complete independent source and actual installed candidate Quality/Security/UX PASS; mandatory212+1 tests and strict per-file coverage, all five CI and actual TDE PASS_WITH_WARNINGS (56findings/one complexity warning).

@@ -150,6 +150,9 @@ class ProjectConceptStore:
                         identity = secrets.token_hex(16)
                         db.execute('INSERT INTO project_concepts_v1 VALUES (?,?,?,?,?,?,?,?)',(identity,*scope,title,notes,1,stamp,stamp))
                     else:
+                        from .project_concept_library import lifecycle_for
+                        if db.execute('SELECT 1 FROM project_concepts_v1 WHERE id=? AND actor_id=? AND context_id=?',(identity,*scope)).fetchone() is not None and lifecycle_for(self.base,db,identity) == 'ARCHIVED':
+                            raise ConversationConflict('restore archived concept before editing')
                         cursor = db.execute('UPDATE project_concepts_v1 SET title=?,notes=?,revision=revision+1,updated_at=? WHERE id=? AND actor_id=? AND context_id=? AND revision=?',(title,notes,stamp,identity,*scope,revision))
                         if cursor.rowcount != 1:
                             exists = db.execute('SELECT 1 FROM project_concepts_v1 WHERE id=? AND actor_id=? AND context_id=?',(identity,*scope)).fetchone()

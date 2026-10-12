@@ -12,6 +12,8 @@ struct ProjectConcept: Codable, Equatable, Identifiable, Sendable {
     let created_at: String
     let updated_at: String
     let state: String
+    var lifecycle: String? = nil
+    var library_version: String? = nil
     static func validText(_ text: String) -> Bool {
         text.unicodeScalars.allSatisfy { $0.value >= 32 || $0.value == 9 || $0.value == 10 }
     }
@@ -22,6 +24,8 @@ struct ProjectConcept: Codable, Equatable, Identifiable, Sendable {
               !title.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,
               title.unicodeScalars.count <= 120, notes.unicodeScalars.count <= 10000, Self.validText(title), Self.validText(notes),
               WorksetReleaseWire.date(created_at) != nil, WorksetReleaseWire.date(updated_at) != nil,
+              (lifecycle == nil || ["ACTIVE","ARCHIVED"].contains(lifecycle!)),
+              (library_version == nil || library_version == "project-concept-library/1"),
               state == "CONCEPT_NOT_CONFIGURED" else { throw ConceptError.invalid }
     }
 }
@@ -35,16 +39,18 @@ struct ProjectConceptSummary: Codable, Equatable, Identifiable, Sendable {
     let created_at: String
     let updated_at: String
     let state: String
+    var lifecycle: String? = nil
+    var library_version: String? = nil
     func validate(_ context: String) throws { try record(notes: "", revision: revision).validate(context) }
     func record(notes: String, revision: Int) -> ProjectConcept {
         .init(id:id,actor_id:actor_id,context_id:context_id,title:title,notes:notes,revision:revision,
-              created_at:created_at,updated_at:updated_at,state:state)
+              created_at:created_at,updated_at:updated_at,state:state,lifecycle:lifecycle,library_version:library_version)
     }
 }
 extension ProjectConcept {
     var summary: ProjectConceptSummary {
         .init(id:id,actor_id:actor_id,context_id:context_id,title:title,revision:revision,
-              created_at:created_at,updated_at:updated_at,state:state)
+              created_at:created_at,updated_at:updated_at,state:state,lifecycle:lifecycle,library_version:library_version)
     }
 }
 struct ConceptCommand: Codable, Equatable, Sendable {
@@ -60,7 +66,7 @@ struct ConceptConnection: Equatable, Sendable {
         SHA256.hash(data:Data([access.endpoint,access.instanceID,access.projectID,access.token].joined(separator:"\n").utf8)).map { String(format:"%02x",$0) }.joined()
     }
 }
-enum ConceptError: Error { case denied, unavailable, conflict, invalid, notFound }
+enum ConceptError: Error { case denied, unavailable, conflict, invalid, notFound, incompatible }
 struct ConceptJournal: Codable, Sendable {
     let key: String
     let identity: String?
@@ -71,24 +77,34 @@ protocol ConceptServing: Sendable {
     func list(_ connection: ConceptConnection) async throws -> [ProjectConceptSummary]
     func get(_ connection: ConceptConnection, id: String) async throws -> ProjectConcept
     func save(_ connection: ConceptConnection, id: String?, command: ConceptCommand) async throws -> ProjectConcept
+    func move(_ connection: ConceptConnection, id: String, command: ConceptLifecycleCommand) async throws -> ProjectConcept
+}
+extension ConceptServing {
+    func move(_ connection: ConceptConnection,id:String,command:ConceptLifecycleCommand) async throws -> ProjectConcept { throw ConceptError.incompatible }
 }
 @MainActor
 final class ProjectConceptState: ObservableObject {
     @Published var title = ""
     @Published var notes = ""
-    @Published private(set) var items: [ProjectConceptSummary] = []
-    @Published private(set) var selected: ProjectConcept?
-    @Published private(set) var phase = "connect"
-    @Published private(set) var busy = false
+    @Published var items: [ProjectConceptSummary] = []
+    @Published var selected: ProjectConcept?
+    @Published var phase = "connect"
+    @Published var busy = false
     @Published private(set) var pending: ConceptJournal?
-    private let transport: any ConceptServing
-    private let records: PrivateLocalRecordStore
+    let transport: any ConceptServing
+    let records: PrivateLocalRecordStore
+    @Published var searchQuery = ""
+    @Published var libraryTab = "ACTIVE"
+    @Published var pendingLifecycle: ConceptLifecycleJournal?
+    @Published var inventoryLoaded = false
+    let lifecycleRecords: PrivateLocalRecordStore
     private var authorizationObservation: AnyCancellable?
-    private var generation = 0
-    private var connection: ConceptConnection?
+    var generation = 0
+    var connection: ConceptConnection?
     var dirty: Bool { title != (selected?.title ?? "") || notes != (selected?.notes ?? "") }
     init(transport: any ConceptServing = ProjectConceptTransport(), root: URL = FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0].appendingPathComponent("Workspace/ProjectConceptIntents")) {
         self.transport = transport; records = PrivateLocalRecordStore(root:root,namespace:"project-concept")
+        lifecycleRecords = PrivateLocalRecordStore(root:root.appendingPathComponent("Library"),namespace:"project-concept")
     }
     var displayPhase: String {
         dirty && ["saved", "ready", "empty"].contains(phase) ? "unsaved" : phase
@@ -113,17 +129,18 @@ final class ProjectConceptState: ObservableObject {
     func cancelReads() { generation += 1; busy = false }
     func invalidate() {
         generation += 1; busy = false; connection = nil; items = []; selected = nil
-        pending = nil; title = ""; notes = ""; phase = "connect"
+        pending = nil; pendingLifecycle = nil; searchQuery = ""; libraryTab = "ACTIVE"; inventoryLoaded = false; title = ""; notes = ""; phase = "connect"
     }
-    private func check(_ expected: ConceptConnection, current: @MainActor () async throws -> ConceptConnection) async throws {
+    func check(_ expected: ConceptConnection, current: @MainActor () async throws -> ConceptConnection) async throws {
         guard try await current() == expected else { throw ConceptError.denied }
     }
-    private func failure(_ error: Error) {
+    func failure(_ error: Error) {
         switch error {
         case ConceptError.denied: invalidate(); phase = "denied"
         case ConceptError.conflict: phase = "conflict"
         case ConceptError.invalid: phase = "invalid"
-        default: phase = "offline"
+        case ConceptError.incompatible: items = []; inventoryLoaded = false; phase = "incompatible"
+        default: phase = pendingLifecycle == nil ? "offline" : "lifecycleOffline"
         }
     }
     func refresh(current: @MainActor () async throws -> ConceptConnection) async {
@@ -138,7 +155,7 @@ final class ProjectConceptState: ObservableObject {
             guard ticket == generation else { return }
             guard values.count <= 500, Set(values.map(\.id)).count == values.count else { throw ConceptError.invalid }
             for value in values { try value.validate(active.access.projectID) }
-            items = values
+            items = values; inventoryLoaded = true
             if pending == nil, let data = try records.load(active.key) {
                 let journal = try JSONDecoder().decode(ConceptJournal.self,from:data)
                 guard journal.key == active.key else { throw ConceptError.invalid }
@@ -147,16 +164,17 @@ final class ProjectConceptState: ObservableObject {
                     if let id = journal.identity { selected = values.first { $0.id == id }?.record(notes:journal.command.notes,revision:journal.command.expected_revision) }
                 }
             }
-            phase = pending != nil ? "retry" : (dirty ? "unsaved" : (items.isEmpty ? "empty" : "ready"))
+            try restoreLifecycle(active)
+            phase = pendingLifecycle != nil ? "lifecycleRetry" : pending != nil ? "retry" : (dirty ? "unsaved" : (items.isEmpty ? "empty" : "ready"))
         } catch { if ticket == generation { failure(error) } }
     }
     func new(defaultTitle: String) {
-        guard !busy, pending == nil else { return }
+        guard !busy, pending == nil, pendingLifecycle == nil else { return }
         guard !dirty else { phase = "unsaved"; return }
-        generation += 1; selected = nil; title = defaultTitle; notes = ""; phase = "unsaved"
+        generation += 1; libraryTab = "ACTIVE"; selected = nil; title = defaultTitle; notes = ""; phase = "unsaved"
     }
     func open(_ id: String, discard: Bool = false, current: @MainActor () async throws -> ConceptConnection) async {
-        guard !busy, pending == nil else { return }
+        guard !busy, pending == nil, pendingLifecycle == nil else { return }
         guard !dirty || discard else { phase = "unsaved"; return }
         guard let active = connection else { return }
         generation += 1; let ticket = generation; busy = true
@@ -177,7 +195,7 @@ final class ProjectConceptState: ObservableObject {
         try records.save(JSONEncoder().encode(completed),key:journal.key)
     }
     func save(current: @MainActor () async throws -> ConceptConnection) async {
-        guard !busy, let active = connection else { return }
+        guard !busy, inventoryLoaded, phase != "conflict", pendingLifecycle == nil, pending != nil || selected?.lifecycle != "ARCHIVED", let active = connection else { return }
         guard selected == nil || dirty || pending != nil else { return }
         guard title.unicodeScalars.count <= 120, notes.unicodeScalars.count <= 10000,
               !title.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty, ProjectConcept.validText(title), ProjectConcept.validText(notes) else { phase = "invalid"; return }

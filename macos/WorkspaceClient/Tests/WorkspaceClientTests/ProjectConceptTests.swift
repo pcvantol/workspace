@@ -157,9 +157,9 @@ extension ProjectConceptTests {
     func testHTTPProjectionHeaderRevisionErrorsAndInvalidIdentities() async throws {
         let configuration=URLSessionConfiguration.ephemeral;configuration.protocolClasses=[ConceptHTTPProtocol.self]
         let transport=ProjectConceptTransport(configuration:configuration)
-        let item:[String:Any]=["id":String(repeating:"a",count:32),"actor_id":"alice","context_id":"own-context","title":"Idea","notes":"🌱","revision":1,"created_at":"2026-10-12T00:00:00Z","updated_at":"2026-10-12T00:00:00Z","state":"CONCEPT_NOT_CONFIGURED"]
+        let item:[String:Any]=["id":String(repeating:"a",count:32),"actor_id":"alice","context_id":"own-context","title":"Idea","notes":"🌱","revision":1,"created_at":"2026-10-12T00:00:00Z","updated_at":"2026-10-12T00:00:00Z","state":"CONCEPT_NOT_CONFIGURED","lifecycle":"ACTIVE","library_version":"project-concept-library/1"]
         var summary=item;summary.removeValue(forKey:"notes")
-        ConceptHTTPProtocol.code=200;ConceptHTTPProtocol.value=["actor_id":"alice","context_id":"own-context","concepts":[summary]]
+        ConceptHTTPProtocol.code=200;ConceptHTTPProtocol.value=["library_version":"project-concept-library/1","actor_id":"alice","context_id":"own-context","concepts":[summary]]
         let rows=try await transport.list(connection);XCTAssertEqual(rows.count,1)
         XCTAssertEqual(ConceptHTTPProtocol.last?.value(forHTTPHeaderField:"X-Workspace-Draft-Grant"),connection.access.token)
         ConceptHTTPProtocol.value=item
@@ -200,4 +200,21 @@ private struct ConceptBoundServer:CredentialStore {
     func token() throws -> String? {"synthetic-own-bearer"}
     func save(binding:ServerBinding,token:String) throws {}
     func forget() throws {}
+}
+
+extension ProjectConceptTests {
+    func testVersionedLibraryHTTPMoveAndUnsupportedCapability() async throws {
+        let configuration=URLSessionConfiguration.ephemeral;configuration.protocolClasses=[ConceptHTTPProtocol.self]
+        let transport=ProjectConceptTransport(configuration:configuration),id=String(repeating:"a",count:32)
+        ConceptHTTPProtocol.code=200;ConceptHTTPProtocol.value=["actor_id":"alice","context_id":"own-context","concepts":[]]
+        do {_=try await transport.list(connection);XCTFail("Legacy metadata accepted as archive capability")} catch ConceptError.incompatible {}
+        ConceptHTTPProtocol.value=["library_version":"project-concept-library/99","actor_id":"alice","context_id":"own-context","concepts":[]]
+        do {_=try await transport.list(connection);XCTFail("Future capability accepted")} catch ConceptError.incompatible {}
+        ConceptHTTPProtocol.value=["id":id,"actor_id":"alice","context_id":"own-context","title":"Idea","notes":"Original notes","revision":2,"created_at":"2026-10-12T00:00:00Z","updated_at":"2026-10-12T01:00:00Z","state":"CONCEPT_NOT_CONFIGURED","lifecycle":"ARCHIVED","library_version":"project-concept-library/1"]
+        let command=ConceptLifecycleCommand(operation_id:String(repeating:"d",count:32),expected_revision:1,lifecycle:"ARCHIVED")
+        let value=try await transport.move(connection,id:id,command:command);XCTAssertEqual(value.lifecycle,"ARCHIVED")
+        XCTAssertEqual(ConceptHTTPProtocol.last?.url?.path,"/v2/project-concepts/"+id+"/lifecycle");XCTAssertEqual(ConceptHTTPProtocol.last?.httpMethod,"POST")
+        do {_=try await transport.move(connection,id:"../wrong",command:command);XCTFail("Nonliteral lifecycle path")} catch ConceptError.invalid {}
+        let fixture=ConceptFixture();do {_=try await fixture.move(connection,id:id,command:command);XCTFail("Unimplemented lifecycle accepted")}catch ConceptError.incompatible{}
+    }
 }

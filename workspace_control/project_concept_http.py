@@ -4,13 +4,14 @@ import re
 import sqlite3
 from .conversations import ConversationConflict
 from .project_concepts import ConceptStorageUnavailable
+from .project_concept_library import ProjectConceptLibrary
 
 
 def handle(handler, service):
     path = handler.path
-    if not path.startswith('/v1/project-concepts'):
+    if not path.startswith(('/v1/project-concepts','/v2/project-concepts')):
         return False
-    match = re.fullmatch(r'/v1/project-concepts(?:/([0-9a-f]{32}))?',path)
+    match = re.fullmatch(r'/(v[12])/project-concepts(?:/([0-9a-f]{32})(/lifecycle)?)?',path)
     if match is None:
         handler._reply(400,{'error':'INVALID_PATH'}); return True
     if not handler._pinned_auth():
@@ -18,8 +19,8 @@ def handle(handler, service):
     grants = handler.headers.get_all('X-Workspace-Draft-Grant',[])
     if len(grants)!=1 or re.fullmatch(r'[A-Za-z0-9_-]{43}',grants[0]) is None:
         handler._reply(403,{'error':'CONCEPT_ACCESS_DENIED'}); return True
-    identity = match[1]; body = None
-    if handler.command not in ('GET','POST','PATCH') or (handler.command=='POST' and identity is not None) or (handler.command=='PATCH' and identity is None):
+    version,identity,lifecycle = match.groups(); body = None
+    if (version=='v1' and (lifecycle is not None or handler.command not in ('GET','POST','PATCH') or (handler.command=='POST' and identity is not None) or (handler.command=='PATCH' and identity is None))) or (version=='v2' and ((lifecycle is None and handler.command!='GET') or (lifecycle is not None and handler.command!='POST'))):
         handler._reply(405,{'error':'METHOD_NOT_ALLOWED'}); return True
     if handler.command != 'GET':
         sizes=handler.headers.get_all('Content-Length',[])
@@ -41,11 +42,14 @@ def handle(handler, service):
         # Same existing actor/context grant; no EP or catalogue prerequisite.
         # Keep existing cross-process revoke fence through storage AND publication.
         with service.project_concepts.authorized(grants[0]) as scope:
-            if handler.command=='GET':
+            if version=='v2':
+                library=ProjectConceptLibrary(service.project_concepts)
+                value=library.move(scope,identity,body) if lifecycle else library.read(scope,identity)
+            elif handler.command=='GET':
                 value=service.project_concepts.get(scope,identity) if identity else service.project_concepts.list(scope)
             else:
                 value=service.project_concepts.save(scope,body,identity=identity)
-            handler._reply(201 if handler.command=='POST' else 200,value)
+            handler._reply(201 if handler.command=='POST' and version=='v1' else 200,value)
     except PermissionError:
         handler._reply(403,{'error':'CONCEPT_ACCESS_DENIED'})
     except ConversationConflict:

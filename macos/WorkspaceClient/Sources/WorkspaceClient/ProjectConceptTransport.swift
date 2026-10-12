@@ -33,17 +33,24 @@ struct ProjectConceptTransport: ConceptServing {
               let value = try? JSONDecoder().decode(T.self,from:data) else { throw ConceptError.invalid }
         return value
     }
-    private struct List: Decodable { let actor_id:String; let context_id:String; let concepts:[ProjectConceptSummary] }
+    private struct List: Decodable { let library_version:String?; let actor_id:String; let context_id:String; let concepts:[ProjectConceptSummary] }
     func list(_ connection:ConceptConnection) async throws -> [ProjectConceptSummary] {
-        let result = try await request(List.self,connection,path:"/v1/project-concepts")
-        guard result.context_id == connection.access.projectID, result.concepts.count <= 500,
+        let result: List
+        do { result = try await request(List.self,connection,path:"/v2/project-concepts") }
+        catch ConceptError.notFound { throw ConceptError.incompatible }
+        guard result.library_version == "project-concept-library/1" else { throw ConceptError.incompatible }
+        guard result.concepts.allSatisfy({$0.lifecycle != nil && $0.library_version == result.library_version}), result.context_id == connection.access.projectID, result.concepts.count <= 500,
               result.concepts.allSatisfy({$0.actor_id == result.actor_id}) else { throw ConceptError.invalid }
         return result.concepts
     }
     func get(_ connection:ConceptConnection,id:String) async throws -> ProjectConcept {
         guard id.range(of:"^[0-9a-f]{32}$",options:.regularExpression) != nil else { throw ConceptError.invalid }
-        let result = try await request(ProjectConcept.self,connection,path:"/v1/project-concepts/"+id)
-        guard result.id == id else { throw ConceptError.invalid }; return result
+        let result = try await request(ProjectConcept.self,connection,path:"/v2/project-concepts/"+id)
+        guard result.id == id, result.lifecycle != nil, result.library_version == "project-concept-library/1" else { throw ConceptError.invalid }; return result
+    }
+    func move(_ connection:ConceptConnection,id:String,command:ConceptLifecycleCommand) async throws -> ProjectConcept {
+        guard id.range(of:"^[0-9a-f]{32}$",options:.regularExpression) != nil else { throw ConceptError.invalid }
+        return try await request(ProjectConcept.self,connection,path:"/v2/project-concepts/"+id+"/lifecycle",method:"POST",body:JSONEncoder().encode(command))
     }
     func save(_ connection:ConceptConnection,id:String?,command:ConceptCommand) async throws -> ProjectConcept {
         if let id, id.range(of:"^[0-9a-f]{32}$",options:.regularExpression) == nil { throw ConceptError.invalid }
