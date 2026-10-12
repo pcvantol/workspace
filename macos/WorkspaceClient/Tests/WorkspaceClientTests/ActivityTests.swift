@@ -398,10 +398,12 @@ extension ActivityTests {
 private final class ActivityExpiryDelay:@unchecked Sendable {
     private let lock=NSLock()
     private var enabled=false
+    private let fails:Bool
+    init(fails:Bool=false) { self.fails=fails }
     func enable() { lock.withLock { enabled=true } }
     func synchronize(_ descriptor:Int32) -> Int32 {
         let delay=lock.withLock { let value=enabled;enabled=false;return value }
-        if delay { Thread.sleep(forTimeInterval:1.5) }
+        if delay { Thread.sleep(forTimeInterval:1.5);if fails { return -1 } }
         return Darwin.fsync(descriptor)
     }
 }
@@ -435,6 +437,34 @@ extension ActivityTests {
         for language in ["en","nl","de","fr","es"] {
             XCTAssertEqual(ActivityCopy.limitation("FUTURE_LIMIT",language),ActivityCopy.text("limitationUnknown",language))
             XCTAssertEqual(ActivityCopy.limitation("NO_BACKFILL_OF_MUTABLE_SNAPSHOTS",language),ActivityCopy.text("NO_BACKFILL_OF_MUTABLE_SNAPSHOTS",language))
+        }
+    }
+}
+
+extension ActivityTests {
+    @MainActor func testResyncSaveCrossingExpiryCannotPublishProtectedCheckpointOrRetainView() async throws {
+        for failedWrite in [false,true] {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer { try? FileManager.default.removeItem(at:root) }
+        let server=try ActivityScriptedServer(),base=try Self.access()
+        let delay=ActivityExpiryDelay(fails:failedWrite),records=PrivateLocalRecordStore(root:root,namespace:"workset-activity",synchronizeDirectory:{ delay.synchronize($0) })
+        let state=ActivityState(transport:server,credentials:ActivityMemoryCredentials(base),store:ActivityLocalStore(records:records))
+        await state.connect(Self.connection);await state.choose(base.worksets[0].workset_id);await state.rememberDisplayed(visible:true)
+        state.invalidate()
+        let formatter=ISO8601DateFormatter();formatter.formatOptions=[.withInternetDateTime,.withFractionalSeconds]
+        let finite=ActivityAccess(endpoint:base.endpoint,workspaceInstanceID:base.workspaceInstanceID,actorID:base.actorID,workspaceProjectID:base.workspaceProjectID,token:base.token,binding_id:base.binding_id,scope:base.scope,installation_id:base.installation_id,worksets:base.worksets,expires_at:formatter.string(from:Date().addingTimeInterval(1)))
+        await server.setAccess(finite)
+        let resumed=ActivityState(transport:server,credentials:ActivityMemoryCredentials(finite),store:ActivityLocalStore(records:records))
+        await resumed.connect(Self.connection);await resumed.choose(base.worksets[0].workset_id)
+        XCTAssertTrue(resumed.complete)
+        var expiredPublication=false
+        let observation=resumed.$journal.sink { value in
+            if !value.lastViewedIDs.isEmpty,WorksetReleaseWire.date(finite.expires_at)!<=Date() { expiredPublication=true }
+        }
+        defer { observation.cancel() }
+        await server.setMode("resync");delay.enable();await resumed.fetch(restart:true)
+        XCTAssertFalse(expiredPublication);XCTAssertNil(resumed.access);XCTAssertTrue(resumed.pages.isEmpty)
+        XCTAssertTrue(resumed.journal.lastViewedIDs.isEmpty);XCTAssertEqual(resumed.status,"denied")
+        resumed.invalidate()
         }
     }
 }

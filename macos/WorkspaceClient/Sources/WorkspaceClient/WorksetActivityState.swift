@@ -33,6 +33,7 @@ import Combine
     }
     private func failure(_ error:Error,_ ticket:UUID) {
         guard ticket==epoch else { return }
+        if let access,!live(ticket,access) { invalidate();return }
         if case AdvisoryError.denied=error { invalidate();return }
         historical = !pages.isEmpty;detail=nil
         if case AdvisoryError.state(let code)=error { status=code=="RESYNC_REQUIRED" ? "resync":code=="UNSUPPORTED" ? "unsupported":code=="ACTIVITY_HISTORY_PARTIAL_CAPACITY" ? "capacity":code=="ACTIVITY_HISTORY_SOURCE_INVALID" || code=="ACTIVITY_INVALID_RESPONSE" ? "invalid":"unavailable" }
@@ -135,7 +136,11 @@ import Combine
             guard live(ticket,access),selected==workset else { invalidate();return }
             if case AdvisoryError.state("RESYNC_REQUIRED")=error {
                 var updated=journal;if !updated.pageKeys.isEmpty { updated.historicalKeys=updated.pageKeys };updated.cursor=nil;updated.pageKeys=[];updated.complete=false;updated.comparisonKnown=false
-                do { try store.save(updated,key(access,connection));journal=updated } catch { status="unavailable";historical=true;return }
+                do {
+                    try store.save(updated,key(access,connection))
+                    guard live(ticket,access),selected==workset else { if ticket==epoch { invalidate() };return }
+                    journal=updated
+                } catch { failure(error,ticket);return }
             }
             failure(error,ticket)
         }
