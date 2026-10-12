@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "Ordinary nonempty documentary finalization of protected PR163; no runtime changes; new exact-final-main installed proof remains post-merge gate",
+  "determined_version": "2.8.23",
+  "event_lineage": "Ordinary nonempty documentary finalization of protected PR163; no runtime changes; new exact-final-main installed proof remains post-merge gate",
+  "expected_source_revision": "5de570d7a983903dd72325789a4f09f610ab8df9",
+  "expected_version": "2.8.23",
+  "operation_id": "L4-PLAN100-LIBRARY-FINALIZATION-20261012",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "NO_BUMP",
+  "requested": {
+    "bump": "none"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}
