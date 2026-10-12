@@ -1,7 +1,7 @@
 # Workspace Projectconcepten V1 — plan99
 
 Assignment L4-PROJECT-CONCEPTS-V1-20261012 / mandate6118583726.
-Current concept budget consumed3/max3/remaining0. Initial implementation.
+Current concept budget consumed4/max4/remaining0. Integrated rendering repair; final-main qualification pending.
 Same writer/session; merged basea6aad520bed9f1c2f7119b393435b8c739f030b3.
 Plan98/PR160 PARKED on0212f898bb049c7019e4f8c602decc09b891c595,
 LINK consumed2/max3/remaining1; not closed or merged. Predecessors96/97 CLOSED.
@@ -143,4 +143,23 @@ bounded native sidebar and one selected detail; stable destinations, StateObject
 current authorization and review routing remain. The concept editor has a finite
 internal-scroll viewport; its Save shortcut is active-pane scoped. New full source
 reviews and actual packaged root rendering/keyboard/fault qualification are required.
-No old failed screenshot is promoted and no fourth source round is authorized.
+At that checkpoint no fourth round was authorized; the later explicit exception is recorded below.
+
+## Explicit extra integrated round4 — viewport containment
+
+Peter answered “Ga verder” to the specific one-extra-render-round request.
+Admission consumed3/max4/remaining1, round4 booked once BEFORE edits via6120776249;
+current consumed4/max4/remaining0. Prior3/3 limit and every FAIL remain historical.
+No fifth round, LINK budget change or operational scope extension follows.
+
+The explicit native split shell still inherited a detail minimum wider than the
+actual window.7e06 had a760pxwindow/root1080 at a shifted origin; its real narrow
+GUI acceptance failed despite source tests. The detail and native split wrapper
+now explicitly allow zero minimum width/height while growing into the finite
+viewport; concept scroll content likewise permits shrinking below its preferred
+maximum. No clipping workaround or larger minimum macOS/window support is used.
+A bounded WIP diagnostic package measured matching window/root origins and widths
+at760 and560 and performed actual keyboard Save/readback at560. This diagnostic
+proof is NOT exact-final-main acceptance. Real concept/Mission presenter window
+containment regressions replace reliance on placeholder-only geometry, while
+full independent source and new exact packaged/final-main gates remain required.

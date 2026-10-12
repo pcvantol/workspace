@@ -40,9 +40,11 @@ struct WorkspaceNavigationShell<Detail: View>: View {
                 .navigationTitle("Workspace")
                 .navigationSplitViewColumnWidth(min:180,ideal:220,max:280)
             } detail: {
-                detail(selected).frame(maxWidth:.infinity,maxHeight:.infinity,alignment:.topLeading)
+                detail(selected)
+                    .frame(minWidth:0,maxWidth:.infinity,minHeight:0,maxHeight:.infinity,alignment:.topLeading)
             }
             .navigationSplitViewStyle(.balanced)
+            .frame(minWidth:0,maxWidth:.infinity,minHeight:0,maxHeight:.infinity)
             .frame(width:WorkspaceDestination.finite(viewport.size.width,fallback:560),
                    height:WorkspaceDestination.finite(viewport.size.height,fallback:520))
         }

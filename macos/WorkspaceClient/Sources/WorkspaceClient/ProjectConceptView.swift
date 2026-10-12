@@ -89,7 +89,7 @@ struct ProjectConceptView: View {
                     }
                 }
                 if state.busy { ProgressView() }
-            }.padding(24).frame(maxWidth:850,alignment:.leading)
+            }.padding(24).frame(minWidth:0,maxWidth:850,alignment:.leading)
         }
         .task { state.bindAuthorization(client); await state.refresh(current:current) }
         .onChange(of:client.phase) { _,phase in
