@@ -6,6 +6,7 @@ import sqlite3
 import tempfile
 import threading
 import unittest
+from unittest.mock import patch
 from urllib.request import Request,urlopen
 from urllib.error import HTTPError
 from workspace_control.service import Service,initialize
@@ -85,6 +86,22 @@ class ProjectConceptTests(unittest.TestCase):
         with sqlite3.connect(db) as connection:connection.execute('ALTER TABLE project_concepts_v1 ADD COLUMN unauthorized TEXT')
         self.assertEqual(self.request()[0],503)
         self.assertEqual(self.request(method='POST',body=self.fields(operation_id='e'*32))[0],503)
+    def test_source_loss_at_actual_sqlite_open_has_no_replacement_effect(self):
+        self.request(method='POST',body=self.fields())
+        db=self.root/'conversations.sqlite3';original=db.read_bytes();connect=sqlite3.connect
+        for method in ['GET','POST']:
+            seen=[]
+            def disappear(target,*args,**kwargs):
+                if 'conversations.sqlite3' in str(target) and not seen:
+                    seen.append(str(target));db.unlink()
+                return connect(target,*args,**kwargs)
+            with patch('workspace_control.conversations.sqlite3.connect',side_effect=disappear):
+                code,_=self.request(method=method,body=self.fields(operation_id='e'*32) if method=='POST' else None)
+            self.assertEqual(code,503);self.assertTrue(seen);self.assertFalse(db.exists())
+            self.assertIn('mode=ro' if method=='GET' else 'mode=rw',seen[0])
+            db.write_bytes(original);db.chmod(0o600)
+        with self.assertRaises(ValueError):self.service.conversations._connect(create=True,read_only=True)
+
     def test_maximum_unicode_inventory_is_metadata_only_and_every_detail_is_reachable(self):
         with self.service.project_concepts.authorized(self.grant) as scope:
             last = None

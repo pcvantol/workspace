@@ -170,6 +170,7 @@ final class ProjectConceptState: ObservableObject {
     }
     func save(current: @MainActor () async throws -> ConceptConnection) async {
         guard !busy, let active = connection else { return }
+        guard selected == nil || dirty || pending != nil else { return }
         guard title.unicodeScalars.count <= 120, notes.unicodeScalars.count <= 10000,
               !title.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty, ProjectConcept.validText(title), ProjectConcept.validText(notes) else { phase = "invalid"; return }
         let ticket = generation; busy = true

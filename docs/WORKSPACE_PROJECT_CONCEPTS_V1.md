@@ -108,3 +108,9 @@ Visible save status follows actual dirty editor immediately, preserving stronger
 conflict/offline/recovery errors. Lists are bounded metadata summaries, note bodies
 only in authorized detail. Initial real packaged GUI created/saved a concept and
 confirmed saved-status defect after unsent edit; failure screenshots retained.
+
+Within the same integrated round1 package, the directly reused SQLite primitive
+now has explicit read-only/existing-only URI modes for concepts. Controlled loss
+at the actual open cannot create a replacement; legacy default callsites retain
+their behavior. Repeated completed Save without edits is a native no-op (same
+concept/revision), alongside immutable pending replay. No new correction booked.

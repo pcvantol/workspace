@@ -75,7 +75,7 @@ struct ProjectConceptView: View {
                 TextEditor(text:$state.notes).frame(minHeight:180).overlay(RoundedRectangle(cornerRadius:8).stroke(.quaternary))
                     .disabled(state.busy || state.pending != nil).accessibilityLabel(text("notes")).accessibilityIdentifier("concept-notes")
                 Button(text(state.pending == nil ? "save" : "retry")) { Task { await state.save(current:current) } }
-                    .buttonStyle(.borderedProminent).disabled(state.busy).keyboardShortcut("s",modifiers:.command).accessibilityIdentifier("concept-save")
+                    .buttonStyle(.borderedProminent).disabled(state.busy || (state.selected != nil && !state.dirty && state.pending == nil)).keyboardShortcut("s",modifiers:.command).accessibilityIdentifier("concept-save")
                 if let selected = state.selected {
                     if let created = WorksetReleaseWire.date(selected.created_at), let updated = WorksetReleaseWire.date(selected.updated_at) {
                         LabeledContent(text("created"),value:created.formatted(date:.abbreviated,time:.shortened))

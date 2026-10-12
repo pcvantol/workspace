@@ -43,6 +43,7 @@ final class ProjectConceptTests:XCTestCase {
         fixture.loseReply=false;await restart.save(current:{binding})
         XCTAssertEqual(restart.phase,"saved");XCTAssertEqual(fixture.commands,[original,original]);XCTAssertEqual(fixture.items.count,1)
         let id=try XCTUnwrap(restart.selected?.id)
+        await restart.save(current:{binding});XCTAssertEqual(fixture.commands.count,2);XCTAssertEqual(restart.selected?.revision,1)
         restart.notes="Verder uitwerken";await restart.save(current:{binding})
         XCTAssertEqual(restart.selected?.id,id);XCTAssertEqual(restart.selected?.revision,2)
         XCTAssertEqual(fixture.commands.last?.expected_revision,1)

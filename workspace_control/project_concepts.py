@@ -48,7 +48,7 @@ class ProjectConceptStore:
         if not existing and not write:
             raise FileNotFoundError('concept store not yet created')
         try:
-            db = self.base._connect(create=not existing and write)
+            db = self.base._connect(create=not existing and write, read_only=not write, existing_only=True)
         except (ValueError, sqlite3.Error) as error:
             raise ConceptStorageUnavailable('invalid existing private store') from error
         try:

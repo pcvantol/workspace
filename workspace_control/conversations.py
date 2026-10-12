@@ -15,6 +15,7 @@ import secrets
 import sqlite3
 import stat
 import threading
+from urllib.parse import quote
 
 from .service import _private_json
 
@@ -146,7 +147,9 @@ class ConversationStore:
                     return grant["actor_id"], grant["project_id"]
         raise PermissionError("conversation grant denied")
 
-    def _connect(self, *, create=False):
+    def _connect(self, *, create=False, read_only=False, existing_only=False):
+        if read_only and create:
+            raise ValueError("read-only store cannot initialize")
         path = self.root / "conversations.sqlite3"
         if create:
             try:
@@ -158,8 +161,18 @@ class ConversationStore:
         info = os.stat(path, follow_symlinks=False)
         if not stat.S_ISREG(info.st_mode) or info.st_uid != os.getuid() or info.st_mode & 0o077:
             raise ValueError("invalid conversation store")
-        connection = sqlite3.connect(path, timeout=5)
+        if read_only or existing_only:
+            mode = "ro" if read_only else "rw"
+            connection = sqlite3.connect("file:" + quote(str(path), safe="/") + "?mode=" + mode, uri=True, timeout=5)
+        else:
+            connection = sqlite3.connect(path, timeout=5)
         connection.row_factory = sqlite3.Row
+        if read_only:
+            columns = {row[1] for row in connection.execute("PRAGMA table_info(conversations)")}
+            if not {"id", "actor_id", "project_id", "draft", "revision", "archived"}.issubset(columns):
+                connection.close()
+                raise ValueError("incompatible existing conversation schema")
+            return connection
         if create:
             connection.execute("""CREATE TABLE IF NOT EXISTS conversations (
                 id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, project_id TEXT NOT NULL,
