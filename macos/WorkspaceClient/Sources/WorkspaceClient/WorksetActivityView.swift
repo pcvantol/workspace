@@ -45,9 +45,34 @@ struct WorksetActivityView: View {
                             Text(text("workset")+" "+String(index+1)).tag(subject.workset_id)
                         }
                     }.disabled(state.busy).accessibilityIdentifier("activity.workset")
+                    DisclosureGroup(text("sourceContext")) {
+                        VStack(alignment:.leading,spacing:6) {
+                            Text("Forge 2.15.0").font(.caption)
+                            Text([access.scope.instance_id,access.scope.project_id,access.scope.repository_id].joined(separator:" · ")).font(.caption).textSelection(.enabled)
+                            ForEach(Array(access.worksets.enumerated()),id:\.element.workset_id) { index,subject in
+                                VStack(alignment:.leading) {
+                                    Text(text("workset")+" "+String(index+1)).font(.caption.bold())
+                                    Text(subject.workset_id).font(.caption).textSelection(.enabled)
+                                }
+                            }
+                            DisclosureGroup(text("technical")) { Text(ActivityWire.pin).font(.caption).textSelection(.enabled) }
+                        }.frame(maxWidth:.infinity,alignment:.leading)
+                    }
                 }
                 if !state.pages.isEmpty {
-                    Text(text("partial")).foregroundStyle(.secondary)
+                    if let page=state.pages.last {
+                        VStack(alignment:.leading,spacing:5) {
+                            Text(text("coverage")).font(.headline)
+                            Text(text(page.offered)).font(.caption)
+                            Text(text("partial")).font(.caption).foregroundStyle(.secondary)
+                            ForEach(Array(page.limitations.enumerated()),id:\.offset) { _,limit in
+                                Text(ActivityCopy.limitation(limit,language)).font(.caption).foregroundStyle(.secondary)
+                            }
+                            DisclosureGroup(text("technical")) {
+                                Text(([page.offered]+page.limitations).joined(separator:"\n")).font(.caption).textSelection(.enabled)
+                            }
+                        }
+                    }
                     if state.historical { Text(text("historical")).foregroundStyle(.orange) }
                     else {
                         GroupBox(text("current")) {
@@ -69,7 +94,7 @@ struct WorksetActivityView: View {
                                         DisclosureGroup(text("technical")) { Text([item.execution_state,item.engineering_result,item.review_state,item.final_acceptance].joined(separator:" · ")).font(.caption).textSelection(.enabled) }
                                     }.frame(maxWidth:.infinity,alignment:.leading)
                                 }
-                                Text(state.pages.last?.observedAt ?? "").font(.caption)
+                                Text(text("CURRENT_READBACK")+" "+(state.pages.last?.observedAt ?? "")).font(.caption).foregroundStyle(.secondary)
                             }
                         }
                     }

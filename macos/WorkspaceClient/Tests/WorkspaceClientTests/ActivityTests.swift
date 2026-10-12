@@ -3,6 +3,7 @@ import Foundation
 import SwiftUI
 import AppKit
 import Security
+import Combine
 @testable import WorkspaceClient
 
 final class ActivityTests:XCTestCase {
@@ -391,5 +392,49 @@ extension ActivityTests {
         XCTAssertEqual(retained.pageKeys,old.pageKeys);XCTAssertEqual(retained.previousCursor,old.previousCursor)
         XCTAssertEqual(retained.comparisonKnown,old.comparisonKnown);XCTAssertEqual(retained.lastViewedIDs,old.lastViewedIDs)
         XCTAssertNil(state.access);XCTAssertEqual(state.status,"denied")
+    }
+}
+
+private final class ActivityExpiryDelay:@unchecked Sendable {
+    private let lock=NSLock()
+    private var enabled=false
+    func enable() { lock.withLock { enabled=true } }
+    func synchronize(_ descriptor:Int32) -> Int32 {
+        let delay=lock.withLock { let value=enabled;enabled=false;return value }
+        if delay { Thread.sleep(forTimeInterval:1.5) }
+        return Darwin.fsync(descriptor)
+    }
+}
+extension ActivityTests {
+    @MainActor func testCacheReadCrossingExpiryCannotBrieflyPublishProtectedHistory() async throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer { try? FileManager.default.removeItem(at:root) }
+        let server=try ActivityScriptedServer(),base=try Self.access(),initial=ActivityState(transport:server,credentials:ActivityMemoryCredentials(base),store:ActivityLocalStore(root:root))
+        await initial.connect(Self.connection);await initial.choose(base.worksets[0].workset_id);await initial.rememberDisplayed(visible:true);initial.invalidate()
+        let formatter=ISO8601DateFormatter();formatter.formatOptions=[.withInternetDateTime,.withFractionalSeconds]
+        let finite=ActivityAccess(endpoint:base.endpoint,workspaceInstanceID:base.workspaceInstanceID,actorID:base.actorID,workspaceProjectID:base.workspaceProjectID,token:base.token,binding_id:base.binding_id,scope:base.scope,installation_id:base.installation_id,worksets:base.worksets,expires_at:formatter.string(from:Date().addingTimeInterval(1)))
+        await server.setAccess(finite)
+        let delay=ActivityExpiryDelay(),privateRecords=PrivateLocalRecordStore(root:root,namespace:"workset-activity",synchronizeDirectory:{ delay.synchronize($0) })
+        let state=ActivityState(transport:server,credentials:ActivityMemoryCredentials(finite),store:ActivityLocalStore(records:privateRecords))
+        var expiredPublication=false
+        let observation=state.$pages.sink { values in
+            if !values.isEmpty,WorksetReleaseWire.date(finite.expires_at)!<=Date() { expiredPublication=true }
+        }
+        defer { observation.cancel() }
+        await state.connect(Self.connection);delay.enable();await state.choose(base.worksets[0].workset_id)
+        // No yield here: MainActor expiry monitor cannot conceal an unsafe transient cache publication.
+        XCTAssertFalse(expiredPublication)
+        XCTAssertNil(state.access);XCTAssertTrue(state.pages.isEmpty);XCTAssertTrue(state.events.isEmpty);XCTAssertEqual(state.status,"denied")
+        state.invalidate()
+    }
+    func testForeignCurrentProjectWithValidSnapshotDigestStillRejectsPinnedNullScope() throws {
+        let access=try Self.access();var raw=try Self.raw("page"),current=raw["current"] as! [String:Any],scope=current["scope"] as! [String:Any]
+        scope["project_id"]="foreign-project";current["scope"]=scope
+        var signed=current;for key in ["snapshot_revision","observed_at","freshness","read_only"] { signed.removeValue(forKey:key) }
+        current["snapshot_revision"]="sha256:"+ActivityWire.hash(try CanonicalJSON.data(signed,ascii:false));raw["current"]=current
+        XCTAssertThrowsError(try ActivityWire.page(JSONSerialization.data(withJSONObject:raw),access:access,workset:access.worksets[0].workset_id))
+        for language in ["en","nl","de","fr","es"] {
+            XCTAssertEqual(ActivityCopy.limitation("FUTURE_LIMIT",language),ActivityCopy.text("limitationUnknown",language))
+            XCTAssertEqual(ActivityCopy.limitation("NO_BACKFILL_OF_MUTABLE_SNAPSHOTS",language),ActivityCopy.text("NO_BACKFILL_OF_MUTABLE_SNAPSHOTS",language))
+        }
     }
 }

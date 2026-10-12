@@ -51,6 +51,7 @@ struct ActivityLocalStore: Sendable {
     init(root:URL=FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0].appendingPathComponent("Workspace/ActivityViews")) {
         records=PrivateLocalRecordStore(root:root,namespace:"workset-activity")
     }
+    init(records:PrivateLocalRecordStore) { self.records=records }
     private func scoped(_ key:String) throws -> PrivateLocalRecordStore {
         guard ActivityWire.matches(key,"^[0-9a-f]{64}$") else { throw AdvisoryError.invalid }
         return PrivateLocalRecordStore(root:records.root.appendingPathComponent(key),namespace:"workset-activity",synchronizeDirectory:records.synchronizeDirectory)

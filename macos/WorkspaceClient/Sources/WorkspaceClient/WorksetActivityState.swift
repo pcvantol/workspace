@@ -90,12 +90,13 @@ import Combine
         do {
             let fresh=try await transport.probe(connection,token:access.token)
             guard live(ticket,access) else { return };guard fresh==access else { throw AdvisoryError.denied }
-            let key=key(access,connection);journal=try store.load(key)
-            var display=journal
+            let key=key(access,connection),loaded=try store.load(key)
+            var display=loaded
             if display.pageKeys.isEmpty { display.pageKeys=display.historicalKeys }
             let cached=try store.pages(display,key).map { try ActivityWire.page($0,access:access,workset:workset) }
             try checkSeries(cached)
-            pages=cached;historical = !cached.isEmpty
+            guard live(ticket,access),selected==workset else { if ticket==epoch { invalidate() };return }
+            journal=loaded;pages=cached;historical = !cached.isEmpty
         } catch { failure(error,ticket);return }
         busy=false
         // Incomplete progress resumes its original producer cursor. A completed view starts a fresh observation.
@@ -131,6 +132,7 @@ import Combine
             journal=updated;pages=combined;historical=false;status=response.hasMore ? "more":"ready"
         } catch {
             guard ticket==epoch else { return }
+            guard live(ticket,access),selected==workset else { invalidate();return }
             if case AdvisoryError.state("RESYNC_REQUIRED")=error {
                 var updated=journal;if !updated.pageKeys.isEmpty { updated.historicalKeys=updated.pageKeys };updated.cursor=nil;updated.pageKeys=[];updated.complete=false;updated.comparisonKnown=false
                 do { try store.save(updated,key(access,connection));journal=updated } catch { status="unavailable";historical=true;return }

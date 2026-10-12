@@ -88,6 +88,14 @@ class ActivityPeerTests(unittest.TestCase):
         with self.assertRaises(WorklistError):wire.event(event,self.workset)
         event['occurred_at']=None;event['time_status']='UNKNOWN';wire.event(event,self.workset)
         with self.assertRaises(WorklistError):wire.read(self.detail,'detail',self.binding,self.workset,'f'*64)
+    def testForeignCurrentProjectWithSelfConsistentDigestRejectsPinnedNullScope(self):
+        from workspace_control.worklist_contract import SNAPSHOT_FIELDS
+        import hashlib
+        page=deepcopy(self.page);current=page['current'];current['scope']['project_id']='foreign-project'
+        fields=SNAPSHOT_FIELDS + (('order_revision','order_digest','original_order','effective_order','order_blocking_reasons') if current['contract_version'].endswith('/v2') else ())
+        current['snapshot_revision']='sha256:'+hashlib.sha256(json.dumps({k:current[k] for k in fields},sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest()
+        with self.assertRaises(ValueError):wire.read(page,'page',self.binding,self.workset)
+
     def testOwnHttpPreAndPostAuthorityAndFailures(self):
         catalogue={'source':'LOCAL','observed_at':datetime.now(timezone.utc).isoformat(),'projects':[{'id':self.project,'name':'Own consumer unit context'}]}
         (self.root/'projects.json').write_text(json.dumps(catalogue));(self.root/'projects.json').chmod(0o600)

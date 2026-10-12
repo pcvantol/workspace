@@ -2,6 +2,15 @@ import Foundation
 
 enum ActivityCopy {
     static let values:[String:[String]] = [
+        "coverage":["History coverage","Historiedekking","Historienabdeckung","Couverture de l’historique","Cobertura del historial"],
+        "COMPLETE_FOR_RETAINED_SOURCES":["All retained source records offered; earlier history can be missing.","Alle bewaarde bronrecords aangeboden; oudere historie kan ontbreken.","Alle erhaltenen Quelldatensätze angeboten; frühere Historie kann fehlen.","Tous les enregistrements conservés proposés ; l’historique antérieur peut manquer.","Se ofrecen todos los registros conservados; puede faltar historial anterior."],
+        "PARTIAL":["Only part of the retained source records was offered.","Slechts een deel van de bewaarde bronrecords aangeboden.","Nur ein Teil der erhaltenen Quelldatensätze angeboten.","Seule une partie des enregistrements conservés est proposée.","Solo se ofrece parte de los registros conservados."],
+        "LEGACY_MISSION_TIMELINE_UNKNOWN":["Earlier Mission timelines are not known.","Eerdere missietijdlijnen zijn niet bekend.","Frühere Missionsverläufe sind nicht bekannt.","Les chronologies de mission antérieures sont inconnues.","No se conocen las cronologías anteriores de las misiones."],
+        "NO_BACKFILL_OF_MUTABLE_SNAPSHOTS":["Earlier changes cannot be reconstructed from current snapshots.","Eerdere wijzigingen kunnen niet uit actuele snapshots worden gereconstrueerd.","Frühere Änderungen lassen sich aus aktuellen Snapshots nicht rekonstruieren.","Les changements antérieurs ne peuvent pas être reconstruits à partir des états actuels.","Los cambios anteriores no pueden reconstruirse a partir de los estados actuales."],
+        "limitationUnknown":["The source reports an additional history limitation.","De bron meldt een aanvullende historiebeperking.","Die Quelle meldet eine weitere Einschränkung der Historie.","La source signale une limite supplémentaire de l’historique.","La fuente informa de otra limitación del historial."],
+        "CURRENT_READBACK":["Current source readback at","Actuele broninzage op","Aktueller Quellenabruf am","État de source consulté le","Lectura actual de la fuente a"],
+        "sourceContext":["Authorized source and worklist context","Geautoriseerde bron en werklijstcontext","Autorisierte Quelle und Arbeitslistenkontext","Source autorisée et contexte de liste","Fuente autorizada y contexto de lista"],
+
         "blocked":["Blocked within this worklist","Geblokkeerd binnen deze werklijst","Innerhalb dieser Arbeitsliste blockiert","Bloqué dans cette liste","Bloqueado en esta lista"],
         "capacity":["Source capacity exceeded; history could not be read.","Broncapaciteit overschreden; historie kon niet worden gelezen.","Quellenkapazität überschritten; Historie nicht lesbar.","Capacité de source dépassée ; historique illisible.","Capacidad de fuente excedida; no se pudo leer el historial."],
         "invalid":["Source contract invalid; no current history accepted.","Broncontract ongeldig; geen actuele historie geaccepteerd.","Quellenvertrag ungültig; keine aktuelle Historie akzeptiert.","Contrat de source invalide ; historique actuel non accepté.","Contrato de fuente no válido; historial actual no aceptado."],
@@ -81,6 +90,7 @@ enum ActivityCopy {
         "FORGE_SUBMISSION_SENT":["Execution request sent — no start proof","Uitvoeringsaanvraag verzonden — geen startbewijs","Ausführungsanfrage gesendet — kein Startbeleg","Demande d’exécution envoyée — pas de preuve de démarrage","Solicitud de ejecución enviada — sin prueba de inicio"],
         "EP_SUBMISSION_RECEIPT_RECEIVED":["EP receipt received — no start proof","EP-ontvangst geregistreerd — geen startbewijs","EP-Empfang erfasst — kein Startbeleg","Réception EP enregistrée — pas de preuve de démarrage","Recepción EP registrada — sin prueba de inicio"]
     ]
+    static func limitation(_ key:String,_ language:String) -> String { text(values[key] == nil ? "limitationUnknown":key,language) }
     static func state(_ key:String,_ language:String) -> String { text(values[key] == nil ? "stateUnknown":key,language) }
     static func text(_ key:String,_ language:String) -> String {
         values[key]?[["en","nl","de","fr","es"].firstIndex(of:language) ?? 0] ?? values["fact"]![["en","nl","de","fr","es"].firstIndex(of:language) ?? 0]
