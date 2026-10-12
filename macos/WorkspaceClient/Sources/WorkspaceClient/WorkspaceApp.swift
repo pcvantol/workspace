@@ -3,6 +3,7 @@ import SwiftUI
 #if WORKSPACE_ISOLATED_TEST
 import AppKit
 import ScreenCaptureKit
+import CoreGraphics
 
 private enum IsolatedWindowEvidence {
     static func capture(in directory: String) {
@@ -16,6 +17,9 @@ private enum IsolatedWindowEvidence {
                 app.appearance=appearance
                 try? await Task.sleep(for:.milliseconds(200))
             }
+            // Test capture is opt-in and must never request permission at startup.
+            guard IsolatedWindowCapturePolicy.permitted(environment:ProcessInfo.processInfo.environment,
+                                                        preflight:CGPreflightScreenCaptureAccess) else { return }
             guard let window=NSApp.windows.first(where: { $0.title=="Workspace" }),
                   let available=try? await SCShareableContent.excludingDesktopWindows(true,onScreenWindowsOnly:true),
                   let owned=available.windows.first(where: { $0.windowID==CGWindowID(window.windowNumber) && $0.owningApplication?.processID==ProcessInfo.processInfo.processIdentifier }) else { return }

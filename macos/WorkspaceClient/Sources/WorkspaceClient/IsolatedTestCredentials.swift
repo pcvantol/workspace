@@ -281,4 +281,10 @@ final class IsolatedActivityCredentials: ActivityCredentials, @unchecked Sendabl
     func forget() throws { lock.withLock { access=nil } }
 }
 
+enum IsolatedWindowCapturePolicy {
+    static func permitted(environment:[String:String],preflight:()->Bool)->Bool {
+        environment["WORKSPACE_ISOLATED_WINDOW_EVIDENCE"]=="1" && preflight()
+    }
+}
+
 #endif
