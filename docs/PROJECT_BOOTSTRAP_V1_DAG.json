@@ -469,13 +469,17 @@
       "max": 4,
       "remaining": 0
     },
-    "state": "INTEGRATED_VIEWPORT_CORRECTION",
+    "state": "PROTECTED_SOURCE_AND_ACTUAL_CANDIDATE_ACCEPTED",
     "contract": "docs/WORKSPACE_PROJECT_CONCEPTS_V1.md",
-    "installed": "7e06b59_NARROW_VIEWPORT_FAIL_RETAINED",
+    "installed": "787891b_ACTUAL_CANDIDATE_PASS_FINAL_MAIN_PENDING",
     "round1_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6119044322",
     "round2_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6119365819",
     "round3_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6120212512",
-    "round4_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6120776249"
+    "round4_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6120776249",
+    "source_main": "0fc818a3b54395fa71a216dcf4246be941781c60",
+    "source_pr": 161,
+    "finalization_receipt": "docs/WORKSPACE_PROJECT_CONCEPTS_FINALIZATION_V1.json",
+    "exact_final_main": "REQUIRED_POST_FINALIZATION_MERGE_EXTERNAL_REGISTER"
   },
   "parked_link_delivery": {
     "plan": 98,
