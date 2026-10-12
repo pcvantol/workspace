@@ -124,3 +124,8 @@ wrong-instance/binding-change errors, distinct from transport UNAVAILABLE. Conce
 state subscribes even while its pane is hidden; denial clears protected content.
 Stat/open errors after known allocation are storage unavailable, never healthy
 empty. Read-only helper closes failures; legitimate first-empty remains distinct.
+
+Round2 also preserves that same known-loss distinction on direct own concept
+HTTP: only closed409/CONCEPT_CONFLICT is a revision conflict; pinned WRONG_INSTANCE
+and unknown409 conceal as denial. Current pairing/Server auth authority is not
+inferred from stale cached health, and recovery records remain private/retained.

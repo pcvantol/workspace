@@ -21,7 +21,11 @@ struct ProjectConceptTransport: ConceptServing {
         case 200,201: break
         case 401,403: throw ConceptError.denied
         case 404: throw ConceptError.notFound
-        case 409: throw ConceptError.conflict
+        case 409:
+            if let error = try? JSONSerialization.jsonObject(with:data) as? [String:String],
+               Set(error.keys) == ["error"], error["error"] == "CONCEPT_CONFLICT" { throw ConceptError.conflict }
+            // Pinned WRONG_INSTANCE (and unknown409) is not an edit conflict.
+            throw ConceptError.denied
         case 400: throw ConceptError.invalid
         default: throw ConceptError.unavailable
         }

@@ -168,6 +168,10 @@ extension ProjectConceptTests {
         ConceptHTTPProtocol.code=201;_=try await transport.save(connection,id:nil,command:command)
         ConceptHTTPProtocol.code=200;_=try await transport.save(connection,id:record.id,command:command)
         XCTAssertEqual(ConceptHTTPProtocol.last?.httpMethod,"PATCH")
+        ConceptHTTPProtocol.code=409;ConceptHTTPProtocol.value=["error":"WRONG_INSTANCE"]
+        do {_=try await transport.list(connection);XCTFail("Wrong own instance accepted")} catch ConceptError.denied {} catch {XCTFail("Wrong denial classification")}
+        ConceptHTTPProtocol.value=["error":"CONCEPT_CONFLICT"]
+        do {_=try await transport.list(connection);XCTFail("Stale conflict accepted")} catch ConceptError.conflict {} catch {XCTFail("Wrong conflict classification")}
         for code in [400,401,403,404,409,503] {
             ConceptHTTPProtocol.code=code
             do{_=try await transport.list(connection);XCTFail("Error accepted")}catch{}
