@@ -36,6 +36,8 @@ class ProjectConceptStore:
 
     def _connect(self, *, write=False):
         # Read absence is empty, never bootstraps or replaces a failed store.
+        from .project_concept_library import preflight, schema
+        preflight(self.base)
         try:
             marker = _private_json('project-concepts-schema-v1.json', dir_fd=self.base.root_fd)
         except FileNotFoundError:
@@ -55,6 +57,7 @@ class ProjectConceptStore:
             raise ConceptStorageUnavailable('invalid existing private store') from error
         try:
             tables = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+            schema(self.base,db)
             if 'project_concepts_v1' in tables:
                 columns = {row[1] for row in db.execute('PRAGMA table_info(project_concepts_v1)')}
                 if columns != COLUMNS:
@@ -150,6 +153,9 @@ class ProjectConceptStore:
                         identity = secrets.token_hex(16)
                         db.execute('INSERT INTO project_concepts_v1 VALUES (?,?,?,?,?,?,?,?)',(identity,*scope,title,notes,1,stamp,stamp))
                     else:
+                        from .project_concept_library import lifecycle_for
+                        if db.execute('SELECT 1 FROM project_concepts_v1 WHERE id=? AND actor_id=? AND context_id=?',(identity,*scope)).fetchone() is not None and lifecycle_for(self.base,db,identity) == 'ARCHIVED':
+                            raise ConversationConflict('restore archived concept before editing')
                         cursor = db.execute('UPDATE project_concepts_v1 SET title=?,notes=?,revision=revision+1,updated_at=? WHERE id=? AND actor_id=? AND context_id=? AND revision=?',(title,notes,stamp,identity,*scope,revision))
                         if cursor.rowcount != 1:
                             exists = db.execute('SELECT 1 FROM project_concepts_v1 WHERE id=? AND actor_id=? AND context_id=?',(identity,*scope)).fetchone()
