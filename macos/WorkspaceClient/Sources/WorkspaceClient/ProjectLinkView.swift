@@ -19,8 +19,14 @@ enum ProjectLinkCopy {
         "invalid": ["The project source could not be verified.", "De projectbron kon niet worden geverifieerd.", "Die Projektquelle konnte nicht geprüft werden.", "La source du projet n’a pas pu être vérifiée.", "No se pudo verificar la fuente del proyecto."],
         "unsupported": ["Verified project linking is not available from this EP connection yet.", "Deze EP-verbinding biedt geverifieerd projectkoppelen nog niet aan.", "Diese EP-Verbindung bietet noch keine geprüfte Projektverknüpfung.", "Cette connexion EP ne propose pas encore la liaison vérifiée.", "Esta conexión EP todavía no ofrece vinculación verificada."],
         "unavailable": ["Connect to restore current project access. Saved references are retained.", "Verbind opnieuw voor actuele projecttoegang. Opgeslagen verwijzingen blijven behouden.", "Erneut verbinden für aktuellen Projektzugriff. Gespeicherte Verweise bleiben erhalten.", "Reconnectez-vous pour rétablir l’accès. Les références enregistrées sont conservées.", "Vuelve a conectar para recuperar el acceso. Se conservan las referencias guardadas."],
+        "child": ["Additional repository", "Aanvullende repository", "Weiteres Repository", "Dépôt supplémentaire", "Repositorio adicional"],
+        "noneAvailable": ["No available checkout", "Geen beschikbare checkout", "Kein verfügbarer Checkout", "Aucune copie disponible", "Ninguna copia disponible"],
+        "available": ["Available checkouts: %@", "Beschikbare checkouts: %@", "Verfügbare Checkouts: %@", "Copies disponibles : %@", "Copias disponibles: %@"],
         "source": ["Technical source details", "Technische brongegevens", "Technische Quelldetails", "Détails techniques de la source", "Detalles técnicos de la fuente"]
     ]
+    static func availability(_ count: Int, language: String) -> String {
+        count == 0 ? text("noneAvailable", language: language) : String(format: text("available", language: language), String(count))
+    }
     static func text(_ key: String, language: String = WorkspaceLanguage.current) -> String {
         let index = ["en", "nl", "de", "fr", "es"].firstIndex(of: language) ?? 0
         return values[key]?[index] ?? key
@@ -55,10 +61,14 @@ struct ProjectLinkView: View {
                     Text(topology.name).font(.title2.bold())
                     Text(copy("inspect"))
                     ForEach(topology.repositories) { repository in
-                        HStack {
+                        HStack(alignment: .top) {
                             Image(systemName: repository.role == "authority" ? "house" : "folder")
-                            Text(repository.name)
-                            if repository.role == "authority" { Text(copy("authority")).foregroundStyle(.secondary) }
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(repository.name)
+                                Text(copy(repository.role == "authority" ? "authority" : "child")).foregroundStyle(.secondary)
+                                Text(ProjectLinkCopy.availability(repository.availableAttachments, language: locale.language.languageCode?.identifier ?? "en"))
+                                    .foregroundStyle(.secondary).accessibilityIdentifier("project-repository-availability-" + repository.id)
+                            }
                         }
                     }
                     Text(copy("readiness")).foregroundStyle(.secondary)

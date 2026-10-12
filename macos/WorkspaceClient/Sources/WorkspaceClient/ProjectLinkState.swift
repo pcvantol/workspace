@@ -67,6 +67,17 @@ struct ProjectLinkIntent: Codable, Equatable, Sendable {
 protocol ProjectLinkIntentStorage: Sendable {
     func load(_ key: String) throws -> ProjectLinkIntent?
     func save(_ intent: ProjectLinkIntent, key: String) throws
+    func archive(_ intent: ProjectLinkIntent, key: String) throws
+}
+extension ProjectLinkIntentStorage {
+    func archive(_ intent: ProjectLinkIntent, key: String) throws {
+        try intent.validate(key)
+        let archiveKey = SHA256.hash(data: Data((key + "\n" + intent.operationID).utf8)).map { String(format: "%02x", $0) }.joined()
+        // Local record key changes; original server operation bytes/identity stay.
+        let archived = ProjectLinkIntent(scopeKey: archiveKey, projectID: intent.projectID,
+            expectedRevision: intent.expectedRevision, operationID: intent.operationID, authorityID: intent.authorityID)
+        try save(archived, key: archiveKey)
+    }
 }
 struct PrivateProjectLinkIntents: ProjectLinkIntentStorage {
     let records: PrivateLocalRecordStore
@@ -176,11 +187,41 @@ final class ProjectLinkState: ObservableObject {
         defer { if ticket == generation { busy = false } }
         do {
             try value.validate(current, project: value.projectID)
+            // Current authorized open reconciles completed and lost-success saves
+            // without sending another mutation or depending on the old revision.
+            do {
+                let fresh = try await reader.open(current, project: value.projectID)
+                try fresh.validate(current, project: value.projectID)
+                guard fresh.authorityID == value.authorityID else { throw ProjectLinkError.conflict }
+                guard ticket == generation else { return }
+                opened = fresh; topology = fresh; phase = "opened"; return
+            } catch ProjectLinkError.notFound { /* Authoritative absence, not offline. */ }
+            try current.validate()
+            guard ticket == generation else { return }
             let key = current.intentKey(value.projectID)
             let existing = try intents.load(key)
             let intent: ProjectLinkIntent
             if let existing, existing.projectID == value.projectID {
-                intent = existing
+                // First reconcile the original immutable request. A definitive
+                // conflict after authorized absence may be freshly confirmed by
+                // this click; keep its original record before replacing the head.
+                do {
+                    let identity = try await reader.link(current, intent: existing)
+                    try current.validate()
+                    guard ticket == generation else { return }
+                    guard identity == value.projectID else { throw ProjectLinkError.invalid }
+                    let fresh = try await reader.open(current, project: identity)
+                    try fresh.validate(current, project: identity)
+                    guard ticket == generation else { return }
+                    opened = fresh; topology = fresh; phase = "opened"; return
+                } catch ProjectLinkError.conflict {
+                    guard existing.expectedRevision != value.revision, existing.authorityID == value.authorityID else { throw ProjectLinkError.conflict }
+                    try current.validate()
+                    guard ticket == generation else { return }
+                    try intents.archive(existing, key: key)
+                    intent = .init(scopeKey: key, projectID: value.projectID, expectedRevision: value.revision, operationID: UUID().uuidString, authorityID: value.authorityID)
+                    try intents.save(intent, key: key)
+                }
             } else {
                 intent = .init(scopeKey: key, projectID: value.projectID, expectedRevision: value.revision, operationID: UUID().uuidString, authorityID: value.authorityID)
                 try intents.save(intent, key: key)

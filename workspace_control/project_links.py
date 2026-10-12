@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 import hashlib
 import json
 import re
-from typing import Protocol
+from typing import Protocol, ContextManager
 
 
 class LinkConflict(ValueError):
@@ -107,6 +107,15 @@ class ProjectReadGateway(Protocol):
     bearer alone authorizes a viewer. This interface issues no credentials.
     """
     def scope(self, viewer_token: str) -> LinkScope: ...
+    def authorization(self, viewer_token: str, expected: LinkScope) -> ContextManager[None]:
+        """Fence existing pairing revoke/scope change through local commit.
+
+        An accepted adapter must serialize owning revocation with this guard,
+        validate the explicit narrower producer scope at entry, and retain the
+        current scope until exit. A snapshot or a pre/post read is not a fence.
+        This grants no new authority and never issues credentials.
+        """
+        ...
     def discover(self, scope: LinkScope) -> list[dict]: ...
     def topology(self, scope: LinkScope, project_id: str) -> dict: ...
 
@@ -133,7 +142,7 @@ class ProjectLinkStore:
         connection.commit()
         return connection
 
-    def record(self, scope, topology, operation_id):
+    def record(self, scope, topology, operation_id, *, authorize):
         scope.require(topology['project_id']); identifier(operation_id)
         project = topology['project_id']
         request = [project, topology['peer_id'], topology['authority_repository_id'], topology['revision']]
@@ -143,6 +152,7 @@ class ProjectLinkStore:
             try:
                 with connection:
                     connection.execute('BEGIN IMMEDIATE')
+                    authorize()  # Current scope after local database/lock wait.
                     scope.require(project)
                     prior = connection.execute('SELECT * FROM project_link_operations WHERE actor_id=? AND operation_id=?',
                                                (scope.actor_id, operation_id)).fetchone()
@@ -159,6 +169,8 @@ class ProjectLinkStore:
                         connection.execute('INSERT INTO project_link_operations VALUES (?,?,?,?)', (scope.actor_id, operation_id, digest, project))
                     connection.execute('INSERT INTO project_links VALUES (?,?,?,?,?) ON CONFLICT(actor_id,project_id) DO NOTHING',
                                        (scope.actor_id, project, scope.peer_id, topology['authority_repository_id'], topology['revision']))
+                    authorize()  # Failed current authority rolls back all inserts.
+                    scope.require(project)
             finally:
                 connection.close()
         return {'project_id': project, 'operation_id': operation_id, 'state': 'REFERENCE_SAVED', 'engineering_readiness': 'NOT_ASSESSED'}
@@ -223,7 +235,14 @@ class ProjectLinks:
         if type(expected_revision) is not int or topology['revision'] != expected_revision or topology['authority_repository_id'] != authority_id:
             raise LinkConflict("topology changed; inspect again")
         self._scope(token, scope)
-        result = self.store.record(scope, topology, operation_id)
+        # No implicit snapshot-only fallback: an unqualified gateway cannot save.
+        authorization = getattr(self.gateway, "authorization", None)
+        if not callable(authorization):
+            raise ProducerUnavailable("owning authorization fence is unqualified")
+        with authorization(token, scope):
+            self._scope(token, scope)
+            result = self.store.record(scope, topology, operation_id,
+                                       authorize=lambda: self._scope(token, scope))
         self._scope(token, scope)
         return result
 

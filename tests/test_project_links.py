@@ -1,5 +1,7 @@
 """SYNTHETIC normalized gateway tests. Not EP wire/installed qualification."""
 import copy
+from contextlib import contextmanager
+import threading
 from dataclasses import replace
 import os
 from pathlib import Path
@@ -14,6 +16,7 @@ from workspace_control.project_links import (LinkConflict, LinkScope, ProducerUn
 class FixtureGateway:
     def __init__(self):
         self.access = LinkScope('actor', 'ep-test', frozenset(['atlas']), '2040-01-01T00:00:00Z', 'epoch-1')
+        self.authority_lock = threading.RLock()
         self.projects = [{'id':'atlas','name':'Atlas'}]; self.reads = 0; self.deny_after_read = False
         self.value = {'peer_id': 'ep-test', 'project_id': 'atlas', 'name': 'Atlas',
             'authority_repository_id': 'core', 'revision': 1, 'observed_at': '2026-10-12T00:00:00Z',
@@ -23,6 +26,12 @@ class FixtureGateway:
         if token != 'synthetic-viewer' or self.deny_after_read and self.reads:
             raise PermissionError('synthetic access denied')
         return self.access
+    @contextmanager
+    def authorization(self, token, expected):
+        with self.authority_lock:
+            if self.scope(token) != expected:
+                raise PermissionError('synthetic scope changed')
+            yield
     def discover(self, scope):
         self.reads += 1
         return copy.deepcopy(self.projects)
@@ -93,6 +102,43 @@ class ProjectLinksTests(unittest.TestCase):
         self.gateway.scope = changing
         with self.assertRaises(PermissionError): self.links.discover('synthetic-viewer')
         self.gateway.scope = original
+    def test_revocation_at_actual_save_boundary_rolls_back_and_retains_prior_reference(self):
+        self.links.link('synthetic-viewer','atlas',1,'original',authority_id='core')
+        original = self.links.store.record
+        def revoke_before_save(*args, **kwargs):
+            self.gateway.deny_after_read = True
+            return original(*args, **kwargs)
+        self.links.store.record = revoke_before_save
+        with self.assertRaises(PermissionError):
+            self.links.link('synthetic-viewer','atlas',1,'revoked',authority_id='core')
+        with sqlite3.connect(self.root/'conversations.sqlite3') as db:
+            self.assertEqual(db.execute('SELECT count(*) FROM project_links').fetchone()[0],1)
+            self.assertEqual(db.execute('SELECT operation_id FROM project_link_operations').fetchall(),[('original',)])
+        self.gateway.deny_after_read = False
+        self.links.store.record = original
+        # A changed scope after the SQL lock wait is not a captured-scope permit.
+        checks = [0]
+        def revoke_before_commit():
+            checks[0] += 1
+            if checks[0] == 2:
+                raise PermissionError('synthetic revoke at commit')
+        with self.assertRaises(PermissionError):
+            original(self.gateway.access,self.gateway.value,'before-commit',authorize=revoke_before_commit)
+        with sqlite3.connect(self.root/'conversations.sqlite3') as db:
+            self.assertEqual(db.execute('SELECT count(*) FROM project_link_operations').fetchone()[0],1)
+        # Gateways without an owning lifecycle fence cannot authorize a save.
+        self.gateway.authorization = None
+        with self.assertRaises(ProducerUnavailable):
+            self.links.link('synthetic-viewer','atlas',1,'no-fence',authority_id='core')
+    def test_completed_and_lost_success_reopen_current_topology_without_new_mutation(self):
+        self.links.link('synthetic-viewer','atlas',1,'lost-success',authority_id='core')
+        self.gateway.value['revision'] = 2
+        restarted = ProjectLinks(ConversationStore(self.root,self.fd),self.gateway)
+        self.assertEqual(restarted.open('synthetic-viewer','atlas')['topology']['revision'],2)
+        with sqlite3.connect(self.root/'conversations.sqlite3') as db:
+            self.assertEqual(db.execute('SELECT count(*) FROM project_links').fetchone()[0],1)
+            self.assertEqual(db.execute('SELECT count(*) FROM project_link_operations').fetchone()[0],1)
+
     def test_normalized_topology_rejects_forged_identity_and_ambiguous_sources(self):
         value = self.gateway.value; scope = self.gateway.access
         for key, invalid in [('peer_id','wrong'), ('project_id','wrong'), ('name',''), ('name','x\n'),

@@ -3,7 +3,7 @@
 Assignment L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012, selected6117331312.
 Only PB-W1-LINK/PB-WQ-LINK. Same sole writer/session; initial base a6aad520.
 Plan96/97 CLOSED, budgets/evidence retained, Forge2.12.1/9875333 unchanged.
-New feature budget consumed0/max3/remaining3. Candidate2.8.21 is not a release.
+New feature budget consumed1/max3/remaining2. Candidate2.8.21 is not a release.
 
 ## Current boundary
 
@@ -86,3 +86,14 @@ finalization and exact-final-main real EP/Server/Client GUI/screens are still ga
 No live/user EP, paid provider, new host, user credentials, Keychain policy, signing
 or old Mission/release/recovery matrix is authorized or needed. Own synthetic test
 access may be issued only by normal supported owners under the selected finite scope.
+
+## Integrated correction round1
+
+Booked once before source via6118203275 after all three complete initial
+663c460 reviews failed. Admission0/3 retained; current consumed1/max3/remaining2.
+Existing pairing authorization must be fenced through local commit by the accepted
+gateway, with fresh checks after lock wait and before commit; absent guard denies.
+Native opens current saved references before mutation. A definitive absent/refused
+old intent can be archived before a newly inspected explicit confirmation; unknown
+outcomes retain the original operation. Availability is shown in all five languages;
+closed HTTP expiry is distinguished from denial. Producer JOIN remains unqualified.

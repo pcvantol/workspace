@@ -47,7 +47,11 @@ struct ProjectLinkHTTPReader: ProjectLinkReading {
         guard try await connection() == binding else { throw ProjectLinkError.denied }
         switch response.statusCode {
         case 200: return (data, binding)
-        case 401, 403: throw ProjectLinkError.denied
+        case 403:
+            if let value = try? JSONSerialization.jsonObject(with: data) as? [String: String],
+               Set(value.keys) == ["error"], value["error"] == "PROJECT_LINK_ACCESS_EXPIRED" { throw ProjectLinkError.expired }
+            throw ProjectLinkError.denied
+        case 401: throw ProjectLinkError.denied
         case 404: throw ProjectLinkError.notFound
         case 409: throw ProjectLinkError.conflict
         case 503:

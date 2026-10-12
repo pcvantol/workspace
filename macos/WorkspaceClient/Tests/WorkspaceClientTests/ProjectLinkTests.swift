@@ -12,6 +12,8 @@ private final class LinkFixture: ProjectLinkReading, @unchecked Sendable {
     var linkError: ProjectLinkError?
     var commands: [ProjectLinkIntent] = []
     var openCalls = 0
+    var saved = false
+    var loseSuccess = false
     var hold: CheckedContinuation<[LinkProject], Error>?
     var holdDiscovery = false
     func access() async throws -> ProjectLinkAccess { if let error { throw error }; return current }
@@ -20,9 +22,12 @@ private final class LinkFixture: ProjectLinkReading, @unchecked Sendable {
     }
     func inspect(_ access: ProjectLinkAccess, project: String) async throws -> LinkTopology { if let error { throw error }; return value }
     func link(_ access: ProjectLinkAccess, intent: ProjectLinkIntent) async throws -> String {
-        commands.append(intent); if let linkError { throw linkError }; return value.projectID
+        commands.append(intent); if let linkError { throw linkError }
+        guard intent.expectedRevision == value.revision else { throw ProjectLinkError.conflict }
+        saved = true
+        if loseSuccess { throw ProjectLinkError.unavailable }; return value.projectID
     }
-    func open(_ access: ProjectLinkAccess, project: String) async throws -> LinkTopology { openCalls += 1; if let error { throw error }; return value }
+    func open(_ access: ProjectLinkAccess, project: String) async throws -> LinkTopology { openCalls += 1; if let error { throw error }; guard saved else { throw ProjectLinkError.notFound }; return value }
 }
 final class ProjectLinkTests: XCTestCase {
     @MainActor func testChooseInspectDurableOriginalIntentRestartAndNoRepeatedClick() async throws {
@@ -45,6 +50,39 @@ final class ProjectLinkTests: XCTestCase {
         XCTAssertNotEqual(fixture.current.intentKey("atlas"), fixture.current.intentKey("other"))
         restart.invalidate(); XCTAssertNil(restart.opened); XCTAssertTrue(restart.projects.isEmpty)
         XCTAssertEqual(try store.load(fixture.current.intentKey("atlas")), original)
+    }
+    @MainActor func testCompletedAndLostSuccessOpenAfterTopologyDriftWithoutReplay() async throws {
+        for lost in [false, true] {
+            let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+            defer { try? FileManager.default.removeItem(at: root) }
+            let fixture = LinkFixture(), store = PrivateProjectLinkIntents(root:root)
+            fixture.loseSuccess = lost
+            let state = ProjectLinkState(reader:fixture,intents:store)
+            await state.refresh(); await state.select("atlas"); await state.linkAndOpen()
+            XCTAssertEqual(fixture.commands.count,1)
+            fixture.value = LinkTopology(peerID:"ep",projectID:"atlas",name:"Atlas",authorityID:"core",revision:2,observedAt:Date(),repositories:fixture.value.repositories)
+            let restart = ProjectLinkState(reader:fixture,intents:store)
+            await restart.refresh(); await restart.select("atlas"); await restart.linkAndOpen()
+            XCTAssertEqual(restart.phase,"opened"); XCTAssertEqual(restart.opened?.revision,2)
+            XCTAssertEqual(fixture.commands.count,1)
+            XCTAssertEqual(try store.load(fixture.current.intentKey("atlas"))?.expectedRevision,1)
+        }
+    }
+    @MainActor func testDefinitiveConflictArchivesOriginalBeforeFreshExplicitConfirmation() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at:root) }
+        let fixture = LinkFixture(), store = PrivateProjectLinkIntents(root:root)
+        let key = fixture.current.intentKey("atlas")
+        let original = ProjectLinkIntent(scopeKey:key,projectID:"atlas",expectedRevision:1,operationID:"original",authorityID:"core")
+        try store.save(original,key:key)
+        fixture.value = LinkTopology(peerID:"ep",projectID:"atlas",name:"Atlas",authorityID:"core",revision:2,observedAt:Date(),repositories:fixture.value.repositories)
+        let state = ProjectLinkState(reader:fixture,intents:store)
+        await state.refresh(); await state.select("atlas"); await state.linkAndOpen()
+        XCTAssertEqual(state.phase,"opened"); XCTAssertEqual(fixture.commands.count,2)
+        XCTAssertEqual(fixture.commands[0],original); XCTAssertEqual(fixture.commands[1].expectedRevision,2)
+        XCTAssertNotEqual(fixture.commands[1].operationID,original.operationID)
+        let data = try FileManager.default.contentsOfDirectory(at:root,includingPropertiesForKeys:nil).filter { $0.pathExtension == "json" }
+        XCTAssertEqual(data.count,2) // Original history retained plus current intent.
     }
     @MainActor func testEmptyErrorsAndLateResponseAfterClosingNeverRestoreData() async throws {
         let fixture = LinkFixture(); let state = ProjectLinkState(reader: fixture)
@@ -85,6 +123,8 @@ final class ProjectLinkTests: XCTestCase {
         for language in ["en","nl","de","fr","es"] {
             for key in ProjectLinkCopy.values.keys { XCTAssertNotEqual(ProjectLinkCopy.text(key,language:language),key) }
             XCTAssertFalse(ProjectLinkCopy.text("authority",language:language).isEmpty)
+            XCTAssertNotEqual(ProjectLinkCopy.availability(0,language:language), ProjectLinkCopy.availability(2,language:language))
+            XCTAssertTrue(ProjectLinkCopy.availability(2,language:language).contains("2"))
         }
         XCTAssertEqual(ProjectLinkCopy.text("unknown",language:"nl"),"unknown")
         XCTAssertEqual(ProjectLinkCopy.text("title",language:"unsupported"),"Projects")
@@ -148,6 +188,10 @@ extension ProjectLinkTests {
         XCTAssertEqual(LinkHTTPFixtureProtocol.last?.httpMethod,"POST")
         LinkHTTPFixtureProtocol.reply=(200,["topology":topology,"state":"VERIFIED_REFERENCE","engineering_readiness":"NOT_ASSESSED"])
         let opened=try await reader.open(scope,project:"atlas");XCTAssertEqual(opened.projectID,"atlas")
+        LinkHTTPFixtureProtocol.reply=(403,["error":"PROJECT_LINK_ACCESS_EXPIRED"])
+        do { _=try await reader.access();XCTFail("Expiry must be classified") } catch ProjectLinkError.expired {} catch { XCTFail("Wrong expiry type") }
+        LinkHTTPFixtureProtocol.reply=(403,["error":"PROJECT_LINK_ACCESS_DENIED"])
+        do { _=try await reader.access();XCTFail("Denied must be classified") } catch ProjectLinkError.denied {} catch { XCTFail("Wrong denial type") }
         for code in [401,403,404,409,503,500] {
             LinkHTTPFixtureProtocol.reply=(code,["error":"PROJECT_LINK_PRODUCER_UNBOUND"])
             do { _=try await reader.access();XCTFail("Error response cannot qualify scope") } catch {}
