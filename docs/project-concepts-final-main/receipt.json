@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "assignment": "L4-PROJECT-CONCEPTS-V1-20261012",
+  "plan": 99,
+  "product_version": "2.8.22",
+  "qualified_exact_final_main": "5e354a5e3571e6a8b1fb45a51b1280b296833cc7",
+  "source_pr": 161,
+  "ordinary_finalization_pr": 162,
+  "wheel_sha256": "0285be65ec84053e3e3a7a3dce0e239bcfb19720cfc541b8971dd4d4bb932f14",
+  "native_sha256": "74e4115774eb293be28fe2537e2c44327a1ff4d8cd229fe1e3af18e77960eaa7",
+  "status": "ACTUAL_OWN_INSTALLED_MATRIX_COMPLETE_INDEPENDENT_REVIEWS_SEPARATE",
+  "scope": "Own synthetic local context; noneditable installed Server plus production-built ad-hoc packaged native isolated-test adapter; not a signed public distribution or a user-production-store test",
+  "cases": [
+    "Actual native create/edit/save/reopen with durable same identity",
+    "Original lost successful response recovered using same operation after separate native and Server OS restarts without duplicate effect",
+    "Stale conflict preserves local editor; explicit saved-version replacement",
+    "Real Server outage and controlled allocated SQLite loss retain local text without claiming saved or replacing lost storage",
+    "Controlled hidden parent401 conceals; distinct actual owning revoke403 and foreign actor404",
+    "Delayed real detail cannot replace current selected editor",
+    "Five languages en/nl/de/fr/es; actual light/dark; finite logical window widths560/760/1180"
+  ],
+  "cleanup": "Both own synthetic pairings revoked; own native/Server/proxy stopped; original evidence retained",
+  "peer_effects": "No EP/Forge/provider/repository/Mission mutation or configuration",
+  "screenshots": [
+    {
+      "path": "de-reopened-dark-760.png",
+      "sha256": "6555dfe9404ce8c09998ab5896aab7aa566a97dc4e4e1b84744962fdae181fb4"
+    },
+    {
+      "path": "en-connection-outage760-light.png",
+      "sha256": "eba1a1d3496f289e9faa2b964b01bb44f4629f2caceb4072cd1db2ae86f79589"
+    },
+    {
+      "path": "en-created760-light.png",
+      "sha256": "ad493e1e94abf4e4aa728e947132cd91cf48b6f4dea31fa7c7c19e8cf0919e25"
+    },
+    {
+      "path": "en-empty760-light.png",
+      "sha256": "d420634dcf220063446070f68c19334b68fae14b6ea5e85966ea3d0d46e932d7"
+    },
+    {
+      "path": "en-hidden-pane-parent401-cleared.png",
+      "sha256": "a6ff0a57d5baf661f23f04bc6c6cd35de883426243fa2b3c9e416a5c5f6e523e"
+    },
+    {
+      "path": "en-long-notes560-light.png",
+      "sha256": "a7e10ec02bcd0bf2ddd743aa881eec0410896852595c3d8a8cf881bea4e37ac6"
+    },
+    {
+      "path": "en-lost-reply760-light.png",
+      "sha256": "ef972a86f0e6d8ae126928a4c2d60bba810c2e6457bcb255eb5edd098cae6cca"
+    },
+    {
+      "path": "en-original-recovery-after-restart.png",
+      "sha256": "f97fa2d05d9dc32e4ea11c6844b56065c9699efe89b856a6586300f090a7fb38"
+    },
+    {
+      "path": "en-other-actor-empty.png",
+      "sha256": "b29166439a2f51f732a1f739d02bbc078bd97a22167c3343137674936febc115"
+    },
+    {
+      "path": "en-real-grant-revoked.png",
+      "sha256": "866c9bc2aad8e6bcc347e7108304021ec2876938f1544607075d30f97a635a97"
+    },
+    {
+      "path": "en-reopened-light-1180.png",
+      "sha256": "152fdf0f19c0b299a0c27fd3b9c80c3a9df7808f40cfb530fdba3c4011182450"
+    },
+    {
+      "path": "en-stale-conflict760-light.png",
+      "sha256": "73da1b719c74bb8c86ab614a6f92ac9fe2c0195725fc518d74b3db199db16164"
+    },
+    {
+      "path": "en-storage-unavailable760-light.png",
+      "sha256": "f2096bb42b520f4d2658a4853d8e2b12290445d4aeb12addecfa2a77bf0c47cc"
+    },
+    {
+      "path": "en-unsaved760-light.png",
+      "sha256": "136c0b88d6facd88e5e1ed0bf022601499d7aed6bc34f238fc1f40c7190c87f0"
+    },
+    {
+      "path": "es-reopened-dark-560.png",
+      "sha256": "e69ad2fb42047f355064ae7f6ca4e49b6ef927b83aa01e0b0ed048c9c4829494"
+    },
+    {
+      "path": "fr-reopened-light-760.png",
+      "sha256": "9b6d5994ee8e451f3af6f2de51e869482d268c53ab0f0ca942674bda4439c692"
+    },
+    {
+      "path": "nl-reopened-dark-760.png",
+      "sha256": "41b7dc52e6fe80cb029d7ca03f25a5ee69bb9469d0bce209cb8099f3d7cfa835"
+    }
+  ],
+  "screenshot_note": "Actual own window pixels. Filename widths are logical window widths, not raster dimensions. Original-recovery screenshot is BEFORE explicit confirmation; completed original replay is verified separately.",
+  "prior_evidence": "All earlier source/GUI failures and original budgets retained; candidate proof is not relabeled final-main",
+  "concept_budget": {
+    "consumed": 4,
+    "max": 4,
+    "remaining": 0
+  },
+  "parked_link_budget": {
+    "consumed": 2,
+    "max": 3,
+    "remaining": 1
+  }
+}
