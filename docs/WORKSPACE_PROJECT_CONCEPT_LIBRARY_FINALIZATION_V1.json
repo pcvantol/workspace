@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "assignment": "L4-PROJECT-CONCEPT-LIBRARY-V1-20261012",
+  "plan": 100,
+  "product_version": "2.8.23",
+  "protected_source": {
+    "pr": 163,
+    "reviewed_head": "7b89abbb8bbd66503be70c456660a24e0f9b1029",
+    "main": "5de570d7a983903dd72325789a4f09f610ab8df9",
+    "tree": "d8878aa69f6193227d212a5adbab6b95dc921b3a",
+    "reviewed_and_merged_tree_equal": true
+  },
+  "budget": {
+    "consumed": 2,
+    "max": 3,
+    "remaining": 1,
+    "round1": "https://github.com/pcvantol/forge/issues/208#issuecomment-6123731480",
+    "round2": "https://github.com/pcvantol/forge/issues/208#issuecomment-6124005482"
+  },
+  "history": {
+    "plan99": "CLOSED",
+    "plan96_97": "CLOSED",
+    "plan98_pr160": "PARKED_WAITING_FOR_EP_JOIN",
+    "link_budget": "consumed2/max3/remaining1"
+  },
+  "validation": {
+    "mandatory": "PASS",
+    "native_tests": 220,
+    "isolated_adapter_tests": 1,
+    "per_modified_production_file_coverage": "STRICTLY_GREATER_THAN_80.2_PERCENT",
+    "owning_ci": "ALL_FIVE_SUCCESS_ON_REVIEWED_HEAD",
+    "tde": {
+      "result": "QUALIFIED / PASS_WITH_WARNINGS",
+      "runtime": "1.1.1",
+      "policy": "1.4.0",
+      "retained_warning": "complexity maximum25 exceeds15",
+      "observe_assessment_and_qualification_exit": 1
+    }
+  },
+  "independent_source_and_installed_candidate": "QUALITY_SECURITY_UX_PASS",
+  "independent_private_report_sha256": {
+    "quality-round2-7b89abb.private.md": "0e36ec03ca3d6b06beebdc089a01a703ee7dfd29bce5675b9e428a0f86b840ca",
+    "security-round2-7b89abb.private.md": "e7983bcb134eb04cbdda07d2ad7d530325bd4238e6d4934904acb3fe79698eaf",
+    "ux-round2-7b89abb.private.md": "f2422e672e6142d7d9c104a938c2934fea463925bd36f7b2169e9ee96e9d3307",
+    "quality-candidate-installed-complete-7b89abb.private.md": "ca5f49508ee5724b74b858831fed8b059e71f86dbc43801a06f17833da0b79b2",
+    "security-candidate-installed-7b89abb.private.md": "411bd795cd12cc55fb9f7fa7f35b8db66128516b5de2cd44bf127b6822ecfd86",
+    "ux-candidate-installed-complete-7b89abb.private.md": "77d0e24cc446c3c58cff5084d8c93dc673ab5a72a1a497ae2c208677c2725361"
+  },
+  "actual_candidate": {
+    "source": "7b89abbb8bbd66503be70c456660a24e0f9b1029",
+    "wheel_sha256": "ae67e796894703f3b3192bfe65ad9d9385ee230ff6e19038195fc63f5ad69826",
+    "native_sha256": "d2d7ad26abe9771218435f87b2ad6f9d484032863ca2d43534e11abaf736b1ad",
+    "environment": "Own synthetic local Server noneditable wheel plus packaged isolated native test adapter; ad-hoc qualification, not public signing",
+    "cases": [
+      "actual legacy2.8.22 records and original receipts preserved",
+      "title metadata search, duplicates, no-results and dirty filter without auto-selection",
+      "pending Save blocks separate lifecycle action",
+      "Archive original response loss and identical replay after separate native and Server OS restarts",
+      "same identity Restore and original receipt versus later opposing current state",
+      "stale conflict, real outage and initialized storage loss fail closed",
+      "actual wrong authority and normal revocation/protected concealment",
+      "five locales/light-dark/560-760-1180; actual long Unicode title and distinct-ID delayed detail",
+      "installed coupled CAS refault RED; unchanged original GREEN; five installed library HTTP tests PASS"
+    ],
+    "retained_failures": "Original source/review failures and private setup/AX expectation errors retained. Supplemental overlength input rejected; valid long-title created once and reused. No successful effect repeated for helper convergence.",
+    "cleanup": "All own normal pairings revoked, own Client/Server/proxy stopped; original proofs retained",
+    "screenshots": [
+      {
+        "path": "docs/project-concept-library-candidate/de-archive-empty-760-dark.png",
+        "sha256": "ed5897ae12212a235dec79e3450a121a3dbf84c79b228c6f7a66f3c503706c1c"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/de-distinct-id-late-detail-retains-long-selection.png",
+        "sha256": "bb4b38ae939384ca0b0c59364e971eb88cb68dc117c78269f02b23af1b9385e6"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/de-long-unicode-title-search560-dark.png",
+        "sha256": "cfa649b9548bb903ebc00da345e93888c2000cfee8cbe78f84f5a28f4a4c5dd2"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/de-selected-760-dark.png",
+        "sha256": "01c8d08991e3050cc62a63294e8b2adc35c327d9c84b81cc9308bcd92a738728"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/en-actual-grant-revocation-clears-protected-text.png",
+        "sha256": "070d20d7065cedd0c74f9155c840a18eb5783c6c5d7b5edd90df4dcfa4d1af9f"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/en-archive-original-pending.png",
+        "sha256": "84859804ad258e615bbd2ead6a60ffd69d4bc299fdd1e74cb63daf037464e7f9"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/en-current-restored-wide-light.png",
+        "sha256": "e971af0fa5a89889021d6c38e626dfc3f239dedffe650fcb290ab3e82a4fa1cd"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/en-current-restored1180-light.png",
+        "sha256": "a38541350c885a62a00908058108d9656af3f5fddd43a312f8e07268255a368d"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/en-dirty-archive-filter-retains-text.png",
+        "sha256": "3f8524c2148775c1973795c8af3f58c9ddbbf56f22b03c0319be752b9e0660f5"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/en-initial-active-legacy760-light.png",
+        "sha256": "eb9bc079d756de9a0f00eac834af3f755fbb34640600c6ebfcbd20c82fd466ef"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/en-no-title-results.png",
+        "sha256": "c74b21dad79e1cc297fa465ab1414ef25fd9df167b4cc38a6896bd6f0c253932"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/en-original-replay-opposing-current-readonly.png",
+        "sha256": "9a20acd9f0cdce22c3239f312c8805a99493941aad7e35eb39be8b06b36ebd4b"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/en-pending-save-blocks-archive.png",
+        "sha256": "d8adce105a07a5de8f9ea6b97894a42a5b5265153ac052695a3b6111c8df6357"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/en-restart-pending-state.png",
+        "sha256": "90979b19740fd870b0dc6ad2330fb8dcefd2c4d9cb34a41355b98ef6ea4be1c2"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/en-restarted-original-recovery-archived.png",
+        "sha256": "c6e9ba9de3950a472296e4e5c345128f515cdd348a3ab6ff2fca567384ca7d4d"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/en-restored-same-identity.png",
+        "sha256": "58f8cc2c795d27429f37db7dca383ca023cf9e3be3db942046431294db752091"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/en-stale-archived-outage-keeps-block.png",
+        "sha256": "4203fb71e1b0caf135657c4f111d9ae428738ce66610b52ea104bb946190ebe8"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/en-title-search-two-identities.png",
+        "sha256": "19a5324b611319626799a7ff9dd01c98e88681836845b2cd15b81726e1b3d3f0"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/es-archive-empty-560-dark.png",
+        "sha256": "3d2479ab0b7511b1de1bc5d7e7c1501b49e5417edf2fd4828384194a5fcd4902"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/es-selected-560-dark.png",
+        "sha256": "36236c4a9d0e2e20db52ff80061332967c034cf3c62cc158f3c7c2df2a4f683d"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/fr-archive-empty-760-light.png",
+        "sha256": "224f1205dac2ed242ade81c0cddb82271c4f8aa36c5e029e48bd3369fce8cdc3"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/fr-selected-760-light.png",
+        "sha256": "437d2d671443ee30b09efe2202b6b111543b60d51b2016503bd7501e46d17bb6"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/nl-archive-empty-760-dark.png",
+        "sha256": "4c81b2749f826c96acb48289a347114371c6c52eef6f83c1cc6a6ecbe05d33f4"
+      },
+      {
+        "path": "docs/project-concept-library-candidate/nl-selected-760-dark.png",
+        "sha256": "a13ccaa2d76b98a64e236f31d23fd483229389d9264ca774ecc54bed5862cda6"
+      }
+    ]
+  },
+  "finalization": {
+    "nonempty": true,
+    "classification": "NO_BUMP",
+    "runtime_code_changed": false,
+    "protected_delivery": "PENDING_EXACT_HEAD_DOCUMENTARY_REVIEW_AND_CI",
+    "exact_final_main_installed": "REQUIRED_NEW_POST_MERGE_PROOF_EXTERNAL_REGISTER",
+    "complete_dod_preclaimed": false
+  },
+  "privacy": "Only exact24 independently approved own synthetic app-window PNG bytes and minimal provenance; raw credentials/stores/logs/reports/AX/wire remain private",
+  "boundaries": "No EP/Forge/provider/project/repository/Mission effects; no user credentials/store/signing changes; no universal VoiceOver certification"
+}

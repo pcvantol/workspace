@@ -437,7 +437,7 @@
       "id": "PB-W1-CONCEPT-LIBRARY",
       "parent": "PB-W1",
       "owner": "workspace",
-      "status": "IN_PROGRESS",
+      "status": "SOURCE_DELIVERED",
       "depends_on": [
         "PB-W1-CONCEPTS"
       ],
@@ -449,7 +449,8 @@
       "input_contracts": [
         "project-concept-library/1"
       ],
-      "acceptance": "docs/WORKSPACE_PROJECT_CONCEPT_LIBRARY_V1.md"
+      "acceptance": "docs/WORKSPACE_PROJECT_CONCEPT_LIBRARY_V1.md",
+      "source_evidence": "docs/WORKSPACE_PROJECT_CONCEPT_LIBRARY_FINALIZATION_V1.json"
     },
     {
       "id": "PB-WQ-CONCEPT-LIBRARY",
@@ -465,7 +466,9 @@
       "user_outcome": "New exact-final-main own installed library acceptance",
       "deliverable": "Own Server/native GUI/OSrestart/lifecycle replay/negative qualification",
       "input_contracts": [],
-      "acceptance": "Strict owning DoD; no peer prerequisites"
+      "acceptance": "Strict owning DoD; no peer prerequisites",
+      "candidate_evidence": "docs/WORKSPACE_PROJECT_CONCEPT_LIBRARY_FINALIZATION_V1.json",
+      "remaining_gate": "NEW_EXACT_FINAL_MAIN_INSTALLED_GUI_AND_INDEPENDENT_PROOF"
     }
   ],
   "holistic_design": "docs/PROJECT_ONBOARDING_HOLISTIC_V1.md",
