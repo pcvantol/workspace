@@ -57,11 +57,17 @@ struct ProjectConceptView: View {
                         .disabled(state.busy || state.pending != nil).accessibilityIdentifier("concept-new")
                     Button(text("refresh")) { Task { await state.refresh(current:current) } }.disabled(state.busy)
                 }
-                Text(text(state.phase)).foregroundStyle(.secondary).accessibilityIdentifier("concept-status")
-                ForEach(state.items) { item in
-                    Button { Task { await state.open(item.id,current:current); titleFocused = state.selected?.id == item.id } } label: {
-                        HStack { Image(systemName:state.selected?.id == item.id ? "checkmark.circle.fill" : "doc.text"); Text(item.title); Spacer() }
-                    }.disabled(state.busy || state.pending != nil).accessibilityIdentifier("concept-row-"+item.id)
+                Text(text(state.displayPhase)).foregroundStyle(.secondary).accessibilityIdentifier("concept-status")
+                if !state.items.isEmpty {
+                    ScrollView {
+                        VStack(alignment:.leading,spacing:8) {
+                            ForEach(state.items) { item in
+                                Button { Task { await state.open(item.id,current:current); titleFocused = state.selected?.id == item.id } } label: {
+                                    HStack { Image(systemName:state.selected?.id == item.id ? "checkmark.circle.fill" : "doc.text"); Text(item.title); Spacer() }
+                                }.disabled(state.busy || state.pending != nil).accessibilityIdentifier("concept-row-"+item.id)
+                            }
+                        }
+                    }.frame(maxHeight:160)
                 }
                 TextField(text("title"),text:$state.title).textFieldStyle(.roundedBorder).focused($titleFocused)
                     .disabled(state.busy || state.pending != nil).accessibilityIdentifier("concept-title")
@@ -86,7 +92,7 @@ struct ProjectConceptView: View {
         .task { await state.refresh(current:current) }
         .onChange(of:client.phase) { _,phase in
             if phase == "CONNECTED" { Task { await state.refresh(current:current) } }
-            else { state.invalidate() }
+            else { state.clientPhaseChanged(phase) }
         }
         .onDisappear { state.cancelReads() }
     }

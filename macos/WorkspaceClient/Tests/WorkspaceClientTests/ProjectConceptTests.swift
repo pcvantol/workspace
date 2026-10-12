@@ -9,11 +9,11 @@ private final class ConceptFixture: ConceptServing, @unchecked Sendable {
     var commands:[ConceptCommand] = []
     var fail:ConceptError?
     var loseReply = false
-    var hold:CheckedContinuation<[ProjectConcept],Error>?
+    var hold:CheckedContinuation<[ProjectConceptSummary],Error>?
     var held = false
     let context = "own-context"
-    func list(_ connection:ConceptConnection) async throws -> [ProjectConcept] {
-        if let fail {throw fail};if held {return try await withCheckedThrowingContinuation {hold=$0}};return items
+    func list(_ connection:ConceptConnection) async throws -> [ProjectConceptSummary] {
+        if let fail {throw fail};if held {return try await withCheckedThrowingContinuation {hold=$0}};return items.map(\.summary)
     }
     func get(_ connection:ConceptConnection,id:String) async throws -> ProjectConcept {
         if let fail {throw fail};guard let item=items.first(where:{$0.id==id}) else {throw ConceptError.notFound};return item
@@ -62,8 +62,24 @@ final class ProjectConceptTests:XCTestCase {
         fixture.fail=nil;fixture.held=true
         let task=Task {await state.refresh(current:{binding})}
         for _ in 0..<100 where fixture.hold==nil {await Task.yield()}
-        state.invalidate();fixture.hold?.resume(returning:fixture.items);await task.value
+        state.invalidate();fixture.hold?.resume(returning:fixture.items.map(\.summary));await task.value
         XCTAssertNil(state.selected);XCTAssertTrue(state.items.isEmpty);XCTAssertFalse(state.busy)
+    }
+    @MainActor func testImmediateDirtyStatusTransientDisconnectRetentionAndKnownDenial() async throws {
+        let root=temporary();defer {try? FileManager.default.removeItem(at:root)}
+        let fixture=ConceptFixture(),binding=connection;let state=ProjectConceptState(transport:fixture,root:root)
+        await state.refresh(current:{binding});state.new(defaultTitle:"Initial");state.notes="Never saved"
+        state.clientPhaseChanged("CONNECTING")
+        XCTAssertEqual(state.notes,"Never saved");XCTAssertEqual(state.displayPhase,"offline");XCTAssertTrue(state.items.isEmpty)
+        await state.refresh(current:{binding});XCTAssertEqual(state.displayPhase,"unsaved");XCTAssertEqual(state.notes,"Never saved")
+        await state.save(current:{binding});XCTAssertEqual(state.displayPhase,"saved")
+        state.title="Changed title";XCTAssertEqual(state.displayPhase,"unsaved")
+        state.title=state.selected!.title;XCTAssertEqual(state.displayPhase,"saved")
+        state.notes="Unsent edit";XCTAssertEqual(state.displayPhase,"unsaved")
+        state.clientPhaseChanged("UNAVAILABLE");XCTAssertEqual(state.notes,"Unsent edit")
+        await state.refresh(current:{binding});XCTAssertEqual(state.displayPhase,"unsaved");XCTAssertEqual(state.notes,"Unsent edit")
+        state.clientPhaseChanged("UNAUTHORIZED");XCTAssertEqual(state.notes,"");XCTAssertNil(state.selected);XCTAssertEqual(state.phase,"denied")
+        state.clientPhaseChanged("CONNECTED");XCTAssertEqual(state.phase,"denied")
     }
     @MainActor func testBoundedInputCurrentPairingAndPrivateStorageFailures() async throws {
         let root=temporary();defer {try? FileManager.default.removeItem(at:root)}
@@ -120,7 +136,8 @@ extension ProjectConceptTests {
         let configuration=URLSessionConfiguration.ephemeral;configuration.protocolClasses=[ConceptHTTPProtocol.self]
         let transport=ProjectConceptTransport(configuration:configuration)
         let item:[String:Any]=["id":String(repeating:"a",count:32),"actor_id":"alice","context_id":"own-context","title":"Idea","notes":"🌱","revision":1,"created_at":"2026-10-12T00:00:00Z","updated_at":"2026-10-12T00:00:00Z","state":"CONCEPT_NOT_CONFIGURED"]
-        ConceptHTTPProtocol.code=200;ConceptHTTPProtocol.value=["actor_id":"alice","context_id":"own-context","concepts":[item]]
+        var summary=item;summary.removeValue(forKey:"notes")
+        ConceptHTTPProtocol.code=200;ConceptHTTPProtocol.value=["actor_id":"alice","context_id":"own-context","concepts":[summary]]
         let rows=try await transport.list(connection);XCTAssertEqual(rows.count,1)
         XCTAssertEqual(ConceptHTTPProtocol.last?.value(forHTTPHeaderField:"X-Workspace-Draft-Grant"),connection.access.token)
         ConceptHTTPProtocol.value=item

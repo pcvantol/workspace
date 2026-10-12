@@ -25,6 +25,28 @@ struct ProjectConcept: Codable, Equatable, Identifiable, Sendable {
               state == "CONCEPT_NOT_CONFIGURED" else { throw ConceptError.invalid }
     }
 }
+// Bounded discovery metadata only; note bodies require current detail access.
+struct ProjectConceptSummary: Codable, Equatable, Identifiable, Sendable {
+    let id: String
+    let actor_id: String
+    let context_id: String
+    let title: String
+    let revision: Int
+    let created_at: String
+    let updated_at: String
+    let state: String
+    func validate(_ context: String) throws { try record(notes: "", revision: revision).validate(context) }
+    func record(notes: String, revision: Int) -> ProjectConcept {
+        .init(id:id,actor_id:actor_id,context_id:context_id,title:title,notes:notes,revision:revision,
+              created_at:created_at,updated_at:updated_at,state:state)
+    }
+}
+extension ProjectConcept {
+    var summary: ProjectConceptSummary {
+        .init(id:id,actor_id:actor_id,context_id:context_id,title:title,revision:revision,
+              created_at:created_at,updated_at:updated_at,state:state)
+    }
+}
 struct ConceptCommand: Codable, Equatable, Sendable {
     let title: String
     let notes: String
@@ -46,7 +68,7 @@ struct ConceptJournal: Codable, Sendable {
     var completed: Bool
 }
 protocol ConceptServing: Sendable {
-    func list(_ connection: ConceptConnection) async throws -> [ProjectConcept]
+    func list(_ connection: ConceptConnection) async throws -> [ProjectConceptSummary]
     func get(_ connection: ConceptConnection, id: String) async throws -> ProjectConcept
     func save(_ connection: ConceptConnection, id: String?, command: ConceptCommand) async throws -> ProjectConcept
 }
@@ -54,7 +76,7 @@ protocol ConceptServing: Sendable {
 final class ProjectConceptState: ObservableObject {
     @Published var title = ""
     @Published var notes = ""
-    @Published private(set) var items: [ProjectConcept] = []
+    @Published private(set) var items: [ProjectConceptSummary] = []
     @Published private(set) var selected: ProjectConcept?
     @Published private(set) var phase = "connect"
     @Published private(set) var busy = false
@@ -66,6 +88,19 @@ final class ProjectConceptState: ObservableObject {
     var dirty: Bool { title != (selected?.title ?? "") || notes != (selected?.notes ?? "") }
     init(transport: any ConceptServing = ProjectConceptTransport(), root: URL = FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0].appendingPathComponent("Workspace/ProjectConceptIntents")) {
         self.transport = transport; records = PrivateLocalRecordStore(root:root,namespace:"project-concept")
+    }
+    var displayPhase: String {
+        dirty && ["saved", "ready", "empty"].contains(phase) ? "unsaved" : phase
+    }
+    func clientPhaseChanged(_ value: String) {
+        guard value != "CONNECTED" else { return }
+        if ["UNAUTHORIZED", "FORGETTING"].contains(value) {
+            invalidate(); phase = "denied"
+        } else {
+            // Unknown transport health is not proof of lost actor authority.
+            // Cancel late publications, retain eligible same-binding editor.
+            cancelReads(); items = []; phase = "offline"
+        }
     }
     func cancelReads() { generation += 1; busy = false }
     func invalidate() {
@@ -101,7 +136,7 @@ final class ProjectConceptState: ObservableObject {
                 guard journal.key == active.key else { throw ConceptError.invalid }
                 if !journal.completed {
                     pending = journal; title = journal.command.title; notes = journal.command.notes
-                    if let id = journal.identity { selected = values.first { $0.id == id } }
+                    if let id = journal.identity { selected = values.first { $0.id == id }?.record(notes:journal.command.notes,revision:journal.command.expected_revision) }
                 }
             }
             phase = pending != nil ? "retry" : (dirty ? "unsaved" : (items.isEmpty ? "empty" : "ready"))
@@ -162,7 +197,7 @@ final class ProjectConceptState: ObservableObject {
             if latest.revision != receipt.revision { phase = "conflict"; return }
             selected = latest
             title = latest.title; notes = latest.notes
-            items.removeAll { $0.id == latest.id }; items.insert(latest,at:0); phase = "saved"
+            items.removeAll { $0.id == latest.id }; items.insert(latest.summary,at:0); phase = "saved"
         } catch ConceptError.conflict {
             if ticket == generation {
                 // Definitive rejection releases editing, original journal is retained.

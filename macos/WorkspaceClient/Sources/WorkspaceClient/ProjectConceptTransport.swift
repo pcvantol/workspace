@@ -25,12 +25,12 @@ struct ProjectConceptTransport: ConceptServing {
         case 400: throw ConceptError.invalid
         default: throw ConceptError.unavailable
         }
-        guard data.count <= 24_000_000, http.value(forHTTPHeaderField:"Content-Type")?.hasPrefix("application/json") == true,
+        guard data.count <= 2_000_000, http.value(forHTTPHeaderField:"Content-Type")?.hasPrefix("application/json") == true,
               let value = try? JSONDecoder().decode(T.self,from:data) else { throw ConceptError.invalid }
         return value
     }
-    private struct List: Decodable { let actor_id:String; let context_id:String; let concepts:[ProjectConcept] }
-    func list(_ connection:ConceptConnection) async throws -> [ProjectConcept] {
+    private struct List: Decodable { let actor_id:String; let context_id:String; let concepts:[ProjectConceptSummary] }
+    func list(_ connection:ConceptConnection) async throws -> [ProjectConceptSummary] {
         let result = try await request(List.self,connection,path:"/v1/project-concepts")
         guard result.context_id == connection.access.projectID, result.concepts.count <= 500,
               result.concepts.allSatisfy({$0.actor_id == result.actor_id}) else { throw ConceptError.invalid }

@@ -50,7 +50,9 @@ class ProjectConceptTests(unittest.TestCase):
             with restarted.project_concepts.authorized(self.grant) as scope:
                 self.assertEqual(restarted.project_concepts.get(scope,identity),updated)
                 self.assertEqual(restarted.project_concepts.save(scope,body),item) # Original receipt, not new mutation.
-        self.assertEqual(self.request()[1]['concepts'][0],updated)
+        summary=self.request()[1]['concepts'][0]
+        self.assertEqual(summary,{k:v for k,v in updated.items() if k != 'notes'})
+        self.assertNotIn('notes',summary)
         with sqlite3.connect(self.root/'conversations.sqlite3') as db:
             self.assertEqual(db.execute('SELECT count(*) FROM project_concepts_v1').fetchone()[0],1)
             self.assertEqual(db.execute('SELECT count(*) FROM conversations').fetchone()[0],0)
@@ -83,6 +85,20 @@ class ProjectConceptTests(unittest.TestCase):
         with sqlite3.connect(db) as connection:connection.execute('ALTER TABLE project_concepts_v1 ADD COLUMN unauthorized TEXT')
         self.assertEqual(self.request()[0],503)
         self.assertEqual(self.request(method='POST',body=self.fields(operation_id='e'*32))[0],503)
+    def test_maximum_unicode_inventory_is_metadata_only_and_every_detail_is_reachable(self):
+        with self.service.project_concepts.authorized(self.grant) as scope:
+            last = None
+            for i in range(500):
+                last = self.service.project_concepts.save(scope,self.fields(title='🌱'*120,notes='🌱'*10000,operation_id=f'{i:032x}'))
+        code,value = self.request()
+        self.assertEqual(code,200);self.assertEqual(len(value['concepts']),500)
+        self.assertTrue(all('notes' not in row for row in value['concepts']))
+        self.assertLess(len(json.dumps(value).encode()),2000000)
+        self.assertEqual(len({row['id'] for row in value['concepts']}),500)
+        code,detail = self.request('/v1/project-concepts/'+last['id'])
+        self.assertEqual(code,200);self.assertEqual(detail['notes'],'🌱'*10000)
+        self.assertEqual(self.request(method='POST',body=self.fields(operation_id='e'*32))[0],400)
+
     def test_existing_conversations_preserved_and_limits_fenced(self):
         base=self.service.conversations
         chat=base.create(('alice','own-context'),{'title':'Existing chat','focus':'','mode':'UX','draft':'Untouched','request_id':'f'*32})

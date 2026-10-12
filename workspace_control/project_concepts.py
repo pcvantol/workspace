@@ -96,7 +96,7 @@ class ProjectConceptStore:
             except FileNotFoundError:
                 return {'actor_id':scope[0], 'context_id':scope[1], 'concepts':[]}
             try:
-                rows = db.execute('SELECT * FROM project_concepts_v1 WHERE actor_id=? AND context_id=? ORDER BY updated_at DESC,id LIMIT 501',scope).fetchall()
+                rows = db.execute('SELECT id,actor_id,context_id,title,revision,created_at,updated_at FROM project_concepts_v1 WHERE actor_id=? AND context_id=? ORDER BY updated_at DESC,id LIMIT 501',scope).fetchall()
                 if len(rows) > 500:
                     raise ValueError('concept inventory limit')
                 return {'actor_id':scope[0], 'context_id':scope[1], 'concepts':[self._record(row) for row in rows]}

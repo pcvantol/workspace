@@ -1,7 +1,7 @@
 # Workspace Projectconcepten V1 — plan99
 
 Assignment L4-PROJECT-CONCEPTS-V1-20261012 / mandate6118583726.
-Current concept budget consumed0/max3/remaining3. Initial implementation.
+Current concept budget consumed1/max3/remaining2. Initial implementation.
 Same writer/session; merged basea6aad520bed9f1c2f7119b393435b8c739f030b3.
 Plan98/PR160 PARKED on0212f898bb049c7019e4f8c602decc09b891c595,
 LINK consumed2/max3/remaining1; not closed or merged. Predecessors96/97 CLOSED.
@@ -38,12 +38,14 @@ edit another concept. Concept text is untrusted data, never executable content.
 
 ## Owning HTTP contract (V1)
 
-- GET /v1/project-concepts: actor_id/context_id/concepts, at most500 entries.
+- GET /v1/project-concepts: actor_id/context_id/concepts, at most500 metadata summaries; no notes.
 - POST /v1/project-concepts: title, notes, operation_id, expected_revision0.
 - GET /v1/project-concepts/{own hex32 ID}: one currently authorized record.
 - PATCH /v1/project-concepts/{ID}: same closed body, expected_revision>=1.
 
-Record: id,actor_id,context_id,title,notes,revision,created_at,updated_at,state.
+Detail record: id,actor_id,context_id,title,notes,revision,created_at,updated_at,state.
+List summaries omit notes; all500 maximum Unicode titles/context IDs remain within
+2,000,000bytes even under existing ASCII-escaped JSON. Full notes remain in detail.
 state=CONCEPT_NOT_CONFIGURED. Title1–120 Unicode scalars (nonblank), notes<=10000;
 control characters except newline/tab rejected. IDs/operation IDs are randomhex32,
 not derived from names/URL/path. Receipt limit4096 per actor/context. Body<=64000
@@ -95,3 +97,14 @@ window, storage capacity, scope and cleanup stop bound. No user credentials/data
 old plan96 grants, EP/Forge service, paid provider, new host or signing changes.
 All failures retained. One bounded guard refault must make the relevant test red.
 No old Mission matrix repetition or blind retry-until-green.
+
+## Integrated correction round1
+
+Booked once before edits via6119044322 after all three complete90d1b71
+initial reviews failed. Admission0/3 preserved; current consumed1/max3/remaining2.
+Transient connection phases suspend current publication while retaining eligible
+same-binding editor/recovery; known denied/forget/rebinding clears protected data.
+Visible save status follows actual dirty editor immediately, preserving stronger
+conflict/offline/recovery errors. Lists are bounded metadata summaries, note bodies
+only in authorized detail. Initial real packaged GUI created/saved a concept and
+confirmed saved-status defect after unsent edit; failure screenshots retained.
