@@ -246,10 +246,11 @@ extension ActivityTests {
         let client=ClientState(keychain:ActivityEmptyServer())
         await state.connect(Self.connection);await state.choose(access.worksets[0].workset_id)
         for language in ["en","nl","de","fr","es"] {
-            for width in [560.0,760.0,1180.0] {
+            for width in [340.0,560.0,760.0,1180.0] {
                 let host=NSHostingView(rootView:WorksetActivityView(state:state,client:client,grants:ActivityEmptyDraft()).environment(\.locale,Locale(identifier:language)))
                 host.frame=NSRect(x:0,y:0,width:width,height:780);host.layoutSubtreeIfNeeded()
                 XCTAssertEqual(host.frame.width,width)
+
             }
         }
         await server.setMode("lost");await state.fetch(restart:true)

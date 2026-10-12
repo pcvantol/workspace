@@ -22,14 +22,18 @@ struct WorksetActivityView: View {
         return AdvisoryConnection(endpoint:access.endpoint,workspaceInstanceID:access.instanceID,actorID:observed.actor_id,
             workspaceProjectID:access.projectID,conversationID:"",bearer:bearer,draftGrant:access.token)
     }
+    @ViewBuilder private var activityActions:some View {
+        Button(text("refresh")) { Task { if state.selected.isEmpty { await state.connect(await connection()) } else { await state.fetch(restart:true) } } }.disabled(state.busy)
+        if state.access != nil { Button(text("forget")) { state.forget() } }
+        if state.busy { ProgressView().controlSize(.small) }
+    }
     var body:some View {
         ScrollView {
             VStack(alignment:.leading,spacing:14) {
-                Text(text("title")).font(.largeTitle.bold())
-                HStack {
-                    Button(text("refresh")) { Task { if state.selected.isEmpty { await state.connect(await connection()) } else { await state.fetch(restart:true) } } }.disabled(state.busy)
-                    if state.access != nil { Button(text("forget")) { state.forget() } }
-                    if state.busy { ProgressView().controlSize(.small) }
+                Text(text("title")).font(.largeTitle.bold()).lineLimit(1).minimumScaleFactor(0.75)
+                ViewThatFits(in:.horizontal) {
+                    HStack { activityActions }
+                    VStack(alignment:.leading) { activityActions }
                 }
                 Text(text(state.status)).foregroundStyle(.secondary).accessibilityIdentifier("activity.status")
                 if state.access == nil {
@@ -39,13 +43,16 @@ struct WorksetActivityView: View {
                     }
                 }
                 if let access=state.access {
-                    Picker(text("workset"),selection:Binding(get:{state.selected},set:{value in Task { await state.choose(value) }})) {
-                        Text(text("choose")).tag("")
-                        ForEach(Array(access.worksets.enumerated()),id:\.element.workset_id) { index,subject in
-                            Text(text("workset")+" "+String(index+1)).tag(subject.workset_id)
-                        }
-                    }.disabled(state.busy).accessibilityIdentifier("activity.workset")
-                    DisclosureGroup(text("sourceContext")) {
+                    VStack(alignment:.leading,spacing:6) {
+                        Text(text("workset")).font(.caption).foregroundStyle(.secondary)
+                        Picker(text("workset"),selection:Binding(get:{state.selected},set:{value in Task { await state.choose(value) }})) {
+                            Text(text("choose")).tag("")
+                            ForEach(Array(access.worksets.enumerated()),id:\.element.workset_id) { index,subject in
+                                Text(text("workset")+" "+String(index+1)).tag(subject.workset_id)
+                            }
+                        }.labelsHidden().disabled(state.busy).accessibilityLabel(text("workset")).accessibilityIdentifier("activity.workset")
+                    }
+                    DisclosureGroup {
                         VStack(alignment:.leading,spacing:6) {
                             Text("Forge 2.15.0").font(.caption)
                             Text([access.scope.instance_id,access.scope.project_id,access.scope.repository_id].joined(separator:" · ")).font(.caption).textSelection(.enabled)
@@ -57,6 +64,8 @@ struct WorksetActivityView: View {
                             }
                             DisclosureGroup(text("technical")) { Text(ActivityWire.pin).font(.caption).textSelection(.enabled) }
                         }.frame(maxWidth:.infinity,alignment:.leading)
+                    } label: {
+                        Text(text("sourceContext")).fixedSize(horizontal:false,vertical:true).frame(maxWidth:.infinity,alignment:.leading)
                     }
                 }
                 if !state.pages.isEmpty {
