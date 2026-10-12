@@ -398,6 +398,40 @@
       "deliverable": "Qualify individual create/adopt slices before aggregate",
       "acceptance": "one actual scoped effect/readback, separate decisions, source/hash/dirty/conflict negatives",
       "implementation_selected": false
+    },
+    {
+      "id": "PB-W1-CONCEPTS",
+      "parent": "PB-W1",
+      "owner": "workspace",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "PB-W0"
+      ],
+      "new_scoped_node": true,
+      "selected_assignment": "L4-PROJECT-CONCEPTS-V1-20261012",
+      "implementation_selected": true,
+      "user_outcome": "Own idea create/save/find/reopen/edit without peers",
+      "deliverable": "Native concepts and own durable HTTP/storage",
+      "input_contracts": [
+        "HOB-W01-own-draft-subset"
+      ],
+      "acceptance": "docs/WORKSPACE_PROJECT_CONCEPTS_V1.md"
+    },
+    {
+      "id": "PB-WQ-CONCEPTS",
+      "parent": "PB-WQ",
+      "owner": "workspace",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "PB-W1-CONCEPTS"
+      ],
+      "new_scoped_node": true,
+      "selected_assignment": "L4-PROJECT-CONCEPTS-V1-20261012",
+      "implementation_selected": true,
+      "user_outcome": "Exact-main installed concept acceptance",
+      "deliverable": "Own native/Server GUI/restart/negative qualification",
+      "input_contracts": [],
+      "acceptance": "No EP/Forge prerequisites; exact-main installed GUI and strict owning DoD"
     }
   ],
   "holistic_design": "docs/PROJECT_ONBOARDING_HOLISTIC_V1.md",
@@ -427,5 +461,27 @@
     "finalization_receipt": "docs/PROJECT_ONBOARDING_DESIGN_FINALIZATION_V1.json",
     "exact_final_main_readback": "REQUIRED_POST_FINALIZATION_MERGE_EXTERNAL_REGISTER"
   },
-  "subset_semantics": "Parent grouping is not a prerequisite edge. Aggregate PB-WQ retains original full-five-route deps; PB-WQ-LINK is independent. Required profile analyses are scoped conditional inputs, not universal initialization prerequisites."
+  "subset_semantics": "Parent grouping is not a prerequisite edge. Aggregate PB-WQ retains original full-five-route deps; PB-WQ-LINK is independent. Required profile analyses are scoped conditional inputs, not universal initialization prerequisites.",
+  "concept_delivery": {
+    "plan": 99,
+    "budget": {
+      "consumed": 0,
+      "max": 3,
+      "remaining": 3
+    },
+    "state": "INITIAL_IMPLEMENTATION",
+    "contract": "docs/WORKSPACE_PROJECT_CONCEPTS_V1.md",
+    "installed": "NOT_RUN"
+  },
+  "parked_link_delivery": {
+    "plan": 98,
+    "head": "0212f898bb049c7019e4f8c602decc09b891c595",
+    "pr": 160,
+    "state": "OWN_SOURCE_READY_CONTRACT_TESTED_WAITING_FOR_EP_JOIN",
+    "budget": {
+      "consumed": 2,
+      "max": 3,
+      "remaining": 1
+    }
+  }
 }

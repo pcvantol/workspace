@@ -1,3 +1,18 @@
+## Selected independent Projectconcepten — plan99
+
+Assignment `L4-PROJECT-CONCEPTS-V1-20261012`, mandate6118583726.
+Same sole writer/session; branch `codex/plan99-project-concepts`, actual merged
+base a6aad520bed9f1c2f7119b393435b8c739f030b3. Current concept budget
+consumed0/max3/remaining3. Plan96/97 CLOSED. Plan98/PR160 parked, not closed,
+head0212f898bb049c7019e4f8c602decc09b891c595; LINK consumed2/max3/remaining1.
+Only own concept create/list/open/edit, stable identity and durable revisioned
+storage. No EP/Forge dependency or scan/repository/Mission/provider effects.
+First material step: reuse private ConversationStore connection and existing
+actor/pairing/fence, with separate project_concepts_v1 tables and native editor.
+Version2.8.21 reserved by PR160; own allocation2.8.22, no publication claim.
+
+## Historical closed plan97 snapshot
+
 ## Selected holistic onboarding design — plan97
 
 Assignment `L4-HOLISTIC-PROJECT-ONBOARDING-DESIGN-DAG-V1-20261011`,

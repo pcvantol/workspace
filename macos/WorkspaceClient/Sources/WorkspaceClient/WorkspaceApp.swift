@@ -121,6 +121,8 @@ struct ContentView: View {
     @StateObject private var conversations: ConversationState
     @StateObject private var reviews: MissionReviewState
     @StateObject private var worklists: WorklistState
+    @StateObject private var concepts = ProjectConceptState()
+    private let conceptGrants: any DraftGrantStore
     @State private var selectedTab = 4
     @State private var requestedReview: MissionReviewKey?
     @State private var reviewNavigationStatus = ""
@@ -128,6 +130,14 @@ struct ContentView: View {
     init(client: ClientState, conversations: ConversationState = ConversationState(),
          reviews: MissionReviewState = MissionReviewState(), worklists: WorklistState = WorklistState()) {
         self.client = client
+        #if WORKSPACE_ISOLATED_TEST
+        if let document = try? IsolatedTestDocument.load() {
+            conceptGrants = IsolatedDraftGrant(document)
+            _concepts = StateObject(wrappedValue:ProjectConceptState(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("project-concept-intents")))
+        } else { conceptGrants = DraftGrantKeychain() }
+        #else
+        conceptGrants = DraftGrantKeychain()
+        #endif
         _conversations = StateObject(wrappedValue: conversations)
         _reviews = StateObject(wrappedValue: reviews)
         _worklists = StateObject(wrappedValue: worklists)
@@ -164,6 +174,8 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
+            ProjectConceptView(state:concepts,client:client,grants:conceptGrants)
+                .tabItem { Label(ProjectConceptCopy.text("nav",language:locale.language.languageCode?.identifier ?? "en"),systemImage:"lightbulb") }.tag(5)
             Group {
                 if let preview=missionObservation {
                     MissionWorkspaceView(observation:preview,canRefine:false,canApprove:false,onRefine:{ _, _, _ in },onApprove:{ _ in })

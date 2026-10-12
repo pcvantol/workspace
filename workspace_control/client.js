@@ -179,6 +179,10 @@ function validProjectCatalogue(catalogue) {
     typeof catalogue.observed_at === 'string' && catalogue.observed_at.length > 0;
 }
 const ownOperations = {
+  'project_concepts.list': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'GET', path: '/v1/project-concepts'},
+  'project_concepts.create': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'POST', path: '/v1/project-concepts'},
+  'project_concepts.get': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'GET', path: '/v1/project-concepts/{id}'},
+  'project_concepts.update': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'PATCH', path: '/v1/project-concepts/{id}'},
   "workset-releases.access": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_WORKSET_RELEASE_GRANT", "method": "GET", "path": "/v1/workset-releases/access", "local_cli": "workset-release-access"},
   "workset-releases.capability": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_WORKSET_RELEASE_GRANT", "method": "GET", "path": "/v1/workset-releases/capability", "local_cli": "workset-release-capability"},
   "workset-releases.prepare": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_WORKSET_RELEASE_GRANT", "method": "POST", "path": "/v1/workset-releases/prepare", "local_cli": "workset-release-prepare"},
