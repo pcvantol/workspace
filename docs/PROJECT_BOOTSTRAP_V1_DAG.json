@@ -532,14 +532,15 @@
     "plan": 100,
     "base": "5e354a5e3571e6a8b1fb45a51b1280b296833cc7",
     "budget": {
-      "consumed": 1,
+      "consumed": 2,
       "max": 3,
-      "remaining": 2
+      "remaining": 1
     },
     "pickup": "https://github.com/pcvantol/forge/issues/208#issuecomment-6123273197",
-    "state": "INTEGRATED_CORRECTION_ROUND1",
+    "state": "INTEGRATED_CORRECTION_ROUND2",
     "contract": "docs/WORKSPACE_PROJECT_CONCEPT_LIBRARY_V1.md",
     "installed": "PENDING_NEW_QUALIFICATION",
-    "round1_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6123731480"
+    "round1_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6123731480",
+    "round2_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6124005482"
   }
 }

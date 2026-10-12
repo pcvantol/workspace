@@ -1,6 +1,6 @@
 # Own project concept library V1 — plan100
 
-Selected [6123101178](https://github.com/pcvantol/forge/issues/208#issuecomment-6123101178), librarybudget1/3 after integrated round6123731480, actual merged base5e354a5 (2.8.22), normal PATCH2.8.23. Plan99 remains closed; PR160 and LINK2/3/1 parked. Only title search, Active ideas/Archive, durable archive and restore of the same concept. No EP/Forge/provider, configured project, repository, scan, Mission or execution effect.
+Selected [6123101178](https://github.com/pcvantol/forge/issues/208#issuecomment-6123101178), librarybudget2/3 after integrated rounds6123731480 and6124005482, actual merged base5e354a5 (2.8.22), normal PATCH2.8.23. Plan99 remains closed; PR160 and LINK2/3/1 parked. Only title search, Active ideas/Archive, durable archive and restore of the same concept. No EP/Forge/provider, configured project, repository, scan, Mission or execution effect.
 
 ## Explicit HTTP compatibility
 
@@ -27,3 +27,5 @@ Actual source/HTTP migration+legacy-receipt/schema/read-only tests; total/receip
 ## Integrated correction history
 
 Initial ad324 full Quality/Security/UX FAIL and mandatory217native/1failure retained. Round1 booked before corrections,1/max3/remaining2: all retained allocation evidence checked before empty/open/create, marker/overlay-loss with durable original lifecycle receipts and NULL/schema corruption fail closed; metadata refresh marks selected stale/read-only without changing local content; source presenter .task state isolated from independent command-state assertions without weakened assertions/deadlines. New full exacthead qualification remains required.
+
+Round1 f750 full218+1/strictPASS and SecurityPASS retained, Quality/UX residualFAIL retained. Round2 booked6124005482 before edits: selection-stale/reopen invariant survives temporary unavailability; new mutations stay blocked while exact original pending recovery remains available. Validated latest lifecycle metadata is published before drift-conflict without changing own editor/snapshot; no old Archive receipt is promoted to current state. Only explicit canonical open/new or successful current-verified operation clears known staleness. No deadlines/assertions weakened; full source and fresh installed gates required.

@@ -98,18 +98,19 @@ struct ProjectConceptView: View {
                 TextEditor(text:$state.notes).frame(height:180).overlay(RoundedRectangle(cornerRadius:8).stroke(.quaternary))
                     .disabled(state.busy || state.pending != nil || state.pendingLifecycle != nil || state.selectedIsArchived).accessibilityLabel(text("notes")).accessibilityIdentifier("concept-notes")
                 Button(text(state.pending == nil ? "save" : "retry")) { Task { await state.save(current:current) } }
-                    .buttonStyle(.borderedProminent).disabled(state.busy || state.phase == "conflict" || state.pendingLifecycle != nil || (state.pending == nil && state.selectedIsArchived) || (state.selected != nil && !state.dirty && state.pending == nil)).keyboardShortcut(commandsActive ? KeyboardShortcut("s",modifiers:.command) : nil).accessibilityIdentifier("concept-save")
+                    .buttonStyle(.borderedProminent).disabled(state.busy || (state.phase == "conflict" || state.selectionStale) || state.pendingLifecycle != nil || (state.pending == nil && state.selectedIsArchived) || (state.selected != nil && !state.dirty && state.pending == nil)).keyboardShortcut(commandsActive ? KeyboardShortcut("s",modifiers:.command) : nil).accessibilityIdentifier("concept-save")
                 if let selected = state.selected {
                     if state.selectedIsArchived { Text(text("archived")).foregroundStyle(.secondary) }
                     Button(text(state.pendingLifecycle != nil ? "lifecycleRetry" : selected.lifecycle == "ARCHIVED" ? "restoreAction" : "archiveAction")) {
                         Task { await state.move(current:current) }
                     }.disabled(state.lifecycleBlocked).accessibilityIdentifier("concept-lifecycle")
+                    if state.selectionStale && state.phase != "conflict" { Text(text("conflict")).foregroundStyle(.secondary) }
                     if state.dirty || state.pending != nil { Text(text("lifecycleBlocked")).foregroundStyle(.secondary) }
                     if let created = WorksetReleaseWire.date(selected.created_at), let updated = WorksetReleaseWire.date(selected.updated_at) {
                         LabeledContent(text("created"),value:created.formatted(date:.abbreviated,time:.shortened))
                         LabeledContent(text("updated"),value:updated.formatted(date:.abbreviated,time:.shortened))
                     }
-                    if state.phase == "conflict" {
+                    if state.phase == "conflict" || state.selectionStale {
                         Button(text("replace")) { Task { await state.open(selected.id,discard:true,current:current) } }
                             .disabled(state.busy).accessibilityIdentifier("concept-conflict-reopen")
                     }

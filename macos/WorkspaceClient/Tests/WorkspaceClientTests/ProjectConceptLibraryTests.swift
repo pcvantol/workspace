@@ -101,6 +101,36 @@ final class ProjectConceptLibraryTests:XCTestCase {
         peer.drop=false;await s.move(current:{c});XCTAssertEqual(s.selected?.revision,2);XCTAssertTrue(s.selectedIsArchived)
         s.concealAuthorization();XCTAssertNil(s.selectedLifecycleHint);XCTAssertFalse(s.selectedIsArchived)
     }
+    @MainActor func testKnownCleanStalenessSurvivesHealthAndResourceOutageUntilCanonicalOpen() async throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
+        let peer=LibraryFixture();peer.items=[record()];let c=connection,s=ProjectConceptState(transport:peer,root:root)
+        await s.refresh(current:{c});await s.open(peer.items[0].id,current:{c});let original=peer.items[0]
+        peer.items[0]=ProjectConcept(id:original.id,actor_id:original.actor_id,context_id:original.context_id,title:original.title,notes:original.notes,revision:2,created_at:original.created_at,updated_at:original.updated_at,state:original.state,lifecycle:"ARCHIVED",library_version:original.library_version)
+        await s.refresh(current:{c});XCTAssertTrue(s.selectionStale);XCTAssertTrue(s.lifecycleBlocked);XCTAssertFalse(s.dirty)
+        s.clientPhaseChanged("UNAVAILABLE");XCTAssertEqual(s.phase,"offline");XCTAssertTrue(s.lifecycleBlocked);XCTAssertTrue(s.selectionStale)
+        let count=peer.moves.count;await s.move(current:{c});await s.save(current:{c});XCTAssertEqual(peer.moves.count,count)
+        peer.fail = .unavailable;await s.refresh(current:{c});XCTAssertTrue(s.selectionStale);XCTAssertTrue(s.lifecycleBlocked)
+        peer.fail=nil;await s.move(current:{c});await s.save(current:{c});XCTAssertEqual(peer.moves.count,count)
+        await s.open(original.id,discard:true,current:{c});XCTAssertFalse(s.selectionStale);XCTAssertTrue(s.selectedIsArchived)
+        await s.move(current:{c});XCTAssertEqual(s.selected?.lifecycle,"ACTIVE");XCTAssertFalse(s.selectionStale)
+        s.concealAuthorization();XCTAssertFalse(s.selectionStale)
+    }
+    @MainActor func testOriginalArchiveReplayAfterRestoreArchivePublishesLatestReadonlyBeforeConflict() async throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
+        let peer=LibraryFixture();peer.items=[record()];let c=connection,s=ProjectConceptState(transport:peer,root:root)
+        await s.refresh(current:{c});await s.open(peer.items[0].id,current:{c});let id=peer.items[0].id,notes=s.notes
+        peer.drop=true;await s.move(current:{c});let original=try XCTUnwrap(s.pendingLifecycle?.command);XCTAssertEqual(peer.items[0].revision,2)
+        peer.drop=false
+        _=try await peer.move(c,id:id,command:.init(operation_id:String(repeating:"d",count:32),expected_revision:2,lifecycle:"ACTIVE"))
+        _=try await peer.move(c,id:id,command:.init(operation_id:String(repeating:"e",count:32),expected_revision:3,lifecycle:"ARCHIVED"))
+        await s.move(current:{c})
+        XCTAssertEqual(peer.moves.first,original);XCTAssertEqual(peer.moves.last,original);XCTAssertEqual(peer.items[0].revision,4)
+        XCTAssertEqual(s.phase,"conflict");XCTAssertTrue(s.selectionStale);XCTAssertTrue(s.selectedIsArchived);XCTAssertEqual(s.selectedLifecycleHint,"ARCHIVED")
+        XCTAssertEqual(s.selected?.revision,1);XCTAssertEqual(s.notes,notes);XCTAssertNil(s.pendingLifecycle);XCTAssertEqual(s.items.first?.revision,4)
+        s.clientPhaseChanged("UNAVAILABLE");XCTAssertTrue(s.selectionStale);XCTAssertTrue(s.selectedIsArchived);XCTAssertTrue(s.lifecycleBlocked)
+        await s.open(id,discard:true,current:{c});XCTAssertEqual(s.selected?.revision,4);XCTAssertFalse(s.selectionStale);XCTAssertTrue(s.selectedIsArchived)
+        await s.move(current:{c});XCTAssertEqual(peer.items[0].revision,5);XCTAssertFalse(s.selectedIsArchived)
+    }
     @MainActor func testFiveLanguageLibraryViewActiveArchiveConflictAndNarrow() throws {
         let peer=LibraryFixture();peer.items=[record(),record("d",life:"ARCHIVED")]
         let s=ProjectConceptState(transport:peer),client=ClientState(keychain:LibraryEmptyServer());s.items=peer.items.map(\.summary);s.inventoryLoaded=true

@@ -22,7 +22,7 @@ extension ProjectConceptState {
         guard inventoryLoaded, !busy, ["saved","ready","empty","unsaved"].contains(phase), visibleItems.isEmpty else { return nil }
         return !searchQuery.isEmpty ? "noTitles" : libraryTab == "ARCHIVED" ? "archiveEmpty" : "activeEmpty"
     }
-    var lifecycleBlocked: Bool { busy || dirty || pending != nil || selected == nil || phase == "conflict" || !inventoryLoaded }
+    var lifecycleBlocked: Bool { busy || dirty || pending != nil || selected == nil || ((phase == "conflict" || selectionStale) && pendingLifecycle == nil) || !inventoryLoaded }
     func restoreLifecycle(_ active: ConceptConnection) throws {
         if pendingLifecycle == nil, let data = try lifecycleRecords.load(active.key) {
             let journal = try JSONDecoder().decode(ConceptLifecycleJournal.self,from:data)
@@ -69,12 +69,14 @@ extension ProjectConceptState {
             try await check(active,current:current)
             guard ticket == generation else { return }
             try settleLifecycle(journal); pendingLifecycle = nil
-            if latest.revision != receipt.revision || latest.lifecycle != receipt.lifecycle { phase = "conflict"; return }
-            selected = latest; selectedLifecycleHint = latest.lifecycle; title = latest.title; notes = latest.notes; libraryTab = latest.lifecycle ?? "ACTIVE"
+            selectedLifecycleHint = latest.lifecycle
+            items.removeAll { $0.id == latest.id }; items.insert(latest.summary,at:0)
+            if latest.revision != receipt.revision || latest.lifecycle != receipt.lifecycle { selectionStale = true; phase = "conflict"; return }
+            selected = latest; selectionStale = false; selectedLifecycleHint = latest.lifecycle; title = latest.title; notes = latest.notes; libraryTab = latest.lifecycle ?? "ACTIVE"
             items.removeAll { $0.id == latest.id }; items.insert(latest.summary,at:0); phase = "saved"
         } catch ConceptError.conflict {
             if ticket == generation {
-                do { if let journal = pendingLifecycle { try settleLifecycle(journal) }; pendingLifecycle = nil; phase = "conflict" }
+                do { if let journal = pendingLifecycle { try settleLifecycle(journal) }; pendingLifecycle = nil; selectionStale = true; phase = "conflict" }
                 catch { phase = "offline" }
             }
         } catch { if ticket == generation { failure(error) } }

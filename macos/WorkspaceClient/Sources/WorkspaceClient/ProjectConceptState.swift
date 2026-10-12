@@ -98,6 +98,7 @@ final class ProjectConceptState: ObservableObject {
     @Published var pendingLifecycle: ConceptLifecycleJournal?
     @Published var inventoryLoaded = false
     @Published var selectedLifecycleHint: String?
+    @Published var selectionStale = false
     let lifecycleRecords: PrivateLocalRecordStore
     private var authorizationObservation: AnyCancellable?
     var generation = 0
@@ -130,7 +131,7 @@ final class ProjectConceptState: ObservableObject {
     func cancelReads() { generation += 1; busy = false }
     func invalidate() {
         generation += 1; busy = false; connection = nil; items = []; selected = nil
-        pending = nil; pendingLifecycle = nil; selectedLifecycleHint = nil; searchQuery = ""; libraryTab = "ACTIVE"; inventoryLoaded = false; title = ""; notes = ""; phase = "connect"
+        pending = nil; pendingLifecycle = nil; selectedLifecycleHint = nil; selectionStale = false; searchQuery = ""; libraryTab = "ACTIVE"; inventoryLoaded = false; title = ""; notes = ""; phase = "connect"
     }
     func check(_ expected: ConceptConnection, current: @MainActor () async throws -> ConceptConnection) async throws {
         guard try await current() == expected else { throw ConceptError.denied }
@@ -138,7 +139,7 @@ final class ProjectConceptState: ObservableObject {
     func failure(_ error: Error) {
         switch error {
         case ConceptError.denied: invalidate(); phase = "denied"
-        case ConceptError.conflict: phase = "conflict"
+        case ConceptError.conflict: selectionStale = true; phase = "conflict"
         case ConceptError.invalid: phase = "invalid"
         case ConceptError.incompatible: items = []; inventoryLoaded = false; phase = "incompatible"
         default: phase = pendingLifecycle == nil ? "offline" : "lifecycleOffline"
@@ -172,13 +173,14 @@ final class ProjectConceptState: ObservableObject {
                 summary == nil || summary!.revision != selected.revision ||
                 (summary!.lifecycle ?? "ACTIVE") != (selected.lifecycle ?? "ACTIVE") || summary!.title != selected.title
             } ?? false
-            phase = pendingLifecycle != nil ? "lifecycleRetry" : pending != nil ? "retry" : stale ? "conflict" : (dirty ? "unsaved" : (items.isEmpty ? "empty" : "ready"))
+            if pending == nil, pendingLifecycle == nil, stale { selectionStale = true }
+            phase = pendingLifecycle != nil ? "lifecycleRetry" : pending != nil ? "retry" : selectionStale ? "conflict" : (dirty ? "unsaved" : (items.isEmpty ? "empty" : "ready"))
         } catch { if ticket == generation { failure(error) } }
     }
     func new(defaultTitle: String) {
         guard !busy, pending == nil, pendingLifecycle == nil else { return }
         guard !dirty else { phase = "unsaved"; return }
-        generation += 1; libraryTab = "ACTIVE"; selected = nil; selectedLifecycleHint = nil; title = defaultTitle; notes = ""; phase = "unsaved"
+        generation += 1; libraryTab = "ACTIVE"; selected = nil; selectedLifecycleHint = nil; selectionStale = false; title = defaultTitle; notes = ""; phase = "unsaved"
     }
     func open(_ id: String, discard: Bool = false, current: @MainActor () async throws -> ConceptConnection) async {
         guard !busy, pending == nil, pendingLifecycle == nil else { return }
@@ -191,7 +193,7 @@ final class ProjectConceptState: ObservableObject {
             let value = try await transport.get(active,id:id); try value.validate(active.access.projectID)
             try await check(active,current:current)
             guard ticket == generation else { return }
-            selected = value; selectedLifecycleHint = value.lifecycle; title = value.title; notes = value.notes; phase = "saved"
+            selected = value; selectedLifecycleHint = value.lifecycle; selectionStale = false; title = value.title; notes = value.notes; phase = "saved"
         } catch { if ticket == generation { failure(error) } }
     }
     private func settle(_ journal: ConceptJournal) throws {
@@ -202,7 +204,7 @@ final class ProjectConceptState: ObservableObject {
         try records.save(JSONEncoder().encode(completed),key:journal.key)
     }
     func save(current: @MainActor () async throws -> ConceptConnection) async {
-        guard !busy, inventoryLoaded, phase != "conflict", pendingLifecycle == nil, pending != nil || !selectedIsArchived, let active = connection else { return }
+        guard !busy, inventoryLoaded, (!selectionStale || pending != nil), phase != "conflict", pendingLifecycle == nil, pending != nil || !selectedIsArchived, let active = connection else { return }
         guard selected == nil || dirty || pending != nil else { return }
         guard title.unicodeScalars.count <= 120, notes.unicodeScalars.count <= 10000,
               !title.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty, ProjectConcept.validText(title), ProjectConcept.validText(notes) else { phase = "invalid"; return }
@@ -228,8 +230,8 @@ final class ProjectConceptState: ObservableObject {
             guard ticket == generation else { return }
             try settle(journal)
             pending = nil; selected = receipt; selectedLifecycleHint = latest.lifecycle
-            if latest.revision != receipt.revision { phase = "conflict"; return }
-            selected = latest
+            if latest.revision != receipt.revision { selectionStale = true; phase = "conflict"; return }
+            selected = latest; selectionStale = false
             title = latest.title; notes = latest.notes
             items.removeAll { $0.id == latest.id }; items.insert(latest.summary,at:0); phase = "saved"
         } catch ConceptError.conflict {
@@ -237,7 +239,7 @@ final class ProjectConceptState: ObservableObject {
                 // Definitive rejection releases editing, original journal is retained.
                 do {
                     if let journal = pending { try settle(journal) }
-                    pending = nil; phase = "conflict"
+                    pending = nil; selectionStale = true; phase = "conflict"
                 } catch { phase = "offline" }
             }
         } catch { if ticket == generation { failure(error) } }
