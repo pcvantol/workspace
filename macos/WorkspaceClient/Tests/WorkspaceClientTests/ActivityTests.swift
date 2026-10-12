@@ -468,3 +468,24 @@ extension ActivityTests {
         }
     }
 }
+
+extension ActivityTests {
+    @MainActor func testResyncFreshObservationCannotOverwriteRetainedHistoricalPageBytes() async throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer { try? FileManager.default.removeItem(at:root) }
+        let server=try ActivityScriptedServer(),access=try Self.access(),store=ActivityLocalStore(root:root)
+        let state=ActivityState(transport:server,credentials:ActivityMemoryCredentials(access),store:store)
+        await state.connect(Self.connection);await state.choose(access.worksets[0].workset_id);await state.rememberDisplayed(visible:true)
+        let key=access.key(state.selected,draft:Self.connection.draftGrant),oldJournal=state.journal,oldBytes=try store.pages(oldJournal,key)
+        await server.setMode("resync");await state.fetch(restart:true)
+        XCTAssertEqual(state.journal.historicalKeys,oldJournal.pageKeys)
+        var raw=try Self.raw("page"),current=raw["current"] as! [String:Any]
+        current["observed_at"]="2026-10-12T17:00:00Z";raw["current"]=current
+        await server.setPage(try JSONSerialization.data(withJSONObject:raw));await server.setMode("normal")
+        await state.fetch(restart:true)
+        XCTAssertTrue(state.complete);XCTAssertFalse(state.journal.comparisonKnown)
+        XCTAssertTrue(Set(state.journal.pageKeys).isDisjoint(with:oldJournal.pageKeys))
+        var history=state.journal;history.pageKeys=history.historicalKeys
+        XCTAssertEqual(try store.pages(history,key),oldBytes)
+        state.invalidate()
+    }
+}

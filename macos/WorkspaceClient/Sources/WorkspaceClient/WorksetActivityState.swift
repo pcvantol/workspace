@@ -126,7 +126,7 @@ import Combine
             guard combined.flatMap(\.events).count<=128 else { throw AdvisoryError.invalid }
             var updated=journal
             if restart { updated.pageKeys=[] }
-            let pageKey=ActivityWire.hash(Data((key(access,connection)+"/"+String(combined.count)+"/"+response.watermark).utf8))
+            let pageKey=ActivityWire.hash(Data((key(access,connection)+"/"+String(combined.count)+"/"+response.watermark+"/"+ActivityWire.hash(response.data)).utf8))
             updated.pageKeys.append(pageKey);updated.cursor=response.cursor;updated.complete = !response.hasMore
             try store.commit(updated,key(access,connection),page:response.data,pageKey:pageKey)
             guard live(ticket,access),selected==workset else { if ticket==epoch { invalidate() };return }
