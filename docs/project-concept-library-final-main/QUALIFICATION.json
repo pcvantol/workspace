@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "assignment": "L4-PROJECT-CONCEPT-LIBRARY-V1-20261012",
+  "plan": 100,
+  "product_version": "2.8.23",
+  "exact_final_main": "1622840e147d718b00d77264cfeb2185e495fe91",
+  "main_tree": "411128bb0c86841c11aed9a2393d72df24e16927",
+  "protected_source_pr": 163,
+  "protected_finalization_pr": 164,
+  "status": "QUALIFIED_ACTUAL_EXACT_FINAL_MAIN_OWN_INSTALLED",
+  "source_and_finalization_reviewed_trees_equal": true,
+  "new_artifacts": {
+    "server_wheel_sha256": "a71818eff569af3e6d49f889ff5aa9576fcd61796b9ec9add501b920889bc07f",
+    "native_sha256": "d2d7ad26abe9771218435f87b2ad6f9d484032863ca2d43534e11abaf736b1ad",
+    "installed_server": "NEW_NONEDITABLE_WHEEL_WITH_EXACT_MAIN_MODULE_PARITY",
+    "native": "NEW_POST_MERGE_PRODUCTION_BUILD_OWN_ISOLATED_ADAPTER",
+    "build_sdk": "26.0",
+    "minimum_macos": "26.0",
+    "binary_minimum_macos": "26.0",
+    "available_xcode_sdk": "27.0"
+  },
+  "qualification_scope": "Own synthetic supported local Server/native; no EP/Forge/provider/project/repository/Mission or user production store effects, no public signing",
+  "cases": [
+    "actual legacy2.8.22 concepts with immutable original receipts",
+    "metadata title search/duplicate identities/no results/dirty filters/pending Save",
+    "Archive original successful response loss and same intent after separate native and Server OS restarts",
+    "same identity Restore, stale/outage block and original old receipt versus later opposing current readback",
+    "real initialized storage loss/no replacement/restoration",
+    "five locales/themes/560-760-1180,92-character Unicode title and different-ID late detail",
+    "real normal grant revocation/protected concealment and own cleanup",
+    "five installed library HTTP contract tests PASS; private installed CAS refault RED and original GREEN"
+  ],
+  "failures_retained": "Startupstatus-before-readiness failure retained before first concept action. Terminal initial AX row discovery failure retained; real forensic GUI/HTTP showed3 rows; only remaining explicit Refresh/revocation/cleanup resumed within same original root/pairings/deadline. No source or productdriver patch, grant renewal, repeated successful effect or deadline reset.",
+  "correction_budget": {
+    "consumed": 2,
+    "max": 3,
+    "remaining": 1
+  },
+  "history": {
+    "plan99": "CLOSED4/4/0",
+    "plan96_97": "CLOSED",
+    "pr160": "PARKED",
+    "link_budget": "consumed2/max3/remaining1"
+  },
+  "owning_gates": {
+    "local_validation": "220NATIVE_PLUS1ISOLATED_PASS_STRICT_CHANGED_FILE_COVERAGE_GT80.2",
+    "source_ci": "ALL_FIVE_SUCCESS_ON_REVIEWED_HEAD",
+    "finalization_ci": "ALL_FIVE_SUCCESS_ON_REVIEWED_HEAD",
+    "actual_finalization_tde": "QUALIFIED/PASS_WITH_WARNINGS complexity25>15; observe exits1 retained",
+    "actual_exact_main_ci": "ALL_FIVE_SUCCESS_ON_EXACT_FINAL_MAIN",
+    "actual_exact_main_tde": "QUALIFIED/PASS_WITH_WARNINGS; complexity25>15 retained; actual artifacts read"
+  },
+  "cleanup": "All own pairings revoked and native/Server/proxy stopped; raw original proofs retained privately",
+  "screenshots": [
+    {
+      "path": "docs/project-concept-library-final-main/de-archive-empty-760-dark.png",
+      "sha256": "3fbe403a57dab7fac5e628bdadfcba85f1d9f1e274b6c212e641a68ce859880d"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/de-selected-760-dark.png",
+      "sha256": "008b3fff72a06495daaf56c71354fb2be69df893e9ff9f562604a641b327d6d0"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/en-actual-grant-revocation-clears-protected-text.png",
+      "sha256": "40141f95759cfa761515ce16fab0e8c3eb0f645f503ea0552c4bfff52e6a7e38"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/en-archive-original-pending.png",
+      "sha256": "d17279493acf6e8aa329543a611c37755f4ec3b22add4151b545e6d842fac240"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/en-current-restored1180-light.png",
+      "sha256": "b90019701a3cba0ef13d4babc42d17da965d1e9fcf607f8913ccb24354911bdd"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/en-dirty-archive-filter-retains-text.png",
+      "sha256": "ae82174eb934c826c485a7c5a3aab08a5811e889ee2ebbc501a1944fa1aa1099"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/en-distinct-id-late-detail-retains-long-selection.png",
+      "sha256": "c5406b280f2e54bee6e5d45e462846cf193eecc28ce820e4dd2dbcf1a488bd08"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/en-long-selection560-light.png",
+      "sha256": "c5406b280f2e54bee6e5d45e462846cf193eecc28ce820e4dd2dbcf1a488bd08"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/en-long-unicode-title-search560-light.png",
+      "sha256": "ff34c51f9f4b485c56651cbdf91b9f899acb37356c3618425f93a894aa98018c"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/en-no-title-results.png",
+      "sha256": "ed5c32546487f519899d56c3e90dc2b162ea399b1f6311b4c6e9fd9d5fa130f1"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/en-original-replay-opposing-current-readonly.png",
+      "sha256": "c09116801726adbfd99515baa3cdada76f05669b4be42b07a5dba3d8632242ef"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/en-pending-save-blocks-archive.png",
+      "sha256": "9157f199320150d834f18b70adc3435c2b7f310cb2243f305dcc263d4d911c5e"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/en-restarted-original-recovery-archived.png",
+      "sha256": "e5285222296ad74ec3ad4b665a80b5f8a97eddd14d5dbc75d56efbb4dcfcab71"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/en-restored-same-identity.png",
+      "sha256": "972dc817dc9011ef7bc2c95e2473f6c35c71025dd65e7e3d1af2a7590e3c4dc6"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/en-stale-archived-outage-keeps-block.png",
+      "sha256": "855487e936b76710a663e8cd1532e4265ea5402366a06c4ee6f50d761154ca14"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/en-terminal-inspection.png",
+      "sha256": "64ec21db27ad9ccf83aaf984da11812431f700d92786d69865565c6ee16aca04"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/en-title-search-two-identities.png",
+      "sha256": "b0d88de6b081e8a8befd424e393c34d393a2fb7b08c3357e12382d17920849e9"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/es-archive-empty-560-dark.png",
+      "sha256": "3998e8aeecc987899af2a8b3c4e8b31544e1241d4d298ae633e39487ab38046d"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/es-selected-560-dark.png",
+      "sha256": "1db0c9d03a48a5ea626e9e48b82b4204c67e58fb89ec366069ddbe09d00a344c"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/fr-archive-empty-760-light.png",
+      "sha256": "2ca0d8fb56dcaf4534996aa374f13eabcceea03b85516af4eb0d38317d06fc97"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/fr-selected-760-light.png",
+      "sha256": "10eb05b2b1e379ad40a12ef7e109e5203bce9d78e9eedc106e915727064a2d57"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/nl-archive-empty-760-dark.png",
+      "sha256": "b2d17dd40ddf53155147cdae4021122e0bf798f2ac1626f1a8b80ad5e00d205f"
+    },
+    {
+      "path": "docs/project-concept-library-final-main/nl-selected-760-dark.png",
+      "sha256": "382e7325e0e4fd933f2385e78efdbc245f65a817d5c15d096d5fc3e8587c2eb2"
+    }
+  ],
+  "privacy": "Only exact23 independently pixel/metadata-reviewed synthetic own native windows and minimal proven source/artifact/review hashes; raw operational data remain private. Exact public byte approval is a separate publication gate.",
+  "external_completion": "Only after independent final-main evidence and exact public byte readback; protected main unchanged by evidence publication",
+  "evidence_correction": "Compiled binary LC_BUILD_VERSION sdk26/minos26 is authoritative; available Xcode SDK27 is separate. Earlier private manifest retained; no product source change or extra build.",
+  "independent_final_main_review_sha256": {
+    "final-main-quality-1622840.private.md": "a8adb1c197540766a17c0b20a95fe9d2a7150a36cfda1f1cf98b111b3f0c3d95",
+    "final-main-quality-sdk-readback-1622840.private.md": "0ea435489686702d83b9a6ff0c80e34ac626de85338b9b96fbb57f5fedcaf82f",
+    "final-main-security-1622840.private.md": "9febdb912bff1f8ca4fbac4fb6723e812ede4a8e79d2f03ca39742052b0d42c2",
+    "final-main-ux-1622840.private.md": "d228bc4c8abf4bd0ef29e1fdec2674a08d011d4c36cdfd48fb738aa2220c4ac1"
+  },
+  "library_node_disposition": {
+    "PB-W1-CONCEPT-LIBRARY": "PROTECTED_SOURCE_DELIVERED",
+    "PB-WQ-CONCEPT-LIBRARY": "ACTUAL_EXACT_FINAL_MAIN_QUALIFIED"
+  },
+  "later_register": "6125417318 read: no scope, budget, pin or new peer gate change; LINK companion remains queued at L2"
+}
