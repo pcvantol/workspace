@@ -1,7 +1,7 @@
 # Workspace Projectconcepten V1 — plan99
 
 Assignment L4-PROJECT-CONCEPTS-V1-20261012 / mandate6118583726.
-Current concept budget consumed2/max3/remaining1. Initial implementation.
+Current concept budget consumed3/max3/remaining0. Initial implementation.
 Same writer/session; merged basea6aad520bed9f1c2f7119b393435b8c739f030b3.
 Plan98/PR160 PARKED on0212f898bb049c7019e4f8c602decc09b891c595,
 LINK consumed2/max3/remaining1; not closed or merged. Predecessors96/97 CLOSED.
@@ -129,3 +129,18 @@ Round2 also preserves that same known-loss distinction on direct own concept
 HTTP: only closed409/CONCEPT_CONFLICT is a revision conflict; pinned WRONG_INSTANCE
 and unknown409 conceal as denial. Current pairing/Server auth authority is not
 inferred from stale cached health, and recovery records remain private/retained.
+
+## Integrated correction round3 — actual rendering
+
+Booked once before source edits via6120212512 after actual816d1e0 installed
+rendering FAIL, independently confirmed by Quality/UX and the user. Earlier
+positive frames and source reviews remain bound; they are not full GUI acceptance.
+Current consumed3/max3/remaining0; LINK remains consumed2/max3/remaining1.
+A normal finite window had negative sidebar/detail width and did not recover on
+resize. Exact internal framework constraint remains unproven. Replace only the
+automatically adapted shared container with an explicit finite NavigationSplitView,
+bounded native sidebar and one selected detail; stable destinations, StateObjects,
+current authorization and review routing remain. The concept editor has a finite
+internal-scroll viewport; its Save shortcut is active-pane scoped. New full source
+reviews and actual packaged root rendering/keyboard/fault qualification are required.
+No old failed screenshot is promoted and no fourth source round is authorized.

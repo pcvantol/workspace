@@ -465,15 +465,16 @@
   "concept_delivery": {
     "plan": 99,
     "budget": {
-      "consumed": 2,
+      "consumed": 3,
       "max": 3,
-      "remaining": 1
+      "remaining": 0
     },
-    "state": "INITIAL_IMPLEMENTATION",
+    "state": "INTEGRATED_RENDER_CORRECTION",
     "contract": "docs/WORKSPACE_PROJECT_CONCEPTS_V1.md",
-    "installed": "NOT_RUN",
+    "installed": "816d1e0_RENDER_FAIL_RETAINED",
     "round1_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6119044322",
-    "round2_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6119365819"
+    "round2_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6119365819",
+    "round3_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6120212512"
   },
   "parked_link_delivery": {
     "plan": 98,

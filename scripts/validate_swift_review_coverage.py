@@ -6,7 +6,7 @@ import sys
 
 
 SOURCES = {
-    "ProjectConceptState.swift", "ProjectConceptTransport.swift", "ProjectConceptView.swift",
+    "WorkspaceNavigationShell.swift", "ProjectConceptState.swift", "ProjectConceptTransport.swift", "ProjectConceptView.swift",
     "CanonicalJSON.swift",
     "ClientState.swift", "WorksetReleaseModels.swift", "WorksetReleaseWire.swift", "WorksetReleaseTransport.swift", "WorksetReleaseStorage.swift", "WorksetReleaseState.swift", "WorksetReleaseCopy.swift", "WorksetReleaseView.swift",
     "MissionApprovalWire.swift", "LiveMissionWorkspaceView.swift", "MissionConceptState.swift", "MissionIntentStore.swift", "PrivateLocalRecordStore.swift", "MissionConceptTransport.swift", "MissionConceptWire.swift", "MissionWorkspacePresentation.swift", "MissionWorkspaceCopy.swift", "MissionWorkspaceView.swift",

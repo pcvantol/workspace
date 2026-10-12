@@ -34,6 +34,7 @@ struct ProjectConceptView: View {
     @ObservedObject var client: ClientState
     let grants: any DraftGrantStore
     @Environment(\.locale) private var locale
+    @Environment(\.nativeTabCommandsActive) private var commandsActive
     @FocusState private var titleFocused: Bool
     private var language:String { locale.language.languageCode?.identifier ?? "en" }
     private func text(_ key:String) -> String { ProjectConceptCopy.text(key,language:language) }
@@ -73,10 +74,10 @@ struct ProjectConceptView: View {
                 TextField(text("title"),text:$state.title).textFieldStyle(.roundedBorder).focused($titleFocused)
                     .disabled(state.busy || state.pending != nil).accessibilityIdentifier("concept-title")
                 Text(text("notes")).font(.headline)
-                TextEditor(text:$state.notes).frame(minHeight:180).overlay(RoundedRectangle(cornerRadius:8).stroke(.quaternary))
+                TextEditor(text:$state.notes).frame(height:180).overlay(RoundedRectangle(cornerRadius:8).stroke(.quaternary))
                     .disabled(state.busy || state.pending != nil).accessibilityLabel(text("notes")).accessibilityIdentifier("concept-notes")
                 Button(text(state.pending == nil ? "save" : "retry")) { Task { await state.save(current:current) } }
-                    .buttonStyle(.borderedProminent).disabled(state.busy || (state.selected != nil && !state.dirty && state.pending == nil)).keyboardShortcut("s",modifiers:.command).accessibilityIdentifier("concept-save")
+                    .buttonStyle(.borderedProminent).disabled(state.busy || (state.selected != nil && !state.dirty && state.pending == nil)).keyboardShortcut(commandsActive ? KeyboardShortcut("s",modifiers:.command) : nil).accessibilityIdentifier("concept-save")
                 if let selected = state.selected {
                     if let created = WorksetReleaseWire.date(selected.created_at), let updated = WorksetReleaseWire.date(selected.updated_at) {
                         LabeledContent(text("created"),value:created.formatted(date:.abbreviated,time:.shortened))
