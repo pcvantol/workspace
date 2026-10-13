@@ -12,6 +12,7 @@ private final class BaselineFixture:ConceptBaselineServing,@unchecked Sendable {
     var expiry="2099-01-01T00:00:00Z"
     var permission=true
     var paths=["README.md"]
+    var summary="Source-only template proposal"
     var binding="own-pairing"
     var created:[String:ConceptBaselineResult]=[:]
     var posts:[ConceptBaselineCommand]=[]
@@ -29,7 +30,7 @@ private final class BaselineFixture:ConceptBaselineServing,@unchecked Sendable {
     }
     func result(_ operation:String)->ConceptBaselineResult {
         let content="# Source-only fixture\n";let sha=SHA256.hash(data:Data(content.utf8)).map{String(format:"%02x",$0)}.joined()
-        return .init(contract_version:"workspace-concept-baseline/1",actor_id:concept.actor_id,context_id:concept.context_id,concept_id:concept.id,operation_id:operation,source_revision:1,current_revision:concept.revision,source_digest:String(repeating:"a",count:64),producer_source:String(repeating:"a",count:40),binding_id:binding,unknown_fields:["users"],source_product:.init(name:concept.title,purpose:concept.notes,users:"Not supplied",non_goals:"Not supplied",constraints:"Not supplied",open_questions:["Who should this serve?"]),proposal:.init(contract_version:"forge-project-proposal-http/v1",instance_id:"producer",principal_id:"limited-actor",audience:"workspace",dossier_id:"private-dossier",operation_id:operation,plan_id:"proposal-source-only",proposal_kind:"pb-render/1.0",request_digest:String(repeating:"a",count:64),record_digest:String(repeating:"a",count:64),result:.init(state:"PROPOSED_NOT_APPROVED",original_contract_version:"pb-render/1.0",summary:"Source-only template proposal",artifacts:paths.sorted().map{.init(path:$0,mode:420,sha256:sha,content:content)},observations:"SUPPLIED_UNVERIFIED",repository_quality:"NOT_ASSESSED"),read_only_result:true,approval:"NOT_PERFORMED",registration:"NOT_PERFORMED"),status:"PROPOSAL_PROJECT_NOT_CONFIGURED")
+        return .init(contract_version:"workspace-concept-baseline/1",actor_id:concept.actor_id,context_id:concept.context_id,concept_id:concept.id,operation_id:operation,source_revision:1,current_revision:concept.revision,source_digest:String(repeating:"a",count:64),producer_source:String(repeating:"a",count:40),binding_id:binding,unknown_fields:["users"],source_product:.init(name:concept.title,purpose:concept.notes,users:"Not supplied",non_goals:"Not supplied",constraints:"Not supplied",open_questions:["Who should this serve?"]),proposal:.init(contract_version:"forge-project-proposal-http/v1",instance_id:"producer",principal_id:"limited-actor",audience:"workspace",dossier_id:"private-dossier",operation_id:operation,plan_id:"proposal-source-only",proposal_kind:"pb-render/1.0",request_digest:String(repeating:"a",count:64),record_digest:String(repeating:"a",count:64),result:.init(state:"PROPOSED_NOT_APPROVED",original_contract_version:"pb-render/1.0",summary:summary,artifacts:paths.sorted().map{.init(path:$0,mode:420,sha256:sha,content:content)},observations:"SUPPLIED_UNVERIFIED",repository_quality:"NOT_ASSESSED"),read_only_result:true,approval:"NOT_PERFORMED",registration:"NOT_PERFORMED"),status:"PROPOSAL_PROJECT_NOT_CONFIGURED")
     }
     func prepare(_ c:ConceptConnection,concept:String,command:ConceptBaselineCommand) async throws -> ConceptBaselineResult {
         posts.append(command);if let prepareFailure {throw prepareFailure};if let fail {throw fail};let value=result(command.operation_id);created[command.operation_id]=value
@@ -118,9 +119,14 @@ final class ConceptBaselineStateTests:XCTestCase {
     @MainActor func testActualResultPresentationGroupsAndOriginalRecoveryAtNarrowWideWidths() async throws {
         let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
         let concept=source();let fixture=BaselineFixture(concept);fixture.paths=["README.md","docs/product/VISION.md","docs/architecture/ARCHITECTURE.md","docs/roadmap/ROADMAP.md","AGENTS.md","BOOTSTRAP.md","engineering/project-contract.json"]
+        fixture.summary="Source-only long ledger\n"+(0..<37).map{"file-\($0) sha256:"+String(repeating:"a",count:64)}.joined(separator:"\n")
         let state=ConceptBaselineState(transport:fixture,root:root);let active=connection
         await state.load(concept,current:{active});let draft=try ConceptBaselineDraftSource.capture(concept,choice:nil,dirty:false)
         await state.prepare(draft,concept:concept,current:{active});XCTAssertNotNil(state.result)
+        XCTAssertEqual(state.result?.proposal.result.summary,fixture.summary)
+        let compact=NSHostingView(rootView:ConceptBaselinePanel(state:state,concept:concept,dirty:false,current:{active}))
+        compact.frame=NSRect(x:0,y:0,width:520,height:900);compact.layoutSubtreeIfNeeded()
+        XCTAssertLessThan(compact.fittingSize.height,900,"Authentic long ledger must not displace primary questions/documents by default")
         for language in ConceptBaselineCopy.languages {
             for width in [520.0,900.0] {
                 let host=NSHostingView(rootView:ScrollView {ConceptBaselinePanel(state:state,concept:concept,dirty:false,current:{active})}.environment(\.locale,Locale(identifier:language)))

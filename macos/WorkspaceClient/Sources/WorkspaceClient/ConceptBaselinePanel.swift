@@ -53,8 +53,10 @@ struct ConceptBaselinePanel:View {
                 Text(text("badge")).font(.headline).accessibilityIdentifier("concept-baseline-result")
                 Text(text("english")).foregroundStyle(.secondary)
                 LabeledContent(text("revision"),value:String(result.source_revision))
-                Text(text("summary")).font(.subheadline.bold())
-                Text(verbatim:result.proposal.result.summary).textSelection(.enabled)
+                LabeledContent(text("documents"),value:String(result.proposal.result.artifacts.count))
+                DisclosureGroup(text("summary")) {
+                    Text(verbatim:result.proposal.result.summary).textSelection(.enabled)
+                }.accessibilityIdentifier("concept-baseline-summary")
                 if result.current_revision != result.source_revision {Text(text("sourceChanged")).foregroundStyle(.secondary)}
                 DisclosureGroup(text("source")) {
                     Text(verbatim:result.source_product.name).font(.headline)
