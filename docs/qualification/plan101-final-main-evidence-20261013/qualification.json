@@ -1,0 +1,204 @@
+{
+  "assignment": "L4-NATIVE-WORKSET-ACTIVITY-V1-20261012",
+  "plan": 101,
+  "final_main": "b22f771c7a85de4cd5e3b789b60de26d41c865dc",
+  "source_pr": 165,
+  "finalization_pr": 166,
+  "trial": 56,
+  "classification": "NEW_EXACT_FINAL_MAIN_SCOPED_INSTALLED_GUI_PASS",
+  "actual_read_pages": [
+    16,
+    6
+  ],
+  "unique_events": 22,
+  "actual_producer_READ_revoked": "DENIED_PROTECTED_FACTS_AND_PICKER_HIDDEN",
+  "preflight": {
+    "fixed_deadline": "2026-10-13T09:50:16.875850+00:00",
+    "grant_expiry": "2026-10-13T10:05:16.875850+00:00",
+    "definition_expiry": "2026-10-13T10:42:22.463312+00:00",
+    "source_sha": "b22f771c7a85de4cd5e3b789b60de26d41c865dc",
+    "new_trial": true
+  },
+  "measured_effects": {
+    "measured_canonical_model_admission_EP_effects": 0,
+    "fresh_own_normal_preparation_separately_counted": true
+  },
+  "cleanup": {
+    "own_server_stopped": true,
+    "own_grant_normally_revoked": true
+  },
+  "setup_cleanup": {
+    "advisory": 3,
+    "release": 1,
+    "order": 2,
+    "all": "REVOKED",
+    "consumer_bindings_and_draft_grants": 0
+  },
+  "independent_quality_security_ux": "PASS",
+  "independent_private_report_sha256": {
+    "final-main-quality-b22f771.md": "2495687592399c61904f7540b4a2352ac91e4307f98acb44351b6d1d739bf08a",
+    "final-main-security-b22f771.md": "e428e8f472d3438e826cc654d856c578daaed9e51c4aa94719e13a981b3906b8",
+    "final-main-ux-b22f771.md": "67d95ff3601406c55bd983f4b35d67799103c45e5e1a29097110661c79677eaa"
+  },
+  "screenshots_privacy": "INDEPENDENT_SECURITY_UX_PIXEL_PASS",
+  "ci": [
+    {
+      "run": 38375111578,
+      "head": "b22f771c7a85de4cd5e3b789b60de26d41c865dc",
+      "url": "https://github.com/pcvantol/workspace/actions/runs/38375111578",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 115221415552,
+          "name": "Native app build and transport tests",
+          "conclusion": "success",
+          "url": "https://github.com/pcvantol/workspace/actions/runs/38375111578/job/115221415552"
+        }
+      ]
+    },
+    {
+      "run": 38375111581,
+      "head": "b22f771c7a85de4cd5e3b789b60de26d41c865dc",
+      "url": "https://github.com/pcvantol/workspace/actions/runs/38375111581",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 115221415191,
+          "name": "validate-version-source",
+          "conclusion": "success",
+          "url": "https://github.com/pcvantol/workspace/actions/runs/38375111581/job/115221415191"
+        }
+      ]
+    },
+    {
+      "run": 38375111582,
+      "head": "b22f771c7a85de4cd5e3b789b60de26d41c865dc",
+      "url": "https://github.com/pcvantol/workspace/actions/runs/38375111582",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 115221415591,
+          "name": "TDE observe (non-blocking)",
+          "conclusion": "success",
+          "url": "https://github.com/pcvantol/workspace/actions/runs/38375111582/job/115221415591"
+        }
+      ]
+    },
+    {
+      "run": 38375111571,
+      "head": "b22f771c7a85de4cd5e3b789b60de26d41c865dc",
+      "url": "https://github.com/pcvantol/workspace/actions/runs/38375111571",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 115221415603,
+          "name": "Foundation validation",
+          "conclusion": "success",
+          "url": "https://github.com/pcvantol/workspace/actions/runs/38375111571/job/115221415603"
+        },
+        {
+          "id": 115221415843,
+          "name": "Python 3.14 installed Server",
+          "conclusion": "success",
+          "url": "https://github.com/pcvantol/workspace/actions/runs/38375111571/job/115221415843"
+        }
+      ]
+    }
+  ],
+  "tde": {
+    "qualificationStatus": "QUALIFIED",
+    "assessmentDecision": "PASS_WITH_WARNINGS",
+    "run": 38375111582,
+    "warning": "complexity product maximum25 exceeds warning threshold15; not a policy PASS",
+    "head": "b22f771c7a85de4cd5e3b789b60de26d41c865dc",
+    "url": "https://github.com/pcvantol/workspace/actions/runs/38375111582"
+  },
+  "exact_main_document_readback": [
+    {
+      "path": ".version-operations/workspace-plan101-activity-finalization-20261013.json",
+      "sha256": "65b86db20afd6d913c3d51eeaecb89bb06a21809e704bfaa5b8d270cdf0ba1f2",
+      "exact_remote_readback": true,
+      "main": "b22f771c7a85de4cd5e3b789b60de26d41c865dc",
+      "url": "https://raw.githubusercontent.com/pcvantol/workspace/b22f771c7a85de4cd5e3b789b60de26d41c865dc/.version-operations/workspace-plan101-activity-finalization-20261013.json",
+      "readback_method": "GitHub contents API decoded bytes equal gitshow exact main",
+      "http": 200
+    },
+    {
+      "path": "BACKLOG.md",
+      "sha256": "4ef05229398279943a0b2500c7215e121a3029e5cf801666e39cbca64debfb9e",
+      "exact_remote_readback": true,
+      "main": "b22f771c7a85de4cd5e3b789b60de26d41c865dc",
+      "url": "https://raw.githubusercontent.com/pcvantol/workspace/b22f771c7a85de4cd5e3b789b60de26d41c865dc/BACKLOG.md",
+      "readback_method": "GitHub contents API decoded bytes equal gitshow exact main",
+      "http": 200
+    },
+    {
+      "path": "BOOTSTRAP.md",
+      "sha256": "4751fd1c7134d8dfb4cfa3e0471ea540c4c6f5274f3e4dd16225c2b05009db01",
+      "exact_remote_readback": true,
+      "main": "b22f771c7a85de4cd5e3b789b60de26d41c865dc",
+      "url": "https://raw.githubusercontent.com/pcvantol/workspace/b22f771c7a85de4cd5e3b789b60de26d41c865dc/BOOTSTRAP.md",
+      "readback_method": "GitHub contents API decoded bytes equal gitshow exact main",
+      "http": 200
+    },
+    {
+      "path": "ROADMAP.md",
+      "sha256": "d1e193f9d3318c23a10ae363395f16a8d3038e0aca1bc62dde336909f6f45806",
+      "exact_remote_readback": true,
+      "main": "b22f771c7a85de4cd5e3b789b60de26d41c865dc",
+      "url": "https://raw.githubusercontent.com/pcvantol/workspace/b22f771c7a85de4cd5e3b789b60de26d41c865dc/ROADMAP.md",
+      "readback_method": "GitHub contents API decoded bytes equal gitshow exact main",
+      "http": 200
+    },
+    {
+      "path": "docs/LIVE_PROJECT_ROADMAP_MANAGEMENT_V1_DAG.json",
+      "sha256": "120cc1ffe44b465f9771c0814fb00ff59f8f2be5740d6ec20b40af291a84e7f7",
+      "exact_remote_readback": true,
+      "main": "b22f771c7a85de4cd5e3b789b60de26d41c865dc",
+      "url": "https://raw.githubusercontent.com/pcvantol/workspace/b22f771c7a85de4cd5e3b789b60de26d41c865dc/docs/LIVE_PROJECT_ROADMAP_MANAGEMENT_V1_DAG.json",
+      "readback_method": "GitHub contents API decoded bytes equal gitshow exact main",
+      "http": 200
+    },
+    {
+      "path": "docs/WORKSPACE_WORKSET_ACTIVITY_FINALIZATION_V1.json",
+      "sha256": "21c3aadcd262e3ef155ebfaa9bc74f5f5151db1d59357621ea95b7437eda3dc9",
+      "exact_remote_readback": true,
+      "main": "b22f771c7a85de4cd5e3b789b60de26d41c865dc",
+      "url": "https://raw.githubusercontent.com/pcvantol/workspace/b22f771c7a85de4cd5e3b789b60de26d41c865dc/docs/WORKSPACE_WORKSET_ACTIVITY_FINALIZATION_V1.json",
+      "readback_method": "GitHub contents API decoded bytes equal gitshow exact main",
+      "http": 200
+    },
+    {
+      "path": "docs/WORKSPACE_WORKSET_ACTIVITY_FINALIZATION_V1.md",
+      "sha256": "3572effd1395cf835d97be8843ed2c6b4b96b3364a63b2e83148be5b97fd9fb0",
+      "exact_remote_readback": true,
+      "main": "b22f771c7a85de4cd5e3b789b60de26d41c865dc",
+      "url": "https://raw.githubusercontent.com/pcvantol/workspace/b22f771c7a85de4cd5e3b789b60de26d41c865dc/docs/WORKSPACE_WORKSET_ACTIVITY_FINALIZATION_V1.md",
+      "readback_method": "GitHub contents API decoded bytes equal gitshow exact main",
+      "http": 200
+    },
+    {
+      "path": "docs/WORKSPACE_WORKSET_ACTIVITY_V1.md",
+      "sha256": "864a3ffdb969d5d2baf56bda3eeeadbd48e0c1e033aba50a4f95742a1efaa561",
+      "exact_remote_readback": true,
+      "main": "b22f771c7a85de4cd5e3b789b60de26d41c865dc",
+      "url": "https://raw.githubusercontent.com/pcvantol/workspace/b22f771c7a85de4cd5e3b789b60de26d41c865dc/docs/WORKSPACE_WORKSET_ACTIVITY_V1.md",
+      "readback_method": "GitHub contents API decoded bytes equal gitshow exact main",
+      "http": 200
+    }
+  ],
+  "retained_candidate_commit": "390adff7fc61522dd460c31c2bb96b43a30d8f7e",
+  "reuse": "Original30frame5language/light-dark/width matrix and53keyboard proof retain original source/run identity; relevant source unchanged; no settings changes or matrix relabeling",
+  "legacy": "OldForge2.12.1 Worklist200/activityidentity403 DENIED/supportNOT_ESTABLISHED; original unsupported recognition remainsNOT_ESTABLISHED, acceptance amended6139754826",
+  "failed55": "Preserved preoperational environment/readiness failures;3ownsetupgrants normallyrevoked;56fresh no-space runtime without product/producer patch",
+  "corrections_consumed": 9,
+  "link_budget": "PARKED_consumed2/max3/remaining1",
+  "bounds": {
+    "full_PRM": false,
+    "live_EP": false,
+    "full_EP_workflow": false,
+    "public_signing": false,
+    "production_installation": false,
+    "automatic_next_feature": false
+  }
+}

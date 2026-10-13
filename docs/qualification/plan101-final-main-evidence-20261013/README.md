@@ -1,0 +1,7 @@
+# Plan101 — NEW exact-final-main installed proof
+
+Workspace2.8.24 main `b22f771c7a85de4cd5e3b789b60de26d41c865dc`; protected source PR165 and nonempty finalization PR166. Independently accepted fresh packaged Client→installed Server→pinned Forge2.15.0/98913266 trial56. Real native workset selection/load-more reads16+6 events; actual producer READ revocation hides protected facts and picker. Both original window-only synthetic screenshots are privacy approved. Newly built and installed after finalization merge; identical image/native hashes reflect unchanged synthetic state/code, not candidate relabeling.
+
+`artifact-binding.json` binds324 exact source/wheel/installed payloads, both archives and actual SDK26/minOS26 native executable. `qualification.json` records fixed deadline/expiry, measured read-effect scope, cleanup, independent report hashes, all five main checks, real TDE status and eight remote exact-main document readbacks. Raw credentials, cursors, private logs and local paths are excluded.
+
+Retained [candidate matrix and keyboard53](https://github.com/pcvantol/workspace/tree/390adff7fc61522dd460c31c2bb96b43a30d8f7e/docs/qualification/plan101-candidate-evidence-20261013) remain original source-bound evidence. This new representative run does not repeat or relabel that matrix. Old legacy denial remains support not established under decision6139754826. Failed55 attempts are preserved. No live EP, full PRM/workflow, public signing, global installation upgrade or next feature is claimed.
