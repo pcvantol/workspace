@@ -533,7 +533,7 @@
     {
       "id": "L4-NATIVE-REMAINING-WORKSET-ORDER-V1-20261013",
       "authority": "SELECTED_SCOPED_IMPLEMENTATION",
-      "status": "IMPLEMENTATION_CANDIDATE_PENDING_FULL_ACCEPTANCE",
+      "status": "SOURCE_MERGED_FINALIZATION_AND_NEW_FINAL_MAIN_REQUIRED",
       "assignment_plan": 102,
       "contract": "docs/WORKSPACE_WORKSET_ORDER_V1.md",
       "producer_pin": "989132660997909e74800ddc8648be11262be8d4",
@@ -568,7 +568,10 @@
             "ORDER-DECISIONS"
           ]
         }
-      ]
+      ],
+      "source_pr": 167,
+      "source_main": "a8013dfd9e6e02c2a31e703fa6f363c54607aafc",
+      "finalization_contract": "docs/WORKSPACE_WORKSET_ORDER_FINALIZATION_V1.md"
     }
   ]
 }
