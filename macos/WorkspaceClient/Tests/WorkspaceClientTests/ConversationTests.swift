@@ -491,6 +491,14 @@ final class ConversationTests: XCTestCase {
         try JSONSerialization.data(withJSONObject:badAdvice).write(to:file);XCTAssertThrowsError(try IsolatedTestDocument.load())
         try JSONSerialization.data(withJSONObject:document).write(to:file)
         XCTAssertNil(try IsolatedAdvisoryCredentials(IsolatedTestDocument.load()).loadAccess())
+        let orderBinding=ActivityAccess(endpoint:loaded.endpoint,workspaceInstanceID:instance,actorID:"reviewer-a",workspaceProjectID:loaded.project_id,token:String(repeating:"O",count:43),binding_id:"own-order",scope:ActivityScope(instance_id:"forge-a",project_id:"project-a",repository_id:"repo-a"),installation_id:"install-a",worksets:[ActivitySubject(workset_id:"workset-a",definition_digest:"sha256:"+String(repeating:"a",count:64))],expires_at:"2099-01-01T00:00:00Z")
+        let orderAccess=OrderAccess(binding:orderBinding,permissions:["READ","REORDER"],maximumAmendments:2)
+        var withOrder=document;withOrder["order_access"]=try JSONSerialization.jsonObject(with:JSONEncoder().encode(orderAccess))
+        try JSONSerialization.data(withJSONObject:withOrder).write(to:file)
+        let orderCredentials=IsolatedOrderCredentials(try IsolatedTestDocument.load());XCTAssertEqual(try orderCredentials.load(),orderAccess)
+        try orderCredentials.save(orderAccess);XCTAssertEqual(try orderCredentials.load(),orderAccess);try orderCredentials.forget();XCTAssertNil(try orderCredentials.load())
+        withOrder["project_id"]="foreign-order-project";try JSONSerialization.data(withJSONObject:withOrder).write(to:file);XCTAssertThrowsError(try IsolatedTestDocument.load())
+        try JSONSerialization.data(withJSONObject:document).write(to:file)
         var noControls = document
         for field in ["control_grant","control_actor","control_forge_instance","control_workset_ids"] { noControls.removeValue(forKey:field) }
         try JSONSerialization.data(withJSONObject:noControls).write(to:file)

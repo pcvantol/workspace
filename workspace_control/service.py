@@ -285,6 +285,8 @@ class Service:
             self.workset_releases = WorksetReleaseTransport(self.root, self._root_fd)
             from .workset_activity_peer import WorksetActivityTransport
             self.activities = WorksetActivityTransport(self.root, self._root_fd)
+            from .workset_order_peer import WorksetOrderTransport
+            self.workset_orders = WorksetOrderTransport(self.root, self._root_fd)
         except Exception:
             self.close()
             raise

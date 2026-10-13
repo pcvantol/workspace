@@ -179,6 +179,14 @@ function validProjectCatalogue(catalogue) {
     typeof catalogue.observed_at === 'string' && catalogue.observed_at.length > 0;
 }
 const ownOperations = {
+  "workset-orders.access": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_ORDER_GRANT", "method": "GET", "path": "/v1/workset-orders"},
+  "workset-orders.bind.issue": {"exposure": "LOCAL_ONLY_ADMIN", "auth": "PRIVATE_ROOT_OWNER", "local_cli": "workset-order-bind-issue"},
+  "workset-orders.bind.revoke": {"exposure": "LOCAL_ONLY_ADMIN", "auth": "PRIVATE_ROOT_OWNER", "local_cli": "workset-order-bind-revoke"},
+  "workset-orders.capability": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_ORDER_GRANT", "method": "GET", "path": "/v1/workset-orders/capability"},
+  "workset-orders.confirm": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_ORDER_GRANT", "method": "POST", "path": "/v1/workset-orders/{workset_id}/confirm"},
+  "workset-orders.current": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_ORDER_GRANT", "method": "GET", "path": "/v1/workset-orders/{workset_id}"},
+  "workset-orders.operation": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_ORDER_GRANT", "method": "GET", "path": "/v1/workset-orders/{workset_id}/operations/{operation_id}"},
+  "workset-orders.preview": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_ORDER_GRANT", "method": "POST", "path": "/v1/workset-orders/{workset_id}/preview"},
   "workset-activity.access": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_ACTIVITY_GRANT", "method": "GET", "path": "/v1/workset-activity"},
   "workset-activity.bind.issue": {"exposure": "LOCAL_ONLY_ADMIN", "auth": "PRIVATE_ROOT_OWNER", "local_cli": "workset-activity-bind-issue"},
   "workset-activity.bind.revoke": {"exposure": "LOCAL_ONLY_ADMIN", "auth": "PRIVATE_ROOT_OWNER", "local_cli": "workset-activity-bind-revoke"},

@@ -24,6 +24,7 @@ struct IsolatedTestDocument: Decodable {
     let workset_release_access: WorksetReleaseAccess?
     let candidate_access: CandidateAccess?
     let activity_access: ActivityAccess?
+    let order_access:OrderAccess?
 
     let control_grant: String?
     let control_actor: String?
@@ -31,6 +32,9 @@ struct IsolatedTestDocument: Decodable {
     let control_workset_ids: [String]?
 
     private static func validateOptionalAccess(_ document: IsolatedTestDocument) throws {
+        if let access=document.order_access {
+            guard access.valid,access.binding.endpoint==document.endpoint,access.binding.workspaceInstanceID==document.instance_id,access.binding.workspaceProjectID==document.project_id else { throw ConversationError.invalidResponse }
+        }
         if let access=document.activity_access {
             guard access.valid,access.endpoint==document.endpoint,access.workspaceInstanceID==document.instance_id,
                 access.workspaceProjectID==document.project_id else { throw ConversationError.invalidResponse }
@@ -278,6 +282,15 @@ final class IsolatedActivityCredentials: ActivityCredentials, @unchecked Sendabl
     init(_ document:IsolatedTestDocument) { access=document.activity_access }
     func load() throws -> ActivityAccess? { lock.withLock { access } }
     func save(_ value:ActivityAccess) throws { lock.withLock { access=value } }
+    func forget() throws { lock.withLock { access=nil } }
+}
+
+final class IsolatedOrderCredentials: OrderCredentials, @unchecked Sendable {
+    private let lock=NSLock()
+    private var access:OrderAccess?
+    init(_ document:IsolatedTestDocument) { access=document.order_access }
+    func load() throws -> OrderAccess? { lock.withLock { access } }
+    func save(_ value:OrderAccess) throws { lock.withLock { access=value } }
     func forget() throws { lock.withLock { access=nil } }
 }
 
