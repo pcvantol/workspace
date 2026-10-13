@@ -30,11 +30,11 @@ def future(value):
 
 def capability(value, binding):
     validate(value, 'capability')
-    require(value['supported'], 'UNSUPPORTED')
     require(value['scope'] == {k:binding[b] for k,b in [('instance_id','forge_instance_id'),('project_id','forge_project_id'),('repository_id','repository_id')]}, 'DENIED')
     require(value['worksets'] == binding['worksets'] and value['expires_at'] == binding['expires_at'], 'DENIED')
     require(len(value['worksets'])>0 and len({x['workset_id'] for x in value['worksets']})==len(value['worksets']))
     require(future(value['expires_at']), 'DENIED')
+    require(value['supported'], 'UNSUPPORTED')
     return value
 
 

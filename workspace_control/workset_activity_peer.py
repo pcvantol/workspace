@@ -44,7 +44,7 @@ class WorksetActivityTransport(WorklistReadTransport):
         return self._provision_binding(binding,client_token_file)
 
     def _request(self,binding,suffix=''):
-        return request(binding,'GET',wire.BASE+suffix,error_validator=wire.validate,maximum_bytes=32768,missing_as_state='UNSUPPORTED' if not suffix else None)
+        return request(binding,'GET',wire.BASE+suffix,error_validator=wire.validate,maximum_bytes=32768)
 
     @contextmanager
     def gate(self,binding,scope):

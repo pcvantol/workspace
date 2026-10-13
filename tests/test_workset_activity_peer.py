@@ -21,7 +21,7 @@ class ActivityPeerTests(unittest.TestCase):
         self.root=Path(self.tmp.name);self.root.chmod(0o700);initialize(self.root)
         self.service=Service(self.root);self.addCleanup(self.service.close);self.peer=self.service.activities
         meta=packet('capability');self.cap={k:v for k,v in meta.items() if k not in {'consumer_contract','binding_id','actor_id','workspace_project_id','producer_source','producer_version','installation_id'}}
-        self.page=packet('page');self.detail=packet('detail');self.calls=[];self.fail=None;self.cap_calls=0
+        self.page=packet('page');self.detail=packet('detail');self.calls=[];self.peer_failure=None;self.cap_calls=0
         self.receipt={'permissions':['READ'],'state':'ACTIVE','principal_id':meta['actor_id'],'instance_id':self.cap['scope']['instance_id'],'project_id':self.cap['scope']['project_id'],'repository_id':self.cap['scope']['repository_id'],'installation_id':meta['installation_id'],'worksets':self.cap['worksets'],'expires_at':self.cap['expires_at']}
         self.actor=meta['actor_id'];self.project=meta['workspace_project_id'];self.workset=self.cap['worksets'][0]['workset_id']
         self.receipt_file=self.root/'receipt';self.receipt_file.write_text(json.dumps(self.receipt));self.receipt_file.chmod(0o600)
@@ -32,10 +32,50 @@ class ActivityPeerTests(unittest.TestCase):
         self.token=self.client.read_text().strip();self.binding=self.peer.access(self.token)
     def response(self,binding,method,path,body=None,**options):
         self.calls.append((method,path,body));self.assertEqual(method,'GET');self.assertIsNone(body)
-        if self.fail:raise WorklistError(self.fail)
+        if self.peer_failure:raise WorklistError(self.peer_failure)
         if path==wire.BASE:self.cap_calls+=1;return deepcopy(self.cap)
         if '/events/' in path:return deepcopy(self.detail)
         return deepcopy(self.page)
+    def testActualHttpDenialAndMissingRouteCannotAssertUnsupported(self):
+        from http.server import BaseHTTPRequestHandler
+        from workspace_control.advisory_http import request as real_request
+        replies={}
+        class Reply(BaseHTTPRequestHandler):
+            def log_message(self,*args):pass
+            def do_GET(handler):
+                handler.send_response(replies['status'])
+                handler.send_header('Content-Type',replies['type'])
+                handler.end_headers();handler.wfile.write(replies['body'])
+        server=ThreadingHTTPServer(('127.0.0.1',0),Reply)
+        thread=threading.Thread(target=server.serve_forever);thread.start()
+        self.addCleanup(thread.join);self.addCleanup(server.server_close);self.addCleanup(server.shutdown)
+        binding={**self.binding,'endpoint':'http://127.0.0.1:'+str(server.server_port)}
+        cases=[(401,b'no access','text/plain','DENIED'),(403,b'no access','text/plain','DENIED'),
+               (404,b'not found','text/plain','INVALID_RESPONSE'),(404,b'{}','application/json','INVALID_RESPONSE'),
+               (404,json.dumps({'contract_version':wire.CONTRACT,'error':{'code':'ACTIVITY_ROUTE_MISSING'}}).encode(),'application/json','ACTIVITY_ROUTE_MISSING')]
+        for status,body,kind,expected in cases:
+            with self.subTest(status=status,body=body):
+                replies.update(status=status,body=body,type=kind)
+                with patch('workspace_control.workset_activity_peer.request',real_request):
+                    with self.assertRaises(WorklistError) as error:self.peer._request(binding)
+                self.assertEqual(error.exception.state,expected)
+
+    def testNegativeCapabilityRequiresSameLiveBindingBeforeUnsupported(self):
+        cap=deepcopy(self.cap);cap['supported']=False
+        with self.assertRaises(WorklistError) as error:wire.capability(cap,self.binding)
+        self.assertEqual(error.exception.state,'UNSUPPORTED')
+        for key in ['instance_id','project_id','repository_id']:
+            foreign=deepcopy(cap);foreign['scope'][key]='foreign'
+            with self.assertRaises(WorklistError) as error:wire.capability(foreign,self.binding)
+            self.assertEqual(error.exception.state,'DENIED')
+        foreign=deepcopy(cap);foreign['worksets'][0]['definition_digest']='sha256:'+'f'*64
+        with self.assertRaises(WorklistError) as error:wire.capability(foreign,self.binding)
+        self.assertEqual(error.exception.state,'DENIED')
+        expired=deepcopy(cap);expired['expires_at']='2001-01-01T00:00:00Z'
+        binding={**self.binding,'expires_at':expired['expires_at']}
+        with self.assertRaises(WorklistError) as error:wire.capability(expired,binding)
+        self.assertEqual(error.exception.state,'DENIED')
+
     def testFiniteSeparateNamespaceOriginalCursorAndClosedSource(self):
         with self.peer.gate(self.binding,(self.actor,self.project)) as cap:
             self.assertNotIn('token',self.peer.metadata(self.binding,cap))
@@ -117,16 +157,16 @@ class ActivityPeerTests(unittest.TestCase):
         self.assertEqual(get(extra={'Authorization':'Bearer wrong'})[0],401)
         self.assertEqual(get(method='POST')[0],405)
         for state,expected in [('RESYNC_REQUIRED',409),('UNSUPPORTED',404),('EVENT_UNAVAILABLE',404),('INVALID_REQUEST',400),('ACTIVITY_REQUEST_INVALID',400),('ACTIVITY_SCOPE_DENIED',403),('ACTIVITY_ROUTE_MISSING',404),('DENIED',403),('HISTORY_PARTIAL_CAPACITY',503),('UNAVAILABLE',503)]:
-            self.fail=state;self.assertEqual(get()[0],expected)
-        self.fail=None
+            self.peer_failure=state;self.assertEqual(get()[0],expected)
+        self.peer_failure=None
         original=self.response;counter=0
         def lose_after_read(*args,**kwargs):
             nonlocal counter
             result=original(*args,**kwargs)
             counter+=1
-            if counter==2:self.fail='DENIED'
+            if counter==2:self.peer_failure='DENIED'
             return result
         with patch('workspace_control.workset_activity_peer.request',side_effect=lose_after_read):
             code,value=get('/v1/workset-activity/'+self.workset+'/pages');self.assertEqual(code,403);self.assertNotIn('events',value)
-        self.fail=None;self.service.revoke_conversation_grants(self.actor,self.project)
+        self.peer_failure=None;self.service.revoke_conversation_grants(self.actor,self.project)
         self.assertEqual(get()[0],403)
