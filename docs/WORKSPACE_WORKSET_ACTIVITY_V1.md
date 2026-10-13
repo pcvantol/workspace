@@ -2,6 +2,10 @@
 
 Selected [mandate6126033363](https://github.com/pcvantol/forge/issues/208#issuecomment-6126033363), `L4-NATIVE-WORKSET-ACTIVITY-V1-20261012`. Same Work session/sole Workspace writer; base1622840e147d718b00d77264cfeb2185e495fe91, branchcodex/plan101-native-workset-activity. Normal PATCH2.8.24. Plan100CLOSED2/3/1, plan99/96/97 closed; draftPR160/LINK0212f898 parked2/3/1. No budget transfer, second writer or global producer upgrade.
 
+## Current protected source checkpoint
+
+Protected [PR165](https://github.com/pcvantol/workspace/pull/165) delivered reviewed58d596e to maina5e85a61 with identical tree. Complete source and installed candidate Q/S/UX, owning strict validation and all five hosted checks PASS; actual TDE QUALIFIED/PASS_WITH_WARNINGS. [Nonempty ordinary finalization](WORKSPACE_WORKSET_ACTIVITY_FINALIZATION_V1.md) retains all failed/historical proofs and explicit legacy disposition. Finalization protected merge and NEW exact-final-main installed Client/Server/Forge/native readback/screens/cleanup remain open. Historical development observations below retain their original refs/status and are not final-main proof.
+
 ## Producer and own boundary
 
 Capability-specific qualified source Forge2.15.0/exact989132660997909e74800ddc8648be11262be8d4/schema46, `forge-workset-activity/v1`. The owning wire JSON is committed as a data projection; no Forge implementation is imported into the product. Initial qualification uses the existing noneditable wheel87c051a4341af8c7ca1a2198c40387d5f09d2336bc9270ab80cab8986bdb6889: all287 payload files match the exact immutable producer export. This packing hash differs from the older R49 receipt; the actual artifact is recorded, not relabeled.
