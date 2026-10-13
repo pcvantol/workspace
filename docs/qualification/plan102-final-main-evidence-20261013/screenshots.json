@@ -1,0 +1,26 @@
+[
+  {
+    "path": "native-client-restart-original-applied.png",
+    "bytes": 3970662,
+    "sha256": "b680e45a29dc8e565649ad5f943b20dfbf57a5781b290f1b1392af6a9ac43b1b",
+    "classification": "NEW_EXACT_FINAL_MAIN_REAL_NATIVE_GUI"
+  },
+  {
+    "path": "native-preview-confirm-ready.png",
+    "bytes": 3914726,
+    "sha256": "34c053ad8068efa82c4a11da238dfdfd9b57a8777eda64075b1fb5d8c41df423",
+    "classification": "NEW_EXACT_FINAL_MAIN_REAL_NATIVE_GUI"
+  },
+  {
+    "path": "native-real-lost-success-uncertain.png",
+    "bytes": 3834879,
+    "sha256": "6e049c147f3a10091ba7f3d614b66706872928433f9b797f29a0eefe6301d197",
+    "classification": "NEW_EXACT_FINAL_MAIN_REAL_NATIVE_GUI"
+  },
+  {
+    "path": "native-server-restart-original-applied.png",
+    "bytes": 3970662,
+    "sha256": "b680e45a29dc8e565649ad5f943b20dfbf57a5781b290f1b1392af6a9ac43b1b",
+    "classification": "NEW_EXACT_FINAL_MAIN_REAL_NATIVE_GUI"
+  }
+]
