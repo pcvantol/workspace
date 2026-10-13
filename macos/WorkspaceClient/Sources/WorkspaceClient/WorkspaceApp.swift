@@ -3,6 +3,7 @@ import SwiftUI
 #if WORKSPACE_ISOLATED_TEST
 import AppKit
 import ScreenCaptureKit
+import CoreGraphics
 
 private enum IsolatedWindowEvidence {
     static func capture(in directory: String) {
@@ -16,6 +17,9 @@ private enum IsolatedWindowEvidence {
                 app.appearance=appearance
                 try? await Task.sleep(for:.milliseconds(200))
             }
+            // Test capture is opt-in and must never request permission at startup.
+            guard IsolatedWindowCapturePolicy.permitted(environment:ProcessInfo.processInfo.environment,
+                                                        preflight:CGPreflightScreenCaptureAccess) else { return }
             guard let window=NSApp.windows.first(where: { $0.title=="Workspace" }),
                   let available=try? await SCShareableContent.excludingDesktopWindows(true,onScreenWindowsOnly:true),
                   let owned=available.windows.first(where: { $0.windowID==CGWindowID(window.windowNumber) && $0.owningApplication?.processID==ProcessInfo.processInfo.processIdentifier }) else { return }
@@ -122,6 +126,7 @@ struct ContentView: View {
     @StateObject private var reviews: MissionReviewState
     @StateObject private var worklists: WorklistState
     @StateObject private var concepts = ProjectConceptState()
+    @StateObject private var activity = ActivityState()
     private let conceptGrants: any DraftGrantStore
     @State private var selectedTab = 4
     @State private var requestedReview: MissionReviewKey?
@@ -133,6 +138,7 @@ struct ContentView: View {
         #if WORKSPACE_ISOLATED_TEST
         if let document = try? IsolatedTestDocument.load() {
             conceptGrants = IsolatedDraftGrant(document)
+            _activity = StateObject(wrappedValue:ActivityState(credentials:IsolatedActivityCredentials(document),store:ActivityLocalStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("activity-views"))))
             _concepts = StateObject(wrappedValue:ProjectConceptState(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("project-concept-intents")))
         } else { conceptGrants = DraftGrantKeychain() }
         #else
@@ -188,6 +194,8 @@ struct ContentView: View {
                 LiveApprovedWorklistView(client:client,state:worklists,
                     reviewNavigationStatus:reviewNavigationStatus,onOpenReviews:openReview)
                     .environment(\.nativeTabCommandsActive,true)
+            case 6:
+                WorksetActivityView(state:activity,client:client,grants:conceptGrants)
             case 3:
                 ServerOverviewView(client:client)
             default:
@@ -200,6 +208,9 @@ struct ContentView: View {
                 }.environment(\.nativeTabCommandsActive,true)
             }
         }
+        .onChange(of:[client.phase,client.savedEndpoint,client.savedInstance]) { _,_ in activity.invalidate() }
+        .onChange(of:[conversations.projectID,conversations.observedActorID ?? ""]) { _,_ in activity.invalidate() }
+        .onChange(of:client.authorizationLost) { _,lost in if lost { activity.invalidate() } }
         .tint(WorkspaceAppearance.accent(for:colorScheme))
         .background(WorkspaceAppearance.backdrop(for:colorScheme))
     }

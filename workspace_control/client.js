@@ -179,6 +179,13 @@ function validProjectCatalogue(catalogue) {
     typeof catalogue.observed_at === 'string' && catalogue.observed_at.length > 0;
 }
 const ownOperations = {
+  "workset-activity.access": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_ACTIVITY_GRANT", "method": "GET", "path": "/v1/workset-activity"},
+  "workset-activity.bind.issue": {"exposure": "LOCAL_ONLY_ADMIN", "auth": "PRIVATE_ROOT_OWNER", "local_cli": "workset-activity-bind-issue"},
+  "workset-activity.bind.revoke": {"exposure": "LOCAL_ONLY_ADMIN", "auth": "PRIVATE_ROOT_OWNER", "local_cli": "workset-activity-bind-revoke"},
+  "workset-activity.continue": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_ACTIVITY_GRANT", "method": "GET", "path": "/v1/workset-activity/{workset_id}/pages/{cursor}"},
+  "workset-activity.event": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_ACTIVITY_GRANT", "method": "GET", "path": "/v1/workset-activity/{workset_id}/events/{event_id}"},
+  "workset-activity.page": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_ACTIVITY_GRANT", "method": "GET", "path": "/v1/workset-activity/{workset_id}/pages"},
+
   'project_concepts.library_list': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'GET', path: '/v2/project-concepts'},
   'project_concepts.library_get': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'GET', path: '/v2/project-concepts/{id}'},
   'project_concepts.lifecycle': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'POST', path: '/v2/project-concepts/{id}/lifecycle'},

@@ -149,3 +149,7 @@ The [plan87 selection](https://github.com/pcvantol/forge/issues/208#issuecomment
 ## Selected scoped hold consumer, 8 October 2026
 
 The [plan88 mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6050026304) adds only scoped hold/unhold, current status and durable command recovery over the completed workset list/graph. [Consumer boundary](WORKSPACE_WORKLIST_HOLD_CONTROLS_V1.md) pins Forge2.7.69/e64302f and full consumer delivery gates. This is a bounded PRM-W-CONTRACT/VIEW/MANAGE qualification subset, not full management/decision/sync/Q, graph reopening, chat selection or workset activation.
+
+## Selected retained ACTIVITY subset — r81-plan101
+
+[Own contract](WORKSPACE_WORKSET_ACTIVITY_V1.md) consumes qualified Forge R49/exact98913266 only. Documentary subset ACTIVITY-CONTRACT under PRM-W-CONTRACT → ACTIVITY-VIEW under PRM-W-VIEW → ACTIVITY-Q under PRM-W-Q. All three are IN_PROGRESS; no full node/family is closed. Qualification has its own new installed/native/GUI/current-source boundary; old pins/evidence remain distinct. Existing node identities/edges and peer dependencies are unchanged; the subset does not depend on full MANAGE/DECISIONS/SYNC or onboarding/EP-discovery. Source and viewing checks cannot create Mission effects.

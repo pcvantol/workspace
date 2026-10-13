@@ -397,6 +397,14 @@ final class ConversationTests: XCTestCase {
 
     #if WORKSPACE_ISOLATED_TEST
     func testIsolatedCredentialDocumentAndMemoryStores() throws {
+        var preflightCalls=0
+        func permission(_ granted:Bool)->Bool { preflightCalls += 1;return granted }
+        XCTAssertFalse(IsolatedWindowCapturePolicy.permitted(environment:[:],preflight:{permission(true)}))
+        XCTAssertFalse(IsolatedWindowCapturePolicy.permitted(environment:["WORKSPACE_ISOLATED_WINDOW_EVIDENCE":"0"],preflight:{permission(true)}))
+        XCTAssertEqual(preflightCalls,0,"Default test launches must not probe or request capture access")
+        XCTAssertFalse(IsolatedWindowCapturePolicy.permitted(environment:["WORKSPACE_ISOLATED_WINDOW_EVIDENCE":"1"],preflight:{permission(false)}))
+        XCTAssertTrue(IsolatedWindowCapturePolicy.permitted(environment:["WORKSPACE_ISOLATED_WINDOW_EVIDENCE":"1"],preflight:{permission(true)}))
+        XCTAssertEqual(preflightCalls,2,"Opt-in capture still requires existing permission")
         let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: false)
         defer {

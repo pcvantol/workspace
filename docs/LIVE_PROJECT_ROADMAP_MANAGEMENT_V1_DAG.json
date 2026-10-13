@@ -78,5 +78,38 @@
   ],
   "ci_joins": {"inner": "Reuse FCI real-service/installed harness and FIE-01..28; unchanged existing required cases and Mission 3 scope", "outer": "Extend FCO-FLOW/RESTART/NEGATIVE with PMT-03/04 and PMT-25..36 without replacing FOE-01..10; qualify each declared project mode separately", "browser": "Workspace own API/Playwright, five locales, both themes; real producer subsets, no internal eligibility stub"},
   "completion_requires_live_proof": false,
-  "completion_note": "All applicable required PMT cases and owning subset evidence must pass for the claimed slice; documentary completion is not runtime or project-loop qualification and activates no policy."
+  "completion_note": "All applicable required PMT cases and owning subset evidence must pass for the claimed slice; documentary completion is not runtime or project-loop qualification and activates no policy.",
+  "scoped_deliveries": [
+    {
+      "id": "L4-NATIVE-WORKSET-ACTIVITY-V1-20261012",
+      "authority": "DOCUMENTARY_SUBSET",
+      "status": "IN_PROGRESS",
+      "assignment_plan": 101,
+      "contract": "docs/WORKSPACE_WORKSET_ACTIVITY_V1.md",
+      "producer_pin": "989132660997909e74800ddc8648be11262be8d4",
+      "full_family_qualified": false,
+      "nodes": [
+        {
+          "id": "ACTIVITY-CONTRACT",
+          "parent": "PRM-W-CONTRACT",
+          "depends_on": []
+        },
+        {
+          "id": "ACTIVITY-VIEW",
+          "parent": "PRM-W-VIEW",
+          "depends_on": [
+            "ACTIVITY-CONTRACT"
+          ]
+        },
+        {
+          "id": "ACTIVITY-Q",
+          "parent": "PRM-W-Q",
+          "depends_on": [
+            "ACTIVITY-CONTRACT",
+            "ACTIVITY-VIEW"
+          ]
+        }
+      ]
+    }
+  ]
 }

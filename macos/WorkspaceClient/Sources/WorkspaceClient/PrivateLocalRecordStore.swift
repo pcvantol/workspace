@@ -11,7 +11,7 @@ struct PrivateLocalRecordStore: Sendable {
     }
     private func name(_ key:String) throws -> String {
         guard key.range(of:"^[0-9a-f]{64}$",options:.regularExpression) != nil else { throw AdvisoryError.invalid }
-        guard ["candidate", "mission", "workset-release", "project-concept"].contains(namespace) else { throw AdvisoryError.invalid }
+        guard ["candidate", "mission", "workset-release", "project-concept", "workset-activity"].contains(namespace) else { throw AdvisoryError.invalid }
         return namespace+"-"+key+".json"
     }
     private func directory() throws -> Int32 {
@@ -72,4 +72,30 @@ struct PrivateLocalRecordStore: Sendable {
         try h.write(contentsOf:data);try h.synchronize()
         guard renameat(dir,temporary,dir,target)==0,synchronizeDirectory(dir)==0 else { throw AdvisoryError.unavailable }
     }
+    // Per-scope cache transactions serialize journal publication and orphan pruning across processes.
+    func transaction<T>(_ body:(Int32)throws->T) throws -> T {
+        let dir=try directory();defer { Darwin.close(dir) }
+        let fd=openat(dir,namespace+"-transaction.lock",O_RDWR|O_CREAT|O_NOFOLLOW|O_CLOEXEC,0o600)
+        guard fd>=0 else { throw AdvisoryError.unavailable };defer { Darwin.close(fd) }
+        var info=stat()
+        guard fstat(fd,&info)==0,info.st_mode & mode_t(S_IFMT)==mode_t(S_IFREG),info.st_uid==getuid(),info.st_mode & 0o077==0,
+            flock(fd,LOCK_EX)==0 else { throw AdvisoryError.unavailable }
+        return try body(dir)
+    }
+    func prune(_ keys:Set<String>,directory dir:Int32) throws {
+        let keep=try Set(keys.map { try name($0) })
+        guard let listing=fdopendir(dup(dir)) else { throw AdvisoryError.unavailable };defer { closedir(listing) }
+        while let entry=readdir(listing) {
+            let filename=withUnsafePointer(to:&entry.pointee.d_name) { pointer in
+                pointer.withMemoryRebound(to:CChar.self,capacity:Int(MAXNAMLEN)+1) { String(cString:$0) }
+            }
+            guard filename.range(of:"^"+namespace+"-[0-9a-f]{64}\\.json$",options:.regularExpression) != nil,!keep.contains(filename) else { continue }
+            var info=stat()
+            guard fstatat(dir,filename,&info,AT_SYMLINK_NOFOLLOW)==0,info.st_mode & mode_t(S_IFMT)==mode_t(S_IFREG),
+                info.st_uid==getuid(),info.st_mode & 0o077==0 else { throw AdvisoryError.unavailable }
+            guard unlinkat(dir,filename,0)==0 else { throw AdvisoryError.unavailable }
+        }
+        guard synchronizeDirectory(dir)==0 else { throw AdvisoryError.unavailable }
+    }
+
 }

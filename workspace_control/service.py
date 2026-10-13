@@ -283,6 +283,8 @@ class Service:
             self.mission_concepts = MissionConceptTransport(self.root, self._root_fd, self.conversations)
             self.candidates = CandidateTransport(self.root, self._root_fd, self.conversations)
             self.workset_releases = WorksetReleaseTransport(self.root, self._root_fd)
+            from .workset_activity_peer import WorksetActivityTransport
+            self.activities = WorksetActivityTransport(self.root, self._root_fd)
         except Exception:
             self.close()
             raise

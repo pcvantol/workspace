@@ -1,0 +1,49 @@
+{
+  "accept_authorized_by_this_contract": false,
+  "actor_id": "606a849359f4df4c",
+  "binding_id": "c04a3d07fda3b4ac06f440ae3f488aef",
+  "consumer_contract": "workspace-workset-activity-access/v1",
+  "contract_version": "forge-workset-activity/v1",
+  "expires_at": "2099-01-01T00:00:00Z",
+  "installation_id": "152ce2f0-e4ec-4864-b167-b2a873d09fd6",
+  "maximum_cursor_bytes": 32768,
+  "maximum_events": 128,
+  "maximum_page_bytes": 32768,
+  "maximum_scan_bytes": 2097152,
+  "page_size": 16,
+  "permissions": [
+    "READ"
+  ],
+  "producer_source": "989132660997909e74800ddc8648be11262be8d4",
+  "producer_version": "2.15.0",
+  "read_only": true,
+  "release_authorized_by_this_contract": false,
+  "reorder_authorized_by_this_contract": false,
+  "scope": {
+    "instance_id": "forge-runtime-1b85b87d-b1b6-4735-a696-a8eb9a040592",
+    "project_id": "isolated-project",
+    "repository_id": "synthetic-repository"
+  },
+  "source_types": [
+    "WORKSET_DECISION",
+    "RELEASE_RECEIPT",
+    "CONTROL_INTENT",
+    "CONTROL_RECEIPT",
+    "ORDER_INTENT",
+    "ORDER_DECISION",
+    "ORDER_RECEIPT",
+    "ACTIVATION_CLAIM",
+    "MISSION_TRANSITION",
+    "EXECUTION_EXCHANGE",
+    "EXECUTION_RECEIPT",
+    "FINAL_ACCEPTANCE_DECISION"
+  ],
+  "supported": true,
+  "worksets": [
+    {
+      "definition_digest": "sha256:1fd64a02ae0a3eebef342b6a5c8c2b8f525451af517b726dfb1963437f52fe86",
+      "workset_id": "released-99a4d5e2ae42167842a8cfde484f65dcba033cf6"
+    }
+  ],
+  "workspace_project_id": "own-project"
+}

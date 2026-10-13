@@ -1,3 +1,11 @@
+## Selected r81-plan101 — native Missieactiviteit
+
+[Mandate6126033363](https://github.com/pcvantol/forge/issues/208#issuecomment-6126033363), assignment L4-NATIVE-WORKSET-ACTIVITY-V1-20261012. Same sole writer/session, base1622840e147d718b00d77264cfeb2185e495fe91, branchcodex/plan101-native-workset-activity, normal PATCH2.8.24. [Own activity contract](docs/WORKSPACE_WORKSET_ACTIVITY_V1.md) covers only finiteREAD original Forge2.15.0/98913266 workset activity/current, bounded private viewing cursors/checkpoints, source details and five-language UX. Initial genuine installed Server/Forge and WIP packaged native clicks exist; full source/reviews/protected/finalization/NEW exact-final-main qualification remain pending. Cumulative integrated corrections9; CONTINUE_WITHIN_SCOPE_UNTIL_FULL_DOD, no administrative cap.
+
+[Acceptance disposition6139754826](https://github.com/pcvantol/forge/issues/208#issuecomment-6139754826) closes the former legacy detection requirement: retained old finite403 remains DENIED/support NOT_ESTABLISHED, not UNSUPPORTED. Correction9 removes the activity-only bare404 shortcut and checks current scope/expiry before a specific negative-capability classification. Original failures and trial53 keyboard evidence remain bound to their actual unchanged source; no new settings, producer writer or discovery. Full protected/finalization/NEW final-main delivery remains open.
+
+Plan100 CLOSED via [terminal6125801412](https://github.com/pcvantol/forge/issues/208#issuecomment-6125801412), sourcePR163/finalizationPR164 merged, exactmain1622840/version2.8.23; below plan100 pre-merge snapshots are historical. Library2/3/1 closed reserve not transferred. Plan99/96/97 remain closed; PR160/LINK0212f898 safely parked2/3/1. Only an ACTIVITY subset of PRM-W-CONTRACT/VIEW/Q is selected; full project-loop/EP workflow/onboarding remain unqualified. No new EP or general peer-ACK gate.
+
 ## Plan100 protected source — ordinary finalization
 
 Library source [PR163](https://github.com/pcvantol/workspace/pull/163) merged at `5de570d7a983903dd72325789a4f09f610ab8df9`, identical reviewed7b89 tree, product2.8.23. Full independent source and NEW actual installed candidate Quality/Security/UX PASS, mandatory220+1/strictcoverage, all five CI and actual TDE QUALIFIED/PASS_WITH_WARNINGS (retained complexity25>15).
