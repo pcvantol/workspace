@@ -45,8 +45,13 @@ enum ProjectConceptCopy {
 }
 struct ProjectConceptView: View {
     @ObservedObject var state: ProjectConceptState
+    @StateObject private var baseline:ConceptBaselineState
     @ObservedObject var client: ClientState
     let grants: any DraftGrantStore
+    init(state:ProjectConceptState,client:ClientState,grants:any DraftGrantStore) {
+        self.state=state;self.client=client;self.grants=grants
+        _baseline=StateObject(wrappedValue:ConceptBaselineState(root:state.records.root.appendingPathComponent("Baseline")))
+    }
     @Environment(\.locale) private var locale
     @Environment(\.nativeTabCommandsActive) private var commandsActive
     @FocusState private var titleFocused: Bool
@@ -63,6 +68,12 @@ struct ProjectConceptView: View {
         guard client.phase == "CONNECTED", checked == access else { throw ConceptError.denied }
         return ConceptConnection(access:access,bearer:token)
     }
+    private func baselineCurrent(_ expected:ProjectConcept) async throws -> ConceptConnection {
+        guard state.selected==expected,let own=state.connection else{throw ConceptError.denied}
+        let active=try await current()
+        guard state.selected==expected,state.connection==own,active==own else{throw ConceptError.denied}
+        return active
+    }
     var body: some View {
         ScrollView {
             VStack(alignment:.leading,spacing:16) {
@@ -71,7 +82,7 @@ struct ProjectConceptView: View {
                 HStack {
                     Button(text("new")) { state.new(defaultTitle:text("default")); titleFocused = true }
                         .disabled(state.busy || state.pending != nil || state.pendingLifecycle != nil).accessibilityIdentifier("concept-new")
-                    Button(text("refresh")) { Task { await state.refresh(current:current) } }.disabled(state.busy)
+                    Button(text("refresh")) { Task { await state.refresh(current:current);state.observeAuthority(current:current) } }.disabled(state.busy)
                 }
                 TextField(text("search"),text:$state.searchQuery).textFieldStyle(.roundedBorder)
                     .accessibilityIdentifier("concept-search")
@@ -106,6 +117,7 @@ struct ProjectConceptView: View {
                     }.disabled(state.lifecycleBlocked).accessibilityIdentifier("concept-lifecycle")
                     if state.selectionStale && state.phase != "conflict" { Text(text("conflict")).foregroundStyle(.secondary) }
                     if state.dirty || state.pending != nil { Text(text("lifecycleBlocked")).foregroundStyle(.secondary) }
+                    ConceptBaselinePanel(state:baseline,concept:selected,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)})
                     if let created = WorksetReleaseWire.date(selected.created_at), let updated = WorksetReleaseWire.date(selected.updated_at) {
                         LabeledContent(text("created"),value:created.formatted(date:.abbreviated,time:.shortened))
                         LabeledContent(text("updated"),value:updated.formatted(date:.abbreviated,time:.shortened))
@@ -118,12 +130,14 @@ struct ProjectConceptView: View {
                 if state.busy { ProgressView() }
             }.padding(24).frame(minWidth:0,maxWidth:850,alignment:.leading)
         }
-        .task { state.bindAuthorization(client); await state.refresh(current:current) }
+        .task { state.bindAuthorization(client); await state.refresh(current:current);state.observeAuthority(current:current) }
         .onChange(of:client.phase) { _,phase in
-            if phase == "CONNECTED" { Task { await state.refresh(current:current) } }
+            if phase == "CONNECTED" { Task { await state.refresh(current:current);state.observeAuthority(current:current) } }
             else if client.authorizationLost { state.concealAuthorization() }
             else { state.clientPhaseChanged(phase) }
         }
-        .onDisappear { state.cancelReads() }
+        .onChange(of:client.authorizationLost) {_,lost in if lost {baseline.conceal()} }
+        .onChange(of:client.phase) {_,phase in if phase != "CONNECTED" {baseline.conceal()} }
+        .onDisappear { state.cancelReads();state.stopObservingAuthority();baseline.conceal() }
     }
 }

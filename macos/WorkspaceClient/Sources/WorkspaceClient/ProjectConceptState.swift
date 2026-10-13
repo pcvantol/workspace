@@ -101,6 +101,7 @@ final class ProjectConceptState: ObservableObject {
     @Published var selectionStale = false
     let lifecycleRecords: PrivateLocalRecordStore
     private var authorizationObservation: AnyCancellable?
+    private var ownAuthorityTask:Task<Void,Never>?
     var generation = 0
     var connection: ConceptConnection?
     var dirty: Bool { title != (selected?.title ?? "") || notes != (selected?.notes ?? "") }
@@ -118,6 +119,35 @@ final class ProjectConceptState: ObservableObject {
             if lost { self?.concealAuthorization() }
         }
     }
+    func stopObservingAuthority() {ownAuthorityTask?.cancel();ownAuthorityTask=nil}
+    func observeAuthority(current:@escaping @MainActor () async throws -> ConceptConnection) {
+        stopObservingAuthority()
+        ownAuthorityTask=Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for:.seconds(3))
+                guard !Task.isCancelled,let self else{return}
+                guard let expected=self.connection else{continue}
+                let ticket=self.generation
+                do {
+                    guard try await current()==expected else{throw ConceptError.denied}
+                    if let source=self.selected {
+                        let fresh=try await self.transport.get(expected,id:source.id)
+                        try await self.check(expected,current:current)
+                        guard ticket==self.generation else{continue}
+                        try fresh.validate(expected.access.projectID)
+                        guard fresh.id==source.id,fresh.actor_id==source.actor_id else{throw ConceptError.denied}
+                    } else {
+                        let inventory=try await self.transport.list(expected)
+                        try await self.check(expected,current:current)
+                        guard ticket==self.generation else{continue}
+                        for item in inventory {try item.validate(expected.access.projectID)}
+                    }
+                } catch ConceptError.denied {guard ticket==self.generation else {continue};self.concealAuthorization();return}
+                catch ConceptError.notFound {guard ticket==self.generation else {continue};self.concealAuthorization();return}
+                catch {continue} // Unknown transport/storage health does not prove lost own authority.
+            }
+        }
+    }
     func clientPhaseChanged(_ value: String) {
         guard value != "CONNECTED" else { return }
         if value == "FORGETTING" {
@@ -130,6 +160,7 @@ final class ProjectConceptState: ObservableObject {
     }
     func cancelReads() { generation += 1; busy = false }
     func invalidate() {
+        stopObservingAuthority()
         generation += 1; busy = false; connection = nil; items = []; selected = nil
         pending = nil; pendingLifecycle = nil; selectedLifecycleHint = nil; selectionStale = false; searchQuery = ""; libraryTab = "ACTIVE"; inventoryLoaded = false; title = ""; notes = ""; phase = "connect"
     }

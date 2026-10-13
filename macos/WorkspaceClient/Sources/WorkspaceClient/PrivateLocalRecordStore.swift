@@ -9,9 +9,28 @@ struct PrivateLocalRecordStore: Sendable {
     init(root: URL, namespace: String, synchronizeDirectory: @escaping @Sendable(Int32) -> Int32 = { fsync($0) }) {
         self.root = root; self.namespace = namespace; self.synchronizeDirectory = synchronizeDirectory
     }
+    private var recordLimit:Int {namespace == "concept-baseline" ? 131072:65536}
+    // No eviction: admission is serialized with publication and preserves every original.
+    func saveBounded(_ data:Data,key:String,maximumRecords:Int=256,maximumBytes:Int=16777216) throws {
+        try transaction {dir in
+            let target=try name(key)
+            guard let listing=fdopendir(dup(dir)) else {throw AdvisoryError.unavailable};defer {closedir(listing)}
+            var count=0,bytes=0,replaced=false
+            while let entry=readdir(listing) {
+                let filename=withUnsafePointer(to:&entry.pointee.d_name) {$0.withMemoryRebound(to:CChar.self,capacity:Int(MAXNAMLEN)+1) {String(cString:$0)}}
+                guard filename.range(of:"^"+namespace+"-[0-9a-f]{64}\\.json$",options:.regularExpression) != nil else {continue}
+                var info=stat()
+                guard fstatat(dir,filename,&info,AT_SYMLINK_NOFOLLOW)==0,info.st_mode & mode_t(S_IFMT)==mode_t(S_IFREG),info.st_uid==getuid(),info.st_mode & 0o077==0,info.st_size>=0,info.st_size<=recordLimit else {throw AdvisoryError.unavailable}
+                count+=1
+                if filename==target {replaced=true} else {bytes+=Int(info.st_size)}
+            }
+            guard count+(replaced ? 0:1)<=maximumRecords,bytes+data.count<=maximumBytes else {throw AdvisoryError.state("LOCAL_CAPACITY_EXHAUSTED")}
+            try save(data,key:key)
+        }
+    }
     private func name(_ key:String) throws -> String {
         guard key.range(of:"^[0-9a-f]{64}$",options:.regularExpression) != nil else { throw AdvisoryError.invalid }
-        guard ["candidate", "mission", "workset-release", "project-concept", "workset-activity", "workset-order"].contains(namespace) else { throw AdvisoryError.invalid }
+        guard ["candidate", "mission", "workset-release", "project-concept", "workset-activity", "workset-order", "concept-baseline"].contains(namespace) else { throw AdvisoryError.invalid }
         return namespace+"-"+key+".json"
     }
     private func directory() throws -> Int32 {
@@ -51,14 +70,14 @@ struct PrivateLocalRecordStore: Sendable {
         guard fd>=0 else { throw AdvisoryError.unavailable }
         let handle=FileHandle(fileDescriptor:fd,closeOnDealloc:true);defer{try? handle.close()}
         var info=stat()
-        guard fstat(fd,&info)==0,info.st_mode & mode_t(S_IFMT)==mode_t(S_IFREG),info.st_uid==getuid(),info.st_mode & 0o077==0,info.st_size<=65536 else { throw AdvisoryError.unavailable }
-        let data=try handle.read(upToCount:65537) ?? Data()
-        guard data.count<=65536 else { throw AdvisoryError.invalid }
+        guard fstat(fd,&info)==0,info.st_mode & mode_t(S_IFMT)==mode_t(S_IFREG),info.st_uid==getuid(),info.st_mode & 0o077==0,info.st_size<=recordLimit else { throw AdvisoryError.unavailable }
+        let data=try handle.read(upToCount:recordLimit+1) ?? Data()
+        guard data.count<=recordLimit else { throw AdvisoryError.invalid }
         return data
     }
     func save(_ data:Data,key:String) throws {
         let target=try name(key)
-        guard data.count<=65536 else { throw AdvisoryError.state("LOCAL_CAPACITY_EXHAUSTED") }
+        guard data.count<=recordLimit else { throw AdvisoryError.state("LOCAL_CAPACITY_EXHAUSTED") }
         let dir=try directory();defer{Darwin.close(dir)}
         var info=stat()
         if fstatat(dir,target,&info,AT_SYMLINK_NOFOLLOW)==0 {

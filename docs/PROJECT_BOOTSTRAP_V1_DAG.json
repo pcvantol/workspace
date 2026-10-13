@@ -260,7 +260,19 @@
       "user_outcome": "Exact create/adopt preview and separate required decisions",
       "deliverable": "Exact create/adopt preview and separate required decisions",
       "acceptance": "empty/README/dirty/guarded birth; preserve documents/history; current mandatory gate cannot defer",
-      "implementation_selected": false
+      "implementation_selected": false,
+      "selected_subset": {
+        "scope": "CONCEPT_BASELINE_PREVIEW",
+        "assignment": "L4-PROJECT-CONCEPT-BASELINE-PREVIEW-V1-20261013",
+        "plan": 103,
+        "status": "IMPLEMENTATION_CANDIDATE",
+        "own_contract": "docs/WORKSPACE_CONCEPT_BASELINE_V1.md",
+        "producer_contract": "forge-project-proposal-http/v1",
+        "qualified_producer_binding": "PENDING",
+        "profile": "portable-docs/1.0.0 authority GENESIS LOCAL_POSIX",
+        "full_parent_selected": false,
+        "ep_dependency_for_subset": false
+      }
     },
     {
       "id": "PB-W3-PROGRESS",

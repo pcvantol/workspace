@@ -109,3 +109,7 @@ HTTP requests, redaction, five languages and honest cache/reconnect state.
 Own-source tests cannot declare live Forge/EP qualification. Preserve existing
 coverage and planned >80% executable-component requirements. This record activates
 no CLI, API, workflow, provider, installation, schema, binding, grant or Mission.
+
+## Selected concept baseline preview adapter
+
+[Plan103 own typed contract](WORKSPACE_CONCEPT_BASELINE_V1.md) adds finite actor/context/concept-scoped access, original intent metadata, explicit document-only prepare and original proposal reads. Product traffic is Client→Workspace Server→actual forge-project-proposal-http/v1. The native Client receives no peer credential or selectable dossier. Existing limited Forge PREPARE/READ is privately owner-paired; owner CLI never issues a grant on behalf of product inspection. Full parent API/peer qualification is not claimed by this subset.

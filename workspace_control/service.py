@@ -276,6 +276,8 @@ class Service:
             self.conversations = ConversationStore(self.root, self._root_fd)
             from .project_concepts import ProjectConceptStore
             self.project_concepts = ProjectConceptStore(self.conversations)
+            from .concept_baseline_peer import ConceptBaselinePeer
+            self.concept_baselines = ConceptBaselinePeer(self.root, self._root_fd, self.project_concepts)
             self.reviews = ReviewTransport(self.root, self._root_fd)
             self.worklists = WorklistReadTransport(self.root, self._root_fd)
             self.worklist_controls = WorklistControlTransport(self.root, self._root_fd)
