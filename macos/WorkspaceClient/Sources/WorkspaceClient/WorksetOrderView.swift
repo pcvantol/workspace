@@ -1,5 +1,17 @@
 import SwiftUI
 
+enum OrderMovementFocus {
+    static func target(index:Int,fixed:Int,count:Int,delta:Int) -> String? {
+        guard fixed>=0,index>=fixed,index<count,(delta == -1 || delta == 1) else {return nil}
+        let up=index>fixed;let down=index<count-1
+        if delta<0 && up {return ":up"}
+        if delta>0 && down {return ":down"}
+        if up {return ":up"}
+        if down {return ":down"}
+        return nil
+    }
+}
+
 struct WorksetOrderView: View {
     @ObservedObject var state:OrderState
     @ObservedObject var client:ClientState
@@ -9,6 +21,8 @@ struct WorksetOrderView: View {
     @State private var token=""
     @State private var reason=""
     @FocusState private var reasonFocused:Bool
+    @FocusState private var moveFocus:String?
+    @State private var pendingMoveFocus:String?
     private var language:String { locale.language.languageCode?.identifier ?? "en" }
     private func text(_ key:String) -> String { OrderCopy.text(key,language) }
     private func connection() async -> AdvisoryConnection? {
@@ -21,6 +35,15 @@ struct WorksetOrderView: View {
             access.endpoint==client.savedEndpoint,access.instanceID==client.savedInstance,
             (try? await Task.detached { try grants.load() }.value)==access else { return nil }
         return AdvisoryConnection(endpoint:access.endpoint,workspaceInstanceID:access.instanceID,actorID:observed.actor_id,workspaceProjectID:access.projectID,conversationID:"",bearer:bearer,draftGrant:access.token)
+    }
+    private func moveMember(_ id:String,_ delta:Int) {
+        let previous=state.proposed;state.move(id,delta)
+        guard state.proposed != previous,let index=state.proposed.firstIndex(of:id),let current=state.current else {return}
+        pendingMoveFocus=OrderMovementFocus.target(index:index,fixed:current.fixed,count:state.proposed.count,delta:delta).map {id+$0}
+        #if WORKSPACE_ISOLATED_TEST
+        let event:[String:Any]=["event":"actual-native-move","member":id,"delta":delta]
+        if let data=try? JSONSerialization.data(withJSONObject:event,options:[.sortedKeys]) {FileHandle.standardOutput.write(Data("WORKSPACE_ORDER_MOVE ".utf8)+data+Data("\n".utf8))}
+        #endif
     }
     private func orderTitles(_ order:[String]) -> String { order.compactMap { id in state.current?.members.first(where:{$0.id==id})?.title }.joined(separator:" → ") }
     var body:some View {
@@ -56,8 +79,8 @@ struct WorksetOrderView: View {
                                         Text(text("dependencies")+": "+member.dependencies.compactMap { dependency in current.members.first(where:{$0.id==dependency})?.title }.joined(separator:" · ")).font(.caption)
                                     }
                                     HStack {
-                                        Button(text("up")) { state.move(id,-1) }.disabled(index<=current.fixed || state.busy || state.intent != nil).accessibilityLabel(text("up")+": "+member.title)
-                                        Button(text("down")) { state.move(id,1) }.disabled(index<current.fixed || index==state.proposed.count-1 || state.busy || state.intent != nil).accessibilityLabel(text("down")+": "+member.title)
+                                        Button(text("up")) { moveMember(id,-1) }.focusable().focused($moveFocus,equals:id+":up").onKeyPress(.space) {moveMember(id,-1);return .handled}.onKeyPress(.return) {moveMember(id,-1);return .handled}.disabled(index<=current.fixed || state.busy || state.intent != nil).accessibilityLabel(text("up")+": "+member.title)
+                                        Button(text("down")) { moveMember(id,1) }.focusable().focused($moveFocus,equals:id+":down").onKeyPress(.space) {moveMember(id,1);return .handled}.onKeyPress(.return) {moveMember(id,1);return .handled}.disabled(index<current.fixed || index==state.proposed.count-1 || state.busy || state.intent != nil).accessibilityLabel(text("down")+": "+member.title)
                                     }
                                 }.padding(8).frame(maxWidth:.infinity,alignment:.leading).background(.quaternary,in:RoundedRectangle(cornerRadius:10))
                             }
@@ -102,6 +125,18 @@ struct WorksetOrderView: View {
             }.padding().frame(maxWidth:.infinity,alignment:.leading)
         }
         .task { state.authority={ await connection() };state.onApplied=onApplied;await state.connect(await connection()) }
+        .onChange(of:state.proposed) { _,_ in
+            guard let target=pendingMoveFocus else {return}
+            let selected=state.selected
+            Task { @MainActor in
+                await Task.yield()
+                guard pendingMoveFocus==target,state.selected==selected,state.intent==nil,state.current != nil else {return}
+                moveFocus=target;pendingMoveFocus=nil
+            }
+        }
+        .onChange(of:state.current?.digest) { _,_ in
+            if moveFocus==nil,state.intent==nil,let current=state.current,current.order.count>current.fixed+1 {moveFocus=current.order[current.fixed+1]+":up"}
+        }
         .onChange(of:state.preview?.digest) { _,digest in reason="";reasonFocused=digest != nil }
         .onChange(of:client.phase) { _,phase in
             if phase=="CONNECTED" { Task { await state.connect(await connection()) } }

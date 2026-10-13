@@ -61,7 +61,7 @@ class OrderHTTPTests(unittest.TestCase):
   self.failure=None;self.cap['permissions']=['READ'];self.binding['permissions']=['READ']
   with self.assertRaises(WorklistError):self.peer.confirm(self.binding,self.key,self.applied['original_request'])
  def testOriginalAppliedReceiptMismatchCannotPublish(self):
-  for field,value in [('package_digest','sha256:'+'0'*64),('order_revision',99),('consumed_activations',99),('applied_order',self.applied['original_receipt']['original_order'])]:
+  for field,value in [('package_digest','sha256:'+'0'*64),('order_revision',2),('consumed_activations',99),('applied_order',self.applied['original_receipt']['original_order'])]:
    corrupted=deepcopy(self.applied);corrupted['original_receipt'][field]=value
    with self.assertRaises(WorklistError):wire.operation(corrupted,self.binding,self.key,corrupted['operation_id'])
   self.applied['canonical_decisions_observed']={'business':'foreign','architecture':'foreign'}

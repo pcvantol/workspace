@@ -5,6 +5,17 @@ import Security
 @testable import WorkspaceClient
 
 final class WorksetOrderTests: XCTestCase {
+    func testMovementFocusPreservesDirectionUntilBoundary() {
+        XCTAssertEqual(OrderMovementFocus.target(index:2,fixed:1,count:5,delta:1),":down")
+        XCTAssertEqual(OrderMovementFocus.target(index:2,fixed:1,count:5,delta:-1),":up")
+        XCTAssertEqual(OrderMovementFocus.target(index:1,fixed:1,count:5,delta:-1),":down")
+        XCTAssertEqual(OrderMovementFocus.target(index:4,fixed:1,count:5,delta:1),":up")
+        XCTAssertNil(OrderMovementFocus.target(index:1,fixed:1,count:2,delta:1))
+        XCTAssertNil(OrderMovementFocus.target(index:0,fixed:1,count:5,delta:1))
+        XCTAssertNil(OrderMovementFocus.target(index:5,fixed:1,count:5,delta:1))
+        XCTAssertNil(OrderMovementFocus.target(index:2,fixed:1,count:5,delta:0))
+        XCTAssertNil(OrderMovementFocus.target(index:2,fixed:-1,count:5,delta:1))
+    }
     private func fixture() throws -> [String:Any] {
         let root=URL(fileURLWithPath:#filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
         return try OrderWire.object(Data(contentsOf:root.appendingPathComponent("tests/fixtures/workset-order-wire.json")))
@@ -210,7 +221,7 @@ extension WorksetOrderTests {
             OrderHTTPProtocol.handler={_ in (status,Data("{\"error\":\"ORDER_PREVIEW_STALE\"}".utf8))}
             do{_=try await transport.read(sample.connection,access:sample.access,workset:sample.key);XCTFail("Accepted denied response") }catch{}
         }
-        var wrongRevision=applied;var wrongReceipt=wrongRevision["original_receipt"] as! [String:Any];wrongReceipt["order_revision"]=99;wrongRevision["original_receipt"]=wrongReceipt
+        var wrongRevision=applied;var wrongReceipt=wrongRevision["original_receipt"] as! [String:Any];wrongReceipt["order_revision"]=2;wrongRevision["original_receipt"]=wrongReceipt
         let wrongBytes=try JSONSerialization.data(withJSONObject:wrongRevision);OrderHTTPProtocol.handler={_ in (200,wrongBytes)}
         do{_=try await transport.operation(sample.connection,access:sample.access,intent:intent,confirm:false);XCTFail("Accepted receipt revision unrelated to original package") }catch{}
         applied["canonical_decisions_observed"]=["business":"foreign","architecture":"foreign"]
