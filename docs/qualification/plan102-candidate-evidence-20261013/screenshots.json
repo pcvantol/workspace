@@ -1,0 +1,164 @@
+[
+  {
+    "path": "trial16/native-client-restart-original-applied.png",
+    "sha256": "1d5537ff6b51386f4457fa9a5f0a8cad395e1af914227d5c7cda1f996e1abeab",
+    "bytes": 4184356,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/native-preview-confirm-ready.png",
+    "sha256": "4a389ec5ea568f7dc9fb277d92f6b0697ac25e2f96308501cf02d94d03367742",
+    "bytes": 4112842,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/native-real-lost-success-uncertain.png",
+    "sha256": "1c583ba7e47a01feb8687ef03d37ffaecfb72b376f32a5e64ef2a4aa24cde237",
+    "bytes": 4042731,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/native-server-restart-original-applied.png",
+    "sha256": "1d5537ff6b51386f4457fa9a5f0a8cad395e1af914227d5c7cda1f996e1abeab",
+    "bytes": 4184356,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-de-dark-1180.png",
+    "sha256": "fa018aab187d515be3ecbc94795b0bd4f9aedb9e66915c21938ed7bfa9acca0a",
+    "bytes": 3574067,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-de-dark-560.png",
+    "sha256": "29a557188f5a64f18216f12148a46d178dc9918483079e0018d0cc7a8e31847d",
+    "bytes": 1869587,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-de-light-1180.png",
+    "sha256": "33ebcf039138763ad5a0b5bf0527c96541b07dbd1c6ef9cae85a6782c0918b1b",
+    "bytes": 4198275,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-de-light-560.png",
+    "sha256": "fb96c75a2e4536fb2ca2ef1bb122a9faf217d9820a205188222024ec6fd74b87",
+    "bytes": 2054250,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-en-dark-1180.png",
+    "sha256": "6fc9f59fa48d17773139297fed905a771786dc5a45c946cbddf970efcad89ae9",
+    "bytes": 3523936,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-en-dark-560.png",
+    "sha256": "1580f7a58db4acfcee459a59d1dccda0dd73846204c1abd382b378ca6e282f7d",
+    "bytes": 1828518,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-en-light-1180.png",
+    "sha256": "83137e778e9bd01ecf4d7023cb58481fc07b8698296720d6b24115e0b8452060",
+    "bytes": 4153260,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-en-light-560.png",
+    "sha256": "20a9db6b484e27add75da32c188784e7a0349d12a64a6e59ab54d171f931f24b",
+    "bytes": 2020294,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-es-dark-1180.png",
+    "sha256": "1d7ba3000e20ec2b1a3019253d48e50fbcc0aa882714c2834af7029377f808e6",
+    "bytes": 3538141,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-es-dark-560.png",
+    "sha256": "5d89670305865775125d17c4db9331d5adce1d7837316c9433478286631c8a20",
+    "bytes": 1840675,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-es-light-1180.png",
+    "sha256": "0d15a613296b4692470c157ef23edf1190402cf176b5ce9dfdbea552d727221c",
+    "bytes": 4162704,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-es-light-560.png",
+    "sha256": "1400b4dd4ffaa1d6e252e25c79854142e24f615a1fe7bdc383dcfb0c7d9be3e4",
+    "bytes": 2028582,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-fr-dark-1180.png",
+    "sha256": "35e7f9436e68ec03b56897399dc1f2df484eb7ddce1e4c2ceb07afa0bbc4ca26",
+    "bytes": 3542407,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-fr-dark-560.png",
+    "sha256": "9086c7359dfc97df00ad71acddf55d72e1526120aef0589c528c3f235372abd3",
+    "bytes": 1842216,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-fr-light-1180.png",
+    "sha256": "c53ae2481ec939ee5199fd7938598fa66c6239d4cfd6d4a9af9c4c2078b26d00",
+    "bytes": 4166098,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-fr-light-560.png",
+    "sha256": "e5ad8ba32f0125898a19268509e57a688603c04d25572cab059db9f3968447a4",
+    "bytes": 2029952,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-nl-dark-1180.png",
+    "sha256": "f1e0d67e38f026bc12a9442af199bb1482469d9af43d8e48196c6b2c615dcfb8",
+    "bytes": 3561100,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-nl-dark-560.png",
+    "sha256": "1cf6db364185131a27dccb7157606ba340340ec19f749892f0bf947fc4869238",
+    "bytes": 1863924,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-nl-light-1180.png",
+    "sha256": "3549d6e87c6e87f6512d0185d67eaa6d23762306ccb606b10e293b69c2a2205d",
+    "bytes": 4184584,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial16/order-nl-light-560.png",
+    "sha256": "7d4113b649b6ef2cff74bddb1fb7af88e0410565026fd1bb622a9612bfc1b889",
+    "bytes": 2047979,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial26/native-named-keyboard-focus-preview.png",
+    "sha256": "9eb14ac36a6e2a854410f52dd974e8b6e37ae08a1ce9af943f2849088a2cfa21",
+    "bytes": 3914886,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial26/native-real-cancel-current-no-effect.png",
+    "sha256": "caa7d46c388dccb8ce0b46a79c7fdef6427bdc06d2bb9adee574f08b70fd6ed7",
+    "bytes": 3888454,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  },
+  {
+    "path": "trial26/native-visible-named-control-focus-before-move.png",
+    "sha256": "58fafe6ad6a9083c3d2a173c396202fa7d94367c14c4edc3336e3c6ab1391d16",
+    "bytes": 3891200,
+    "classification": "SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN"
+  }
+]
