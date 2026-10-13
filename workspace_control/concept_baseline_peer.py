@@ -3,7 +3,7 @@
 Only explicit local owner pairing reads a private finite peer receipt/token.
 Ordinary product requests never issue grants or select a dossier/peer identity.
 """
-from contextlib import contextmanager
+from contextlib import contextmanager,ExitStack
 from datetime import datetime,timezone
 import os
 import re
@@ -61,8 +61,11 @@ class ConceptBaselinePeer(WorklistReadTransport):
     def dispatch_guard(self,draft,identity,binding):
         descriptor=self._locked()
         try:
-            with self.concepts.authorized(draft) as scope:
-                self.concepts.get(scope,identity)
+            with ExitStack() as authority:
+                try:
+                    scope=authority.enter_context(self.concepts.authorized(draft))
+                    self.concepts.get(scope,identity)
+                except PermissionError:raise WorklistError('DENIED') from None
                 if self.binding(scope,identity)!=binding:raise WorklistError('DENIED')
                 yield
         finally:fcntl.flock(descriptor,fcntl.LOCK_UN);os.close(descriptor)
