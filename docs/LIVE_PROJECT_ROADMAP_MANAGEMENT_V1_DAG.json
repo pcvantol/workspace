@@ -83,7 +83,11 @@
     {
       "id": "L4-NATIVE-WORKSET-ACTIVITY-V1-20261012",
       "authority": "DOCUMENTARY_SUBSET",
-      "status": "IN_PROGRESS",
+      "status": "SOURCE_DELIVERED_PENDING_EXACT_FINAL_MAIN_QUALIFICATION",
+      "source_pr": 165,
+      "source_main": "a5e85a61ef6c5fd0efb233e91b4c890f7c5530be",
+      "finalization": "docs/WORKSPACE_WORKSET_ACTIVITY_FINALIZATION_V1.md",
+      "acceptance_disposition": "6139754826_DENIED_SUPPORT_NOT_ESTABLISHED",
       "assignment_plan": 101,
       "contract": "docs/WORKSPACE_WORKSET_ACTIVITY_V1.md",
       "producer_pin": "989132660997909e74800ddc8648be11262be8d4",
