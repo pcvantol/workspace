@@ -132,7 +132,7 @@ final class ConceptBaselineStateTests:XCTestCase {
         let recovery=ConceptBaselineState(transport:recoveryFixture,root:root.appendingPathComponent("recovery"))
         await recovery.load(concept,current:{active})
         await recovery.prepare(draft,concept:concept,current:{active});XCTAssertNotNil(recovery.pending)
-        for phase in ["sourceRejected","offline","conflict","invalid","notFound","unavailable"] {
+        for phase in ["capacity","sourceRejected","offline","conflict","invalid","notFound","unavailable"] {
             recovery.phase=phase
             let host=NSHostingView(rootView:ConceptBaselinePanel(state:recovery,concept:concept,dirty:false,current:{active}))
             host.frame=NSRect(x:0,y:0,width:520,height:900);host.layoutSubtreeIfNeeded();_=host.fittingSize
@@ -175,6 +175,18 @@ final class ConceptBaselineStateTests:XCTestCase {
         let state=ConceptBaselineState(transport:fixture,root:root)
         await state.load(concept,current:{active});fixture.fail = .unavailable
         try await Task.sleep(for:.seconds(3.3));XCTAssertNil(state.access);XCTAssertEqual(state.phase,"unavailable");state.conceal()
+    }
+
+    @MainActor func testFullNativeAdmissionReportsLocalCapacityBeforeAnyPost() async throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
+        let concept=source(),active=connection;let fixture=BaselineFixture(concept)
+        let state=ConceptBaselineState(transport:fixture,root:root)
+        await state.load(concept,current:{active})
+        for index in 0..<256 {try state.records.saveBounded(Data("retained".utf8),key:String(format:"%064x",index))}
+        await state.prepare(try .capture(concept,choice:nil,dirty:false),concept:concept,current:{active})
+        XCTAssertEqual(state.phase,"capacity");XCTAssertEqual(fixture.posts.count,0);XCTAssertNil(state.pending)
+        for index in 0..<256 {XCTAssertEqual(try state.records.load(String(format:"%064x",index)),Data("retained".utf8))}
+        state.failure(AdvisoryError.state("UNKNOWN"));XCTAssertEqual(state.phase,"unavailable");state.conceal()
     }
 
 }

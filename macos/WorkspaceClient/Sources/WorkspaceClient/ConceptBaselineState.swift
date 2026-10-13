@@ -87,6 +87,7 @@ import CryptoKit
     func failure(_ error:Error) {
         result=nil
         switch error {
+        case AdvisoryError.state("LOCAL_CAPACITY_EXHAUSTED"):phase="capacity"
         case ConceptError.denied:conceal();phase="access"
         case ConceptError.conflict:phase="conflict"
         case ConceptBaselineError.sourceRejected:phase="sourceRejected"

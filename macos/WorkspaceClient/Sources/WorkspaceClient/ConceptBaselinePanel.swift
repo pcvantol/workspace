@@ -43,7 +43,7 @@ struct ConceptBaselinePanel:View {
                 Button(text("refreshAccess")) {Task {await state.load(concept,current:current)}}.accessibilityIdentifier("concept-baseline-refresh")
             }
             if state.busy {ProgressView()}
-            if ["offline","conflict","sourceRejected","invalid","notFound","unavailable"].contains(state.phase) {Text(text(state.phase)).foregroundStyle(.secondary)}
+            if ["capacity","offline","conflict","sourceRejected","invalid","notFound","unavailable"].contains(state.phase) {Text(text(state.phase)).foregroundStyle(.secondary)}
             ForEach(state.history) {entry in
                 Button {Task {await state.open(entry.operation_id,concept:concept,current:current)}} label: {
                     Text(text("open")+" · "+text("revision")+" "+String(entry.source_revision))
