@@ -74,6 +74,11 @@ def main(argv=None):
         order_issue.add_argument("--" + flag, required=True)
     order_revoke = commands.add_parser("workset-order-bind-revoke")
     order_revoke.add_argument("--binding-id", required=True)
+    baseline_issue=commands.add_parser("concept-baseline-bind-issue")
+    for flag in ["actor","context","concept-id","forge-endpoint","dossier-id","producer-source","forge-grant-receipt-file","forge-token-file"]:
+        baseline_issue.add_argument("--"+flag,required=True)
+    baseline_revoke=commands.add_parser("concept-baseline-bind-revoke")
+    baseline_revoke.add_argument("--binding-id",required=True)
     advisory_issue = commands.add_parser("advisory-bind-issue")
     for flag in ["actor", "project", "forge-endpoint", "forge-grant-receipt-file", "forge-token-file", "client-token-file"]:
         advisory_issue.add_argument("--" + flag, required=True)
@@ -203,6 +208,13 @@ def main(argv=None):
             print(json.dumps(result,sort_keys=True))
         elif args.command == "mission-bind-revoke":
             with Service(args.root) as service:result=service.revoke_mission(args.binding_id)
+            print(json.dumps(result,sort_keys=True))
+        elif args.command == "concept-baseline-bind-issue":
+            with Service(args.root) as service:
+                result=service.concept_baselines.provision(args.actor,args.context,args.concept_id,args.forge_endpoint,args.dossier_id,args.producer_source,args.forge_grant_receipt_file,args.forge_token_file)
+            print(json.dumps(result,sort_keys=True))
+        elif args.command == "concept-baseline-bind-revoke":
+            with Service(args.root) as service:result=service.concept_baselines.revoke(args.binding_id)
             print(json.dumps(result,sort_keys=True))
         elif args.command == "advisory-bind-issue":
             with Service(args.root) as service:

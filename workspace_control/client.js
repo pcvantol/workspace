@@ -179,6 +179,13 @@ function validProjectCatalogue(catalogue) {
     typeof catalogue.observed_at === 'string' && catalogue.observed_at.length > 0;
 }
 const ownOperations = {
+  'concept-baselines.access': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-baselines/{concept_id}/access'},
+  'concept-baselines.history': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-baselines/{concept_id}/operations'},
+  'concept-baselines.prepare': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'POST',path:'/v1/concept-baselines/{concept_id}/prepare'},
+  'concept-baselines.original': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-baselines/{concept_id}/operations/{operation_id}'},
+  'concept-baselines.bind.issue': {exposure:'LOCAL_ONLY_ADMIN',auth:'PRIVATE_ROOT_OWNER',local_cli:'concept-baseline-bind-issue'},
+  'concept-baselines.bind.revoke': {exposure:'LOCAL_ONLY_ADMIN',auth:'PRIVATE_ROOT_OWNER',local_cli:'concept-baseline-bind-revoke'},
+
   "workset-orders.access": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_ORDER_GRANT", "method": "GET", "path": "/v1/workset-orders"},
   "workset-orders.bind.issue": {"exposure": "LOCAL_ONLY_ADMIN", "auth": "PRIVATE_ROOT_OWNER", "local_cli": "workset-order-bind-issue"},
   "workset-orders.bind.revoke": {"exposure": "LOCAL_ONLY_ADMIN", "auth": "PRIVATE_ROOT_OWNER", "local_cli": "workset-order-bind-revoke"},

@@ -37,6 +37,7 @@ c.element('token').value='unsent synthetic token';
 await c.element('connect').listeners.click();
 assert.equal(c.requests(),4);
 assert.ok(c.element('capabilities').children.some(row=>row.textContent.startsWith('candidate.register')));
+assert.ok(c.element('capabilities').children.some(row=>row.textContent.startsWith('concept-baselines.prepare')));
 const labels={en:'Language',nl:'Taal',de:'Sprache',fr:'Langue',es:'Idioma'};
 for(const [language,title] of Object.entries(labels)) {
   c.change(language);

@@ -86,3 +86,9 @@ Traceability: [HOB-R01..20 / HOB-01..18](PROJECT_ONBOARDING_SCENARIOS_V1.json), 
 IDs preserved at their immutable owning catalogue. Design finalization needs independent complete
 Quality/Security/UX, owning checks/protected delivery and exact-main document readback, not a
 functional onboarding PASS. Older runtime evidence/budgets are not reopened by this refinement.
+
+## Plan103 selected setup subset: saved concept baseline preview
+
+CONCEPT_BASELINE_PREVIEW is a bounded subset of the existing PB-W2-SETUP identity, not full setup/adoption/EP/PB-W2. Saved concept → explicit exact saved-source/purpose check → actual R52 document/open-question proposal → original read-only reopen. Only portable-docs/1.0.0 authority/GENESIS/LOCAL_POSIX; [own contract](WORKSPACE_CONCEPT_BASELINE_V1.md). Existing nodes/parents/dependencies retain their full-family meaning. No additional EP/R51/discovery/installer gate applies to this selected subset. Full parent implementation_selected remains false.
+
+Canonical owningPATCH2.8.26, plan103base02dd6af/branchcodex/plan103-concept-baseline-preview, own corrections7/qualificationruns1; no administrative maximum. Qualified R52 final-main binding and complete scoped consumer/source/finalization/NEW exact-final-main installed acceptance pending. Early actual WIP/native screenshots are independently privacy-approved and [publicly hash-readback verified](https://github.com/pcvantol/workspace/tree/b44e244c618d14a13b25c6d7dd3ab6dad21fb077/docs/qualification/plan103-early-proof-20261013); they are not parent/onboarding acceptance. Plan102 CLOSED15/27; PR160/LINK parked2/3/1 unchanged.

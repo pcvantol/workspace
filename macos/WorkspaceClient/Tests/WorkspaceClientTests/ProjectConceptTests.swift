@@ -120,6 +120,25 @@ final class ProjectConceptTests:XCTestCase {
         let view=NSHostingView(rootView:ProjectConceptView(state:presentation,client:client,grants:grants));view.frame=NSRect(x:0,y:0,width:560,height:780);view.layoutSubtreeIfNeeded()
         XCTAssertEqual(state.phase,"conflict")
     }
+    @MainActor func testCurrentOwnGrantLossConcealsParentSourceAndPreservesDurableJournal() async throws {
+        let root=temporary();defer{try? FileManager.default.removeItem(at:root)}
+        let fixture=ConceptFixture();let state=ProjectConceptState(transport:fixture,root:root);let active=connection
+        await state.refresh(current:{active});state.title="Protected title";state.notes="Protected original notes"
+        await state.save(current:{active});XCTAssertNotNil(state.selected)
+        fixture.loseReply=true;state.notes="Uncertain edit";await state.save(current:{active});let original=try XCTUnwrap(state.pending)
+        state.observeAuthority(current:{active});fixture.fail = .denied
+        try await Task.sleep(for:.seconds(3.3));XCTAssertNil(state.selected);XCTAssertEqual(state.title,"");XCTAssertEqual(state.notes,"");XCTAssertTrue(state.items.isEmpty)
+        XCTAssertNotNil(try state.records.load(original.key));XCTAssertEqual(state.phase,"denied");state.stopObservingAuthority()
+    }
+    @MainActor func testOwnBindingChangeConcealsSourceWithoutPeerOrGlobalTokenChange() async throws {
+        let root=temporary();defer{try? FileManager.default.removeItem(at:root)}
+        let fixture=ConceptFixture();let state=ProjectConceptState(transport:fixture,root:root);let active=connection
+        await state.refresh(current:{active});state.title="Owned source";state.notes="Private notes";await state.save(current:{active})
+        let changed=ConceptConnection(access:DraftAccess(endpoint:active.access.endpoint,instanceID:active.access.instanceID,projectID:active.access.projectID,token:String(repeating:"d",count:43)),bearer:active.bearer)
+        state.observeAuthority(current:{changed});try await Task.sleep(for:.seconds(3.3))
+        XCTAssertNil(state.selected);XCTAssertEqual(state.notes,"");XCTAssertEqual(state.phase,"denied");state.stopObservingAuthority()
+    }
+
 }
 private struct ConceptMemoryGrant:DraftGrantStore {
     func load() throws -> DraftAccess? {nil}

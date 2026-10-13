@@ -137,6 +137,11 @@ for key,method,path in [("list","GET","/v1/project-concepts"),("create","POST","
     OPERATIONS["project_concepts."+key] = {"exposure":"HTTP_EXPOSED","method":method,"path":path,
         "auth":"BEARER_PINNED_AND_DRAFT_GRANT","contract":"project_concept","summary":"own project concept; no peer effects"}
 
+for key,method,path in [("access","GET","/v1/concept-baselines/{concept_id}/access"),("history","GET","/v1/concept-baselines/{concept_id}/operations"),("prepare","POST","/v1/concept-baselines/{concept_id}/prepare"),("original","GET","/v1/concept-baselines/{concept_id}/operations/{operation_id}")]:
+    OPERATIONS["concept-baselines."+key]={"exposure":"HTTP_EXPOSED","method":method,"path":path,"auth":"BEARER_PINNED_AND_DRAFT_GRANT","contract":"concept-baseline","summary":"saved concept document-only proposal; no registration/approval/apply/Mission"}
+for key in ["issue","revoke"]:
+    OPERATIONS["concept-baselines.bind."+key]={"exposure":"LOCAL_ONLY_ADMIN","local_cli":"concept-baseline-bind-"+key,"auth":"PRIVATE_ROOT_OWNER","summary":"pair or revoke existing finite private dossier capability"}
+
 for key,method,path in [("context","GET","/v1/mission-concepts/{conversation_id}/context"),("resolve","POST","/v1/mission-concepts/resolve"),("package","GET","/v1/mission-concepts/{conversation_id}/package"),("approve","POST","/v1/mission-concepts/{conversation_id}/approve"),("operation","GET","/v1/mission-concepts/{conversation_id}/operations/{operation_id}")]:
     OPERATIONS["mission-concepts."+key]={"exposure":"HTTP_EXPOSED","method":method,"path":path,"auth":"BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT","contract":"mission","summary":"exact frozen approval and separate current operation readback"}
 OPERATIONS["mission-concepts.contract.read"]={"exposure":"HTTP_EXPOSED","method":"GET","path":"/v1/mission-concepts/openapi.json","auth":"BEARER_PINNED","contract":"mission","summary":"closed versioned mission transport contract"}
@@ -811,6 +816,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_GET(self):
             if not self._trusted_origin():
                 return
+            from .concept_baseline_http import route as concept_baseline_route
+            if concept_baseline_route(self,service):return
             if handle_project_concept(self, service): return
             from .workset_order_http import route as order_route
             if order_route(self, service, self.command): return
@@ -917,6 +924,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_POST(self):
             if not self._trusted_origin():
                 return
+            from .concept_baseline_http import route as concept_baseline_route
+            if concept_baseline_route(self,service):return
             if handle_project_concept(self, service): return
             from .workset_order_http import route as order_route
             if order_route(self, service, self.command): return
@@ -950,6 +959,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_PATCH(self):
             if not self._trusted_origin():
                 return
+            from .concept_baseline_http import route as concept_baseline_route
+            if concept_baseline_route(self,service):return
             if handle_project_concept(self, service): return
             from .workset_order_http import route as order_route
             if order_route(self, service, self.command): return
