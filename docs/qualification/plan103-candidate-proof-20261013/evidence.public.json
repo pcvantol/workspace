@@ -1,0 +1,99 @@
+{
+  "assignment": "L4-PROJECT-CONCEPT-BASELINE-PREVIEW-V1-20261013",
+  "plan": 103,
+  "kind": "RETAINED_CANDIDATE_EVIDENCE_NOT_FINAL_MAIN",
+  "current_candidate_source": "b231728f1772e08bd795946f708812ee22f7f1f4",
+  "workspace_version": "2.8.26",
+  "qualified_producer_source": "96e1d73670b8575d41977fd448bfec10fc55206e",
+  "forge_version": "2.18.0",
+  "producer_wheel_sha256": "20efb7f1a92d1af352b14729d51d92689fa55ef1b09b4dc657e1cee06e7e451d",
+  "own_wheel_sha256": "4635488e0aac7e971635285bbf8f9228186c97ab6adf1c5d69afc53284ccb284",
+  "actual_sdk": "26.5",
+  "minimum_macos": "26.0",
+  "cumulative_corrections": 12,
+  "qualification_runs": 5,
+  "validation": {
+    "mandatory_validate": "PASS",
+    "python_cases": 225,
+    "native_cases": 269,
+    "isolated_cases": 1,
+    "all_modified_production_files_strictly_above_80_2_percent": true,
+    "current_peer_coverage": "132/135 (97.78%)",
+    "native_draft_coverage": "106/112 (94.64%)",
+    "native_panel_coverage": "192/236 (81.36%)",
+    "five_own_ci_checks": "SUCCESS"
+  },
+  "TDE": {
+    "assessment": "PASS_WITH_WARNINGS",
+    "repository": "QUALIFIED",
+    "complexity": 28,
+    "warning_threshold": 15,
+    "blocking_threshold": 30,
+    "own_coverage_is_separate": true
+  },
+  "real_evidence": {
+    "documents": 37,
+    "open_questions": 3,
+    "keyboard_named_review_and_explicit_request": true,
+    "real_readme_disclosure_verbatim_producer_content": true,
+    "five_language_primary_readonly_inspection": true,
+    "themes_widths_original_trial3_supporting_frames_retained_privately": true,
+    "completed_reply_loss_and_separate_client_server_restarts": {
+      "source": "88cfe3846e65c7f11f79c129b27307ea150ebaac",
+      "producer": "96e1d73670b8575d41977fd448bfec10fc55206e",
+      "same_original_bytes_one_effect": true
+    },
+    "archive_restore_and_edited_source_preserve_original": true,
+    "late_own_revocation_actual_status": 403,
+    "late_own_revocation_error": "DENIED",
+    "late_revocation_one_original_effect": true,
+    "normal_fixture_cleanup_complete": true,
+    "earlier_partial_failure_records_retained": true
+  },
+  "privacy": "Each of these six exact PNGs independently approved; synthetic data only. Internal operation, proposal, actor, dossier and grant identifiers remain private. Offscreen keyboard frames are excluded.",
+  "screens": [
+    {
+      "file": "current-qualified-primary-inspector.png",
+      "sha256": "60b47135454d454cd8d7a6d65e4f83b432ad183dc6b339fd6b0372b04ea09487",
+      "actual_image_source": "889894c8e3b8d35c23f0ac76c4ec6839c9ada29d",
+      "producer_source": "96e1d73670b8575d41977fd448bfec10fc55206e",
+      "not_new_C12_or_final_main_pixels": true
+    },
+    {
+      "file": "current-qualified-real-readme.png",
+      "sha256": "b1a58b9307a6373d48d8f3c8556bab40647df84935433aeac2abf302b29e333f",
+      "actual_image_source": "889894c8e3b8d35c23f0ac76c4ec6839c9ada29d",
+      "producer_source": "96e1d73670b8575d41977fd448bfec10fc55206e",
+      "not_new_C12_or_final_main_pixels": true
+    },
+    {
+      "file": "current-primary-en-dark-760.png",
+      "sha256": "ac35a414da2d8cff9188da9fc6e77ec5aeb1295e8ccc797ba23bfaacc4a8d373",
+      "actual_image_source": "889894c8e3b8d35c23f0ac76c4ec6839c9ada29d",
+      "producer_source": "96e1d73670b8575d41977fd448bfec10fc55206e",
+      "not_new_C12_or_final_main_pixels": true
+    },
+    {
+      "file": "current-primary-de-dark-760.png",
+      "sha256": "186e602a2b6323a5a6f892e233192a7b718908fdd64f4cc847627241da9920cb",
+      "actual_image_source": "889894c8e3b8d35c23f0ac76c4ec6839c9ada29d",
+      "producer_source": "96e1d73670b8575d41977fd448bfec10fc55206e",
+      "not_new_C12_or_final_main_pixels": true
+    },
+    {
+      "file": "current-primary-fr-dark-760.png",
+      "sha256": "09dda211f4c2c2a1437a7b177d1465eb1e802965c5bc3a3b573d9035d4883f3f",
+      "actual_image_source": "889894c8e3b8d35c23f0ac76c4ec6839c9ada29d",
+      "producer_source": "96e1d73670b8575d41977fd448bfec10fc55206e",
+      "not_new_C12_or_final_main_pixels": true
+    },
+    {
+      "file": "current-primary-es-dark-760.png",
+      "sha256": "48e06e69505c62b59d92824350a3a08f03fa51dcba8ac2964b82dc10d203b93d",
+      "actual_image_source": "889894c8e3b8d35c23f0ac76c4ec6839c9ada29d",
+      "producer_source": "96e1d73670b8575d41977fd448bfec10fc55206e",
+      "not_new_C12_or_final_main_pixels": true
+    }
+  ],
+  "remaining": "Protected source delivery, nonempty protected finalization and NEW exact-final-main installed/native/public readback remain separate."
+}
