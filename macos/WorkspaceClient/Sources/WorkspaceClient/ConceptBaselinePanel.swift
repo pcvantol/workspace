@@ -32,14 +32,14 @@ struct ConceptBaselinePanel:View {
                 Button(text("resume")) {Task {await state.prepare(pending.source,concept:concept,current:current)}}
                     .disabled(state.busy || state.access?.can_prepare != true).accessibilityIdentifier("concept-baseline-resume")
             } else {
-                ConceptBaselineDraftView(concept:concept,dirty:dirty || state.busy,onPrepare:state.access?.can_prepare==true ? {source in Task {await state.prepare(source,concept:concept,current:current)}}:nil)
+                ConceptBaselineDraftView(concept:concept,dirty:dirty || state.busy,showAccessRequirement:state.phase=="access" || (state.access != nil && state.access?.can_prepare==false),onPrepare:state.access?.can_prepare==true ? {source in Task {await state.prepare(source,concept:concept,current:current)}}:nil)
             }
             if let access=state.access {
                 Text(text(access.can_prepare ? "ready":"readOnly")).font(.subheadline)
                 Text(verbatim:"Forge · "+String(access.producer_source.prefix(12))).font(.caption).foregroundStyle(.secondary)
             }
             if state.access==nil && !state.busy {
-                Text(text("access")).foregroundStyle(.secondary)
+                if state.phase=="access" {Text(text("access")).foregroundStyle(.secondary)}
                 Button(text("refreshAccess")) {Task {await state.load(concept,current:current)}}.accessibilityIdentifier("concept-baseline-refresh")
             }
             if state.busy {ProgressView()}

@@ -142,8 +142,8 @@ final class ProjectConceptState: ObservableObject {
                         guard ticket==self.generation else{continue}
                         for item in inventory {try item.validate(expected.access.projectID)}
                     }
-                } catch ConceptError.denied {if ticket==self.generation {self.concealAuthorization()};return}
-                catch ConceptError.notFound {if ticket==self.generation {self.concealAuthorization()};return}
+                } catch ConceptError.denied {guard ticket==self.generation else {continue};self.concealAuthorization();return}
+                catch ConceptError.notFound {guard ticket==self.generation else {continue};self.concealAuthorization();return}
                 catch {continue} // Unknown transport/storage health does not prove lost own authority.
             }
         }

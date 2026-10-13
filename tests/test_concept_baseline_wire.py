@@ -44,3 +44,18 @@ class ConceptBaselineWireTests(unittest.TestCase):
         with self.assertRaises(ValueError):result(packet,self.binding,self.request)
         request=deepcopy(self.request);request['input']['product']['purpose']='Other input'
         with self.assertRaises(ValueError):result(self.packet,self.binding,request)
+
+    def test_nested_manifest_duplicate_keys_and_rehashed_duplicate_rows_reject(self):
+        import hashlib
+        for duplicate_key in (True,False):
+            packet=deepcopy(self.packet)
+            item=next(d for d in packet['result']['artifacts'] if d['path']=='engineering/bootstrap-manifest.json')
+            manifest=json.loads(item['content'])
+            if duplicate_key:
+                content=item['content'].replace('{','{"input_digest":"shadowed",',1)
+            else:
+                manifest['artifacts'].append(deepcopy(manifest['artifacts'][0]))
+                manifest['manifest_digest']=peer_digest({k:v for k,v in manifest.items() if k!='manifest_digest'})
+                content=json.dumps(manifest,sort_keys=True,separators=(',',':'))+'\n'
+            item['content']=content;item['sha256']=hashlib.sha256(content.encode()).hexdigest();self.rehash(packet)
+            with self.assertRaises(ValueError):result(packet,self.binding,self.request)

@@ -39,6 +39,10 @@ final class ConceptBaselineTests:XCTestCase {
                 }
             }
         }
+        for visibleAccess in [true,false] {
+            let host=NSHostingView(rootView:ConceptBaselineDraftView(concept:concept(),dirty:false,showAccessRequirement:visibleAccess,reviewing:true))
+            host.frame=NSRect(x:0,y:0,width:520,height:780);host.layoutSubtreeIfNeeded();_=host.fittingSize
+        }
         for saved in [concept(),concept(lifecycle:"ARCHIVED")] {
             let host=NSHostingView(rootView:ConceptBaselineDraftView(concept:saved,dirty:true,reviewing:true))
             host.frame=NSRect(x:0,y:0,width:520,height:780);host.layoutSubtreeIfNeeded();_=host.fittingSize

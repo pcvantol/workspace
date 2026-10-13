@@ -20,7 +20,7 @@ enum ConceptBaselineCopy {
         "unavailable":["The proposal service could not be read. Refresh this idea.","De voorstelservice kon niet worden gelezen. Vernieuw dit idee.","Vorschlagsdienst nicht lesbar. Idee aktualisieren.","Service de propositions indisponible. Actualisez cette idée.","No se pudo leer el servicio. Actualiza esta idea."],
         "documents":["Proposed documents","Voorgestelde documenten","Vorgeschlagene Dokumente","Documents proposés","Documentos propuestos"],
         "questions":["Open questions","Open vragen","Offene Fragen","Questions ouvertes","Preguntas abiertas"],
-        "open":["Reopen proposal","Voorstel heropenen","Vorschlag erneut öffnen","Rouvrir la proposition","Reabrir propuesta"],
+        "open":["Read original request result","Resultaat oorspronkelijke aanvraag lezen","Ergebnis der ursprünglichen Anfrage lesen","Lire le résultat de la demande initiale","Leer el resultado de la solicitud original"],
         "ready":["Connected proposal service","Verbonden voorstelservice","Verbundener Vorschlagsdienst","Service de propositions connecté","Servicio de propuestas conectado"],
         "offline":["The result is uncertain. Retry the original request.","De uitkomst is onzeker. Hervat de oorspronkelijke aanvraag.","Das Ergebnis ist ungewiss. Ursprüngliche Anfrage fortsetzen.","Le résultat est incertain. Reprenez la demande initiale.","El resultado es incierto. Reanuda la solicitud original."],
         "conflict":["The saved source or access changed. Refresh this idea.","De opgeslagen bron of toegang is gewijzigd. Vernieuw dit idee.","Quelle oder Zugriff geändert. Idee aktualisieren.","Source ou accès modifié. Actualisez cette idée.","La fuente o el acceso ha cambiado. Actualiza esta idea."],
@@ -66,6 +66,7 @@ struct ConceptBaselineDraftSource: Codable, Equatable {
 struct ConceptBaselineDraftView: View {
     let concept:ProjectConcept
     let dirty:Bool
+    var showAccessRequirement=true
     var onPrepare:((ConceptBaselineDraftSource)->Void)?=nil
     @Environment(\.locale) private var locale
     @State var reviewing=false
@@ -98,7 +99,7 @@ struct ConceptBaselineDraftView: View {
                     Text(verbatim:concept.notes.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty ? text("notSupplied"):concept.notes).textSelection(.enabled)
                 }
                 Text(text("unknown")).foregroundStyle(.secondary)
-                if onPrepare==nil {Text(text("access")).foregroundStyle(.secondary)}
+                if onPrepare==nil && showAccessRequirement {Text(text("access")).foregroundStyle(.secondary)}
                 HStack {
                     Button(text("request")) {if let source {onPrepare?(source)}}
                         .disabled(source==nil || onPrepare==nil).accessibilityIdentifier("concept-baseline-request")

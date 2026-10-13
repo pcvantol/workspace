@@ -128,8 +128,8 @@ final class ConceptBaselineStateTests:XCTestCase {
                 XCTAssertEqual(host.frame.width,width)
             }
         }
-        state.conceal();fixture.prepareFailure=ConceptBaselineError.sourceRejected
-        let recovery=ConceptBaselineState(transport:fixture,root:root.appendingPathComponent("recovery"))
+        state.conceal();let recoveryFixture=BaselineFixture(concept);recoveryFixture.prepareFailure=ConceptBaselineError.sourceRejected
+        let recovery=ConceptBaselineState(transport:recoveryFixture,root:root.appendingPathComponent("recovery"))
         await recovery.load(concept,current:{active})
         await recovery.prepare(draft,concept:concept,current:{active});XCTAssertNotNil(recovery.pending)
         for phase in ["sourceRejected","offline","conflict","invalid","notFound","unavailable"] {
@@ -138,6 +138,43 @@ final class ConceptBaselineStateTests:XCTestCase {
             host.frame=NSRect(x:0,y:0,width:520,height:900);host.layoutSubtreeIfNeeded();_=host.fittingSize
         }
         recovery.conceal();state.conceal()
+    }
+
+    @MainActor func testOriginalLossAfterLostSuccessFailsClosedWithoutAnotherPost() async throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
+        let concept=source(),active=connection;let fixture=BaselineFixture(concept)
+        let state=ConceptBaselineState(transport:fixture,root:root)
+        await state.load(concept,current:{active});fixture.lose=true
+        await state.prepare(try .capture(concept,choice:nil,dirty:false),concept:concept,current:{active})
+        let original=try XCTUnwrap(state.pending);state.conceal()
+        try FileManager.default.removeItem(at:root.appendingPathComponent("concept-baseline-"+original.key+".json"))
+        let restarted=ConceptBaselineState(transport:fixture,root:root)
+        await restarted.load(concept,current:{active});XCTAssertEqual(restarted.phase,"unavailable");XCTAssertNil(restarted.access)
+        await restarted.prepare(original.source,concept:concept,current:{active});XCTAssertEqual(fixture.posts.count,1)
+        XCTAssertNotNil(try restarted.records.load(restarted.allocationKey(original.key)));restarted.conceal()
+    }
+    func testBoundedPrivatePublicationPreservesOriginalAndHandlesLargeValidSource() throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
+        let store=PrivateLocalRecordStore(root:root,namespace:"concept-baseline")
+        let first=String(repeating:"a",count:64),second=String(repeating:"b",count:64)
+        try store.saveBounded(Data("original".utf8),key:first,maximumRecords:1,maximumBytes:8)
+        XCTAssertThrowsError(try store.saveBounded(Data("second".utf8),key:second,maximumRecords:1,maximumBytes:8))
+        XCTAssertThrowsError(try store.saveBounded(Data(repeating:0,count:9),key:first,maximumRecords:1,maximumBytes:8))
+        XCTAssertEqual(try store.load(first),Data("original".utf8));XCTAssertNil(try store.load(second))
+        let notes=String(repeating:"😀",count:10000),purpose=String(repeating:"😀",count:4096)
+        let source=ConceptBaselineDraftSource(conceptID:String(repeating:"a",count:32),revision:1,title:"Source",originalNotes:notes,chosenPurpose:purpose)
+        let journal=ConceptBaselineState.Journal(key:first,concept_id:source.conceptID,command:.init(operation_id:String(repeating:"c",count:32),expected_revision:1,description:purpose),source:source,binding_id:"binding",producer_source:String(repeating:"d",count:40),completed:false)
+        let encoded=try JSONEncoder().encode(journal);XCTAssertGreaterThan(encoded.count,65536)
+        try store.saveBounded(encoded,key:first);XCTAssertEqual(try store.load(first),encoded)
+        XCTAssertEqual(try JSONDecoder().decode(ConceptBaselineState.Journal.self,from:encoded).source.originalNotes,notes)
+        XCTAssertThrowsError(try store.saveBounded(Data(repeating:0,count:131073),key:second))
+    }
+    @MainActor func testPeerMonitorConcealsButPreservesUnavailableErrorClassification() async throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
+        let concept=source(),active=connection;let fixture=BaselineFixture(concept)
+        let state=ConceptBaselineState(transport:fixture,root:root)
+        await state.load(concept,current:{active});fixture.fail = .unavailable
+        try await Task.sleep(for:.seconds(3.3));XCTAssertNil(state.access);XCTAssertEqual(state.phase,"unavailable");state.conceal()
     }
 
 }

@@ -22,6 +22,9 @@ import CryptoKit
     func key(_ connection:ConceptConnection,_ concept:ProjectConcept)->String {
         SHA256.hash(data:Data((connection.key+"\n"+concept.actor_id+"\n"+concept.id).utf8)).map{String(format:"%02x",$0)}.joined()
     }
+    func allocationKey(_ key:String)->String {
+        SHA256.hash(data:Data(("allocation\n"+key).utf8)).map{String(format:"%02x",$0)}.joined()
+    }
     func checked(_ connection:ConceptConnection,_ concept:ProjectConcept,current:@escaping @MainActor () async throws -> ConceptConnection) async throws {
         guard try await current()==connection else {throw ConceptError.denied}
         guard access==nil || WorksetReleaseWire.date(access!.expires_at).map({$0>Date()})==true else {throw ConceptError.denied}
@@ -44,7 +47,17 @@ import CryptoKit
                   previous.operations.count<=256,Set(previous.operations.map(\.id)).count==previous.operations.count,
                   previous.operations.allSatisfy({$0.source_revision>0 && $0.operation_id.range(of:"^[0-9a-f]{32}$",options:.regularExpression) != nil}) else {throw ConceptError.invalid}
             let localKey=key(connection,concept)
-            let journal=try records.load(localKey).map{try JSONDecoder().decode(Journal.self,from:$0)}
+            let original=try records.load(localKey)
+            let witnessKey=allocationKey(localKey)
+            let witness=try records.load(witnessKey)
+            guard original != nil || (witness==nil && previous.operations.isEmpty) else {throw ConceptError.unavailable}
+            if let original {
+                // Migrate retained originals without replacing any uncertain operation.
+                if witness==nil {try records.saveBounded(Data(localKey.utf8),key:witnessKey)}
+                guard try records.load(witnessKey)==Data(localKey.utf8) else {throw ConceptError.invalid}
+                _=original
+            }
+            let journal=try original.map{try JSONDecoder().decode(Journal.self,from:$0)}
             if let journal {guard journal.key==localKey,journal.concept_id==concept.id,journal.binding_id==cap.binding_id,journal.producer_source==cap.producer_source,journal.source.conceptID==concept.id,journal.source.revision==journal.command.expected_revision,journal.command.operation_id.range(of:"^[0-9a-f]{32}$",options:.regularExpression) != nil else {throw ConceptError.invalid}}
             guard ticket==generation else{return}
             guard WorksetReleaseWire.date(cap.expires_at).map({$0>Date()})==true else{throw ConceptError.denied}
@@ -66,7 +79,7 @@ import CryptoKit
                         try await self.checked(connection,concept,current:current)
                         guard self.generation==ticket else{return}
                         guard now.binding_id==cap.binding_id,now.actor_id==cap.actor_id,now.context_id==cap.context_id,now.concept_id==cap.concept_id,now.producer_source==cap.producer_source,now.expires_at==cap.expires_at else {throw ConceptError.denied}
-                    } catch {if self.generation==ticket {self.conceal()};return}
+                    } catch {if self.generation==ticket {self.conceal();self.failure(error)};return}
                 }
             }
         } catch {if ticket==generation {failure(error)}}
@@ -97,7 +110,10 @@ import CryptoKit
                 journal=Journal(key:localKey,concept_id:concept.id,command:command,source:source,binding_id:cap.binding_id,producer_source:cap.producer_source,completed:false)
                 // Durable original command before any product POST; never replace
                 // an uncertain command with another operation or newer source.
-                try records.save(JSONEncoder().encode(journal),key:localKey)
+                let witnessKey=allocationKey(localKey)
+                if try records.load(witnessKey) != nil && records.load(localKey)==nil {throw ConceptError.unavailable}
+                try records.saveBounded(Data(localKey.utf8),key:witnessKey)
+                try records.saveBounded(JSONEncoder().encode(journal),key:localKey)
                 pending=journal
             }
             let value:ConceptBaselineResult
@@ -111,7 +127,7 @@ import CryptoKit
             try value.validate(connection,concept:concept,operation:journal.command.operation_id,access:cap)
             guard ticket==generation else{return}
             var completed=journal;completed.completed=true
-            try records.save(JSONEncoder().encode(completed),key:localKey)
+            try records.saveBounded(JSONEncoder().encode(completed),key:localKey)
             result=value;phase="badge";pending=nil
             // Retain original command on disk for recovery after either process
             // restart; history GET remains the authoritative proposal inventory.
@@ -130,7 +146,7 @@ import CryptoKit
                 try existing.validate(connection,concept:concept,operation:journal.command.operation_id,access:cap)
                 guard ticket==generation else{return}
                 var completed=journal;completed.completed=true
-                try records.save(JSONEncoder().encode(completed),key:journal.key)
+                try records.saveBounded(JSONEncoder().encode(completed),key:journal.key)
                 pending=nil;result=existing;phase="badge"
             } catch ConceptError.notFound {
                 // Only after a definitive own source rejection plus verified
@@ -139,9 +155,9 @@ import CryptoKit
                 try await checked(connection,concept,current:current)
                 guard ticket==generation else{return}
                 let archiveKey=SHA256.hash(data:Data((journal.key+"\n"+journal.command.operation_id).utf8)).map{String(format:"%02x",$0)}.joined()
-                try records.save(JSONEncoder().encode(journal),key:archiveKey)
+                try records.saveBounded(JSONEncoder().encode(journal),key:archiveKey)
                 var retired=journal;retired.retired=true
-                try records.save(JSONEncoder().encode(retired),key:journal.key)
+                try records.saveBounded(JSONEncoder().encode(retired),key:journal.key)
                 pending=nil;result=nil;phase="ready"
             }
         } catch {if ticket==generation {failure(error)}}

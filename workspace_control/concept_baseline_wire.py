@@ -21,6 +21,14 @@ def require(condition):
     if not condition:raise WorklistError('INVALID_RESPONSE')
 
 
+def unique_object(pairs):
+    value={}
+    for key,item in pairs:
+        require(key not in value)
+        value[key]=item
+    return value
+
+
 def peer_digest(value):return hashlib.sha256(canonical(value)+b'\n').hexdigest()
 
 
@@ -66,9 +74,10 @@ def _result(value,binding,original_request):
         raw=artifact['content'].encode();require(len(raw)<=131072 and hashlib.sha256(raw).hexdigest()==artifact['sha256'])
         require(artifact['path'] not in inventory);inventory[artifact['path']]=artifact
     require(list(inventory)==sorted(inventory) and 'engineering/bootstrap-manifest.json' in inventory)
-    manifest=json.loads(inventory['engineering/bootstrap-manifest.json']['content']);_check(manifest,MANIFEST,{})
+    manifest=json.loads(inventory['engineering/bootstrap-manifest.json']['content'],object_pairs_hook=unique_object);_check(manifest,MANIFEST,{})
     require(manifest['input_digest']==packet['input_digest'] and manifest['renderer_source_digest']==RENDERER_PIN)
     require(manifest['manifest_digest']==peer_digest({k:v for k,v in manifest.items() if k!='manifest_digest'}))
+    require(len(manifest['artifacts'])==len(inventory)-1 and len({row['relative_path'] for row in manifest['artifacts']})==len(manifest['artifacts']))
     require({row['relative_path'] for row in manifest['artifacts']}==set(inventory)-{'engineering/bootstrap-manifest.json'})
     for row in manifest['artifacts']:
         item=inventory[row['relative_path']];require(row['expected_after_digest']==item['sha256'] and row['bytes']==len(item['content'].encode()) and row['input_digest']==packet['input_digest'])
