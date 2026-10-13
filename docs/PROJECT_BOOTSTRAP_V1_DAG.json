@@ -265,13 +265,18 @@
         "scope": "CONCEPT_BASELINE_PREVIEW",
         "assignment": "L4-PROJECT-CONCEPT-BASELINE-PREVIEW-V1-20261013",
         "plan": 103,
-        "status": "IMPLEMENTATION_CANDIDATE",
+        "status": "PROTECTED_SOURCE_MERGED_FINALIZATION_PENDING",
         "own_contract": "docs/WORKSPACE_CONCEPT_BASELINE_V1.md",
         "producer_contract": "forge-project-proposal-http/v1",
-        "qualified_producer_binding": "PENDING",
+        "qualified_producer_binding": "Forge2.18.0/96e1d73670b8575d41977fd448bfec10fc55206e/forge-project-proposal-http/v1",
         "profile": "portable-docs/1.0.0 authority GENESIS LOCAL_POSIX",
         "full_parent_selected": false,
-        "ep_dependency_for_subset": false
+        "ep_dependency_for_subset": false,
+        "source_pull_request": 169,
+        "source_main": "a9f43228f0ec2c57d1a3ca1e52442a8d953da65d",
+        "candidate_acceptance": "COMPLETE_SCOPED_QUALITY_SECURITY_UX_PASS",
+        "finalization": "docs/WORKSPACE_CONCEPT_BASELINE_FINALIZATION_V1.md",
+        "new_exact_final_main_installed": "PENDING"
       }
     },
     {

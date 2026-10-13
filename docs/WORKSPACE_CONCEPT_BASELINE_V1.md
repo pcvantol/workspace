@@ -1,6 +1,6 @@
 # Saved Projectconcept baseline preview v1
 
-Status: implementation candidate; actual qualified R52 delivery and complete own acceptance pending.
+Status: protected implementation PR169 merged; complete scoped candidate acceptance and qualified R52 binding delivered. Documentary finalization and NEW exact-final-main installed/native acceptance remain separate.
 
 ## Product and authority
 
@@ -31,8 +31,20 @@ Wire checks bind original request/input/operation/scopes, deterministic plan ide
 
 ## Producer and delivery boundary
 
-First published R50 basis is b3581003961572e0182d6b5573cbd4f5e674755b. R52 contract is forge-project-proposal-http/v1 with capability GET, POST /v1/onboarding/plans and original plan/intent GET using explicit dossier query and audience. Producer candidate e182ca41cbb8775c6b3b29c81ade94f035da264d / Forge2.18.0/schema46 retains its original source/wheel/installed candidate evidence. Protected implementation9736bbbd and finalization96e1d736 are merged, while actual qualified exact-final-main delivery has not yet been handed off; candidate packets and mocks are source tests only.
+First published R50 basis is b3581003961572e0182d6b5573cbd4f5e674755b. R52 contract is forge-project-proposal-http/v1 with capability GET, POST /v1/onboarding/plans and original plan/intent GET using explicit dossier query and audience. Producer candidate e182ca41cbb8775c6b3b29c81ade94f035da264d / Forge2.18.0/schema46 retains its original source/wheel/installed candidate evidence. Qualified protected producer final-main96e1d73670b8575d41977fd448bfec10fc55206e / Forge2.18.0/schema46 is delivered via handoff6153725231 and independently accepted. The actual producer wheel is20efb7f1a92d1af352b14729d51d92689fa55ef1b09b4dc657e1cee06e7e451d; candidate packets and mocks remain source tests or explicitly original candidate evidence.
 
 Own complete DoD requires strict>80.2% executable-line coverage per modified production file, actual full owning validation/CI/TDE status, independent Quality/Security/UX, protected exact-head source merge, nonempty finalization with own checks/reviews, and NEW exact-final-main installed Client/Server/qualifiedForge plus actual native five-language/light-dark/narrow-wide/keyboard/document/recovery/privacy-screen/readback/cleanup evidence. No PASS is transferred from earlier source or producer candidate bytes. PB node identities remain documentary; full PB-W2/EP onboarding is not claimed.
 
 Actual R50 full summary may include every file/hash. The native inspector preserves it byte-for-byte under collapsed English-template details; primary artifact count, open questions and grouped document disclosures remain usable without traversing that ledger. No inferred short product summary or second renderer is introduced.
+
+## Protected source and finalization checkpoint
+
+Assignment `L4-PROJECT-CONCEPT-BASELINE-PREVIEW-V1-20261013`, same r81-plan103 writer/session. [Implementation PR169](https://github.com/pcvantol/workspace/pull/169) was normally protected and squash-merged to `a9f43228f0ec2c57d1a3ca1e52442a8d953da65d` from exact independently accepted `b231728f1772e08bd795946f708812ee22f7f1f4`; merged tree is byte-identical to the reviewed tree. Workspace2.8.26 is unchanged by this documentary NO_BUMP finalization. Cumulative corrections12 / qualificationruns5; earlier counts, partial failures and source-bound evidence remain preserved.
+
+Saved concept → explicit saved-source check → actual Forge baseline proposal → real documents/open questions → original read-only reopen. Only CONCEPT_BASELINE_PREVIEW, not complete PB-W2/setup/adoption/onboarding. Qualified Forge2.18.0/schema46 exact96e1d73670b8575d41977fd448bfec10fc55206e and wheel20efb7 are delivered and independently accepted. Own actor/context/concept authority stays separate from finite producer PREPARE/READ. No model/EP/repository/approval/apply/Mission effect or global installation/credential/system-setting change.
+
+Complete scoped candidate Quality/Security/UX PASS; actual owning validation225Python/269native+1isolated and strict>80.2% for all18 modified executable production files; all five exact-head CI SUCCESS. Actual TDE repository QUALIFIED / policy PASS_WITH_WARNINGS, complexity28 versus warning15/blocking30, with own coverage separate. [Six privacy-approved candidate screenshots plus safe evidence JSON](https://github.com/pcvantol/workspace/tree/c7920e88fb20bc35a8d3404a1cd9077ea1ae2b9e/docs/qualification/plan103-candidate-proof-20261013) have seven immutable HTTP200/SHA256 readbacks. Native images retain original889 source; earlier qualified-producer recovery retains88 source. No candidate screenshot or original partial FAILED run becomes a new final-main result.
+
+Actual late own revocation revealed known denial converted to UNAVAILABLE. Correction12 catches only own authority-entry denial before guard yield, preserves genuine network errors, and passes exact-old-source RED/restored-source GREEN real HTTP zero-POST regression. Corrected installed proof5 returns403 DENIED/no protected result with one original effect; normal own revoke57ms outside held peer wait. All five fixture sets and extra grants/pairings/actors/processes cleaned up normally; protected source/history retained.
+
+[Nonempty own finalization](WORKSPACE_CONCEPT_BASELINE_FINALIZATION_V1.md) reconciles the own contract, roadmap/backlog and existing documentary DAG subset without changing parent/node identities or runtime bytes. This finalization's independent reviews, required checks, protected merge and NEW exact-final-main installed Client/Server/qualifiedForge, actual GUI, privacy-safe public readback and cleanup remain required. No full delivery is preclaimed. Plan102 remains CLOSED15/27; PR160/LINK parked0212f898 consumed2/max3/remaining1; primary checkout retained. No automatic next feature.
