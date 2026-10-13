@@ -31,6 +31,8 @@ struct ConceptBaselinePanel:View {
                 }
                 Button(text("resume")) {Task {await state.prepare(pending.source,concept:concept,current:current)}}
                     .disabled(state.busy || state.access?.can_prepare != true).accessibilityIdentifier("concept-baseline-resume")
+                    .keyboardShortcut(.return,modifiers:.command).help(text("resumeShortcut"))
+                Text(text("resumeShortcut")).font(.caption).foregroundStyle(.secondary)
             } else {
                 ConceptBaselineDraftView(concept:concept,dirty:dirty || state.busy,showAccessRequirement:state.phase=="access" || (state.access != nil && state.access?.can_prepare==false),onPrepare:state.access?.can_prepare==true ? {source in Task {await state.prepare(source,concept:concept,current:current)}}:nil)
             }

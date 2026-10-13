@@ -3,6 +3,9 @@ import SwiftUI
 enum ConceptBaselineCopy {
     static let languages=["en","nl","de","fr","es"]
     static let values:[String:[String]]=[
+        "reviewShortcut":["Review saved source: ⌥⌘B","Opgeslagen bron controleren: ⌥⌘B","Gespeicherte Quelle prüfen: ⌥⌘B","Vérifier la source enregistrée : ⌥⌘B","Revisar fuente guardada: ⌥⌘B"],
+        "requestShortcut":["Request proposal: ⌘Return","Voorstel aanvragen: ⌘Return","Vorschlag anfordern: ⌘Return","Demander la proposition : ⌘Return","Solicitar propuesta: ⌘Return"],
+        "resumeShortcut":["Resume original request: ⌘Return","Oorspronkelijke aanvraag hervatten: ⌘Return","Ursprüngliche Anfrage fortsetzen: ⌘Return","Reprendre la demande initiale : ⌘Return","Reanudar solicitud original: ⌘Return"],
         "capacity":["Local recovery storage is full. Existing originals are preserved; no new request was sent.","De lokale herstelopslag is vol. Bestaande oorspronkelijke gegevens blijven bewaard; er is geen nieuwe aanvraag verstuurd.","Der lokale Wiederherstellungsspeicher ist voll. Vorhandene Originale bleiben erhalten; keine neue Anfrage wurde gesendet.","Le stockage local de récupération est plein. Les originaux sont conservés ; aucune nouvelle demande n’a été envoyée.","El almacenamiento local de recuperación está lleno. Se conservan los originales; no se envió una solicitud nueva."],
         "refreshAccess":["Check connection","Verbinding controleren","Verbindung prüfen","Vérifier la connexion","Verificar conexión"],
         "sourceRejected":["This request was rejected because the saved source changed. The original request is preserved.","Deze aanvraag is geweigerd omdat de opgeslagen bron veranderde. De oorspronkelijke aanvraag blijft bewaard.","Gespeicherte Quelle geändert; Anfrage abgelehnt. Die ursprüngliche Anfrage bleibt erhalten.","Demande refusée car la source enregistrée a changé. La demande initiale est conservée.","Solicitud rechazada por cambio de fuente. Se conserva la solicitud original."],
@@ -82,6 +85,8 @@ struct ConceptBaselineDraftView: View {
             Button(text("make")) {reviewing=true}
                 .disabled(dirty || concept.lifecycle=="ARCHIVED")
                 .accessibilityIdentifier("concept-baseline-review")
+                .keyboardShortcut("b",modifiers:[.command,.option]).help(text("reviewShortcut"))
+            Text(text("reviewShortcut")).font(.caption).foregroundStyle(.secondary)
             if dirty {Text(text("unsaved")).foregroundStyle(.secondary)}
             else if concept.lifecycle=="ARCHIVED" {Text(text("archived")).foregroundStyle(.secondary)}
             if reviewing {
@@ -104,8 +109,11 @@ struct ConceptBaselineDraftView: View {
                 HStack {
                     Button(text("request")) {if let source {onPrepare?(source)}}
                         .disabled(source==nil || onPrepare==nil).accessibilityIdentifier("concept-baseline-request")
+                        .keyboardShortcut(.return,modifiers:.command).help(text("requestShortcut"))
                     Button(text("cancel")) {reviewing=false;shorterPurpose=""}
+                        .keyboardShortcut(.escape,modifiers:[])
                 }
+                Text(text("requestShortcut")).font(.caption).foregroundStyle(.secondary)
             }
         }
         .onChange(of:concept) {_,_ in reviewing=false;shorterPurpose=""}
