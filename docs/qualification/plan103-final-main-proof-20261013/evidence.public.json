@@ -1,0 +1,118 @@
+{
+  "assignment": "L4-PROJECT-CONCEPT-BASELINE-PREVIEW-V1-20261013",
+  "plan": 103,
+  "kind": "NEW_EXACT_FINAL_MAIN_INSTALLED_NATIVE_EVIDENCE",
+  "source": "fc3a26ab048742d2c03c79969860c0b6feb3f12e",
+  "source_tree": "c630c43319c20b567586f8b811e5141c1916c4b1",
+  "workspace_version": "2.8.26",
+  "qualified_producer_source": "96e1d73670b8575d41977fd448bfec10fc55206e",
+  "forge_version": "2.18.0",
+  "own_wheel_sha256": "7f222418ea406e19b245fa024878febd37befd2b97c8e62cc285949be2c8bd8a",
+  "producer_wheel_sha256": "20efb7f1a92d1af352b14729d51d92689fa55ef1b09b4dc657e1cee06e7e451d",
+  "native_binary_sha256": "496e6d119f2debdbaf4eabb8966002b64208c9cf044ab41645b0cd78830798f2",
+  "effective_macho_sdk": "26.0",
+  "minimum_macos": "26.0",
+  "buildscript_selected_reported_sdk": "26.5",
+  "sdk_note": "Earlier 26.5 labels describe selected/reported SDK; the actual freshly linked binary uses SDK 26.0 and minimum macOS 26.0, meeting the >=26 requirement.",
+  "cumulative_corrections": 12,
+  "qualification_runs": 6,
+  "validation": {
+    "mandatory_validate": "PASS",
+    "python_cases": 225,
+    "native_cases": 269,
+    "isolated_cases": 1,
+    "modified_production_files": 18,
+    "every_modified_production_file_strictly_above_80_2_percent": true,
+    "implementation_ci_checks": "5 SUCCESS",
+    "finalization_ci_checks": "5 SUCCESS"
+  },
+  "TDE": {
+    "repository": "QUALIFIED",
+    "assessment": "PASS_WITH_WARNINGS",
+    "complexity": 28,
+    "warning_threshold": 15,
+    "blocking_threshold": 30
+  },
+  "protected_delivery": {
+    "implementation_pr": 169,
+    "finalization_pr": 170,
+    "both_merged": true,
+    "nonempty_finalization": true
+  },
+  "independent_reviews": {
+    "quality": "PASS",
+    "security": "PASS",
+    "ux": "PASS",
+    "four_exact_screenshot_bytes_privacy": "PASS"
+  },
+  "new_actual_final_main": {
+    "isolated_installed_client_server_qualified_forge": true,
+    "own_payload_files_equal_git_wheel_installed": 49,
+    "producer_payload_files_equal_git_wheel_installed": 319,
+    "native_flow": [
+      "OPEN_SAVED_CONCEPT",
+      "REVIEW_EXACT_SAVED_SOURCE",
+      "EXPLICIT_PREPARE",
+      "READ_REAL_PROPOSAL",
+      "README_DISCLOSURE"
+    ],
+    "documents": 37,
+    "open_questions": 3,
+    "theme": "dark",
+    "width": 760,
+    "separate_client_os_restart": true,
+    "separate_server_os_restart": true,
+    "same_original_proposal_bytes": true,
+    "one_original_effect": true,
+    "history_records": 1,
+    "normal_fixture_cleanup": "COMPLETE",
+    "cleanup_readback": {
+      "own_status": 403,
+      "peer_status": 401,
+      "own_services_and_client_stopped": true
+    }
+  },
+  "retained_evidence": {
+    "five_languages_both_themes_narrow_wide_named_keyboard": "Previously accepted candidate evidence retained at original source pins; no relabel as new final-main pixels.",
+    "completed_reply_loss": {
+      "source": "88cfe3846e65c7f11f79c129b27307ea150ebaac",
+      "qualified_producer_source": "96e1d73670b8575d41977fd448bfec10fc55206e",
+      "same_original_bytes_one_effect": true
+    },
+    "late_own_revocation": {
+      "source": "b231728f1772e08bd795946f708812ee22f7f1f4",
+      "status": 403,
+      "error": "DENIED"
+    },
+    "partial_failed_runs_and_initial_offscreen_click": "Preserved privately at original provenance; not claimed PASS."
+  },
+  "privacy": "Synthetic approved screenshots only. No private runtime operation, proposal, actor, context, dossier, grant identifiers, credentials, raw protected packets or host paths are exported.",
+  "qualification_boundary": "Isolated installed qualification only; no global installation upgrade, EP, model, repository creation, approval, apply or Mission effects.",
+  "screens": [
+    {
+      "file": "final-main-explicit-source-review.png",
+      "sha256": "76e6367cab624224404050b3579d9d7541f9b352b2dc7d2e3d78da54ecaaebd0",
+      "actual_source": "fc3a26ab048742d2c03c79969860c0b6feb3f12e",
+      "qualified_producer_source": "96e1d73670b8575d41977fd448bfec10fc55206e"
+    },
+    {
+      "file": "final-main-real-primary-proposal.png",
+      "sha256": "2a25af9812dc6362196bf02156ac8c1c162891c76bfea5e9f239ca413f3aa813",
+      "actual_source": "fc3a26ab048742d2c03c79969860c0b6feb3f12e",
+      "qualified_producer_source": "96e1d73670b8575d41977fd448bfec10fc55206e"
+    },
+    {
+      "file": "final-main-real-readme.png",
+      "sha256": "a43b3663fd0fd8eedb2e067390d5582253e648f1f036548116470097796688a8",
+      "actual_source": "fc3a26ab048742d2c03c79969860c0b6feb3f12e",
+      "qualified_producer_source": "96e1d73670b8575d41977fd448bfec10fc55206e"
+    },
+    {
+      "file": "final-main-original-after-client-server-restarts.png",
+      "sha256": "2a25af9812dc6362196bf02156ac8c1c162891c76bfea5e9f239ca413f3aa813",
+      "actual_source": "fc3a26ab048742d2c03c79969860c0b6feb3f12e",
+      "qualified_producer_source": "96e1d73670b8575d41977fd448bfec10fc55206e"
+    }
+  ],
+  "restart_image_note": "Primary and post-restart pixels match; distinct OS process transitions and original HTTP readback establish restart evidence separately."
+}
