@@ -1,0 +1,28 @@
+{
+  "evidence": "EARLY_ACTUAL_INSTALLED_AND_PACKAGED_CANDIDATE_ONLY",
+  "workspace_version": "2.8.26",
+  "own_source": "WORKING_TREE_CANDIDATE_NOT_FINAL_MAIN",
+  "producer_candidate": "e182ca41cbb8775c6b3b29c81ade94f035da264d",
+  "producer_version": "2.18.0",
+  "qualified_final_pin": false,
+  "native_ui_language": "nl",
+  "template_language": "en",
+  "real_prepare_and_original_readback": true,
+  "cleanup": true,
+  "images": [
+    {
+      "file": "early-saved-concept.png",
+      "sha256": "3800b1cc70897b421d8501aa6d8f82e8c2cbc8da86b04a291d1155b0930e6a7d"
+    },
+    {
+      "file": "early-source-review.png",
+      "sha256": "6bc4ff13b0adfeb87ce0e857ef5176a604fbc6bf1bc9f888683d402319c1cb9a"
+    },
+    {
+      "file": "early-real-document-content.png",
+      "sha256": "3e8f473441b86f80a9840b2149184548a239bb2d5a10d5fa47d5e4ccad4d7cc8"
+    }
+  ],
+  "independent_privacy_review": "PASS for these exact three images only",
+  "acceptance_boundary": "Screens show synthetic saved source, preflight and actual README/open questions. Not all documents, recovery matrix, producer final pin or full consumer acceptance."
+}
