@@ -1,0 +1,266 @@
+{
+  "version": "2.8.24",
+  "producer_source": "989132660997909e74800ddc8648be11262be8d4",
+  "workspace_wheel_sha256": "fc067ee83536dbdf455e767ad284150e6c55332c9761b0ded363365e9c4c90c4",
+  "forge_wheel_sha256": "f9d87067179aac54577e554d06c670e969a5eef2905b7f1392a3d7f31ca80f9a",
+  "native": {
+    "sha256": "ce4b2dde2276c6ab599b0b2716145373bd4f817f26ce377ff80a2f736a69504a",
+    "codesign_verify": "PASS_ADHOC_ISOLATED",
+    "minos": "26.0",
+    "sdk": "26.0",
+    "bundle_version": "2.8.24",
+    "launch_capture": "DEFAULT_OFF"
+  },
+  "screenshots": [
+    {
+      "image": "images/en-light-1180x780.png",
+      "sha256": "4da9582b088a2cf0f69db72241215687fd5830497fa4597539dd3a76554b1359",
+      "language": "en",
+      "theme": "light",
+      "width": 1180,
+      "height": 780
+    },
+    {
+      "image": "images/en-light-760x780.png",
+      "sha256": "4ba1d614e9a6e35f738c2388d94c20200f1851b0a3128cf58c8151f0ff1ae583",
+      "language": "en",
+      "theme": "light",
+      "width": 760,
+      "height": 780
+    },
+    {
+      "image": "images/en-light-560x780.png",
+      "sha256": "613c2ad6e617cc7375c42effefbe97c004e6ccbb12e5c542558ef0652f97f424",
+      "language": "en",
+      "theme": "light",
+      "width": 560,
+      "height": 780
+    },
+    {
+      "image": "images/en-dark-1180x780.png",
+      "sha256": "937da89e1ec33f8a5af6c355f2159626e7cf6b7a8ad2e8847afebc9f34a13566",
+      "language": "en",
+      "theme": "dark",
+      "width": 1180,
+      "height": 780
+    },
+    {
+      "image": "images/en-dark-760x780.png",
+      "sha256": "58a82de4c908c8c5d9bce084316ef9ad74c98978faffadd206c8602e249cad3a",
+      "language": "en",
+      "theme": "dark",
+      "width": 760,
+      "height": 780
+    },
+    {
+      "image": "images/en-dark-560x780.png",
+      "sha256": "133b62ddcb989c499ba062a609d22451b14def1da44b66bb1cc1cfb1bdb1a7ee",
+      "language": "en",
+      "theme": "dark",
+      "width": 560,
+      "height": 780
+    },
+    {
+      "image": "images/nl-light-1180x780.png",
+      "sha256": "e012a35dd905a96d9cf5da86262cc4ef28641766acc639a9ab4f963e3336459c",
+      "language": "nl",
+      "theme": "light",
+      "width": 1180,
+      "height": 780
+    },
+    {
+      "image": "images/nl-light-760x780.png",
+      "sha256": "2bc40c47b6f66e79a4def92b0cc15de72de7e94cb3c853f4f0f648302fb66e55",
+      "language": "nl",
+      "theme": "light",
+      "width": 760,
+      "height": 780
+    },
+    {
+      "image": "images/nl-light-560x780.png",
+      "sha256": "78e7bfe0dbd4a2d25b63c5c0bd09f0361f6597be33996243a71f08843cd67741",
+      "language": "nl",
+      "theme": "light",
+      "width": 560,
+      "height": 780
+    },
+    {
+      "image": "images/nl-dark-1180x780.png",
+      "sha256": "96fe4ad54d8fbd665b6742e2004260bed4d4c2c11a36106de5cc7b8db4fd6321",
+      "language": "nl",
+      "theme": "dark",
+      "width": 1180,
+      "height": 780
+    },
+    {
+      "image": "images/nl-dark-760x780.png",
+      "sha256": "794469e343be596e4638b4c8ab1d71b84693b9b58e4c06ef69707ee2ede67d22",
+      "language": "nl",
+      "theme": "dark",
+      "width": 760,
+      "height": 780
+    },
+    {
+      "image": "images/nl-dark-560x780.png",
+      "sha256": "adb4f0c865f1fe8cc506240d6570678139bf8a55023237f8d721956fe45a0717",
+      "language": "nl",
+      "theme": "dark",
+      "width": 560,
+      "height": 780
+    },
+    {
+      "image": "images/de-light-1180x780.png",
+      "sha256": "7b5cbbe001349ecf6fe4389d36fd61ef914e814d3345425cc60cfbd0f0ffc13e",
+      "language": "de",
+      "theme": "light",
+      "width": 1180,
+      "height": 780
+    },
+    {
+      "image": "images/de-light-760x780.png",
+      "sha256": "2a69aa039eddb2126da7df1d982e17fc5b1c1749ed975d9b09796da7aa50d052",
+      "language": "de",
+      "theme": "light",
+      "width": 760,
+      "height": 780
+    },
+    {
+      "image": "images/de-light-560x780.png",
+      "sha256": "087614e8f526972bee687f7ec2088319a8101389a924874e3c34038bfc2c5662",
+      "language": "de",
+      "theme": "light",
+      "width": 560,
+      "height": 780
+    },
+    {
+      "image": "images/de-dark-1180x780.png",
+      "sha256": "903666c0162ce990e1574ce84f65ecd43448a5afa589f17ae3da7b119ae188a4",
+      "language": "de",
+      "theme": "dark",
+      "width": 1180,
+      "height": 780
+    },
+    {
+      "image": "images/de-dark-760x780.png",
+      "sha256": "8a9505701da18eac80293839c1e89bcad23980bb7e5b313c1003c69bb60725bd",
+      "language": "de",
+      "theme": "dark",
+      "width": 760,
+      "height": 780
+    },
+    {
+      "image": "images/de-dark-560x780.png",
+      "sha256": "34282900a849af0d7ab257cec11140c09622ed1bbda5cd427bd32563557a88df",
+      "language": "de",
+      "theme": "dark",
+      "width": 560,
+      "height": 780
+    },
+    {
+      "image": "images/fr-light-1180x780.png",
+      "sha256": "650d391aa8a71483e41334ea769f12a56db3cb0fdc16242ec1c0b662ffe4936e",
+      "language": "fr",
+      "theme": "light",
+      "width": 1180,
+      "height": 780
+    },
+    {
+      "image": "images/fr-light-760x780.png",
+      "sha256": "f428ce54a13831d709fcb89e4589c68b8d04080cb26a6164e2bc230016e5fc4e",
+      "language": "fr",
+      "theme": "light",
+      "width": 760,
+      "height": 780
+    },
+    {
+      "image": "images/fr-light-560x780.png",
+      "sha256": "514382fd5d22eb65000345b4874d739531bbef61c61fd0a20983acc8ed6ebfe6",
+      "language": "fr",
+      "theme": "light",
+      "width": 560,
+      "height": 780
+    },
+    {
+      "image": "images/fr-dark-1180x780.png",
+      "sha256": "9326b5652b262402f4e17ec0ca34a3d7ce5527fd406e7577143b874a6d107abc",
+      "language": "fr",
+      "theme": "dark",
+      "width": 1180,
+      "height": 780
+    },
+    {
+      "image": "images/fr-dark-760x780.png",
+      "sha256": "8c878f800e80bc630bc1a4bcc2bc8f3b494f6054a1fed4462075cb7416ac5a8f",
+      "language": "fr",
+      "theme": "dark",
+      "width": 760,
+      "height": 780
+    },
+    {
+      "image": "images/fr-dark-560x780.png",
+      "sha256": "0d62e6de8c99a7abda141ade4d70a09c236e36b176f29286771e10bccb72f29d",
+      "language": "fr",
+      "theme": "dark",
+      "width": 560,
+      "height": 780
+    },
+    {
+      "image": "images/es-light-1180x780.png",
+      "sha256": "711b4e02259464f86ab8715b40c2774cf9cb02c458bf5a4b89fdae1e6be105ef",
+      "language": "es",
+      "theme": "light",
+      "width": 1180,
+      "height": 780
+    },
+    {
+      "image": "images/es-light-760x780.png",
+      "sha256": "2a05e16d27dbc8444a348dab042d281e3aaa53b482739fd4dddfef0b87f0df03",
+      "language": "es",
+      "theme": "light",
+      "width": 760,
+      "height": 780
+    },
+    {
+      "image": "images/es-light-560x780.png",
+      "sha256": "5dd1bca6b0e6436635988eead95d509ff18bcdc9918b3836d3201c7b9e6d0dbd",
+      "language": "es",
+      "theme": "light",
+      "width": 560,
+      "height": 780
+    },
+    {
+      "image": "images/es-dark-1180x780.png",
+      "sha256": "15f37e044e887343afbebeae599d1ea31c28a036e9b90db58e2862c408a03300",
+      "language": "es",
+      "theme": "dark",
+      "width": 1180,
+      "height": 780
+    },
+    {
+      "image": "images/es-dark-760x780.png",
+      "sha256": "f2bef4b6f69bbb727e75c5ed3078ed45e410e01677fb37285f04785d9ff0dc2a",
+      "language": "es",
+      "theme": "dark",
+      "width": 760,
+      "height": 780
+    },
+    {
+      "image": "images/es-dark-560x780.png",
+      "sha256": "088956c5de5b21bdc6cfdd5cf88dfebfc17e2ec9e1f4c9d3678d921a45e076ee",
+      "language": "es",
+      "theme": "dark",
+      "width": 560,
+      "height": 780
+    }
+  ],
+  "classification": "RETAINED_NATIVE_CANDIDATE_PIXEL_MATRIX_NOT_FINAL_MAIN",
+  "current_candidate_source": "58d596e67dcdafb3f519fd3cbbbe9c45d6086f5b",
+  "original_native_capture_source": "35e68ee3a6be1c7befd0a07ae1c664dcfe50bc41",
+  "native_code_diff_to_current_candidate": "EMPTY",
+  "legacy_disposition": "DENIED_SUPPORT_NOT_ESTABLISHED_6139754826",
+  "original_unsupported_recognition": "NOT_ESTABLISHED_PRESERVED",
+  "current_server_wheel_sha256": "d48397c6a9c5e256331cd2467ddebfb801d596990704f38504045153377a85c9",
+  "environment": "OWN_SYNTHETIC_INSTALLED_FORGE_EP_HTTP_SIMULATOR_NOT_LIVE_EP",
+  "publication": "IMMUTABLE_CANDIDATE_PROOF_BRANCH_NOT_PRODUCT_RELEASE",
+  "privacy": "Only independently inspected synthetic application windows; original user screenshot and private grants/cursors/logs excluded"
+}

@@ -1,0 +1,15 @@
+{
+  "classification": "NARROW_CANDIDATE_KEYBOARD_FULL_ACCESS_CONFIGURATION_NOT_FINAL_MAIN",
+  "source_sha": "35e68ee3a6be1c7befd0a07ae1c664dcfe50bc41",
+  "image": "images/keyboard53-nl-light-refresh.png",
+  "sha256": "0020fdedddce55dd0ae64814b365d3515b8911b2f1417965d23e71752a8ebf59",
+  "logical_window_width": 1180,
+  "logical_window_height": 780,
+  "actual_png_width": 2584,
+  "actual_png_height": 1784,
+  "image_includes_scaled_window_and_shadow": true,
+  "keyboard_forward_steps": 26,
+  "reverse_steps": 6,
+  "original_setting_restored": true,
+  "publication": "IMMUTABLE_CANDIDATE_PROOF_BRANCH"
+}
