@@ -127,6 +127,7 @@ struct ContentView: View {
     @StateObject private var worklists: WorklistState
     @StateObject private var concepts = ProjectConceptState()
     @StateObject private var activity = ActivityState()
+    @StateObject private var order = OrderState()
     private let conceptGrants: any DraftGrantStore
     @State private var selectedTab = 4
     @State private var requestedReview: MissionReviewKey?
@@ -138,6 +139,7 @@ struct ContentView: View {
         #if WORKSPACE_ISOLATED_TEST
         if let document = try? IsolatedTestDocument.load() {
             conceptGrants = IsolatedDraftGrant(document)
+            _order = StateObject(wrappedValue:OrderState(credentials:IsolatedOrderCredentials(document),store:OrderIntentStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("order-intents"))))
             _activity = StateObject(wrappedValue:ActivityState(credentials:IsolatedActivityCredentials(document),store:ActivityLocalStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("activity-views"))))
             _concepts = StateObject(wrappedValue:ProjectConceptState(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("project-concept-intents")))
         } else { conceptGrants = DraftGrantKeychain() }
@@ -194,6 +196,13 @@ struct ContentView: View {
                 LiveApprovedWorklistView(client:client,state:worklists,
                     reviewNavigationStatus:reviewNavigationStatus,onOpenReviews:openReview)
                     .environment(\.nativeTabCommandsActive,true)
+            case 7:
+                WorksetOrderView(state:order,client:client,grants:conceptGrants,onApplied:{ access,workset in
+                    if let bound=activity.access,activity.selected==workset,
+                       bound.scope==access.binding.scope,bound.installation_id==access.binding.installation_id,
+                       bound.worksets==access.binding.worksets,bound.actorID==access.binding.actorID,
+                       bound.workspaceProjectID==access.binding.workspaceProjectID { await activity.fetch(restart:true) }
+                })
             case 6:
                 WorksetActivityView(state:activity,client:client,grants:conceptGrants)
             case 3:
@@ -208,9 +217,9 @@ struct ContentView: View {
                 }.environment(\.nativeTabCommandsActive,true)
             }
         }
-        .onChange(of:[client.phase,client.savedEndpoint,client.savedInstance]) { _,_ in activity.invalidate() }
-        .onChange(of:[conversations.projectID,conversations.observedActorID ?? ""]) { _,_ in activity.invalidate() }
-        .onChange(of:client.authorizationLost) { _,lost in if lost { activity.invalidate() } }
+        .onChange(of:[client.phase,client.savedEndpoint,client.savedInstance]) { _,_ in activity.invalidate();order.invalidate() }
+        .onChange(of:[conversations.projectID,conversations.observedActorID ?? ""]) { _,_ in activity.invalidate();order.invalidate() }
+        .onChange(of:client.authorizationLost) { _,lost in if lost { activity.invalidate();order.invalidate() } }
         .tint(WorkspaceAppearance.accent(for:colorScheme))
         .background(WorkspaceAppearance.backdrop(for:colorScheme))
     }

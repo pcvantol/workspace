@@ -350,6 +350,20 @@ for key in ('issue', 'revoke'):
         'summary': 'private owner pairing to an existing finite Forge workset release grant'}
 
 
+for key,method,path in [('access','GET','/v1/workset-orders'),
+                        ('capability','GET','/v1/workset-orders/capability'),
+                        ('current','GET','/v1/workset-orders/{workset_id}'),
+                        ('preview','POST','/v1/workset-orders/{workset_id}/preview'),
+                        ('confirm','POST','/v1/workset-orders/{workset_id}/confirm'),
+                        ('operation','GET','/v1/workset-orders/{workset_id}/operations/{operation_id}')]:
+    OPERATIONS['workset-orders.'+key] = {'exposure':'HTTP_EXPOSED','method':method,
+        'path':path,'auth':'BEARER_PINNED_AND_DRAFT_AND_ORDER_GRANT',
+        'contract':'workset-order','summary':'Explicit finite remaining order; preview is nonmutating; confirm alone may amend order'}
+for key in ('issue','revoke'):
+    OPERATIONS['workset-orders.bind.'+key] = {'exposure':'LOCAL_ONLY_ADMIN',
+        'local_cli':'workset-order-bind-'+key,'auth':'PRIVATE_ROOT_OWNER',
+        'summary':'Separate existing finite Forge READ+REORDER binding; no grant issuance'}
+
 for key,path in [('access','/v1/workset-activity'),
                  ('page','/v1/workset-activity/{workset_id}/pages'),
                  ('continue','/v1/workset-activity/{workset_id}/pages/{cursor}'),
@@ -798,6 +812,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
             if not self._trusted_origin():
                 return
             if handle_project_concept(self, service): return
+            from .workset_order_http import route as order_route
+            if order_route(self, service, self.command): return
             from .workset_activity_http import route as activity_route
             if activity_route(self,service):return
             if self.path.startswith('/v1/workset-releases/'):
@@ -902,6 +918,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
             if not self._trusted_origin():
                 return
             if handle_project_concept(self, service): return
+            from .workset_order_http import route as order_route
+            if order_route(self, service, self.command): return
             if self.path.startswith('/v1/workset-releases/'):
                 from .workset_release_http import route
                 return route(self, service, self.path, 'POST')
@@ -933,6 +951,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
             if not self._trusted_origin():
                 return
             if handle_project_concept(self, service): return
+            from .workset_order_http import route as order_route
+            if order_route(self, service, self.command): return
             if re.fullmatch(r"/v1/conversations/[0-9a-f]{32}", self.path):
                 return self._conversation_write(self.path)
             self._reply(405, {"error": "READ_ONLY"})

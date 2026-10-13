@@ -881,7 +881,11 @@ extension WorksetReleaseTests {
         try await Task.sleep(for:.milliseconds(120),tolerance:.zero)
         XCTAssertEqual(state.history,[original]);XCTAssertEqual(state.phase,"unavailable")
         clock.advance(0.05)
-        try await Task.sleep(for:.milliseconds(100),tolerance:.zero)
+        // Await the actual expiry transition within a bounded scheduler window.
+        let timeout=ContinuousClock.now.advanced(by:.seconds(2))
+        while state.phase != "denied",ContinuousClock.now<timeout {
+            try await Task.sleep(for:.milliseconds(10),tolerance:.zero)
+        }
         XCTAssertEqual(state.phase,"denied");XCTAssertTrue(state.history.isEmpty)
         XCTAssertNil(state.observation);XCTAssertNil(state.pending);XCTAssertEqual(store.journal.history,[original])
         let sends=await peer.sends;XCTAssertEqual(sends.count,1)

@@ -1,0 +1,501 @@
+{
+  "capability": {
+    "actor_id": "606a849359f4df4c",
+    "binding_id": "d6de1e6a3f0cbb9f265903dc2821b9d7",
+    "consumed_amendments": 0,
+    "consumer_contract": "workspace-workset-order-access/v1",
+    "contract_version": "forge-workset-order/v1",
+    "expires_at": "2026-10-13T13:05:29.981735+00:00",
+    "installation_id": "84c38bc8-d323-4983-9cf2-c8944c1e570c",
+    "maximum_amendments": 2,
+    "permissions": [
+      "READ",
+      "REORDER"
+    ],
+    "producer_source": "989132660997909e74800ddc8648be11262be8d4",
+    "producer_version": "2.15.0",
+    "read_only": true,
+    "remaining_amendments": 2,
+    "reorder_supported": true,
+    "required_roles": [
+      "business_owner",
+      "platform_architect"
+    ],
+    "scope": {
+      "instance_id": "forge-runtime-cd479f51-15fc-44a7-8b04-3d251d4dcc9d",
+      "project_id": "isolated-project",
+      "repository_id": "synthetic-repository"
+    },
+    "worksets": [
+      {
+        "definition_digest": "sha256:df7501cc40afd1504d0433969b0e2f371d341116d0c0df63af7e5e1cfd650fc7",
+        "workset_id": "released-2f8f588928788d0a91e0d2b351e9fd8f35dcb1ba"
+      }
+    ],
+    "workspace_project_id": "order-project"
+  },
+  "current": {
+    "additional_model_calls": 0,
+    "contract_version": "forge-workset-order/v1",
+    "current": {
+      "activation_support": "QUALIFIED_SERIAL_APPROVED_WORKLIST",
+      "completeness": "COMPLETE_WITHIN_SCOPE",
+      "continuation": {
+        "candidate_id": "concept-candidate-2a453ec0817e306f788d2c01184809c9",
+        "committed_order": 0,
+        "mission_id": "MISSION-0001",
+        "reason_codes": [
+          "MISSION_ACTIVE"
+        ],
+        "state": "BLOCKED"
+      },
+      "contract_version": "forge-workspace-worklist/v1",
+      "freshness": "CURRENT_READBACK",
+      "installation_id": "84c38bc8-d323-4983-9cf2-c8944c1e570c",
+      "instance_id": "forge-runtime-cd479f51-15fc-44a7-8b04-3d251d4dcc9d",
+      "items": [
+        {
+          "active": true,
+          "allocation_binding": {
+            "candidate_id": "concept-candidate-2a453ec0817e306f788d2c01184809c9",
+            "envelope_digest": "sha256:8e37fb8ac65ca775e7578623b9765b05a526b28835ba3f20fd14dad13907adeb",
+            "installation_id": "84c38bc8-d323-4983-9cf2-c8944c1e570c",
+            "kind": "CANONICAL_CANDIDATE_INTAKE",
+            "mission_id": "MISSION-0001",
+            "subject_revision": "sha256:18b4933e617b6cc2fb08fc219b420c3ad3268b456ac668017bd4f24cc5071227"
+          },
+          "approved": true,
+          "blocking_reasons": [],
+          "candidate_id": "concept-candidate-2a453ec0817e306f788d2c01184809c9",
+          "committed_order": 0,
+          "completed": false,
+          "dependencies": [],
+          "detail_reference": {
+            "kind": "MISSION_REVIEW",
+            "mission_id": "MISSION-0001"
+          },
+          "effect_mode": "READ_ONLY_ASSESSMENT",
+          "eligibility": "ELIGIBLE",
+          "engineering_result": "UNKNOWN",
+          "evidence_references": [],
+          "execution_state": "WAITING_FOR_EXECUTION",
+          "final_acceptance": "UNKNOWN",
+          "mission_id": "MISSION-0001",
+          "mission_state_revision": 6,
+          "released": true,
+          "review_state": "NONE",
+          "subject_revision": "sha256:18b4933e617b6cc2fb08fc219b420c3ad3268b456ac668017bd4f24cc5071227",
+          "title": "Assessment A"
+        },
+        {
+          "active": false,
+          "allocation_binding": {
+            "candidate_id": "concept-candidate-459939560240dd1d06bd7175e341ad63",
+            "envelope_digest": "sha256:e6aa911ac26c397d95b88dfbff75b7bad2ef89df8481f0ff3f94008206b56850",
+            "installation_id": "84c38bc8-d323-4983-9cf2-c8944c1e570c",
+            "kind": "CANONICAL_CANDIDATE_INTAKE",
+            "mission_id": "MISSION-0002",
+            "subject_revision": "sha256:37ed5a22d740fb8c3c0f9c069395d36524aea70b2da4105647d56ca514110ef6"
+          },
+          "approved": true,
+          "blocking_reasons": [
+            "DEPENDENCY_NOT_PROVEN"
+          ],
+          "candidate_id": "concept-candidate-459939560240dd1d06bd7175e341ad63",
+          "committed_order": 1,
+          "completed": false,
+          "dependencies": [
+            "concept-candidate-2a453ec0817e306f788d2c01184809c9"
+          ],
+          "detail_reference": {
+            "kind": "MISSION_REVIEW",
+            "mission_id": "MISSION-0002"
+          },
+          "effect_mode": "READ_ONLY_ASSESSMENT",
+          "eligibility": "BLOCKED",
+          "engineering_result": "UNKNOWN",
+          "evidence_references": [],
+          "execution_state": "APPROVED_PLANNABLE",
+          "final_acceptance": "UNKNOWN",
+          "mission_id": "MISSION-0002",
+          "mission_state_revision": 1,
+          "released": true,
+          "review_state": "NONE",
+          "subject_revision": "sha256:37ed5a22d740fb8c3c0f9c069395d36524aea70b2da4105647d56ca514110ef6",
+          "title": "Assessment B"
+        },
+        {
+          "active": false,
+          "allocation_binding": {
+            "candidate_id": "concept-candidate-f1991bd120779b57ef3f10993c333f05",
+            "envelope_digest": "sha256:45dd6c8c480677487892695d8493036364c4ea2acb10b342ecec9cc76670cb61",
+            "installation_id": "84c38bc8-d323-4983-9cf2-c8944c1e570c",
+            "kind": "CANONICAL_CANDIDATE_INTAKE",
+            "mission_id": "MISSION-0003",
+            "subject_revision": "sha256:23b3734ab064dced195d8d8008ded38c6395617daa2491ce6b3429e386477e16"
+          },
+          "approved": true,
+          "blocking_reasons": [
+            "DEPENDENCY_NOT_PROVEN"
+          ],
+          "candidate_id": "concept-candidate-f1991bd120779b57ef3f10993c333f05",
+          "committed_order": 2,
+          "completed": false,
+          "dependencies": [
+            "concept-candidate-2a453ec0817e306f788d2c01184809c9"
+          ],
+          "detail_reference": {
+            "kind": "MISSION_REVIEW",
+            "mission_id": "MISSION-0003"
+          },
+          "effect_mode": "READ_ONLY_ASSESSMENT",
+          "eligibility": "BLOCKED",
+          "engineering_result": "UNKNOWN",
+          "evidence_references": [],
+          "execution_state": "APPROVED_PLANNABLE",
+          "final_acceptance": "UNKNOWN",
+          "mission_id": "MISSION-0003",
+          "mission_state_revision": 1,
+          "released": true,
+          "review_state": "NONE",
+          "subject_revision": "sha256:23b3734ab064dced195d8d8008ded38c6395617daa2491ce6b3429e386477e16",
+          "title": "Assessment C"
+        }
+      ],
+      "membership_revision": "sha256:df7501cc40afd1504d0433969b0e2f371d341116d0c0df63af7e5e1cfd650fc7",
+      "observed_at": "2026-10-13T12:35:30.523889+00:00",
+      "read_only": true,
+      "scope": {
+        "kind": "EXPLICIT_WORKSET",
+        "principal_id": "606a849359f4df4c",
+        "project_id": null,
+        "workset_id": "released-2f8f588928788d0a91e0d2b351e9fd8f35dcb1ba"
+      },
+      "selector_revision": "sha256:df7501cc40afd1504d0433969b0e2f371d341116d0c0df63af7e5e1cfd650fc7",
+      "snapshot_revision": "sha256:1d8af239b8839bfdcb4d8a8aa048fba598697568d9c13f38e3737896a78aaf52",
+      "workset_revision": 7
+    },
+    "current_order": [
+      "concept-candidate-2a453ec0817e306f788d2c01184809c9",
+      "concept-candidate-459939560240dd1d06bd7175e341ad63",
+      "concept-candidate-f1991bd120779b57ef3f10993c333f05"
+    ],
+    "execution_started": false,
+    "fixed_prefix": 1,
+    "members": [
+      {
+        "candidate_id": "concept-candidate-2a453ec0817e306f788d2c01184809c9",
+        "claimed": true,
+        "dependencies": [],
+        "mission_id": "MISSION-0001",
+        "position": 1,
+        "remaining_position": null,
+        "title": "Assessment A"
+      },
+      {
+        "candidate_id": "concept-candidate-459939560240dd1d06bd7175e341ad63",
+        "claimed": false,
+        "dependencies": [
+          "concept-candidate-2a453ec0817e306f788d2c01184809c9"
+        ],
+        "mission_id": "MISSION-0002",
+        "position": 2,
+        "remaining_position": 1,
+        "title": "Assessment B"
+      },
+      {
+        "candidate_id": "concept-candidate-f1991bd120779b57ef3f10993c333f05",
+        "claimed": false,
+        "dependencies": [
+          "concept-candidate-2a453ec0817e306f788d2c01184809c9"
+        ],
+        "mission_id": "MISSION-0003",
+        "position": 3,
+        "remaining_position": 2,
+        "title": "Assessment C"
+      }
+    ],
+    "order_digest": "sha256:415017598efc7bf371c042888016d69f2bc070c82c41d09e46f0338bf176fee5",
+    "order_revision": 0,
+    "read_only": true,
+    "workset_id": "released-2f8f588928788d0a91e0d2b351e9fd8f35dcb1ba"
+  },
+  "preview": {
+    "additional_model_calls": 0,
+    "blocking_reasons": [],
+    "consequences": [
+      "ONLY_UNCLAIMED_ORDER_CHANGES",
+      "NO_NEW_MISSION_OR_START_ALLOWANCE",
+      "BUSINESS_AND_ARCHITECTURE_ORDER_DECISIONS"
+    ],
+    "contract_version": "forge-workset-order/v1",
+    "current": {
+      "additional_model_calls": 0,
+      "contract_version": "forge-workset-order/v1",
+      "current": {
+        "activation_support": "QUALIFIED_SERIAL_APPROVED_WORKLIST",
+        "completeness": "COMPLETE_WITHIN_SCOPE",
+        "continuation": {
+          "candidate_id": "concept-candidate-2a453ec0817e306f788d2c01184809c9",
+          "committed_order": 0,
+          "mission_id": "MISSION-0001",
+          "reason_codes": [
+            "MISSION_ACTIVE"
+          ],
+          "state": "BLOCKED"
+        },
+        "contract_version": "forge-workspace-worklist/v1",
+        "freshness": "CURRENT_READBACK",
+        "installation_id": "84c38bc8-d323-4983-9cf2-c8944c1e570c",
+        "instance_id": "forge-runtime-cd479f51-15fc-44a7-8b04-3d251d4dcc9d",
+        "items": [
+          {
+            "active": true,
+            "allocation_binding": {
+              "candidate_id": "concept-candidate-2a453ec0817e306f788d2c01184809c9",
+              "envelope_digest": "sha256:8e37fb8ac65ca775e7578623b9765b05a526b28835ba3f20fd14dad13907adeb",
+              "installation_id": "84c38bc8-d323-4983-9cf2-c8944c1e570c",
+              "kind": "CANONICAL_CANDIDATE_INTAKE",
+              "mission_id": "MISSION-0001",
+              "subject_revision": "sha256:18b4933e617b6cc2fb08fc219b420c3ad3268b456ac668017bd4f24cc5071227"
+            },
+            "approved": true,
+            "blocking_reasons": [],
+            "candidate_id": "concept-candidate-2a453ec0817e306f788d2c01184809c9",
+            "committed_order": 0,
+            "completed": false,
+            "dependencies": [],
+            "detail_reference": {
+              "kind": "MISSION_REVIEW",
+              "mission_id": "MISSION-0001"
+            },
+            "effect_mode": "READ_ONLY_ASSESSMENT",
+            "eligibility": "ELIGIBLE",
+            "engineering_result": "UNKNOWN",
+            "evidence_references": [],
+            "execution_state": "WAITING_FOR_EXECUTION",
+            "final_acceptance": "UNKNOWN",
+            "mission_id": "MISSION-0001",
+            "mission_state_revision": 6,
+            "released": true,
+            "review_state": "NONE",
+            "subject_revision": "sha256:18b4933e617b6cc2fb08fc219b420c3ad3268b456ac668017bd4f24cc5071227",
+            "title": "Assessment A"
+          },
+          {
+            "active": false,
+            "allocation_binding": {
+              "candidate_id": "concept-candidate-459939560240dd1d06bd7175e341ad63",
+              "envelope_digest": "sha256:e6aa911ac26c397d95b88dfbff75b7bad2ef89df8481f0ff3f94008206b56850",
+              "installation_id": "84c38bc8-d323-4983-9cf2-c8944c1e570c",
+              "kind": "CANONICAL_CANDIDATE_INTAKE",
+              "mission_id": "MISSION-0002",
+              "subject_revision": "sha256:37ed5a22d740fb8c3c0f9c069395d36524aea70b2da4105647d56ca514110ef6"
+            },
+            "approved": true,
+            "blocking_reasons": [
+              "DEPENDENCY_NOT_PROVEN"
+            ],
+            "candidate_id": "concept-candidate-459939560240dd1d06bd7175e341ad63",
+            "committed_order": 1,
+            "completed": false,
+            "dependencies": [
+              "concept-candidate-2a453ec0817e306f788d2c01184809c9"
+            ],
+            "detail_reference": {
+              "kind": "MISSION_REVIEW",
+              "mission_id": "MISSION-0002"
+            },
+            "effect_mode": "READ_ONLY_ASSESSMENT",
+            "eligibility": "BLOCKED",
+            "engineering_result": "UNKNOWN",
+            "evidence_references": [],
+            "execution_state": "APPROVED_PLANNABLE",
+            "final_acceptance": "UNKNOWN",
+            "mission_id": "MISSION-0002",
+            "mission_state_revision": 1,
+            "released": true,
+            "review_state": "NONE",
+            "subject_revision": "sha256:37ed5a22d740fb8c3c0f9c069395d36524aea70b2da4105647d56ca514110ef6",
+            "title": "Assessment B"
+          },
+          {
+            "active": false,
+            "allocation_binding": {
+              "candidate_id": "concept-candidate-f1991bd120779b57ef3f10993c333f05",
+              "envelope_digest": "sha256:45dd6c8c480677487892695d8493036364c4ea2acb10b342ecec9cc76670cb61",
+              "installation_id": "84c38bc8-d323-4983-9cf2-c8944c1e570c",
+              "kind": "CANONICAL_CANDIDATE_INTAKE",
+              "mission_id": "MISSION-0003",
+              "subject_revision": "sha256:23b3734ab064dced195d8d8008ded38c6395617daa2491ce6b3429e386477e16"
+            },
+            "approved": true,
+            "blocking_reasons": [
+              "DEPENDENCY_NOT_PROVEN"
+            ],
+            "candidate_id": "concept-candidate-f1991bd120779b57ef3f10993c333f05",
+            "committed_order": 2,
+            "completed": false,
+            "dependencies": [
+              "concept-candidate-2a453ec0817e306f788d2c01184809c9"
+            ],
+            "detail_reference": {
+              "kind": "MISSION_REVIEW",
+              "mission_id": "MISSION-0003"
+            },
+            "effect_mode": "READ_ONLY_ASSESSMENT",
+            "eligibility": "BLOCKED",
+            "engineering_result": "UNKNOWN",
+            "evidence_references": [],
+            "execution_state": "APPROVED_PLANNABLE",
+            "final_acceptance": "UNKNOWN",
+            "mission_id": "MISSION-0003",
+            "mission_state_revision": 1,
+            "released": true,
+            "review_state": "NONE",
+            "subject_revision": "sha256:23b3734ab064dced195d8d8008ded38c6395617daa2491ce6b3429e386477e16",
+            "title": "Assessment C"
+          }
+        ],
+        "membership_revision": "sha256:df7501cc40afd1504d0433969b0e2f371d341116d0c0df63af7e5e1cfd650fc7",
+        "observed_at": "2026-10-13T12:35:30.873736+00:00",
+        "read_only": true,
+        "scope": {
+          "kind": "EXPLICIT_WORKSET",
+          "principal_id": "606a849359f4df4c",
+          "project_id": null,
+          "workset_id": "released-2f8f588928788d0a91e0d2b351e9fd8f35dcb1ba"
+        },
+        "selector_revision": "sha256:df7501cc40afd1504d0433969b0e2f371d341116d0c0df63af7e5e1cfd650fc7",
+        "snapshot_revision": "sha256:1d8af239b8839bfdcb4d8a8aa048fba598697568d9c13f38e3737896a78aaf52",
+        "workset_revision": 7
+      },
+      "current_order": [
+        "concept-candidate-2a453ec0817e306f788d2c01184809c9",
+        "concept-candidate-459939560240dd1d06bd7175e341ad63",
+        "concept-candidate-f1991bd120779b57ef3f10993c333f05"
+      ],
+      "execution_started": false,
+      "fixed_prefix": 1,
+      "members": [
+        {
+          "candidate_id": "concept-candidate-2a453ec0817e306f788d2c01184809c9",
+          "claimed": true,
+          "dependencies": [],
+          "mission_id": "MISSION-0001",
+          "position": 1,
+          "remaining_position": null,
+          "title": "Assessment A"
+        },
+        {
+          "candidate_id": "concept-candidate-459939560240dd1d06bd7175e341ad63",
+          "claimed": false,
+          "dependencies": [
+            "concept-candidate-2a453ec0817e306f788d2c01184809c9"
+          ],
+          "mission_id": "MISSION-0002",
+          "position": 2,
+          "remaining_position": 1,
+          "title": "Assessment B"
+        },
+        {
+          "candidate_id": "concept-candidate-f1991bd120779b57ef3f10993c333f05",
+          "claimed": false,
+          "dependencies": [
+            "concept-candidate-2a453ec0817e306f788d2c01184809c9"
+          ],
+          "mission_id": "MISSION-0003",
+          "position": 3,
+          "remaining_position": 2,
+          "title": "Assessment C"
+        }
+      ],
+      "order_digest": "sha256:415017598efc7bf371c042888016d69f2bc070c82c41d09e46f0338bf176fee5",
+      "order_revision": 0,
+      "read_only": true,
+      "workset_id": "released-2f8f588928788d0a91e0d2b351e9fd8f35dcb1ba"
+    },
+    "display_orders": {
+      "current": [
+        {
+          "candidate_id": "concept-candidate-2a453ec0817e306f788d2c01184809c9",
+          "position": 1,
+          "title": "Assessment A"
+        },
+        {
+          "candidate_id": "concept-candidate-459939560240dd1d06bd7175e341ad63",
+          "position": 2,
+          "title": "Assessment B"
+        },
+        {
+          "candidate_id": "concept-candidate-f1991bd120779b57ef3f10993c333f05",
+          "position": 3,
+          "title": "Assessment C"
+        }
+      ],
+      "proposed": [
+        {
+          "candidate_id": "concept-candidate-2a453ec0817e306f788d2c01184809c9",
+          "position": 1,
+          "title": "Assessment A"
+        },
+        {
+          "candidate_id": "concept-candidate-f1991bd120779b57ef3f10993c333f05",
+          "position": 2,
+          "title": "Assessment C"
+        },
+        {
+          "candidate_id": "concept-candidate-459939560240dd1d06bd7175e341ad63",
+          "position": 3,
+          "title": "Assessment B"
+        }
+      ]
+    },
+    "execution_started": false,
+    "package": {
+      "authority_digest": "sha256:3db1c97c7578f2891c1de17ed79063dc2df421357729005c288cdd9d02548eb5",
+      "consumed_activations": 1,
+      "contract_version": "forge-workset-order/v1",
+      "current_order": [
+        "concept-candidate-2a453ec0817e306f788d2c01184809c9",
+        "concept-candidate-459939560240dd1d06bd7175e341ad63",
+        "concept-candidate-f1991bd120779b57ef3f10993c333f05"
+      ],
+      "definition_digest": "sha256:df7501cc40afd1504d0433969b0e2f371d341116d0c0df63af7e5e1cfd650fc7",
+      "expires_at": "2026-10-13T13:35:27.896258+00:00",
+      "fixed_prefix": 1,
+      "instance_id": "forge-runtime-cd479f51-15fc-44a7-8b04-3d251d4dcc9d",
+      "maximum_activations": 3,
+      "order_revision": 0,
+      "previous_order_digest": "sha256:415017598efc7bf371c042888016d69f2bc070c82c41d09e46f0338bf176fee5",
+      "project_id": "isolated-project",
+      "proposed_order": [
+        "concept-candidate-2a453ec0817e306f788d2c01184809c9",
+        "concept-candidate-f1991bd120779b57ef3f10993c333f05",
+        "concept-candidate-459939560240dd1d06bd7175e341ad63"
+      ],
+      "repository_id": "synthetic-repository",
+      "subjects": [
+        {
+          "candidate_id": "concept-candidate-2a453ec0817e306f788d2c01184809c9",
+          "subject_revision": "sha256:18b4933e617b6cc2fb08fc219b420c3ad3268b456ac668017bd4f24cc5071227"
+        },
+        {
+          "candidate_id": "concept-candidate-459939560240dd1d06bd7175e341ad63",
+          "subject_revision": "sha256:37ed5a22d740fb8c3c0f9c069395d36524aea70b2da4105647d56ca514110ef6"
+        },
+        {
+          "candidate_id": "concept-candidate-f1991bd120779b57ef3f10993c333f05",
+          "subject_revision": "sha256:23b3734ab064dced195d8d8008ded38c6395617daa2491ce6b3429e386477e16"
+        }
+      ],
+      "workset_id": "released-2f8f588928788d0a91e0d2b351e9fd8f35dcb1ba",
+      "workset_revision": 7
+    },
+    "package_digest": "sha256:abfa5f3334ae4d97cc3bdd0eadc830327b87cb1316824b9d1e1b231636ab8a6b",
+    "read_only": true,
+    "reorder_supported": true
+  },
+  "preview_effects": 0,
+  "classification": "OWN_SYNTHETIC_RECORDED_PRODUCER_WIRE_UNIT_FIXTURE_NOT_INSTALLED_ACCEPTANCE"
+}
