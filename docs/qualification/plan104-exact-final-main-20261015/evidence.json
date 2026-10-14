@@ -1,0 +1,68 @@
+{
+  "kind": "NEW_EXACT_FINAL_MAIN_INSTALLED_GUI",
+  "consumer_source": "e95f8a4362a74cdc4640af3adf9276d28e8210ae",
+  "workspace_version": "2.8.28",
+  "own_wheel_sha256": "fbfa1fd6ea055438cf89087201fae60f6b0160a090258aa321120a728189511d",
+  "own_installed_payload_count": 61,
+  "native_binary_sha256": "bdf2702f32d5a6e58bf00bd8524cf80bdd1eaf2e3beede0db21dfe45190f9ede",
+  "native_component_file_count": 213,
+  "actual_MachO_minimum": "26.0",
+  "actual_MachO_SDK": "26.0",
+  "qualified_R53": "877602f016dee36c1977ef7df1d937c7c5793ccc",
+  "qualified_R53_wheel_sha256": "fca4f93684905e9eb524ada59bc68f2e41bf85ca5135f8f407db8bc261098912",
+  "qualified_R53_installed_payload_count": 325,
+  "flow": {
+    "consumer_source": "e95f8a4362a74cdc4640af3adf9276d28e8210ae",
+    "workspace_version": "2.8.28",
+    "qualified_r53": "877602f016dee36c1977ef7df1d937c7c5793ccc",
+    "qualified_r52": "96e1d73670b8575d41977fd448bfec10fc55206e",
+    "actual_native_review_send_proposal_explicit_adoption": true,
+    "revision_sequence": [
+      1,
+      2
+    ],
+    "no_implicit_baseline": true,
+    "separate_native_baseline_request": true,
+    "operation_id": "d9109401d37447e3a5db2d0b53325d84",
+    "actual_artifacts": 37,
+    "actual_native_complete_VISION_text_matches": true,
+    "document_sha256": "9c924058345abde4ddcfeedafc4adf5021a29ff40e3e79e292fbf074007481c9",
+    "synthetic_calls": 1,
+    "paid_calls": 0,
+    "no_EP_Mission_approval_apply_repo_effect": true,
+    "earlier_candidate_recovery_and_matrix_retained_with_original_binding": true
+  },
+  "cleanup": {
+    "state": "COMPLETE",
+    "errors": 0,
+    "all_own_pairings_actor_R53_R52_testgrants_revoked": true,
+    "own_recorded_pids_and_listeners_closed": true,
+    "synthetic_external_fixture_calls": 1,
+    "paid_model_calls": 0,
+    "earlier_history_retained": true,
+    "before_original_deadline": true,
+    "finished": "2026-10-14T22:50:40.451153+00:00"
+  },
+  "independent_Quality_Security_UX": "PASS",
+  "independent_pixel_and_metadata_privacy": "PASS",
+  "cumulative": {
+    "source_corrections": 12,
+    "installed_attempts": 4,
+    "full_validations": 13
+  },
+  "prior_candidate_evidence": "https://github.com/pcvantol/workspace/tree/6fa9bd15f20b6e48983857a1224467b7972ff527/docs/qualification/plan104-qualified-r53-candidate-20261015",
+  "images": [
+    {
+      "path": "final-main-business-proposal.png",
+      "sha256": "41c5d9d8802230531c1fd50d3193ee3652c58c91406592a5cd54b73086ef62fb"
+    },
+    {
+      "path": "final-main-explicit-transfer-review.png",
+      "sha256": "947fcbb88ac9d8834a756622201a41b05d1837ad58a592ee09ccec4ced41a521"
+    },
+    {
+      "path": "final-main-adopted-briefing.png",
+      "sha256": "0af760cb06091c4c025524bde2dc92b656f2f5ef257e7284aa4e1fa6e6dae340"
+    }
+  ]
+}
