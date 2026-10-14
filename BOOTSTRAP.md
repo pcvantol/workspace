@@ -7,8 +7,8 @@ assignment L4-NATIVE-CONCEPT-CHAT-REFINEMENT-V1-20261014, same sole writer,
 basefc3a26a/branchcodex/plan104-native-concept-chat-refinement/PATCH2.8.27.
 [Own bounded implementation](docs/WORKSPACE_CONCEPT_CHAT_REFINEMENT_V1.md):
 chat → separate changes → explicit own adoption → separately updated R52
-baseline. Existing SQLite/immutable originals/manual routes remain. R53 early input contract6161946949 consumed; full response schema/pin and
-qualified handoff pending; no guessed endpoint, fake model reply
+baseline. Existing SQLite/immutable originals/manual routes remain. R53 exact candidate schema/typed synthetic examples consumed from e5816702;
+byte-identical contract checked on newer7b89392a. Qualified handoff pending; no guessed endpoint, fake model reply
 or installed/full-DoD claim. Cumulative counts have no administrative maximum.
 PR160/LINK original0212f898 remains draft; separate main-preparation5a6338c
 retains historical2 plus preparation3 without a fixed maximum;

@@ -17,7 +17,7 @@ class ConceptChatIntentTests(unittest.TestCase):
         self.concept=self.store.save(self.scope,{'title':'Saved idea','notes':'Declared purpose','operation_id':'a'*32,'expected_revision':0})
         self.id=self.concept['id'];self.journal=ConceptChatIntents(self.store)
         self.command={'operation_id':'b'*32,'turn_id':'c'*32,'expected_concept_revision':1,'role':'BUSINESS','language':'en','message':'Who is this for?'}
-        self.binding={'id':'own-binding','actor_id':'alice','context_id':'own','concept_id':self.id,'instance_id':'producer-instance','principal_id':'peer-alice','audience':'workspace-advice','dossier_id':'private-dossier','conversation_id':'own-conversation','producer_source':'a'*40,'transfer_policy_digest':'d'*64}
+        self.binding={'id':'own-binding','actor_id':'alice','context_id':'own','concept_id':self.id,'instance_id':'producer-instance','principal_id':'peer-alice','audience':'workspace-advice','dossier_id':'private-dossier','conversation_id':'own-conversation','producer_source':'a'*40,'transfer_policy_digest':'sha256:'+'d'*64}
     def tearDown(self):self.service.close();self.temp.cleanup()
     def freeze(self,command=None,binding=None):
         with self.store.authorized(self.token) as scope:return self.journal.freeze(scope,self.id,command or self.command,binding or self.binding,0)

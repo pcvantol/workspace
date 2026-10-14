@@ -8,6 +8,7 @@ import hashlib
 import json
 import re
 from .concept_briefing import VERSION, source, validate
+from .advisory_contract import _safe
 from .concept_baseline_mapping import digest, text
 
 CONTRACT = 'forge-preproject-concept-advisory/v1'
@@ -25,7 +26,7 @@ def canonical(value):
 
 
 def peer_digest(value):
-    return hashlib.sha256(canonical(value)).hexdigest()
+    return 'sha256:' + hashlib.sha256(canonical(value)).hexdigest()
 
 
 def briefing(snapshot):
@@ -41,6 +42,8 @@ def briefing(snapshot):
     for key, value in fields.items():
         if len(value) > 2000:
             raise AdviceInputTooLong('saved briefing field exceeds advice limit')
+        if not _safe(value):
+            raise ValueError('unsafe briefing text')
         fields[key] = value if value.strip() else None
     return {'concept_id': own['concept']['id'],
             'revision': own['concept']['revision'], 'fields': fields}
@@ -53,11 +56,13 @@ def prepare(snapshot, *, instance, dossier, conversation, operation, turn,
             raise ValueError('invalid configured advice identity')
     if type(expected_revision) is not int or not 0 <= expected_revision <= 1000000 or role not in ROLES or language not in LANGUAGES:
         raise ValueError('invalid advice context')
-    if not isinstance(transfer_digest, str) or re.fullmatch('[0-9a-f]{64}', transfer_digest) is None:
+    if not isinstance(transfer_digest, str) or re.fullmatch('sha256:[0-9a-f]{64}', transfer_digest) is None:
         raise ValueError('explicit transfer policy required')
     if isinstance(message, str) and len(message) > 4000:
         raise AdviceInputTooLong('message exceeds advice limit')
     text(message, 4000)
+    if not _safe(message):
+        raise ValueError('unsafe advice message')
     peer_briefing = briefing(snapshot)
     request = {'contract_version': CONTRACT, 'instance_id': instance,
                'dossier_id': dossier, 'conversation_id': conversation,
@@ -66,7 +71,7 @@ def prepare(snapshot, *, instance, dossier, conversation, operation, turn,
                'briefing_digest': peer_digest(peer_briefing),
                'advisor_kind': ROLES[role], 'language': language,
                'message': message, 'transfer_policy_digest': transfer_digest}
-    if len(canonical(request)) > 32768:
+    if len(json.dumps(request, ensure_ascii=True, allow_nan=False).encode('ascii')) > 32768:
         raise AdviceInputTooLong('complete advice request exceeds byte limit')
     return {'own_source': json.loads(canonical(snapshot)), 'own_source_digest': snapshot['source_digest'],
             'request': request, 'request_digest': peer_digest(request),

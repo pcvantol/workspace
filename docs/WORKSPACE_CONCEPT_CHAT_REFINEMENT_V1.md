@@ -84,15 +84,26 @@ An immutable witness in the existing own operation store detects individual
 row and combined marker/table loss. Original reopen is a read, not permission
 to generate again. These journal operations issue no model/grant/provider call.
 
-The full closed capability/original-turn/error/grant JSON and candidate source
-pin are still required. The named remote candidate branch returned404 at the
-checkpoint. [Concrete JOIN request6162267792](https://github.com/pcvantol/forge/issues/208#issuecomment-6162267792)
-asks for these bytes and the conversation-revision/question-field semantics;
-it does not introduce a general peer-ACK gate. Forge2.19.0 remains an early
-candidate rather than qualified consumer authority. The actual output/wiring,
-provider rights and model accounting must not be invented from a route name.
-The current internal resolver/native callbacks remain unexposed as advisory
-authority, with no fake-response fallback or provider invocation.
+The actual closed R53 schema and explicitly synthetic Business/Architect wire
+examples are projected from candidate e5816702e70712c8e5832e7b7874422e3b988e14.
+The schema, owning input/result contract and example bytes are unchanged on
+newer candidate7b89392a8a126636c7adcba84a185c7008aae133. This is a source
+contract binding, not a qualified producer handoff or model-quality receipt.
+The normal owning Server package includes the exact schema. Consumer checks
+bind original request/briefing, conversation revision, actor/principal/audience,
+result hashes, typed before-values and accepted turn references. The private
+producer integrity seal is checked for shape only: authenticated authorized
+HTTP readback remains necessary. COMPLETE output is never accepted from a
+PENDING, FAILED or UNCERTAIN turn. Digest spelling includes `sha256:` and the
+request capacity follows the producer's expanded ASCII JSON admission, even
+though actual transport uses compact sorted JSON. No old R52 digest changes.
+
+Correction7 is booked once after explicit user authorization; historical
+counts6 and failed access attempts are retained. The initial sandbox transport
+test could not bind a local socket; the owning full validation with explicit
+local test access supersedes that environmental failure without relabeling it.
+Qualified final-main R53, actual pairing/orchestration, native binding and the
+full independent/installed/GUI delivery gates remain open.
 
 The qualified R52 binding remains Forge2.18.0/96e1d73670b8575d41977fd448bfec10fc55206e.
 A new producer pin is used only after actual qualification, and old results

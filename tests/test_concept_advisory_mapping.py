@@ -10,7 +10,7 @@ class ConceptAdvisoryMappingTests(unittest.TestCase):
     def setUp(self):
         self.concept={'id':'a'*32,'actor_id':'alice','context_id':'own','revision':1,'title':'Een idee 🌱','notes':'Originele 日本語 beschrijving','state':'CONCEPT_NOT_CONFIGURED'}
         self.snapshot=source(self.concept,initial(self.concept))
-        self.kw={'instance':'forge-own','dossier':'private-dossier','conversation':'own-conversation','operation':'b'*32,'turn':'c'*32,'expected_revision':0,'role':'BUSINESS','language':'nl','message':'Voor wie is dit? 🌱','transfer_digest':'d'*64}
+        self.kw={'instance':'forge-own','dossier':'private-dossier','conversation':'own-conversation','operation':'b'*32,'turn':'c'*32,'expected_revision':0,'role':'BUSINESS','language':'nl','message':'Voor wie is dit? 🌱','transfer_digest':'sha256:'+'d'*64}
     def test_exact_ascii_digest_preserves_original_own_utf8_source(self):
         original=deepcopy(self.snapshot);value=prepare(self.snapshot,**self.kw);request=value['request']
         self.assertEqual(request['briefing']['fields']['purpose'],self.concept['notes'])
@@ -43,3 +43,27 @@ class ConceptAdvisoryMappingTests(unittest.TestCase):
         with self.assertRaises(ValueError):briefing({})
         fields=initial(self.concept);fields['open_questions']=['Welke regio?','Welke termijn?']
         self.assertEqual(briefing(source(self.concept,fields))['fields']['open_questions'],'Welke regio?\nWelke termijn?')
+
+    def test_real_prefixed_digest_and_producer_text_guards(self):
+        import hashlib
+        self.assertEqual(peer_digest({'a':'🌱'}),'sha256:'+hashlib.sha256(canonical({'a':'🌱'})).hexdigest())
+        with self.assertRaises(ValueError):prepare(self.snapshot,**dict(self.kw,transfer_digest='d'*64))
+        for message in ('<markup>', 'bearer secret', 'password=hidden'):
+            with self.assertRaises(ValueError):prepare(self.snapshot,**dict(self.kw,message=message))
+        fields=initial(self.concept);fields['users']='<untrusted>'
+        with self.assertRaises(ValueError):prepare(source(self.concept,fields),**self.kw)
+    def test_expanded_ascii_limit_matches_actual_producer_admission(self):
+        # Find a boundary where compact transport fits but producer validation
+        # with its default JSON separators exceeds the same 32768-byte bound.
+        fields=initial(self.concept)
+        fields.update(purpose='日'*2000,users='日'*2000,constraints='日'*1300)
+        for count in range(40,100):
+            snapshot=source(self.concept,dict(fields,non_goals='日'*count))
+            try:value=prepare(snapshot,**self.kw)
+            except AdviceInputTooLong:
+                from unittest.mock import patch
+                with patch('workspace_control.concept_advisory_mapping.json.dumps',wraps=json.dumps) as dumps:
+                    with self.assertRaises(AdviceInputTooLong):prepare(snapshot,**self.kw)
+                    self.assertTrue(any(call.kwargs.get('separators') is None for call in dumps.call_args_list))
+                return
+        self.fail('expected actual expanded admission boundary')

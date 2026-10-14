@@ -1,0 +1,13 @@
+{
+  "evidence_type": "SOURCE_CONTRACT_PROJECTION_NOT_INSTALLED_QUALIFICATION",
+  "contract_version": "forge-preproject-concept-advisory/v1",
+  "source_repository": "pcvantol/forge",
+  "original_candidate": "e5816702e70712c8e5832e7b7874422e3b988e14",
+  "byte_identical_newer_candidate": "7b89392a8a126636c7adcba84a185c7008aae133",
+  "schema_path": "forge/api/concept-advisory-v1.json",
+  "schema_sha256": "62cf57cb370a3a239575283a69bc1ef36ea55c35a4d1692ab679f967a1abcb88",
+  "fixture_path": "examples/concept-advisory/synthetic-conversation.json",
+  "fixture_sha256": "89dbab979efadac794f6bb3ce212de0622e5aa37fda080079b0330dda6f95852",
+  "fixture_label": "SYNTHETIC_TYPED_WIRE_EXAMPLE_NOT_RUNTIME_RECEIPT",
+  "producer_qualified": false
+}
