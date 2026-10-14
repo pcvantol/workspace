@@ -1,3 +1,13 @@
+### Finalization CI correction12 — observation only
+
+Native CI38647802499 retained a real expiry-test failure: the old observer checked
+only80ms after the unchanged deadline, before the asynchronous timer had run.
+Correction12 was booked once before source. Only that test now waits up to2s
+for the real timer transition; it never invokes expiry and preserves both denied
+and authority-epoch assertions. No runtime or product deadline changed.
+Cumulative12corrections/3installed/12completedfullruns; required fullrun13 follows.
+The failure and original reviewed32e21e snapshot remain preserved.
+
 ## Plan104 protected implementation — own finalization
 
 Same r81-plan104 / L4-NATIVE-CONCEPT-CHAT-REFINEMENT-V1-20261014.

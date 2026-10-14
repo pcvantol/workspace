@@ -300,7 +300,7 @@
           "qualified_r53_binding": "Forge2.19.0/877602f016dee36c1977ef7df1d937c7c5793ccc",
           "candidate_evidence": "docs/qualification/plan104-candidate-proof-20261014/evidence.json",
           "qualified_projection_receipt": "docs/WORKSPACE_CONCEPT_CHAT_R53_QUALIFIED_BINDING_V1.json",
-          "corrections_consumed": 11,
+          "corrections_consumed": 12,
           "implementation_main": "812143bc5c9e8f8193cec249e5be53583eca4128",
           "qualified_consumer_candidate": "PASS_3936a060_TRIAL3",
           "qualified_candidate_evidence": "https://github.com/pcvantol/workspace/tree/6fa9bd15f20b6e48983857a1224467b7972ff527/docs/qualification/plan104-qualified-r53-candidate-20261015",
