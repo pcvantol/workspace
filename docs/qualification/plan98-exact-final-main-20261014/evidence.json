@@ -1,0 +1,88 @@
+{
+  "assignment": "L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012",
+  "plan": 98,
+  "version": "2.8.27",
+  "state": "NEW_ACTUAL_EXACT_FINAL_MAIN_INSTALLED_GUI_AND_CLEANUP",
+  "source": "588092a5ad85236f6eda315501fc573ef1807bfb",
+  "server_wheel_sha256": "f06cbb2263656b6fe0eeb9392d5f1b54be5e20ccfeb508d705fce28cbc21252a",
+  "server_payload_count": 53,
+  "native_sha256": "7f40ded7576eb7e9bb90810516816f190c5e22fbcacb41899c3d2cde3a58d3ef",
+  "native_archived_component_files_count": 205,
+  "native_production_sources_count": 87,
+  "actual_native_load_command": "      cmd LC_BUILD_VERSION\n  cmdsize 32\n platform 1\n    minos 26.0\n      sdk 26.0\n   ntools 1\n     tool 3\n  version 27037.1\nLoad command 12\n      cmd LC_SOURCE_VERSION\n  cmdsize 16\n  version 0.0\nLoad command 13\n       cm",
+  "producer_source": "f375a4e8adcec0c1693aa100c0f31f6014b84b20",
+  "producer_wheel_sha256": "487357c26d1c023b46ec073bd2f281d2b8157f091518f923266ba8aa13c430ef",
+  "producer_installed_payload_count": 195,
+  "actual_gui": {
+    "source": "588092a5ad85236f6eda315501fc573ef1807bfb",
+    "actual_packaged_client_server_qualified_ep": true,
+    "flow": "Space choose \u2192 inspect \u2192 CommandReturn explicit link \u2192 opened \u2192 separateServerready \u2192 separateClientrestart \u2192 sameoriginalreopen",
+    "original": {
+      "reference_count": 1,
+      "operation_ids": [
+        "D308FBFD-92D8-46C7-A73D-526286B16FBD"
+      ]
+    },
+    "same_intent_bytes": true,
+    "separate_os_restarts": {
+      "server": true,
+      "client": true
+    },
+    "ep_three_gets_same_database_bytes": true,
+    "model_calls": 0,
+    "system_settings_changed": false
+  },
+  "cleanup": {
+    "state": "COMPLETE",
+    "own_resource_cleanup_errors": 0,
+    "before_original_deadline": true,
+    "finished": "2026-10-14T21:41:07.501295+00:00",
+    "qualification_pass": true
+  },
+  "post_cleanup_readback": {
+    "all_recorded_own_pids": {
+      "ep": "STOPPED",
+      "workspace": "STOPPED",
+      "client_pid": "STOPPED"
+    },
+    "own_listeners_closed": true,
+    "fresh_readback_at": "2026-10-14T21:42:18.378111+00:00"
+  },
+  "independent_proof_acceptance": {
+    "Quality": "PASS",
+    "Security": "PASS",
+    "UX": "PASS"
+  },
+  "main_ci": "AUTOMATIC_CHECKS_RECORDED_SEPARATELY_AT_TERMINAL_REGISTRATION",
+  "images": [
+    {
+      "file": "final-main-preview-nl-dark-760.png",
+      "sha256": "6781fd3549f2d6a9908b8df75b56d875b8e5d3e5512a564c83a143116a4e200f",
+      "pixel_privacy": "INDEPENDENT_UX_SECURITY_PASS_BEFORE_PUBLICATION",
+      "png_metadata": "INDEPENDENT_SECURITY_DECODED_TEXT_PASS_PLUS_WRITER_AUDIT",
+      "actual_native_source": "588092a5ad85236f6eda315501fc573ef1807bfb"
+    },
+    {
+      "file": "final-main-opened-nl-dark-760.png",
+      "sha256": "e4095a854d077ad6240203b577006887c528e44bdf4ca37b8eaf29197155b744",
+      "pixel_privacy": "INDEPENDENT_UX_SECURITY_PASS_BEFORE_PUBLICATION",
+      "png_metadata": "INDEPENDENT_SECURITY_DECODED_TEXT_PASS_PLUS_WRITER_AUDIT",
+      "actual_native_source": "588092a5ad85236f6eda315501fc573ef1807bfb"
+    },
+    {
+      "file": "final-main-reopened-nl-dark-760.png",
+      "sha256": "e4095a854d077ad6240203b577006887c528e44bdf4ca37b8eaf29197155b744",
+      "pixel_privacy": "INDEPENDENT_UX_SECURITY_PASS_BEFORE_PUBLICATION",
+      "png_metadata": "INDEPENDENT_SECURITY_DECODED_TEXT_PASS_PLUS_WRITER_AUDIT",
+      "actual_native_source": "588092a5ad85236f6eda315501fc573ef1807bfb"
+    }
+  ],
+  "corrections_consumed": 8,
+  "installed_attempts": 2,
+  "full_validation_runs_resumption": 6,
+  "earlier_candidate_history_retained": true,
+  "unchanged_candidate_matrix": "../plan98-link-candidate-20261014/README.md",
+  "whole_onboarding_complete": false,
+  "signing": "existing isolated ad-hoc qualification only",
+  "global_installation_or_user_settings_changed": false
+}
