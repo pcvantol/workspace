@@ -1,3 +1,25 @@
+## LINK qualified consumer candidate — protected delivery pending
+
+Current production source2a75c5a5ccf88c0d4103d4663a6bc03de22abcbd,
+Workspace2.8.27, same writer/PR160; cumulative corrections8, installedattempt1.
+[Actual candidate evidence](qualification/plan98-link-candidate-20261014/README.md)
+records qualified EP2.3.120/f375a4e8, true native choose/inspect/link/open,
+same original lost-reply recovery with separate Server/Client OS restarts,
+one reference/receipt, five real locale/theme/width opens and retained C7RED /
+C8GREEN for late scope and natural expiry. All own test access/services were
+normally cleaned up before the original deadline. No model/userEP/repository/
+scan/Action/Mission effect. Complete independent source and candidate Q/S/UX,
+all eleven raw screenshot pixelprivacy and separate PNG-metadata audit PASS.
+Owning fullrun5 PASS:248Python/280native+1isolated, strict>80.2% per production
+file, package/noneditable/nativebuild gates. Current CI/TDE are separately
+read back; green workflow is not inferred policyPASS. Protected exact-head
+implementation, nonempty finalization and NEW exact-final-main installed/GUI/
+readback/cleanup remain OPEN. Candidate images retain their original C7/C8
+source byte bindings. Plan104/d458/PR171 remains preserved for after LINK;
+closed predecessors and all historical counters remain closed/retained.
+
+## Earlier candidate stages (retained history)
+
 ## Directed actual candidate findings and correction8
 
 C7 actual packaged keyboard confirmation committed one reference/original receipt
