@@ -3,9 +3,9 @@
 Same r81-plan98 assignment/writer; priority switch from plan104 at clean
 pushed d458fa1/PR171 under selected6161577364 and ACK6177691573. Chat remains
 open and preserved; plan103/predecessors remain closed. Existing PR160 lineage
-0212f898 + merged mainfc3a26a is retained on preparation5a6338c. Corrections6
+0212f898 + merged mainfc3a26a is retained on preparation5a6338c. Corrections7
 cumulative (historical2, main-preparation3, producer binding4, security epoch5,
-identity/keyboard6); installedattempt1, earlier failures retained, no fixed max.
+identity/keyboard6, own isolated-store/lifecycle7); installedattempt1, earlier failures retained, no fixed max.
 
 Qualified EP2.3.120/schema75/sourcef375a4e8adcec0c1693aa100c0f31f6014b84b20,
 wheel487357c26d1c023b46ec073bd2f281d2b8157f091518f923266ba8aa13c430ef,

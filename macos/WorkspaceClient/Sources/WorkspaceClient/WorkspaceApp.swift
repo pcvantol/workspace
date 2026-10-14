@@ -137,15 +137,18 @@ struct ContentView: View {
     init(client: ClientState, conversations: ConversationState = ConversationState(),
          reviews: MissionReviewState = MissionReviewState(), worklists: WorklistState = WorklistState()) {
         self.client = client
+        let linkIntents: PrivateProjectLinkIntents
         #if WORKSPACE_ISOLATED_TEST
         if let document = try? IsolatedTestDocument.load() {
             conceptGrants = IsolatedDraftGrant(document)
+            linkIntents = PrivateProjectLinkIntents(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("project-link-intents"))
             _order = StateObject(wrappedValue:OrderState(credentials:IsolatedOrderCredentials(document),store:OrderIntentStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("order-intents"))))
             _activity = StateObject(wrappedValue:ActivityState(credentials:IsolatedActivityCredentials(document),store:ActivityLocalStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("activity-views"))))
             _concepts = StateObject(wrappedValue:ProjectConceptState(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("project-concept-intents")))
-        } else { conceptGrants = DraftGrantKeychain() }
+        } else { conceptGrants = DraftGrantKeychain(); linkIntents = PrivateProjectLinkIntents() }
         #else
         conceptGrants = DraftGrantKeychain()
+        linkIntents = PrivateProjectLinkIntents()
         #endif
         let linkGrants = conceptGrants
         _projectLinks = StateObject(wrappedValue: ProjectLinkState(reader: ProjectLinkHTTPReader(connection: { @MainActor in
@@ -159,7 +162,7 @@ struct ContentView: View {
                   access.endpoint == client.savedEndpoint, access.instanceID == client.savedInstance,
                   try await Task.detached { try linkGrants.load() }.value == access else { throw ProjectLinkError.denied }
             return paired
-        })))
+        }), intents:linkIntents))
         _conversations = StateObject(wrappedValue: conversations)
         _reviews = StateObject(wrappedValue: reviews)
         _worklists = StateObject(wrappedValue: worklists)
@@ -233,10 +236,9 @@ struct ContentView: View {
                 }.environment(\.nativeTabCommandsActive,true)
             }
         }
-        .onChange(of:[client.phase,client.savedEndpoint,client.savedInstance]) { _,_ in activity.invalidate();order.invalidate() }
-        .onChange(of:[conversations.projectID,conversations.observedActorID ?? ""]) { _,_ in activity.invalidate();order.invalidate() }
-        .onChange(of:client.authorizationLost) { _,lost in if lost { activity.invalidate();order.invalidate() } }
-        .onChange(of:client.phase) {_,phase in if phase != "CONNECTED" {projectLinks.invalidate()} }
+        .onChange(of:[client.phase,client.savedEndpoint,client.savedInstance]) { _,_ in activity.invalidate();order.invalidate();projectLinks.invalidate() }
+        .onChange(of:[conversations.projectID,conversations.observedActorID ?? ""]) { _,_ in activity.invalidate();order.invalidate();projectLinks.invalidate() }
+        .onChange(of:client.authorizationLost) { _,lost in if lost { activity.invalidate();order.invalidate();projectLinks.invalidate() } }
         .tint(WorkspaceAppearance.accent(for:colorScheme))
         .background(WorkspaceAppearance.backdrop(for:colorScheme))
     }

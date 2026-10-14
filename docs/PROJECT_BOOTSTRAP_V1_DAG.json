@@ -579,7 +579,7 @@
   "link_delivery": {
     "assignment": "L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012",
     "plan": 98,
-    "corrections_consumed": 6,
+    "corrections_consumed": 7,
     "installed_attempts": 1,
     "state": "QUALIFIED_PRODUCER_BOUND_CONSUMER_ACCEPTANCE_IN_PROGRESS",
     "contract": "docs/WORKSPACE_VERIFIED_PROJECT_LINK_V1.md",
