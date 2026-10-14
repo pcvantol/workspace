@@ -61,20 +61,36 @@ def map_concept(concept, scope, references, description=None):
         if key!='owner_reference' and re.fullmatch('[a-z0-9][a-z0-9._-]{2,127}',value) is None:
             raise ValueError('invalid provisional reference')
     if description is None:
-        if len(notes)>4096:raise DescriptionRequired('choose a purpose of at most4096characters')
-        purpose=notes if notes.strip() else UNKNOWN
+        purpose=notes if notes.strip() and len(notes)<=4096 else UNKNOWN
     else:
         purpose=text(description,4096)
-    unknown=['users','non_goals','constraints']
+    product_fields={key:UNKNOWN for key in ('users','non_goals','constraints')}
+    briefing=concept.get('briefing')
+    questions=[]
+    if briefing is not None:
+        from .concept_briefing import validate
+        if type(briefing) is not dict or set(briefing)!={'fields','accepted_from'} or type(briefing['accepted_from']) is not dict or not briefing['accepted_from'] or len(canonical(briefing))>64000:
+            raise ValueError('invalid accepted briefing')
+        values=validate(briefing['fields'])
+        if values['name']!=title:raise ValueError('briefing title changed')
+        if description is None and values['purpose'].strip():purpose=values['purpose']
+        product_fields={key:values[key] if values[key].strip() else UNKNOWN for key in product_fields}
+        questions=list(values['open_questions'])
+    if description is None and len(notes)>4096 and purpose==UNKNOWN:
+        raise DescriptionRequired('choose a purpose of at most4096characters')
+    unknown=[key for key,value in product_fields.items() if value==UNKNOWN]
     if purpose==UNKNOWN:unknown.insert(0,'purpose')
     snapshot={key:concept[key] for key in ('id','actor_id','context_id','revision','title','notes','state')}
+    if briefing is not None:snapshot['briefing']=briefing
     source_digest=digest(snapshot)
     choice={'source_digest':source_digest,'purpose':purpose,'unknown_fields':unknown}
     result={**PROFILE,'identity':{'status':'PROVISIONAL_REFERENCE',**references,'authority_repository_id':references['repository_id']},
-            'product':{'name':title,'purpose':purpose,**{key:UNKNOWN for key in ('users','non_goals','constraints')},'open_questions':[QUESTIONS[key] for key in unknown]},
+            'product':{'name':title,'purpose':purpose,**product_fields,'open_questions':list(dict.fromkeys(questions+[QUESTIONS[key] for key in unknown]))},
             'authority_contract_reference':references['repository_id']+':engineering/project-contract.json',
             'source_references':[{'owner':'USER_DECLARED','reference':f'workspace-concept:{identity}:revision:{revision}','digest':source_digest},
                                  {'owner':'USER_DECLARED','reference':f'workspace-concept-purpose-choice:{identity}:revision:{revision}','digest':digest(choice)}]}
+    if briefing is not None:
+        result['source_references'].append({'owner':'USER_DECLARED','reference':f'workspace-concept-accepted-briefing:{identity}:revision:{revision}','digest':digest(briefing)})
     _check(result,_SCHEMA,{})
     if len(canonical(result))>64000:raise ValueError('mapping byte limit')
     return {'contract_version':CONTRACT,'source':snapshot,'source_digest':source_digest,'choice':choice,

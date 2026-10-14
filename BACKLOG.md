@@ -1,5 +1,19 @@
 ## Plan103 protected source — ordinary finalization
 
+## Selected r81-plan104 — native concept chat refinement
+
+[Mandate6161577364](https://github.com/pcvantol/forge/issues/208#issuecomment-6161577364),
+assignment L4-NATIVE-CONCEPT-CHAT-REFINEMENT-V1-20261014, same sole writer,
+basefc3a26a/branchcodex/plan104-native-concept-chat-refinement/PATCH2.8.27.
+[Own bounded implementation](docs/WORKSPACE_CONCEPT_CHAT_REFINEMENT_V1.md):
+chat → separate changes → explicit own adoption → separately updated R52
+baseline. Existing SQLite/immutable originals/manual routes remain. R53 exact
+contract and qualified handoff pending; no guessed endpoint, fake model reply
+or installed/full-DoD claim. Cumulative counts have no administrative maximum.
+PR160/LINK remains separately parked with original0212f898 and historical2;
+qualified HOB-EP01 delivery has priority at the next safe checkpoint. Plan103
+CLOSED via[6156170422](https://github.com/pcvantol/forge/issues/208#issuecomment-6156170422).
+
 Assignment `L4-PROJECT-CONCEPT-BASELINE-PREVIEW-V1-20261013`, same r81-plan103 writer/session. [Implementation PR169](https://github.com/pcvantol/workspace/pull/169) was normally protected and squash-merged to `a9f43228f0ec2c57d1a3ca1e52442a8d953da65d` from exact independently accepted `b231728f1772e08bd795946f708812ee22f7f1f4`; merged tree is byte-identical to the reviewed tree. Workspace2.8.26 is unchanged by this documentary NO_BUMP finalization. Cumulative corrections12 / qualificationruns5; earlier counts, partial failures and source-bound evidence remain preserved.
 
 Saved concept → explicit saved-source check → actual Forge baseline proposal → real documents/open questions → original read-only reopen. Only CONCEPT_BASELINE_PREVIEW, not complete PB-W2/setup/adoption/onboarding. Qualified Forge2.18.0/schema46 exact96e1d73670b8575d41977fd448bfec10fc55206e and wheel20efb7 are delivered and independently accepted. Own actor/context/concept authority stays separate from finite producer PREPARE/READ. No model/EP/repository/approval/apply/Mission effect or global installation/credential/system-setting change.

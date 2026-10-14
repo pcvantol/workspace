@@ -117,6 +117,7 @@ struct ProjectConceptView: View {
                     }.disabled(state.lifecycleBlocked).accessibilityIdentifier("concept-lifecycle")
                     if state.selectionStale && state.phase != "conflict" { Text(text("conflict")).foregroundStyle(.secondary) }
                     if state.dirty || state.pending != nil { Text(text("lifecycleBlocked")).foregroundStyle(.secondary) }
+                    ConceptChatView(concept:selected,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale)
                     ConceptBaselinePanel(state:baseline,concept:selected,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)})
                     if let created = WorksetReleaseWire.date(selected.created_at), let updated = WorksetReleaseWire.date(selected.updated_at) {
                         LabeledContent(text("created"),value:created.formatted(date:.abbreviated,time:.shortened))
@@ -128,7 +129,7 @@ struct ProjectConceptView: View {
                     }
                 }
                 if state.busy { ProgressView() }
-            }.padding(24).frame(minWidth:0,maxWidth:850,alignment:.leading)
+            }.padding(24).frame(minWidth:0,maxWidth:1200,alignment:.leading)
         }
         .task { state.bindAuthorization(client); await state.refresh(current:current);state.observeAuthority(current:current) }
         .onChange(of:client.phase) { _,phase in

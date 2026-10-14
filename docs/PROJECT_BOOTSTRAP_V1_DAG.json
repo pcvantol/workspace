@@ -265,7 +265,7 @@
         "scope": "CONCEPT_BASELINE_PREVIEW",
         "assignment": "L4-PROJECT-CONCEPT-BASELINE-PREVIEW-V1-20261013",
         "plan": 103,
-        "status": "PROTECTED_SOURCE_MERGED_FINALIZATION_PENDING",
+        "status": "CLOSED_SCOPED_DELIVERED",
         "own_contract": "docs/WORKSPACE_CONCEPT_BASELINE_V1.md",
         "producer_contract": "forge-project-proposal-http/v1",
         "qualified_producer_binding": "Forge2.18.0/96e1d73670b8575d41977fd448bfec10fc55206e/forge-project-proposal-http/v1",
@@ -276,8 +276,25 @@
         "source_main": "a9f43228f0ec2c57d1a3ca1e52442a8d953da65d",
         "candidate_acceptance": "COMPLETE_SCOPED_QUALITY_SECURITY_UX_PASS",
         "finalization": "docs/WORKSPACE_CONCEPT_BASELINE_FINALIZATION_V1.md",
-        "new_exact_final_main_installed": "PENDING"
-      }
+        "new_exact_final_main_installed": "PASS_fc3a26ab048742d2c03c79969860c0b6feb3f12e",
+        "terminal_register": "https://github.com/pcvantol/forge/issues/208#issuecomment-6156170422"
+      },
+      "selected_successor_subsets": [
+        {
+          "scope": "CONCEPT_CHAT_REFINEMENT",
+          "assignment": "L4-NATIVE-CONCEPT-CHAT-REFINEMENT-V1-20261014",
+          "plan": 104,
+          "status": "OWN_SOURCE_IN_PROGRESS_R53_CONTRACT_PENDING",
+          "own_contract": "docs/WORKSPACE_CONCEPT_CHAT_REFINEMENT_V1.md",
+          "producer_assignment": "L3-PREPROJECT-CONCEPT-ADVISORY-V1-20261014",
+          "producer_contract": "PENDING_ACTUAL_R53_PUBLICATION",
+          "join": "L3-L4-CONCEPT-CHAT-BRIEF-V1-20261014",
+          "prior_subset": "CONCEPT_BASELINE_PREVIEW",
+          "full_parent_selected": false,
+          "ep_dependency_for_subset": false,
+          "qualified_r52_binding": "Forge2.18.0/96e1d73670b8575d41977fd448bfec10fc55206e"
+        }
+      ]
     },
     {
       "id": "PB-W3-PROGRESS",

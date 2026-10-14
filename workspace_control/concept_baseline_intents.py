@@ -73,6 +73,10 @@ class ConceptBaselineIntents:
                     if lifecycle_for(self.base,db,identity)=='ARCHIVED':raise ConversationConflict('restore concept before preparing')
                     if current['revision']!=command['expected_revision']:raise ConversationConflict('concept revision changed')
                     source=self.store._record(current)
+                    from .concept_briefing_store import ConceptBriefingStore
+                    briefing=ConceptBriefingStore(self.store)._read(db,scope,identity)
+                    if briefing['accepted_from'] is not None:
+                        source['briefing']={'fields':briefing['fields'],'accepted_from':briefing['accepted_from']}
                     if exists and db.execute('SELECT count(*) FROM '+TABLE).fetchone()[0]>=LIMIT:raise ConceptStorageUnavailable('proposal history capacity')
                     references=None
                     if exists:
