@@ -23,7 +23,7 @@ class ProjectLinkHTTPTests(unittest.TestCase):
         self.server.shutdown();self.server.server_close();self.thread.join();self.service.close();self.temp.cleanup()
     def request(self,path,method='GET',body=None,headers=None):
         values={'Authorization':'Bearer '+self.service.token,'X-Workspace-Instance':self.service.instance_id,
-                'X-Workspace-Project-Grant':'synthetic-viewer'}
+                'X-Workspace-Project-Grant':'synthetic-viewer','X-Workspace-Project-Binding':'epoch-1'}
         if headers is not None:values.update(headers)
         if body is not None:
             if not isinstance(body,str):body=json.dumps(body)
@@ -54,11 +54,11 @@ class ProjectLinkHTTPTests(unittest.TestCase):
         code,body=self.request('/v1/project-links/projects');self.assertEqual(code,503)
         self.assertEqual(body,{'error':'PROJECT_LINK_PRODUCER_UNBOUND'})
     def test_closed_mutation_snapshot_authority_and_late_scope_checks(self):
-        base={'expected_revision':1,'authority_id':'core','operation_id':'op'}
+        base={'expected_revision':'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','authority_id':'core','operation_id':'op'}
         for value in [{},base|{'extra':True},base|{'operation_id':'bad/path'},'not-json','{"expected_revision":1,"expected_revision":2}',base|{'expected_revision':True}]:
             self.assertIn(self.request('/v1/project-links/atlas/link','POST',value)[0],[400,409])
         self.assertEqual(self.request('/v1/project-links/atlas/link','POST',base,{'Content-Type':'text/plain'})[0],400)
-        for body in [base|{'authority_id':'child'},base|{'expected_revision':2}]:self.assertEqual(self.request('/v1/project-links/atlas/link','POST',body)[0],409)
+        for body in [base|{'authority_id':'child'},base|{'expected_revision':'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'}]:self.assertEqual(self.request('/v1/project-links/atlas/link','POST',body)[0],409)
         self.gateway.deny_after_read=True
         self.assertEqual(self.request('/v1/project-links/atlas/link','POST',base)[0],403)
         self.assertFalse((self.root/'conversations.sqlite3').exists())
@@ -68,7 +68,7 @@ class ProjectLinkHTTPTests(unittest.TestCase):
         self.assertEqual(self.request('/v1/project-links/atlas/inspect')[0],400)
     def test_declared_own_inventory_no_new_issuer_and_current_access_expiry(self):
         from workspace_control.http import operation_inventory
-        operations={x['id']:x for x in operation_inventory(self.service.instance_id)['operations'] if x['id'].startswith('project_link.')}
+        operations={x['id']:x for x in operation_inventory(self.service.instance_id)['operations'] if x['id'].startswith('project_link.') and x['exposure']=='HTTP_EXPOSED'}
         self.assertEqual(set(operations),{'project_link.access','project_link.projects','project_link.inspect','project_link.link','project_link.open'})
         self.assertTrue(all(x['auth']=='BEARER_PINNED_AND_EXISTING_ACTOR_PAIRING' for x in operations.values()))
         self.assertNotIn('project_link.issue',operations)
@@ -78,6 +78,40 @@ class ProjectLinkHTTPTests(unittest.TestCase):
         self.gateway.access=replace(self.gateway.access,expires_at='2020-01-01T00:00:00Z')
         status,body=self.request('/v1/project-links/access');self.assertEqual(status,403)
         self.assertEqual(body['error'],'PROJECT_LINK_ACCESS_EXPIRED')
+
+    def test_original_request_binding_survives_scope_change_and_publication(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        original=self.service.project_links.discover
+        def swap(token,**kw):
+            result=original(token,**kw)
+            self.gateway.access=replace(self.gateway.access,epoch='replacement',project_ids=frozenset())
+            return result
+        with patch.object(self.service.project_links,'discover',side_effect=swap):
+            status,body=self.request('/v1/project-links/projects')
+        self.assertEqual(status,403);self.assertEqual(set(body),{'error'});self.assertNotIn('Atlas',str(body))
+        self.gateway.access=replace(self.gateway.access,epoch='epoch-1',project_ids=frozenset(['atlas']))
+        for epoch in ['', 'replacement']:
+            status,body=self.request('/v1/project-links/atlas/link','POST',{'expected_revision':'a'*64,'authority_id':'core','operation_id':'old-binding'},headers={'X-Workspace-Project-Binding':epoch})
+            self.assertEqual(status,403)
+        self.assertFalse((self.root/'conversations.sqlite3').exists())
+        link=self.service.project_links.link
+        def before_commit(*args,**kw):
+            self.gateway.access=replace(self.gateway.access,epoch='replacement')
+            return link(*args,**kw)
+        with patch.object(self.service.project_links,'link',side_effect=before_commit):
+            status,body=self.request('/v1/project-links/atlas/link','POST',{'expected_revision':'a'*64,'authority_id':'core','operation_id':'racing-old-binding'})
+        self.assertEqual(status,403);self.assertFalse((self.root/'conversations.sqlite3').exists())
+
+    def test_contract_valid_internal_dots_and_128_byte_identifier_route(self):
+        from dataclasses import replace
+        for identity in ['atlas..prod','x'*121,'x'*128]:
+            self.gateway.access=replace(self.gateway.access,project_ids=frozenset([identity]))
+            self.gateway.value['project_id']=identity;self.gateway.value['name']=identity
+            code,body=self.request('/v1/project-links/'+identity+'/inspect')
+            self.assertEqual(code,200);self.assertEqual(body['project_id'],identity)
+        for identity in ['..','.hidden','x'*129,'a/b']:
+            self.assertEqual(self.request('/v1/project-links/'+identity+'/inspect')[0],400)
 
     def test_closed_error_projection_without_private_diagnostics(self):
         from unittest.mock import patch

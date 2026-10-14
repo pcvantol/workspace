@@ -29,6 +29,10 @@ def identifier(value):
     return value
 
 
+def valid_revision(value):
+    return isinstance(value, str) and re.fullmatch('[0-9a-f]{64}', value) is not None
+
+
 def timestamp(value):
     if not isinstance(value, str):
         raise ValueError("invalid link timestamp")
@@ -69,10 +73,10 @@ def validate_topology(raw, scope, project_id):
     if raw['peer_id'] != scope.peer_id or raw['project_id'] != project_id:
         raise LinkConflict("wrong owning peer or project")
     identifier(raw['authority_repository_id'])
-    if (not isinstance(raw['name'], str) or not raw['name'].strip() or len(raw['name']) > 120
+    if (not isinstance(raw['name'], str) or not raw['name'].strip() or len(raw['name']) > 128
             or any(ord(x) < 32 for x in raw['name'])):
         raise ValueError("invalid project name")
-    if type(raw['revision']) is not int or raw['revision'] < 1:
+    if not valid_revision(raw['revision']):
         raise ValueError("invalid topology revision")
     timestamp(raw['observed_at'])
     repositories = raw['repositories']
@@ -86,10 +90,10 @@ def validate_topology(raw, scope, project_id):
         if identity in ids:
             raise LinkConflict("duplicate logical repository")
         ids.add(identity)
-        if (not isinstance(item['name'], str) or not item['name'].strip() or len(item['name']) > 120
+        if (not isinstance(item['name'], str) or not item['name'].strip() or len(item['name']) > 128
                 or any(ord(x) < 32 for x in item['name'])):
             raise ValueError("invalid repository name")
-        if item['role'] not in ['authority', 'child'] or type(item['available_attachments']) is not int or not 0 <= item['available_attachments'] <= 100:
+        if item['role'] not in ['authority', 'child'] or item['available_attachments'] is not None and (type(item['available_attachments']) is not int or not 0 <= item['available_attachments'] <= 100):
             raise ValueError("invalid repository availability")
         if item['role'] == 'authority':
             authority.append(identity)
@@ -134,7 +138,7 @@ class ProjectLinkStore:
         connection = self.conversations._connect(create=True)
         connection.execute('''CREATE TABLE IF NOT EXISTS project_links (
             actor_id TEXT NOT NULL, project_id TEXT NOT NULL, peer_id TEXT NOT NULL,
-            authority_id TEXT NOT NULL, topology_revision INTEGER NOT NULL,
+            authority_id TEXT NOT NULL, topology_revision TEXT NOT NULL,
             PRIMARY KEY(actor_id, project_id))''')
         connection.execute('''CREATE TABLE IF NOT EXISTS project_link_operations (
             actor_id TEXT NOT NULL, operation_id TEXT NOT NULL, request_digest TEXT NOT NULL,
@@ -205,8 +209,8 @@ class ProjectLinks:
         return {"actor_id":scope.actor_id,"peer_id":scope.peer_id,"project_ids":sorted(scope.project_ids),
                 "expires_at":scope.expires_at,"epoch":scope.epoch}
 
-    def discover(self, token):
-        scope = self._scope(token)
+    def discover(self, token, *, expected=None):
+        scope = self._scope(token, expected)
         projects = self.gateway.discover(scope)
         if not isinstance(projects, list) or len(projects) > 100:
             raise ValueError("invalid bounded discovery")
@@ -216,23 +220,23 @@ class ProjectLinks:
                 raise ValueError('invalid discovery row')
             identity = identifier(project['id']); scope.require(identity); identities.append(identity)
             name = project['name']
-            if not isinstance(name, str) or not name.strip() or len(name) > 120 or any(ord(x) < 32 for x in name):
+            if not isinstance(name, str) or not name.strip() or len(name) > 128 or any(ord(x) < 32 for x in name):
                 raise ValueError('invalid discovery name')
         if len(set(identities)) != len(identities):
             raise ValueError("duplicate discovery identity")
         self._scope(token, scope)
         return {'projects': json.loads(json.dumps(projects)), 'state': 'AVAILABLE' if projects else 'EMPTY'}
 
-    def inspect(self, token, project):
-        identifier(project); scope = self._scope(token); scope.require(project)
+    def inspect(self, token, project, *, expected=None):
+        identifier(project); scope = self._scope(token, expected); scope.require(project)
         topology = validate_topology(self.gateway.topology(scope, project), scope, project)
         self._scope(token, scope)
         return topology
 
-    def link(self, token, project, expected_revision, operation_id, *, authority_id):
-        scope = self._scope(token); scope.require(project)
+    def link(self, token, project, expected_revision, operation_id, *, authority_id, expected=None):
+        scope = self._scope(token, expected); scope.require(project)
         topology = validate_topology(self.gateway.topology(scope, project), scope, project)
-        if type(expected_revision) is not int or topology['revision'] != expected_revision or topology['authority_repository_id'] != authority_id:
+        if not valid_revision(expected_revision) or topology['revision'] != expected_revision or topology['authority_repository_id'] != authority_id:
             raise LinkConflict("topology changed; inspect again")
         self._scope(token, scope)
         # No implicit snapshot-only fallback: an unqualified gateway cannot save.
@@ -246,8 +250,8 @@ class ProjectLinks:
         self._scope(token, scope)
         return result
 
-    def open(self, token, project):
-        scope = self._scope(token); scope.require(project)
+    def open(self, token, project, *, expected=None):
+        scope = self._scope(token, expected); scope.require(project)
         linked = next((row for row in self.store.identities(scope) if row['project_id'] == project), None)
         if linked is None:
             raise FileNotFoundError("project reference not found")

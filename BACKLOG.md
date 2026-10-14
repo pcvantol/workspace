@@ -1,3 +1,40 @@
+## Active LINK completion after qualified HOB-EP01 — 14 October 2026
+
+Same r81-plan98 assignment/writer; priority switch from plan104 at clean
+pushed d458fa1/PR171 under selected6161577364 and ACK6177691573. Chat remains
+open and preserved; plan103/predecessors remain closed. Existing PR160 lineage
+0212f898 + merged mainfc3a26a is retained on preparation5a6338c. Corrections6
+cumulative (historical2, main-preparation3, producer binding4, security epoch5,
+identity/keyboard6); installedattempt1, earlier failures retained, no fixed max.
+
+Qualified EP2.3.120/schema75/sourcef375a4e8adcec0c1693aa100c0f31f6014b84b20,
+wheel487357c26d1c023b46ec073bd2f281d2b8157f091518f923266ba8aa13c430ef,
+closed schema1d909b8098f209ad2828c15ddfe171b65ed4d22aab5d18dd25f0dccf33d457e9
+is delivered by[6171877315](https://github.com/pcvantol/forge/issues/208#issuecomment-6171877315).
+Actual separate noneditable own Server→qualified EP HTTP discovery/topology and
+narrower own-actor project set PASS; peer-readable foreign project gives403.
+This early C4 source-component proof does not prove C5/C6 or final-main GUI.
+
+The actual adapter consumes only the two closed owner GETs with finite discovery
+READ and exact instance/consumer/Workspace/audience/scope. Trusted local owner
+pairs an existing own actor/context to a narrower explicit project set; no new
+issuer. Every request preserves its original binding epoch through admission,
+local commit and guarded publication. Native actor/peer checks remain exact;
+a separate authenticated ownServer bootstrap resolves concrete identities.
+Topology revision remains the full64hex string. No display names exist in this
+producer: readonly labels faithfully show canonical IDs (up to128 characters),
+never inferred names. Attachments NOT_GRANTED are unknown, distinct from zero.
+
+Only PB-W1-LINK/PB-WQ-LINK; no scan/adoption/repository/EPAction/Mission/model.
+Current LINK normal PATCH2.8.27 follows actual priority delivery order. The
+unmerged plan1042.8.27 allocation remains historical on its preserved branch;
+chat must rebase/reallocate normally after LINK, without changing its old receipt.
+Required source/CI/complete independent Q/S/UX, actual installed Client/Server/EP,
+keyboard/five-language/screens, protected implementation/nonempty finalization
+and NEW exact-final-main proof/readback/own cleanup remain OPEN.
+
+## Historical preparation and earlier source checkpoints
+
 ## Plan103 protected source — ordinary finalization
 
 ## LINK main-integration preparation — 14 October 2026

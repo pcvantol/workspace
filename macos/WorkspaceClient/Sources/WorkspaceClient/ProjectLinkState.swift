@@ -6,7 +6,7 @@ struct LinkedRepository: Codable, Equatable, Identifiable, Sendable {
     let id: String
     let name: String
     let role: String
-    let availableAttachments: Int
+    let availableAttachments: Int?
 }
 struct LinkProject: Codable, Equatable, Identifiable, Sendable {
     let id: String
@@ -17,17 +17,18 @@ struct LinkTopology: Codable, Equatable, Sendable {
     let projectID: String
     let name: String
     let authorityID: String
-    let revision: Int
+    let revision: String
     let observedAt: Date
     let repositories: [LinkedRepository]
+    static func validRevision(_ value: String) -> Bool { value.range(of: "^[a-f0-9]{64}$", options: .regularExpression) != nil }
     func validate(_ access: ProjectLinkAccess, project: String) throws {
         try access.validate()
         guard peerID == access.peerID, projectID == project, access.projectIDs.contains(project),
-              revision > 0, !name.isEmpty, name.count <= 120, !repositories.isEmpty,
+              Self.validRevision(revision), !name.isEmpty, name.count <= 128, !repositories.isEmpty,
               repositories.count <= 100, Set(repositories.map(\.id)).count == repositories.count,
               repositories.filter({ $0.role == "authority" }).map(\.id) == [authorityID],
-              repositories.allSatisfy({ ProjectLinkAccess.validID($0.id) && !$0.name.isEmpty && $0.name.count <= 120 &&
-                ["authority", "child"].contains($0.role) && (0...100).contains($0.availableAttachments) }) else { throw ProjectLinkError.invalid }
+              repositories.allSatisfy({ ProjectLinkAccess.validID($0.id) && !$0.name.isEmpty && $0.name.count <= 128 &&
+                ["authority", "child"].contains($0.role) && ($0.availableAttachments == nil || (0...100).contains($0.availableAttachments!)) }) else { throw ProjectLinkError.invalid }
     }
 }
 struct ProjectLinkAccess: Equatable, Sendable {
@@ -56,11 +57,11 @@ enum ProjectLinkError: Error { case denied, unavailable, unsupported, expired, c
 struct ProjectLinkIntent: Codable, Equatable, Sendable {
     let scopeKey: String
     let projectID: String
-    let expectedRevision: Int
+    let expectedRevision: String
     let operationID: String
     let authorityID: String
     func validate(_ key: String) throws {
-        guard scopeKey == key, ProjectLinkAccess.validID(projectID), expectedRevision > 0,
+        guard scopeKey == key, ProjectLinkAccess.validID(projectID), LinkTopology.validRevision(expectedRevision),
               ProjectLinkAccess.validID(operationID), ProjectLinkAccess.validID(authorityID) else { throw ProjectLinkError.invalid }
     }
 }
@@ -165,7 +166,7 @@ final class ProjectLinkState: ObservableObject {
             let values = try await reader.discover(current); try current.validate()
             guard ticket == generation else { return }
             guard values.count <= 100, Set(values.map(\.id)).count == values.count,
-                  values.allSatisfy({ current.projectIDs.contains($0.id) && ProjectLinkAccess.validID($0.id) && !$0.name.isEmpty && $0.name.count <= 120 }) else { throw ProjectLinkError.invalid }
+                  values.allSatisfy({ current.projectIDs.contains($0.id) && ProjectLinkAccess.validID($0.id) && !$0.name.isEmpty && $0.name.count <= 128 }) else { throw ProjectLinkError.invalid }
             access = current; projects = values; phase = values.isEmpty ? "empty" : "choose"
             armExpiry(current.expiresAt, ticket: ticket)
         } catch { if ticket == generation { failure(error) } }

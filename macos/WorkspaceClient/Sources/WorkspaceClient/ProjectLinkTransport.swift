@@ -39,6 +39,7 @@ struct ProjectLinkHTTPReader: ProjectLinkReading {
         request.setValue("Bearer " + binding.bearer, forHTTPHeaderField: "Authorization")
         request.setValue(binding.workspaceInstanceID, forHTTPHeaderField: "X-Workspace-Instance")
         request.setValue(binding.actorPairingToken, forHTTPHeaderField: "X-Workspace-Project-Grant")
+        if let expected { request.setValue(expected.epoch, forHTTPHeaderField: "X-Workspace-Project-Binding") }
         if body != nil { request.setValue("application/json", forHTTPHeaderField: "Content-Type") }
         let (data, response) = try await session.data(for: request)
         guard let response = response as? HTTPURLResponse, data.count <= 262144,
@@ -74,14 +75,14 @@ struct ProjectLinkHTTPReader: ProjectLinkReading {
         guard Set(raw.keys) == ["peer_id", "project_id", "name", "authority_repository_id", "revision", "observed_at", "repositories"],
               let peer = raw["peer_id"] as? String, let projectID = raw["project_id"] as? String,
               let name = raw["name"] as? String, let authority = raw["authority_repository_id"] as? String,
-              let revision = integer(raw["revision"]),
+              let revision = raw["revision"] as? String,
               let stamp = raw["observed_at"] as? String, let observed = WorksetReleaseWire.date(stamp),
               let repositories = raw["repositories"] as? [[String: Any]], repositories.count <= 100 else { throw ProjectLinkError.invalid }
         let items = try repositories.map { row -> LinkedRepository in
             guard Set(row.keys) == ["id", "name", "role", "available_attachments"],
                   let id = row["id"] as? String, let name = row["name"] as? String, let role = row["role"] as? String,
-                  let count = integer(row["available_attachments"]) else { throw ProjectLinkError.invalid }
-            return .init(id: id, name: name, role: role, availableAttachments: count)
+                  (row["available_attachments"] is NSNull || integer(row["available_attachments"]) != nil) else { throw ProjectLinkError.invalid }
+            return .init(id: id, name: name, role: role, availableAttachments: integer(row["available_attachments"]))
         }
         let topology = LinkTopology(peerID: peer, projectID: projectID, name: name, authorityID: authority, revision: revision, observedAt: observed, repositories: items)
         try topology.validate(access, project: project); return topology
@@ -128,5 +129,40 @@ struct ProjectLinkHTTPReader: ProjectLinkReading {
         guard let topology = raw["topology"] as? [String: Any], raw["state"] as? String == "VERIFIED_REFERENCE",
               raw["engineering_readiness"] as? String == "NOT_ASSESSED" else { throw ProjectLinkError.invalid }
         return try decodeTopology(topology, access: access, project: project)
+    }
+}
+
+// Bootstrap only through the existing pinned owning HTTP/actor proof. There is
+// no empty/wildcard identity and no caller-selected actor or EP. Every ordinary
+// reader request retains its unconditional exact actor/peer comparison.
+extension ProjectLinkHTTPReader {
+    static func pairedConnection(_ access: DraftAccess, bearer: String, testingSession: URLSession? = nil) async throws -> ProjectLinkConnection {
+        let endpoint = try ServerEndpoint(access.endpoint)
+        let url = endpoint.url.appendingPathComponent("v1/project-links/access")
+        let config = URLSessionConfiguration.ephemeral
+        config.httpCookieStorage = nil; config.urlCredentialStorage = nil; config.urlCache = nil
+        let session = testingSession ?? URLSession(configuration: config, delegate: ProjectLinkRedirects(), delegateQueue: nil)
+        defer { session.invalidateAndCancel() }
+        var request = URLRequest(url: url); request.timeoutInterval = 15
+        request.setValue("Bearer " + bearer, forHTTPHeaderField: "Authorization")
+        request.setValue(access.instanceID, forHTTPHeaderField: "X-Workspace-Instance")
+        request.setValue(access.token, forHTTPHeaderField: "X-Workspace-Project-Grant")
+        let (data, response) = try await session.data(for: request)
+        guard let response = response as? HTTPURLResponse, response.url == url, data.count <= 262144 else { throw ProjectLinkError.invalid }
+        if response.statusCode == 401 || response.statusCode == 403 { throw ProjectLinkError.denied }
+        if response.statusCode == 503 { throw ProjectLinkError.unavailable }
+        guard response.statusCode == 200,
+              response.value(forHTTPHeaderField: "Content-Type")?.hasPrefix("application/json") == true,
+              let raw = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+              Set(raw.keys) == ["workspace_instance_id", "actor_id", "peer_id", "project_ids", "expires_at", "epoch"],
+              raw["workspace_instance_id"] as? String == access.instanceID,
+              let actor = raw["actor_id"] as? String, let peer = raw["peer_id"] as? String,
+              let projects = raw["project_ids"] as? [String], Set(projects).count == projects.count,
+              let stamp = raw["expires_at"] as? String, let expiry = WorksetReleaseWire.date(stamp),
+              let epoch = raw["epoch"] as? String else { throw ProjectLinkError.invalid }
+        try ProjectLinkAccess(workspaceInstanceID: access.instanceID, actorID: actor, peerID: peer,
+            projectIDs: Set(projects), expiresAt: expiry, epoch: epoch).validate()
+        return ProjectLinkConnection(endpoint: access.endpoint, workspaceInstanceID: access.instanceID,
+            bearer: bearer, actorPairingToken: access.token, actorID: actor, peerID: peer)
     }
 }

@@ -140,6 +140,7 @@ for key,method,path in [("list","GET","/v1/project-concepts"),("create","POST","
 for key,method,path in [("access","GET","/v1/concept-baselines/{concept_id}/access"),("history","GET","/v1/concept-baselines/{concept_id}/operations"),("prepare","POST","/v1/concept-baselines/{concept_id}/prepare"),("original","GET","/v1/concept-baselines/{concept_id}/operations/{operation_id}")]:
     OPERATIONS["concept-baselines."+key]={"exposure":"HTTP_EXPOSED","method":method,"path":path,"auth":"BEARER_PINNED_AND_DRAFT_GRANT","contract":"concept-baseline","summary":"saved concept document-only proposal; no registration/approval/apply/Mission"}
 for key in ["issue","revoke"]:
+    OPERATIONS["project_link.bind."+key]={"exposure":"LOCAL_ONLY_ADMIN","local_cli":"project-link-bind-"+key,"auth":"PRIVATE_ROOT_OWNER","summary":"pair or revoke existing finite EP discovery READ; no issuer"}
     OPERATIONS["concept-baselines.bind."+key]={"exposure":"LOCAL_ONLY_ADMIN","local_cli":"concept-baseline-bind-"+key,"auth":"PRIVATE_ROOT_OWNER","summary":"pair or revoke existing finite private dossier capability"}
 
 for key,method,path in [("context","GET","/v1/mission-concepts/{conversation_id}/context"),("resolve","POST","/v1/mission-concepts/resolve"),("package","GET","/v1/mission-concepts/{conversation_id}/package"),("approve","POST","/v1/mission-concepts/{conversation_id}/approve"),("operation","GET","/v1/mission-concepts/{conversation_id}/operations/{operation_id}")]:

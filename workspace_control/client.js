@@ -183,6 +183,8 @@ const ownOperations = {
   'concept-baselines.history': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-baselines/{concept_id}/operations'},
   'concept-baselines.prepare': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'POST',path:'/v1/concept-baselines/{concept_id}/prepare'},
   'concept-baselines.original': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-baselines/{concept_id}/operations/{operation_id}'},
+  'project_link.bind.issue': {exposure:'LOCAL_ONLY_ADMIN',auth:'PRIVATE_ROOT_OWNER',local_cli:'project-link-bind-issue'},
+  'project_link.bind.revoke': {exposure:'LOCAL_ONLY_ADMIN',auth:'PRIVATE_ROOT_OWNER',local_cli:'project-link-bind-revoke'},
   'concept-baselines.bind.issue': {exposure:'LOCAL_ONLY_ADMIN',auth:'PRIVATE_ROOT_OWNER',local_cli:'concept-baseline-bind-issue'},
   'concept-baselines.bind.revoke': {exposure:'LOCAL_ONLY_ADMIN',auth:'PRIVATE_ROOT_OWNER',local_cli:'concept-baseline-bind-revoke'},
 

@@ -7,7 +7,7 @@ import XCTest
 private final class LinkFixture: ProjectLinkReading, @unchecked Sendable {
     var current = ProjectLinkAccess(workspaceInstanceID: "workspace", actorID: "actor", peerID: "ep", projectIDs: ["atlas"], expiresAt: Date().addingTimeInterval(3600), epoch: "1")
     var rows = [LinkProject(id: "atlas", name: "Atlas")]
-    var value = LinkTopology(peerID: "ep", projectID: "atlas", name: "Atlas", authorityID: "core", revision: 1, observedAt: Date(), repositories: [.init(id: "core", name: "Core", role: "authority", availableAttachments: 2), .init(id: "client", name: "Client", role: "child", availableAttachments: 0)])
+    var value = LinkTopology(peerID: "ep", projectID: "atlas", name: "Atlas", authorityID: "core", revision: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", observedAt: Date(), repositories: [.init(id: "core", name: "Core", role: "authority", availableAttachments: 2), .init(id: "client", name: "Client", role: "child", availableAttachments: 0)])
     var error: ProjectLinkError?
     var linkError: ProjectLinkError?
     var commands: [ProjectLinkIntent] = []
@@ -60,12 +60,12 @@ final class ProjectLinkTests: XCTestCase {
             let state = ProjectLinkState(reader:fixture,intents:store)
             await state.refresh(); await state.select("atlas"); await state.linkAndOpen()
             XCTAssertEqual(fixture.commands.count,1)
-            fixture.value = LinkTopology(peerID:"ep",projectID:"atlas",name:"Atlas",authorityID:"core",revision:2,observedAt:Date(),repositories:fixture.value.repositories)
+            fixture.value = LinkTopology(peerID:"ep",projectID:"atlas",name:"Atlas",authorityID:"core",revision: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",observedAt:Date(),repositories:fixture.value.repositories)
             let restart = ProjectLinkState(reader:fixture,intents:store)
             await restart.refresh(); await restart.select("atlas"); await restart.linkAndOpen()
-            XCTAssertEqual(restart.phase,"opened"); XCTAssertEqual(restart.opened?.revision,2)
+            XCTAssertEqual(restart.phase,"opened"); XCTAssertEqual(restart.opened?.revision,"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
             XCTAssertEqual(fixture.commands.count,1)
-            XCTAssertEqual(try store.load(fixture.current.intentKey("atlas"))?.expectedRevision,1)
+            XCTAssertEqual(try store.load(fixture.current.intentKey("atlas"))?.expectedRevision,"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
         }
     }
     @MainActor func testDefinitiveConflictArchivesOriginalBeforeFreshExplicitConfirmation() async throws {
@@ -73,13 +73,13 @@ final class ProjectLinkTests: XCTestCase {
         defer { try? FileManager.default.removeItem(at:root) }
         let fixture = LinkFixture(), store = PrivateProjectLinkIntents(root:root)
         let key = fixture.current.intentKey("atlas")
-        let original = ProjectLinkIntent(scopeKey:key,projectID:"atlas",expectedRevision:1,operationID:"original",authorityID:"core")
+        let original = ProjectLinkIntent(scopeKey:key,projectID:"atlas",expectedRevision: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",operationID:"original",authorityID:"core")
         try store.save(original,key:key)
-        fixture.value = LinkTopology(peerID:"ep",projectID:"atlas",name:"Atlas",authorityID:"core",revision:2,observedAt:Date(),repositories:fixture.value.repositories)
+        fixture.value = LinkTopology(peerID:"ep",projectID:"atlas",name:"Atlas",authorityID:"core",revision: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",observedAt:Date(),repositories:fixture.value.repositories)
         let state = ProjectLinkState(reader:fixture,intents:store)
         await state.refresh(); await state.select("atlas"); await state.linkAndOpen()
         XCTAssertEqual(state.phase,"opened"); XCTAssertEqual(fixture.commands.count,2)
-        XCTAssertEqual(fixture.commands[0],original); XCTAssertEqual(fixture.commands[1].expectedRevision,2)
+        XCTAssertEqual(fixture.commands[0],original); XCTAssertEqual(fixture.commands[1].expectedRevision,"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
         XCTAssertNotEqual(fixture.commands[1].operationID,original.operationID)
         let data = try FileManager.default.contentsOfDirectory(at:root,includingPropertiesForKeys:nil).filter { $0.pathExtension == "json" }
         XCTAssertEqual(data.count,2) // Original history retained plus current intent.
@@ -110,13 +110,13 @@ final class ProjectLinkTests: XCTestCase {
             ProjectLinkAccess(workspaceInstanceID:"w",actorID:"actor",peerID:"ep",projectIDs:["atlas"],expiresAt:Date().addingTimeInterval(-1),epoch:"1") ] {
             XCTAssertThrowsError(try scope.validate())
         }
-        let bad = LinkTopology(peerID:"ep",projectID:"atlas",name:"Atlas",authorityID:"unknown",revision:1,observedAt:Date(),repositories:fixture.value.repositories)
+        let bad = LinkTopology(peerID:"ep",projectID:"atlas",name:"Atlas",authorityID:"unknown",revision: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",observedAt:Date(),repositories:fixture.value.repositories)
         XCTAssertThrowsError(try bad.validate(fixture.current,project:"atlas"))
         let state = ProjectLinkState(reader:fixture)
         await state.refresh(); fixture.value = bad; await state.select("atlas")
         XCTAssertEqual(state.phase,"invalid"); XCTAssertNil(state.topology)
         let key = fixture.current.intentKey("atlas")
-        let invalid = ProjectLinkIntent(scopeKey:key,projectID:"atlas",expectedRevision:0,operationID:"x",authorityID:"core")
+        let invalid = ProjectLinkIntent(scopeKey:key,projectID:"atlas",expectedRevision: "",operationID:"x",authorityID:"core")
         XCTAssertThrowsError(try invalid.validate(key))
     }
     @MainActor func testAllFiveLocalesAndActualSourceViewStates() async throws {
@@ -125,6 +125,7 @@ final class ProjectLinkTests: XCTestCase {
             XCTAssertFalse(ProjectLinkCopy.text("authority",language:language).isEmpty)
             XCTAssertNotEqual(ProjectLinkCopy.availability(0,language:language), ProjectLinkCopy.availability(2,language:language))
             XCTAssertTrue(ProjectLinkCopy.availability(2,language:language).contains("2"))
+            XCTAssertNotEqual(ProjectLinkCopy.availability(nil,language:language),ProjectLinkCopy.availability(0,language:language))
         }
         XCTAssertEqual(ProjectLinkCopy.text("unknown",language:"nl"),"unknown")
         XCTAssertEqual(ProjectLinkCopy.text("title",language:"unsupported"),"Projects")
@@ -145,7 +146,7 @@ final class ProjectLinkTests: XCTestCase {
                 case 0: _ = try await reader.access()
                 case 1: _ = try await reader.discover(fixture.current)
                 case 2: _ = try await reader.inspect(fixture.current,project:"atlas")
-                case 3: _ = try await reader.link(fixture.current,intent:.init(scopeKey:"key",projectID:"atlas",expectedRevision:1,operationID:"op",authorityID:"core"))
+                case 3: _ = try await reader.link(fixture.current,intent:.init(scopeKey:"key",projectID:"atlas",expectedRevision: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",operationID:"op",authorityID:"core"))
                 default: _ = try await reader.open(fixture.current,project:"atlas")
                 }; XCTFail("Unbound reader must not succeed")
             } catch ProjectLinkError.unsupported {} catch { XCTFail("Unexpected error") }
@@ -180,9 +181,9 @@ extension ProjectLinkTests {
         XCTAssertEqual(LinkHTTPFixtureProtocol.last?.value(forHTTPHeaderField:"X-Workspace-Instance"),"workspace")
         LinkHTTPFixtureProtocol.reply=(200,["projects":[["id":"atlas","name":"Atlas"]],"state":"AVAILABLE"])
         let rows=try await reader.discover(scope);XCTAssertEqual(rows.map(\.name),["Atlas"])
-        let topology:[String:Any]=["peer_id":"ep","project_id":"atlas","name":"Atlas","authority_repository_id":"core","revision":1,"observed_at":formatter.string(from:Date()),"repositories":[["id":"core","name":"Core","role":"authority","available_attachments":2]]]
+        let topology:[String:Any]=["peer_id":"ep","project_id":"atlas","name":"Atlas","authority_repository_id":"core","revision":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","observed_at":formatter.string(from:Date()),"repositories":[["id":"core","name":"Core","role":"authority","available_attachments":2]]]
         LinkHTTPFixtureProtocol.reply=(200,topology);let detail=try await reader.inspect(scope,project:"atlas");XCTAssertEqual(detail.authorityID,"core")
-        let intent=ProjectLinkIntent(scopeKey:scope.intentKey("atlas"),projectID:"atlas",expectedRevision:1,operationID:"operation",authorityID:"core")
+        let intent=ProjectLinkIntent(scopeKey:scope.intentKey("atlas"),projectID:"atlas",expectedRevision: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",operationID:"operation",authorityID:"core")
         LinkHTTPFixtureProtocol.reply=(200,["project_id":"atlas","operation_id":"operation","state":"REFERENCE_SAVED","engineering_readiness":"NOT_ASSESSED"])
         let linked=try await reader.link(scope,intent:intent);XCTAssertEqual(linked,"atlas")
         XCTAssertEqual(LinkHTTPFixtureProtocol.last?.httpMethod,"POST")
@@ -213,5 +214,25 @@ extension ProjectLinkTests {
         await state.refresh();await state.select("atlas")
         state.expireIfNecessary(now:fixture.current.expiresAt.addingTimeInterval(1))
         XCTAssertEqual(state.phase,"expired");XCTAssertTrue(state.projects.isEmpty);XCTAssertNil(state.topology)
+    }
+}
+
+extension ProjectLinkTests {
+    func testPairedBootstrapRequiresActualPinnedServerScopeAndFiniteIdentity() async throws {
+        let config = URLSessionConfiguration.ephemeral; config.protocolClasses = [LinkHTTPFixtureProtocol.self]
+        let proof = DraftAccess(endpoint: "http://127.0.0.1:8765/", instanceID: "workspace", projectID: "ideas", token: "existing-actor-proof")
+        let raw: [String: Any] = ["workspace_instance_id":"workspace", "actor_id":"actor", "peer_id":"ep", "project_ids":["atlas"], "expires_at":ISO8601DateFormatter().string(from:Date().addingTimeInterval(3600)), "epoch":"pair"]
+        LinkHTTPFixtureProtocol.reply = (200, raw)
+        let paired = try await ProjectLinkHTTPReader.pairedConnection(proof, bearer:"own-server", testingSession:URLSession(configuration:config))
+        XCTAssertEqual(paired.actorID,"actor"); XCTAssertEqual(paired.peerID,"ep")
+        XCTAssertEqual(LinkHTTPFixtureProtocol.last?.value(forHTTPHeaderField:"X-Workspace-Project-Grant"),proof.token)
+        for code in [401,403,503,409,500] {
+            LinkHTTPFixtureProtocol.reply = (code,raw)
+            do { _ = try await ProjectLinkHTTPReader.pairedConnection(proof,bearer:"own-server",testingSession:URLSession(configuration:config));XCTFail("Error cannot establish binding") } catch {}
+        }
+        for changed in [raw.merging(["workspace_instance_id":"foreign"]){_,b in b},raw.merging(["actor_id":""]){_,b in b},raw.merging(["peer_id":""]){_,b in b},raw.merging(["project_ids":["atlas","atlas"]]){_,b in b},raw.merging(["expires_at":"2000-01-01T00:00:00Z"]){_,b in b},raw.merging(["extra":"no"]){_,b in b}] {
+            LinkHTTPFixtureProtocol.reply = (200,changed)
+            do { _ = try await ProjectLinkHTTPReader.pairedConnection(proof,bearer:"own-server",testingSession:URLSession(configuration:config));XCTFail("Invalid identity cannot bind") } catch {}
+        }
     }
 }

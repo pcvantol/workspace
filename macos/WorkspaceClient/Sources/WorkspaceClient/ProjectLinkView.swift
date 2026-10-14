@@ -20,12 +20,14 @@ enum ProjectLinkCopy {
         "unsupported": ["Verified project linking is not available from this EP connection yet.", "Deze EP-verbinding biedt geverifieerd projectkoppelen nog niet aan.", "Diese EP-Verbindung bietet noch keine geprüfte Projektverknüpfung.", "Cette connexion EP ne propose pas encore la liaison vérifiée.", "Esta conexión EP todavía no ofrece vinculación verificada."],
         "unavailable": ["Connect to restore current project access. Saved references are retained.", "Verbind opnieuw voor actuele projecttoegang. Opgeslagen verwijzingen blijven behouden.", "Erneut verbinden für aktuellen Projektzugriff. Gespeicherte Verweise bleiben erhalten.", "Reconnectez-vous pour rétablir l’accès. Les références enregistrées sont conservées.", "Vuelve a conectar para recuperar el acceso. Se conservan las referencias guardadas."],
         "child": ["Additional repository", "Aanvullende repository", "Weiteres Repository", "Dépôt supplémentaire", "Repositorio adicional"],
+        "unknownAvailability": ["Checkout availability is not shared", "Checkoutbeschikbaarheid is niet gedeeld", "Checkout-Verfügbarkeit wird nicht geteilt", "La disponibilité des copies n’est pas partagée", "No se comparte la disponibilidad de copias"],
         "noneAvailable": ["No available checkout", "Geen beschikbare checkout", "Kein verfügbarer Checkout", "Aucune copie disponible", "Ninguna copia disponible"],
         "available": ["Available checkouts: %@", "Beschikbare checkouts: %@", "Verfügbare Checkouts: %@", "Copies disponibles : %@", "Copias disponibles: %@"],
         "source": ["Technical source details", "Technische brongegevens", "Technische Quelldetails", "Détails techniques de la source", "Detalles técnicos de la fuente"]
     ]
-    static func availability(_ count: Int, language: String) -> String {
-        count == 0 ? text("noneAvailable", language: language) : String(format: text("available", language: language), String(count))
+    static func availability(_ count: Int?, language: String) -> String {
+        guard let count else { return text("unknownAvailability", language: language) }
+        return count == 0 ? text("noneAvailable", language: language) : String(format: text("available", language: language), String(count))
     }
     static func text(_ key: String, language: String = WorkspaceLanguage.current) -> String {
         let index = ["en", "nl", "de", "fr", "es"].firstIndex(of: language) ?? 0
@@ -45,6 +47,7 @@ struct ProjectLinkView: View {
                     Text(copy("title")).font(.largeTitle.bold())
                     Spacer()
                     Button(copy("refresh")) { Task { await state.refresh() } }.disabled(state.busy)
+                        .keyboardShortcut("r", modifiers: .command)
                 }
                 Text(copy(state.phase)).foregroundStyle(.secondary).accessibilityIdentifier("project-link-state")
                 if state.access == nil {
@@ -54,7 +57,9 @@ struct ProjectLinkView: View {
                     Button { Task { await state.select(project.id) } } label: {
                         HStack { Image(systemName: state.selection == project.id ? "checkmark.circle.fill" : "folder"); Text(project.name); Spacer() }
                     }
-                    .buttonStyle(.bordered).disabled(state.busy).focused($focusedProject, equals: project.id)
+                    .buttonStyle(.bordered).disabled(state.busy)
+                    .focusable().focused($focusedProject, equals: project.id)
+                    .onKeyPress(.space) { guard !state.busy else { return .ignored }; Task { await state.select(project.id) }; return .handled }
                     .accessibilityIdentifier("project-choice-" + project.id)
                 }
                 if let topology = state.topology {
@@ -80,10 +85,15 @@ struct ProjectLinkView: View {
                     Button(copy("link")) { Task { await state.linkAndOpen() } }
                         .buttonStyle(.borderedProminent).disabled(state.busy || state.opened != nil)
                         .accessibilityIdentifier("project-link-confirm")
+                        .keyboardShortcut(.return, modifiers: .command)
                 }
                 if state.busy { ProgressView() }
             }
             .padding(24).frame(maxWidth: 850, alignment: .leading)
+        }
+        .task { await state.refresh() }
+        .onChange(of: state.phase) { _, phase in
+            if phase == "choose" { focusedProject = state.projects.first?.id }
         }
         .onChange(of: scenePhase) { _, phase in if phase != .active { state.invalidate() } }
         .onDisappear { state.invalidate() }

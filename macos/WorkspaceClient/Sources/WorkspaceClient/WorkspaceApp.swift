@@ -147,6 +147,19 @@ struct ContentView: View {
         #else
         conceptGrants = DraftGrantKeychain()
         #endif
+        let linkGrants = conceptGrants
+        _projectLinks = StateObject(wrappedValue: ProjectLinkState(reader: ProjectLinkHTTPReader(connection: { @MainActor in
+            guard !client.authorizationLost else { throw ProjectLinkError.denied }
+            guard client.phase == "CONNECTED" else { throw ProjectLinkError.unavailable }
+            guard let access = try await Task.detached { try linkGrants.load() }.value,
+                  access.endpoint == client.savedEndpoint, access.instanceID == client.savedInstance else { throw ProjectLinkError.denied }
+            let token = try await client.draftReadToken()
+            let paired = try await ProjectLinkHTTPReader.pairedConnection(access, bearer: token)
+            guard client.phase == "CONNECTED", !client.authorizationLost,
+                  access.endpoint == client.savedEndpoint, access.instanceID == client.savedInstance,
+                  try await Task.detached { try linkGrants.load() }.value == access else { throw ProjectLinkError.denied }
+            return paired
+        })))
         _conversations = StateObject(wrappedValue: conversations)
         _reviews = StateObject(wrappedValue: reviews)
         _worklists = StateObject(wrappedValue: worklists)
