@@ -171,9 +171,9 @@ private final class LinkHTTPFixtureProtocol: URLProtocol, @unchecked Sendable {
 extension ProjectLinkTests {
     func testClosedOwnIPCHeadersAndBindingsRejectMalformedOrDeniedReplies() async throws {
         let configuration=URLSessionConfiguration.ephemeral;configuration.protocolClasses=[LinkHTTPFixtureProtocol.self]
-        let connection=ProjectLinkConnection(endpoint:"http://127.0.0.1:8765/",workspaceInstanceID:"workspace",bearer:"own-server",actorPairingToken:"existing-actor-proof",actorID:"actor",peerID:"ep")
+        let scope=ProjectLinkAccess(workspaceInstanceID:"workspace",actorID:"actor",peerID:"ep",projectIDs:["atlas"],expiresAt:Date(timeIntervalSince1970:4_000_000_000),epoch:"one")
+        let connection=ProjectLinkConnection(endpoint:"http://127.0.0.1:8765/",workspaceInstanceID:"workspace",bearer:"own-server",actorPairingToken:"existing-actor-proof",actorID:"actor",peerID:"ep",scope:scope)
         let reader=ProjectLinkHTTPReader(connection:{connection},session:URLSession(configuration:configuration))
-        let scope=ProjectLinkAccess(workspaceInstanceID:"workspace",actorID:"actor",peerID:"ep",projectIDs:["atlas"],expiresAt:Date().addingTimeInterval(3600),epoch:"one")
         let formatter=ISO8601DateFormatter()
         let access:[String:Any]=["workspace_instance_id":"workspace","actor_id":"actor","peer_id":"ep","project_ids":["atlas"],"expires_at":formatter.string(from:scope.expiresAt),"epoch":"one"]
         LinkHTTPFixtureProtocol.reply=(200,access);let actual=try await reader.access();XCTAssertEqual(actual.actorID,"actor")
@@ -226,6 +226,8 @@ extension ProjectLinkTests {
         let paired = try await ProjectLinkHTTPReader.pairedConnection(proof, bearer:"own-server", testingSession:URLSession(configuration:config))
         XCTAssertEqual(paired.actorID,"actor"); XCTAssertEqual(paired.peerID,"ep")
         XCTAssertEqual(LinkHTTPFixtureProtocol.last?.value(forHTTPHeaderField:"X-Workspace-Project-Grant"),proof.token)
+        LinkHTTPFixtureProtocol.reply = (403,["error":"PROJECT_LINK_ACCESS_EXPIRED"])
+        do { _ = try await ProjectLinkHTTPReader.pairedConnection(proof,bearer:"own-server",testingSession:URLSession(configuration:config));XCTFail("Typed expiry must remain expiry") } catch ProjectLinkError.expired {} catch { XCTFail("Wrong typed expiry") }
         for code in [401,403,503,409,500] {
             LinkHTTPFixtureProtocol.reply = (code,raw)
             do { _ = try await ProjectLinkHTTPReader.pairedConnection(proof,bearer:"own-server",testingSession:URLSession(configuration:config));XCTFail("Error cannot establish binding") } catch {}
@@ -234,5 +236,32 @@ extension ProjectLinkTests {
             LinkHTTPFixtureProtocol.reply = (200,changed)
             do { _ = try await ProjectLinkHTTPReader.pairedConnection(proof,bearer:"own-server",testingSession:URLSession(configuration:config));XCTFail("Invalid identity cannot bind") } catch {}
         }
+    }
+}
+
+private actor ChangingLinkScopeFixture {
+    let original: ProjectLinkConnection
+    var calls = 0
+    init(_ original: ProjectLinkConnection) { self.original = original }
+    func connection() -> ProjectLinkConnection {
+        calls += 1
+        if calls == 1 { return original }
+        let scope = original.scope
+        return ProjectLinkConnection(endpoint: original.endpoint, workspaceInstanceID: original.workspaceInstanceID,
+            bearer: original.bearer, actorPairingToken: original.actorPairingToken, actorID: original.actorID, peerID: original.peerID,
+            scope: ProjectLinkAccess(workspaceInstanceID:scope.workspaceInstanceID,actorID:scope.actorID,peerID:scope.peerID,
+                projectIDs:[],expiresAt:scope.expiresAt,epoch:"replacement"))
+    }
+}
+extension ProjectLinkTests {
+    func testLateScopeReplacementWithSameActorPeerCannotPublishOldBufferedRows() async throws {
+        let config = URLSessionConfiguration.ephemeral; config.protocolClasses = [LinkHTTPFixtureProtocol.self]
+        let expiry = Date(timeIntervalSince1970:4_000_000_000)
+        let scope = ProjectLinkAccess(workspaceInstanceID:"workspace",actorID:"actor",peerID:"ep",projectIDs:["atlas"],expiresAt:expiry,epoch:"original")
+        let connection = ProjectLinkConnection(endpoint:"http://127.0.0.1:8765/",workspaceInstanceID:"workspace",bearer:"own",actorPairingToken:"actor-proof",actorID:"actor",peerID:"ep",scope:scope)
+        let changes = ChangingLinkScopeFixture(connection)
+        let reader = ProjectLinkHTTPReader(connection:{ await changes.connection() },session:URLSession(configuration:config))
+        LinkHTTPFixtureProtocol.reply = (200,["projects":[["id":"atlas","name":"atlas"]],"state":"AVAILABLE"])
+        do { _ = try await reader.discover(scope);XCTFail("Old rows must not survive observed scope replacement") } catch ProjectLinkError.denied {} catch { XCTFail("Wrong scope classification") }
     }
 }

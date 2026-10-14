@@ -9,6 +9,7 @@ struct ProjectLinkConnection: Equatable, Sendable {
     let actorPairingToken: String
     let actorID: String
     let peerID: String
+    let scope: ProjectLinkAccess
 }
 private final class ProjectLinkRedirects: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
     func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
@@ -27,8 +28,11 @@ struct ProjectLinkHTTPReader: ProjectLinkReading {
     }
     private func request(_ suffix: String, body: Data? = nil, expected: ProjectLinkAccess? = nil) async throws -> (Data, ProjectLinkConnection) {
         let binding = try await connection()
+        try binding.scope.validate()
+        guard binding.scope.workspaceInstanceID == binding.workspaceInstanceID, binding.scope.actorID == binding.actorID, binding.scope.peerID == binding.peerID else { throw ProjectLinkError.denied }
         if let expected {
             try expected.validate()
+            guard expected == binding.scope else { throw ProjectLinkError.denied }
             guard expected.workspaceInstanceID == binding.workspaceInstanceID, expected.actorID == binding.actorID, expected.peerID == binding.peerID else { throw ProjectLinkError.denied }
         }
         guard !binding.bearer.isEmpty, !binding.actorPairingToken.isEmpty else { throw ProjectLinkError.denied }
@@ -95,7 +99,7 @@ struct ProjectLinkHTTPReader: ProjectLinkReading {
               let projects = raw["project_ids"] as? [String], Set(projects).count == projects.count,
               let stamp = raw["expires_at"] as? String, let expires = WorksetReleaseWire.date(stamp), let epoch = raw["epoch"] as? String else { throw ProjectLinkError.denied }
         let access = ProjectLinkAccess(workspaceInstanceID: binding.workspaceInstanceID, actorID: binding.actorID, peerID: binding.peerID, projectIDs: Set(projects), expiresAt: expires, epoch: epoch)
-        try access.validate(); return access
+        try access.validate(); guard access == binding.scope else { throw ProjectLinkError.denied }; return access
     }
     func discover(_ access: ProjectLinkAccess) async throws -> [LinkProject] {
         try access.validate(); let (data, _) = try await request("projects", expected: access)
@@ -149,6 +153,9 @@ extension ProjectLinkHTTPReader {
         request.setValue(access.token, forHTTPHeaderField: "X-Workspace-Project-Grant")
         let (data, response) = try await session.data(for: request)
         guard let response = response as? HTTPURLResponse, response.url == url, data.count <= 262144 else { throw ProjectLinkError.invalid }
+        if response.statusCode == 403,
+           let value = try? JSONSerialization.jsonObject(with: data) as? [String:String],
+           Set(value.keys) == ["error"], value["error"] == "PROJECT_LINK_ACCESS_EXPIRED" { throw ProjectLinkError.expired }
         if response.statusCode == 401 || response.statusCode == 403 { throw ProjectLinkError.denied }
         if response.statusCode == 503 { throw ProjectLinkError.unavailable }
         guard response.statusCode == 200,
@@ -160,9 +167,10 @@ extension ProjectLinkHTTPReader {
               let projects = raw["project_ids"] as? [String], Set(projects).count == projects.count,
               let stamp = raw["expires_at"] as? String, let expiry = WorksetReleaseWire.date(stamp),
               let epoch = raw["epoch"] as? String else { throw ProjectLinkError.invalid }
-        try ProjectLinkAccess(workspaceInstanceID: access.instanceID, actorID: actor, peerID: peer,
-            projectIDs: Set(projects), expiresAt: expiry, epoch: epoch).validate()
+        let scope = ProjectLinkAccess(workspaceInstanceID: access.instanceID, actorID: actor, peerID: peer,
+            projectIDs: Set(projects), expiresAt: expiry, epoch: epoch)
+        try scope.validate()
         return ProjectLinkConnection(endpoint: access.endpoint, workspaceInstanceID: access.instanceID,
-            bearer: bearer, actorPairingToken: access.token, actorID: actor, peerID: peer)
+            bearer: bearer, actorPairingToken: access.token, actorID: actor, peerID: peer, scope: scope)
     }
 }

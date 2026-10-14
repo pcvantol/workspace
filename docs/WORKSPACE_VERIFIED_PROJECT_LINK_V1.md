@@ -1,11 +1,29 @@
+## Directed actual candidate findings and correction8
+
+C7 actual packaged keyboard confirmation committed one reference/original receipt
+before a deliberately lost successful response. Separate Server and Client OS
+restarts recover the same original ID/intent bytes and one effect. Five actual
+settled locale/theme/width frames preserve that C7 source identity; none is a
+new final-main frame. Actual NOT_GRANTED displays unknown, not zero.
+
+The actual C7 buffered-read test reproduced a native late-scope leak after real
+owner re-pair to EMPTY. The original failed result is retained. Correction8
+retains the entire authenticated scope (epoch, exact project set and expiry) in
+the connection equality and compares it to expected before requests and again
+after receiving bytes. Unconditional actor/peer checks remain. Natural finite
+expiry also exposed bootstrap’s typed403 being mislabeled denied; only the exact
+closed ACCESS_EXPIRED maps to existing expired, other401/403 remain denied.
+Eleven directed native tests pass; new actual GREEN and full exact source gates
+remain required. No receipt, original failure, deadline or grant is rewritten.
+
 ## Active LINK completion after qualified HOB-EP01 — 14 October 2026
 
 Same r81-plan98 assignment/writer; priority switch from plan104 at clean
 pushed d458fa1/PR171 under selected6161577364 and ACK6177691573. Chat remains
 open and preserved; plan103/predecessors remain closed. Existing PR160 lineage
-0212f898 + merged mainfc3a26a is retained on preparation5a6338c. Corrections7
+0212f898 + merged mainfc3a26a is retained on preparation5a6338c. Corrections8
 cumulative (historical2, main-preparation3, producer binding4, security epoch5,
-identity/keyboard6, own isolated-store/lifecycle7); installedattempt1, earlier failures retained, no fixed max.
+identity/keyboard6, own isolated-store/lifecycle7, native full-scope/expiry8); installedattempt1, earlier failures retained, no fixed max.
 
 Qualified EP2.3.120/schema75/sourcef375a4e8adcec0c1693aa100c0f31f6014b84b20,
 wheel487357c26d1c023b46ec073bd2f281d2b8157f091518f923266ba8aa13c430ef,
