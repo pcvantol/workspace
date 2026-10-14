@@ -815,6 +815,11 @@ extension WorksetReleaseTests {
         await peer.capabilityFailure(true);await state.refresh(connection)
         XCTAssertNil(state.capability);XCTAssertEqual(state.phase,"unavailable");let epoch=state.authorityEpoch
         try await Task.sleep(for:.seconds(deadline.timeIntervalSinceNow+0.08))
+        // Observe the real asynchronous timer under runner load; never invoke expiry from the test.
+        let observationDeadline = ContinuousClock.now + .seconds(2)
+        while state.phase != "denied" && ContinuousClock.now < observationDeadline {
+            try await Task.sleep(for:.milliseconds(10))
+        }
         XCTAssertEqual(state.phase,"denied");XCTAssertGreaterThan(state.authorityEpoch,epoch)
     }
 }

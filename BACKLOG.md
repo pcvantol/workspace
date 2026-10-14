@@ -1,3 +1,47 @@
+### Finalization CI correction12 — observation only
+
+Native CI38647802499 retained a real expiry-test failure: the old observer checked
+only80ms after the unchanged deadline, before the asynchronous timer had run.
+Correction12 was booked once before source. Only that test now waits up to2s
+for the real timer transition; it never invokes expiry and preserves both denied
+and authority-epoch assertions. No runtime or product deadline changed.
+Cumulative12corrections/3installed/12completedfullruns; required fullrun13 follows.
+The failure and original reviewed32e21e snapshot remain preserved.
+
+## Plan104 protected implementation — own finalization
+
+Same r81-plan104 / L4-NATIVE-CONCEPT-CHAT-REFINEMENT-V1-20261014.
+[PR171](https://github.com/pcvantol/workspace/pull/171) normally protected
+exact-head squash-merged to812143bc5c9e8f8193cec249e5be53583eca4128; its tree equals
+independently accepted3936a060440eae3cb8a6f39c4751da611538ffd2. Workspace2.8.28,
+this nonempty documentary finalization is NO_BUMP; no runtime bytes change.
+LINK is CLOSED via PR160/175; original history/budgets/evidence remain intact.
+
+[Qualified consumer evidence and seven original privacy-approved screenshots](https://github.com/pcvantol/workspace/tree/6fa9bd15f20b6e48983857a1224467b7972ff527/docs/qualification/plan104-qualified-r53-candidate-20261015)
+have all9 immutable HTTP200/byte-exact readbacks. Actual Client→Server→qualified
+Forge2.19.0/877602f, original qualifiedR52/96e1d736 retained. Three synthetic
+Business/followup/Architect calls, two explicit adoptions1→2→3, separate37-document
+updatedR52 result and complete native VISION.md inspection. Genuine lost COMPLETE
+reply plus separate Server/Client OS restarts preserve original operation/turn,
+without a second initial call. Original proposal/source bytes remain unchanged.
+All own grants/pairings/processes cleaned before the fixed deadline.
+
+Independent Quality/Security/UX source AND qualified consumer PASS. Strict full
+validation11 PASS294Python/291native+1isolated, >80.2% per changed production file,
+packages/noneditable installation/native gates. All5 exact-head CI SUCCESS.
+Actual TDE QUALIFIED/PASS_WITH_WARNINGS, complexity28; no clean policyPASS claim.
+Cumulative11corrections/3installed/11fullruns before this own finalization run;
+all old failures remain preserved and no administrative reset/maximum applies.
+Old negative/language/theme/narrow/focus proof remains original-source bound.
+Actual Mach-O min26.0/SDK26.0. Synthetic provider proves technical wiring, no live
+advice quality. No EP/modelcharge/Mission/approval/apply/repo/globalupgrade/settings.
+
+This finalization reconciles own contract/backlog/roadmap and selected DAG subset.
+Own validation/reviews/checks/protected merge and NEW exact-final-main installed
+Client/Server/qualifiedForge, realGUI/privacy/screenshots/readback/cleanup remain
+required. No automatic next feature and no preclaim of new final-main proof.
+Historical stage snapshots follow.
+
 ## Current plan104 — qualified R53 integration after CLOSED LINK
 
 Same L4-NATIVE-CONCEPT-CHAT-REFINEMENT-V1-20261014 / r81-plan104 / solewriter.
