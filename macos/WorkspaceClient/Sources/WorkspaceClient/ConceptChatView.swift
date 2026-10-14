@@ -56,7 +56,7 @@ enum ConceptChatCopy {
         "close":["Back to concept","Terug naar concept","Zurück zum Entwurf","Retour au concept","Volver al concepto"],
         "revision":["Saved revision","Bewaarde revisie","Gespeicherte Revision","Révision enregistrée","Revisión guardada"],
         "stale":["This suggestion belongs to an earlier saved revision. It cannot be accepted into the current concept.","Deze suggestie hoort bij een eerdere bewaarde revisie. Je kunt haar niet in het huidige concept overnemen.","Dieser Vorschlag gehört zu einer früheren Revision und kann nicht übernommen werden.","Cette suggestion concerne une révision antérieure et ne peut pas être intégrée au concept actuel.","Esta sugerencia pertenece a una revisión anterior y no se puede incorporar al concepto actual."],
-        "length":["Use a nonempty message of at most 4,096 characters.","Gebruik een bericht van 1 tot 4.096 tekens.","Nachricht mit 1 bis 4.096 Zeichen verwenden.","Utilisez un message de 1 à 4 096 caractères.","Usa un mensaje de 1 a 4.096 caracteres."],
+        "length":["Use a nonempty message of at most 4,000 characters.","Gebruik een bericht van 1 tot 4.000 tekens.","Nachricht mit 1 bis 4.000 Zeichen verwenden.","Utilisez un message de 1 à 4 000 caractères.","Usa un mensaje de 1 a 4.000 caracteres."],
         "name":["Name","Naam","Name","Nom","Nombre"],
         "purpose":["Purpose","Doel","Ziel","Objectif","Objetivo"],
         "users":["People served","Doelgroep","Zielgruppe","Public visé","Destinatarios"],
@@ -68,7 +68,7 @@ enum ConceptChatCopy {
         values[key]?[languages.firstIndex(of:language) ?? 0] ?? key
     }
     static func validMessage(_ value:String)->Bool {
-        !value.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty && value.unicodeScalars.count<=4096 && ProjectConcept.validText(value)
+        !value.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty && value.unicodeScalars.count<=4000 && ProjectConcept.validText(value)
     }
 }
 

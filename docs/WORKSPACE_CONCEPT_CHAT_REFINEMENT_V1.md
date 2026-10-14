@@ -67,13 +67,32 @@ Route: native Client → owning Workspace Server → authenticated Forge R53 HTT
 → existing instance-owned provider. The separate finite R53 model/transfer
 right must not be inferred from R52 PREPARE/READ or old advisory credentials.
 
-[Actual L3 pickup6161800467](https://github.com/pcvantol/forge/issues/207#issuecomment-6161800467)
-is source implementation progress, not a published R53 route/schema or
-qualified artifact. [Consumer JOIN proposal6161845811](https://github.com/pcvantol/forge/issues/208#issuecomment-6161845811)
-requests exact input/output/auth/audience/dossier/model-profile/limits and
-original-turn readback. No Forge endpoints are guessed. The current internal
-resolver and native callbacks are deliberately not exposed as a product
-advisory authority. There is no fake-response fallback or provider invocation.
+[Actual R53 JOIN6161946949](https://github.com/pcvantol/forge/issues/208#issuecomment-6161946949)
+publishes `forge-preproject-concept-advisory/v1`: capability, explicit turns,
+history and original-intent HTTP routes under `/v1/concept-advisory`. The
+existing HTTP transport now supports its separate `X-Forge-Concept-Audience`
+without mixing the R52 audience. Pure input mapping uses compact sorted ASCII
+JSON SHA256, not Workspace's existing UTF8 digest. It preserves the original
+own snapshot, maps unknown fields to null, questions to explicit line text and
+native Architect to ARCHITECTURE. Published2000-character source fields,
+4000-character messages and32768-byte requests are checked without truncation.
+Existing own/R52 field limits are not narrowed by this adapter.
+
+Original request/operation/turn/source/role/language/transfer-policy binding is
+captured atomically in the existing concept database before any transport.
+An immutable witness in the existing own operation store detects individual
+row and combined marker/table loss. Original reopen is a read, not permission
+to generate again. These journal operations issue no model/grant/provider call.
+
+The full closed capability/original-turn/error/grant JSON and candidate source
+pin are still required. The named remote candidate branch returned404 at the
+checkpoint. [Concrete JOIN request6162267792](https://github.com/pcvantol/forge/issues/208#issuecomment-6162267792)
+asks for these bytes and the conversation-revision/question-field semantics;
+it does not introduce a general peer-ACK gate. Forge2.19.0 remains an early
+candidate rather than qualified consumer authority. The actual output/wiring,
+provider rights and model accounting must not be invented from a route name.
+The current internal resolver/native callbacks remain unexposed as advisory
+authority, with no fake-response fallback or provider invocation.
 
 The qualified R52 binding remains Forge2.18.0/96e1d73670b8575d41977fd448bfec10fc55206e.
 A new producer pin is used only after actual qualification, and old results
@@ -98,9 +117,16 @@ privacy-approved screenshots/readback and own cleanup remain required.
 Actual Mach-O SDK and minimumOS must be read from the delivered artifact.
 
 PR160/LINK original0212f898bb049c7019e4f8c602decc09b891c595 remains draft and
-preserved. Its thirteen main-integration conflict paths have been assessed
-without overwriting the parked branch. Historical consumed2 remains; its old
-administrative max3 is removed. Both scopes keep separate cumulative counts.
+preserved. Its thirteen main-integration conflict paths were resolved on separate
+preparation branch `codex/plan98-link-main-preparation-20261014`, merge commit
+`5a6338c759ed33f079d481de2b50aa1a15918d36`, parents original0212f898 and
+closed mainfc3a26a. It contains no chat WIP and preserves main2.8.26 instead of
+old2.8.21; final LINK version follows actual delivery order. Historical
+consumed2 remains and preparation3 is separately booked without a fixed max.
+Own12Python/11targetednative tests pass; full Python/native/coverage/package/
+isolated/build gates completed after preserving a detected stale generated
+build-cache failure and resuming the remaining gates. This is source
+preparation, not EP/installed acceptance. Both scopes keep separate cumulative counts.
 A qualified HOB-EP01 handoff takes priority at the next safe source/test
 checkpoint, without aborting a running test or adding an EP gate to R53.
 Full onboarding/Approve/Apply and an automatic following feature are unselected.

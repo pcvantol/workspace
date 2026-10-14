@@ -14,8 +14,8 @@ final class ConceptChatTests:XCTestCase {
             }
         }
         XCTAssertEqual(ConceptChatCopy.text("chat","unknown"),ConceptChatCopy.text("chat","en"))
-        for text in ["", " \n",String(repeating:"x",count:4097),"bad\u{0}"] {XCTAssertFalse(ConceptChatCopy.validMessage(text))}
-        for text in ["Eigen vraag 日本語",String(repeating:"🌱",count:4096),"literal <script>not code</script>"] {XCTAssertTrue(ConceptChatCopy.validMessage(text))}
+        for text in ["", " \n",String(repeating:"x",count:4001),"bad\u{0}"] {XCTAssertFalse(ConceptChatCopy.validMessage(text))}
+        for text in ["Eigen vraag 日本語",String(repeating:"🌱",count:4000),"literal <script>not code</script>"] {XCTAssertTrue(ConceptChatCopy.validMessage(text))}
     }
     @MainActor func testOwningFiveLanguageResponsiveViewsAndSafeData() {
         let access=ConceptChatAccess(profile:"Explicit test profile — synthetic fixture",recipient:"Configured test service",limits:"Finite fixture limit",maySubmit:true)
