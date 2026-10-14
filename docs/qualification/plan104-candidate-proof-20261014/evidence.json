@@ -1,0 +1,187 @@
+{
+  "assignment": "L4-NATIVE-CONCEPT-CHAT-REFINEMENT-V1-20261014",
+  "plan_revision": 104,
+  "evidence_class": "ACTUAL_INSTALLED_EARLY_CANDIDATE_WITH_EXPLICIT_SYNTHETIC_EXTERNAL_PROVIDER",
+  "full_dod": false,
+  "qualified_R53_final_main": false,
+  "server_source": "fef756ca622c7cbf4a8fb850c132e9c9d202ddb3",
+  "server_wheel_sha256": "9dc8704dfe0499f27a0ba2916d2ecc6af562b8fcd1a82f876f8975a9bc98dc37",
+  "producer_candidate_source": "233a014a60a6a47f26f5181a4de1ad2f7741559c",
+  "producer_candidate_wheel_sha256": "f3be4143eb812ba612b33e29b2cfe46f359a92bf847283398bdee6796654110d",
+  "qualified_R52_source": "96e1d73670b8575d41977fd448bfec10fc55206e",
+  "qualified_R52_wheel_sha256": "20efb7f1a92d1af352b14729d51d92689fa55ef1b09b4dc657e1cee06e7e451d",
+  "native_corrected_source_files": {
+    "macos/WorkspaceClient/Sources/WorkspaceClient/ConceptChatView.swift": "2d8b78a4a55cd165f72f9cec4ad6c8d32610d5e54dc798fe84935ac6c76cfa46",
+    "macos/WorkspaceClient/Sources/WorkspaceClient/ConceptBaselineDraftView.swift": "f838a2a1ed475900d325b7e67f604994ec0635f6bad646fefbcbae0deca8a543"
+  },
+  "actual_flow": {
+    "business_then_followup_then_architect": true,
+    "first_three_synthetic_calls": 3,
+    "separate_explicit_adoptions": 2,
+    "saved_revision": 3,
+    "new_actual_R52_documents": 37,
+    "accepted_users_and_constraints_in_actual_document_content": true,
+    "old_proposal_and_original_source_bytes_unchanged": true,
+    "old_envelope_current_revision_is_current_observation": 3,
+    "same_complete_lost_reply_after_separate_client_server_restarts": true,
+    "native_original_resume_completed": true,
+    "native_original_journal_sha256": [
+      "62ffe522231f77f8fd658283828a428340b03739d6d2d2d4e9c791cc72c5a936"
+    ],
+    "fourth_separate_pending_revoke_call": true,
+    "total_unique_synthetic_operations_and_turns": 4
+  },
+  "late_revoke": {
+    "source_server": "fef756ca622c7cbf4a8fb850c132e9c9d202ddb3",
+    "native_phase": "CORRECTION10_UI_WIP",
+    "success": true,
+    "actual_revoke_while_external_call_pending": true,
+    "publication_status": 403,
+    "publication_error": "DENIED",
+    "protected_native_output_concealed": true,
+    "revoke_elapsed_ms": 14.57,
+    "actual_unique_synthetic_calls": 4,
+    "no_new_post_after_revoke": true
+  },
+  "cleanup": {
+    "own_pairings_and_actor_grants_revoked": true,
+    "R53_and_R52_test_grants_revoked": true,
+    "own_processes_stopped": true,
+    "own_listeners_closed": true,
+    "evidence_and_original_operations_retained": true,
+    "synthetic_calls": 4,
+    "system_settings_or_user_credentials_changed": false
+  },
+  "native_focus": {
+    "phase": "CORRECTION10_UI_WIP_NOT_FINAL_MAIN",
+    "actual_space_reopened_after_escape_without_mouse_or_AX_focus": true,
+    "AXButton_Focused_metadata": false,
+    "focusable_wrapper_activation_proved": true,
+    "actual_baseline_review_copy_corrected": true,
+    "prior_focus_and_metadata_assertion_failures_preserved": true,
+    "synthetic_calls_unchanged": 3,
+    "system_settings_changed": false
+  },
+  "mach_o_minimum_macos": "26.0",
+  "mach_o_sdk": "26.0",
+  "scoped_independent_reviews": {
+    "quality": "SOURCE_AND_DIRECTED_CANDIDATE_ACCEPTED",
+    "security": "SOURCE_AND_DIRECTED_REVOKE_CLEANUP_ACCEPTED",
+    "ux": "SOURCE_DIRECTED_FOCUS_COPY_AND_LISTED_PIXELS_ACCEPTED"
+  },
+  "counts": {
+    "source_corrections": 10,
+    "installed_attempts": 2,
+    "full_validation_runs": 10,
+    "trial1": "FAILED_SETUP_ZERO_MODEL_CALLS_NORMAL_CLEANUP_RETAINED",
+    "trial2": "DIRECTED_EARLY_CANDIDATE_TECHNICAL_PROOF_WITH_ORIGINAL_FAILURES_RETAINED"
+  },
+  "screens": [
+    {
+      "file": "business-result.png",
+      "sha256": "e49ffef5196c8eba6c84b330ed68e1516e821b36fdbcb21cb0fd53091e4f258c",
+      "pixel_privacy": "INDEPENDENT_UX_ACCEPTED",
+      "metadata_keys": [
+        "XML:com.adobe.xmp"
+      ],
+      "metadata_private_path_and_credential_audit": "PASS",
+      "source_phase": "FEF756_CANDIDATE",
+      "layout_only_while_read_pending": false
+    },
+    {
+      "file": "actual-en-light-1420.png",
+      "sha256": "93c7556bb66f6b7fe251ec3dc780e8ddec374a9b722f29c8b4701d265f9d622e",
+      "pixel_privacy": "INDEPENDENT_UX_ACCEPTED",
+      "metadata_keys": [
+        "XML:com.adobe.xmp"
+      ],
+      "metadata_private_path_and_credential_audit": "PASS",
+      "source_phase": "FEF756_CANDIDATE",
+      "layout_only_while_read_pending": true
+    },
+    {
+      "file": "actual-nl-dark-760.png",
+      "sha256": "37614a006e18e3c54c72279d9e5f9291dc02cc461fc19b3875311dcdf29a9760",
+      "pixel_privacy": "INDEPENDENT_UX_ACCEPTED",
+      "metadata_keys": [
+        "XML:com.adobe.xmp"
+      ],
+      "metadata_private_path_and_credential_audit": "PASS",
+      "source_phase": "FEF756_CANDIDATE",
+      "layout_only_while_read_pending": true
+    },
+    {
+      "file": "actual-de-light-1420.png",
+      "sha256": "802ad382dc1bf8b20c6084e4c730c012ca49b50e92bfd2d6822172495b32bacd",
+      "pixel_privacy": "INDEPENDENT_UX_ACCEPTED",
+      "metadata_keys": [
+        "XML:com.adobe.xmp"
+      ],
+      "metadata_private_path_and_credential_audit": "PASS",
+      "source_phase": "FEF756_CANDIDATE",
+      "layout_only_while_read_pending": true
+    },
+    {
+      "file": "actual-fr-dark-760.png",
+      "sha256": "b661837c998c83bc2fe39e11a5577cbe189eaadaa6c462df02d9e8578401390d",
+      "pixel_privacy": "INDEPENDENT_UX_ACCEPTED",
+      "metadata_keys": [
+        "XML:com.adobe.xmp"
+      ],
+      "metadata_private_path_and_credential_audit": "PASS",
+      "source_phase": "FEF756_CANDIDATE",
+      "layout_only_while_read_pending": true
+    },
+    {
+      "file": "actual-es-light-1420.png",
+      "sha256": "e2ada9bd292ca10156112b9006eadae1fa48eeeceb2b19355213fdf8c3ba7cfb",
+      "pixel_privacy": "INDEPENDENT_UX_ACCEPTED",
+      "metadata_keys": [
+        "XML:com.adobe.xmp"
+      ],
+      "metadata_private_path_and_credential_audit": "PASS",
+      "source_phase": "FEF756_CANDIDATE",
+      "layout_only_while_read_pending": true
+    },
+    {
+      "file": "corrected-return-focus.png",
+      "sha256": "18ef7f10d38465d0deb19cba8a01e0b69747fe93e1c66538244073a687f5e1aa",
+      "pixel_privacy": "INDEPENDENT_UX_ACCEPTED",
+      "metadata_keys": [
+        "XML:com.adobe.xmp"
+      ],
+      "metadata_private_path_and_credential_audit": "PASS",
+      "source_phase": "CORRECTION10_HASH_BOUND_UI",
+      "layout_only_while_read_pending": false
+    },
+    {
+      "file": "corrected-focus-unknown.png",
+      "sha256": "fa2ce87cb13fa56c4c6c9014e7e589c8b0d5a1304f0b88059079a7f67de32a01",
+      "pixel_privacy": "INDEPENDENT_UX_ACCEPTED",
+      "metadata_keys": [
+        "XML:com.adobe.xmp"
+      ],
+      "metadata_private_path_and_credential_audit": "PASS",
+      "source_phase": "CORRECTION10_HASH_BOUND_UI",
+      "layout_only_while_read_pending": false
+    },
+    {
+      "file": "corrected-baseline-review.png",
+      "sha256": "84010b1de0fbdcdaa71039fe4bd54d4f8d42ff59cd757d242ed337f0a4dcb28e",
+      "pixel_privacy": "INDEPENDENT_UX_ACCEPTED",
+      "metadata_keys": [
+        "XML:com.adobe.xmp"
+      ],
+      "metadata_private_path_and_credential_audit": "PASS",
+      "source_phase": "CORRECTION10_HASH_BOUND_UI",
+      "layout_only_while_read_pending": false
+    }
+  ],
+  "remaining": [
+    "Qualified R53 final-main artifact handoff",
+    "Complete qualified consumer acceptance and exact-head CI",
+    "Normal protected implementation merge",
+    "Nonempty own finalization and its checks/reviews/protected merge",
+    "NEW exact-final-main installed Client/Server/qualified Forge and GUI/readback/cleanup"
+  ]
+}

@@ -217,3 +217,33 @@ retained; TDE5c032 is PASS_WITH_WARNINGS, not a clean policy PASS.
 Cumulative corrections9 / installedattempts1 / fullvalidations8. Qualified
 producer, actual full installed/GUI acceptance, new exact-head CI, protected
 delivery/finalization and NEW final-main evidence remain OPEN.
+
+## Actual candidate qualification and correction10
+
+[Retained public candidate evidence](qualification/plan104-candidate-proof-20261014/README.md)
+records actual installed Client/Server/Forge HTTP, three synthetic Business /
+followup / Architect calls, two explicit adoptions to revision3 and a separate
+qualified R52 result with37 documents containing the accepted fields. Old
+proposal/original source bytes remain identical. Own current_revision is an
+explicit current observation and must not be compared as frozen result bytes.
+Native original recovery after a lost COMPLETE reply and separate process
+restarts keeps the same operation; the fourth bounded synthetic call tests
+late own revocation,403DENIED and native concealment. All own fixtures were
+normally revoked/stopped, evidence retained.
+
+Actual GUI exposed false all-unknown review copy and missing opener focus.
+Correction10 uses accurate five-language disclosure, explicit unknown-before,
+and the existing own focusable/Space/yield pattern with State-bound opener
+identity cleared on concept change. Actual Escape→Space reopens without mouse,
+AXfocus injection or settings. AXButton metadatafalse is retained separately
+from focusable-wrapper activation. Five locale/theme/width images plus three
+corrected images and the Business result have independent pixel acceptance;
+metadata audited before publication. Pending-read frames are layout evidence.
+
+Full owningrun10 PASS,271Python/280native+1isolated and strict per-file gates;
+ChatView261/311=83.92%, BaselineDraftView106/112=94.64%. Counts10corrections /
+2installedattempts /10fullruns retain all prior failures. Independent directed
+Quality/Security/UX source/candidate acceptance is complete for these facts.
+R53 qualified final-main handoff, full qualified consumer acceptance, exact-head
+CI/protected implementation delivery, nonempty finalization and NEW final-main
+installed/native/readback/cleanup remain required. No complete DoD is claimed.

@@ -116,6 +116,7 @@ struct ConceptChatView:View {
     @State var role="BUSINESS"
     @State var reviewing=false
     @State private var showingChat=false
+    @State private var openedConceptID:String?
     @State private var reviewedMessage:String?
     @State private var reviewedRole:String?
     @State private var reviewedRevision:Int?
@@ -179,7 +180,7 @@ struct ConceptChatView:View {
                 Text(text("proposal")).font(.headline)
                 ForEach(proposal.changes) {change in
                     Text(text(change.field)).font(.subheadline.bold())
-                    LabeledContent(text("before")) {Text(verbatim:change.before).textSelection(.enabled)}
+                    LabeledContent(text("before")) {Text(verbatim:change.before.isEmpty ? text("notKnown"):change.before).textSelection(.enabled)}
                     LabeledContent(text("after")) {Text(verbatim:change.after).textSelection(.enabled)}
                     Text(verbatim:change.reason).foregroundStyle(.secondary).textSelection(.enabled)
                 }
@@ -197,11 +198,21 @@ struct ConceptChatView:View {
             HStack(alignment:.top,spacing:24) {summary.frame(width:280);chat.frame(minWidth:430)}
             VStack(alignment:.leading,spacing:12) {
                 summary
-                Button(text("open")) {showingChat=true}.focused($launchFocused).accessibilityIdentifier("concept-chat-open")
+                Button(text("open")) {launchFocused=false;openedConceptID=concept.id;showingChat=true}
+                    .focusable().focused($launchFocused).accessibilityIdentifier("concept-chat-open")
+                    .onKeyPress(.space) {launchFocused=false;openedConceptID=concept.id;showingChat=true;return .handled}
                     .keyboardShortcut("j",modifiers:[.command,.option])
             }
         }
-        .sheet(isPresented:$showingChat,onDismiss:{launchFocused=true}) {
+        .sheet(isPresented:$showingChat,onDismiss:{
+            let identity=openedConceptID
+            launchFocused=false
+            Task { @MainActor in
+                await Task.yield()
+                guard identity != nil,!showingChat,openedConceptID==identity else{return}
+                launchFocused=true
+            }
+        }) {
             ScrollView {VStack(alignment:.leading,spacing:16) {
                 Button(text("close")) {showingChat=false}.keyboardShortcut(.escape,modifiers:[])
                 summary
@@ -209,7 +220,7 @@ struct ConceptChatView:View {
                 chat
             }.padding(24)}.frame(minWidth:420,idealWidth:620,minHeight:500)
         }
-        .onChange(of:concept) {_,_ in reviewing=false;message="";showingChat=false}
+        .onChange(of:concept) {_,_ in openedConceptID=nil;launchFocused=false;reviewing=false;message="";showingChat=false}
         .onChange(of:dirty) {_,_ in reviewing=false}
         .onChange(of:message) {_,_ in reviewing=false}
         .onChange(of:role) {_,_ in reviewing=false}

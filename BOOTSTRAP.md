@@ -16,18 +16,20 @@ recovery/adoption and native transport/journal/controls in five languages.
 fixtures, not qualified Forge or installed/GUI acceptance. Source Q/S/UX is
 conditionally accepted after concrete integrated fixes. Full source gates,
 exact-head binding and actual qualified installed delivery remain open.
-Cumulative corrections9 / installed1 / full validations8; runs5 and6 failed
-on the new namespace's read-catalogue/admin inventory expectations. Both
-original failures are retained; corrected full run7 PASS, without reset.
-Owning Python271/native280+1isolated, wheel/sdist/install/app and strict
-per-file coverage PASS. Actual installed trial1 exposed missing owner-CLI
-JSON receipts before model generation; zero calls, normal cleanup complete.
-Correction9 adds safe issue/revoke receipts and actual CLI regression
-(RED before fix,11 directed tests GREEN). Full run8 PASS. The existing expiry
-test harness now awaits the real autonomous transition within2s, retaining
-all assertions; three directed post-delta native tests PASS. Original5c032
-native CI failure and TDE PASS_WITH_WARNINGS retained. New exact-head CI and
-actual installed/GUI acceptance remain open.
+Cumulative corrections10 / installed2 / full validations10; original failures
+and partial stages retained. Full source run10 PASS,271Python/280native+1isolated,
+strict>80.2% per production file; ChatView261/311, BaselineView106/112.
+[Actual early installed evidence](docs/qualification/plan104-candidate-proof-20261014/README.md)
+proves Business/followup/Architect,2explicit adoptions/revision3, richer37-doc
+R52 result, original bytes, lost reply and separate Client/Server restarts.
+Fourth/final synthetic call: late own revoke14.57ms/403DENIED/native concealment;
+all own grants/pairings/processes/listeners cleaned up. Five language frames
+and directed focus/copy images have independent pixel/privacy acceptance.
+Correction10 fixes false all-unknown copy and actual Space-based return focus,
+without settings; original AXButton metadatafalse and failed probes retained.
+Qualified R53 final handoff and complete consumer/final delivery remain OPEN;
+no final-main, live-model quality or full-DoD PASS inferred. Exact-head CI and
+review bindings follow this source freeze; no bypass or budget reset.
 PR160/LINK original0212f898 remains draft; separate main-preparation5a6338c
 retains historical2 plus preparation3 without a fixed maximum;
 qualified HOB-EP01 delivery has priority at the next safe checkpoint. Plan103

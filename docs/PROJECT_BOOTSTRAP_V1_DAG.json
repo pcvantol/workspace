@@ -284,7 +284,7 @@
           "scope": "CONCEPT_CHAT_REFINEMENT",
           "assignment": "L4-NATIVE-CONCEPT-CHAT-REFINEMENT-V1-20261014",
           "plan": 104,
-          "status": "OWN_HTTP_NATIVE_INTEGRATED_QUALIFIED_R53_INSTALLED_PENDING",
+          "status": "OWN_EARLY_INSTALLED_GUI_PROVED_QUALIFIED_R53_PENDING",
           "own_contract": "docs/WORKSPACE_CONCEPT_CHAT_REFINEMENT_V1.md",
           "producer_assignment": "L3-PREPROJECT-CONCEPT-ADVISORY-V1-20261014",
           "producer_contract": "forge-preproject-concept-advisory/v1",
@@ -294,7 +294,8 @@
           "ep_dependency_for_subset": false,
           "qualified_r52_binding": "Forge2.18.0/96e1d73670b8575d41977fd448bfec10fc55206e",
           "early_join": "https://github.com/pcvantol/forge/issues/208#issuecomment-6161946949",
-          "qualified_r53_binding": "PENDING"
+          "qualified_r53_binding": "PENDING",
+          "candidate_evidence": "docs/qualification/plan104-candidate-proof-20261014/evidence.json"
         }
       ]
     },
