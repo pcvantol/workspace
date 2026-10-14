@@ -12,7 +12,7 @@ class ConceptAdviceContractTests(unittest.TestCase):
         self.example=json.loads(Path(__file__).with_name('r53-synthetic-conversation-e581.json').read_text())
         self.rows=self.example['conversation']; self.value=deepcopy(self.rows[0]['response'])
         self.binding={key:self.value[key] for key in ('instance_id','principal_id','audience','dossier_id','conversation_id')}
-        self.binding.update(concept_id='concept-one',transfer_policy_digest=self.rows[0]['request']['transfer_policy_digest'])
+        self.binding.update(provider_id='concept-fixture',concept_id='concept-one',transfer_policy_digest=self.rows[0]['request']['transfer_policy_digest'])
     def validate(self,value=None):
         return response(value or self.value,'TurnResponse',self.binding,expected=self.rows[0]['request'])
     def bad(self,mutate):

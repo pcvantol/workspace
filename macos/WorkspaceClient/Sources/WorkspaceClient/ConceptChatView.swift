@@ -8,6 +8,9 @@ struct ConceptChatTurn:Identifiable,Equatable {
     let message:String
     let answer:String
     let sourceRevision:Int
+    var questions:[String]=[]
+    var assumptions:[String]=[]
+    var status:String="COMPLETE"
 }
 struct ConceptChatChange:Identifiable,Equatable {
     let field:String
@@ -26,6 +29,7 @@ struct ConceptChatAccess:Equatable {
     let recipient:String
     let limits:String
     let maySubmit:Bool
+    var dataCategories:[String]=[]
 }
 enum ConceptChatCopy {
     static let languages=["en","nl","de","fr","es"]
@@ -62,7 +66,31 @@ enum ConceptChatCopy {
         "users":["People served","Doelgroep","Zielgruppe","Public visé","Destinatarios"],
         "non_goals":["Outside scope","Buiten afbakening","Außerhalb des Umfangs","Hors périmètre","Fuera del alcance"],
         "constraints":["Constraints","Randvoorwaarden","Rahmenbedingungen","Contraintes","Condiciones"],
-        "open_questions":["Open questions","Open vragen","Offene Fragen","Questions ouvertes","Preguntas abiertas"]
+        "turnPENDING":["Advice is still pending.","Het advies is nog in behandeling.","Die Beratung wird noch bearbeitet.","Le conseil est en cours.","El asesoramiento está pendiente."],
+        "turnUNCERTAIN":["The outcome is not established. Recover the original request.","De uitkomst is niet vastgesteld. Herstel de oorspronkelijke aanvraag.","Das Ergebnis steht nicht fest. Die ursprüngliche Anfrage wiederherstellen.","Le résultat n’est pas établi. Récupérez la demande initiale.","El resultado no está establecido. Recupera la solicitud original."],
+        "turnFAILED":["This advice request failed; no concept changes were accepted.","Deze adviesaanvraag is mislukt; er zijn geen conceptwijzigingen overgenomen.","Diese Beratungsanfrage ist fehlgeschlagen; keine Änderungen wurden übernommen.","Cette demande de conseil a échoué ; aucune modification n’a été intégrée.","La solicitud de asesoramiento falló; no se incorporaron cambios al concepto."],
+        "sendShortcut":["Send reviewed message: ⌥⌘Return","Gecontroleerd bericht versturen: ⌥⌘Return","Geprüfte Nachricht senden: ⌥⌘Return","Envoyer le message vérifié : ⌥⌘Retour","Enviar mensaje revisado: ⌥⌘Retorno"],
+        "externalSession":["Instance-configured external advice session","Extern adviesgesprek ingesteld door de instantie","Von der Instanz konfigurierte externe Beratungssitzung","Session de conseil externe configurée par l’instance","Sesión de asesoramiento externa configurada por la instancia"],
+        "transfer_explicit_briefing":["The saved briefing of this idea","De bewaarde briefing van dit idee","Die gespeicherte Beschreibung dieser Idee","La description enregistrée de cette idée","La descripción guardada de esta idea"],
+        "transfer_user_message":["This exact message","Dit exacte bericht","Diese genaue Nachricht","Ce message exact","Este mensaje exacto"],
+        "transfer_accepted_prior_turns":["Previously accepted turns in this conversation","Eerder geaccepteerde beurten in dit gesprek","Zuvor akzeptierte Beiträge dieses Gesprächs","Les échanges précédemment acceptés de cette conversation","Turnos previamente aceptados de esta conversación"],
+        "questions":[ "Questions","Vragen","Fragen","Questions","Preguntas"],
+        "assumptions":["Assumptions","Aannames","Annahmen","Hypothèses","Suposiciones"],
+        "turnsLimit":["turns maximum","beurten maximaal","Beiträgen maximal","tours maximum","turnos como máximo"],
+        "tokensLimit":["tokens maximum","tokens maximaal","Token maximal","jetons maximum","tokens como máximo"],
+        "secondsLimit":["seconds maximum","seconden maximaal","Sekunden maximal","secondes maximum","segundos como máximo"],
+        "pending":["The original request is retained. Check its outcome before sending another message.","De oorspronkelijke aanvraag is bewaard. Controleer de uitkomst voordat je een nieuw bericht verstuurt.","Die ursprüngliche Anfrage bleibt erhalten. Vor einer neuen Nachricht das Ergebnis prüfen.","La demande initiale est conservée. Vérifiez son résultat avant un nouveau message.","Se conserva la solicitud original. Comprueba su resultado antes de enviar otro mensaje."],
+        "resume":["Recover original request","Oorspronkelijke aanvraag herstellen","Ursprüngliche Anfrage wiederherstellen","Récupérer la demande initiale","Recuperar la solicitud original"],
+        "refresh":["Refresh advice access","Adviesverbinding vernieuwen","Beratungszugriff aktualisieren","Actualiser l’accès au conseil","Actualizar el acceso al asesoramiento"],
+        "reopen":["Reopen original advice","Oorspronkelijk advies heropenen","Ursprünglichen Rat öffnen","Rouvrir le conseil initial","Reabrir el consejo original"],
+        "editRequired":["This suggestion exceeds the concept’s input limits. Nothing was accepted; keep editing your idea.","Dit voorstel overschrijdt de invoergrenzen van het concept. Er is niets overgenomen; je kunt je idee verder bewerken.","Dieser Vorschlag überschreitet die Eingabegrenzen. Nichts wurde übernommen; die Idee kann weiter bearbeitet werden.","Cette suggestion dépasse les limites du concept. Rien n’a été intégré ; vous pouvez continuer à modifier l’idée.","La sugerencia supera los límites del concepto. No se ha incorporado nada; puedes seguir editando la idea."],
+        "unavailable":["Advice is temporarily unavailable. Your original request remains saved.","Advies is tijdelijk niet beschikbaar. De oorspronkelijke aanvraag blijft bewaard.","Beratung ist vorübergehend nicht verfügbar. Die ursprüngliche Anfrage bleibt gespeichert.","Le conseil est temporairement indisponible. La demande initiale reste enregistrée.","El asesoramiento no está disponible temporalmente. Se conserva la solicitud original."],
+        "inputRejected":["The saved briefing or message was not accepted. Check the original before editing and trying again.","De bewaarde briefing of het bericht is niet geaccepteerd. Controleer de oorspronkelijke aanvraag voordat je bewerkt en opnieuw probeert.","Gespeicherte Beschreibung oder Nachricht wurde nicht akzeptiert. Vor Änderungen die ursprüngliche Anfrage prüfen.","La description enregistrée ou le message n’a pas été accepté. Vérifiez la demande initiale avant de modifier et réessayer.","La descripción o el mensaje no se aceptó. Comprueba la solicitud original antes de editar e intentarlo de nuevo."],
+        "retireRejected":["Check rejected original and unlock editing","Afgewezen origineel controleren en bewerken vrijgeven","Abgelehnte Anfrage prüfen und Bearbeitung freigeben","Vérifier la demande rejetée et libérer la modification","Comprobar la solicitud rechazada y habilitar la edición"],
+        "invalid":[ "The answer could not be verified. No changes were accepted.","Het antwoord kon niet worden geverifieerd. Er zijn geen wijzigingen overgenomen.","Die Antwort konnte nicht geprüft werden. Keine Änderungen wurden übernommen.","La réponse n’a pas pu être vérifiée. Aucune modification n’a été intégrée.","No se ha podido verificar la respuesta. No se han incorporado cambios."],
+        "conflict":["The saved idea or conversation changed. Refresh and check the original request.","Het bewaarde idee of gesprek is gewijzigd. Vernieuw en controleer de oorspronkelijke aanvraag.","Idee oder Gespräch wurde geändert. Aktualisieren und die ursprüngliche Anfrage prüfen.","L’idée ou la conversation a changé. Actualisez et vérifiez la demande initiale.","La idea o conversación ha cambiado. Actualiza y comprueba la solicitud original."],
+        "capacity":["Local storage is full; previous requests are retained.","De lokale opslag is vol; eerdere aanvragen blijven bewaard.","Der lokale Speicher ist voll; frühere Anfragen bleiben erhalten.","Le stockage local est plein ; les demandes précédentes sont conservées.","El almacenamiento local está lleno; se conservan las solicitudes anteriores."],
+        "open_questions":[ "Open questions","Open vragen","Offene Fragen","Questions ouvertes","Preguntas abiertas"]
     ]
     static func text(_ key:String,_ language:String)->String {
         values[key]?[languages.firstIndex(of:language) ?? 0] ?? key
@@ -79,6 +107,8 @@ struct ConceptChatView:View {
     var briefingFields:[String:String]=[:]
     var turns:[ConceptChatTurn]=[]
     var proposal:ConceptChatProposal?=nil
+    var supplement:AnyView?=nil
+    var submissionHeld=false
     var busy=false
     var onSend:((String,String)->Void)?=nil
     var onAccept:((ConceptChatProposal)->Void)?=nil
@@ -94,7 +124,7 @@ struct ConceptChatView:View {
     private var language:String {locale.language.languageCode?.identifier ?? "en"}
     private func text(_ key:String)->String {ConceptChatCopy.text(key,language)}
     private var editable:Bool {!dirty && concept.lifecycle != "ARCHIVED" && !busy}
-    private var canSend:Bool {editable && access?.maySubmit==true && onSend != nil && ConceptChatCopy.validMessage(message)}
+    private var canSend:Bool {!submissionHeld && editable && access?.maySubmit==true && onSend != nil && ConceptChatCopy.validMessage(message)}
     private var reviewMatches:Bool {reviewedMessage==message && reviewedRole==role && reviewedRevision==concept.revision}
     private var summary:some View {
         VStack(alignment:.leading,spacing:8) {
@@ -113,13 +143,16 @@ struct ConceptChatView:View {
             Text(text("chat")).font(.headline)
             if dirty {Text(text("unsaved"))}
             if concept.lifecycle=="ARCHIVED" {Text(text("archived"))}
-            if access==nil {Text(text("access")).foregroundStyle(.secondary)}
+            if access==nil || access?.maySubmit==false {Text(text("access")).foregroundStyle(.secondary)}
             ForEach(turns) {turn in
                 VStack(alignment:.leading,spacing:6) {
                     Text(verbatim:turn.role=="BUSINESS" ? "Business":"Architect").font(.subheadline.bold())
                     LabeledContent(text("revision"),value:String(turn.sourceRevision))
                     Text(verbatim:turn.message).textSelection(.enabled)
+                    if turn.status != "COMPLETE" {Text(text("turn"+turn.status)).foregroundStyle(.secondary)}
                     Text(verbatim:turn.answer).textSelection(.enabled)
+                    if !turn.questions.isEmpty {Text(text("questions")).font(.subheadline.bold());ForEach(Array(turn.questions.enumerated()),id:\.offset) {_,value in Text(verbatim:value).textSelection(.enabled)}}
+                    if !turn.assumptions.isEmpty {Text(text("assumptions")).font(.subheadline.bold());ForEach(Array(turn.assumptions.enumerated()),id:\.offset) {_,value in Text(verbatim:value).textSelection(.enabled)}}
                 }.padding().background(.quaternary,in:RoundedRectangle(cornerRadius:10))
             }
             Picker(text("role"),selection:$role) {Text("Business").tag("BUSINESS");Text("Architect").tag("ARCHITECT")}.pickerStyle(.segmented)
@@ -129,12 +162,17 @@ struct ConceptChatView:View {
             Button(text("review")) {reviewedMessage=message;reviewedRole=role;reviewedRevision=concept.revision;reviewing=true}.disabled(!canSend).accessibilityIdentifier("concept-chat-review")
             if reviewing,let access {
                 Text(text("transfer"))
+                LabeledContent(text("role"),value:role=="BUSINESS" ? "Business":"Architect")
+                LabeledContent(text("revision"),value:String(concept.revision))
+                Text(verbatim:reviewedMessage ?? "").textSelection(.enabled)
+                ForEach(access.dataCategories,id:\.self) {category in Text(text("transfer_"+category)).foregroundStyle(.secondary)}
                 LabeledContent(text("recipient")) {Text(verbatim:access.recipient.isEmpty ? text("notKnown"):access.recipient).textSelection(.enabled)}
                 LabeledContent(text("profile")) {Text(verbatim:access.profile.isEmpty ? text("notKnown"):access.profile).textSelection(.enabled)}
                 LabeledContent(text("limits")) {Text(verbatim:access.limits.isEmpty ? text("notKnown"):access.limits).textSelection(.enabled)}
                 Text(text("costUnknown")).foregroundStyle(.secondary)
+                Text(text("sendShortcut")).font(.caption).foregroundStyle(.secondary)
                 Button(text("send")) {if reviewMatches,let reviewedRole,let reviewedMessage {onSend?(reviewedRole,reviewedMessage)};reviewing=false}
-                    .disabled(!canSend || !reviewMatches).keyboardShortcut(.return,modifiers:.command).accessibilityIdentifier("concept-chat-send")
+                    .disabled(!canSend || !reviewMatches).keyboardShortcut(.return,modifiers:[.command,.option]).accessibilityIdentifier("concept-chat-send")
             }
             if let proposal {
                 Divider()
@@ -151,6 +189,7 @@ struct ConceptChatView:View {
                     .disabled(!editable || proposal.sourceRevision != concept.revision || onAccept==nil)
                     .accessibilityIdentifier("concept-chat-accept")
             }
+            if let supplement {supplement}
         }.frame(minWidth:0,maxWidth:.infinity,alignment:.leading)
     }
     var body:some View {

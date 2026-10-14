@@ -111,6 +111,59 @@ retain their original pin. Technical qualification may use the explicitly
 labeled external model fixture at Forge's existing provider transport boundary;
 this does not prove live model quality or grant paid-provider permission.
 
+## Integrated Server and native source checkpoint — correction8
+
+Product routes use the existing pinned Server bearer/instance and own draft
+actor/context grant. `/v1/concept-chats/{concept_id}/briefing` reads only own
+storage without a producer/model call. `access`, `history`, `turns`, original
+`operations/{operation_id}` and explicit `adopt` use the separate privately
+paired R53 READ/ADVISE capability. The owner-only `concept-chat-bind-issue`
+consumes existing finite receipt/token files; product requests cannot issue
+or select grants, endpoint, dossier, provider or credentials.
+
+Every producer request has the exact private audience/instance/principal/
+conversation/transfer binding. Turnprovider identity is checked; historical
+requested/observed model fields are never replaced by current configuration.
+Only actual HTTP404 plus the typed original-notfound envelope can authorize
+the same original POST. HTTP503 carrying that error code remains unavailable,
+not healthy absence. Current own authority and binding are checked at short
+send/publication fences; peer waits do not hold those locks.
+
+Server history includes scoped original commands and explicitly distinguishes
+`PRODUCER_NOT_OBSERVED` from actual accepted producer records. Missing or
+corrupt original rows/witnesses never become a fresh operation. Client private
+journals bind own connection/concept/pairing/source/operation before POST,
+preserve both original chat and adoption commands across restart, and block
+new advice while unresolved. Completed older journals cannot hide newer
+Server-only originals. Generation checks prevent late selection changes from
+publishing or saving another concept's pending command.
+
+A known own input rejection before Server capture can be explicitly retired
+only after own `CHAT_NOT_FOUND`; that is distinct from a retained Server
+intent's producer `CONCEPT_TURN_NOT_FOUND`. The latter and all uncertain
+outcomes remain retained under their original operation; no local retirement
+or new operation is authorized. Retired local commands are separately
+archived, never relabeled successful. Conflicts do not offer edit-unlock.
+
+Native shows genuine profile/known finite limits, explicit transfer categories
+(including accepted prior turns) and unknown monetary/account credit. Answers,
+questions, assumptions and changes remain separate. Every turn has safe
+localized pending/failed/uncertain status and source revision. Narrow sheet
+contains the same recovery/history/status actions as wide mode. The visible
+chat shortcut is distinct Option-Command-Return; the model-free baseline
+retains its existing shortcut. Adoption blocks conflicting editor/lifecycle
+writes; its refresh never silently discards newer local text.
+
+The actual own briefing wire contains a bounded source snapshot without
+catalogue timestamps. Native decodes that real shape instead of inventing
+missing metadata. First native failures, URLSession test-body stream issue,
+fixture preparation/import failure and first whole-run read-catalogue parity
+failure remain preserved; corrected targeted evidence does not relabel them.
+Full owning run7 PASS:270Python/280native+1isolated, wheel/sdist/install,
+app build and strict per-file coverage. Chat HTTP43/44, intents124/134 and
+peer159/161; native Panel69/84, State184/196, Transport100/103, View247/283.
+Current CI/TDE and actual installed/GUI qualification remain separate gates.
+
 ## Checkpoints, LINK and remaining DoD
 
 Own tests cover source preservation, original receipt replay after Service

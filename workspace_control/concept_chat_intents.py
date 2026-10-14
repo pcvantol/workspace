@@ -132,3 +132,16 @@ class ConceptChatIntents:
                 if witness is not None:raise ConceptStorageUnavailable('original chat row lost')
                 raise FileNotFoundError('original chat request not found')
             finally:db.close()
+
+    def list(self,scope,identity):
+        with self.base.lock:
+            db=self.concepts._connect()
+            try:
+                self.concepts.get(scope,identity)
+                present=self._schema(db)
+                rows=db.execute('SELECT * FROM '+TABLE+' WHERE actor_id=? AND context_id=? AND concept_id=? ORDER BY operation_id',(*scope,identity)).fetchall() if present else []
+                result=[self._original(db,row,scope,identity,row['operation_id']) for row in rows]
+                witnesses=db.execute("SELECT operation_id FROM project_concept_operations_v1 WHERE actor_id=? AND context_id=? AND json_extract(response,'$.chat_intent_version')=1 AND json_extract(response,'$.concept_id')=?",(*scope,identity)).fetchall()
+                if {row['operation_id'] for row in witnesses}!={row['operation_id'] for row in rows}:raise ConceptStorageUnavailable('original chat rows lost')
+                return result
+            finally:db.close()

@@ -45,17 +45,20 @@ enum ProjectConceptCopy {
 }
 struct ProjectConceptView: View {
     @ObservedObject var state: ProjectConceptState
+    @StateObject private var chat:ConceptChatState
     @StateObject private var baseline:ConceptBaselineState
     @ObservedObject var client: ClientState
     let grants: any DraftGrantStore
     init(state:ProjectConceptState,client:ClientState,grants:any DraftGrantStore) {
         self.state=state;self.client=client;self.grants=grants
+        _chat=StateObject(wrappedValue:ConceptChatState(root:state.records.root.appendingPathComponent("Chat")))
         _baseline=StateObject(wrappedValue:ConceptBaselineState(root:state.records.root.appendingPathComponent("Baseline")))
     }
     @Environment(\.locale) private var locale
     @Environment(\.nativeTabCommandsActive) private var commandsActive
     @FocusState private var titleFocused: Bool
     private var language:String { locale.language.languageCode?.identifier ?? "en" }
+    private var adoptionHeld:Bool {chat.adopting || chat.pending?.adoption != nil}
     private func text(_ key:String) -> String { ProjectConceptCopy.text(key,language:language) }
     private func current() async throws -> ConceptConnection {
         guard !client.authorizationLost else { throw ConceptError.denied }
@@ -81,8 +84,8 @@ struct ProjectConceptView: View {
                 Text(text("badge")).foregroundStyle(.secondary).accessibilityIdentifier("concept-badge")
                 HStack {
                     Button(text("new")) { state.new(defaultTitle:text("default")); titleFocused = true }
-                        .disabled(state.busy || state.pending != nil || state.pendingLifecycle != nil).accessibilityIdentifier("concept-new")
-                    Button(text("refresh")) { Task { await state.refresh(current:current);state.observeAuthority(current:current) } }.disabled(state.busy)
+                        .disabled(adoptionHeld || state.busy || state.pending != nil || state.pendingLifecycle != nil).accessibilityIdentifier("concept-new")
+                    Button(text("refresh")) { Task { await state.refresh(current:current);state.observeAuthority(current:current) } }.disabled(adoptionHeld || state.busy)
                 }
                 TextField(text("search"),text:$state.searchQuery).textFieldStyle(.roundedBorder)
                     .accessibilityIdentifier("concept-search")
@@ -98,26 +101,26 @@ struct ProjectConceptView: View {
                             ForEach(state.visibleItems) { item in
                                 Button { Task { await state.open(item.id,current:current); titleFocused = state.selected?.id == item.id } } label: {
                                     HStack { Image(systemName:state.selected?.id == item.id ? "checkmark.circle.fill" : "doc.text"); Text(item.title); Spacer() }
-                                }.disabled(state.busy || state.pending != nil || state.pendingLifecycle != nil).accessibilityIdentifier("concept-row-"+item.id)
+                                }.disabled(adoptionHeld || state.busy || state.pending != nil || state.pendingLifecycle != nil).accessibilityIdentifier("concept-row-"+item.id)
                             }
                         }
                     }.frame(maxHeight:160)
                 }
                 TextField(text("title"),text:$state.title).textFieldStyle(.roundedBorder).focused($titleFocused)
-                    .disabled(state.busy || state.pending != nil || state.pendingLifecycle != nil || state.selectedIsArchived).accessibilityIdentifier("concept-title")
+                    .disabled(adoptionHeld || state.busy || state.pending != nil || state.pendingLifecycle != nil || state.selectedIsArchived).accessibilityIdentifier("concept-title")
                 Text(text("notes")).font(.headline)
                 TextEditor(text:$state.notes).frame(height:180).overlay(RoundedRectangle(cornerRadius:8).stroke(.quaternary))
-                    .disabled(state.busy || state.pending != nil || state.pendingLifecycle != nil || state.selectedIsArchived).accessibilityLabel(text("notes")).accessibilityIdentifier("concept-notes")
+                    .disabled(adoptionHeld || state.busy || state.pending != nil || state.pendingLifecycle != nil || state.selectedIsArchived).accessibilityLabel(text("notes")).accessibilityIdentifier("concept-notes")
                 Button(text(state.pending == nil ? "save" : "retry")) { Task { await state.save(current:current) } }
-                    .buttonStyle(.borderedProminent).disabled(state.busy || (state.phase == "conflict" || state.selectionStale) || state.pendingLifecycle != nil || (state.pending == nil && state.selectedIsArchived) || (state.selected != nil && !state.dirty && state.pending == nil)).keyboardShortcut(commandsActive ? KeyboardShortcut("s",modifiers:.command) : nil).accessibilityIdentifier("concept-save")
+                    .buttonStyle(.borderedProminent).disabled(adoptionHeld || state.busy || (state.phase == "conflict" || state.selectionStale) || state.pendingLifecycle != nil || (state.pending == nil && state.selectedIsArchived) || (state.selected != nil && !state.dirty && state.pending == nil)).keyboardShortcut(commandsActive ? KeyboardShortcut("s",modifiers:.command) : nil).accessibilityIdentifier("concept-save")
                 if let selected = state.selected {
                     if state.selectedIsArchived { Text(text("archived")).foregroundStyle(.secondary) }
                     Button(text(state.pendingLifecycle != nil ? "lifecycleRetry" : selected.lifecycle == "ARCHIVED" ? "restoreAction" : "archiveAction")) {
                         Task { await state.move(current:current) }
-                    }.disabled(state.lifecycleBlocked).accessibilityIdentifier("concept-lifecycle")
+                    }.disabled(adoptionHeld || state.lifecycleBlocked).accessibilityIdentifier("concept-lifecycle")
                     if state.selectionStale && state.phase != "conflict" { Text(text("conflict")).foregroundStyle(.secondary) }
                     if state.dirty || state.pending != nil { Text(text("lifecycleBlocked")).foregroundStyle(.secondary) }
-                    ConceptChatView(concept:selected,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale)
+                    ConceptChatPanel(state:chat,concept:selected,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)},adopted:{if state.dirty {state.selectionStale=true;state.phase="conflict"} else {await state.open(selected.id,current:current)}})
                     ConceptBaselinePanel(state:baseline,concept:selected,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)})
                     if let created = WorksetReleaseWire.date(selected.created_at), let updated = WorksetReleaseWire.date(selected.updated_at) {
                         LabeledContent(text("created"),value:created.formatted(date:.abbreviated,time:.shortened))
@@ -125,7 +128,7 @@ struct ProjectConceptView: View {
                     }
                     if state.phase == "conflict" || state.selectionStale {
                         Button(text("replace")) { Task { await state.open(selected.id,discard:true,current:current) } }
-                            .disabled(state.busy).accessibilityIdentifier("concept-conflict-reopen")
+                            .disabled(adoptionHeld || state.busy).accessibilityIdentifier("concept-conflict-reopen")
                     }
                 }
                 if state.busy { ProgressView() }
@@ -137,8 +140,8 @@ struct ProjectConceptView: View {
             else if client.authorizationLost { state.concealAuthorization() }
             else { state.clientPhaseChanged(phase) }
         }
-        .onChange(of:client.authorizationLost) {_,lost in if lost {baseline.conceal()} }
-        .onChange(of:client.phase) {_,phase in if phase != "CONNECTED" {baseline.conceal()} }
-        .onDisappear { state.cancelReads();state.stopObservingAuthority();baseline.conceal() }
+        .onChange(of:client.authorizationLost) {_,lost in if lost {baseline.conceal();chat.conceal()} }
+        .onChange(of:client.phase) {_,phase in if phase != "CONNECTED" {baseline.conceal();chat.conceal()} }
+        .onDisappear { state.cancelReads();state.stopObservingAuthority();baseline.conceal();chat.conceal() }
     }
 }

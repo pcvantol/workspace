@@ -37,7 +37,7 @@ def request(binding, method, path, body=None, *, gate=None, error_validator=vali
         if len(raw)>maximum_bytes:raise WorklistError('INVALID_RESPONSE')
         value=json.loads(raw,object_pairs_hook=_unique_pairs)
         if response.status!=200:
-            error_validator(value,'error');raise WorklistError(value['error']['code'])
+            error_validator(value,'error');raise WorklistError(value['error']['code'],http_status=response.status)
         return value
     except WorklistError:raise
     except (ssl.SSLCertVerificationError,ssl.CertificateError):raise WorklistError('TLS_UNTRUSTED') from None

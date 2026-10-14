@@ -7,9 +7,20 @@ assignment L4-NATIVE-CONCEPT-CHAT-REFINEMENT-V1-20261014, same sole writer,
 basefc3a26a/branchcodex/plan104-native-concept-chat-refinement/PATCH2.8.27.
 [Own bounded implementation](docs/WORKSPACE_CONCEPT_CHAT_REFINEMENT_V1.md):
 chat → separate changes → explicit own adoption → separately updated R52
-baseline. Existing SQLite/immutable originals/manual routes remain. R53 exact candidate schema/typed synthetic examples consumed from e5816702;
-byte-identical contract checked on newer7b89392a. Qualified handoff pending; no guessed endpoint, fake model reply
-or installed/full-DoD claim. Cumulative counts have no administrative maximum.
+baseline. Existing SQLite/immutable originals/manual routes remain. Actual R53
+schema/typed examples e5816702 are byte-identical on7b89392a; implementation
+protected main233a014 is delivered, qualified final-main handoff remains open.
+Correction8 connects separate finite pairing, actual own HTTP, durable original
+recovery/adoption and native transport/journal/controls in five languages.
+10 directed own/peer-double HTTP and11 native chat tests PASS; these are source
+fixtures, not qualified Forge or installed/GUI acceptance. Source Q/S/UX is
+conditionally accepted after concrete integrated fixes. Full source gates,
+exact-head binding and actual qualified installed delivery remain open.
+Cumulative corrections8 / installed0 / full validations7; runs5 and6 failed
+on the new namespace's read-catalogue/admin inventory expectations. Both
+original failures are retained; corrected full run7 PASS, without reset.
+Owning Python270/native280+1isolated, wheel/sdist/install/app and strict
+per-file coverage PASS; current CI/TDE and installed acceptance remain open.
 PR160/LINK original0212f898 remains draft; separate main-preparation5a6338c
 retains historical2 plus preparation3 without a fixed maximum;
 qualified HOB-EP01 delivery has priority at the next safe checkpoint. Plan103

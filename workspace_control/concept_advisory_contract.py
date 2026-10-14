@@ -52,6 +52,8 @@ def request(value, binding):
 def turn(value, binding, prior=(), expected=None):
     validate(value, 'Turn')
     scope(value, binding, ('principal_id', 'audience'))
+    if value['provider']['provider_id'] != binding.get('provider_id'):
+        raise WorklistError('DENIED')
     r = request(value['request'], binding)
     if (value['request_digest'] != peer_digest(r) or
             value['revision'] != r['expected_revision'] + 1 or

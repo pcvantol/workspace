@@ -179,6 +179,14 @@ function validProjectCatalogue(catalogue) {
     typeof catalogue.observed_at === 'string' && catalogue.observed_at.length > 0;
 }
 const ownOperations = {
+  'concept-chats.access': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-chats/{concept_id}/access'},
+  'concept-chats.briefing': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-chats/{concept_id}/briefing'},
+  'concept-chats.history': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-chats/{concept_id}/history'},
+  'concept-chats.send': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'POST',path:'/v1/concept-chats/{concept_id}/turns'},
+  'concept-chats.original': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-chats/{concept_id}/operations/{operation_id}'},
+  'concept-chats.adopt': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'POST',path:'/v1/concept-chats/{concept_id}/adopt'},
+  'concept-chats.bind.issue': {exposure:'LOCAL_ONLY_ADMIN',auth:'PRIVATE_ROOT_OWNER',local_cli:'concept-chat-bind-issue'},
+  'concept-chats.bind.revoke': {exposure:'LOCAL_ONLY_ADMIN',auth:'PRIVATE_ROOT_OWNER',local_cli:'concept-chat-bind-revoke'},
   'concept-baselines.access': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-baselines/{concept_id}/access'},
   'concept-baselines.history': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-baselines/{concept_id}/operations'},
   'concept-baselines.prepare': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'POST',path:'/v1/concept-baselines/{concept_id}/prepare'},
