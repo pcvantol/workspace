@@ -1,3 +1,38 @@
+## Current plan104 — qualified R53 integration after CLOSED LINK
+
+Same L4-NATIVE-CONCEPT-CHAT-REFINEMENT-V1-20261014 / r81-plan104 / solewriter.
+PR171/d458 and all earlier evidence remain in history; main588092a was merged
+without rewriting either lineage (integratione1fea1c). LINK is fully CLOSED via
+[6179192862](https://github.com/pcvantol/forge/issues/208#issuecomment-6179192862),
+including protected PR160/175, new exact-main installed/GUI/readback/cleanup.
+Its counters remain8corrections/2installed/6resumptionfullruns.
+
+Chat correction11 was booked before source at
+[6179217297](https://github.com/pcvantol/forge/issues/208#issuecomment-6179217297).
+Prior chat10corrections/2installed/10fullruns remain preserved; no maximum/reset.
+Normal next allocation2.8.28 follows deliveredLINK2.8.27; the original unmerged
+chat2.8.27 receipt remains historical. Both closed namespaces/routes/stores and
+package schemas were retained during ordinary main-conflict resolution.
+
+Qualified Forge2.19.0/schema46 exact877602f016dee36c1977ef7df1d937c7c5793ccc
+is delivered via[6168468302](https://github.com/pcvantol/forge/issues/208#issuecomment-6168468302).
+The actual frozen Mac wheel fca4f93684905e9eb524ada59bc68f2e41bf85ca5135f8f407db8bc261098912
+was verified before any installation. Current schema62cf57cb and synthetic wire
+example89dbab97 are byte-identical to the original committed projection; that
+old projection and producer233 candidate proof retain their original labels.
+The hosted public receipt is separately hash-verified and contains no wheel;
+it was not substituted for a qualified installation bundle.
+
+Integrated full validation11 PASS:291native+1isolated, strict per-file coverage
+and package/native gates. All325qualified Forge product payloads are byte-equal
+to the retained233candidate; new consumer installed proof remains required.
+Current exact-head CI and complete independent Quality/Security/UX,
+actual consumer qualification against qualified877, protected implementation,
+nonempty own finalization and NEW exact-final-main installed/GUI/privacy/
+readback/cleanup remain OPEN. Existing R52/96e1d736 and older proposal bytes keep
+their original bindings. No live model/EP/globalupgrade/credential/settings
+change or new feature. Historical stage snapshots follow.
+
 ## LINK protected source — own nonempty finalization
 
 Same r81-plan98 / L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012.
