@@ -1,0 +1,100 @@
+{
+  "flow": {
+    "source": "3936a060440eae3cb8a6f39c4751da611538ffd2",
+    "qualified_r53": "877602f016dee36c1977ef7df1d937c7c5793ccc",
+    "qualified_r52": "96e1d73670b8575d41977fd448bfec10fc55206e",
+    "actual_native_business_followup_and_architect": true,
+    "explicit_adoptions": 2,
+    "own_revision_sequence": [
+      1,
+      2,
+      3
+    ],
+    "adoption_does_not_automatically_prepare": true,
+    "separate_actual_native_updated_baseline_request": true,
+    "old_source_revision": 1,
+    "new_source_revision": 3,
+    "old_proposal_bytes_unchanged": true,
+    "new_source_product_contains_both_explicitly_adopted_values": true,
+    "synthetic_external_calls": 3,
+    "paid_model_calls": 0,
+    "no_mission_approval_apply_repo_or_EP_effect": true
+  },
+  "recovery": {
+    "source": "3936a060440eae3cb8a6f39c4751da611538ffd2",
+    "qualified_r53": "877602f016dee36c1977ef7df1d937c7c5793ccc",
+    "operation_id": "7624b7409fed4b9e99dbc1514d3ca418",
+    "original_command_canonical_sha256": "49d00a56b1f6447852a81645696c68742208b982db671df8ebaa998799859ecf",
+    "original_peer_turn_bytes_equal": true,
+    "separate_server_restart_ready_then_client_restart": true,
+    "server_pid_changed": true,
+    "client_pid_changed": true,
+    "actual_native_resume": true,
+    "provider_calls_still1": true
+  },
+  "document": {
+    "document": "docs/product/VISION.md",
+    "actual_native_AXPress": true,
+    "actual_visible_text_matches_complete_real_document": true,
+    "actual_document_contains_adopted_users_and_constraints": true,
+    "actual_artifacts": 37,
+    "document_sha256": "856a05f5301064cff856a07e35ce496454471a44a129c955ec9817e32c0dd2af",
+    "synthetic_calls_still3": true
+  },
+  "schema_version": 1,
+  "kind": "QUALIFIED_PRODUCER_CONSUMER_CANDIDATE",
+  "consumer_source": "3936a060440eae3cb8a6f39c4751da611538ffd2",
+  "workspace_version": "2.8.28",
+  "independent_reviews": {
+    "Quality": "PASS",
+    "Security": "PASS",
+    "UX": "PASS",
+    "pixel_and_metadata_privacy": "PASS"
+  },
+  "cleanup": {
+    "status": "COMPLETE",
+    "errors": 0,
+    "before_original_deadline": true,
+    "five_processes_stopped": true
+  },
+  "cumulative": {
+    "source_corrections": 11,
+    "installed_attempts": 3,
+    "full_validations": 11
+  },
+  "tde": {
+    "repository": "QUALIFIED",
+    "assessment": "PASS_WITH_WARNINGS",
+    "complexity": 28
+  },
+  "images": [
+    {
+      "path": "qualified-architect-proposal.png",
+      "sha256": "879e94f39f61f13cb36909ce404b7a3d95fa742a81ebd87527a6ad0c3e99abe2"
+    },
+    {
+      "path": "qualified-business-original-recovered.png",
+      "sha256": "96b3848b32bd17d3344845c5f5e44ac90daa1945025a640d8c40fd0990a58a73"
+    },
+    {
+      "path": "qualified-explicit-business-adoption.png",
+      "sha256": "a1aaf7b5402c2a41486430d31ead82ba54eb6000f49f2a6fd38fdb5b86b69c74"
+    },
+    {
+      "path": "qualified-real-VISION-document.png",
+      "sha256": "921cf25b5916f09ad656b325542e08bfe2081e3b311301d08d7cff8df4b6352b"
+    },
+    {
+      "path": "qualified-transfer-review.png",
+      "sha256": "273903475d7b112e50c1922f79ed8720c7c500ca85083c14f5155df88c1b0da7"
+    },
+    {
+      "path": "qualified-updated-baseline-result.png",
+      "sha256": "a276a82d801c7cfe78f217217a4ee00430960b246125a4e110c49f0061e97926"
+    },
+    {
+      "path": "qualified-updated-baseline-review.png",
+      "sha256": "ab1e9ed530bc4e6e77c6943b5d312af69c0df3f68f9acf8d45d0a664b2ec03cb"
+    }
+  ]
+}
