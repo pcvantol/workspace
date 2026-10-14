@@ -266,6 +266,7 @@ class Service:
         try:
             self._load_instance()
             from .conversations import ConversationStore
+            from .project_links import ProjectLinks
             from .review_peer import ReviewTransport
             from .worklist_peer import WorklistReadTransport
             from .worklist_control_peer import WorklistControlTransport
@@ -280,6 +281,9 @@ class Service:
             self.concept_baselines = ConceptBaselinePeer(self.root, self._root_fd, self.project_concepts)
             from .concept_chat_peer import ConceptChatPeer
             self.concept_chats = ConceptChatPeer(self.root, self._root_fd, self.project_concepts)
+            from .project_link_peer import ProjectLinkPeer
+            self.project_link_peer = ProjectLinkPeer(self.root,self._root_fd,self.conversations,self.instance_id)
+            self.project_links = ProjectLinks(self.conversations,self.project_link_peer)
             self.reviews = ReviewTransport(self.root, self._root_fd)
             self.worklists = WorklistReadTransport(self.root, self._root_fd)
             self.worklist_controls = WorklistControlTransport(self.root, self._root_fd)

@@ -125,6 +125,7 @@ struct ContentView: View {
     @StateObject private var conversations: ConversationState
     @StateObject private var reviews: MissionReviewState
     @StateObject private var worklists: WorklistState
+    @StateObject private var projectLinks = ProjectLinkState()
     @StateObject private var concepts = ProjectConceptState()
     @StateObject private var activity = ActivityState()
     @StateObject private var order = OrderState()
@@ -136,16 +137,32 @@ struct ContentView: View {
     init(client: ClientState, conversations: ConversationState = ConversationState(),
          reviews: MissionReviewState = MissionReviewState(), worklists: WorklistState = WorklistState()) {
         self.client = client
+        let linkIntents: PrivateProjectLinkIntents
         #if WORKSPACE_ISOLATED_TEST
         if let document = try? IsolatedTestDocument.load() {
             conceptGrants = IsolatedDraftGrant(document)
+            linkIntents = PrivateProjectLinkIntents(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("project-link-intents"))
             _order = StateObject(wrappedValue:OrderState(credentials:IsolatedOrderCredentials(document),store:OrderIntentStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("order-intents"))))
             _activity = StateObject(wrappedValue:ActivityState(credentials:IsolatedActivityCredentials(document),store:ActivityLocalStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("activity-views"))))
             _concepts = StateObject(wrappedValue:ProjectConceptState(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("project-concept-intents")))
-        } else { conceptGrants = DraftGrantKeychain() }
+        } else { conceptGrants = DraftGrantKeychain(); linkIntents = PrivateProjectLinkIntents() }
         #else
         conceptGrants = DraftGrantKeychain()
+        linkIntents = PrivateProjectLinkIntents()
         #endif
+        let linkGrants = conceptGrants
+        _projectLinks = StateObject(wrappedValue: ProjectLinkState(reader: ProjectLinkHTTPReader(connection: { @MainActor in
+            guard !client.authorizationLost else { throw ProjectLinkError.denied }
+            guard client.phase == "CONNECTED" else { throw ProjectLinkError.unavailable }
+            guard let access = try await Task.detached { try linkGrants.load() }.value,
+                  access.endpoint == client.savedEndpoint, access.instanceID == client.savedInstance else { throw ProjectLinkError.denied }
+            let token = try await client.draftReadToken()
+            let paired = try await ProjectLinkHTTPReader.pairedConnection(access, bearer: token)
+            guard client.phase == "CONNECTED", !client.authorizationLost,
+                  access.endpoint == client.savedEndpoint, access.instanceID == client.savedInstance,
+                  try await Task.detached { try linkGrants.load() }.value == access else { throw ProjectLinkError.denied }
+            return paired
+        }), intents:linkIntents))
         _conversations = StateObject(wrappedValue: conversations)
         _reviews = StateObject(wrappedValue: reviews)
         _worklists = StateObject(wrappedValue: worklists)
@@ -183,6 +200,8 @@ struct ContentView: View {
     var body: some View {
         WorkspaceNavigationShell(selected:$selectedTab,language:locale.language.languageCode?.identifier ?? "en") { destination in
             switch destination {
+            case 8:
+                ProjectLinkView(state:projectLinks)
             case 5:
                 ProjectConceptView(state:concepts,client:client,grants:conceptGrants)
                     .environment(\.nativeTabCommandsActive,true)
@@ -217,9 +236,9 @@ struct ContentView: View {
                 }.environment(\.nativeTabCommandsActive,true)
             }
         }
-        .onChange(of:[client.phase,client.savedEndpoint,client.savedInstance]) { _,_ in activity.invalidate();order.invalidate() }
-        .onChange(of:[conversations.projectID,conversations.observedActorID ?? ""]) { _,_ in activity.invalidate();order.invalidate() }
-        .onChange(of:client.authorizationLost) { _,lost in if lost { activity.invalidate();order.invalidate() } }
+        .onChange(of:[client.phase,client.savedEndpoint,client.savedInstance]) { _,_ in activity.invalidate();order.invalidate();projectLinks.invalidate() }
+        .onChange(of:[conversations.projectID,conversations.observedActorID ?? ""]) { _,_ in activity.invalidate();order.invalidate();projectLinks.invalidate() }
+        .onChange(of:client.authorizationLost) { _,lost in if lost { activity.invalidate();order.invalidate();projectLinks.invalidate() } }
         .tint(WorkspaceAppearance.accent(for:colorScheme))
         .background(WorkspaceAppearance.backdrop(for:colorScheme))
     }

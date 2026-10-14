@@ -138,7 +138,7 @@
       "id": "PB-W1-LINK",
       "parent": "PB-W1",
       "owner": "workspace",
-      "status": "PLANNED",
+      "status": "IN_PROGRESS",
       "depends_on": [
         "PB-W0"
       ],
@@ -148,11 +148,14 @@
       "input_contracts": [
         "HOB-EP01"
       ],
-      "external_evidence": [],
+      "external_evidence": [
+        "https://github.com/pcvantol/forge/issues/208#issuecomment-6171877315",
+        "docs/WORKSPACE_VERIFIED_PROJECT_LINK_V1.md"
+      ],
       "user_outcome": "Link verified configured project without scan or peer write",
       "deliverable": "Link verified configured project without scan or peer write",
       "acceptance": "identity/scope/ref repeat, denied/offline, no scan/duplicate/create, five locales",
-      "implementation_selected": false
+      "implementation_selected": true
     },
     {
       "id": "PB-W1-TOPOLOGY",
@@ -371,7 +374,7 @@
       "id": "PB-WQ-LINK",
       "parent": "PB-WQ",
       "owner": "workspace",
-      "status": "PLANNED",
+      "status": "IN_PROGRESS",
       "depends_on": [
         "PB-W1-LINK"
       ],
@@ -381,11 +384,14 @@
       "input_contracts": [
         "HOB-EP01"
       ],
-      "external_evidence": [],
+      "external_evidence": [
+        "https://github.com/pcvantol/forge/issues/208#issuecomment-6171877315",
+        "docs/WORKSPACE_VERIFIED_PROJECT_LINK_V1.md"
+      ],
       "user_outcome": "Qualify independent basic link slice",
       "deliverable": "Qualify independent basic link slice",
       "acceptance": "real installed qualified scoped read, no deep scan/promotion/wholepeerQ prerequisite",
-      "implementation_selected": false
+      "implementation_selected": true
     },
     {
       "id": "PB-WQ-ASSESS",
@@ -566,6 +572,13 @@
       "consumed": 2,
       "max": 3,
       "remaining": 1
+    },
+    "main_integration_preparation": {
+      "base": "fc3a26ab048742d2c03c79969860c0b6feb3f12e",
+      "original_head": "0212f898bb049c7019e4f8c602decc09b891c595",
+      "status": "SOURCE_PREPARATION_ONLY_NO_EP_BINDING",
+      "consumed": 3,
+      "administrative_maximum": null
     }
   },
   "concept_library_delivery": {
@@ -582,5 +595,23 @@
     "installed": "PENDING_NEW_QUALIFICATION",
     "round1_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6123731480",
     "round2_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6124005482"
+  },
+  "link_delivery": {
+    "assignment": "L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012",
+    "plan": 98,
+    "corrections_consumed": 8,
+    "installed_attempts": 1,
+    "state": "PROTECTED_SOURCE_DELIVERED_FINALIZATION_OWN_GATES_PENDING",
+    "contract": "docs/WORKSPACE_VERIFIED_PROJECT_LINK_V1.md",
+    "producer_source": "f375a4e8adcec0c1693aa100c0f31f6014b84b20",
+    "whole_onboarding": false,
+    "candidate_production_source": "2a75c5a5ccf88c0d4103d4663a6bc03de22abcbd",
+    "candidate_evidence": "docs/qualification/plan98-link-candidate-20261014/evidence.json",
+    "full_onboarding_complete": false,
+    "source_main": "1b9ecd119e4e27f65f14b06bd39b78813a98f5f1",
+    "source_pr": 160,
+    "reviewed_source": "793de825e21745d3766e4d5f412f9d3610d9e623",
+    "finalization_receipt": "docs/WORKSPACE_VERIFIED_PROJECT_LINK_FINALIZATION_V1.json",
+    "exact_final_main": "REQUIRED_NEW_POST_FINALIZATION_MERGE_PROOF"
   }
 }

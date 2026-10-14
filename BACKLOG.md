@@ -1,3 +1,90 @@
+## LINK protected source — own nonempty finalization
+
+Same r81-plan98 / L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012.
+[Implementation PR160](https://github.com/pcvantol/workspace/pull/160) normally
+protected squash-merged to 1b9ecd119e4e27f65f14b06bd39b78813a98f5f1 from independently accepted 793de825e21745d3766e4d5f412f9d3610d9e623;
+merged tree equals reviewed tree. Workspace2.8.27; this documentary finalization
+is NO_BUMP, preserves every runtime byte and existing node/edge identity.
+Only PB-W1-LINK/PB-WQ-LINK; parent onboarding families are not complete.
+
+Qualified EP2.3.120/f375a4e8 and real Client→Server→EP candidate acceptance,
+strict per-file coverage, full248Python/280native+1isolated validation,
+independent Quality/Security/UX and eleven privacy-approved original images are
+[retained with their source bindings](docs/qualification/plan98-link-candidate-20261014/README.md).
+All thirteen public candidate files have immutable HTTP200/byte-exact readback.
+TDE actual C8 QUALIFIED/PASS_WITH_WARNINGS: complexity28, warning15/block30;
+own runtime coverage is separate. All five implementation-head CI passed.
+Cumulative corrections8 / installedattempt1 / fullvalidationruns6 this resumption
+(implementation5 plus own finalization1 PASS), plus earlier retained histories/
+failures; no administrative limit or reset.
+
+This finalization reconciles own contract/backlog/roadmap and documentary DAG.
+Its own independent reviews/checks/protected merge and NEW exact-final-main
+installed Client/Server/qualifiedEP, actual GUI/privacy screenshots/readback/
+normal cleanup are still required. Old candidate captures are never relabelled.
+Plan104/d458/PR171 remains preserved and follows LINK with ordinary reallocation;
+closed predecessors, primary checkout, old budgets/evidence remain preserved.
+No scan/repository/EPAction/Mission/model/global install or system-setting effect.
+
+## LINK qualified consumer candidate — protected delivery pending
+
+Current production source2a75c5a5ccf88c0d4103d4663a6bc03de22abcbd,
+Workspace2.8.27, same writer/PR160; cumulative corrections8, installedattempt1.
+[Actual candidate evidence](docs/qualification/plan98-link-candidate-20261014/README.md)
+records qualified EP2.3.120/f375a4e8, true native choose/inspect/link/open,
+same original lost-reply recovery with separate Server/Client OS restarts,
+one reference/receipt, five real locale/theme/width opens and retained C7RED /
+C8GREEN for late scope and natural expiry. All own test access/services were
+normally cleaned up before the original deadline. No model/userEP/repository/
+scan/Action/Mission effect. Complete independent source and candidate Q/S/UX,
+all eleven raw screenshot pixelprivacy and separate PNG-metadata audit PASS.
+Owning fullrun5 PASS:248Python/280native+1isolated, strict>80.2% per production
+file, package/noneditable/nativebuild gates. Current CI/TDE are separately
+read back; green workflow is not inferred policyPASS. Protected exact-head
+implementation, nonempty finalization and NEW exact-final-main installed/GUI/
+readback/cleanup remain OPEN. Candidate images retain their original C7/C8
+source byte bindings. Plan104/d458/PR171 remains preserved for after LINK;
+closed predecessors and all historical counters remain closed/retained.
+
+## Earlier candidate stages (retained history)
+
+## Active LINK completion after qualified HOB-EP01 — 14 October 2026
+
+Same r81-plan98 assignment/writer; priority switch from plan104 at clean
+pushed d458fa1/PR171 under selected6161577364 and ACK6177691573. Chat remains
+open and preserved; plan103/predecessors remain closed. Existing PR160 lineage
+0212f898 + merged mainfc3a26a is retained on preparation5a6338c. Corrections8
+cumulative (historical2, main-preparation3, producer binding4, security epoch5,
+identity/keyboard6, own isolated-store/lifecycle7, native full-scope/expiry8); installedattempt1, earlier failures retained, no fixed max.
+
+Qualified EP2.3.120/schema75/sourcef375a4e8adcec0c1693aa100c0f31f6014b84b20,
+wheel487357c26d1c023b46ec073bd2f281d2b8157f091518f923266ba8aa13c430ef,
+closed schema1d909b8098f209ad2828c15ddfe171b65ed4d22aab5d18dd25f0dccf33d457e9
+is delivered by[6171877315](https://github.com/pcvantol/forge/issues/208#issuecomment-6171877315).
+Actual separate noneditable own Server→qualified EP HTTP discovery/topology and
+narrower own-actor project set PASS; peer-readable foreign project gives403.
+This early C4 source-component proof does not prove C5/C6 or final-main GUI.
+
+The actual adapter consumes only the two closed owner GETs with finite discovery
+READ and exact instance/consumer/Workspace/audience/scope. Trusted local owner
+pairs an existing own actor/context to a narrower explicit project set; no new
+issuer. Every request preserves its original binding epoch through admission,
+local commit and guarded publication. Native actor/peer checks remain exact;
+a separate authenticated ownServer bootstrap resolves concrete identities.
+Topology revision remains the full64hex string. No display names exist in this
+producer: readonly labels faithfully show canonical IDs (up to128 characters),
+never inferred names. Attachments NOT_GRANTED are unknown, distinct from zero.
+
+Only PB-W1-LINK/PB-WQ-LINK; no scan/adoption/repository/EPAction/Mission/model.
+Current LINK normal PATCH2.8.27 follows actual priority delivery order. The
+unmerged plan1042.8.27 allocation remains historical on its preserved branch;
+chat must rebase/reallocate normally after LINK, without changing its old receipt.
+Required source/CI/complete independent Q/S/UX, actual installed Client/Server/EP,
+keyboard/five-language/screens, protected implementation/nonempty finalization
+and NEW exact-final-main proof/readback/own cleanup remain OPEN.
+
+## Historical preparation and earlier source checkpoints
+
 ## Plan103 protected source — ordinary finalization
 
 ## Selected r81-plan104 — native concept chat refinement
@@ -34,6 +121,16 @@ PR160/LINK original0212f898 remains draft; separate main-preparation5a6338c
 retains historical2 plus preparation3 without a fixed maximum;
 qualified HOB-EP01 delivery has priority at the next safe checkpoint. Plan103
 CLOSED via[6156170422](https://github.com/pcvantol/forge/issues/208#issuecomment-6156170422).
+
+## LINK main-integration preparation — 14 October 2026
+
+Original PR160/0212f898 and all evidence retained. This preparation merges only
+closed mainfc3a26a into the existing LINK lineage on a separate branch; it does
+not include plan104 WIP. Canonical main2.8.26 is preserved instead of restoring
+old2.8.21; a new normal feature allocation follows the actual delivery order.
+The old consumed2 remains historical; preparation correction3 has no fixed
+administrative maximum under selection6161577364. No producer/installed PASS.
+Qualified HOB-EP01 and full LINK DoD still required. Plan103 stays CLOSED.
 
 Assignment `L4-PROJECT-CONCEPT-BASELINE-PREVIEW-V1-20261013`, same r81-plan103 writer/session. [Implementation PR169](https://github.com/pcvantol/workspace/pull/169) was normally protected and squash-merged to `a9f43228f0ec2c57d1a3ca1e52442a8d953da65d` from exact independently accepted `b231728f1772e08bd795946f708812ee22f7f1f4`; merged tree is byte-identical to the reviewed tree. Workspace2.8.26 is unchanged by this documentary NO_BUMP finalization. Cumulative corrections12 / qualificationruns5; earlier counts, partial failures and source-bound evidence remain preserved.
 
