@@ -30,7 +30,7 @@ struct PrivateLocalRecordStore: Sendable {
     }
     private func name(_ key:String) throws -> String {
         guard key.range(of:"^[0-9a-f]{64}$",options:.regularExpression) != nil else { throw AdvisoryError.invalid }
-        guard ["candidate", "mission", "workset-release", "project-concept", "workset-activity", "workset-order", "concept-baseline"].contains(namespace) else { throw AdvisoryError.invalid }
+        guard ["candidate", "mission", "workset-release", "project-concept", "workset-activity", "workset-order", "concept-baseline", "project-link"].contains(namespace) else { throw AdvisoryError.invalid }
         return namespace+"-"+key+".json"
     }
     private func directory() throws -> Int32 {
