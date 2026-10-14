@@ -25,7 +25,8 @@ _BINDING_FIELDS = {"id", "client_digest", "actor_id", "forge_instance_id",
 
 
 class WorklistError(ValueError):
-    def __init__(self, state):
+    def __init__(self, state, *, http_status=None):
+        self.http_status = http_status
         self.state = state
         super().__init__(state)
 
@@ -107,7 +108,7 @@ def _valid_binding(binding):
 
 class WorklistReadTransport:
     def __init__(self, root, root_fd, *, namespace="worklist"):
-        if namespace not in ("worklist", "worklist-control", "advisory", "candidate", "mission", "workset-release", "workset-activity", "workset-order", "concept-baseline", "project-link"):
+        if namespace not in ("worklist", "worklist-control", "advisory", "candidate", "mission", "workset-release", "workset-activity", "workset-order", "concept-baseline", "concept-chat", "project-link"):
             raise ValueError("unsupported binding namespace")
         self.namespace = namespace
         self.root = Path(root)

@@ -137,6 +137,11 @@ for key,method,path in [("list","GET","/v1/project-concepts"),("create","POST","
     OPERATIONS["project_concepts."+key] = {"exposure":"HTTP_EXPOSED","method":method,"path":path,
         "auth":"BEARER_PINNED_AND_DRAFT_GRANT","contract":"project_concept","summary":"own project concept; no peer effects"}
 
+for key,method,path in [("access","GET","/v1/concept-chats/{concept_id}/access"),("briefing","GET","/v1/concept-chats/{concept_id}/briefing"),("history","GET","/v1/concept-chats/{concept_id}/history"),("send","POST","/v1/concept-chats/{concept_id}/turns"),("original","GET","/v1/concept-chats/{concept_id}/operations/{operation_id}"),("adopt","POST","/v1/concept-chats/{concept_id}/adopt")]:
+    OPERATIONS["concept-chats."+key]={"exposure":"HTTP_EXPOSED","method":method,"path":path,"auth":"BEARER_PINNED_AND_DRAFT_GRANT","contract":"concept-chat","summary":"scoped concept advice and separate explicit own adoption"}
+for key in ["issue","revoke"]:
+    OPERATIONS["concept-chats.bind."+key]={"exposure":"LOCAL_ONLY_ADMIN","local_cli":"concept-chat-bind-"+key,"auth":"PRIVATE_ROOT_OWNER","summary":"pair or revoke separate finite concept advice grant"}
+
 for key,method,path in [("access","GET","/v1/concept-baselines/{concept_id}/access"),("history","GET","/v1/concept-baselines/{concept_id}/operations"),("prepare","POST","/v1/concept-baselines/{concept_id}/prepare"),("original","GET","/v1/concept-baselines/{concept_id}/operations/{operation_id}")]:
     OPERATIONS["concept-baselines."+key]={"exposure":"HTTP_EXPOSED","method":method,"path":path,"auth":"BEARER_PINNED_AND_DRAFT_GRANT","contract":"concept-baseline","summary":"saved concept document-only proposal; no registration/approval/apply/Mission"}
 for key in ["issue","revoke"]:
@@ -825,6 +830,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_GET(self):
             if not self._trusted_origin():
                 return
+            from .concept_chat_http import route as concept_chat_route
+            if concept_chat_route(self,service):return
             from .concept_baseline_http import route as concept_baseline_route
             if concept_baseline_route(self,service):return
             if handle_project_concept(self, service): return
@@ -936,6 +943,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_POST(self):
             if not self._trusted_origin():
                 return
+            from .concept_chat_http import route as concept_chat_route
+            if concept_chat_route(self,service):return
             from .concept_baseline_http import route as concept_baseline_route
             if concept_baseline_route(self,service):return
             if handle_project_concept(self, service): return
@@ -974,6 +983,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_PATCH(self):
             if not self._trusted_origin():
                 return
+            from .concept_chat_http import route as concept_chat_route
+            if concept_chat_route(self,service):return
             from .concept_baseline_http import route as concept_baseline_route
             if concept_baseline_route(self,service):return
             if handle_project_concept(self, service): return

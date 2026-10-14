@@ -1,3 +1,38 @@
+## Current plan104 — qualified R53 integration after CLOSED LINK
+
+Same L4-NATIVE-CONCEPT-CHAT-REFINEMENT-V1-20261014 / r81-plan104 / solewriter.
+PR171/d458 and all earlier evidence remain in history; main588092a was merged
+without rewriting either lineage (integratione1fea1c). LINK is fully CLOSED via
+[6179192862](https://github.com/pcvantol/forge/issues/208#issuecomment-6179192862),
+including protected PR160/175, new exact-main installed/GUI/readback/cleanup.
+Its counters remain8corrections/2installed/6resumptionfullruns.
+
+Chat correction11 was booked before source at
+[6179217297](https://github.com/pcvantol/forge/issues/208#issuecomment-6179217297).
+Prior chat10corrections/2installed/10fullruns remain preserved; no maximum/reset.
+Normal next allocation2.8.28 follows deliveredLINK2.8.27; the original unmerged
+chat2.8.27 receipt remains historical. Both closed namespaces/routes/stores and
+package schemas were retained during ordinary main-conflict resolution.
+
+Qualified Forge2.19.0/schema46 exact877602f016dee36c1977ef7df1d937c7c5793ccc
+is delivered via[6168468302](https://github.com/pcvantol/forge/issues/208#issuecomment-6168468302).
+The actual frozen Mac wheel fca4f93684905e9eb524ada59bc68f2e41bf85ca5135f8f407db8bc261098912
+was verified before any installation. Current schema62cf57cb and synthetic wire
+example89dbab97 are byte-identical to the original committed projection; that
+old projection and producer233 candidate proof retain their original labels.
+The hosted public receipt is separately hash-verified and contains no wheel;
+it was not substituted for a qualified installation bundle.
+
+Integrated full validation11 PASS:291native+1isolated, strict per-file coverage
+and package/native gates. All325qualified Forge product payloads are byte-equal
+to the retained233candidate; new consumer installed proof remains required.
+Current exact-head CI and complete independent Quality/Security/UX,
+actual consumer qualification against qualified877, protected implementation,
+nonempty own finalization and NEW exact-final-main installed/GUI/privacy/
+readback/cleanup remain OPEN. Existing R52/96e1d736 and older proposal bytes keep
+their original bindings. No live model/EP/globalupgrade/credential/settings
+change or new feature. Historical stage snapshots follow.
+
 ## LINK protected source — own nonempty finalization
 
 Same r81-plan98 / L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012.
@@ -86,6 +121,41 @@ and NEW exact-final-main proof/readback/own cleanup remain OPEN.
 ## Historical preparation and earlier source checkpoints
 
 ## Plan103 protected source — ordinary finalization
+
+## Selected r81-plan104 — native concept chat refinement
+
+[Mandate6161577364](https://github.com/pcvantol/forge/issues/208#issuecomment-6161577364),
+assignment L4-NATIVE-CONCEPT-CHAT-REFINEMENT-V1-20261014, same sole writer,
+basefc3a26a/branchcodex/plan104-native-concept-chat-refinement/PATCH2.8.27.
+[Own bounded implementation](docs/WORKSPACE_CONCEPT_CHAT_REFINEMENT_V1.md):
+chat → separate changes → explicit own adoption → separately updated R52
+baseline. Existing SQLite/immutable originals/manual routes remain. Actual R53
+schema/typed examples e5816702 are byte-identical on7b89392a; implementation
+protected main233a014 is delivered, qualified final-main handoff remains open.
+Correction8 connects separate finite pairing, actual own HTTP, durable original
+recovery/adoption and native transport/journal/controls in five languages.
+10 directed own/peer-double HTTP and11 native chat tests PASS; these are source
+fixtures, not qualified Forge or installed/GUI acceptance. Source Q/S/UX is
+conditionally accepted after concrete integrated fixes. Full source gates,
+exact-head binding and actual qualified installed delivery remain open.
+Cumulative corrections10 / installed2 / full validations10; original failures
+and partial stages retained. Full source run10 PASS,271Python/280native+1isolated,
+strict>80.2% per production file; ChatView261/311, BaselineView106/112.
+[Actual early installed evidence](docs/qualification/plan104-candidate-proof-20261014/README.md)
+proves Business/followup/Architect,2explicit adoptions/revision3, richer37-doc
+R52 result, original bytes, lost reply and separate Client/Server restarts.
+Fourth/final synthetic call: late own revoke14.57ms/403DENIED/native concealment;
+all own grants/pairings/processes/listeners cleaned up. Five language frames
+and directed focus/copy images have independent pixel/privacy acceptance.
+Correction10 fixes false all-unknown copy and actual Space-based return focus,
+without settings; original AXButton metadatafalse and failed probes retained.
+Qualified R53 final handoff and complete consumer/final delivery remain OPEN;
+no final-main, live-model quality or full-DoD PASS inferred. Exact-head CI and
+review bindings follow this source freeze; no bypass or budget reset.
+PR160/LINK original0212f898 remains draft; separate main-preparation5a6338c
+retains historical2 plus preparation3 without a fixed maximum;
+qualified HOB-EP01 delivery has priority at the next safe checkpoint. Plan103
+CLOSED via[6156170422](https://github.com/pcvantol/forge/issues/208#issuecomment-6156170422).
 
 ## LINK main-integration preparation — 14 October 2026
 
