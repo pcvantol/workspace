@@ -112,6 +112,22 @@ class ConceptChatHTTPTests(unittest.TestCase):
         result=self.peer.provision('alice','own-context',self.identity,self.binding['endpoint'],'dossier-alice','conversation-alice','a'*40,str(path),str(token));self.assertEqual(result['concept_id'],self.identity)
         with self.assertRaises(ValueError):self.peer.provision('alice','own-context',self.identity,self.binding['endpoint'],'dossier-alice','conversation-alice','a'*40,'relative',str(token))
         (self.root/'concept-chat-bindings.json').unlink();self.assertEqual(self.request(self.prefix+'/access')[0],503)
+    def test_owner_cli_returns_safe_receipt_and_actual_revocation(self):
+        import io
+        from contextlib import redirect_stdout
+        from workspace_control.cli import main
+        self.peer.revoke(self.binding['id'])
+        token=self.root/'cli-advice-token';token.write_text('T'*64);token.chmod(0o600)
+        receipt={k:self.binding[k] for k in ('instance_id','principal_id','audience','dossier_ids','conversation_ids','permissions','maximum_turns','maximum_tokens','maximum_seconds','provider_id','transfer_policy_digest','expires_at')};receipt.update(state='ACTIVE',grant_id='concept-'+'a'*32)
+        path=self.root/'cli-advice-receipt';path.write_text(json.dumps(receipt));path.chmod(0o600)
+        out=io.StringIO()
+        with redirect_stdout(out):
+            status=main(['--root',str(self.root),'concept-chat-bind-issue','--actor','alice','--context','own-context','--concept-id',self.identity,'--forge-endpoint',self.binding['endpoint'],'--dossier-id','dossier-alice','--conversation-id','conversation-alice','--producer-source','a'*40,'--forge-grant-receipt-file',str(path),'--forge-token-file',str(token)])
+        self.assertEqual(status,0);value=json.loads(out.getvalue());self.assertEqual(set(value),{'binding_id','concept_id','producer_source'});self.assertEqual(value['concept_id'],self.identity)
+        self.assertEqual(self.request(self.prefix+'/access')[0],200)
+        out=io.StringIO()
+        with redirect_stdout(out):status=main(['--root',str(self.root),'concept-chat-bind-revoke','--binding-id',value['binding_id']])
+        self.assertEqual(status,0);self.assertEqual(json.loads(out.getvalue())['binding_id'],value['binding_id']);self.assertEqual(self.request(self.prefix+'/access')[0],403);self.assertEqual(self.posts,0)
     def test_closed_routes_and_bad_commands(self):
         for action in ('access','briefing','history'):self.assertEqual(self.request(self.prefix+'/'+action,'POST',{})[0],405)
         self.assertEqual(self.request(self.prefix+'/turns')[0],405)

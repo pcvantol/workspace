@@ -16,11 +16,18 @@ recovery/adoption and native transport/journal/controls in five languages.
 fixtures, not qualified Forge or installed/GUI acceptance. Source Q/S/UX is
 conditionally accepted after concrete integrated fixes. Full source gates,
 exact-head binding and actual qualified installed delivery remain open.
-Cumulative corrections8 / installed0 / full validations7; runs5 and6 failed
+Cumulative corrections9 / installed1 / full validations8; runs5 and6 failed
 on the new namespace's read-catalogue/admin inventory expectations. Both
 original failures are retained; corrected full run7 PASS, without reset.
-Owning Python270/native280+1isolated, wheel/sdist/install/app and strict
-per-file coverage PASS; current CI/TDE and installed acceptance remain open.
+Owning Python271/native280+1isolated, wheel/sdist/install/app and strict
+per-file coverage PASS. Actual installed trial1 exposed missing owner-CLI
+JSON receipts before model generation; zero calls, normal cleanup complete.
+Correction9 adds safe issue/revoke receipts and actual CLI regression
+(RED before fix,11 directed tests GREEN). Full run8 PASS. The existing expiry
+test harness now awaits the real autonomous transition within2s, retaining
+all assertions; three directed post-delta native tests PASS. Original5c032
+native CI failure and TDE PASS_WITH_WARNINGS retained. New exact-head CI and
+actual installed/GUI acceptance remain open.
 PR160/LINK original0212f898 remains draft; separate main-preparation5a6338c
 retains historical2 plus preparation3 without a fixed maximum;
 qualified HOB-EP01 delivery has priority at the next safe checkpoint. Plan103

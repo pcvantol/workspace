@@ -217,8 +217,10 @@ def main(argv=None):
         elif args.command == "concept-chat-bind-issue":
             with Service(args.root) as service:
                 result=service.concept_chats.provision(args.actor,args.context,args.concept_id,args.forge_endpoint,args.dossier_id,args.conversation_id,args.producer_source,args.forge_grant_receipt_file,args.forge_token_file)
+            print(json.dumps(result,sort_keys=True))
         elif args.command == "concept-chat-bind-revoke":
             with Service(args.root) as service:result=service.concept_chats.revoke(args.binding_id)
+            print(json.dumps(result,sort_keys=True))
         elif args.command == "concept-baseline-bind-issue":
             with Service(args.root) as service:
                 result=service.concept_baselines.provision(args.actor,args.context,args.concept_id,args.forge_endpoint,args.dossier_id,args.producer_source,args.forge_grant_receipt_file,args.forge_token_file)

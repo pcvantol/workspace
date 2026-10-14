@@ -194,3 +194,26 @@ preparation, not EP/installed acceptance. Both scopes keep separate cumulative c
 A qualified HOB-EP01 handoff takes priority at the next safe source/test
 checkpoint, without aborting a running test or adding an EP gate to R53.
 Full onboarding/Approve/Apply and an automatic following feature are unselected.
+
+## Actual installed setup correction9
+
+First isolated candidate trial1 used noneditable own5c032 and producer233a014
+packages. Setup found successful owner CLI issue/revoke omitted their safe
+JSON receipt; no model invocation occurred. The original failure remains
+FAILED_SETUP, not a successful chat. All own pairings/grants/processes were
+normally cleaned up and private fixture/evidence retained.
+
+Two CLI publication lines now return the existing bounded receipt fields,
+without token/path/pairing contents. The actual ownerCLI/HTTP regression is
+RED on old source and GREEN after repair;11 directed tests pass. Full owning
+run8 PASS with271Python/280native+1isolated and unchanged strict product gates.
+Normal5c032 CI additionally exposed the existing test's fixed80ms wait versus
+an asynchronous MainActor expiry transition. Only the test harness now awaits
+the actual transition for at most2s, preserving every safety assertion and
+zero-send check. Three directed post-delta expiry tests PASS; no release
+product code changed or old assignment reopened. Original CI failure stays
+retained; TDE5c032 is PASS_WITH_WARNINGS, not a clean policy PASS.
+
+Cumulative corrections9 / installedattempts1 / fullvalidations8. Qualified
+producer, actual full installed/GUI acceptance, new exact-head CI, protected
+delivery/finalization and NEW final-main evidence remain OPEN.
