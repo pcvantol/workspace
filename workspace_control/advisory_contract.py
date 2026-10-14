@@ -46,7 +46,7 @@ def _check(value, schema, definitions=None):
         for item in value: _check(item, schema.get('items', {}), definitions)
     elif isinstance(value, str):
         if not schema.get('minLength', 0) <= len(value) <= schema.get('maxLength', 4096): raise WorklistError('INVALID_RESPONSE')
-        if 'pattern' in schema and re.fullmatch(schema['pattern'], value) is None: raise WorklistError('INVALID_RESPONSE')
+        if 'pattern' in schema and re.search(schema['pattern'], value) is None: raise WorklistError('INVALID_RESPONSE')
         if schema.get('format') == 'date-time':
             try:
                 if len(value) > 64 or datetime.fromisoformat(value.replace('Z', '+00:00')).utcoffset() is None: raise ValueError()

@@ -138,7 +138,7 @@
       "id": "PB-W1-LINK",
       "parent": "PB-W1",
       "owner": "workspace",
-      "status": "IN_PROGRESS_PRODUCER_JOIN_PENDING",
+      "status": "PLANNED",
       "depends_on": [
         "PB-W0"
       ],
@@ -152,8 +152,7 @@
       "user_outcome": "Link verified configured project without scan or peer write",
       "deliverable": "Link verified configured project without scan or peer write",
       "acceptance": "identity/scope/ref repeat, denied/offline, no scan/duplicate/create, five locales",
-      "implementation_selected": true,
-      "selected_assignment": "L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012"
+      "implementation_selected": false
     },
     {
       "id": "PB-W1-TOPOLOGY",
@@ -261,7 +260,24 @@
       "user_outcome": "Exact create/adopt preview and separate required decisions",
       "deliverable": "Exact create/adopt preview and separate required decisions",
       "acceptance": "empty/README/dirty/guarded birth; preserve documents/history; current mandatory gate cannot defer",
-      "implementation_selected": false
+      "implementation_selected": false,
+      "selected_subset": {
+        "scope": "CONCEPT_BASELINE_PREVIEW",
+        "assignment": "L4-PROJECT-CONCEPT-BASELINE-PREVIEW-V1-20261013",
+        "plan": 103,
+        "status": "PROTECTED_SOURCE_MERGED_FINALIZATION_PENDING",
+        "own_contract": "docs/WORKSPACE_CONCEPT_BASELINE_V1.md",
+        "producer_contract": "forge-project-proposal-http/v1",
+        "qualified_producer_binding": "Forge2.18.0/96e1d73670b8575d41977fd448bfec10fc55206e/forge-project-proposal-http/v1",
+        "profile": "portable-docs/1.0.0 authority GENESIS LOCAL_POSIX",
+        "full_parent_selected": false,
+        "ep_dependency_for_subset": false,
+        "source_pull_request": 169,
+        "source_main": "a9f43228f0ec2c57d1a3ca1e52442a8d953da65d",
+        "candidate_acceptance": "COMPLETE_SCOPED_QUALITY_SECURITY_UX_PASS",
+        "finalization": "docs/WORKSPACE_CONCEPT_BASELINE_FINALIZATION_V1.md",
+        "new_exact_final_main_installed": "PENDING"
+      }
     },
     {
       "id": "PB-W3-PROGRESS",
@@ -335,7 +351,7 @@
       "id": "PB-WQ-LINK",
       "parent": "PB-WQ",
       "owner": "workspace",
-      "status": "IN_PROGRESS_PRODUCER_JOIN_PENDING",
+      "status": "PLANNED",
       "depends_on": [
         "PB-W1-LINK"
       ],
@@ -349,8 +365,7 @@
       "user_outcome": "Qualify independent basic link slice",
       "deliverable": "Qualify independent basic link slice",
       "acceptance": "real installed qualified scoped read, no deep scan/promotion/wholepeerQ prerequisite",
-      "implementation_selected": true,
-      "selected_assignment": "L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012"
+      "implementation_selected": false
     },
     {
       "id": "PB-WQ-ASSESS",
@@ -400,6 +415,77 @@
       "deliverable": "Qualify individual create/adopt slices before aggregate",
       "acceptance": "one actual scoped effect/readback, separate decisions, source/hash/dirty/conflict negatives",
       "implementation_selected": false
+    },
+    {
+      "id": "PB-W1-CONCEPTS",
+      "parent": "PB-W1",
+      "owner": "workspace",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "PB-W0"
+      ],
+      "new_scoped_node": true,
+      "selected_assignment": "L4-PROJECT-CONCEPTS-V1-20261012",
+      "implementation_selected": true,
+      "user_outcome": "Own idea create/save/find/reopen/edit without peers",
+      "deliverable": "Native concepts and own durable HTTP/storage",
+      "input_contracts": [
+        "HOB-W01-own-draft-subset"
+      ],
+      "acceptance": "docs/WORKSPACE_PROJECT_CONCEPTS_V1.md"
+    },
+    {
+      "id": "PB-WQ-CONCEPTS",
+      "parent": "PB-WQ",
+      "owner": "workspace",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "PB-W1-CONCEPTS"
+      ],
+      "new_scoped_node": true,
+      "selected_assignment": "L4-PROJECT-CONCEPTS-V1-20261012",
+      "implementation_selected": true,
+      "user_outcome": "Exact-main installed concept acceptance",
+      "deliverable": "Own native/Server GUI/restart/negative qualification",
+      "input_contracts": [],
+      "acceptance": "No EP/Forge prerequisites; exact-main installed GUI and strict owning DoD"
+    },
+    {
+      "id": "PB-W1-CONCEPT-LIBRARY",
+      "parent": "PB-W1",
+      "owner": "workspace",
+      "status": "SOURCE_DELIVERED",
+      "depends_on": [
+        "PB-W1-CONCEPTS"
+      ],
+      "new_scoped_node": true,
+      "selected_assignment": "L4-PROJECT-CONCEPT-LIBRARY-V1-20261012",
+      "implementation_selected": true,
+      "user_outcome": "Own title search and durable reversible archive",
+      "deliverable": "Versioned Server lifecycle and existing native concept library",
+      "input_contracts": [
+        "project-concept-library/1"
+      ],
+      "acceptance": "docs/WORKSPACE_PROJECT_CONCEPT_LIBRARY_V1.md",
+      "source_evidence": "docs/WORKSPACE_PROJECT_CONCEPT_LIBRARY_FINALIZATION_V1.json"
+    },
+    {
+      "id": "PB-WQ-CONCEPT-LIBRARY",
+      "parent": "PB-WQ",
+      "owner": "workspace",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "PB-W1-CONCEPT-LIBRARY"
+      ],
+      "new_scoped_node": true,
+      "selected_assignment": "L4-PROJECT-CONCEPT-LIBRARY-V1-20261012",
+      "implementation_selected": true,
+      "user_outcome": "New exact-final-main own installed library acceptance",
+      "deliverable": "Own Server/native GUI/OSrestart/lifecycle replay/negative qualification",
+      "input_contracts": [],
+      "acceptance": "Strict owning DoD; no peer prerequisites",
+      "candidate_evidence": "docs/WORKSPACE_PROJECT_CONCEPT_LIBRARY_FINALIZATION_V1.json",
+      "remaining_gate": "NEW_EXACT_FINAL_MAIN_INSTALLED_GUI_AND_INDEPENDENT_PROOF"
     }
   ],
   "holistic_design": "docs/PROJECT_ONBOARDING_HOLISTIC_V1.md",
@@ -430,18 +516,58 @@
     "exact_final_main_readback": "REQUIRED_POST_FINALIZATION_MERGE_EXTERNAL_REGISTER"
   },
   "subset_semantics": "Parent grouping is not a prerequisite edge. Aggregate PB-WQ retains original full-five-route deps; PB-WQ-LINK is independent. Required profile analyses are scoped conditional inputs, not universal initialization prerequisites.",
-  "verified_link_delivery": {
+  "concept_delivery": {
+    "plan": 99,
+    "budget": {
+      "consumed": 4,
+      "max": 4,
+      "remaining": 0
+    },
+    "state": "PROTECTED_SOURCE_AND_ACTUAL_CANDIDATE_ACCEPTED",
+    "contract": "docs/WORKSPACE_PROJECT_CONCEPTS_V1.md",
+    "installed": "787891b_ACTUAL_CANDIDATE_PASS_FINAL_MAIN_PENDING",
+    "round1_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6119044322",
+    "round2_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6119365819",
+    "round3_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6120212512",
+    "round4_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6120776249",
+    "source_main": "0fc818a3b54395fa71a216dcf4246be941781c60",
+    "source_pr": 161,
+    "finalization_receipt": "docs/WORKSPACE_PROJECT_CONCEPTS_FINALIZATION_V1.json",
+    "exact_final_main": "REQUIRED_POST_FINALIZATION_MERGE_EXTERNAL_REGISTER",
+    "terminal_registration": "https://github.com/pcvantol/forge/issues/208#issuecomment-6122145258",
+    "terminal_state": "CLOSED"
+  },
+  "parked_link_delivery": {
     "plan": 98,
+    "head": "0212f898bb049c7019e4f8c602decc09b891c595",
+    "pr": 160,
+    "state": "OWN_SOURCE_READY_CONTRACT_TESTED_WAITING_FOR_EP_JOIN",
     "budget": {
       "consumed": 2,
       "max": 3,
       "remaining": 1
     },
-    "state": "INITIAL_OWN_COMPONENTS_PRODUCER_JOIN_PENDING",
-    "join": "L2-L4-HOB-EP01-VERIFIED-LINK-V1-20261012",
-    "contract": "docs/WORKSPACE_VERIFIED_PROJECT_LINK_V1.md",
-    "installed_ep_qualification": "NOT_RUN_UNBOUND",
-    "correction_round1_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6118203275",
-    "correction_round2_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6118282617"
+    "main_integration_preparation": {
+      "base": "fc3a26ab048742d2c03c79969860c0b6feb3f12e",
+      "original_head": "0212f898bb049c7019e4f8c602decc09b891c595",
+      "status": "SOURCE_PREPARATION_ONLY_NO_EP_BINDING",
+      "consumed": 3,
+      "administrative_maximum": null
+    }
+  },
+  "concept_library_delivery": {
+    "plan": 100,
+    "base": "5e354a5e3571e6a8b1fb45a51b1280b296833cc7",
+    "budget": {
+      "consumed": 2,
+      "max": 3,
+      "remaining": 1
+    },
+    "pickup": "https://github.com/pcvantol/forge/issues/208#issuecomment-6123273197",
+    "state": "INTEGRATED_CORRECTION_ROUND2",
+    "contract": "docs/WORKSPACE_PROJECT_CONCEPT_LIBRARY_V1.md",
+    "installed": "PENDING_NEW_QUALIFICATION",
+    "round1_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6123731480",
+    "round2_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6124005482"
   }
 }

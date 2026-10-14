@@ -275,6 +275,10 @@ class Service:
             from .mission_peer import MissionConceptTransport
             from .workset_release_peer import WorksetReleaseTransport
             self.conversations = ConversationStore(self.root, self._root_fd)
+            from .project_concepts import ProjectConceptStore
+            self.project_concepts = ProjectConceptStore(self.conversations)
+            from .concept_baseline_peer import ConceptBaselinePeer
+            self.concept_baselines = ConceptBaselinePeer(self.root, self._root_fd, self.project_concepts)
             self.project_links = ProjectLinks(self.conversations)
             self.reviews = ReviewTransport(self.root, self._root_fd)
             self.worklists = WorklistReadTransport(self.root, self._root_fd)
@@ -283,6 +287,10 @@ class Service:
             self.mission_concepts = MissionConceptTransport(self.root, self._root_fd, self.conversations)
             self.candidates = CandidateTransport(self.root, self._root_fd, self.conversations)
             self.workset_releases = WorksetReleaseTransport(self.root, self._root_fd)
+            from .workset_activity_peer import WorksetActivityTransport
+            self.activities = WorksetActivityTransport(self.root, self._root_fd)
+            from .workset_order_peer import WorksetOrderTransport
+            self.workset_orders = WorksetOrderTransport(self.root, self._root_fd)
         except Exception:
             self.close()
             raise

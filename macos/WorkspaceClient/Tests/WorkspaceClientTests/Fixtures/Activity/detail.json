@@ -1,0 +1,52 @@
+{
+  "contract_version": "forge-workset-activity/v1",
+  "coverage": {
+    "historical_extent": "PARTIAL",
+    "limitations": [
+      "LEGACY_MISSION_TIMELINE_UNKNOWN",
+      "NO_BACKFILL_OF_MUTABLE_SNAPSHOTS"
+    ],
+    "offered_records": "COMPLETE_FOR_RETAINED_SOURCES",
+    "ordering": "STABLE_PRESENTATION_NOT_CROSS_SOURCE_CAUSAL_PROOF",
+    "source_counts": {
+      "ACTIVATION_CLAIM": 1,
+      "CONTROL_INTENT": 0,
+      "CONTROL_RECEIPT": 0,
+      "EXECUTION_EXCHANGE": 2,
+      "EXECUTION_RECEIPT": 0,
+      "FINAL_ACCEPTANCE_DECISION": 0,
+      "MISSION_TRANSITION": 5,
+      "ORDER_DECISION": 0,
+      "ORDER_INTENT": 0,
+      "ORDER_RECEIPT": 0,
+      "RELEASE_RECEIPT": 1,
+      "WORKSET_DECISION": 2
+    }
+  },
+  "event": {
+    "causes": [],
+    "details": {},
+    "digest_contract": "GOVERNANCE_ASCII",
+    "event_id": "6da3210cdaab674701f1bf824aacaae4d1ee83f2807f6faa3f2544fd5cf77dbb",
+    "fact": "WORKSET_ARCHITECTURE_APPROVED",
+    "kind": "DECISION",
+    "occurred_at": "2026-10-12T14:46:35Z",
+    "sequence": null,
+    "source_digest": "sha256:bf9b64289c07d933d8952df859bc0f587a59b279a903d66d52790adeea0abd18",
+    "source_reference": {
+      "kind": "WORKSET_DECISION",
+      "record_id": "workset:released-99a4d5e2ae42167842a8cfde484f65dcba033cf6:architecture:1fd64a02ae0a3eebef342b6a5c8c2b8f525451af517b726dfb1963437f52fe86",
+      "url": "/v1/approved-workset-activity/released-99a4d5e2ae42167842a8cfde484f65dcba033cf6/events/6da3210cdaab674701f1bf824aacaae4d1ee83f2807f6faa3f2544fd5cf77dbb"
+    },
+    "source_revision": "sha256:bf9b64289c07d933d8952df859bc0f587a59b279a903d66d52790adeea0abd18",
+    "subject": {
+      "id": "released-99a4d5e2ae42167842a8cfde484f65dcba033cf6",
+      "kind": "WORKSET",
+      "label": "Werklijst"
+    },
+    "summary": "Architectuur heeft de exacte werklijst goedgekeurd — Werklijst",
+    "time_status": "RECORDED"
+  },
+  "read_only": true,
+  "workset_id": "released-99a4d5e2ae42167842a8cfde484f65dcba033cf6"
+}

@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "assignment": "L4-PROJECT-CONCEPTS-V1-20261012",
+  "plan": 99,
+  "product_version": "2.8.22",
+  "protected_source": {
+    "pr": 161,
+    "reviewed_head": "787891b16bd7caf68fadb71318d5b5d2f04cd773",
+    "main": "0fc818a3b54395fa71a216dcf4246be941781c60",
+    "tree": "e2dabf5cf92fb4bac4970824982699a6ad7073d5",
+    "reviewed_and_merged_tree_equal": true
+  },
+  "scope": "Own durable project concepts; no configured project creation or peer execution",
+  "budget": {
+    "consumed": 4,
+    "max": 4,
+    "remaining": 0,
+    "last_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6120776249"
+  },
+  "parked_link": {
+    "plan": 98,
+    "pr": 160,
+    "head": "0212f898bb049c7019e4f8c602decc09b891c595",
+    "budget": {
+      "consumed": 2,
+      "max": 3,
+      "remaining": 1
+    }
+  },
+  "validation": {
+    "mandatory": "PASS",
+    "native_tests": 212,
+    "isolated_adapter_tests": 1,
+    "every_modified_production_file_coverage": "STRICTLY_GREATER_THAN_80.2_PERCENT",
+    "owning_ci": "ALL_FIVE_SUCCESS_ON_REVIEWED_HEAD",
+    "tde": {
+      "result": "QUALIFIED / PASS_WITH_WARNINGS",
+      "runtime": "1.1.1",
+      "policy": "1.4.0",
+      "findings": 56,
+      "warning": "complexity maximum18 exceeds15",
+      "evidence_sha256": "c6cd72cb26a7e2e23df08bac96fae8060f2fac540539e64458b57c630c1ec717"
+    }
+  },
+  "independent_private_report_sha256": {
+    "security-round4-787891b.private.md": "5136ac9cd59b82efc6cb3303f2837458f63c1f537b76e9ee7d78badf4b66fe17",
+    "ux-round4-787891b.private.md": "6f9366c8432e7ace811aad126605a2d85af23b1fc37a00dfae1fdd8bfa5038fd",
+    "installed-quality-round4-787891b.private.md": "b7350701f7b434178ef297e946656be5e28a03ca3841922440cb237d45048a81",
+    "installed-ux-round4-787891b.private.md": "5e4f3f28faf3f4779256c949929e706b78dbbc852269830b089752cd9d0b0eb8",
+    "installed-security-round4-787891b.private.md": "c3143ee4b34bfb73054ccd9ff28e43926c02243837c4310d4a31421a6bd4df1b",
+    "quality-round4-787891b.private.md": "8fd9d34e1e2141c9f45e3489aa2afe06a484b40a750e1a8e030a4b06127c1dbd"
+  },
+  "actual_candidate": {
+    "status": "PASS_INDEPENDENT_QUALITY_SECURITY_UX",
+    "source": "787891b16bd7caf68fadb71318d5b5d2f04cd773",
+    "wheel_sha256": "83dd50bf8eb375bf3b7e50f9b352cd99dc8f3e89e4824447b5c6fbcf4855a2c5",
+    "native_sha256": "74e4115774eb293be28fe2537e2c44327a1ff4d8cd229fe1e3af18e77960eaa7",
+    "environment": "Own synthetic local context; separately installed noneditable Server and production-built ad-hoc native isolated-test adapter",
+    "cases": [
+      "actual GUI create/edit/CmdS/reopen",
+      "original response-loss recovery after separate native and Server OS restarts with identical original operation and no duplicate effect",
+      "stale conflict retains local text; explicit canonical reopen",
+      "actual unavailable Server and allocated SQLite loss do not claim saved or recreate missing storage",
+      "controlled hidden parent401 concealment; separate actual revoked403 and foreign actor404",
+      "late actual detail cannot replace current selection",
+      "five languages with light/dark and logical widths560/760/1180"
+    ],
+    "retained_limitation": "One private helper awaited a Button as statictext; original failure retained and same bounded scope continued from its unexecuted step without repeating completed operations",
+    "guard_refault": "Current installed derivative stale-CAS mutation produced expected red test; original product bytes unchanged",
+    "cleanup": "Both synthetic pairings revoked; own native/Server/proxy stopped",
+    "screenshots": [
+      {
+        "path": "docs/project-concepts-candidate/de-reopened-dark-760.png",
+        "sha256": "18cf3325fa4516fd62c0523f194b9cd4e1d896ec9eb3fe017fa6f2048df704f6"
+      },
+      {
+        "path": "docs/project-concepts-candidate/en-connection-outage760-light.png",
+        "sha256": "f1cd00911a84761390a9805ee081dfe2f8b8dab5699d91bd020b5da8c1931b7a"
+      },
+      {
+        "path": "docs/project-concepts-candidate/en-created760-light.png",
+        "sha256": "0ca356b42ac0e56df68ef9ceb47d791eaf6c7bde899a62a547b1fe6b87dc9ce8"
+      },
+      {
+        "path": "docs/project-concepts-candidate/en-empty760-light.png",
+        "sha256": "e193574dbb08803fad88bbd9685ee2bf7c3b054e5cb458d5bc6a29ab076e1911"
+      },
+      {
+        "path": "docs/project-concepts-candidate/en-hidden-pane-parent401-cleared.png",
+        "sha256": "5e596db263c5357d501f6b47f437d2423dc1796bd8a94d3d768a3f987f54bddc"
+      },
+      {
+        "path": "docs/project-concepts-candidate/en-long-notes560-light.png",
+        "sha256": "d5e67f72e6219cfbb9994a77157a488026a57b96472c4d3dd5bf3fbc0ba43e11"
+      },
+      {
+        "path": "docs/project-concepts-candidate/en-lost-reply760-light.png",
+        "sha256": "19afba5d9ed72a1777b060fd4db0539433bdd3ff53d5dde5273b0213683df67e"
+      },
+      {
+        "path": "docs/project-concepts-candidate/en-original-recovery-after-restart.png",
+        "sha256": "10fcb185204807106bc13320e086862aff9bedfd0304104f85f236766b4776a5"
+      },
+      {
+        "path": "docs/project-concepts-candidate/en-other-actor-empty.png",
+        "sha256": "b29166439a2f51f732a1f739d02bbc078bd97a22167c3343137674936febc115"
+      },
+      {
+        "path": "docs/project-concepts-candidate/en-real-grant-revoked.png",
+        "sha256": "866c9bc2aad8e6bcc347e7108304021ec2876938f1544607075d30f97a635a97"
+      },
+      {
+        "path": "docs/project-concepts-candidate/en-reopened-light-1180.png",
+        "sha256": "f35ec9f22fa3a343eedcb2eff94b3c9c634d0ecd657f2e8c9b10a8c5638553e8"
+      },
+      {
+        "path": "docs/project-concepts-candidate/en-stale-conflict760-light.png",
+        "sha256": "0d7e88084699102a55ed64e06a90f904e4480d8d978b99ce2d632ba66098d7ec"
+      },
+      {
+        "path": "docs/project-concepts-candidate/en-storage-unavailable760-light.png",
+        "sha256": "ccbe66b6c011e6ad0950762e626df23385fda1963eeeee2c53561b48540a1980"
+      },
+      {
+        "path": "docs/project-concepts-candidate/en-unsaved760-light.png",
+        "sha256": "ec58f26030f921094288076d692d09186ceeee84bb9ffb015ec1ec410c0a339d"
+      },
+      {
+        "path": "docs/project-concepts-candidate/es-reopened-dark-560.png",
+        "sha256": "89939f0467e637f86a7fc525e3f2e31a2890897560da301360432782e45d6dbb"
+      },
+      {
+        "path": "docs/project-concepts-candidate/fr-reopened-light-760.png",
+        "sha256": "07978270ec4a8bcdf3a2e70c0dca806944d0f0a7dd24a81dc2ac15b93bf6398f"
+      },
+      {
+        "path": "docs/project-concepts-candidate/nl-reopened-dark-760.png",
+        "sha256": "c8380d2e461d73bed582a2c9a3fe394f85fd1bf8195bc196f9c4b0f9fd4719ab"
+      }
+    ]
+  },
+  "finalization": {
+    "nonempty": true,
+    "classification": "NO_BUMP",
+    "product_code_changed": false,
+    "protected_delivery": "PENDING_CURRENT_DOCUMENTARY_REVIEW_AND_CI",
+    "exact_final_main_installed": "REQUIRED_NEW_POST_MERGE_PROOF_EXTERNAL_REGISTER",
+    "complete_dod_preclaimed": false
+  },
+  "history": "All original source/GUI failures and earlier budgets retained; plan96/97 closed; plan98 remains parked"
+}

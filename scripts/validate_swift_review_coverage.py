@@ -6,6 +6,10 @@ import sys
 
 
 SOURCES = {
+    "ConceptBaselineDraftView.swift", "ConceptBaselineTransport.swift", "ConceptBaselineState.swift", "ConceptBaselinePanel.swift",
+    "WorksetOrderCopy.swift", "WorksetOrderModels.swift", "WorksetOrderTransport.swift", "WorksetOrderStorage.swift", "WorksetOrderState.swift", "WorksetOrderView.swift", "WorksetOrderSchema.swift",
+    "WorksetActivityCopy.swift", "WorksetActivityModels.swift", "WorksetActivityTransport.swift", "WorksetActivityStorage.swift", "WorksetActivityState.swift", "WorksetActivityView.swift", "WorksetActivitySchema.swift",
+    "WorkspaceNavigationShell.swift", "ProjectConceptState.swift", "ProjectConceptLibraryState.swift", "ProjectConceptTransport.swift", "ProjectConceptView.swift",
     "ProjectLinkState.swift", "ProjectLinkTransport.swift", "ProjectLinkView.swift",
     "CanonicalJSON.swift",
     "ClientState.swift", "WorksetReleaseModels.swift", "WorksetReleaseWire.swift", "WorksetReleaseTransport.swift", "WorksetReleaseStorage.swift", "WorksetReleaseState.swift", "WorksetReleaseCopy.swift", "WorksetReleaseView.swift",

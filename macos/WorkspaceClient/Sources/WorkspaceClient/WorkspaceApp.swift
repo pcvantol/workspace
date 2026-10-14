@@ -3,6 +3,7 @@ import SwiftUI
 #if WORKSPACE_ISOLATED_TEST
 import AppKit
 import ScreenCaptureKit
+import CoreGraphics
 
 private enum IsolatedWindowEvidence {
     static func capture(in directory: String) {
@@ -16,6 +17,9 @@ private enum IsolatedWindowEvidence {
                 app.appearance=appearance
                 try? await Task.sleep(for:.milliseconds(200))
             }
+            // Test capture is opt-in and must never request permission at startup.
+            guard IsolatedWindowCapturePolicy.permitted(environment:ProcessInfo.processInfo.environment,
+                                                        preflight:CGPreflightScreenCaptureAccess) else { return }
             guard let window=NSApp.windows.first(where: { $0.title=="Workspace" }),
                   let available=try? await SCShareableContent.excludingDesktopWindows(true,onScreenWindowsOnly:true),
                   let owned=available.windows.first(where: { $0.windowID==CGWindowID(window.windowNumber) && $0.owningApplication?.processID==ProcessInfo.processInfo.processIdentifier }) else { return }
@@ -122,6 +126,10 @@ struct ContentView: View {
     @StateObject private var reviews: MissionReviewState
     @StateObject private var worklists: WorklistState
     @StateObject private var projectLinks = ProjectLinkState()
+    @StateObject private var concepts = ProjectConceptState()
+    @StateObject private var activity = ActivityState()
+    @StateObject private var order = OrderState()
+    private let conceptGrants: any DraftGrantStore
     @State private var selectedTab = 4
     @State private var requestedReview: MissionReviewKey?
     @State private var reviewNavigationStatus = ""
@@ -129,6 +137,16 @@ struct ContentView: View {
     init(client: ClientState, conversations: ConversationState = ConversationState(),
          reviews: MissionReviewState = MissionReviewState(), worklists: WorklistState = WorklistState()) {
         self.client = client
+        #if WORKSPACE_ISOLATED_TEST
+        if let document = try? IsolatedTestDocument.load() {
+            conceptGrants = IsolatedDraftGrant(document)
+            _order = StateObject(wrappedValue:OrderState(credentials:IsolatedOrderCredentials(document),store:OrderIntentStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("order-intents"))))
+            _activity = StateObject(wrappedValue:ActivityState(credentials:IsolatedActivityCredentials(document),store:ActivityLocalStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("activity-views"))))
+            _concepts = StateObject(wrappedValue:ProjectConceptState(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("project-concept-intents")))
+        } else { conceptGrants = DraftGrantKeychain() }
+        #else
+        conceptGrants = DraftGrantKeychain()
+        #endif
         _conversations = StateObject(wrappedValue: conversations)
         _reviews = StateObject(wrappedValue: reviews)
         _worklists = StateObject(wrappedValue: worklists)
@@ -164,33 +182,48 @@ struct ContentView: View {
     }
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            ProjectLinkView(state: projectLinks)
-                .tabItem { Label(ProjectLinkCopy.text("title", language: locale.language.languageCode?.identifier ?? "en"), systemImage: "folder") }.tag(5)
-            Group {
-                if let preview=missionObservation {
-                    MissionWorkspaceView(observation:preview,canRefine:false,canApprove:false,onRefine:{ _, _, _ in },onApprove:{ _ in })
-                } else {
-                    LiveMissionWorkspaceView(client:client,conversations:conversations,onOpenReviews:openReview)
-                }
+        WorkspaceNavigationShell(selected:$selectedTab,language:locale.language.languageCode?.identifier ?? "en") { destination in
+            switch destination {
+            case 8:
+                ProjectLinkView(state:projectLinks)
+            case 5:
+                ProjectConceptView(state:concepts,client:client,grants:conceptGrants)
+                    .environment(\.nativeTabCommandsActive,true)
+            case 0:
+                ConversationsView(client:client,state:conversations)
+                    .environment(\.nativeTabCommandsActive,true)
+            case 1:
+                LiveMissionReviewsView(client:client,state:reviews,selection:$requestedReview)
+                    .environment(\.nativeTabCommandsActive,true)
+            case 2:
+                LiveApprovedWorklistView(client:client,state:worklists,
+                    reviewNavigationStatus:reviewNavigationStatus,onOpenReviews:openReview)
+                    .environment(\.nativeTabCommandsActive,true)
+            case 7:
+                WorksetOrderView(state:order,client:client,grants:conceptGrants,onApplied:{ access,workset in
+                    if let bound=activity.access,activity.selected==workset,
+                       bound.scope==access.binding.scope,bound.installation_id==access.binding.installation_id,
+                       bound.worksets==access.binding.worksets,bound.actorID==access.binding.actorID,
+                       bound.workspaceProjectID==access.binding.workspaceProjectID { await activity.fetch(restart:true) }
+                })
+            case 6:
+                WorksetActivityView(state:activity,client:client,grants:conceptGrants)
+            case 3:
+                ServerOverviewView(client:client)
+            default:
+                Group {
+                    if let preview=missionObservation {
+                        MissionWorkspaceView(observation:preview,canRefine:false,canApprove:false,onRefine:{ _, _, _ in },onApprove:{ _ in })
+                    } else {
+                        LiveMissionWorkspaceView(client:client,conversations:conversations,onOpenReviews:openReview)
+                    }
+                }.environment(\.nativeTabCommandsActive,true)
             }
-                .environment(\.nativeTabCommandsActive, selectedTab == 4)
-                .tabItem { Label(MissionWorkspaceCopy.text("missions", language: locale.language.languageCode?.identifier ?? "en"), systemImage: "bubble.left.and.text.bubble.right") }.tag(4)
-            ConversationsView(client: client, state: conversations)
-                .environment(\.nativeTabCommandsActive, selectedTab == 0)
-                .tabItem { Label(ConversationCopy.text("nav",language:locale.language.languageCode?.identifier), systemImage: "bubble.left.and.bubble.right") }.tag(0)
-            LiveMissionReviewsView(client: client, state: reviews, selection: $requestedReview)
-                .environment(\.nativeTabCommandsActive, selectedTab == 1)
-                .tabItem { Label(MissionReviewCopy.text("nav",language:locale.language.languageCode?.identifier), systemImage: "checkmark.seal") }.tag(1)
-            LiveApprovedWorklistView(client: client, state: worklists,
-                reviewNavigationStatus: reviewNavigationStatus, onOpenReviews: openReview)
-                .environment(\.nativeTabCommandsActive, selectedTab == 2)
-                .tabItem { Label(WorklistCopy.text("nav",language:locale.language.languageCode?.identifier), systemImage: "list.bullet.rectangle") }.tag(2)
-            ServerOverviewView(client: client)
-                .tabItem { Label(WorkspaceCopy.text("Server",language:locale.language.languageCode?.identifier), systemImage: "server.rack") }.tag(3)
         }
-        .onChange(of: client.phase) { _, phase in if phase != "CONNECTED" { projectLinks.invalidate() } }
-        .tabViewStyle(.sidebarAdaptable)
+        .onChange(of:[client.phase,client.savedEndpoint,client.savedInstance]) { _,_ in activity.invalidate();order.invalidate() }
+        .onChange(of:[conversations.projectID,conversations.observedActorID ?? ""]) { _,_ in activity.invalidate();order.invalidate() }
+        .onChange(of:client.authorizationLost) { _,lost in if lost { activity.invalidate();order.invalidate() } }
+        .onChange(of:client.phase) {_,phase in if phase != "CONNECTED" {projectLinks.invalidate()} }
         .tint(WorkspaceAppearance.accent(for:colorScheme))
         .background(WorkspaceAppearance.backdrop(for:colorScheme))
     }

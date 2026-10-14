@@ -86,3 +86,9 @@ Traceability: [HOB-R01..20 / HOB-01..18](PROJECT_ONBOARDING_SCENARIOS_V1.json), 
 IDs preserved at their immutable owning catalogue. Design finalization needs independent complete
 Quality/Security/UX, owning checks/protected delivery and exact-main document readback, not a
 functional onboarding PASS. Older runtime evidence/budgets are not reopened by this refinement.
+
+## Plan103 selected setup subset: saved concept baseline preview
+
+CONCEPT_BASELINE_PREVIEW is a bounded subset of the existing PB-W2-SETUP identity, not full setup/adoption/EP/PB-W2. Saved concept → explicit exact saved-source/purpose check → actual R52 document/open-question proposal → original read-only reopen. Only portable-docs/1.0.0 authority/GENESIS/LOCAL_POSIX; [own contract](WORKSPACE_CONCEPT_BASELINE_V1.md). Existing nodes/parents/dependencies retain their full-family meaning. No additional EP/R51/discovery/installer gate applies to this selected subset. Full parent implementation_selected remains false.
+
+Canonical owningPATCH2.8.26; plan103 protected sourcePR169/maina9f43228f0ec2c57d1a3ca1e52442a8d953da65d, reviewedb231728f1772e08bd795946f708812ee22f7f1f4. Corrections12/qualificationruns5 remain cumulative; complete scoped candidate Quality/Security/UX and actual qualified R52 final96e1 binding accepted. Documentary [NO_BUMP finalization](WORKSPACE_CONCEPT_BASELINE_FINALIZATION_V1.md), its checks/reviews/protected merge and NEW exact-final-main installed acceptance remain separate. Six safe candidate images/seven immutable HTTP200/hash readbacks are [available](https://github.com/pcvantol/workspace/tree/c7920e88fb20bc35a8d3404a1cd9077ea1ae2b9e/docs/qualification/plan103-candidate-proof-20261013); original image/recovery/failure pins remain unchanged. Full parent/onboarding is not delivered. Plan102 CLOSED15/27; PR160/LINK parked2/3/1.

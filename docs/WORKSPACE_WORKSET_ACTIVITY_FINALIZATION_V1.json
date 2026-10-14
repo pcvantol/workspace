@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "assignment": "L4-NATIVE-WORKSET-ACTIVITY-V1-20261012",
+  "plan": 101,
+  "product_version": "2.8.24",
+  "protected_source": {
+    "pr": 165,
+    "reviewed_head": "58d596e67dcdafb3f519fd3cbbbe9c45d6086f5b",
+    "main": "a5e85a61ef6c5fd0efb233e91b4c890f7c5530be",
+    "tree": "72428f972aa24e271ccf2cf14a06cc8dbf448db9",
+    "reviewed_merged_tree_equal": true
+  },
+  "acceptance_disposition": {
+    "decision_id": "L4-PLAN101-LEGACY-CAPABILITY-ACCEPTANCE-DISPOSITION-20261013",
+    "url": "https://github.com/pcvantol/forge/issues/208#issuecomment-6139754826",
+    "actual_legacy": "DENIED_SUPPORT_NOT_ESTABLISHED",
+    "original_automatic_unsupported_recognition": "NOT_ESTABLISHED_PRESERVED",
+    "owner_credential_fallback": false,
+    "extra_discovery": false
+  },
+  "corrections": {
+    "consumed": 9,
+    "administrative_maximum": null,
+    "correction9_booking": "https://github.com/pcvantol/forge/issues/208#issuecomment-6139952740",
+    "history": "All rejected/failed/expired/lost-original attempts retained; no reset"
+  },
+  "producer": {
+    "version": "2.15.0",
+    "source": "989132660997909e74800ddc8648be11262be8d4",
+    "schema": 46,
+    "wheel_sha256": "f9d87067179aac54577e554d06c670e969a5eef2905b7f1392a3d7f31ca80f9a",
+    "environment": "Own synthetic Forge setup and existing EP HTTP simulator, not live EP"
+  },
+  "validation": {
+    "owning_validate": "PASS",
+    "native_tests": 238,
+    "isolated_tests": 1,
+    "per_production_file_coverage": "STRICTLY_GREATER_THAN_80.2_PERCENT",
+    "activity_contract": "57/57 = 100%",
+    "activity_peer": "64/65 = 98.46%",
+    "all_five_hosted_checks": "SUCCESS_EXACT_58D596E",
+    "tde": "QUALIFIED / PASS_WITH_WARNINGS",
+    "original_packaging_error": "ENOSPC inherited external pipcache preserved; unchanged normal gate passed with own checked internal cache"
+  },
+  "independent_source_and_complete_candidate": "QUALITY_SECURITY_UX_PASS",
+  "private_report_sha256": {
+    "source-quality-58d596e.md": "f4fddc3f21c557fb62d4d4ae7b8c523c4dfdad4d4f596d3e7bf8babf571a77d1",
+    "source-security-58d596e.md": "0b3b9ca3c69e83c9649c1eba91b388704868c0c32c66f66007e120f679681fca",
+    "source-security-58d596e-validation-addendum.md": "b1ed5167524e58fe39dadea429a0ac3e113be06f4f7dfa9365f797e9e3e2b680",
+    "source-ux-58d596e.md": "8e8c0672cf847ea550188d760a2033c3fd721a33c6c9a5f03dbf09c7117fc01f",
+    "complete-installed-quality-58d596e.md": "31cc782eb0f81a32fe1d4bad0ebb173bb87cbf912124bf2faa6a4386098965b0",
+    "complete-candidate-installed-security-58d596e.md": "680031067fd04dd23aed4264b13bb103ac5b43a79ba1f6a7dd4ad23d38df24fd",
+    "installed-ux-candidate-58d596e.md": "4daaf18cb384ef8f6bba8d7f14892893d9ad1420f355ce49291034efc73de741"
+  },
+  "candidate_artifacts": {
+    "server_wheel_sha256": "d48397c6a9c5e256331cd2467ddebfb801d596990704f38504045153377a85c9",
+    "server_payloads_exact": 37,
+    "native_sha256": "ce4b2dde2276c6ab599b0b2716145373bd4f817f26ce377ff80a2f736a69504a",
+    "native_original_source": "35e68ee3a6be1c7befd0a07ae1c664dcfe50bc41",
+    "native_code_to_58d_diff": "EMPTY",
+    "actual_minos": "26.0",
+    "actual_sdk": "26.0"
+  },
+  "candidate_evidence": {
+    "immutable_commit": "390adff7fc61522dd460c31c2bb96b43a30d8f7e",
+    "url": "https://github.com/pcvantol/workspace/tree/390adff7fc61522dd460c31c2bb96b43a30d8f7e/docs/qualification/plan101-candidate-evidence-20261013",
+    "downloaded_hash_matched_files": 37,
+    "candidate_matrix_images": 30,
+    "keyboard53_image": 1,
+    "new_changed_server54_images": 2,
+    "screenshots": "PRIVACY_AND_PIXELS_INDEPENDENTLY_PASS",
+    "keyboard53": "Retained unchanged source proof; original settings restored; no repeat required",
+    "scope_causal": "SOURCE_RED_EXACT_RESTORATION_GREEN_NOT_INSTALLED_REFAULT",
+    "classification": "CANDIDATE_NOT_FINAL_MAIN"
+  },
+  "delivery_bounds": {
+    "full_PRM_family_qualified": false,
+    "full_EP_workflow_qualified": false,
+    "live_EP": false,
+    "public_signing": false,
+    "production_installation": false,
+    "automatic_next_feature": false
+  },
+  "history": {
+    "plan96_97_99_100": "CLOSED_UNCHANGED",
+    "pr160_link": "PARKED_UNQUALIFIED",
+    "link_budget": "consumed2/max3/remaining1"
+  },
+  "finalization": {
+    "classification": "NO_BUMP",
+    "operation_id": "workspace-plan101-activity-finalization-20261013",
+    "checks_reviews_protected_merge": "REQUIRED_PENDING",
+    "NEW_exact_final_main_installed_GUI_readback_cleanup": "REQUIRED_AFTER_FINALIZATION_MERGE",
+    "terminal_evidence_location": "External register receipt to avoid recursive main SHA claims"
+  }
+}

@@ -1,5 +1,15 @@
 # Verified existing project link — plan98
 
+## LINK main-integration preparation — 14 October 2026
+
+Original PR160/0212f898 and all evidence retained. This preparation merges only
+closed mainfc3a26a into the existing LINK lineage on a separate branch; it does
+not include plan104 WIP. Canonical main2.8.26 is preserved instead of restoring
+old2.8.21; a new normal feature allocation follows the actual delivery order.
+The old consumed2 remains historical; preparation correction3 has no fixed
+administrative maximum under selection6161577364. No producer/installed PASS.
+Qualified HOB-EP01 and full LINK DoD still required. Plan103 stays CLOSED.
+
 Assignment L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012, selected6117331312.
 Only PB-W1-LINK/PB-WQ-LINK. Same sole writer/session; initial base a6aad520.
 Plan96/97 CLOSED, budgets/evidence retained, Forge2.12.1/9875333 unchanged.

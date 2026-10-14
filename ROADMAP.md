@@ -1,12 +1,89 @@
-## Selected plan98 — verified existing project link
+## Plan103 protected source — ordinary finalization
 
-Mandate6117331312 / L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012.
-Only PB-W1-LINK/PB-WQ-LINK selected; current feature budget consumed2/max3/remaining1, same sole writer/session.
-Admission0/3 and round1 consumed1/max3/remaining2 retained; round2 booked6118282617.
-[Own implementation boundary/matrix](docs/WORKSPACE_VERIFIED_PROJECT_LINK_V1.md):
-durable scoped reference/intent deduplication, normalized own IPC and native chooser.
-Actual EP producer JOIN pending after L2r34; fixtures are not LINK-COMPLETE.
-Plan96/97 remain CLOSED; all earlier budgets/evidence and Forgepin retained.
+## LINK main-integration preparation — 14 October 2026
+
+Original PR160/0212f898 and all evidence retained. This preparation merges only
+closed mainfc3a26a into the existing LINK lineage on a separate branch; it does
+not include plan104 WIP. Canonical main2.8.26 is preserved instead of restoring
+old2.8.21; a new normal feature allocation follows the actual delivery order.
+The old consumed2 remains historical; preparation correction3 has no fixed
+administrative maximum under selection6161577364. No producer/installed PASS.
+Qualified HOB-EP01 and full LINK DoD still required. Plan103 stays CLOSED.
+
+Assignment `L4-PROJECT-CONCEPT-BASELINE-PREVIEW-V1-20261013`, same r81-plan103 writer/session. [Implementation PR169](https://github.com/pcvantol/workspace/pull/169) was normally protected and squash-merged to `a9f43228f0ec2c57d1a3ca1e52442a8d953da65d` from exact independently accepted `b231728f1772e08bd795946f708812ee22f7f1f4`; merged tree is byte-identical to the reviewed tree. Workspace2.8.26 is unchanged by this documentary NO_BUMP finalization. Cumulative corrections12 / qualificationruns5; earlier counts, partial failures and source-bound evidence remain preserved.
+
+Saved concept → explicit saved-source check → actual Forge baseline proposal → real documents/open questions → original read-only reopen. Only CONCEPT_BASELINE_PREVIEW, not complete PB-W2/setup/adoption/onboarding. Qualified Forge2.18.0/schema46 exact96e1d73670b8575d41977fd448bfec10fc55206e and wheel20efb7 are delivered and independently accepted. Own actor/context/concept authority stays separate from finite producer PREPARE/READ. No model/EP/repository/approval/apply/Mission effect or global installation/credential/system-setting change.
+
+Complete scoped candidate Quality/Security/UX PASS; actual owning validation225Python/269native+1isolated and strict>80.2% for all18 modified executable production files; all five exact-head CI SUCCESS. Actual TDE repository QUALIFIED / policy PASS_WITH_WARNINGS, complexity28 versus warning15/blocking30, with own coverage separate. [Six privacy-approved candidate screenshots plus safe evidence JSON](https://github.com/pcvantol/workspace/tree/c7920e88fb20bc35a8d3404a1cd9077ea1ae2b9e/docs/qualification/plan103-candidate-proof-20261013) have seven immutable HTTP200/SHA256 readbacks. Native images retain original889 source; earlier qualified-producer recovery retains88 source. No candidate screenshot or original partial FAILED run becomes a new final-main result.
+
+Actual late own revocation revealed known denial converted to UNAVAILABLE. Correction12 catches only own authority-entry denial before guard yield, preserves genuine network errors, and passes exact-old-source RED/restored-source GREEN real HTTP zero-POST regression. Corrected installed proof5 returns403 DENIED/no protected result with one original effect; normal own revoke57ms outside held peer wait. All five fixture sets and extra grants/pairings/actors/processes cleaned up normally; protected source/history retained.
+
+[Nonempty own finalization](docs/WORKSPACE_CONCEPT_BASELINE_FINALIZATION_V1.md) reconciles the own contract, roadmap/backlog and existing documentary DAG subset without changing parent/node identities or runtime bytes. This finalization's independent reviews, required checks, protected merge and NEW exact-final-main installed Client/Server/qualifiedForge, actual GUI, privacy-safe public readback and cleanup remain required. No full delivery is preclaimed. Plan102 remains CLOSED15/27; PR160/LINK parked0212f898 consumed2/max3/remaining1; primary checkout retained. No automatic next feature.
+
+## Historical plan103 implementation-candidate checkpoint
+
+Assignment `L4-PROJECT-CONCEPT-BASELINE-PREVIEW-V1-20261013`, [mandate6150002324](https://github.com/pcvantol/forge/issues/208#issuecomment-6150002324), [pickup6150486616](https://github.com/pcvantol/forge/issues/208#issuecomment-6150486616). Same sole writer/session, branch `codex/plan103-concept-baseline-preview`, actual merged base `02dd6af7af7a0f93ad1b92905acac7ff46d6b13b`, canonical PATCH2.8.26; own corrections10 / qualificationruns2, no administrative maximum. [Own scoped contract](docs/WORKSPACE_CONCEPT_BASELINE_V1.md) covers only CONCEPT_BASELINE_PREVIEW, not full PB-W2 or onboarding.
+
+Saved idea → explicit baseline request → actual document/open-question inspection → original proposal reopen. Actor/context/current concept authority is independent of finite private R52 PREPARE/READ pairing. Exact saved source and original operation bytes are durably captured before POST. Five-language UI honestly labels English document templates. No model, approval/apply, repository/project registration or Mission effects.
+
+Producer [R52 merged implementationPR287](https://github.com/pcvantol/forge/pull/287) candidate `e182ca41cbb8775c6b3b29c81ade94f035da264d`, Forge2.18.0/schema46 is concrete HTTP candidate evidence; producer implementation main9736bbbd and protected finalization96e1d736 are merged; actual qualified exact-final-main handoff remains pending. Prior strict owning gate PASS223Python/264native; integrated correction10 regression and full revalidation in progress. [Actual early installed/native proof](https://github.com/pcvantol/workspace/tree/b44e244c618d14a13b25c6d7dd3ab6dad21fb077/docs/qualification/plan103-early-proof-20261013) has four HTTP200/hash readbacks and independent privacy approval; trial1 cleanup complete. This is WIP/candidate evidence, not final-main acceptance. Prior candidate01e31cf has complete independent source Q/S/UX PASS and normal own CI green. Trial2 actual completed-reply loss plus separate Client/Server OS restarts preserves one original operation and identical37document/3question result; normal fixture revocations return Own403/peer401 and exact own process cleanup is complete. This remains actual R52 e182 candidate evidence. Actual GUI UX found the37row summary displaced primary inspection; integrated correction10 preserves it under collapsed details with actual document count. Required current-head checks/reviews/qualifiedproducer/GUI/protected source/nonempty finalization/NEW exact-final-main installed/publicreadback/cleanup remain open.
+
+Plan102 CLOSED via [terminal6149473973](https://github.com/pcvantol/forge/issues/208#issuecomment-6149473973), sourcePR167/finalizationPR168/main02dd6af/2.8.25; corrections15/probes27 retained. Older pending entries below are historical pre-terminal snapshots. PR160/LINK remains parked0212f898, consumed2/max3/remaining1; primary iCloud checkout unchanged. No automatic next feature.
+
+## Plan102 protected source — ordinary finalization
+
+Native remaining-order source [PR167](https://github.com/pcvantol/workspace/pull/167) merged exact reviewed e2542a3 to maina8013dfd9e6e02c2a31e703fa6f363c54607aafc, identical tree45b5303edfddb5c25c15c73a8bf706238b7c5595. Complete candidate Quality/Security/UX PASS, owning validation203Python/248native+1isolated/strict>80.2%, all five checks SUCCESS; actual TDE QUALIFIED/VALID/PASS_WITH_WARNINGS. [Nonempty NO_BUMP finalization](docs/WORKSPACE_WORKSET_ORDER_FINALIZATION_V1.md) records27 privacy-approved candidate images and29 immutable HTTP200/hash readbacks. Finalization own checks/reviews/protected merge and NEW exact-final-main installed/native/readback/cleanup are required; full DoD not preclaimed. Corrections15/probes26 retained without reset; PR160/LINK parked2/3/1, plan101 CLOSED.
+
+## Selected r81-plan102 — native remaining workset order
+
+Assignment `L4-NATIVE-REMAINING-WORKSET-ORDER-V1-20261013`, [mandate6143760050](https://github.com/pcvantol/forge/issues/208#issuecomment-6143760050), [pickup6144408234](https://github.com/pcvantol/forge/issues/208#issuecomment-6144408234). Same sole writer/session, base `b22f771c7a85de4cd5e3b789b60de26d41c865dc`, branch `codex/plan102-native-remaining-workset-order`. Canonical PATCH2.8.25, own corrections15/qualificationruns26, no administrative maximum; existing financial/host/runtimegrant/privacy bounds preserved. ORDER subset only under PRM-W-CONTRACT/MANAGE/DECISIONS/Q, not full family.
+
+Native workset selection → remaining-item moves → real Forge preview → one authorized confirmation → original/current order readback. Separate finite READ+REORDER binding; immutable original package/digest/operation intent saved before send. Product traffic only Client→ownServer→Forge HTTP. Exact Forge2.15.0/schema46/989132660997909e74800ddc8648be11262be8d4. No live EP, peer source patch, R51/discovery/installer gate or global upgrade. Implementation and full scoped tests/coverage/independent Q/S/UX/protected source/nonempty finalization/NEW exact-final-main installed/GUI/publicreadback/cleanup pending; no qualification preclaim.
+
+Plan101 CLOSED via [terminal6143077991](https://github.com/pcvantol/forge/issues/208#issuecomment-6143077991), sourcePR165/finalizationPR166/mainb22f771/2.8.24, original corrections9 and retained evidence unchanged. Historical plan101 pending wording below is pre-terminal history. PR160/LINK parked consumed2/max3/remaining1; plans96/97/99/100 closed, primary iCloud checkout retained.
+
+## Selected r81-plan101 — native Missieactiviteit
+
+[Mandate6126033363](https://github.com/pcvantol/forge/issues/208#issuecomment-6126033363), assignment L4-NATIVE-WORKSET-ACTIVITY-V1-20261012. Same sole writer/session, base1622840e147d718b00d77264cfeb2185e495fe91, branchcodex/plan101-native-workset-activity, normal PATCH2.8.24. [Own activity contract](docs/WORKSPACE_WORKSET_ACTIVITY_V1.md) covers only finiteREAD original Forge2.15.0/98913266 workset activity/current, bounded private viewing cursors/checkpoints, source details and five-language UX. Protected sourcePR165 and complete source/installed candidate acceptance are delivered; nonempty finalization/protected delivery and NEW exact-final-main qualification remain pending. Cumulative integrated corrections9; CONTINUE_WITHIN_SCOPE_UNTIL_FULL_DOD, no administrative cap.
+
+[Acceptance disposition6139754826](https://github.com/pcvantol/forge/issues/208#issuecomment-6139754826) closes the former legacy detection requirement: retained old finite403 remains DENIED/support NOT_ESTABLISHED, not UNSUPPORTED. Correction9 removes the activity-only bare404 shortcut and checks current scope/expiry before a specific negative-capability classification. Original failures and trial53 keyboard evidence remain bound to their actual unchanged source; no new settings, producer writer or discovery. Full protected/finalization/NEW final-main delivery remains open.
+
+## Plan101 protected source and ordinary finalization
+
+[PR165](https://github.com/pcvantol/workspace/pull/165) merged exactreview58d596e to maina5e85a61, identicaltree72428f9. Complete source and installed candidate Q/S/UX PASS, full owning validation/strictcoverage and all five checks SUCCESS; actual TDE QUALIFIED/PASS_WITH_WARNINGS. [Nonempty NO_BUMP finalization](docs/WORKSPACE_WORKSET_ACTIVITY_FINALIZATION_V1.md) binds privacy-approved immutable candidate proofs and [legacy disposition6139754826](https://github.com/pcvantol/forge/issues/208#issuecomment-6139754826): DENIED/support NOT_ESTABLISHED; old automatic recognition remains NOT_ESTABLISHED. Finalization review/checks/protected merge and NEW exact-final-main installed/native/readback/privacy/cleanup remain pending. Corrections9/no cap; retained trial53 on unchanged focus code, no new settings or repeated matrix. Full DoD is not preclaimed.
+
+Plan100 CLOSED via [terminal6125801412](https://github.com/pcvantol/forge/issues/208#issuecomment-6125801412), sourcePR163/finalizationPR164 merged, exactmain1622840/version2.8.23; below plan100 pre-merge snapshots are historical. Library2/3/1 closed reserve not transferred. Plan99/96/97 remain closed; PR160/LINK0212f898 safely parked2/3/1. Only an ACTIVITY subset of PRM-W-CONTRACT/VIEW/Q is selected; full project-loop/EP workflow/onboarding remain unqualified. No new EP or general peer-ACK gate.
+
+## Plan100 protected source — ordinary finalization
+
+Library source [PR163](https://github.com/pcvantol/workspace/pull/163) merged at `5de570d7a983903dd72325789a4f09f610ab8df9`, identical reviewed7b89 tree, product2.8.23. Full independent source and NEW actual installed candidate Quality/Security/UX PASS, mandatory220+1/strictcoverage, all five CI and actual TDE QUALIFIED/PASS_WITH_WARNINGS (retained complexity25>15).
+
+[Nonempty NO_BUMP finalization](docs/WORKSPACE_PROJECT_CONCEPT_LIBRARY_FINALIZATION_V1.md) records24 privacy-approved candidate screenshots and original failure/budget history. Current documentary review/CI/protected merge and NEW exact-final-main installed Client/Server/realGUI/freshscreens/readback remain pending. Library2/3/1; plan99CLOSED4/4/0, PR160/LINKparked2/3/1 unchanged. Full delivery is not preclaimed; no peer effect or signing.
+
+## Selected concept library — r81-plan100
+
+[Mandate6123101178](https://github.com/pcvantol/forge/issues/208#issuecomment-6123101178), assignment L4-PROJECT-CONCEPT-LIBRARY-V1-20261012. Same session/sole writer, actual base5e354a5e3571e6a8b1fb45a51b1280b296833cc7, branchcodex/plan100-concept-library. New library budget2/max3/remaining1, normal PATCH allocation2.8.23. [Versioned own contract](docs/WORKSPACE_PROJECT_CONCEPT_LIBRARY_V1.md): title metadata search, Active/Archive, archive and restore same concept with durable original lifecycle intents; no peer/project/Mission effects.
+
+Plan99 CLOSED via [terminal6122145258](https://github.com/pcvantol/forge/issues/208#issuecomment-6122145258); older pre-merge document snapshots below remain historical. Plan96/97 closed, plan98/PR160 safely parked0212f898/LINK2/3/1; no EP-companion binding delivered at pickup. Source/tests/independent Quality/Security/UX/protected/nonempty finalization/NEW exact-final-main installed GUI and fresh reachable screenshots remain mandatory.
+
+## Plan99 protected source — ordinary finalization
+
+Projectconcepten source [PR161](https://github.com/pcvantol/workspace/pull/161) merged at `0fc818a3b54395fa71a216dcf4246be941781c60`, exact reviewed787891b tree, product2.8.22. Complete independent source and actual installed candidate Quality/Security/UX PASS; mandatory212+1 tests and strict per-file coverage, all five CI and actual TDE PASS_WITH_WARNINGS (56findings/one complexity warning).
+
+[Nonempty NO_BUMP finalization](docs/WORKSPACE_PROJECT_CONCEPTS_FINALIZATION_V1.md) preserves runtime bytes and all prior history. Current documentary review/CI/protected delivery and NEW exact-final-main installed Client/Server/GUI/screenshots proof remain pending. Concepts4/4/0; plan98/PR160 remains parked LINK2/3/1. Plan96/97 stay closed; no peer execution or signing scope added.
+
+## Selected independent Projectconcepten — plan99
+
+Assignment `L4-PROJECT-CONCEPTS-V1-20261012`, mandate6118583726.
+Same sole writer/session; branch `codex/plan99-project-concepts`, actual merged
+base a6aad520bed9f1c2f7119b393435b8c739f030b3. Current concept budget
+consumed4/max4/remaining0. Plan96/97 CLOSED. Plan98/PR160 parked, not closed,
+head0212f898bb049c7019e4f8c602decc09b891c595; LINK consumed2/max3/remaining1.
+Only own concept create/list/open/edit, stable identity and durable revisioned
+storage. No EP/Forge dependency or scan/repository/Mission/provider effects.
+First material step: reuse private ConversationStore connection and existing
+actor/pairing/fence, with separate project_concepts_v1 tables and native editor.
+Version2.8.21 reserved by PR160; own allocation2.8.22, no publication claim.
 
 ## Historical closed plan97 snapshot
 

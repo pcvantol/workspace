@@ -8,15 +8,24 @@ from .review_peer import _unique_pairs
 from .worklist_peer import WorklistError
 from .advisory_contract import validate
 
-def request(binding, method, path, body=None, *, gate=None, error_validator=validate, maximum_bytes=65536):
+def request(binding, method, path, body=None, *, gate=None, error_validator=validate, maximum_bytes=65536, missing_as_state=None, proposal_audience=None, send_guard=None, timeout=60):
     scheme,host,port=_endpoint(binding['endpoint'])
-    connection=(http.client.HTTPSConnection(host,port,timeout=60,context=ssl.create_default_context()) if scheme=='https' else http.client.HTTPConnection(host,port,timeout=60))
+    connection=(http.client.HTTPSConnection(host,port,timeout=timeout,context=ssl.create_default_context()) if scheme=='https' else http.client.HTTPConnection(host,port,timeout=timeout))
     try:
         payload=None if body is None else json.dumps(body,sort_keys=True,ensure_ascii=True,separators=(',',':')).encode()
+        if send_guard is not None:
+            from .concept_baseline_dispatch import install_guarded_send
+            connection.connect()  # DNS/TLS/connect wait holds no own authority lock.
+            install_guarded_send(connection,send_guard,timeout)
         with gate or nullcontext():
-            connection.request(method,path,body=payload,headers={'Authorization':'Bearer '+binding['forge_token'],'Content-Type':'application/json','Accept':'application/json'})
+            headers={'Authorization':'Bearer '+binding['forge_token'],'Content-Type':'application/json','Accept':'application/json'}
+            if proposal_audience is not None:
+                if not isinstance(proposal_audience,str) or not 1<=len(proposal_audience)<=128 or any(ord(c)<32 or ord(c)>126 for c in proposal_audience):raise WorklistError('INVALID_CONFIGURATION')
+                headers['X-Forge-Proposal-Audience']=proposal_audience
+            connection.request(method,path,body=payload,headers=headers)
         response=connection.getresponse()
         if response.status in (401,403):raise WorklistError('DENIED')
+        if response.status==404 and missing_as_state:raise WorklistError(missing_as_state)
         if response.getheader('Content-Type','').split(';',1)[0].lower()!='application/json':raise WorklistError('INVALID_RESPONSE')
         length=response.getheader('Content-Length')
         if length is not None and (not length.isdecimal() or int(length)>maximum_bytes):raise WorklistError('INVALID_RESPONSE')

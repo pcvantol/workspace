@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "assignment": "L4-NATIVE-REMAINING-WORKSET-ORDER-V1-20261013",
+  "plan": 102,
+  "product_version": "2.8.25",
+  "protected_source": {
+    "pr": 167,
+    "reviewed_head": "e2542a3b6087695d33fa57e18aaaecac877713a8",
+    "main": "a8013dfd9e6e02c2a31e703fa6f363c54607aafc",
+    "tree": "45b5303edfddb5c25c15c73a8bf706238b7c5595",
+    "reviewed_merged_tree_equal": true
+  },
+  "cumulative_consumption": {
+    "corrections": 15,
+    "qualification_runs": 26,
+    "administrative_maximum": null,
+    "old_failures_windows_preserved": true
+  },
+  "producer": {
+    "version": "2.15.0",
+    "schema": 46,
+    "source": "989132660997909e74800ddc8648be11262be8d4"
+  },
+  "own_validation": {
+    "command": "bash scripts/validate.sh",
+    "outcome": "PASS",
+    "python_tests": 203,
+    "native_tests": 248,
+    "isolated_tests": 1,
+    "all_changed_production_files_strictly_above_80_2_percent": true,
+    "order_view_executable_coverage": "370/44183.90%",
+    "isolated_coverage": "248/29384.64%"
+  },
+  "independent_complete_candidate_reviews": {
+    "quality": {
+      "decision": "PASS",
+      "report_sha256": "a9b2f4051c452c47b71157ca84bef921bb3d8c42af193239f4ed243747b995e1"
+    },
+    "security": {
+      "decision": "PASS",
+      "report_sha256": "989706f7abacae6b0f265ff3ca29e08361115ff58c88a416b765ffde6319e59c"
+    },
+    "ux": {
+      "decision": "PASS",
+      "report_sha256": "06fce3951718059cd2f95cab6aa69c5f332333008a4da763dafacef7a9ec3946"
+    }
+  },
+  "artifact_provenance": {
+    "native_executable_sha256": "0d7817d2564a2446cd27724654e7295a0c200137b8558100b16563d20613b22e",
+    "frozen_swift_source_inputs": 80,
+    "native_source_head": "e2542a3b6087695d33fa57e18aaaecac877713a8",
+    "SDK": "26.5",
+    "minimum_macOS": "26",
+    "server_source_wheel_installed_matching_files": 41,
+    "server_wheel_sha256": "4ea5738ca911b23777c437214d442df493f742319933ae9031049610c0b4e666",
+    "producer_wheel_sha256": "f9d87067179aac54577e554d06c670e969a5eef2905b7f1392a3d7f31ca80f9a"
+  },
+  "candidate_publication": {
+    "commit": "d6394a4255733f710b3a74ecde18187df3045327",
+    "url": "https://github.com/pcvantol/workspace/tree/d6394a4255733f710b3a74ecde18187df3045327/docs/qualification/plan102-candidate-evidence-20261013",
+    "screenshots": 27,
+    "HTTP200_SHA256_readback_files": 29,
+    "trial16": "ORIGINAL46F_SOURCE_OLD_BINARY_HASH_NOT_RETAINED",
+    "trial26": "ORIGINAL_PRE_USE_SEALED_CORRECTION13_ACTUAL_KEYBOARD_CANCEL",
+    "classification": "CANDIDATE_NOT_FINAL_MAIN"
+  },
+  "required_hosted_checks": [
+    {
+      "bucket": "pass",
+      "name": "Native app build and transport tests",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "pass",
+      "name": "Foundation validation",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "pass",
+      "name": "Python 3.14 installed Server",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "pass",
+      "name": "TDE observe (non-blocking)",
+      "state": "SUCCESS"
+    },
+    {
+      "bucket": "pass",
+      "name": "validate-version-source",
+      "state": "SUCCESS"
+    }
+  ],
+  "TDE": {
+    "head": "e2542a3b6087695d33fa57e18aaaecac877713a8",
+    "run": 38417857795,
+    "validation": "VALID",
+    "assessment": "PASS_WITH_WARNINGS",
+    "qualification": "QUALIFIED",
+    "assessment_sha256": "9f1f8e74e5f7fa79c3114881685028430a2c39321378460f5b4498f0ac9dbb07",
+    "qualification_sha256": "5009de46bc3a838e134e3708b25b4b2ba9cb6c9f4bff7a87ca59313bc41f8990",
+    "policy_pass_inferred_from_green_workflow": false
+  },
+  "source_causal": "SOURCE_RED_EXACT_RESTORATION_GREEN_NOT_INSTALLED_REFAULT",
+  "history": {
+    "plan101": "CLOSED_UNCHANGED",
+    "PR160_LINK": "PARKEDconsumed2/max3/remaining1"
+  },
+  "delivery_bounds": {
+    "live_EP": false,
+    "full_PRM_family_qualified": false,
+    "user_credentials_changed": false,
+    "system_settings_changed": false,
+    "public_signing": false,
+    "global_installation_upgrade": false,
+    "automatic_next_feature": false
+  },
+  "finalization": {
+    "classification": "NO_BUMP",
+    "operation_id": "workspace-plan102-order-finalization-20261013",
+    "own_checks_reviews_protected_merge": "REQUIRED_PENDING",
+    "NEW_exact_final_main_installed_GUI_readback_cleanup": "REQUIRED_AFTER_FINALIZATION_MERGE",
+    "terminal_evidence_location": "External register receipt avoids recursive source SHA claim"
+  }
+}

@@ -23,6 +23,8 @@ struct IsolatedTestDocument: Decodable {
     let mission_access:AdvisoryAccess?
     let workset_release_access: WorksetReleaseAccess?
     let candidate_access: CandidateAccess?
+    let activity_access: ActivityAccess?
+    let order_access:OrderAccess?
 
     let control_grant: String?
     let control_actor: String?
@@ -30,6 +32,13 @@ struct IsolatedTestDocument: Decodable {
     let control_workset_ids: [String]?
 
     private static func validateOptionalAccess(_ document: IsolatedTestDocument) throws {
+        if let access=document.order_access {
+            guard access.valid,access.binding.endpoint==document.endpoint,access.binding.workspaceInstanceID==document.instance_id,access.binding.workspaceProjectID==document.project_id else { throw ConversationError.invalidResponse }
+        }
+        if let access=document.activity_access {
+            guard access.valid,access.endpoint==document.endpoint,access.workspaceInstanceID==document.instance_id,
+                access.workspaceProjectID==document.project_id else { throw ConversationError.invalidResponse }
+        }
         let reviewFields = [document.review_grant != nil, document.review_actor != nil,
                             document.review_forge_instance != nil, document.review_mission_ids != nil]
         if reviewFields.contains(true) {
@@ -265,6 +274,30 @@ final class IsolatedWorksetReleaseCredentials: WorksetReleaseCredentials, @unche
     func load() throws -> WorksetReleaseAccess? { lock.withLock { access } }
     func save(_ value: WorksetReleaseAccess) throws { lock.withLock { access = value } }
     func forget() throws { lock.withLock { access = nil } }
+}
+
+final class IsolatedActivityCredentials: ActivityCredentials, @unchecked Sendable {
+    private let lock=NSLock()
+    private var access:ActivityAccess?
+    init(_ document:IsolatedTestDocument) { access=document.activity_access }
+    func load() throws -> ActivityAccess? { lock.withLock { access } }
+    func save(_ value:ActivityAccess) throws { lock.withLock { access=value } }
+    func forget() throws { lock.withLock { access=nil } }
+}
+
+final class IsolatedOrderCredentials: OrderCredentials, @unchecked Sendable {
+    private let lock=NSLock()
+    private var access:OrderAccess?
+    init(_ document:IsolatedTestDocument) { access=document.order_access }
+    func load() throws -> OrderAccess? { lock.withLock { access } }
+    func save(_ value:OrderAccess) throws { lock.withLock { access=value } }
+    func forget() throws { lock.withLock { access=nil } }
+}
+
+enum IsolatedWindowCapturePolicy {
+    static func permitted(environment:[String:String],preflight:()->Bool)->Bool {
+        environment["WORKSPACE_ISOLATED_WINDOW_EVIDENCE"]=="1" && preflight()
+    }
 }
 
 #endif

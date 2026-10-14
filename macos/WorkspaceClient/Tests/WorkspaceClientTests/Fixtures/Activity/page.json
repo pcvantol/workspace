@@ -1,0 +1,465 @@
+{
+  "additional_model_calls": 0,
+  "contract_version": "forge-workset-activity/v1",
+  "coverage": {
+    "historical_extent": "PARTIAL",
+    "limitations": [
+      "LEGACY_MISSION_TIMELINE_UNKNOWN",
+      "NO_BACKFILL_OF_MUTABLE_SNAPSHOTS"
+    ],
+    "offered_records": "COMPLETE_FOR_RETAINED_SOURCES",
+    "ordering": "STABLE_PRESENTATION_NOT_CROSS_SOURCE_CAUSAL_PROOF",
+    "source_counts": {
+      "ACTIVATION_CLAIM": 1,
+      "CONTROL_INTENT": 0,
+      "CONTROL_RECEIPT": 0,
+      "EXECUTION_EXCHANGE": 2,
+      "EXECUTION_RECEIPT": 0,
+      "FINAL_ACCEPTANCE_DECISION": 0,
+      "MISSION_TRANSITION": 5,
+      "ORDER_DECISION": 0,
+      "ORDER_INTENT": 0,
+      "ORDER_RECEIPT": 0,
+      "RELEASE_RECEIPT": 1,
+      "WORKSET_DECISION": 2
+    }
+  },
+  "current": {
+    "activation_support": "QUALIFIED_SERIAL_APPROVED_WORKLIST",
+    "completeness": "COMPLETE_WITHIN_SCOPE",
+    "continuation": {
+      "candidate_id": "concept-candidate-4bece6a9383136c588bf81c4b5231b76",
+      "committed_order": 0,
+      "mission_id": "MISSION-0001",
+      "reason_codes": [
+        "MISSION_ACTIVE"
+      ],
+      "state": "BLOCKED"
+    },
+    "contract_version": "forge-workspace-worklist/v1",
+    "freshness": "CURRENT_READBACK",
+    "installation_id": "152ce2f0-e4ec-4864-b167-b2a873d09fd6",
+    "instance_id": "forge-runtime-1b85b87d-b1b6-4735-a696-a8eb9a040592",
+    "items": [
+      {
+        "active": true,
+        "allocation_binding": {
+          "candidate_id": "concept-candidate-4bece6a9383136c588bf81c4b5231b76",
+          "envelope_digest": "sha256:c5d98606decfdf342ba94eb66db0e0276e7c56e5d9a868bc92ea1750adaed3cd",
+          "installation_id": "152ce2f0-e4ec-4864-b167-b2a873d09fd6",
+          "kind": "CANONICAL_CANDIDATE_INTAKE",
+          "mission_id": "MISSION-0001",
+          "subject_revision": "sha256:d570752a114493ea2903e7c0465f5d075072afb32c49c998919bfe9f12760890"
+        },
+        "approved": true,
+        "blocking_reasons": [],
+        "candidate_id": "concept-candidate-4bece6a9383136c588bf81c4b5231b76",
+        "committed_order": 0,
+        "completed": false,
+        "dependencies": [],
+        "detail_reference": {
+          "kind": "MISSION_REVIEW",
+          "mission_id": "MISSION-0001"
+        },
+        "effect_mode": "READ_ONLY_ASSESSMENT",
+        "eligibility": "ELIGIBLE",
+        "engineering_result": "UNKNOWN",
+        "evidence_references": [],
+        "execution_state": "WAITING_FOR_EXECUTION",
+        "final_acceptance": "UNKNOWN",
+        "mission_id": "MISSION-0001",
+        "mission_state_revision": 6,
+        "released": true,
+        "review_state": "NONE",
+        "subject_revision": "sha256:d570752a114493ea2903e7c0465f5d075072afb32c49c998919bfe9f12760890",
+        "title": "Assessment A"
+      },
+      {
+        "active": false,
+        "allocation_binding": {
+          "candidate_id": "concept-candidate-e6bd0cfcfd3dbaa85c7916e6dd8656f2",
+          "envelope_digest": "sha256:80e632226202a23595bc74ce2e28079a10870510ea305f7dc062844f7da1ea55",
+          "installation_id": "152ce2f0-e4ec-4864-b167-b2a873d09fd6",
+          "kind": "CANONICAL_CANDIDATE_INTAKE",
+          "mission_id": "MISSION-0002",
+          "subject_revision": "sha256:505fd353a31c78cf737fe5cc5cf7352f80bc4b7e88145400ec9c90932579adba"
+        },
+        "approved": true,
+        "blocking_reasons": [
+          "DEPENDENCY_NOT_PROVEN"
+        ],
+        "candidate_id": "concept-candidate-e6bd0cfcfd3dbaa85c7916e6dd8656f2",
+        "committed_order": 1,
+        "completed": false,
+        "dependencies": [
+          "concept-candidate-4bece6a9383136c588bf81c4b5231b76"
+        ],
+        "detail_reference": {
+          "kind": "MISSION_REVIEW",
+          "mission_id": "MISSION-0002"
+        },
+        "effect_mode": "READ_ONLY_ASSESSMENT",
+        "eligibility": "BLOCKED",
+        "engineering_result": "UNKNOWN",
+        "evidence_references": [],
+        "execution_state": "APPROVED_PLANNABLE",
+        "final_acceptance": "UNKNOWN",
+        "mission_id": "MISSION-0002",
+        "mission_state_revision": 1,
+        "released": true,
+        "review_state": "NONE",
+        "subject_revision": "sha256:505fd353a31c78cf737fe5cc5cf7352f80bc4b7e88145400ec9c90932579adba",
+        "title": "Assessment B"
+      },
+      {
+        "active": false,
+        "allocation_binding": {
+          "candidate_id": "concept-candidate-229ee94aa687270da932aa9a07ed058a",
+          "envelope_digest": "sha256:5dcb74dca19ccd1cbbd7e84dd35a257e5c758657cf18ced2b1e8aa5a9c486145",
+          "installation_id": "152ce2f0-e4ec-4864-b167-b2a873d09fd6",
+          "kind": "CANONICAL_CANDIDATE_INTAKE",
+          "mission_id": "MISSION-0003",
+          "subject_revision": "sha256:7171e6944f79aeab508145f4b0a23cd2e267da5369ac28dca670d99a591855b0"
+        },
+        "approved": true,
+        "blocking_reasons": [
+          "DEPENDENCY_NOT_PROVEN"
+        ],
+        "candidate_id": "concept-candidate-229ee94aa687270da932aa9a07ed058a",
+        "committed_order": 2,
+        "completed": false,
+        "dependencies": [
+          "concept-candidate-4bece6a9383136c588bf81c4b5231b76"
+        ],
+        "detail_reference": {
+          "kind": "MISSION_REVIEW",
+          "mission_id": "MISSION-0003"
+        },
+        "effect_mode": "READ_ONLY_ASSESSMENT",
+        "eligibility": "BLOCKED",
+        "engineering_result": "UNKNOWN",
+        "evidence_references": [],
+        "execution_state": "APPROVED_PLANNABLE",
+        "final_acceptance": "UNKNOWN",
+        "mission_id": "MISSION-0003",
+        "mission_state_revision": 1,
+        "released": true,
+        "review_state": "NONE",
+        "subject_revision": "sha256:7171e6944f79aeab508145f4b0a23cd2e267da5369ac28dca670d99a591855b0",
+        "title": "Assessment C"
+      }
+    ],
+    "membership_revision": "sha256:1fd64a02ae0a3eebef342b6a5c8c2b8f525451af517b726dfb1963437f52fe86",
+    "observed_at": "2026-10-12T14:48:14.386289+00:00",
+    "read_only": true,
+    "scope": {
+      "kind": "EXPLICIT_WORKSET",
+      "principal_id": "606a849359f4df4c",
+      "project_id": null,
+      "workset_id": "released-99a4d5e2ae42167842a8cfde484f65dcba033cf6"
+    },
+    "selector_revision": "sha256:1fd64a02ae0a3eebef342b6a5c8c2b8f525451af517b726dfb1963437f52fe86",
+    "snapshot_revision": "sha256:b317dde2c30cf0958a6445929f378e7d4e6d43faa0d7329d30e6b39dbab6ab97",
+    "workset_revision": 7
+  },
+  "cursor": "unitOpaque.signedPlaceholder",
+  "events": [
+    {
+      "causes": [],
+      "details": {},
+      "digest_contract": "GOVERNANCE_ASCII",
+      "event_id": "6da3210cdaab674701f1bf824aacaae4d1ee83f2807f6faa3f2544fd5cf77dbb",
+      "fact": "WORKSET_ARCHITECTURE_APPROVED",
+      "kind": "DECISION",
+      "occurred_at": "2026-10-12T14:46:35Z",
+      "sequence": null,
+      "source_digest": "sha256:bf9b64289c07d933d8952df859bc0f587a59b279a903d66d52790adeea0abd18",
+      "source_reference": {
+        "kind": "WORKSET_DECISION",
+        "record_id": "workset:released-99a4d5e2ae42167842a8cfde484f65dcba033cf6:architecture:1fd64a02ae0a3eebef342b6a5c8c2b8f525451af517b726dfb1963437f52fe86",
+        "url": "/v1/approved-workset-activity/released-99a4d5e2ae42167842a8cfde484f65dcba033cf6/events/6da3210cdaab674701f1bf824aacaae4d1ee83f2807f6faa3f2544fd5cf77dbb"
+      },
+      "source_revision": "sha256:bf9b64289c07d933d8952df859bc0f587a59b279a903d66d52790adeea0abd18",
+      "subject": {
+        "id": "released-99a4d5e2ae42167842a8cfde484f65dcba033cf6",
+        "kind": "WORKSET",
+        "label": "Werklijst"
+      },
+      "summary": "Architectuur heeft de exacte werklijst goedgekeurd — Werklijst",
+      "time_status": "RECORDED"
+    },
+    {
+      "causes": [],
+      "details": {},
+      "digest_contract": "GOVERNANCE_ASCII",
+      "event_id": "7de648519421a36dbfcc0c499950aa9a38292739be9cf448622b3a30e7ccf618",
+      "fact": "WORKSET_BUSINESS_APPROVED",
+      "kind": "DECISION",
+      "occurred_at": "2026-10-12T14:46:35Z",
+      "sequence": null,
+      "source_digest": "sha256:256ce7cf97189b3a7ea363b0ca1bc3ea2cae8b76c9dcb4716ba0c966f2f8326a",
+      "source_reference": {
+        "kind": "WORKSET_DECISION",
+        "record_id": "workset:released-99a4d5e2ae42167842a8cfde484f65dcba033cf6:business:1fd64a02ae0a3eebef342b6a5c8c2b8f525451af517b726dfb1963437f52fe86",
+        "url": "/v1/approved-workset-activity/released-99a4d5e2ae42167842a8cfde484f65dcba033cf6/events/7de648519421a36dbfcc0c499950aa9a38292739be9cf448622b3a30e7ccf618"
+      },
+      "source_revision": "sha256:256ce7cf97189b3a7ea363b0ca1bc3ea2cae8b76c9dcb4716ba0c966f2f8326a",
+      "subject": {
+        "id": "released-99a4d5e2ae42167842a8cfde484f65dcba033cf6",
+        "kind": "WORKSET",
+        "label": "Werklijst"
+      },
+      "summary": "Business heeft de exacte werklijst goedgekeurd — Werklijst",
+      "time_status": "RECORDED"
+    },
+    {
+      "causes": [
+        "6da3210cdaab674701f1bf824aacaae4d1ee83f2807f6faa3f2544fd5cf77dbb",
+        "7de648519421a36dbfcc0c499950aa9a38292739be9cf448622b3a30e7ccf618"
+      ],
+      "details": {},
+      "digest_contract": "UTF8",
+      "event_id": "4731696eb76e6952824252f704da5bae4509398c3be5a204038ee190b9f73cbf",
+      "fact": "RELEASE_APPLIED",
+      "kind": "FACT",
+      "occurred_at": "2026-10-12T14:46:35.502819+00:00",
+      "sequence": 5,
+      "source_digest": "sha256:fc85cc418ce52f7a4a2572db512dc15be75920685c501184f3495a4d688a7aa2",
+      "source_reference": {
+        "kind": "RELEASE_RECEIPT",
+        "record_id": "release-a-b",
+        "url": "/v1/approved-workset-activity/released-99a4d5e2ae42167842a8cfde484f65dcba033cf6/events/4731696eb76e6952824252f704da5bae4509398c3be5a204038ee190b9f73cbf"
+      },
+      "source_revision": 5,
+      "subject": {
+        "id": "released-99a4d5e2ae42167842a8cfde484f65dcba033cf6",
+        "kind": "WORKSET",
+        "label": "Werklijst"
+      },
+      "summary": "Toekomstige uitvoering expliciet vrijgegeven — Werklijst",
+      "time_status": "RECORDED"
+    },
+    {
+      "causes": [
+        "e8c6b21a668bebf0e3084d2f6a680019bff0a900db79689d4a41e21ab592b4ab"
+      ],
+      "details": {
+        "from_status": "READY",
+        "to_status": "ACTIVE"
+      },
+      "digest_contract": "UTF8",
+      "event_id": "1194b7b7a21f3ecd083a50df11d5b3cf58630affd5513e43d48c7d572c9dd224",
+      "fact": "MISSION_TRANSITION",
+      "kind": "FACT",
+      "occurred_at": "2026-10-12T14:46:36Z",
+      "sequence": 5,
+      "source_digest": "sha256:661c5051be5b4e4758503ff3301b22b2d11cfa4741844f10facb7d88758239cc",
+      "source_reference": {
+        "kind": "MISSION_TRANSITION",
+        "record_id": "5",
+        "url": "/v1/approved-workset-activity/released-99a4d5e2ae42167842a8cfde484f65dcba033cf6/events/1194b7b7a21f3ecd083a50df11d5b3cf58630affd5513e43d48c7d572c9dd224"
+      },
+      "source_revision": 5,
+      "subject": {
+        "id": "MISSION-0001",
+        "kind": "MISSION",
+        "label": "Assessment A"
+      },
+      "summary": "Opgeslagen Forge-toestand: ACTIVE — Assessment A",
+      "time_status": "RECORDED"
+    },
+    {
+      "causes": [],
+      "details": {},
+      "digest_contract": "UTF8",
+      "event_id": "47bcefb441507ff2a3639a5f120b5b5f18eb15cb195581dceb99567faceaff37",
+      "fact": "EP_SUBMISSION_RECEIPT_RECEIVED",
+      "kind": "FACT",
+      "occurred_at": "2026-10-12T14:46:36Z",
+      "sequence": null,
+      "source_digest": "sha256:1122a1b2cff2199e6e0123ad253c53a35ba3f77f75b6523d0ea3ac3f5539dece",
+      "source_reference": {
+        "kind": "EXECUTION_EXCHANGE",
+        "record_id": "host-exchange-aa5c2b4f-c5d3-49b8-9f17-a908b1560ae3",
+        "url": "/v1/approved-workset-activity/released-99a4d5e2ae42167842a8cfde484f65dcba033cf6/events/47bcefb441507ff2a3639a5f120b5b5f18eb15cb195581dceb99567faceaff37"
+      },
+      "source_revision": "sha256:1122a1b2cff2199e6e0123ad253c53a35ba3f77f75b6523d0ea3ac3f5539dece",
+      "subject": {
+        "id": "MISSION-0001",
+        "kind": "MISSION",
+        "label": "Assessment A"
+      },
+      "summary": "EP heeft de uitvoeringsaanvraag bevestigd; geen resultaat- of acceptatieclaim — Assessment A",
+      "time_status": "RECORDED"
+    },
+    {
+      "causes": [
+        "8c80588c0893f9bdd807eabb025630a3daae7bf6d1e45e3d099fe6d597d5c0d3"
+      ],
+      "details": {
+        "from_status": "APPROVED_PLANNABLE",
+        "to_status": "CREATED"
+      },
+      "digest_contract": "UTF8",
+      "event_id": "4882620fe9ec207030468475ba53a5a66c75bba96eb56c293a218fbf571965f0",
+      "fact": "MISSION_TRANSITION",
+      "kind": "FACT",
+      "occurred_at": "2026-10-12T14:46:36Z",
+      "sequence": 3,
+      "source_digest": "sha256:96c643913e6020a6e327d2b0ab4286d79b72041eadfb6ff101d3747be39610ad",
+      "source_reference": {
+        "kind": "MISSION_TRANSITION",
+        "record_id": "3",
+        "url": "/v1/approved-workset-activity/released-99a4d5e2ae42167842a8cfde484f65dcba033cf6/events/4882620fe9ec207030468475ba53a5a66c75bba96eb56c293a218fbf571965f0"
+      },
+      "source_revision": 3,
+      "subject": {
+        "id": "MISSION-0001",
+        "kind": "MISSION",
+        "label": "Assessment A"
+      },
+      "summary": "Opgeslagen Forge-toestand: CREATED — Assessment A",
+      "time_status": "RECORDED"
+    },
+    {
+      "causes": [],
+      "details": {
+        "from_status": "APPROVED_PLANNABLE",
+        "to_status": "APPROVED_PLANNABLE"
+      },
+      "digest_contract": "UTF8",
+      "event_id": "8c80588c0893f9bdd807eabb025630a3daae7bf6d1e45e3d099fe6d597d5c0d3",
+      "fact": "MISSION_TRANSITION",
+      "kind": "FACT",
+      "occurred_at": "2026-10-12T14:46:36Z",
+      "sequence": 2,
+      "source_digest": "sha256:91a687f84083d2ec8b5db2ebfc36cc60ee36848bd0a139d31df67f7d4717cef6",
+      "source_reference": {
+        "kind": "MISSION_TRANSITION",
+        "record_id": "2",
+        "url": "/v1/approved-workset-activity/released-99a4d5e2ae42167842a8cfde484f65dcba033cf6/events/8c80588c0893f9bdd807eabb025630a3daae7bf6d1e45e3d099fe6d597d5c0d3"
+      },
+      "source_revision": 2,
+      "subject": {
+        "id": "MISSION-0001",
+        "kind": "MISSION",
+        "label": "Assessment A"
+      },
+      "summary": "Opgeslagen Forge-toestand: APPROVED_PLANNABLE — Assessment A",
+      "time_status": "RECORDED"
+    },
+    {
+      "causes": [],
+      "details": {},
+      "digest_contract": "UTF8",
+      "event_id": "9a25b26163c57f76743d3c555ec3232ca33ff0a4989ba54701c6001852905dfa",
+      "fact": "FORGE_SUBMISSION_SENT",
+      "kind": "FACT",
+      "occurred_at": "2026-10-12T14:46:36Z",
+      "sequence": null,
+      "source_digest": "sha256:c1fae457b3e80c71da6c8ed838ee00b3dfe01078b90a41698c7f3673a146174d",
+      "source_reference": {
+        "kind": "EXECUTION_EXCHANGE",
+        "record_id": "host-exchange-e2cd28d2-4d70-4120-a822-1c17fa66b52b",
+        "url": "/v1/approved-workset-activity/released-99a4d5e2ae42167842a8cfde484f65dcba033cf6/events/9a25b26163c57f76743d3c555ec3232ca33ff0a4989ba54701c6001852905dfa"
+      },
+      "source_revision": "sha256:c1fae457b3e80c71da6c8ed838ee00b3dfe01078b90a41698c7f3673a146174d",
+      "subject": {
+        "id": "MISSION-0001",
+        "kind": "MISSION",
+        "label": "Assessment A"
+      },
+      "summary": "Forge heeft een uitvoeringsaanvraag verzonden — Assessment A",
+      "time_status": "RECORDED"
+    },
+    {
+      "causes": [
+        "1194b7b7a21f3ecd083a50df11d5b3cf58630affd5513e43d48c7d572c9dd224"
+      ],
+      "details": {
+        "from_status": "ACTIVE",
+        "to_status": "WAITING_FOR_EXECUTION"
+      },
+      "digest_contract": "UTF8",
+      "event_id": "b6c5c03d5db40c6712981b488c3d7828aa72da1a4db1f77397e1f1ce3ffa8e61",
+      "fact": "MISSION_TRANSITION",
+      "kind": "FACT",
+      "occurred_at": "2026-10-12T14:46:36Z",
+      "sequence": 6,
+      "source_digest": "sha256:0a704bb7beee85ad0dec33e2d7a91205b3810bc722ce15a9f593dcf6b2509536",
+      "source_reference": {
+        "kind": "MISSION_TRANSITION",
+        "record_id": "6",
+        "url": "/v1/approved-workset-activity/released-99a4d5e2ae42167842a8cfde484f65dcba033cf6/events/b6c5c03d5db40c6712981b488c3d7828aa72da1a4db1f77397e1f1ce3ffa8e61"
+      },
+      "source_revision": 6,
+      "subject": {
+        "id": "MISSION-0001",
+        "kind": "MISSION",
+        "label": "Assessment A"
+      },
+      "summary": "Opgeslagen Forge-toestand: WAITING_FOR_EXECUTION — Assessment A",
+      "time_status": "RECORDED"
+    },
+    {
+      "causes": [
+        "4882620fe9ec207030468475ba53a5a66c75bba96eb56c293a218fbf571965f0"
+      ],
+      "details": {
+        "from_status": "CREATED",
+        "to_status": "READY"
+      },
+      "digest_contract": "UTF8",
+      "event_id": "e8c6b21a668bebf0e3084d2f6a680019bff0a900db79689d4a41e21ab592b4ab",
+      "fact": "MISSION_TRANSITION",
+      "kind": "FACT",
+      "occurred_at": "2026-10-12T14:46:36Z",
+      "sequence": 4,
+      "source_digest": "sha256:55d86722f0ad9a5dae6e0ab03391fd1f1aea16a01252e45090f10caca3a4862a",
+      "source_reference": {
+        "kind": "MISSION_TRANSITION",
+        "record_id": "4",
+        "url": "/v1/approved-workset-activity/released-99a4d5e2ae42167842a8cfde484f65dcba033cf6/events/e8c6b21a668bebf0e3084d2f6a680019bff0a900db79689d4a41e21ab592b4ab"
+      },
+      "source_revision": 4,
+      "subject": {
+        "id": "MISSION-0001",
+        "kind": "MISSION",
+        "label": "Assessment A"
+      },
+      "summary": "Opgeslagen Forge-toestand: READY — Assessment A",
+      "time_status": "RECORDED"
+    },
+    {
+      "causes": [],
+      "details": {
+        "execution_start_not_implied": true
+      },
+      "digest_contract": "UTF8",
+      "event_id": "b78287ba6041dc8232f35fb2e934f2c1909d3fef4bfe842778b51f4d278f1bff",
+      "fact": "ACTIVATION_CLAIMED",
+      "kind": "FACT",
+      "occurred_at": "2026-10-12T14:46:36.262772+00:00",
+      "sequence": 5,
+      "source_digest": "sha256:44a6229fec1fb8574b7aba7d451440e910289857c2259af459c0f1c04ad56a49",
+      "source_reference": {
+        "kind": "ACTIVATION_CLAIM",
+        "record_id": "sha256:7406dc311dcc8a8eac765fd045aa80d78a3a83826c042f9ae0db3bf9c301f10e",
+        "url": "/v1/approved-workset-activity/released-99a4d5e2ae42167842a8cfde484f65dcba033cf6/events/b78287ba6041dc8232f35fb2e934f2c1909d3fef4bfe842778b51f4d278f1bff"
+      },
+      "source_revision": 5,
+      "subject": {
+        "id": "concept-candidate-4bece6a9383136c588bf81c4b5231b76",
+        "kind": "CANDIDATE",
+        "label": "Assessment A"
+      },
+      "summary": "Activatie geclaimd; uitvoering hiermee niet bewezen — Assessment A",
+      "time_status": "RECORDED"
+    }
+  ],
+  "execution_started": false,
+  "has_more": false,
+  "read_only": true,
+  "source_watermark": "2aa1c210650a14375b111f52630e6a553adb8998b08a9a5c2e45b30cef47c543",
+  "workset_id": "released-99a4d5e2ae42167842a8cfde484f65dcba033cf6"
+}
