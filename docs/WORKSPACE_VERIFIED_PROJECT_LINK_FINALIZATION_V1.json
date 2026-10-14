@@ -1,0 +1,21 @@
+{
+  "assignment": "L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012",
+  "plan": 98,
+  "version": "2.8.27",
+  "classification": "NO_BUMP",
+  "implementation_pr": 160,
+  "reviewed_source": "793de825e21745d3766e4d5f412f9d3610d9e623",
+  "source_main": "1b9ecd119e4e27f65f14b06bd39b78813a98f5f1",
+  "equal_reviewed_tree": true,
+  "state": "PROTECTED_SOURCE_DELIVERED_FINALIZATION_OWN_GATES_PENDING",
+  "corrections_consumed": 8,
+  "installed_attempts": 1,
+  "full_validation_runs_resumption": 6,
+  "qualified_producer": "f375a4e8adcec0c1693aa100c0f31f6014b84b20",
+  "candidate_evidence": "docs/qualification/plan98-link-candidate-20261014/evidence.json",
+  "exact_final_main_installed": "REQUIRED_NEW_POST_FINALIZATION_MERGE_PROOF",
+  "whole_onboarding_complete": false,
+  "plan104": "PRESERVED_d458_PR171_AFTER_LINK",
+  "finalization_full_validation": "PASS_248Python_280native_plus1isolated_strict_perfile_packages",
+  "exact_head_tde_readback": "793de825_QUALIFIED_PASS_WITH_WARNINGS_complexity28"
+}

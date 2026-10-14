@@ -581,12 +581,17 @@
     "plan": 98,
     "corrections_consumed": 8,
     "installed_attempts": 1,
-    "state": "ACTUAL_QUALIFIED_CONSUMER_CANDIDATE_ACCEPTED_PROTECTED_PENDING",
+    "state": "PROTECTED_SOURCE_DELIVERED_FINALIZATION_OWN_GATES_PENDING",
     "contract": "docs/WORKSPACE_VERIFIED_PROJECT_LINK_V1.md",
     "producer_source": "f375a4e8adcec0c1693aa100c0f31f6014b84b20",
     "whole_onboarding": false,
     "candidate_production_source": "2a75c5a5ccf88c0d4103d4663a6bc03de22abcbd",
     "candidate_evidence": "docs/qualification/plan98-link-candidate-20261014/evidence.json",
-    "full_onboarding_complete": false
+    "full_onboarding_complete": false,
+    "source_main": "1b9ecd119e4e27f65f14b06bd39b78813a98f5f1",
+    "source_pr": 160,
+    "reviewed_source": "793de825e21745d3766e4d5f412f9d3610d9e623",
+    "finalization_receipt": "docs/WORKSPACE_VERIFIED_PROJECT_LINK_FINALIZATION_V1.json",
+    "exact_final_main": "REQUIRED_NEW_POST_FINALIZATION_MERGE_PROOF"
   }
 }
