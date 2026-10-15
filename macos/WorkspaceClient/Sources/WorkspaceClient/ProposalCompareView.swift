@@ -16,7 +16,9 @@ struct ProposalCompareView:View {
     private func picker(_ before:Bool)->some View {
         Picker(text(before ? "before":"after"),selection:Binding(get:{before ? state.choice?.before ?? state.history.first?.id ?? "":state.choice?.after ?? state.history.last?.id ?? ""},set:{id in
             guard let chosen=state.choice else{return}
-            Task {await state.compare(.init(before:before ? id:chosen.before,after:before ? chosen.after:id),concept:concept,current:current)}
+            let next=ProposalCompareState.Choice(before:before ? id:(id==chosen.before ? chosen.after:chosen.before),after:before ? (id==chosen.after ? chosen.before:chosen.after):id)
+            guard next != chosen else{return}
+            Task {await state.compare(next,concept:concept,current:current)}
         })) {
             ForEach(state.history) {entry in Text(label(entry)).tag(entry.id)}
         }.pickerStyle(.menu).disabled(state.busy).accessibilityIdentifier(before ? "proposal-compare-before":"proposal-compare-after")
@@ -26,7 +28,7 @@ struct ProposalCompareView:View {
             Divider();Text(text("title")).font(.title2.bold())
             Text(text("preparation")).fixedSize(horizontal:false,vertical:true)
             Text(text("readOnly")).font(.caption).foregroundStyle(.secondary)
-            Button(text("refresh")) {Task {await state.load(concept,current:current)}}.disabled(state.busy).focusable().focused($returnFocused,equals:.refresh).accessibilityIdentifier("proposal-compare-refresh")
+            Button(text("refresh")) {Task {await state.load(concept,current:current)}}.disabled(state.busy).focusable().onKeyPress(.space) {guard !state.busy else{return .ignored};Task {await state.load(concept,current:current)};return .handled}.focused($returnFocused,equals:.refresh).accessibilityIdentifier("proposal-compare-refresh")
             if state.busy {ProgressView(text("loading"))}
             if !["idle","loading","comparable"].contains(state.phase) {Text(text(state.phase)).accessibilityIdentifier("proposal-compare-status")}
             if state.partialHistory {Text(text("historyPartial")).foregroundStyle(.secondary)}
@@ -69,7 +71,7 @@ struct ProposalCompareView:View {
                     Text(verbatim:model.profile).textSelection(.enabled)
                     source(model.before);source(model.after)
                 }.accessibilityIdentifier("proposal-compare-source")
-                Button(text("discuss"),action:discuss).focusable().focused($returnFocused,equals:.discuss).accessibilityIdentifier("proposal-compare-discuss").id("proposal-compare-discuss")
+                Button(text("discuss"),action:discuss).focusable().onKeyPress(.space) {discuss();return .handled}.focused($returnFocused,equals:.discuss).accessibilityIdentifier("proposal-compare-discuss").id("proposal-compare-discuss")
             }
         }.frame(minWidth:0,maxWidth:.infinity,alignment:.leading)
         .onChange(of:returnFocusRequest) {_,_ in returnFocused=state.comparison==nil ? .refresh:.discuss}
@@ -110,7 +112,7 @@ struct ProposalCompareDocumentView:View {
                     ForEach(Array(difference.rows.dropFirst(page*120).prefix(120))) {line in
                         Text(verbatim:line.sign+" "+(invisible ? ProposalCompareModel.visible(line.text):line.text)).font(.system(.caption,design:.monospaced)).textSelection(.enabled).frame(minWidth:0,maxWidth:.infinity,alignment:.leading)
                     }
-                    HStack {Button(text("previous")) {page-=1}.focusable().accessibilityLabel(text("previous")+" · "+document.path).disabled(page==0);Text(text("page")+" "+String(page+1)+" / "+String(pages));Button(text("next")) {page+=1}.focusable().accessibilityLabel(text("next")+" · "+document.path).disabled(page+1>=pages)}
+                    HStack {Button(text("previous")) {page-=1}.focusable().onKeyPress(.space) {guard page>0 else{return .ignored};page-=1;return .handled}.accessibilityLabel(text("previous")+" · "+document.path).disabled(page==0);Text(text("page")+" "+String(page+1)+" / "+String(pages));Button(text("next")) {page+=1}.focusable().onKeyPress(.space) {guard page+1<pages else{return .ignored};page+=1;return .handled}.accessibilityLabel(text("next")+" · "+document.path).disabled(page+1>=pages)}
                 } else {ProgressView()}
                 DisclosureGroup(text("full")) {
                     VStack(alignment:.leading) {
@@ -142,7 +144,7 @@ struct ProposalCompareOriginalView:View {
             if let value {
                 let pages=ProposalCompareModel.pages(value.content)
                 Text(verbatim:pages[min(page,pages.count-1)]).font(.system(.caption,design:.monospaced)).textSelection(.enabled).frame(minWidth:0,maxWidth:.infinity,alignment:.leading)
-                HStack {Button(text("previous")) {page-=1}.focusable().accessibilityLabel(text("previous")+" · "+side+" · "+value.path).disabled(page==0);Text(text("page")+" "+String(page+1)+" / "+String(pages.count));Button(text("next")) {page+=1}.focusable().accessibilityLabel(text("next")+" · "+side+" · "+value.path).disabled(page+1>=pages.count)}
+                HStack {Button(text("previous")) {page-=1}.focusable().onKeyPress(.space) {guard page>0 else{return .ignored};page-=1;return .handled}.accessibilityLabel(text("previous")+" · "+side+" · "+value.path).disabled(page==0);Text(text("page")+" "+String(page+1)+" / "+String(pages.count));Button(text("next")) {page+=1}.focusable().onKeyPress(.space) {guard page+1<pages.count else{return .ignored};page+=1;return .handled}.accessibilityLabel(text("next")+" · "+side+" · "+value.path).disabled(page+1>=pages.count)}
             } else {Text(text("absent")).foregroundStyle(.secondary)}
         }
     }

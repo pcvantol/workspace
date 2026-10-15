@@ -1,3 +1,10 @@
+## Current delivery status — CLOSED plan103
+
+Complete scoped DoD is delivered on exact-final-mainfc3a26ab048742d2c03c79969860c0b6feb3f12e;
+[terminal register](https://github.com/pcvantol/forge/issues/208#issuecomment-6156170422).
+LINK also CLOSED6179192862. Plan105 comparison is a separate selected successor.
+Older pending-stage descriptions below retain their historical source/evidence.
+
 # Saved Projectconcept baseline preview v1
 
 Status: protected implementation PR169 merged; complete scoped candidate acceptance and qualified R52 binding delivered. Documentary finalization and NEW exact-final-main installed/native acceptance remain separate.

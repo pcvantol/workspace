@@ -1,3 +1,27 @@
+### Plan105 round3 — complete-original default and concept-bound return
+
+Full validation1 PASS:297Python/305native+1isolated, strict per-file production
+coverage and package/native gates. That earlier source result is retained.
+Round3 preserves latest complete A/B behind incomplete intents (bounded256-history)
+and clears chat comparison context/return-focus tickets on concept change.
+Directed15native tests PASS; independent targeted UX source acceptance PASS.
+Full validation2 PASS306native+1isolated, strict per-file coverage and package gates.
+Cumulative3source rounds/1installed/2completed fullruns; current installed follows.
+Initialdf5f7b1 real-R52 proof remains original-source-bound, not new acceptance.
+
+### Plan105 compact matrix checkpoint
+
+First real installed vertical on initial df5f7b1b06aa9a2f00030f7a39eb475b0cf52c39
+PASS: two real qualifiedR52 originals,37artifacts each/14changed; source1→2 and
+current3 separate, omission not resolution, reversed native choice survives
+separate Server/Client OS restarts. Producerledger byte-identical;2ownerprepares
+before comparison and0comparisonPREPARE/model/EP/repo/Mission effects. Normal
+own cleanupCOMPLETE before originaldeadline. These are initial source-bound
+facts, not final-main acceptance. Source round2 aligns unchanged line context,
+swaps opposite explicit version choices, names same-selection state and keyboard
+paging/actions. Compact14native+3ownHTTPtests PASS. Current counters2source rounds/
+1installed/0fullruns before first required full validation; old failures retained.
+
 ## Current selected plan105 — saved proposal comparison
 
 L4-PROJECT-PROPOSAL-COMPARE-V1-20261015 / PB-W2-SETUP/S7

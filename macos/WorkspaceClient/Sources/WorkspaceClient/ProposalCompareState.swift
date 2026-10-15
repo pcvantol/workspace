@@ -36,6 +36,7 @@ import CryptoKit
         switch error {
         case ConceptError.denied:conceal();phase="denied"
         case ProposalCompareError.incompatible:phase="incompatible"
+        case ProposalCompareError.selection:phase="chooseDifferent"
         case ProposalCompareError.partial:phase="partial"
         case ConceptError.notFound:phase="partial"
         case ConceptError.conflict:phase="sourceChanged"
@@ -51,7 +52,7 @@ import CryptoKit
             let connection=try await current();try concept.validate(connection.access.projectID)
             let cap=try await transport.access(connection,concept:concept.id);try await checked(connection,concept,cap,current:current)
             let entries=try await transport.history(connection,concept:concept.id);try await checked(connection,concept,cap,current:current)
-            guard entries.contract_version==cap.contract_version,entries.actor_id==cap.actor_id,entries.context_id==cap.context_id,entries.concept_id==concept.id,entries.binding_id==cap.binding_id,entries.producer_source==cap.producer_source,entries.operations.count<=256,Set(entries.operations.map(\.id)).count==entries.operations.count,entries.operations.allSatisfy({$0.source_revision>0 && $0.id.range(of:"^[0-9a-f]{32}$",options:.regularExpression) != nil}) else {throw ConceptError.invalid}
+            guard entries.contract_version==cap.contract_version,entries.actor_id==cap.actor_id,entries.context_id==cap.context_id,entries.concept_id==concept.id,entries.binding_id==cap.binding_id,entries.producer_source==cap.producer_source,entries.operations.count<=256,Set(entries.operations.map(\.id)).count==entries.operations.count,entries.operations.allSatisfy({$0.source_revision>0 && $0.source_revision<=cap.source_revision && $0.id.range(of:"^[0-9a-f]{32}$",options:.regularExpression) != nil}) else {throw ConceptError.invalid}
             let saved=try records.load(key(connection,concept)).map{try JSONDecoder().decode(Choice.self,from:$0)}
             guard ticket==generation,!Task.isCancelled else{return}
             access=cap;history=entries.operations
@@ -77,7 +78,8 @@ import CryptoKit
             if let saved {busy=false;await compare(saved,concept:concept,current:current);return}
             guard !history.isEmpty else {phase="none";return}
             var complete:[String]=[]
-            for entry in history.reversed().prefix(8) {
+            for entry in history.reversed() {
+                guard ticket==generation,!Task.isCancelled else{return}
                 do {
                     let result=try await transport.read(connection,concept:concept.id,operation:entry.id)
                     try await checked(connection,concept,cap,current:current);try result.validate(connection,concept:concept,operation:entry.id,access:cap)
@@ -95,7 +97,8 @@ import CryptoKit
         comparison=nil;choice=next;let ticket=generation;busy=true;phase="loading"
         defer {if ticket==generation {busy=false}}
         do {
-            guard next.before != next.after,history.contains(where:{$0.id==next.before}),history.contains(where:{$0.id==next.after}) else {throw ConceptError.invalid}
+            guard next.before != next.after else {throw ProposalCompareError.selection}
+            guard history.contains(where:{$0.id==next.before}),history.contains(where:{$0.id==next.after}) else {throw ConceptError.invalid}
             let connection=try await current();try await fresh(connection,concept,cap,current:current)
             guard ticket==generation,choice==next,!Task.isCancelled else{return}
             try records.saveBounded(JSONEncoder().encode(next),key:key(connection,concept))

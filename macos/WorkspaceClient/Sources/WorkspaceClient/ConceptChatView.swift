@@ -116,6 +116,7 @@ struct ConceptChatView:View {
     var comparisonContext:String?=nil
     var onFocusReturn:(()->Void)?=nil
     @State private var openedFromComparison=false
+    @State private var focusGeneration=0
     @State var message=""
     @State var role="BUSINESS"
     @State var reviewing=false
@@ -203,22 +204,21 @@ struct ConceptChatView:View {
             HStack(alignment:.top,spacing:24) {summary.frame(width:280);chat.frame(minWidth:430)}
             VStack(alignment:.leading,spacing:12) {
                 summary
-                Button(text("open")) {openedFromComparison=false;launchFocused=false;openedConceptID=concept.id;showingChat=true}
+                Button(text("open")) {focusGeneration+=1;openedFromComparison=false;launchFocused=false;openedConceptID=concept.id;showingChat=true}
                     .focusable().focused($launchFocused).accessibilityIdentifier("concept-chat-open")
-                    .onKeyPress(.space) {openedFromComparison=false;launchFocused=false;openedConceptID=concept.id;showingChat=true;return .handled}
+                    .onKeyPress(.space) {focusGeneration+=1;openedFromComparison=false;launchFocused=false;openedConceptID=concept.id;showingChat=true;return .handled}
                     .keyboardShortcut("j",modifiers:[.command,.option])
             }
         }
-        .onChange(of:focusRequest) {_,_ in openedFromComparison=true;openedConceptID=concept.id;showingChat=true}
+        .onChange(of:focusRequest) {_,_ in focusGeneration+=1;openedFromComparison=true;openedConceptID=concept.id;showingChat=true}
         .sheet(isPresented:$showingChat,onDismiss:{
-            if openedFromComparison,let onFocusReturn {openedFromComparison=false;onFocusReturn()} else {
-            let identity=openedConceptID
-            launchFocused=false
+            let identity=openedConceptID,ticket=focusGeneration,returnToComparison=openedFromComparison
+            openedFromComparison=false;launchFocused=false
             Task { @MainActor in
                 await Task.yield()
-                guard identity != nil,!showingChat,openedConceptID==identity else{return}
-                launchFocused=true
-            }
+                guard identity==concept.id,!showingChat,openedConceptID==identity,focusGeneration==ticket else{return}
+                if returnToComparison,let onFocusReturn {onFocusReturn()}
+                else {launchFocused=true}
             }
         }) {
             ScrollView {VStack(alignment:.leading,spacing:16) {
@@ -229,7 +229,7 @@ struct ConceptChatView:View {
                 chat
             }.padding(24)}.frame(minWidth:420,idealWidth:620,minHeight:500).onAppear {messageFocused=true}
         }
-        .onChange(of:concept) {_,_ in openedConceptID=nil;launchFocused=false;reviewing=false;message="";showingChat=false}
+        .onChange(of:concept) {_,_ in focusGeneration+=1;openedConceptID=nil;openedFromComparison=false;launchFocused=false;reviewing=false;message="";showingChat=false}
         .onChange(of:dirty) {_,_ in reviewing=false}
         .onChange(of:message) {_,_ in reviewing=false}
         .onChange(of:role) {_,_ in reviewing=false}

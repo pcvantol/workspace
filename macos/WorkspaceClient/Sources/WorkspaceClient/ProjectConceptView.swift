@@ -126,7 +126,7 @@ struct ProjectConceptView: View {
                     }.disabled(adoptionHeld || state.lifecycleBlocked).accessibilityIdentifier("concept-lifecycle")
                     if state.selectionStale && state.phase != "conflict" { Text(text("conflict")).foregroundStyle(.secondary) }
                     if state.dirty || state.pending != nil { Text(text("lifecycleBlocked")).foregroundStyle(.secondary) }
-                    ConceptChatPanel(state:chat,concept:selected,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)},adopted:{if state.dirty {state.selectionStale=true;state.phase="conflict"} else {await state.open(selected.id,current:current)}},focusRequest:comparisonFocusRequest,comparisonContext:comparisonContext,onFocusReturn:{proxy.scrollTo("proposal-compare-discuss",anchor:.center);comparisonReturnFocus+=1}).id("concept-chat-panel")
+                    ConceptChatPanel(state:chat,concept:selected,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)},adopted:{if state.dirty {state.selectionStale=true;state.phase="conflict"} else {await state.open(selected.id,current:current)}},focusRequest:comparisonFocusRequest,comparisonContext:comparisonContext,onFocusReturn:{guard state.selected==selected else{return};proxy.scrollTo("proposal-compare-discuss",anchor:.center);comparisonReturnFocus+=1}).id("concept-chat-panel")
                     ConceptBaselinePanel(state:baseline,concept:selected,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)})
                     ProposalCompareView(state:comparison,concept:selected,current:{try await baselineCurrent(selected)},discuss:{
                         if let model=comparison.comparison {comparisonContext=ProposalCompareCopy.text("title",language)+" · "+ProposalCompareCopy.text("revision",language)+" "+String(model.before.source_revision)+" → "+String(model.after.source_revision)}
@@ -150,6 +150,7 @@ struct ProjectConceptView: View {
             else if client.authorizationLost { state.concealAuthorization() }
             else { state.clientPhaseChanged(phase) }
         }
+        .onChange(of:state.selected) {_,_ in comparisonContext=nil}
         .onChange(of:client.authorizationLost) {_,lost in if lost {baseline.conceal();chat.conceal();comparison.conceal()} }
         .onChange(of:client.phase) {_,phase in if phase != "CONNECTED" {baseline.conceal();chat.conceal();comparison.conceal()} }
         .onDisappear { state.cancelReads();state.stopObservingAuthority();baseline.conceal();chat.conceal();comparison.conceal() }

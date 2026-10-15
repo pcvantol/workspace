@@ -2,7 +2,7 @@ import Foundation
 
 // A deterministic, byte-exact presentation of already validated original R52 results.
 // Linear work only: common whole-line prefix/suffix, then explicit removed/added lines.
-enum ProposalCompareError:Error {case incompatible, partial}
+enum ProposalCompareError:Error {case incompatible, partial, selection}
 struct ProposalCompareModel:Sendable {
     struct Document:Identifiable,Sendable {
         let path:String;let before:ConceptBaselineResult.Artifact?;let after:ConceptBaselineResult.Artifact?
@@ -59,10 +59,14 @@ struct ProposalCompareModel:Sendable {
         let a=lines(document.before?.content ?? ""),b=lines(document.after?.content ?? "");var prefix=0,suffix=0
         while prefix<min(a.count,b.count),Data(a[prefix].utf8)==Data(b[prefix].utf8) {prefix+=1}
         while suffix<min(a.count,b.count)-prefix,Data(a[a.count-1-suffix].utf8)==Data(b[b.count-1-suffix].utf8) {suffix+=1}
-        var rows:[Line]=[]
-        for line in a[prefix..<(a.count-suffix)].prefix(8192) {rows.append(.init(id:rows.count,sign:"−",text:line))}
-        for line in b[prefix..<(b.count-suffix)].prefix(8192-rows.count) {rows.append(.init(id:rows.count,sign:"+",text:line))}
-        return .init(rows:rows,complete:rows.count==a.count+b.count-2*prefix-2*suffix)
+        let old=Array(a[prefix..<(a.count-suffix)]),new=Array(b[prefix..<(b.count-suffix)])
+        var rows:[Line]=[],total=0
+        func append(_ sign:String,_ text:String) {total+=1;if rows.count<8192 {rows.append(.init(id:rows.count,sign:sign,text:text))}}
+        for index in 0..<max(old.count,new.count) {
+            if index<old.count,index<new.count,Data(old[index].utf8)==Data(new[index].utf8) {append(" ",old[index])}
+            else {if index<old.count {append("−",old[index])};if index<new.count {append("+",new[index])}}
+        }
+        return .init(rows:rows,complete:rows.count==total)
     }
     static func visible(_ value:String)->String {value.replacingOccurrences(of:" ",with:"·").replacingOccurrences(of:"\t",with:"⇥").replacingOccurrences(of:"\r",with:"␍").replacingOccurrences(of:"\n",with:"␊\n")}
     static func pages(_ value:String)->[String] {

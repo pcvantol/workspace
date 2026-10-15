@@ -9,6 +9,7 @@ enum ProposalCompareCopy {
         "non_goals":["Outside scope","Afbakening","Nicht im Umfang","Hors périmètre","Fuera del alcance"],
         "constraints":["Constraints","Randvoorwaarden","Rahmenbedingungen","Contraintes","Restricciones"],
         "preparation":["Preparation for review — proposal, project not configured. No decision or execution readiness implied.","Voorbereiding op beoordeling — voorstel, project nog niet ingericht. Geen besluit of oordeel over uitvoeringsgereedheid.","Vorbereitung zur Prüfung — Vorschlag, Projekt nicht eingerichtet. Keine Entscheidung oder Ausführungsfreigabe.","Préparation de la revue — proposition, projet non configuré. Aucune décision ni autorisation d’exécution.","Preparación para revisión — propuesta, proyecto sin configurar. No implica decisión ni autorización de ejecución."],
+        "chooseDifferent":["Choose two different saved proposals.","Kies twee verschillende bewaarde voorstellen.","Wählen Sie zwei verschiedene gespeicherte Vorschläge.","Choisissez deux propositions enregistrées différentes.","Elige dos propuestas guardadas diferentes."],
         "before":["First selection","Eerste keuze","Erste Auswahl","Première sélection","Primera selección"],
         "after":["Compared with","Vergelijken met","Vergleichen mit","Comparer avec","Comparar con"],
         "version":["Proposal","Voorstel","Vorschlag","Proposition","Propuesta"],

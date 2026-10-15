@@ -1,3 +1,16 @@
+### Plan105 compact matrix checkpoint
+
+First real installed vertical on initial df5f7b1b06aa9a2f00030f7a39eb475b0cf52c39
+PASS: two real qualifiedR52 originals,37artifacts each/14changed; source1→2 and
+current3 separate, omission not resolution, reversed native choice survives
+separate Server/Client OS restarts. Producerledger byte-identical;2ownerprepares
+before comparison and0comparisonPREPARE/model/EP/repo/Mission effects. Normal
+own cleanupCOMPLETE before originaldeadline. These are initial source-bound
+facts, not final-main acceptance. Source round2 aligns unchanged line context,
+swaps opposite explicit version choices, names same-selection state and keyboard
+paging/actions. Compact14native+3ownHTTPtests PASS. Current counters2source rounds/
+1installed/0fullruns before first required full validation; old failures retained.
+
 # Saved proposal comparison v1 — selected plan105
 
 Assignment L4-PROJECT-PROPOSAL-COMPARE-V1-20261015; r81-plan105.
@@ -25,8 +38,10 @@ Existing R53 chat pairing stays separate. L2 inspection/L3 decisions are not gat
 ## Presentation and bounded work
 
 Two named historical proposal choices preserve original operation/direction.
-Default scans at most eight most recent intents (qualified dossier record limit)
-for two actual complete results; missing intents are explicitly partial history.
+Default scans the bounded history (at most256 original intents), newest first,
+until two actual complete results are found; incomplete later intents cannot hide
+older complete originals. Each GET retains existing transport/expiry limits and
+cancellation guards; denial/corruption aborts. Missing intents are partial history.
 All historical choices remain available. A saved choice is re-read after restart;
 its absence never triggers regeneration or silent substitution. Only selection
 IDs are stored using the existing bounded private baseline record namespace.
@@ -39,11 +54,14 @@ identity is its exact original manifest path; no inferred rename. Four labeled
 statuses, original manifest/profile/mode/hash details, and question presence are
 separate facts. Omission implies neither repository deletion nor resolution.
 No Approved flag, ready judgment, approval/apply controls or automatic chat send.
-The conversation button scrolls to the existing conversation without submitting.
+The conversation button opens the existing conversation with visible comparison
+context without submitting. Escape returns focus only to the same active concept;
+concept changes clear comparison context and invalidate pending return tickets.
 
 Comparison model construction and line diff run on utility workers. UTF8 bytes
 are compared without Unicode/whitespace normalization. Linear whole-line common
-prefix/suffix extraction intentionally does not claim a minimal semantic diff.
+prefix/suffix extraction and aligned unchanged context intentionally do not claim
+a minimal semantic diff.
 Per document≤131072original bytes; two≤64artifact original responses retain all
 existing transport limits. Difference output≤8192rows,120rows per visible page;
 any omitted middle is explicitly bounded, never a complete comparison claim.

@@ -1,3 +1,10 @@
+## Current delivery status — CLOSED plan104
+
+Complete scoped DoD is delivered on exact-final-maine95f8a4362a74cdc4640af3adf9276d28e8210ae;
+[terminal register](https://github.com/pcvantol/forge/issues/208#issuecomment-6180309393).
+LINK also CLOSED6179192862. Plan105 comparison is a separate selected successor.
+Older pending-stage descriptions below retain their historical source/evidence.
+
 ### Finalization CI correction12 — observation only
 
 Native CI38647802499 retained a real expiry-test failure: the old observer checked
