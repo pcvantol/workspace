@@ -20,6 +20,21 @@ enum ExecutionFixture {
         if let run=q.run {packet["selected_run_id"]=run;packet["completeness"]="EXACT_RUN"}
         return ["contract_version":"workspace-execution-progress/1","actor_id":q.connection.actorID,"context_id":q.connection.workspaceProjectID,"workspace_instance_id":q.connection.workspaceInstanceID,"binding_id":"binding","activity_binding_id":q.activity.binding_id,"forge_instance_id":q.activity.scope.instance_id,"workset_id":q.workset,"producer_source":ExecutionWire.source,"expires_at":"2099-01-01T00:00:00Z","packet":packet]
     }
+    // Source-only richer presentation: separate original/retry attempts, queued
+    // and deferred actions, repeated real phase codes and distinct qualifications.
+    static func rich(_ q:ExecutionQuery) throws->ExecutionEnvelope {
+        var raw=try raw(q);var packet=raw["packet"] as! [String:Any]
+        let base=(packet["records"] as! [[String:Any]])[0]
+        var original=base;original["description"]="Synthetic recorded implementation";original["description_status"]="AVAILABLE"
+        original["progress"]=["available":true,"current_phase":"WAIT_FOR_OPERATOR_MERGE","activity":"WAITING","wait_reason":"OPERATOR_MERGE_REQUIRED","responsible_role":"OPERATOR","steps":[["phase":"EXECUTE_AGENT","state":"COMPLETED"],["phase":"WAIT_FOR_OPERATOR_MERGE","state":"ACTIVE"],["phase":"FINALIZE_AGENT","state":"PENDING"]],"history":[["phase":"QUALITY_CONTROL_AGENT","recorded_at":"2026-10-15T00:00:01Z","responsible_role":"AUTONOMOUS_QUALITY_SECURITY","wait_reason":"NOT_RECORDED"],["phase":"REPAIR_AGENT","recorded_at":"2026-10-15T00:00:02Z","responsible_role":"IMPLEMENTATION_AGENT","wait_reason":"NOT_RECORDED"],["phase":"QUALITY_CONTROL_AGENT","recorded_at":"2026-10-15T00:00:03Z","responsible_role":"AUTONOMOUS_QUALITY_SECURITY","wait_reason":"NOT_RECORDED"]],"history_completeness":"COMPLETE_WITHIN_RECORDED_EVENTS"] as [String:Any]
+        var result=original["result"] as! [String:Any];result["technical_outcome"]="RUNNING";original["result"]=result
+        var retry=original;retry["submission_id"]="sub-retry";retry["run_id"]="retry-run";retry["lineage"]=["state":"AVAILABLE","retry_parent_run_id":"run","attempt_submission_id":"sub-retry","root_submission_id":"sub","retry_parent_submission_id":"sub"]
+        var queued=base;queued["submission_id"]="sub-queued";queued["engineering_action_id"]="queued-action";queued["run_id"]=NSNull();queued["description_status"]="WITHHELD_PRIVACY"
+        var deferred=queued;deferred["submission_id"]="sub-deferred";deferred["engineering_action_id"]="deferred-action";deferred["submission_disposition"]="DEFERRED"
+        let rows=[original,retry,queued,deferred];packet["records"]=q.run.map {run in rows.filter {($0["run_id"] as? String)==run}} ?? rows
+        packet["logical_action_count"]=q.run == nil ? 3:1;packet["unlinked_legacy_records"]=1;raw["packet"]=packet
+        return try ExecutionWire.decode(JSONSerialization.data(withJSONObject:raw),q)
+    }
     static func envelope(_ q:ExecutionQuery,wrong:Bool=false) throws->ExecutionEnvelope {
         var raw=try raw(q)
         if wrong {var p=raw["packet"] as! [String:Any];var rows=p["records"] as! [[String:Any]];rows[0]["submission_id"]="different-submission";rows[0]["engineering_action_id"]="different-action";p["records"]=rows;raw["packet"]=p}
@@ -44,7 +59,7 @@ private actor ExecutionSource:ExecutionServing {
         case "corrupt":throw ExecutionError.corrupt
         case "invalid":throw ExecutionError.invalid
         default:
-            var value=try ExecutionFixture.envelope(query,wrong:query.run != nil && selectedMode=="wrong")
+            var value=try selectedMode=="rich" ? ExecutionFixture.rich(query):ExecutionFixture.envelope(query,wrong:query.run != nil && selectedMode=="wrong")
             if let expiry {
                 var raw=try ExecutionFixture.raw(query);raw["expires_at"]=expiry;value=try ExecutionWire.decode(JSONSerialization.data(withJSONObject:raw),query)
             }
@@ -232,9 +247,14 @@ extension ExecutionProgressTests {
     }
     @MainActor func testSourceRenderFiveLanguagesThemesAndCompactWideLayouts() async throws {
         let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
-        let q=try ExecutionFixture.query(),state=ExecutionProgressState(transport:ExecutionSource(),root:root);defer{state.reset()}
+        let q=try ExecutionFixture.query(),source=ExecutionSource();await source.set("rich")
+        let state=ExecutionProgressState(transport:source,root:root);defer{state.reset()}
         await state.activate(q,current:{q.connection});await state.choose("mission");await state.select("sub")
         XCTAssertEqual(state.detail?.id,"sub")
+        XCTAssertEqual(state.overview?.packet.groups.count,3)
+        XCTAssertEqual(state.overview?.packet.groups.first?.records.map(\.id),["sub","sub-retry"])
+        XCTAssertEqual(state.detail?.progress.history.map(\.phase),["QUALITY_CONTROL_AGENT","REPAIR_AGENT","QUALITY_CONTROL_AGENT"])
+        XCTAssertEqual(state.overview?.packet.records.filter {$0.run_id==nil}.count,2)
         let page=try ActivityWire.page(ActivityTests.data("page"),access:q.activity,workset:q.workset)
         for language in ["en","nl","de","fr","es"] {
             for width in [520.0,1150.0] {

@@ -387,11 +387,13 @@
           "candidate_producer": "EP2.3.122/4607202b805bf39808b02cadb2a9b79196b77d14",
           "schema_sha256": "ac4ccc1c43c02742dc6ad15e642fadc6456844f8a1a3e7425275f67d247b7d89",
           "qualified_final_handoff": "PENDING",
-          "source_rounds": 11,
+          "source_rounds": 12,
           "installed_attempts": 7,
           "operational_trials": 4,
           "full_validations_started": 3,
-          "new_exact_final_main_installed": "REQUIRED_AFTER_OWN_FINALIZATION_MERGE"
+          "new_exact_final_main_installed": "REQUIRED_AFTER_OWN_FINALIZATION_MERGE",
+          "required_validation": "PASS_356_PYTHON_335_NATIVE_PLUS_1_ISOLATED_STRICT_PER_FILE",
+          "independent_candidate_evidence": "QUALITY_SECURITY_UX_SCOPED_CANDIDATE_PASS_NOT_FINAL_DOD"
         }
       ]
     },

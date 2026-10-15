@@ -7,11 +7,11 @@ Actual noneditable installed candidate Client→Workspace Server→EP4607202 GET
 and qualified original Forge2.15.0 Activity context are working. Compact actual
 phase/outcome/retry/legacy/snapshot/authority/lost-reply/separate-restart matrix
 and five-language native focus/viewport/Client-restart proof PASS as candidates.
-Source28Python/15native plus exact browser-inventory regressions PASS. Strict
-full validation/CI/TDE, qualified L2-final-main handoff, complete independent
+Fullvalidation3 PASS:356Python,335native+1isolated, package checks and strict
+per-file coverage. CI/TDE, qualified L2-final-main handoff, complete independent
 acceptance, protected implementation/finalization and NEW exact-final-main
 installed/GUI/readback remain REQUIRED. No final or complete-parent claim.
-Cumulative11source rounds/7artifact starts/4operation trials/3full-validation
+Cumulative12source rounds/7artifact starts/4operation trials/3full-validation
 starts; original failures and normal cleanup recovery retained, no reset/cap.
 Plan106/LINK and predecessors remain CLOSED; the older headers below are history.
 

@@ -71,12 +71,14 @@ cannot become valid native JSON. No business mutation is caused by any read.
 ## Delivery status and counters
 
 Actual own source and noneditable installed candidate chain implemented. Directed
-28Python/15native tests and browser inventory regression PASS. Cumulative11source
+28Python/15native tests and browser inventory regression PASS. Cumulative12source
 rounds/7artifact starts/4operational trials/3full-validation starts; no reset or
 administrative maximum. Fullvalidation1 failed closed browser inventory drift;
 four exact descriptors repaired and independently Security-reviewed. Fullvalidation2 retained two exact catalog parity/auth vocabulary failures; both
 repaired using the existing actual activity-auth descriptor and exact route/admin
-expectations. Server63/browser regressions PASS. Fullvalidation3 running; strict coverage and complete owning CI/TDE are not yet established.
+expectations. Server63/browser regressions PASS. Fullvalidation3 PASS:356Python,
+335native+1isolated, strict per-source executable coverage and package/wheel checks.
+Complete owning CI/TDE remain pending.
 Final qualified producer handoff, strict per-production-source>80.2%, full owning
 validation/CI/honest TDE, independent Quality/Security/UX, normal protected source
 and own nonempty finalization merges, NEW exact-final-main installed/GUI/screens,
@@ -136,3 +138,28 @@ remaining cleanup used normal owner operations. Both servers/Client stopped,
 original and temporary EP rights REVOKED, progress/activity pairings and own grants
 revoked. No all-steps-first-try cleanup claim. These are candidate proofs on their
 actual sources, not new final-main qualification or qualified L2 delivery.
+
+## Required validation3 and exact candidate review boundary
+
+Actual `bash scripts/validate.sh` PASS after the two original catalog failures.
+356Python runtime tests,335native and1isolated; all strict owning per-file gates
+PASS. New Python source81.82–100%; new native83.18–100%; browser93.43%.
+Rich source-only rendering now includes separate original/retry attempts,
+queued/deferred EAs and repeated QC→repair→QC timestamps. Genuine schema JSON
+decode moved unchanged into its data-owner file so that executable code has its
+own measurable coverage; schema bytes and closed checks are unchanged.
+A final targeted15native test confirmation includes the coherent RUNNING outcome
+for the recorded synthetic operator-wait fixture. No runtime proof is inferred.
+
+Source12 schema/model helper and source10/11 browser/catalog changes postdate
+the actual trial4 installed artifacts. Trial4 images remain bound to afd9e45;
+no relabeling as the current source or final-main. Independent Quality accepted
+schema-byte identity and unchanged decode; fresh final-source package/GUI proof
+remains mandatory after the qualified producer and protected own delivery.
+SDK27.0 and actual Mach-O minimum26.0 were separately read on candidate packages;
+there is no assertion that the build used SDK26 when the installed SDK was27.
+Fullvalidation3 per-file stdout is retained as the exact original gate evidence;
+its transient native JSON was superseded by the subsequent targeted15native run.
+That directed JSON and original isolated/full3 codecov are retained separately,
+never labeled as the original full native JSON. Hosted final-head and final-main
+coverage/artifact readbacks remain required. No large matrix repeat for this.
