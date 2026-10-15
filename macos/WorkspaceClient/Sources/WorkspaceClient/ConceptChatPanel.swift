@@ -6,6 +6,9 @@ struct ConceptChatPanel:View {
     let dirty:Bool
     let current:@MainActor () async throws -> ConceptConnection
     let adopted:@MainActor () async -> Void
+    var focusRequest=0
+    var comparisonContext:String?=nil
+    var onFocusReturn:(()->Void)?=nil
     @Environment(\.locale) private var locale
     private var language:String {let value=locale.language.languageCode?.identifier ?? "en";return ConceptChatCopy.languages.contains(value) ? value:"en"}
     private func text(_ key:String)->String {ConceptChatCopy.text(key,language)}
@@ -23,7 +26,7 @@ struct ConceptChatPanel:View {
     var body:some View {
             ConceptChatView(concept:concept,dirty:dirty,access:access,briefingFields:state.briefing,turns:state.turns.map(\.display),proposal:proposal,supplement:AnyView(controls),submissionHeld:state.pending != nil,busy:state.busy,
                 onSend:{role,message in Task {await state.send(role:role,message:message,language:language,concept:concept,current:current)}},
-                onAccept:state.reply?.proposal?.adoptable==true && state.pending==nil ? {_ in Task {await state.adopt(concept,current:current)}}:nil)
+                onAccept:state.reply?.proposal?.adoptable==true && state.pending==nil ? {_ in Task {await state.adopt(concept,current:current)}}:nil,focusRequest:focusRequest,comparisonContext:comparisonContext,onFocusReturn:onFocusReturn)
         .task(id:concept) {await state.load(concept,current:current)}
         .onChange(of:state.phase) {_,value in if value=="adopted" {Task {await adopted()}}}
         .onDisappear {state.conceal()}

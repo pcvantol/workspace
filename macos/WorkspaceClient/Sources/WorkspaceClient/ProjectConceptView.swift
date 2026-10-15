@@ -47,16 +47,21 @@ struct ProjectConceptView: View {
     @ObservedObject var state: ProjectConceptState
     @StateObject private var chat:ConceptChatState
     @StateObject private var baseline:ConceptBaselineState
+    @StateObject private var comparison:ProposalCompareState
     @ObservedObject var client: ClientState
     let grants: any DraftGrantStore
     init(state:ProjectConceptState,client:ClientState,grants:any DraftGrantStore) {
         self.state=state;self.client=client;self.grants=grants
         _chat=StateObject(wrappedValue:ConceptChatState(root:state.records.root.appendingPathComponent("Chat")))
         _baseline=StateObject(wrappedValue:ConceptBaselineState(root:state.records.root.appendingPathComponent("Baseline")))
+        _comparison=StateObject(wrappedValue:ProposalCompareState(root:state.records.root.appendingPathComponent("Baseline")))
     }
     @Environment(\.locale) private var locale
     @Environment(\.nativeTabCommandsActive) private var commandsActive
     @FocusState private var titleFocused: Bool
+    @State private var comparisonFocusRequest=0
+    @State private var comparisonContext:String?
+    @State private var comparisonReturnFocus=0
     private var language:String { locale.language.languageCode?.identifier ?? "en" }
     private var adoptionHeld:Bool {chat.adopting || chat.pending?.adoption != nil}
     private func text(_ key:String) -> String { ProjectConceptCopy.text(key,language:language) }
@@ -78,6 +83,7 @@ struct ProjectConceptView: View {
         return active
     }
     var body: some View {
+        ScrollViewReader { proxy in
         ScrollView {
             VStack(alignment:.leading,spacing:16) {
                 Text(text("nav")).font(.largeTitle.bold())
@@ -120,8 +126,12 @@ struct ProjectConceptView: View {
                     }.disabled(adoptionHeld || state.lifecycleBlocked).accessibilityIdentifier("concept-lifecycle")
                     if state.selectionStale && state.phase != "conflict" { Text(text("conflict")).foregroundStyle(.secondary) }
                     if state.dirty || state.pending != nil { Text(text("lifecycleBlocked")).foregroundStyle(.secondary) }
-                    ConceptChatPanel(state:chat,concept:selected,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)},adopted:{if state.dirty {state.selectionStale=true;state.phase="conflict"} else {await state.open(selected.id,current:current)}})
+                    ConceptChatPanel(state:chat,concept:selected,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)},adopted:{if state.dirty {state.selectionStale=true;state.phase="conflict"} else {await state.open(selected.id,current:current)}},focusRequest:comparisonFocusRequest,comparisonContext:comparisonContext,onFocusReturn:{proxy.scrollTo("proposal-compare-discuss",anchor:.center);comparisonReturnFocus+=1}).id("concept-chat-panel")
                     ConceptBaselinePanel(state:baseline,concept:selected,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)})
+                    ProposalCompareView(state:comparison,concept:selected,current:{try await baselineCurrent(selected)},discuss:{
+                        if let model=comparison.comparison {comparisonContext=ProposalCompareCopy.text("title",language)+" · "+ProposalCompareCopy.text("revision",language)+" "+String(model.before.source_revision)+" → "+String(model.after.source_revision)}
+                        proxy.scrollTo("concept-chat-panel",anchor:.top);comparisonFocusRequest+=1
+                    },returnFocusRequest:comparisonReturnFocus)
                     if let created = WorksetReleaseWire.date(selected.created_at), let updated = WorksetReleaseWire.date(selected.updated_at) {
                         LabeledContent(text("created"),value:created.formatted(date:.abbreviated,time:.shortened))
                         LabeledContent(text("updated"),value:updated.formatted(date:.abbreviated,time:.shortened))
@@ -140,8 +150,9 @@ struct ProjectConceptView: View {
             else if client.authorizationLost { state.concealAuthorization() }
             else { state.clientPhaseChanged(phase) }
         }
-        .onChange(of:client.authorizationLost) {_,lost in if lost {baseline.conceal();chat.conceal()} }
-        .onChange(of:client.phase) {_,phase in if phase != "CONNECTED" {baseline.conceal();chat.conceal()} }
-        .onDisappear { state.cancelReads();state.stopObservingAuthority();baseline.conceal();chat.conceal() }
+        .onChange(of:client.authorizationLost) {_,lost in if lost {baseline.conceal();chat.conceal();comparison.conceal()} }
+        .onChange(of:client.phase) {_,phase in if phase != "CONNECTED" {baseline.conceal();chat.conceal();comparison.conceal()} }
+        .onDisappear { state.cancelReads();state.stopObservingAuthority();baseline.conceal();chat.conceal();comparison.conceal() }
+        }
     }
 }

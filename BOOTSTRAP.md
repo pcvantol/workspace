@@ -1,3 +1,17 @@
+## Current selected plan105 — saved proposal comparison
+
+L4-PROJECT-PROPOSAL-COMPARE-V1-20261015 / PB-W2-SETUP/S7
+CONCEPT_PROPOSAL_COMPARE only. Same sole writer, branch
+codex/plan105-project-proposal-compare, baseba4fd06fda5b24f7acb02a23a07da1cd08c4020d,
+normal PATCH2.8.29. [Own contract](docs/WORKSPACE_PROJECT_PROPOSAL_COMPARE_V1.md).
+[Selected mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6189001671).
+Read-only actual R52/96e1d736 originals; no generation/model/Approve/Apply/EP gate.
+LINK CLOSED6179192862, plan103 CLOSED6156170422, plan104 CLOSED6180309393.
+Their old pins, proofs and counters remain historical, not reopened or reset.
+Earlier pending/parked stage descriptions below are retained history.
+New counting1initial integrated correction/0fullvalidation/0installed starts;
+no administrative maximum. Complete selected DoD remains required.
+
 ### Finalization CI correction12 — observation only
 
 Native CI38647802499 retained a real expiry-test failure: the old observer checked
