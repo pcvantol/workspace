@@ -1,3 +1,9 @@
+## Protected implementation checkpoint
+
+See [own finalization](WORKSPACE_PROJECT_PROPOSAL_COMPARE_FINALIZATION_V1.md).
+Implementation/candidate PASS; new exact-final-main proof remains separately required.
+Earlier checkpoints below retain their original source/count bindings.
+
 ### Plan105 compact matrix checkpoint
 
 First real installed vertical on initial df5f7b1b06aa9a2f00030f7a39eb475b0cf52c39
