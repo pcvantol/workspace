@@ -164,6 +164,7 @@ class ProposalContentPeer(ConceptBaselinePeer):
             current=self.read_proposal(draft,identity,command['source_operation_id'],expected=binding)
             if command['selection_digest']!=current['selection_digest'] or command['expected_concept_revision']!=current['current_revision'] or current['pending_operations']:raise ConversationConflict('reload exact proposal or recover original decision')
             value=current['decision'];history=value['history']
+            if len(history)>=8:raise WorklistError('CONTENT_DECISION_CAPACITY',http_status=409)
             request_value={'contract_version':wire.CONTRACT,'instance_id':binding['instance_id'],'dossier_id':binding['dossier_id'],'operation_id':command['operation_id'],'plan_id':value['plan_id'],'subject':value['subject'],'profile_id':wire.PROFILE,'role':command['role'],'decision':command['decision'],'expected_decision_revision':value['decision_revision'],'previous_decision_id':history[-1]['decision_id'] if history else None,**{k:command[k] for k in ('reason','acknowledged_open_points')}}
             with self.dispatch_guard(draft,identity,binding):intent=self.intents.freeze(scope,identity,command,self.descriptor(binding),request_value,value['open_points'])
         elif intent['command']!=command or intent['binding']!=self.descriptor(binding):raise ConversationConflict('original decision changed')

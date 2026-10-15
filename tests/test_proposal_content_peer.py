@@ -72,6 +72,29 @@ class ContentPeerTests(unittest.TestCase):
             self.assertEqual(intent['request'],self.posts[0])
         self.assertEqual(self.request(self.prefix+'/decisions','POST',command)[0],200);self.assertEqual(len(self.posts),1)
         self.assertEqual(self.request(self.prefix+'/decisions','POST',dict(command,reason='Changed'))[0],409)
+    def test_invalid_original_open_points_reject_before_allocation_or_transport(self):
+        for choice,points in [('APPROVE_CONTENT',[]),('REQUEST_CHANGES',['invented question'])]:
+            command=self.command(decision=choice);command['acknowledged_open_points']=points
+            self.assertEqual(self.request(self.prefix+'/decisions','POST',command)[0],400)
+            self.assertEqual(self.peer.intents.list(('alice','own-context'),self.identity),[])
+            self.assertEqual(self.posts,[])
+        command=self.command()
+        self.assertEqual(self.request(self.prefix+'/decisions','POST',command)[0],200)
+        self.assertEqual(len(self.posts),1)
+
+    def test_full_original_history_rejects_new_before_schema_overflow_but_recovers_original(self):
+        first=None
+        for index in range(8):
+            command=self.command(operation=format(index+1,'032x'))
+            if first is None:first=command
+            self.assertEqual(self.request(self.prefix+'/decisions','POST',command)[0],200)
+        command=self.command(operation='f'*32)
+        self.assertEqual(self.request(self.prefix+'/decisions','POST',command),(409,{'error':'CONTENT_DECISION_CAPACITY'}))
+        self.assertEqual(len(self.posts),8)
+        self.assertEqual(len(self.peer.intents.list(('alice','own-context'),self.identity)),8)
+        self.assertEqual(self.request(self.prefix+'/decisions','POST',first)[0],200)
+        self.assertEqual(len(self.posts),8)
+
     def test_stale_and_role_reject_without_own_or_peer_effect(self):
         old=self.command();self.assertEqual(self.request(self.prefix+'/decisions','POST',dict(old,selection_digest='f'*64))[0],409)
         self.assertEqual(self.request(self.prefix+'/decisions','POST',dict(old,role='OWNER'))[0],403)

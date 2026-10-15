@@ -342,8 +342,8 @@
           "profile": "CONTENT_BASELINE_ONLY/1.0",
           "full_parent_selected": false,
           "ep_dependency_for_subset": false,
-          "source_rounds": 4,
-          "installed_attempts": 0,
+          "source_rounds": 5,
+          "installed_attempts": 2,
           "full_validations": 0
         }
       ]

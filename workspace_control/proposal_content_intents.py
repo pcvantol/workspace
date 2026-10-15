@@ -63,6 +63,8 @@ class ProposalContentIntents:
         if type(command['expected_concept_revision']) is not int or not 1<=command['expected_concept_revision']<=1000001 or not isinstance(command['selection_digest'],str) or len(command['selection_digest'])!=64:raise ValueError('invalid original selection')
         if set(binding)!=BINDING or (binding['actor_id'],binding['context_id'],binding['concept_id'])!=(*scope,identity):raise PermissionError('decision binding denied')
         wire.decision_request(request)
+        acknowledged=request['acknowledged_open_points']
+        if (request['decision']=='APPROVE_CONTENT' and acknowledged!=open_points) or any(point not in open_points for point in acknowledged):raise ValueError('original open-point acknowledgment required before capture')
         if request['operation_id']!=command['operation_id'] or any(request[k]!=command[k] for k in ('role','decision','reason','acknowledged_open_points')):raise ValueError('decision changed')
         key=digest({'concept_id':identity,'command':command,'binding':binding})
         with self.base.lock:

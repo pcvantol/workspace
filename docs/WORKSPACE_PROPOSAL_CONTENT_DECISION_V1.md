@@ -148,3 +148,22 @@ operations across malformed responses. Only a closed single plain error field, e
 HTTP status and own operation route may authorize own missing-intent disposition;
 extra, mistyped or duplicate fields remain invalid. Cumulative counters4 source rounds,
 1 installed attempt,0 full validations; no reset or administrative maximum.
+
+## Integrated round5 — preallocation admission boundaries
+
+Preserve ef47c3b trial2 proof at its own source: actual explicit Business partial,
+Architecture committed-reply loss, separate Client and Server OS restarts with identical
+original readback and no extra POST, plus a genuinely failing negative control.
+Native source is unchanged in this round. Compact installed checks reached actual
+changes-requested, new-proposal no-inheritance, concurrency and8-record history.
+An attempted ninth command returned INVALID_RESPONSE503 before transport; that actual
+failure is retained rather than relabeled as a capacity PASS.
+
+New intents now detect actual authenticated history capacity before constructing a
+request whose expected revision exceeds the producer schema; original recovery remains
+allowed at capacity. Exact original-point acknowledgments are checked before durable
+allocation, preventing malformed own commands from poisoning pending recovery. Directed
+31 Python tests PASS; independent targeted Quality/Security source acceptance PASS.
+Earlier failed patch/test observations remain preserved. New installed checks of these
+deltas, full coverage/validation, qualified handoff and protected delivery remain open.
+Cumulative5 source rounds/2 installed attempts/0 full validations; no reset/maximum.
