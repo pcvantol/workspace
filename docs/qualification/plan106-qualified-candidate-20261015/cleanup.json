@@ -1,0 +1,10 @@
+{
+  "state": "COMPLETE",
+  "errors": 0,
+  "all_own_pairings_actor_peergrants_revoked": true,
+  "four_own_processes_and_listeners_stopped": true,
+  "before_original_deadline": true,
+  "finished": "2026-10-15T15:49:58.964529+00:00",
+  "original_source_evidence_and_attempts_retained": true,
+  "model_calls": 0
+}

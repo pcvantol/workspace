@@ -1,0 +1,46 @@
+{
+  "consumer_source": "8e5301b1180be51f1368161367f8f30da4dffacb",
+  "version": "2.8.30",
+  "wheel_sha256": "dbf3a9a2eb7055a8ba38852d3ec3c8fec1d05ed1c182a525fb8d7fb04c3bb268",
+  "producer_candidate_source": "0ea1b1a7380aaef95205821bc7bf3c9a3f9ec3e2",
+  "producer_candidate_wheel_sha256": "b38b697847b3addcee74ec3dbb60ff6449003f296b36d5be90d94bfc3535f43a",
+  "native_binary_sha256": "b6f7254388803b0d02781264a629d4360f441b759a507f106df15ece3eedf44b",
+  "available_toolchain_SDK_query": "27.0",
+  "native_MachO_SDK": "26.0",
+  "noneditable_installation": true,
+  "outside_source_checkout": true,
+  "qualified_R54_handoff": "https://github.com/pcvantol/forge/issues/208#issuecomment-6195333957",
+  "producer_version": "2.20.0",
+  "own_payload_count": 66,
+  "producer_payload_count": 331,
+  "native_source_payload_count": 229,
+  "own_producer_wheel_distinct_build_of_same_qualified_source": true,
+  "original_hosted_ZIP_sha256": "da757ddd5a1d36226b9a08aef81cf7ccf61d047e59e0f23ed4b2adaafa36465d",
+  "minimum_macos": "26.0",
+  "full_validation2": {
+    "source": "8e5301b1180be51f1368161367f8f30da4dffacb",
+    "exit_code": 0,
+    "validation": "PASS",
+    "log_sha256": "6ceb93d90d5ab7e848d8b7dc9f1de34fd43c246efa23daf182771b7f92ed8705",
+    "scope": "full scripts/validate.sh including strict per-production-file coverage and package/native gates"
+  },
+  "tests": {
+    "Python": 328,
+    "native": 320,
+    "isolated_native": 1
+  },
+  "strict_production_file_coverage": ">80.2%",
+  "ProposalContentState_coverage": "191/192 99.48%",
+  "counters": {
+    "plan": 106,
+    "source_rounds": 6,
+    "installed_attempts": 4,
+    "full_validations_started": 2,
+    "no_administrative_maximum": true,
+    "historical_consumption_preserved": true
+  },
+  "independent_Quality_Security_UX_candidate": "PASS",
+  "all8_original_images_independent_pixel_and_metadata_privacy": "PASS",
+  "exact_final_main_installed": "NOT_YET_RUN",
+  "old_failed_TDE32_checkpoint_preserved": true
+}

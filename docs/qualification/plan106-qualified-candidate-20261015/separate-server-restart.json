@@ -1,0 +1,10 @@
+{
+  "source": "8e5301b1180be51f1368161367f8f30da4dffacb",
+  "separate_Server_OS_process_restart": true,
+  "same_original_operation": "082785df618043c4817658e5f751d2eb",
+  "original_request_digest": "086dc451a28a3c37aca098f602a39bdeb58484faffab5d6c2b9373355df6d750",
+  "exact_original_record_unchanged": true,
+  "actual_history": 2,
+  "extra_POST": 0,
+  "Client_restart_already_separate": true
+}

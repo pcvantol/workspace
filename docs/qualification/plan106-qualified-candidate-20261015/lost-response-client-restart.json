@@ -1,0 +1,10 @@
+{
+  "source": "8e5301b1180be51f1368161367f8f30da4dffacb",
+  "real_native_Architecture_confirmed_once": true,
+  "actual_committed_reply_lost": true,
+  "separate_Client_OS_process_restart": true,
+  "original_operation": "082785df618043c4817658e5f751d2eb",
+  "original_request_digest": "086dc451a28a3c37aca098f602a39bdeb58484faffab5d6c2b9373355df6d750",
+  "actual_history": 2,
+  "same_original_recovered": true
+}

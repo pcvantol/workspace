@@ -1,0 +1,20 @@
+{
+  "source": "8e5301b1180be51f1368161367f8f30da4dffacb",
+  "real_pointer_event_on_visible_reason": true,
+  "real_reason_keyboard_input": true,
+  "separate_confirm_Return": true,
+  "existing_event_access_preflight_only": true,
+  "settings_changed": false,
+  "AX_value_or_focused_attribute_injection": false,
+  "own_window_reason_frame": [
+    477,
+    548,
+    1152,
+    56,
+    233,
+    80,
+    1420,
+    900
+  ],
+  "actual_Business_only_partial": true
+}
