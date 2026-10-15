@@ -1,3 +1,20 @@
+## Active plan107 — native Mission/EA execution read
+
+Selected `L4-NATIVE-MISSION-EA-PROGRESS-V1-20261015`, JOIN
+`L2-L4-CENTRAL-MISSION-EA-PROGRESS-V1-20261015`; own PATCH2.8.31 from80f51fc.
+[Bounded contract and identity mapping](docs/WORKSPACE_MISSION_EA_PROGRESS_V1.md).
+Actual noneditable installed candidate Client→Workspace Server→EP4607202 GETs
+and qualified original Forge2.15.0 Activity context are working. Compact actual
+phase/outcome/retry/legacy/snapshot/authority/lost-reply/separate-restart matrix
+and five-language native focus/viewport/Client-restart proof PASS as candidates.
+Source28Python/15native plus exact browser-inventory regressions PASS. Strict
+full validation/CI/TDE, qualified L2-final-main handoff, complete independent
+acceptance, protected implementation/finalization and NEW exact-final-main
+installed/GUI/readback remain REQUIRED. No final or complete-parent claim.
+Cumulative11source rounds/7artifact starts/4operation trials/3full-validation
+starts; original failures and normal cleanup recovery retained, no reset/cap.
+Plan106/LINK and predecessors remain CLOSED; the older headers below are history.
+
 ## Plan106 protected implementation — own finalization
 
 [PR179](https://github.com/pcvantol/workspace/pull/179) protected merged to `3ec96aceb61e92290ef2f607865c6b398d71b577`

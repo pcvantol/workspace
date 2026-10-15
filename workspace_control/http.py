@@ -179,7 +179,7 @@ for key,method,path in [("access","GET","/v1/project-links/access"),
 
 for key,path in [("overview","/v1/execution-progress/{workset_id}/overview"),("run","/v1/execution-progress/{workset_id}/runs/{run_id}")]:
     OPERATIONS["execution_progress."+key]={"exposure":"HTTP_EXPOSED","method":"GET","path":path,
-        "auth":"BEARER_PINNED_AND_DRAFT_AND_ACTIVITY_GRANTS","contract":"execution-progress",
+        "auth":"BEARER_PINNED_AND_DRAFT_AND_ACTIVITY_GRANT","contract":"execution-progress",
         "summary":"exact known Mission/EA snapshot read; separate finite EP progress binding"}
 for key in ["issue","revoke"]:
     OPERATIONS["execution_progress.bind."+key]={"exposure":"LOCAL_ONLY_ADMIN","local_cli":"execution-progress-bind-"+key,"auth":"PRIVATE_ROOT_OWNER","summary":"pair or revoke existing finite progress READ; no new issuer"}

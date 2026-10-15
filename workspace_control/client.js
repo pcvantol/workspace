@@ -179,6 +179,10 @@ function validProjectCatalogue(catalogue) {
     typeof catalogue.observed_at === 'string' && catalogue.observed_at.length > 0;
 }
 const ownOperations = {
+  'execution_progress.overview': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_AND_ACTIVITY_GRANT', method: 'GET', path: '/v1/execution-progress/{workset_id}/overview'},
+  'execution_progress.run': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_AND_ACTIVITY_GRANT', method: 'GET', path: '/v1/execution-progress/{workset_id}/runs/{run_id}'},
+  'execution_progress.bind.issue': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'execution-progress-bind-issue'},
+  'execution_progress.bind.revoke': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'execution-progress-bind-revoke'},
   'concept-chats.access': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-chats/{concept_id}/access'},
   'concept-chats.briefing': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-chats/{concept_id}/briefing'},
   'concept-chats.history': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-chats/{concept_id}/history'},

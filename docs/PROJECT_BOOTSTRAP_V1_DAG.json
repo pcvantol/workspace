@@ -373,7 +373,27 @@
       "user_outcome": "CENTRAL progress and same-operation recovery",
       "deliverable": "CENTRAL progress and same-operation recovery",
       "acceptance": "owner scopes/source snapshots, partial/stale/waits, lost reply no second effect; relay requires HOB-F04",
-      "implementation_selected": false
+      "implementation_selected": false,
+      "scoped_implementations": [
+        {
+          "scope": "NATIVE_MISSION_EA_EXECUTION_READ",
+          "assignment": "L4-NATIVE-MISSION-EA-PROGRESS-V1-20261015",
+          "join": "L2-L4-CENTRAL-MISSION-EA-PROGRESS-V1-20261015",
+          "plan": 107,
+          "status": "IMPLEMENTED_CANDIDATE_QUALIFICATION_IN_PROGRESS",
+          "own_contract": "docs/WORKSPACE_MISSION_EA_PROGRESS_V1.md",
+          "full_parent_selected": false,
+          "producer_contract": "workspace-execution-progress/1.0",
+          "candidate_producer": "EP2.3.122/4607202b805bf39808b02cadb2a9b79196b77d14",
+          "schema_sha256": "ac4ccc1c43c02742dc6ad15e642fadc6456844f8a1a3e7425275f67d247b7d89",
+          "qualified_final_handoff": "PENDING",
+          "source_rounds": 11,
+          "installed_attempts": 7,
+          "operational_trials": 4,
+          "full_validations_started": 3,
+          "new_exact_final_main_installed": "REQUIRED_AFTER_OWN_FINALIZATION_MERGE"
+        }
+      ]
     },
     {
       "id": "PB-W2-CHILD",

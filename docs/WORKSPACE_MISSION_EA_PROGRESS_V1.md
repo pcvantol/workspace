@@ -70,11 +70,13 @@ cannot become valid native JSON. No business mutation is caused by any read.
 
 ## Delivery status and counters
 
-Source preparation only. Directed28Python and11native tests PASS;
-not installed/GUI proof. Own cumulative5source rounds/2artifact starts/0full validations,
-no administrative cap/reset; historical consumption retained. Next: own typed
-Server/Client connection and native panel; first real noneditable candidate chain
-and compact transitions/authority/restart/negative-control matrix before big runs.
+Actual own source and noneditable installed candidate chain implemented. Directed
+28Python/15native tests and browser inventory regression PASS. Cumulative11source
+rounds/7artifact starts/4operational trials/3full-validation starts; no reset or
+administrative maximum. Fullvalidation1 failed closed browser inventory drift;
+four exact descriptors repaired and independently Security-reviewed. Fullvalidation2 retained two exact catalog parity/auth vocabulary failures; both
+repaired using the existing actual activity-auth descriptor and exact route/admin
+expectations. Server63/browser regressions PASS. Fullvalidation3 running; strict coverage and complete owning CI/TDE are not yet established.
 Final qualified producer handoff, strict per-production-source>80.2%, full owning
 validation/CI/honest TDE, independent Quality/Security/UX, normal protected source
 and own nonempty finalization merges, NEW exact-final-main installed/GUI/screens,
@@ -98,3 +100,39 @@ bypassing the owning gate. Source3 separately labels original submission, techni
 outcome and both qualifications; source4 aligns actual published460 closed
 qualification/error semantics; source5 focuses only after detail mounts, fenced
 to the still-current original selection. New candidate qualification follows.
+
+## Actual compact candidate matrix and GUI recovery
+
+Trial3/36dc6af with EP4607202 passed actual healthy-empty/queued/technical outcomes,
+separate positive qualification, multiple EAs/owner retry/original lineage/legacy,
+snapshot409 and explicit fresh read, exact missing-run404/foreign-Mission403,
+old-token401/foreign-instance403, a genuinely failing negative control, lost GET,
+separate own Server and EP HTTP-host process restarts preserving the original run,
+and source-loss503 rather than empty success. Before/after business-state checks
+show no business mutations from consumer reads. EP host uses installed owning
+read handlers without starting lifecycle workers. Synthetic owner lifecycle writes
+are setup/progression, not live agent/provider/target execution evidence.
+
+Actual visible detail focus passed; original Escape failed. Source9/afd9e45
+handles Escape on the exact focused edit control. Trial4 real native AX activation,
+Escape and Space passed visible original opener/detail rectangles; original
+coordinate-click failure retained separately. Five languages, light/dark and
+760/1180/1420px actual windows plus separate Client OS restarts preserve the same
+original Mission/submission/run/detail under new authorization. Independent UX
+review inspected representative original pixels/AX evidence; Security independently
+accepted all10trial4 PNG pixels and PNG metadata. No system setting changed.
+
+Actual otheractor403, natural short EP grant expiry401, real revoke401 and a held
+genuine EP response after normal own-context revocation403 passed without protected
+packet publication. The original CENTRAL run remained readable while the isolated
+own synthetic checkout was absent; it was restored. Fault forwarding preserves
+genuine upstream response bytes and changes timing only, never product code.
+
+Trial1/2 fixture claim-gate failures, trial3 Escape failure and trial4 coordinate
+click failure remain original records. Trial4 cleanup stopped on an already normally
+revoked original progress binding after normal rebind for the late-response probe.
+The original FileNotFound and temporary duplicate-revoke conflict remain preserved;
+remaining cleanup used normal owner operations. Both servers/Client stopped,
+original and temporary EP rights REVOKED, progress/activity pairings and own grants
+revoked. No all-steps-first-try cleanup claim. These are candidate proofs on their
+actual sources, not new final-main qualification or qualified L2 delivery.
