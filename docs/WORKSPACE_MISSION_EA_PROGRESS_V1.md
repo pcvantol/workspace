@@ -8,9 +8,9 @@ Plan106/LINK/predecessors remain CLOSED; parent PB-W3-PROGRESS/HOB-EP03 open.
 
 ## Actual published candidate, not qualified handoff
 
-EP2.3.122/CENTRAL76, published source d1679e8f3eb35354b766c909cd4b699680695c0d,
+EP2.3.122/CENTRAL76, published source4607202b805bf39808b02cadb2a9b79196b77d14,
 PR359 OPEN at inspection. Original handoff6201761430 source ff4a970 retained;
-both schemas have SHA256ac4ccc1c43c02742dc6ad15e642fadc6456844f8a1a3e7425275f67d247b7d89.
+earlier d167 and current460 schemas have SHA256ac4ccc1c43c02742dc6ad15e642fadc6456844f8a1a3e7425275f67d247b7d89.
 The committed data projection is byte-identical owning closed schema, not copied
 EP implementation. Full producer qualification/final-main handoff NOT DELIVERED.
 Source tests/candidate observations never substitute for that acceptance gate.
@@ -70,8 +70,8 @@ cannot become valid native JSON. No business mutation is caused by any read.
 
 ## Delivery status and counters
 
-Source preparation only. Directed26Python and7native tests PASS;
-not installed/GUI proof. Own cumulative2source rounds/0installed/0full validations,
+Source preparation only. Directed28Python and11native tests PASS;
+not installed/GUI proof. Own cumulative5source rounds/2artifact starts/0full validations,
 no administrative cap/reset; historical consumption retained. Next: own typed
 Server/Client connection and native panel; first real noneditable candidate chain
 and compact transitions/authority/restart/negative-control matrix before big runs.
@@ -79,3 +79,22 @@ Final qualified producer handoff, strict per-production-source>80.2%, full ownin
 validation/CI/honest TDE, independent Quality/Security/UX, normal protected source
 and own nonempty finalization merges, NEW exact-final-main installed/GUI/screens,
 safe immutable readback and own cleanup remain REQUIRED. No next feature.
+
+## First actual candidate chain and preserved failures
+
+Source79aebd6 with published EPd1679e8, actual installed own71/EP205/Forge287
+payloads byte-equal source/wheel/install, separate own Server/EP HTTP host and
+real Forge2.15.0 Mission context. Owning synthetic admission/claim/lifecycle writers
+produced real implementation→autonomousQC→operatorwait→finalization reads; native
+real menu/mouse showed operatorwait→finalization, original run preserved. No live
+model/target execution or complete workflow claim. Both original private captures
+have independent pixel AND PNG-metadata privacy acceptance; not final-main proof.
+
+Original GUI startup/menu-driver failures retained. The subsequent matrix stopped
+correctly at PROJECT_RUN_ALREADY_ACTIVE when its fixture tried to claim a second
+run. No matrixPASS. All own processes/listeners/pairings/finite grants normally
+closed. Next fixture completes the original run before a new claim, without
+bypassing the owning gate. Source3 separately labels original submission, technical
+outcome and both qualifications; source4 aligns actual published460 closed
+qualification/error semantics; source5 focuses only after detail mounts, fenced
+to the still-current original selection. New candidate qualification follows.

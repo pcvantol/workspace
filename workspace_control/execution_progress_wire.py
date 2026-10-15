@@ -12,7 +12,7 @@ SCHEMA_SHA256='ac4ccc1c43c02742dc6ad15e642fadc6456844f8a1a3e7425275f67d247b7d89'
 if hashlib.sha256(SCHEMA_BYTES).hexdigest()!=SCHEMA_SHA256:raise RuntimeError('progress schema projection changed')
 SCHEMA=json.loads(SCHEMA_BYTES)
 MAXIMUM_BYTES=524288
-CANDIDATE_SOURCE='d1679e8f3eb35354b766c909cd4b699680695c0d'
+CANDIDATE_SOURCE='4607202b805bf39808b02cadb2a9b79196b77d14'
 PRODUCER_VERSION='2.3.122'
 
 class ProgressError(Exception):
@@ -53,6 +53,7 @@ def validate(value,binding,mission,run=None,expected=None):
         if row['run_id'] is not None:
             require(row['run_id'] not in runs);runs.add(row['run_id'])
         if run is not None:require(row['run_id']==run,'DENIED',403)
+        require(row['result']['qualification']['run_qualification']!='QUALIFIED' or row['result']['technical_outcome']=='COMPLETE')
         description=row['description']
         require((row['description_status']=='AVAILABLE')==(description is not None))
         if description is not None:
@@ -64,4 +65,10 @@ def error(value,status):
     except WorklistError:raise ProgressError('INVALID_RESPONSE') from None
     code={400:'INVALID_REQUEST',401:'DENIED',403:'DENIED',404:'RUN_NOT_FOUND',409:'SNAPSHOT_CONFLICT',422:'UNSUPPORTED',500:'SOURCE_CORRUPT',503:'UNAVAILABLE'}.get(status)
     require(code is not None)
+    if status==409:
+        source=value['error']
+        if source in ('PROGRESS_SNAPSHOT_CONFLICT','PROGRESS_SOURCE_CONFLICT'):code='SNAPSHOT_CONFLICT'
+        elif source.endswith('_LIMIT'):code='UNAVAILABLE'
+        elif source.endswith('_CONFLICT') or source=='PROGRESS_ROOT_UNAVAILABLE':code='SOURCE_CORRUPT'
+        else:raise ProgressError('INVALID_RESPONSE')
     raise ProgressError(code,status)

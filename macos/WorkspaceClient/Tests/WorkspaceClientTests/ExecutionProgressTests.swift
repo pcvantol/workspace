@@ -73,6 +73,13 @@ final class ExecutionProgressTests:XCTestCase {
         var raw=try ExecutionFixture.raw(q);var p=raw["packet"] as! [String:Any];let rows=p["records"] as! [[String:Any]];p["records"]=rows+rows;raw["packet"]=p
         XCTAssertThrowsError(try ExecutionWire.decode(JSONSerialization.data(withJSONObject:raw),q))
     }
+    func testQualifiedCannotConcealFailedTechnicalResult() throws {
+        let q=try ExecutionFixture.query();var raw=try ExecutionFixture.raw(q);var p=raw["packet"] as! [String:Any];var rows=p["records"] as! [[String:Any]];var result=rows[0]["result"] as! [String:Any];var qualification=result["qualification"] as! [String:Any]
+        qualification["run_qualification"]="QUALIFIED";result["qualification"]=qualification;result["technical_outcome"]="FAILED";rows[0]["result"]=result;p["records"]=rows;raw["packet"]=p
+        XCTAssertThrowsError(try ExecutionWire.decode(JSONSerialization.data(withJSONObject:raw),q))
+        result["technical_outcome"]="COMPLETE";rows[0]["result"]=result;p["records"]=rows;raw["packet"]=p
+        XCTAssertEqual(try ExecutionWire.decode(JSONSerialization.data(withJSONObject:raw),q).packet.records[0].result.qualification.run_qualification,"QUALIFIED")
+    }
     @MainActor func testSameRunDifferentAttemptIsNeverPublished() async throws {
         let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
         let peer=ExecutionSource(),state=ExecutionProgressState(transport:peer,root:root),q=try ExecutionFixture.query();defer{state.reset()}
@@ -161,11 +168,11 @@ extension ExecutionProgressTests {
     func testTransportErrorsAreDistinctAndNeverUnsupportedBy404OrAuth() async throws {
         let config=URLSessionConfiguration.ephemeral;config.protocolClasses=[ExecutionURLProtocol.self]
         let transport=ExecutionProgressTransport(session:URLSession(configuration:config)),q=try ExecutionFixture.query()
-        for (code,name) in [(503,"UNBOUND"),(404,"RUN_NOT_FOUND"),(409,"SNAPSHOT_CONFLICT"),(422,"UNSUPPORTED"),(503,"SOURCE_CORRUPT"),(503,"UNAVAILABLE"),(404,"UNSUPPORTED"),(401,"UNSUPPORTED"),(403,"UNSUPPORTED")] {
+        for (code,name) in [(503,"UNBOUND"),(404,"RUN_NOT_FOUND"),(409,"SNAPSHOT_CONFLICT"),(422,"UNSUPPORTED"),(503,"SOURCE_CORRUPT"),(409,"SOURCE_CORRUPT"),(409,"UNAVAILABLE"),(503,"UNAVAILABLE"),(404,"UNSUPPORTED"),(401,"UNSUPPORTED"),(403,"UNSUPPORTED")] {
             ExecutionURLProtocol.reply={_ in (code,Data(("{\"error\":\"EXECUTION_PROGRESS_"+name+"\"}").utf8),["Content-Type":"application/json","Cache-Control":"no-store"])}
             do {_=try await transport.read(q);XCTFail("must reject "+name)} catch {
                 switch (code,name,error) {
-                case (503,"UNBOUND",ExecutionError.unbound),(404,"RUN_NOT_FOUND",ExecutionError.notFound),(409,"SNAPSHOT_CONFLICT",ExecutionError.snapshot),(422,"UNSUPPORTED",ExecutionError.unsupported),(503,"SOURCE_CORRUPT",ExecutionError.corrupt),(503,"UNAVAILABLE",ExecutionError.unavailable),(404,"UNSUPPORTED",ExecutionError.invalid),(401,_,ExecutionError.denied),(403,_,ExecutionError.denied):break
+                case (503,"UNBOUND",ExecutionError.unbound),(404,"RUN_NOT_FOUND",ExecutionError.notFound),(409,"SNAPSHOT_CONFLICT",ExecutionError.snapshot),(422,"UNSUPPORTED",ExecutionError.unsupported),(503,"SOURCE_CORRUPT",ExecutionError.corrupt),(409,"SOURCE_CORRUPT",ExecutionError.corrupt),(409,"UNAVAILABLE",ExecutionError.unavailable),(503,"UNAVAILABLE",ExecutionError.unavailable),(404,"UNSUPPORTED",ExecutionError.invalid),(401,_,ExecutionError.denied),(403,_,ExecutionError.denied):break
                 default:XCTFail("wrong classification: \(code) \(error)")
                 }
             }

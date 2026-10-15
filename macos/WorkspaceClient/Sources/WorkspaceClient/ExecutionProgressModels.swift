@@ -58,7 +58,7 @@ struct ExecutionQuery:Equatable,Sendable {
 enum ExecutionError:Error {case denied,unbound,notFound,snapshot,unsupported,corrupt,unavailable,invalid}
 protocol ExecutionServing:Sendable {func read(_ query:ExecutionQuery) async throws->ExecutionEnvelope}
 enum ExecutionWire {
-    static let source="d1679e8f3eb35354b766c909cd4b699680695c0d"
+    static let source="4607202b805bf39808b02cadb2a9b79196b77d14"
     static func envelope(_ data:Data,_ query:ExecutionQuery)->ExecutionEnvelope? {try? decode(data,query)}
     static func decode(_ data:Data,_ query:ExecutionQuery) throws->ExecutionEnvelope {
         try query.validate()
@@ -78,6 +78,7 @@ enum ExecutionWire {
         guard Set(runs).count==runs.count else {throw ExecutionError.invalid}
         for r in packet.records {
             guard r.project_id==packet.selection.project_id,packet.selection.repository_ids.contains(r.repository_id),packet.selection.producer_ids==[r.producer_id],r.mission_id==query.mission,query.run==nil || r.run_id==query.run,r.result.forge_mission_acceptance=="NOT_OWNED_BY_EP" else {throw ExecutionError.denied}
+            guard r.result.qualification.run_qualification != "QUALIFIED" || r.result.technical_outcome=="COMPLETE" else {throw ExecutionError.invalid}
             guard (r.description_status=="AVAILABLE")==((r.description) != nil) else {throw ExecutionError.invalid}
             if let description=r.description {guard !description.contains("/"),!description.contains("\\"),description.unicodeScalars.allSatisfy({$0.value>=32}) else {throw ExecutionError.invalid}}
         }

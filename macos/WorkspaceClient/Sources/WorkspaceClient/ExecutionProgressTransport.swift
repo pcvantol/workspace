@@ -38,8 +38,8 @@ struct ExecutionProgressTransport:ExecutionServing {
         case (404,"EXECUTION_PROGRESS_RUN_NOT_FOUND"):return .notFound
         case (409,"EXECUTION_PROGRESS_SNAPSHOT_CONFLICT"):return .snapshot
         case (422,"EXECUTION_PROGRESS_UNSUPPORTED"):return .unsupported
-        case (500,"EXECUTION_PROGRESS_SOURCE_CORRUPT"),(503,"EXECUTION_PROGRESS_SOURCE_CORRUPT"):return .corrupt
-        case (503,"EXECUTION_PROGRESS_UNAVAILABLE"):return .unavailable
+        case (409,"EXECUTION_PROGRESS_SOURCE_CORRUPT"),(500,"EXECUTION_PROGRESS_SOURCE_CORRUPT"),(503,"EXECUTION_PROGRESS_SOURCE_CORRUPT"):return .corrupt
+        case (409,"EXECUTION_PROGRESS_UNAVAILABLE"),(503,"EXECUTION_PROGRESS_UNAVAILABLE"):return .unavailable
         default:return .invalid
         }
     }

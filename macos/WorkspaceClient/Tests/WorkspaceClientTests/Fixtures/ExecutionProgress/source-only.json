@@ -58,8 +58,8 @@
       "result": {
         "technical_outcome": "NOT_STARTED",
         "qualification": {
-          "required_validation_state": "PASS",
-          "run_qualification": "QUALIFIED"
+          "required_validation_state": "UNAVAILABLE",
+          "run_qualification": "UNAVAILABLE"
         },
         "forge_mission_acceptance": "NOT_OWNED_BY_EP"
       },

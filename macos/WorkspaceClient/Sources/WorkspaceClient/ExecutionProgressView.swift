@@ -59,6 +59,14 @@ struct ExecutionProgressView:View {
                     }.focused($focusedControl,equals:"detail").accessibilityIdentifier("execution-detail")
                     if state.navigation.expanded {history(row)}
                 }.onExitCommand {state.expanded(false);focusedControl=row.id}
+                .task(id:row.id) {
+                    // Focus only after the new detail control has mounted. Keep
+                    // late focus tasks fenced to the same authorized selection.
+                    let original=state.navigation
+                    await Task.yield()
+                    guard !Task.isCancelled,original==state.navigation,original.expanded,state.detail?.id==row.id else {return}
+                    focusedControl="detail"
+                }
             }
             DisclosureGroup(text("source")) {
                 identities([("epInstance",value.packet.instance_id),("project",value.packet.selection.project_id),("authority",value.packet.selection.authority_repository_id),("forgeInstance",value.forge_instance_id),("producerSource",value.producer_source),("snapshotId",value.packet.snapshot_id)])
@@ -81,7 +89,7 @@ struct ExecutionProgressView:View {
             ProposalCompareControl(title:runTitle(row,packet:packet),focused:focusedControl==row.id) {
                 Task {
                     await state.select(row.id)
-                    if state.navigation.submission==row.id,state.detail?.id==row.id,state.navigation.expanded {focusedControl="detail"}
+                    // The mounted detail owns the guarded focus transition.
                 }
             }.focused($focusedControl,equals:row.id).accessibilityIdentifier("execution-run-"+row.id)
             if state.navigation.submission==row.id,(state.navigation.run==nil || state.navigation.run==row.run_id),state.navigation.group==ActivityWire.hash(Data(row.groupKey.utf8)) {Label(text("details"),systemImage:"checkmark.circle").font(.caption)}

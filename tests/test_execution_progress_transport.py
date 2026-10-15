@@ -52,7 +52,7 @@ class ExecutionProgressTransportTests(unittest.TestCase):
     def test_closed_error_statuses_are_distinct(self):
         self.payload={'error':'PROGRESS_SOURCE_UNAVAILABLE'}
         for status,code in ((400,'INVALID_REQUEST'),(404,'RUN_NOT_FOUND'),(409,'SNAPSHOT_CONFLICT'),(422,'UNSUPPORTED'),(500,'SOURCE_CORRUPT'),(503,'UNAVAILABLE'),(302,'INVALID_RESPONSE')):
-            self.status=status
+            self.status=status;self.payload={'error':'PROGRESS_SNAPSHOT_CONFLICT' if status==409 else 'PROGRESS_SOURCE_UNAVAILABLE'}
             with self.assertRaises(ProgressError) as c:read(self.binding,'mission')
             self.assertEqual(c.exception.code,code)
     def test_content_and_duplicate_headers_rejected(self):
