@@ -1,3 +1,67 @@
+### Plan105 round5 — keyboard viewport follows real focus
+
+Actual0574candidate proved keyboardactions, real5locale/theme/width, reversepair
+separateOSrestarts and realoutage/revoke afscherming; cleanupCOMPLETEbeforefixed
+originaldeadline. Preserve all receipts, failures and original source bindings.
+IndependentUX confirmed focusedcatalogopener y1717 outside windowbottom980: no
+complete UXacceptance was claimed. Round5 routes focus/expand/Escape and pager
+reveal through the existing guarded ScrollViewReader/stableanchors; page controls
+precede content so focus and new-page beginning are visible. No byte/auth/HTTP/model
+change. Directed15native and fullrun4 PASS297Python/306native+1isolated; strict
+per-file/package gates. CompareView348/38989.46%, ProjectConceptView369/41688.70%.
+Independent targeted Quality/Security/UX sourceacceptance PASS; new GUIproof follows.
+Cumulative5source rounds/3installed/4completed fullvalidations; no reset/maximum.
+
+### Plan105 integrated round4 — hosted compiler and explicit keyboard input
+
+Preserved exact0d533b2 candidate proof: real five languages/lightdark/760–1420px,
+originals1/2/current3; initial plain Tab observer stayed in the notes editor and
+is not keyboard PASS. No system preference was changed. Native CI38722061847
+rejected the long original-text pager expression; preserve that failure.
+Round4 splits typed pager labels without changing actions and explicitly declares
+keyboard input focus interactions on existing Space-handling compare controls.
+Directed15native and fullrun3 PASS306native+1isolated, strict per-file/package
+gates. ProposalCompareView333/372executable lines89.52%. NEW keyboard proof follows.
+Cumulative4source rounds/2installed/3completed fullvalidations, no reset/maximum.
+
+### Plan105 round3 — complete-original default and concept-bound return
+
+Full validation1 PASS:297Python/305native+1isolated, strict per-file production
+coverage and package/native gates. That earlier source result is retained.
+Round3 preserves latest complete A/B behind incomplete intents (bounded256-history)
+and clears chat comparison context/return-focus tickets on concept change.
+Directed15native tests PASS; independent targeted UX source acceptance PASS.
+Full validation2 PASS306native+1isolated, strict per-file coverage and package gates.
+Cumulative3source rounds/1installed/2completed fullruns; current installed follows.
+Initialdf5f7b1 real-R52 proof remains original-source-bound, not new acceptance.
+
+### Plan105 compact matrix checkpoint
+
+First real installed vertical on initial df5f7b1b06aa9a2f00030f7a39eb475b0cf52c39
+PASS: two real qualifiedR52 originals,37artifacts each/14changed; source1→2 and
+current3 separate, omission not resolution, reversed native choice survives
+separate Server/Client OS restarts. Producerledger byte-identical;2ownerprepares
+before comparison and0comparisonPREPARE/model/EP/repo/Mission effects. Normal
+own cleanupCOMPLETE before originaldeadline. These are initial source-bound
+facts, not final-main acceptance. Source round2 aligns unchanged line context,
+swaps opposite explicit version choices, names same-selection state and keyboard
+paging/actions. Compact14native+3ownHTTPtests PASS. Current counters2source rounds/
+1installed/0fullruns before first required full validation; old failures retained.
+
+## Current selected plan105 — saved proposal comparison
+
+L4-PROJECT-PROPOSAL-COMPARE-V1-20261015 / PB-W2-SETUP/S7
+CONCEPT_PROPOSAL_COMPARE only. Same sole writer, branch
+codex/plan105-project-proposal-compare, baseba4fd06fda5b24f7acb02a23a07da1cd08c4020d,
+normal PATCH2.8.29. [Own contract](docs/WORKSPACE_PROJECT_PROPOSAL_COMPARE_V1.md).
+[Selected mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6189001671).
+Read-only actual R52/96e1d736 originals; no generation/model/Approve/Apply/EP gate.
+LINK CLOSED6179192862, plan103 CLOSED6156170422, plan104 CLOSED6180309393.
+Their old pins, proofs and counters remain historical, not reopened or reset.
+Earlier pending/parked stage descriptions below are retained history.
+New counting1initial integrated correction/0fullvalidation/0installed starts;
+no administrative maximum. Complete selected DoD remains required.
+
 ### Finalization CI correction12 — observation only
 
 Native CI38647802499 retained a real expiry-test failure: the old observer checked

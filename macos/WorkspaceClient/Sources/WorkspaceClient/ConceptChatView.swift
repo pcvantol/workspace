@@ -112,6 +112,11 @@ struct ConceptChatView:View {
     var busy=false
     var onSend:((String,String)->Void)?=nil
     var onAccept:((ConceptChatProposal)->Void)?=nil
+    var focusRequest=0
+    var comparisonContext:String?=nil
+    var onFocusReturn:(()->Void)?=nil
+    @State private var openedFromComparison=false
+    @State private var focusGeneration=0
     @State var message=""
     @State var role="BUSINESS"
     @State var reviewing=false
@@ -121,6 +126,7 @@ struct ConceptChatView:View {
     @State private var reviewedRole:String?
     @State private var reviewedRevision:Int?
     @FocusState private var launchFocused:Bool
+    @FocusState private var messageFocused:Bool
     @Environment(\.locale) private var locale
     private var language:String {locale.language.languageCode?.identifier ?? "en"}
     private func text(_ key:String)->String {ConceptChatCopy.text(key,language)}
@@ -158,7 +164,7 @@ struct ConceptChatView:View {
             }
             Picker(text("role"),selection:$role) {Text("Business").tag("BUSINESS");Text("Architect").tag("ARCHITECT")}.pickerStyle(.segmented)
             TextField(text("message"),text:$message,axis:.vertical).lineLimit(3...8)
-                .disabled(!editable).accessibilityIdentifier("concept-chat-message")
+                .focused($messageFocused).disabled(!editable).accessibilityIdentifier("concept-chat-message")
             if !message.isEmpty && !ConceptChatCopy.validMessage(message) {Text(text("length")).foregroundStyle(.secondary)}
             Button(text("review")) {reviewedMessage=message;reviewedRole=role;reviewedRevision=concept.revision;reviewing=true}.disabled(!canSend).accessibilityIdentifier("concept-chat-review")
             if reviewing,let access {
@@ -198,29 +204,32 @@ struct ConceptChatView:View {
             HStack(alignment:.top,spacing:24) {summary.frame(width:280);chat.frame(minWidth:430)}
             VStack(alignment:.leading,spacing:12) {
                 summary
-                Button(text("open")) {launchFocused=false;openedConceptID=concept.id;showingChat=true}
+                Button(text("open")) {focusGeneration+=1;openedFromComparison=false;launchFocused=false;openedConceptID=concept.id;showingChat=true}
                     .focusable().focused($launchFocused).accessibilityIdentifier("concept-chat-open")
-                    .onKeyPress(.space) {launchFocused=false;openedConceptID=concept.id;showingChat=true;return .handled}
+                    .onKeyPress(.space) {focusGeneration+=1;openedFromComparison=false;launchFocused=false;openedConceptID=concept.id;showingChat=true;return .handled}
                     .keyboardShortcut("j",modifiers:[.command,.option])
             }
         }
+        .onChange(of:focusRequest) {_,_ in focusGeneration+=1;openedFromComparison=true;openedConceptID=concept.id;showingChat=true}
         .sheet(isPresented:$showingChat,onDismiss:{
-            let identity=openedConceptID
-            launchFocused=false
+            let identity=openedConceptID,ticket=focusGeneration,returnToComparison=openedFromComparison
+            openedFromComparison=false;launchFocused=false
             Task { @MainActor in
                 await Task.yield()
-                guard identity != nil,!showingChat,openedConceptID==identity else{return}
-                launchFocused=true
+                guard identity==concept.id,!showingChat,openedConceptID==identity,focusGeneration==ticket else{return}
+                if returnToComparison,let onFocusReturn {onFocusReturn()}
+                else {launchFocused=true}
             }
         }) {
             ScrollView {VStack(alignment:.leading,spacing:16) {
                 Button(text("close")) {showingChat=false}.keyboardShortcut(.escape,modifiers:[])
+                if let comparisonContext {Text(verbatim:comparisonContext).font(.headline)}
                 summary
                 Divider()
                 chat
-            }.padding(24)}.frame(minWidth:420,idealWidth:620,minHeight:500)
+            }.padding(24)}.frame(minWidth:420,idealWidth:620,minHeight:500).onAppear {messageFocused=true}
         }
-        .onChange(of:concept) {_,_ in openedConceptID=nil;launchFocused=false;reviewing=false;message="";showingChat=false}
+        .onChange(of:concept) {_,_ in focusGeneration+=1;openedConceptID=nil;openedFromComparison=false;launchFocused=false;reviewing=false;message="";showingChat=false}
         .onChange(of:dirty) {_,_ in reviewing=false}
         .onChange(of:message) {_,_ in reviewing=false}
         .onChange(of:role) {_,_ in reviewing=false}
