@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 struct ProposalCompareView:View {
     @ObservedObject var state:ProposalCompareState
@@ -29,7 +30,7 @@ struct ProposalCompareView:View {
             Divider();Text(text("title")).font(.title2.bold())
             Text(text("preparation")).fixedSize(horizontal:false,vertical:true)
             Text(text("readOnly")).font(.caption).foregroundStyle(.secondary)
-            Button(text("refresh")) {Task {await state.load(concept,current:current)}}.disabled(state.busy).focusable(interactions:.edit).onKeyPress(.space) {guard !state.busy else{return .ignored};Task {await state.load(concept,current:current)};return .handled}.focused($returnFocused,equals:.refresh).accessibilityIdentifier("proposal-compare-refresh").id("proposal-compare-refresh")
+            ProposalCompareControl(title:text("refresh"),focused:returnFocused == .refresh) {Task {await state.load(concept,current:current)}}.disabled(state.busy).focused($returnFocused,equals:.refresh).accessibilityIdentifier("proposal-compare-refresh").id("proposal-compare-refresh")
             if state.busy {ProgressView(text("loading"))}
             if !["idle","loading","comparable"].contains(state.phase) {Text(text(state.phase)).accessibilityIdentifier("proposal-compare-status")}
             if state.partialHistory {Text(text("historyPartial")).foregroundStyle(.secondary)}
@@ -72,7 +73,7 @@ struct ProposalCompareView:View {
                     Text(verbatim:model.profile).textSelection(.enabled)
                     source(model.before);source(model.after)
                 }.accessibilityIdentifier("proposal-compare-source")
-                Button(text("discuss"),action:discuss).focusable(interactions:.edit).onKeyPress(.space) {discuss();return .handled}.focused($returnFocused,equals:.discuss).accessibilityIdentifier("proposal-compare-discuss").id("proposal-compare-discuss")
+                ProposalCompareControl(title:text("discuss"),focused:returnFocused == .discuss,action:discuss).focused($returnFocused,equals:.discuss).accessibilityIdentifier("proposal-compare-discuss").id("proposal-compare-discuss")
             }
         }.frame(minWidth:0,maxWidth:.infinity,alignment:.leading)
         .onChange(of:returnFocused) {_,target in if let target {reveal(target == .refresh ? "proposal-compare-refresh":"proposal-compare-discuss")} }
@@ -105,15 +106,13 @@ struct ProposalComparePager:View {
     private func text(_ key:String)->String {ProposalCompareCopy.text(key,language)}
     var body:some View {
         HStack {
-            Button(text("previous")) {page-=1}
-                .focusable(interactions:.edit).focused($focused,equals:.previous)
-                .onKeyPress(.space) {guard page>0 else{return .ignored};page-=1;return .handled}
+            ProposalCompareControl(title:text("previous"),focused:focused == .previous) {page-=1}
+                .focused($focused,equals:.previous)
                 .accessibilityLabel([text("previous"),label].joined(separator:" · "))
                 .accessibilityIdentifier(anchor+"-previous").disabled(page==0)
             Text(text("page")+" "+String(page+1)+" / "+String(count))
-            Button(text("next")) {page+=1}
-                .focusable(interactions:.edit).focused($focused,equals:.next)
-                .onKeyPress(.space) {guard page+1<count else{return .ignored};page+=1;return .handled}
+            ProposalCompareControl(title:text("next"),focused:focused == .next) {page+=1}
+                .focused($focused,equals:.next)
                 .accessibilityLabel([text("next"),label].joined(separator:" · "))
                 .accessibilityIdentifier(anchor+"-next").disabled(page+1>=count)
         }
@@ -136,9 +135,8 @@ struct ProposalCompareDocumentView:View {
     private func text(_ key:String)->String {ProposalCompareCopy.text(key,language)}
     var body:some View {
         VStack(alignment:.leading,spacing:8) {
-            Button {expanded.toggle()} label: {Label(text(document.status)+" · "+document.path,systemImage:expanded ? "chevron.down":"chevron.right").multilineTextAlignment(.leading)}
-                .focusable(interactions:.edit).focused($openerFocused)
-                .onKeyPress(.space) {expanded.toggle();return .handled}
+            ProposalCompareControl(title:text(document.status)+" · "+document.path,systemImage:expanded ? "chevron.down":"chevron.right",focused:openerFocused) {expanded.toggle()}
+                .focused($openerFocused)
                 .accessibilityLabel(text(document.status)+" · "+document.path)
                 .accessibilityIdentifier("proposal-compare-document-"+document.path)
             if expanded {
@@ -190,5 +188,45 @@ struct ProposalCompareOriginalView:View {
                 Text(verbatim:pages[min(page,pages.count-1)]).font(.system(.caption,design:.monospaced)).textSelection(.enabled).frame(minWidth:0,maxWidth:.infinity,alignment:.leading)
             } else {Text(text("absent")).foregroundStyle(.secondary)}
         }.id(anchor)
+    }
+}
+
+// Exactly one keyboard focus owner; the AppKit anchor reveals that same control.
+struct ProposalCompareControl:View {
+    let title:String
+    var systemImage:String?=nil
+    var focused=false
+    let action:()->Void
+    @Environment(\.isEnabled) private var enabled
+    private func activate()->KeyPress.Result {guard enabled else{return .ignored};action();return .handled}
+    var body:some View {
+        Group {if let systemImage {Label(title,systemImage:systemImage)} else {Text(title)}}
+            .multilineTextAlignment(.leading).padding(.vertical,3).padding(.horizontal,7)
+            .background(.quaternary,in:RoundedRectangle(cornerRadius:5)).opacity(enabled ? 1:0.45)
+            .overlay(RoundedRectangle(cornerRadius:5).stroke(focused ? Color.accentColor:Color.clear,lineWidth:2))
+            .contentShape(Rectangle()).focusable(enabled,interactions:.edit)
+            .onTapGesture {if enabled {action()}}
+            .onKeyPress(keys:[.space,.return]) {press in guard press.modifiers.isEmpty else{return .ignored};return activate()}
+            .accessibilityElement(children:.ignore).accessibilityLabel(title)
+            .accessibilityAddTraits(.isButton).accessibilityAction {if enabled {action()}}
+            .background(ProposalCompareFocusViewport(focused:focused).allowsHitTesting(false))
+    }
+}
+struct ProposalCompareFocusViewport:NSViewRepresentable {
+    var focused:Bool
+    func makeNSView(context:Context)->ProposalCompareViewportAnchor {ProposalCompareViewportAnchor()}
+    func updateNSView(_ view:ProposalCompareViewportAnchor,context:Context) {view.reveal(focused)}
+    static func dismantleNSView(_ view:ProposalCompareViewportAnchor,coordinator:()) {view.reveal(false)}
+}
+final class ProposalCompareViewportAnchor:NSView {
+    private var currentFocus=false
+    private var generation=0
+    func reveal(_ focused:Bool) {
+        currentFocus=focused;generation+=1;let ticket=generation
+        guard focused else{return}
+        DispatchQueue.main.async {[weak self] in
+            guard let self,self.window != nil,self.currentFocus,self.generation==ticket else{return}
+            self.scrollToVisible(self.bounds)
+        }
     }
 }

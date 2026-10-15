@@ -55,4 +55,26 @@ import AppKit
         render(ProposalCompareOriginalView(value:CompareFixture.artifact("large",String(repeating:"🌱",count:10000)),side:"Before",language:"nl",page:1),width:520)
         render(ProposalCompareOriginalView(value:nil,side:"After",language:"nl"),width:520)
     }
+    func testNativeViewportRejectsQueuedFocusLossAndRevealsCurrentControl() async {
+        let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false)
+        window.isReleasedWhenClosed=false
+        let scroll=NSScrollView(frame:NSRect(x:0,y:0,width:400,height:300))
+        let document=NSView(frame:NSRect(x:0,y:0,width:400,height:1600))
+        let anchor=ProposalCompareViewportAnchor(frame:NSRect(x:0,y:1200,width:200,height:30))
+        document.addSubview(anchor);scroll.documentView=document;window.contentView=scroll
+        defer {window.close()}
+        let original=scroll.contentView.bounds.origin
+        anchor.reveal(true);anchor.reveal(false)
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertEqual(scroll.contentView.bounds.origin,original,"Focus loss must invalidate queued scroll")
+        anchor.reveal(true)
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertNotEqual(scroll.contentView.bounds.origin,original,"Actual current native control must be revealed")
+        XCTAssertTrue(scroll.contentView.bounds.contains(anchor.frame))
+        let revealed=scroll.contentView.bounds.origin
+        anchor.reveal(true);anchor.removeFromSuperview()
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertEqual(scroll.contentView.bounds.origin,revealed,"Detached control must not trigger stale scrolling")
+    }
+
 }
