@@ -317,12 +317,14 @@
           "full_parent_selected": false,
           "ep_dependency_for_subset": false,
           "l3_decision_dependency_for_subset": false,
-          "corrections_consumed": 3,
+          "corrections_consumed": 4,
           "first_real_installed_vertical": "PASS_INITIAL_df5f7b1_NOT_FINAL_MAIN",
-          "installed_attempts": 1,
-          "full_validations": 2,
+          "installed_attempts": 2,
+          "full_validations": 3,
           "required_validation": "PASS_306_NATIVE_PLUS_1_ISOLATED_STRICT_PER_FILE",
-          "independent_source_reviews": "QUALITY_SECURITY_UX_PASS_WIP_ROUND3_CURRENT_INSTALLED_PENDING"
+          "independent_source_reviews": "QUALITY_SECURITY_UX_PASS_WIP_ROUND3_CURRENT_INSTALLED_PENDING",
+          "hosted_native_CI": "38722061847_COMPILER_FAILURE_RETAINED_ROUND4_TARGETED_REPAIR",
+          "current_packaged_keyboard": "PENDING_NO_SYSTEM_SETTING_CHANGE"
         }
       ]
     },

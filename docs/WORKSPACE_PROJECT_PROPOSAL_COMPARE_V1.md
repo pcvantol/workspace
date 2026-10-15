@@ -69,6 +69,9 @@ Complete original text remains independently readable in4096Unicode-scalar pages
 whitespace/CR/LF marks can be shown without modifying stored bytes/hashes.
 Text is verbatim, no active Markdown/HTML/URL fetching or executable link effects.
 Five UI languages, light/dark, narrow/wide, labels/icons and native focus controls.
+Controls that capture Space explicitly declare keyboard input focus interactions;
+ordinary text editors retain their native Tab behavior. No system preference
+changes or accessibility focus injection can qualify keyboard acceptance.
 
 Capture original pair before reading. Current own authority and finite binding
 are checked before/between/after GETs and worker computation. Generation and pair

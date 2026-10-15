@@ -1,3 +1,15 @@
+### Plan105 integrated round4 — hosted compiler and explicit keyboard input
+
+Preserved exact0d533b2 candidate proof: real five languages/lightdark/760–1420px,
+originals1/2/current3; initial plain Tab observer stayed in the notes editor and
+is not keyboard PASS. No system preference was changed. Native CI38722061847
+rejected the long original-text pager expression; preserve that failure.
+Round4 splits typed pager labels without changing actions and explicitly declares
+keyboard input focus interactions on existing Space-handling compare controls.
+Directed15native and fullrun3 PASS306native+1isolated, strict per-file/package
+gates. ProposalCompareView333/372executable lines89.52%. NEW keyboard proof follows.
+Cumulative4source rounds/2installed/3completed fullvalidations, no reset/maximum.
+
 ### Plan105 round3 — complete-original default and concept-bound return
 
 Full validation1 PASS:297Python/305native+1isolated, strict per-file production
