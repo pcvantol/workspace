@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012;priority6171877315;plan104-unmerged-allocation-rebases-after-LINK",
+  "determined_version": "2.8.27",
+  "event_lineage": "L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012;priority6171877315;plan104-unmerged-allocation-rebases-after-LINK",
+  "expected_source_revision": "5a6338c759ed33f079d481de2b50aa1a15918d36",
+  "expected_version": "2.8.26",
+  "operation_id": "workspace-plan98-qualified-link-20261014",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

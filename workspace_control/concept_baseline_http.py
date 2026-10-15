@@ -14,7 +14,8 @@ from .conversations import ConversationConflict
 PREFIX='/v1/concept-baselines/'
 
 
-def protected_reply(handler,service,draft,identity,binding,value):
+def protected_reply(handler,service,draft,identity,binding,value,*,peer=None):
+    peer=service.concept_baselines if peer is None else peer
     # Waiting for peer/writability is always outside own authorization locks.
     payload=json.dumps(value,ensure_ascii=False,sort_keys=True,separators=(',',':')).encode()
     if len(payload)>1150000:raise WorklistError('INVALID_RESPONSE')
@@ -25,13 +26,13 @@ def protected_reply(handler,service,draft,identity,binding,value):
         while offset<len(data):
             if time.monotonic()>=deadline:raise WorklistError('UNAVAILABLE')
             if not select.select([], [connection], [], min(.1,max(0,deadline-time.monotonic())))[1]:continue
-            service.concept_baselines.cap(binding,timeout=max(.001,deadline-time.monotonic()),send_guard=lambda:service.concept_baselines.dispatch_guard(draft,identity,binding))
+            peer.cap(binding,timeout=max(.001,deadline-time.monotonic()),send_guard=lambda:peer.dispatch_guard(draft,identity,binding))
             if time.monotonic()>=deadline:raise WorklistError('UNAVAILABLE')
-            descriptor=service.concept_baselines._locked()
+            descriptor=peer._locked()
             try:
                 with service.project_concepts.authorized(draft) as scope:
                     service.project_concepts.get(scope,identity)
-                    if service.concept_baselines.binding(scope,identity)!=binding:raise WorklistError('DENIED')
+                    if peer.binding(scope,identity)!=binding:raise WorklistError('DENIED')
                     if time.monotonic()>=deadline:raise WorklistError('UNAVAILABLE')
                     try:sent=connection.send(data[offset:offset+65536])
                     except BlockingIOError:continue

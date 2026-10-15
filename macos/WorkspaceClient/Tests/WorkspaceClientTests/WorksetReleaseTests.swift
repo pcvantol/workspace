@@ -647,6 +647,11 @@ extension WorksetReleaseTests {
         XCTAssertNotNil(state.capability);XCTAssertFalse(state.selected.isEmpty)
         XCTAssertTrue(state.interactionActive)
         try await Task.sleep(for:.seconds(deadline.timeIntervalSinceNow+0.08))
+        // Wait for the autonomous MainActor transition, not just the test's wake.
+        let timeout=ContinuousClock.now.advanced(by:.seconds(2))
+        while state.phase != "denied",ContinuousClock.now<timeout {
+            try await Task.sleep(for:.milliseconds(10),tolerance:.zero)
+        }
         XCTAssertEqual(state.phase,"denied");XCTAssertNil(state.capability);XCTAssertTrue(state.selected.isEmpty)
         XCTAssertNil(state.observation);XCTAssertTrue(state.history.isEmpty)
         let sends=await peer.sends;XCTAssertEqual(sends.count,0)
@@ -810,6 +815,11 @@ extension WorksetReleaseTests {
         await peer.capabilityFailure(true);await state.refresh(connection)
         XCTAssertNil(state.capability);XCTAssertEqual(state.phase,"unavailable");let epoch=state.authorityEpoch
         try await Task.sleep(for:.seconds(deadline.timeIntervalSinceNow+0.08))
+        // Observe the real asynchronous timer under runner load; never invoke expiry from the test.
+        let observationDeadline = ContinuousClock.now + .seconds(2)
+        while state.phase != "denied" && ContinuousClock.now < observationDeadline {
+            try await Task.sleep(for:.milliseconds(10))
+        }
         XCTAssertEqual(state.phase,"denied");XCTAssertGreaterThan(state.authorityEpoch,epoch)
     }
 }
