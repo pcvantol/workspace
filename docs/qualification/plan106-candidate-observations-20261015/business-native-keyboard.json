@@ -1,0 +1,8 @@
+{
+  "real_native_role_and_choice": true,
+  "real_Tab_reason": true,
+  "Escape_cancels_then_returns_visible_review_focus": true,
+  "Space_reopens_confirmation": true,
+  "Return_confirms": true,
+  "separate_explicit_Business_only": true
+}

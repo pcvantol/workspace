@@ -1,0 +1,7 @@
+{
+  "actual_exit": 1,
+  "actual_state": "DECISION_NEEDED",
+  "actual_history": 1,
+  "intentionally_wrong_expected_state": "CONTENT_APPROVED",
+  "expected_failure_observed": true
+}

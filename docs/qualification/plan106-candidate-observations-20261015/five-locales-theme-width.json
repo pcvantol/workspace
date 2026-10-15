@@ -1,0 +1,87 @@
+{
+  "source": "ef47c3b4f7abb1d3c4725d3556e96c7589c360a9",
+  "real_packaged_GUI_cases": [
+    {
+      "language": "nl",
+      "theme": "light",
+      "width": 760,
+      "actual_original_history_reopened": true,
+      "actual_translated_CHANGES_REQUESTED": true,
+      "screenshot": "round4-nl-light-760.private.png"
+    },
+    {
+      "language": "nl",
+      "theme": "dark",
+      "width": 1420,
+      "actual_original_history_reopened": true,
+      "actual_translated_CHANGES_REQUESTED": true,
+      "screenshot": "round4-nl-dark-1420.private.png"
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 760,
+      "actual_original_history_reopened": true,
+      "actual_translated_CHANGES_REQUESTED": true,
+      "screenshot": "round4-en-light-760.private.png"
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 1420,
+      "actual_original_history_reopened": true,
+      "actual_translated_CHANGES_REQUESTED": true,
+      "screenshot": "round4-en-dark-1420.private.png"
+    },
+    {
+      "language": "de",
+      "theme": "light",
+      "width": 760,
+      "actual_original_history_reopened": true,
+      "actual_translated_CHANGES_REQUESTED": true,
+      "screenshot": "round4-de-light-760.private.png"
+    },
+    {
+      "language": "de",
+      "theme": "dark",
+      "width": 1420,
+      "actual_original_history_reopened": true,
+      "actual_translated_CHANGES_REQUESTED": true,
+      "screenshot": "round4-de-dark-1420.private.png"
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 760,
+      "actual_original_history_reopened": true,
+      "actual_translated_CHANGES_REQUESTED": true,
+      "screenshot": "round4-fr-light-760.private.png"
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 1420,
+      "actual_original_history_reopened": true,
+      "actual_translated_CHANGES_REQUESTED": true,
+      "screenshot": "round4-fr-dark-1420.private.png"
+    },
+    {
+      "language": "es",
+      "theme": "light",
+      "width": 760,
+      "actual_original_history_reopened": true,
+      "actual_translated_CHANGES_REQUESTED": true,
+      "screenshot": "round4-es-light-760.private.png"
+    },
+    {
+      "language": "es",
+      "theme": "dark",
+      "width": 1420,
+      "actual_original_history_reopened": true,
+      "actual_translated_CHANGES_REQUESTED": true,
+      "screenshot": "round4-es-dark-1420.private.png"
+    }
+  ],
+  "settings_changed": false,
+  "screenshots_pending_independent_pixel_metadata_review": true
+}

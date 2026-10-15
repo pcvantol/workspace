@@ -1,0 +1,28 @@
+{
+  "actual_late_producer_revocation": {
+    "status": 403,
+    "held_real_200_then_actual_owner_revoke": true,
+    "protected_history_absent": true,
+    "owner_revoke_seconds": 0.222,
+    "network_wait_did_not_hold_owner_lock": true
+  },
+  "actual_own_READ_cannot_DECIDE": {
+    "status": 403,
+    "permissions": [
+      "READ"
+    ],
+    "roles": []
+  },
+  "actual_expiry": {
+    "own_status": 403,
+    "producer_status": 401,
+    "short_grant_intentionally_negative_only": true,
+    "positive_source_test_grant_window_unchanged": true
+  },
+  "source": "999d9bb95765eb882a4e9da86c9339e521d15164",
+  "producer_candidate_source": "0ea1b1a7380aaef95205821bc7bf3c9a3f9ec3e2",
+  "extra_successful_POST": 0,
+  "model_calls": 0,
+  "final_main": false,
+  "qualified_handoff": false
+}

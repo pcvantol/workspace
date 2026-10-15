@@ -1,0 +1,13 @@
+{
+  "source": "999d9bb95765eb882a4e9da86c9339e521d15164",
+  "native_component_verified_unchanged_from_ef47": true,
+  "actual_installed_Server": true,
+  "exact_A_after_reverse_comparison": true,
+  "record_digest": "bb9e1831cc5a5c8f9d451c6736d702bfc40c757d28b2fffbf1aa79645a174213",
+  "actual_changes_requested_readback": true,
+  "existing_chat_opened_explicitly": true,
+  "extra_POST": 0,
+  "model_calls": 0,
+  "qualified_producer_handoff": false,
+  "final_main": false
+}

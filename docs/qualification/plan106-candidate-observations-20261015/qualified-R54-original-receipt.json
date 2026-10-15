@@ -1,0 +1,30 @@
+{
+  "cases": [
+    "actual-r52-http-prepare-read-frozen-document-proposal",
+    "owner-issued-distinct-human-roles-partial-then-content-only-approval",
+    "actual-installed-cli-original-intent-readback-no-second-decision",
+    "actual-concurrent-single-decision-conflict-stale-and-exact-subject",
+    "actual-lost-response-original-intent-without-new-operation",
+    "explicit-changes-request-and-cas-successor-content-only-reapproval-cli-parity",
+    "new-proposal-id-content-source-never-inherits-approval",
+    "actual-purpose-role-dossier-instance-admin-denials-no-fallback",
+    "separate-server-os-original-recovery-r52-immutable-old-token-denied",
+    "initialized-own-source-witness-missing-corrupt-fail-closed-exact-restore",
+    "actual-owner-issued-read-only-and-real-time-expiry",
+    "actual-revoke-current-access-denied-original-history-retained-for-authorized-reader"
+  ],
+  "cleanup": true,
+  "decision_records": 5,
+  "entrypoints_source_wheel_installed_verified": true,
+  "human_decisions": "SYNTHETIC_TECHNICAL_NOT_REAL_OWNER_BUSINESS_APPROVAL",
+  "no_project_repo_ep_model_mission_effects": true,
+  "operator_identity_evidence": "MODELED_TRUSTED_OS_FIXTURE",
+  "payload_files_verified": 331,
+  "result": "PROJECT_PROPOSAL_CONTENT_HTTP_PASS",
+  "separate_server_processes": true,
+  "source_revision": "0ea1b1a7380aaef95205821bc7bf3c9a3f9ec3e2",
+  "source_tree": "b07648d6dd16d82541c8d089f2c7b36e41be98b1",
+  "transport": "ACTUAL_NONEDITABLE_HTTP_SEPARATE_SERVER_OS",
+  "version": "2.20.0",
+  "wheel_sha256": "d9294fd50d689b1f094b9b794751395a0787e45eb749b5b2391003374e3dfd33"
+}

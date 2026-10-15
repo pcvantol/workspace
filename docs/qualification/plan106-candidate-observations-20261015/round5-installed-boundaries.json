@@ -1,0 +1,26 @@
+{
+  "bad_acknowledgments": {
+    "actual_statuses": [
+      400,
+      400
+    ],
+    "own_intents_allocated": 0,
+    "pending": 0,
+    "same_selection": true
+  },
+  "capacity": {
+    "actual_status": 409,
+    "new_allocation": 0,
+    "retained_history": 8
+  },
+  "original_recovery_after_full_history": {
+    "status": 200,
+    "same_original": true
+  },
+  "source": "999d9bb95765eb882a4e9da86c9339e521d15164",
+  "actual_installed_Server": true,
+  "native_component_byte_identical_to_ef47": true,
+  "producer_candidate_source": "0ea1b1a7380aaef95205821bc7bf3c9a3f9ec3e2",
+  "extra_producer_POST": 0,
+  "final_main_or_qualified_handoff": false
+}
