@@ -136,7 +136,7 @@ jobs:
           fi
           test "$(gh release view "$TAG" --json targetCommitish --jq .targetCommitish)" = "$SOURCE_SHA"
           rm -f "$QUALIFIED"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: workspace-qualified-release-${{ needs.release-context.outputs.version }}-${{ needs.release-context.outputs.source_sha }}
           path: |
@@ -297,7 +297,7 @@ jobs:
           fi
           rm -rf -- "$registry_readback" "$published_readback"
           rm -f published-operation.json "$PUBLISHED"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: workspace-published-evidence-${{ needs.release-context.outputs.version }}-${{ needs.release-context.outputs.source_sha }}
           path: |
@@ -503,7 +503,7 @@ jobs:
           fi
           rm -rf -- "$complete_readback"
           rm -f cleanup-complete.json
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: workspace-release-evidence-${{ needs.release-context.outputs.version }}-${{ needs.release-context.outputs.source_sha }}
           path: workspace-release-complete-${{ needs.release-context.outputs.version }}-${{ needs.release-context.outputs.source_sha }}.json
