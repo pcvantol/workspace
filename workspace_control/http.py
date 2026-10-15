@@ -830,6 +830,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_GET(self):
             if not self._trusted_origin():
                 return
+            from .proposal_content_http import route as proposal_content_route
+            if proposal_content_route(self,service):return
             from .concept_chat_http import route as concept_chat_route
             if concept_chat_route(self,service):return
             from .concept_baseline_http import route as concept_baseline_route
@@ -943,6 +945,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_POST(self):
             if not self._trusted_origin():
                 return
+            from .proposal_content_http import route as proposal_content_route
+            if proposal_content_route(self,service):return
             from .concept_chat_http import route as concept_chat_route
             if concept_chat_route(self,service):return
             from .concept_baseline_http import route as concept_baseline_route
@@ -983,6 +987,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_PATCH(self):
             if not self._trusted_origin():
                 return
+            from .proposal_content_http import route as proposal_content_route
+            if proposal_content_route(self,service):return
             from .concept_chat_http import route as concept_chat_route
             if concept_chat_route(self,service):return
             from .concept_baseline_http import route as concept_baseline_route

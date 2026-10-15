@@ -1,3 +1,12 @@
+## Current bounded selection — plan106
+
+PB-W2-SETUP/S7 content-decision consumer selected only, not full setup/create/adopt.
+[Own contract](WORKSPACE_PROPOSAL_CONTENT_DECISION_V1.md). Native explicit original
+subject and separate human R54 roles/intent/readback; genuine qualified R54 final
+handoff and complete own DoD remain required. No EP/discovery/L2 dependency gate.
+Plan105 and predecessors remain CLOSED. The original parent design and historical
+selection/status sections below retain their original scope and identities.
+
 # Project bootstrap V1 — Workspace owning roadmap
 
 **Owner:** Workspace. **Status:** all runtime/qualification nodes PLANNED. **NO_BUMP.**

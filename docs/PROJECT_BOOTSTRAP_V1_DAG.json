@@ -311,7 +311,7 @@
           "scope": "CONCEPT_PROPOSAL_COMPARE",
           "assignment": "L4-PROJECT-PROPOSAL-COMPARE-V1-20261015",
           "plan": 105,
-          "status": "IMPLEMENTATION_AND_CANDIDATE_QUALIFIED_FINALIZATION_PENDING",
+          "status": "CLOSED_COMPLETE_SCOPED_DOD",
           "own_contract": "docs/WORKSPACE_PROJECT_PROPOSAL_COMPARE_V1.md",
           "qualified_r52_binding": "Forge2.18.0/96e1d73670b8575d41977fd448bfec10fc55206e",
           "full_parent_selected": false,
@@ -319,8 +319,8 @@
           "l3_decision_dependency_for_subset": false,
           "corrections_consumed": 7,
           "first_real_installed_vertical": "PASS_INITIAL_df5f7b1_NOT_FINAL_MAIN",
-          "installed_attempts": 6,
-          "full_validations": 7,
+          "installed_attempts": 7,
+          "full_validations": 8,
           "required_validation": "PASS_297_PYTHON_307_NATIVE_PLUS_1_ISOLATED_STRICT_PER_FILE",
           "independent_source_reviews": "QUALITY_SECURITY_UX_PASS_EXACT_fed45f2_AND_COMPLETE_SCOPED_CANDIDATE",
           "hosted_native_CI": "ALL_FIVE_SUCCESS_EXACT_fed45f2_TDE_QUALIFIED_PASS_WITH_WARNINGS",
@@ -328,7 +328,24 @@
           "protected_implementation_main": "b5da4bc9abf8d6c4453cb124c496c4007ca8b55c",
           "qualified_candidate_evidence": "https://github.com/pcvantol/workspace/tree/18bb32cf88d8273da9438dec376de6865079378e/docs/qualification/plan105-qualified-candidate-20261015",
           "own_finalization": "docs/WORKSPACE_PROJECT_PROPOSAL_COMPARE_FINALIZATION_V1.md",
-          "new_exact_final_main_installed": "PENDING_AFTER_OWN_FINALIZATION_PROTECTED_MERGE"
+          "new_exact_final_main_installed": "PASS_1af17ae1d7d1a4e1540c10788ad2b5fb490b64c4",
+          "terminal_register": "https://github.com/pcvantol/forge/issues/208#issuecomment-6192675865"
+        },
+        {
+          "scope": "CONCEPT_PROPOSAL_CONTENT_DECISION",
+          "assignment": "L4-NATIVE-PROPOSAL-CONTENT-DECISION-V1-20261015",
+          "join": "L3-L4-PROPOSAL-CONTENT-DECISION-V1-20261015",
+          "plan": 106,
+          "status": "QUALIFIED_R54_DELIVERED_MONITOR_REFACTOR_ACCEPTANCE_IN_PROGRESS",
+          "own_contract": "docs/WORKSPACE_PROPOSAL_CONTENT_DECISION_V1.md",
+          "producer_contract": "forge-project-proposal-content-decision/v1",
+          "profile": "CONTENT_BASELINE_ONLY/1.0",
+          "full_parent_selected": false,
+          "ep_dependency_for_subset": false,
+          "source_rounds": 6,
+          "installed_attempts": 3,
+          "full_validations": 1,
+          "qualified_handoff": "https://github.com/pcvantol/forge/issues/208#issuecomment-6195333957"
         }
       ]
     },

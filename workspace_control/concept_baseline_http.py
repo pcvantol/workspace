@@ -1,7 +1,5 @@
 """Closed own concept routes and bounded revocation-aware private publication."""
-import fcntl
 import json
-import os
 import re
 import sqlite3
 import select
@@ -28,17 +26,12 @@ def protected_reply(handler,service,draft,identity,binding,value,*,peer=None):
             if not select.select([], [connection], [], min(.1,max(0,deadline-time.monotonic())))[1]:continue
             peer.cap(binding,timeout=max(.001,deadline-time.monotonic()),send_guard=lambda:peer.dispatch_guard(draft,identity,binding))
             if time.monotonic()>=deadline:raise WorklistError('UNAVAILABLE')
-            descriptor=peer._locked()
-            try:
-                with service.project_concepts.authorized(draft) as scope:
-                    service.project_concepts.get(scope,identity)
-                    if peer.binding(scope,identity)!=binding:raise WorklistError('DENIED')
-                    if time.monotonic()>=deadline:raise WorklistError('UNAVAILABLE')
-                    try:sent=connection.send(data[offset:offset+65536])
-                    except BlockingIOError:continue
-                    if sent<=0:raise WorklistError('UNAVAILABLE')
-                    offset+=sent
-            finally:fcntl.flock(descriptor,fcntl.LOCK_UN);os.close(descriptor)
+            with peer.dispatch_guard(draft,identity,binding):
+                if time.monotonic()>=deadline:raise WorklistError('UNAVAILABLE')
+                try:sent=connection.send(data[offset:offset+65536])
+                except BlockingIOError:continue
+                if sent<=0:raise WorklistError('UNAVAILABLE')
+                offset+=sent
     except Exception:
         # Partial protected JSON cannot become a new successful native result.
         if offset:handler.close_connection=True;return

@@ -48,6 +48,7 @@ struct ProjectConceptView: View {
     @StateObject private var chat:ConceptChatState
     @StateObject private var baseline:ConceptBaselineState
     @StateObject private var comparison:ProposalCompareState
+    @StateObject private var content:ProposalContentState
     @ObservedObject var client: ClientState
     let grants: any DraftGrantStore
     init(state:ProjectConceptState,client:ClientState,grants:any DraftGrantStore) {
@@ -55,6 +56,7 @@ struct ProjectConceptView: View {
         _chat=StateObject(wrappedValue:ConceptChatState(root:state.records.root.appendingPathComponent("Chat")))
         _baseline=StateObject(wrappedValue:ConceptBaselineState(root:state.records.root.appendingPathComponent("Baseline")))
         _comparison=StateObject(wrappedValue:ProposalCompareState(root:state.records.root.appendingPathComponent("Baseline")))
+        _content=StateObject(wrappedValue:ProposalContentState(root:state.records.root.appendingPathComponent("ContentDecisions")))
     }
     @Environment(\.locale) private var locale
     @Environment(\.nativeTabCommandsActive) private var commandsActive
@@ -62,6 +64,8 @@ struct ProjectConceptView: View {
     @State private var comparisonFocusRequest=0
     @State private var comparisonContext:String?
     @State private var comparisonReturnFocus=0
+    @State private var contentDiscussion=false
+    @State private var contentReturnFocus=0
     private var language:String { locale.language.languageCode?.identifier ?? "en" }
     private var adoptionHeld:Bool {chat.adopting || chat.pending?.adoption != nil}
     private func text(_ key:String) -> String { ProjectConceptCopy.text(key,language:language) }
@@ -126,9 +130,16 @@ struct ProjectConceptView: View {
                     }.disabled(adoptionHeld || state.lifecycleBlocked).accessibilityIdentifier("concept-lifecycle")
                     if state.selectionStale && state.phase != "conflict" { Text(text("conflict")).foregroundStyle(.secondary) }
                     if state.dirty || state.pending != nil { Text(text("lifecycleBlocked")).foregroundStyle(.secondary) }
-                    ConceptChatPanel(state:chat,concept:selected,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)},adopted:{if state.dirty {state.selectionStale=true;state.phase="conflict"} else {await state.open(selected.id,current:current)}},focusRequest:comparisonFocusRequest,comparisonContext:comparisonContext,onFocusReturn:{guard state.selected==selected else{return};proxy.scrollTo("proposal-compare-discuss",anchor:.center);comparisonReturnFocus+=1}).id("concept-chat-panel")
+                    ConceptChatPanel(state:chat,concept:selected,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)},adopted:{if state.dirty {state.selectionStale=true;state.phase="conflict"} else {await state.open(selected.id,current:current)}},focusRequest:comparisonFocusRequest,comparisonContext:comparisonContext,onFocusReturn:{guard state.selected==selected else{return};if contentDiscussion {proxy.scrollTo("proposal-content-discuss",anchor:.center);contentReturnFocus+=1} else {proxy.scrollTo("proposal-compare-discuss",anchor:.center);comparisonReturnFocus+=1}}).id("concept-chat-panel")
                     ConceptBaselinePanel(state:baseline,concept:selected,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)})
+                    if let original=baseline.result {
+                        ProposalContentView(state:content,concept:selected,source:original,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)},discuss:{
+                            contentDiscussion=true;comparisonContext=ProposalContentCopy.text("title",language)+" · "+ProposalContentCopy.text("revision",language)+" "+String(original.source_revision)
+                            proxy.scrollTo("concept-chat-panel",anchor:.top);comparisonFocusRequest+=1
+                        },returnFocusRequest:contentReturnFocus,reveal:{guard state.selected==selected else{return};proxy.scrollTo("proposal-content-panel",anchor:.top)}).id("proposal-content-panel")
+                    }
                     ProposalCompareView(state:comparison,concept:selected,current:{try await baselineCurrent(selected)},discuss:{
+                        contentDiscussion=false
                         if let model=comparison.comparison {comparisonContext=ProposalCompareCopy.text("title",language)+" · "+ProposalCompareCopy.text("revision",language)+" "+String(model.before.source_revision)+" → "+String(model.after.source_revision)}
                         proxy.scrollTo("concept-chat-panel",anchor:.top);comparisonFocusRequest+=1
                     },returnFocusRequest:comparisonReturnFocus,reveal:{id in guard state.selected==selected else{return};proxy.scrollTo(id,anchor:.top)})
@@ -150,10 +161,10 @@ struct ProjectConceptView: View {
             else if client.authorizationLost { state.concealAuthorization() }
             else { state.clientPhaseChanged(phase) }
         }
-        .onChange(of:state.selected) {_,_ in comparisonContext=nil}
-        .onChange(of:client.authorizationLost) {_,lost in if lost {baseline.conceal();chat.conceal();comparison.conceal()} }
-        .onChange(of:client.phase) {_,phase in if phase != "CONNECTED" {baseline.conceal();chat.conceal();comparison.conceal()} }
-        .onDisappear { state.cancelReads();state.stopObservingAuthority();baseline.conceal();chat.conceal();comparison.conceal() }
+        .onChange(of:state.selected) {_,_ in comparisonContext=nil;contentDiscussion=false;content.conceal()}
+        .onChange(of:client.authorizationLost) {_,lost in if lost {baseline.conceal();chat.conceal();comparison.conceal();content.conceal()} }
+        .onChange(of:client.phase) {_,phase in if phase != "CONNECTED" {baseline.conceal();chat.conceal();comparison.conceal();content.conceal()} }
+        .onDisappear { state.cancelReads();state.stopObservingAuthority();baseline.conceal();chat.conceal();comparison.conceal();content.conceal() }
         }
     }
 }

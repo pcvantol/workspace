@@ -251,7 +251,15 @@
       "acceptance": "empty/README/dirty/guarded birth; preserve documents/history; current mandatory gate cannot defer",
       "source_ref": "889eb61d487b1374a63107e46e7d124ae67b77e3",
       "source_path": "docs/PROJECT_BOOTSTRAP_V1_DAG.json",
-      "implementation_selected_by_L4": false
+      "implementation_selected_by_L4": false,
+      "selected_content_decision_subset": {
+        "assignment": "L4-NATIVE-PROPOSAL-CONTENT-DECISION-V1-20261015",
+        "plan": 106,
+        "status": "IMPLEMENTING_QUALIFIED_R54_FINAL_HANDOFF_REQUIRED",
+        "own_contract": "docs/WORKSPACE_PROPOSAL_CONTENT_DECISION_V1.md",
+        "full_parent_selected": false,
+        "ep_dependency_for_subset": false
+      }
     },
     {
       "id": "workspace:PB-W3-PROGRESS",

@@ -279,6 +279,8 @@ class Service:
             self.project_concepts = ProjectConceptStore(self.conversations)
             from .concept_baseline_peer import ConceptBaselinePeer
             self.concept_baselines = ConceptBaselinePeer(self.root, self._root_fd, self.project_concepts)
+            from .proposal_content_peer import ProposalContentPeer
+            self.proposal_content = ProposalContentPeer(self.root, self._root_fd, self.project_concepts, self.concept_baselines)
             from .concept_chat_peer import ConceptChatPeer
             self.concept_chats = ConceptChatPeer(self.root, self._root_fd, self.project_concepts)
             from .project_link_peer import ProjectLinkPeer

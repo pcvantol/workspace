@@ -74,6 +74,11 @@ def main(argv=None):
         order_issue.add_argument("--" + flag, required=True)
     order_revoke = commands.add_parser("workset-order-bind-revoke")
     order_revoke.add_argument("--binding-id", required=True)
+    content_issue=commands.add_parser("proposal-content-bind-issue")
+    for flag in ["actor","context","concept-id","human-principal-id","forge-grant-receipt-file","forge-token-file"]:
+        content_issue.add_argument("--"+flag,required=True)
+    content_revoke=commands.add_parser("proposal-content-bind-revoke")
+    content_revoke.add_argument("--binding-id",required=True)
     chat_issue=commands.add_parser("concept-chat-bind-issue")
     for flag in ["actor","context","concept-id","forge-endpoint","dossier-id","conversation-id","producer-source","forge-grant-receipt-file","forge-token-file"]:
         chat_issue.add_argument("--"+flag,required=True)
@@ -233,6 +238,13 @@ def main(argv=None):
             print(json.dumps(result,sort_keys=True))
         elif args.command == "project-link-bind-revoke":
             with Service(args.root) as service:result=service.project_link_peer.revoke(args.binding_id)
+            print(json.dumps(result,sort_keys=True))
+        elif args.command == "proposal-content-bind-issue":
+            with Service(args.root) as service:
+                result=service.proposal_content.provision(args.actor,args.context,args.concept_id,args.human_principal_id,args.forge_grant_receipt_file,args.forge_token_file)
+            print(json.dumps(result,sort_keys=True))
+        elif args.command == "proposal-content-bind-revoke":
+            with Service(args.root) as service:result=service.proposal_content.revoke(args.binding_id)
             print(json.dumps(result,sort_keys=True))
         elif args.command == "concept-baseline-bind-issue":
             with Service(args.root) as service:
