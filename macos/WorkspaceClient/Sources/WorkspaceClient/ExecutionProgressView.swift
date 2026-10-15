@@ -71,6 +71,11 @@ struct ExecutionProgressView:View {
                         state.expanded(!state.navigation.expanded)
                         if !state.navigation.expanded {focusedControl = .run(row.id)}
                     }.focused($focusedControl,equals:.detail).id("execution-detail").accessibilityIdentifier("execution-detail")
+                    .onKeyPress(keys:[.escape]) {press in
+                        guard press.modifiers.isEmpty else {return .ignored}
+                        state.expanded(false);focusedControl = .run(row.id)
+                        return .handled
+                    }
                     if state.navigation.expanded {history(row)}
                 }.onExitCommand {state.expanded(false);focusedControl = .run(row.id)}
                 .task(id:row.id) {
