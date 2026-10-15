@@ -1,0 +1,85 @@
+{
+  "assignment": "L4-NATIVE-MISSION-EA-PROGRESS-V1-20261015",
+  "join": "L2-L4-CENTRAL-MISSION-EA-PROGRESS-V1-20261015",
+  "kind": "ACTUAL_INSTALLED_CANDIDATE_NOT_QUALIFIED_PRODUCER_NOT_FINAL_MAIN",
+  "current_reviewed_source": "33fcd0209a197dbcd12f0ed2d6aac68cedce41e1",
+  "actual_native_gui_source": "afd9e45743eef8bacd32c807cdb7c1202fe1fa32",
+  "actual_own_installed_Python_source": "018e1a7eabade8eff57e7566a784ab096e8057c3",
+  "actual_EP_candidate": "4607202b805bf39808b02cadb2a9b79196b77d14",
+  "EP_version": "2.3.122",
+  "own_version": "2.8.31",
+  "qualified_EP_handoff": false,
+  "Forge_Activity_pin": "2.15.0/989132660997909e74800ddc8648be11262be8d4",
+  "schema_sha256": "ac4ccc1c43c02742dc6ad15e642fadc6456844f8a1a3e7425275f67d247b7d89",
+  "source_model_or_live_execution_claim": false,
+  "synthetic_owning_ingress_lifecycle": "normal_public_owner_functions; no new target/model/provider execution",
+  "screenshots": [
+    {
+      "file": "visible-original-detail.png",
+      "original_sha256": "76c47cdd41edaf0246e091bcbf5fc7afccb215331b0de7f688a0820159d822aa",
+      "actual_native_source": "afd9e45743eef8bacd32c807cdb7c1202fe1fa32",
+      "independent_pixels_and_metadata_privacy": "Security_PASS",
+      "independent_UX_pixels": "PASS",
+      "not_final_main": true
+    },
+    {
+      "file": "german-narrow-original-detail.png",
+      "original_sha256": "e2471aa517878f5ee7387ad478dc62fff321291114af886497cdd50efd522a8d",
+      "actual_native_source": "afd9e45743eef8bacd32c807cdb7c1202fe1fa32",
+      "independent_pixels_and_metadata_privacy": "Security_PASS",
+      "independent_UX_pixels": "PASS",
+      "not_final_main": true
+    }
+  ],
+  "actual_HTTP_candidate_outcomes": [
+    "healthy_empty",
+    "four_phases",
+    "queued_without_run",
+    "COMPLETE_BLOCKED_FAILED_and_separate_qualification",
+    "original_ownerretry_lineage",
+    "legacy",
+    "snapshot409_explicit_fresh",
+    "run404",
+    "Mission403",
+    "old_token401",
+    "instance403",
+    "genuinely_failing_negative_control",
+    "lost_GET_original_recovered",
+    "separate_Server_and_EP_process_restarts",
+    "source503_not_empty",
+    "foreign_actor403",
+    "natural_EP_expiry401",
+    "real_revoke401",
+    "late_genuine_response_after_own_revoke403_no_packet",
+    "checkout_absent_original_CENTRAL_read200"
+  ],
+  "actual_GUI_candidate": [
+    "NL_EN_DE_FR_ES",
+    "light_dark",
+    "760_1180_1420px",
+    "real_Escape_visible_original_opener",
+    "real_Space_visible_original_detail",
+    "separate_Client_OS_restarts_same_original_selection"
+  ],
+  "own_read_business_effects": 0,
+  "all_own_probe_processes_stopped": true,
+  "original_and_temporary_grants_and_pairings_revoked": true,
+  "cleanup_original_driver_FileNotFound_retained_and_normal_remaining_cleanup_verified": true,
+  "prior_errors_preserved": true,
+  "current_full_validation3": "PASS_356Python_335native_1isolated_strict_per_file_wheel_package",
+  "coverage_stdout_gate": {
+    "new_Python_min": 81.82,
+    "new_native_min": 83.18,
+    "browser": 93.43
+  },
+  "full_native_JSON_superseded_by_directed_report": "full original stdout retained; directed JSON not relabeled full",
+  "independent_Q_S_UX": "source_and_scoped_candidate_PASS; not_final_DOD",
+  "full_DoD": false,
+  "remaining": [
+    "qualified_L2_final_main_handoff",
+    "exact_head_CI_TDE_readback",
+    "protected_implementation",
+    "own_finalization",
+    "NEW_exact_final_main_installed_GUI_safe_readback_cleanup"
+  ]
+}
