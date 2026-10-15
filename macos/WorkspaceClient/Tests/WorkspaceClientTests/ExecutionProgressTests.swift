@@ -159,6 +159,16 @@ final class ExecutionProgressTests:XCTestCase {
         await peer.set("empty");await state.refresh();XCTAssertEqual(state.status,"notFound");XCTAssertNil(state.detail);XCTAssertEqual(state.navigation,original)
         await peer.set("normal");await state.refresh();XCTAssertEqual(state.status,"ready");XCTAssertEqual(state.detail?.id,"sub")
     }
+    func testLegalReservedSubmissionIDsRetainSeparateFocusAndOriginalAnchors() throws {
+        let q=try ExecutionFixture.query()
+        for original in ["detail","refresh","mission"] {
+            var raw=try ExecutionFixture.raw(q);var packet=raw["packet"] as! [String:Any];var rows=packet["records"] as! [[String:Any]];rows[0]["submission_id"]=original;packet["records"]=rows;raw["packet"]=packet
+            let admitted=try ExecutionWire.decode(JSONSerialization.data(withJSONObject:raw),q).packet.records[0]
+            let run=ExecutionFocus.run(admitted.id)
+            XCTAssertNotEqual(run,.detail);XCTAssertNotEqual(run,.refresh);XCTAssertNotEqual(run,.mission)
+            XCTAssertEqual(run.anchor,"execution-run-"+original);XCTAssertNotEqual(run.anchor,ExecutionFocus.detail.anchor);XCTAssertNotEqual(run.anchor,ExecutionFocus.refresh.anchor);XCTAssertNotEqual(run.anchor,ExecutionFocus.mission.anchor)
+        }
+    }
     func testAllFiveLanguageLabelsHaveCompleteEntries() {
         for (key,values) in ExecutionProgressCopy.table {XCTAssertEqual(values.count,5,key);XCTAssertTrue(values.allSatisfy{!$0.isEmpty})}
         for language in ["en","nl","de","fr","es"] {XCTAssertEqual(ExecutionProgressCopy.text("NEW_FUTURE_PHASE",language),ExecutionProgressCopy.text("UNAVAILABLE",language))}

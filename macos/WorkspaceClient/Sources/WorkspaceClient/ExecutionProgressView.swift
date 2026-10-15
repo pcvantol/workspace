@@ -1,5 +1,17 @@
 import SwiftUI
 
+enum ExecutionFocus:Hashable {
+    case mission,refresh,detail,run(String)
+    var anchor:String {
+        switch self {
+        case .mission:return "execution-mission"
+        case .refresh:return "execution-refresh"
+        case .detail:return "execution-detail"
+        case .run(let original):return "execution-run-"+original
+        }
+    }
+}
+
 struct ExecutionProgressView:View {
     @ObservedObject var state:ExecutionProgressState
     let access:ActivityAccess
@@ -9,7 +21,7 @@ struct ExecutionProgressView:View {
     var reveal:(String)->Void={_ in}
     @Environment(\.locale) private var locale
     @Environment(\.scenePhase) private var scene
-    @FocusState private var focusedControl:String?
+    @FocusState private var focusedControl:ExecutionFocus?
     private var language:String {locale.language.languageCode?.identifier ?? "en"}
     private func text(_ key:String)->String {ExecutionProgressCopy.text(key,language)}
     private var missionRows:[ActivityCurrentItem] {
@@ -23,9 +35,9 @@ struct ExecutionProgressView:View {
             Picker(text("mission"),selection:Binding(get:{state.navigation.mission},set:{value in Task {await state.choose(value)}})) {
                 Text(text("choose")).tag("")
                 ForEach(missionRows) {row in Text(row.title).tag(row.mission_id ?? "")}
-            }.focused($focusedControl,equals:"mission").id("execution-mission").accessibilityIdentifier("execution-mission")
-            ProposalCompareControl(title:text("refresh"),focused:focusedControl=="refresh") {Task {await state.refresh()}}
-                .focused($focusedControl,equals:"refresh").id("execution-refresh")
+            }.focused($focusedControl,equals:.mission).id("execution-mission").accessibilityIdentifier("execution-mission")
+            ProposalCompareControl(title:text("refresh"),focused:focusedControl == .refresh) {Task {await state.refresh()}}
+                .focused($focusedControl,equals:.refresh).id("execution-refresh")
                 .disabled(state.navigation.mission.isEmpty || state.busy).accessibilityIdentifier("execution-refresh")
             if state.busy {ProgressView().controlSize(.small)}
             Text(text(state.status)).accessibilityIdentifier("execution-status").fixedSize(horizontal:false,vertical:true)
@@ -33,16 +45,8 @@ struct ExecutionProgressView:View {
         }.frame(maxWidth:.infinity,alignment:.leading)
         .task(id:access.key(workset,draft:access.token)) {await activate()}
         .onDisappear {state.hide()}
-        .onChange(of:focusedControl) {_,focus in if let focus {reveal(anchor(focus))}}
+        .onChange(of:focusedControl) {_,focus in if let focus {reveal(focus.anchor)}}
         .onChange(of:scene) {_,value in if value == .active {Task {await activate()}} else {state.hide()}}
-    }
-    private func anchor(_ focus:String)->String {
-        switch focus {
-        case "detail":return "execution-detail"
-        case "refresh":return "execution-refresh"
-        case "mission":return "execution-mission"
-        default:return "execution-run-"+focus
-        }
     }
     private func activate() async {
         guard scene == .active,let current=await connection() else {state.reset();return}
@@ -63,19 +67,19 @@ struct ExecutionProgressView:View {
             }
             if let row=state.detail {
                 VStack(alignment:.leading,spacing:10) {
-                    ProposalCompareControl(title:text("details"),systemImage:state.navigation.expanded ? "chevron.down":"chevron.right",focused:focusedControl=="detail") {
+                    ProposalCompareControl(title:text("details"),systemImage:state.navigation.expanded ? "chevron.down":"chevron.right",focused:focusedControl == .detail) {
                         state.expanded(!state.navigation.expanded)
-                        if !state.navigation.expanded {focusedControl=row.id}
-                    }.focused($focusedControl,equals:"detail").id("execution-detail").accessibilityIdentifier("execution-detail")
+                        if !state.navigation.expanded {focusedControl = .run(row.id)}
+                    }.focused($focusedControl,equals:.detail).id("execution-detail").accessibilityIdentifier("execution-detail")
                     if state.navigation.expanded {history(row)}
-                }.onExitCommand {state.expanded(false);focusedControl=row.id}
+                }.onExitCommand {state.expanded(false);focusedControl = .run(row.id)}
                 .task(id:row.id) {
                     // Focus only after the new detail control has mounted. Keep
                     // late focus tasks fenced to the same authorized selection.
                     let original=state.navigation
                     await Task.yield()
                     guard !Task.isCancelled,original==state.navigation,original.expanded,state.detail?.id==row.id else {return}
-                    focusedControl="detail";reveal("execution-detail")
+                    focusedControl = .detail;reveal("execution-detail")
                 }
             }
             DisclosureGroup(text("source")) {
@@ -96,12 +100,12 @@ struct ExecutionProgressView:View {
             Text(text("technicalOutcome")+": "+text(row.result.technical_outcome)).font(.callout)
             Text(text("requiredValidation")+": "+text(row.result.qualification.required_validation_state)).font(.caption)
             Text(text("runQualification")+": "+text(row.result.qualification.run_qualification)).font(.caption)
-            ProposalCompareControl(title:runTitle(row,packet:packet),focused:focusedControl==row.id) {
+            ProposalCompareControl(title:runTitle(row,packet:packet),focused:focusedControl == .run(row.id)) {
                 Task {
                     await state.select(row.id)
                     // The mounted detail owns the guarded focus transition.
                 }
-            }.focused($focusedControl,equals:row.id).id("execution-run-"+row.id).accessibilityIdentifier("execution-run-"+row.id)
+            }.focused($focusedControl,equals:.run(row.id)).id("execution-run-"+row.id).accessibilityIdentifier("execution-run-"+row.id)
             if state.navigation.submission==row.id,(state.navigation.run==nil || state.navigation.run==row.run_id),state.navigation.group==ActivityWire.hash(Data(row.groupKey.utf8)) {Label(text("details"),systemImage:"checkmark.circle").font(.caption)}
         }.padding(12).frame(maxWidth:.infinity,alignment:.leading).background(.quaternary,in:RoundedRectangle(cornerRadius:12))
     }
