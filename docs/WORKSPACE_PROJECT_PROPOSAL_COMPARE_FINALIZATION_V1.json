@@ -1,0 +1,250 @@
+{
+  "assignment": "L4-PROJECT-PROPOSAL-COMPARE-V1-20261015",
+  "plan": 105,
+  "scope": "PB-W2-SETUP/S7 CONCEPT_PROPOSAL_COMPARE only",
+  "version": "2.8.29",
+  "version_operation": "workspace-plan105-proposal-compare-finalization-20261015",
+  "release_class": "NO_BUMP",
+  "reviewed_source": "fed45f260764dfab6e2f8c14dfe84848fd370963",
+  "protected_implementation_main": "b5da4bc9abf8d6c4453cb124c496c4007ca8b55c",
+  "implementation_pr": "https://github.com/pcvantol/workspace/pull/177",
+  "main_tree_exact_reviewed_source": true,
+  "independent_source_and_scoped_candidate_reviews": {
+    "Quality": "PASS",
+    "Security": "PASS",
+    "UX": "PASS",
+    "all10_original_PNG_pixel_and_metadata_privacy": "PASS"
+  },
+  "actual_validation": {
+    "command": "bash scripts/validate.sh",
+    "full_run": 7,
+    "Python_tests": 297,
+    "native_tests": 307,
+    "isolated_credential_tests": 1,
+    "strict_minimum_per_changed_production_file": ">80.2%",
+    "coverage_percent": {
+      "ProposalCompareModel": 100.0,
+      "ProposalCompareState": 95.42,
+      "ProposalCompareCopy": 100.0,
+      "ProposalCompareView": 90.31,
+      "ProjectConceptView": 88.7,
+      "ConceptChatView": 82.41,
+      "ConceptChatPanel": 82.76
+    }
+  },
+  "actual_implementation_checks": {
+    "headRefOid": "fed45f260764dfab6e2f8c14dfe84848fd370963",
+    "mergeStateStatus": "CLEAN",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-15T12:05:56Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38732072799/job/116412014808",
+        "name": "validate-version-source",
+        "startedAt": "2026-10-15T12:05:47Z",
+        "status": "COMPLETED",
+        "workflowName": "Canonical product versioning"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-15T12:08:21Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38732077103/job/116412029051",
+        "name": "TDE observe (non-blocking)",
+        "startedAt": "2026-10-15T12:05:49Z",
+        "status": "COMPLETED",
+        "workflowName": "TDE observe"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-15T12:08:56Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38732077068/job/116412029021",
+        "name": "Foundation validation",
+        "startedAt": "2026-10-15T12:05:49Z",
+        "status": "COMPLETED",
+        "workflowName": "Workspace CI"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-15T12:14:32Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38732077081/job/116412029399",
+        "name": "Native app build and transport tests",
+        "startedAt": "2026-10-15T12:05:56Z",
+        "status": "COMPLETED",
+        "workflowName": "Workspace native macOS Client"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-15T12:09:25Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38732077068/job/116412029379",
+        "name": "Python 3.14 installed Server",
+        "startedAt": "2026-10-15T12:05:49Z",
+        "status": "COMPLETED",
+        "workflowName": "Workspace CI"
+      }
+    ]
+  },
+  "actual_TDE": {
+    "run": 38732077103,
+    "qualification": "QUALIFIED",
+    "policy": "PASS_WITH_WARNINGS"
+  },
+  "candidate_public_readback": {
+    "artifact_commit": "18bb32cf88d8273da9438dec376de6865079378e",
+    "product_source": "fed45f260764dfab6e2f8c14dfe84848fd370963",
+    "branch": "codex/plan105-qualified-candidate-evidence-20261015",
+    "destination": "docs/qualification/plan105-qualified-candidate-20261015",
+    "files": [
+      {
+        "file": "README.md",
+        "bytes": 1531,
+        "sha256": "0279cac6cf03a242f9141868eba74693320536cab706fba072d15c46f8600bca",
+        "url": "https://raw.githubusercontent.com/pcvantol/workspace/18bb32cf88d8273da9438dec376de6865079378e/docs/qualification/plan105-qualified-candidate-20261015/README.md",
+        "status": 200,
+        "byte_exact": true
+      },
+      {
+        "file": "candidate-de-dark-1000.png",
+        "bytes": 829157,
+        "sha256": "79b9ba663947e160dd6525bf297e77f055e840ed218fe3581bd79ee2d1afa697",
+        "url": "https://raw.githubusercontent.com/pcvantol/workspace/18bb32cf88d8273da9438dec376de6865079378e/docs/qualification/plan105-qualified-candidate-20261015/candidate-de-dark-1000.png",
+        "status": 200,
+        "byte_exact": true
+      },
+      {
+        "file": "candidate-en-light-760.png",
+        "bytes": 679980,
+        "sha256": "cf6f57e86c9844f9c7b76b1887a96f361f628b3be38743b15e86a1a79654025d",
+        "url": "https://raw.githubusercontent.com/pcvantol/workspace/18bb32cf88d8273da9438dec376de6865079378e/docs/qualification/plan105-qualified-candidate-20261015/candidate-en-light-760.png",
+        "status": 200,
+        "byte_exact": true
+      },
+      {
+        "file": "candidate-es-dark-1420.png",
+        "bytes": 1153545,
+        "sha256": "ddb0c81e2812da834dd34c219a70b3763b462e2bf2c65a4fd0f61318bca953c0",
+        "url": "https://raw.githubusercontent.com/pcvantol/workspace/18bb32cf88d8273da9438dec376de6865079378e/docs/qualification/plan105-qualified-candidate-20261015/candidate-es-dark-1420.png",
+        "status": 200,
+        "byte_exact": true
+      },
+      {
+        "file": "candidate-exact-original-reverse-after-two-OSrestarts.png",
+        "bytes": 1169484,
+        "sha256": "a21c515bed7fda98c27c008df5e55099ed69cb69b8d79ad09552c3d17eb08ec0",
+        "url": "https://raw.githubusercontent.com/pcvantol/workspace/18bb32cf88d8273da9438dec376de6865079378e/docs/qualification/plan105-qualified-candidate-20261015/candidate-exact-original-reverse-after-two-OSrestarts.png",
+        "status": 200,
+        "byte_exact": true
+      },
+      {
+        "file": "candidate-fr-light-760.png",
+        "bytes": 688219,
+        "sha256": "3e1abae37238abb864993903525e749732777ce3a4aab87a3c248da0b930a8ca",
+        "url": "https://raw.githubusercontent.com/pcvantol/workspace/18bb32cf88d8273da9438dec376de6865079378e/docs/qualification/plan105-qualified-candidate-20261015/candidate-fr-light-760.png",
+        "status": 200,
+        "byte_exact": true
+      },
+      {
+        "file": "candidate-keyboard-VISION.png",
+        "bytes": 1172190,
+        "sha256": "e32985fa5a9b734805216da257829ff42e31eae39028dfb3a30d169d26fcc933",
+        "url": "https://raw.githubusercontent.com/pcvantol/workspace/18bb32cf88d8273da9438dec376de6865079378e/docs/qualification/plan105-qualified-candidate-20261015/candidate-keyboard-VISION.png",
+        "status": 200,
+        "byte_exact": true
+      },
+      {
+        "file": "candidate-nl-dark-1420.png",
+        "bytes": 1149957,
+        "sha256": "de1de980a0137621fbf761d88b1cf78df95c265b5de47c840ef99d485926bad0",
+        "url": "https://raw.githubusercontent.com/pcvantol/workspace/18bb32cf88d8273da9438dec376de6865079378e/docs/qualification/plan105-qualified-candidate-20261015/candidate-nl-dark-1420.png",
+        "status": 200,
+        "byte_exact": true
+      },
+      {
+        "file": "candidate-real-denied.png",
+        "bytes": 969685,
+        "sha256": "1240bd06a671bf6a4414de710858ba58f5f2f0370853e5c19f036814803c72d9",
+        "url": "https://raw.githubusercontent.com/pcvantol/workspace/18bb32cf88d8273da9438dec376de6865079378e/docs/qualification/plan105-qualified-candidate-20261015/candidate-real-denied.png",
+        "status": 200,
+        "byte_exact": true
+      },
+      {
+        "file": "candidate-real-original-text-page2.png",
+        "bytes": 1146347,
+        "sha256": "b7a0429887cfd41362b0b94df4dcd02bc3e1272182bd92bf9c57c94bfcb350f4",
+        "url": "https://raw.githubusercontent.com/pcvantol/workspace/18bb32cf88d8273da9438dec376de6865079378e/docs/qualification/plan105-qualified-candidate-20261015/candidate-real-original-text-page2.png",
+        "status": 200,
+        "byte_exact": true
+      },
+      {
+        "file": "candidate-real-unavailable.png",
+        "bytes": 1079530,
+        "sha256": "4911ebe1d037ce65bd1991a6fdb4949423795d5fad096d6f9e9870f2ceecf54e",
+        "url": "https://raw.githubusercontent.com/pcvantol/workspace/18bb32cf88d8273da9438dec376de6865079378e/docs/qualification/plan105-qualified-candidate-20261015/candidate-real-unavailable.png",
+        "status": 200,
+        "byte_exact": true
+      },
+      {
+        "file": "evidence.json",
+        "bytes": 22426,
+        "sha256": "5a8fe6bfa4c5437b6f682e7d941024d0ed6280a24f0fb1fa82514c5fad7c5639",
+        "url": "https://raw.githubusercontent.com/pcvantol/workspace/18bb32cf88d8273da9438dec376de6865079378e/docs/qualification/plan105-qualified-candidate-20261015/evidence.json",
+        "status": 200,
+        "byte_exact": true
+      }
+    ],
+    "all_immutable_HTTP200_byte_exact": true,
+    "product_writer_clean_and_unchanged": true,
+    "verified_system_TLS_readback": true,
+    "prior_Python_CA_store_failure_retained": true
+  },
+  "candidate_Forge": {
+    "version": "2.18.0",
+    "source": "96e1d73670b8575d41977fd448bfec10fc55206e",
+    "wheel_sha256": "20efb7f1a92d1af352b14729d51d92689fa55ef1b09b4dc657e1cee06e7e451d",
+    "payload_files": 319
+  },
+  "candidate_own_payload_files": 61,
+  "MachO_minimum_macos": "26.0",
+  "MachO_SDK": "26.0",
+  "candidate_cleanup": "COMPLETE_ZERO_ERRORS_BEFORE_FIXED_DEADLINE",
+  "cumulative_consumption_at_implementation_delivery": {
+    "source_correction_rounds": 7,
+    "installed_attempts": 6,
+    "full_validations_started": 7,
+    "failed_fullrun6_test_window_lifetime": "RETAINED_FIXED_TEST_ONLY_BEFORE_FULL7",
+    "no_administrative_maximum": true
+  },
+  "preserved_failures": [
+    "initial offscreen source/GUI snapshots",
+    "trial6 observer inherited DisclosureGroup ID expectation",
+    "trial6 transient reverse original unavailable and same GET recovery",
+    "trial6 forward chat expectation after actual durable2to1 choice",
+    "local Python CA public-readback failure; completed via normal verified system TLS"
+  ],
+  "closed_predecessors": [
+    "LINK6179192862",
+    "plan1036156170422",
+    "plan1046180309393"
+  ],
+  "finalization_gates": [
+    "own nonempty document reviews",
+    "own mandatory validation/current5CI and actual TDE",
+    "normal protected exact-head finalization merge",
+    "NEW exact-final-main noneditable Client/Server/qualified Forge installed proof",
+    "NEW actual packaged GUI/privacy-approved screenshots/public immutable HTTP200 byte readback",
+    "independent final evidence review and own cleanup",
+    "terminal external register readback"
+  ],
+  "new_exact_final_main_installed_status": "PENDING_AFTER_OWN_FINALIZATION_PROTECTED_MERGE",
+  "not_selected": [
+    "Approved/apply",
+    "generation/model calls",
+    "new project/repository/Mission",
+    "L2 inspection/L3 decisions as gates",
+    "global installation/signing/user settings or credentials changes"
+  ]
+}
