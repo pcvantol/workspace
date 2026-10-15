@@ -58,8 +58,8 @@ struct ProposalCompareView:View {
                     if !documents.isEmpty {
                         Text(text(group)).font(.subheadline.bold())
                         ForEach(documents) {document in
-                            ProposalCompareDocumentView(document:document,language:language,reveal:reveal)
-                                .id(model.before.operation_id+model.after.operation_id+document.path)
+                            ProposalCompareDocumentView(document:document,language:language,reveal:reveal,scrollIdentity:"proposal-compare-anchor-"+model.before.operation_id+model.after.operation_id+document.path)
+                                .id("proposal-compare-anchor-"+model.before.operation_id+model.after.operation_id+document.path)
                         }
                     }
                 }
@@ -126,12 +126,13 @@ struct ProposalCompareDocumentView:View {
     let document:ProposalCompareModel.Document
     let language:String
     var reveal:(String)->Void={_ in}
+    var scrollIdentity=""
     @State var expanded=false
     @State var difference:ProposalCompareModel.Difference?
     @State var page=0
     @State var invisible=false
     @FocusState private var openerFocused:Bool
-    private var anchor:String {"proposal-compare-anchor-"+document.path}
+    private var anchor:String {scrollIdentity.isEmpty ? "proposal-compare-anchor-"+document.path:scrollIdentity}
     private func text(_ key:String)->String {ProposalCompareCopy.text(key,language)}
     var body:some View {
         VStack(alignment:.leading,spacing:8) {
@@ -164,7 +165,7 @@ struct ProposalCompareDocumentView:View {
                     }
                 }.accessibilityIdentifier("proposal-compare-document-details-"+document.path)
             }
-        }.padding(.leading,8).id(anchor)
+        }.padding(.leading,8)
         .onChange(of:openerFocused) {_,value in if value {reveal(anchor)}}
         .onChange(of:expanded) {_,_ in reveal(anchor)}
         .onExitCommand {if expanded {expanded=false;openerFocused=true}}
