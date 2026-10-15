@@ -6,6 +6,7 @@ struct ExecutionProgressView:View {
     let workset:String
     let missions:[ActivityCurrentItem]
     let connection:@MainActor () async->AdvisoryConnection?
+    var reveal:(String)->Void={_ in}
     @Environment(\.locale) private var locale
     @Environment(\.scenePhase) private var scene
     @FocusState private var focusedControl:String?
@@ -22,9 +23,9 @@ struct ExecutionProgressView:View {
             Picker(text("mission"),selection:Binding(get:{state.navigation.mission},set:{value in Task {await state.choose(value)}})) {
                 Text(text("choose")).tag("")
                 ForEach(missionRows) {row in Text(row.title).tag(row.mission_id ?? "")}
-            }.accessibilityIdentifier("execution-mission")
+            }.focused($focusedControl,equals:"mission").id("execution-mission").accessibilityIdentifier("execution-mission")
             ProposalCompareControl(title:text("refresh"),focused:focusedControl=="refresh") {Task {await state.refresh()}}
-                .focused($focusedControl,equals:"refresh")
+                .focused($focusedControl,equals:"refresh").id("execution-refresh")
                 .disabled(state.navigation.mission.isEmpty || state.busy).accessibilityIdentifier("execution-refresh")
             if state.busy {ProgressView().controlSize(.small)}
             Text(text(state.status)).accessibilityIdentifier("execution-status").fixedSize(horizontal:false,vertical:true)
@@ -32,7 +33,16 @@ struct ExecutionProgressView:View {
         }.frame(maxWidth:.infinity,alignment:.leading)
         .task(id:access.key(workset,draft:access.token)) {await activate()}
         .onDisappear {state.hide()}
+        .onChange(of:focusedControl) {_,focus in if let focus {reveal(anchor(focus))}}
         .onChange(of:scene) {_,value in if value == .active {Task {await activate()}} else {state.hide()}}
+    }
+    private func anchor(_ focus:String)->String {
+        switch focus {
+        case "detail":return "execution-detail"
+        case "refresh":return "execution-refresh"
+        case "mission":return "execution-mission"
+        default:return "execution-run-"+focus
+        }
     }
     private func activate() async {
         guard scene == .active,let current=await connection() else {state.reset();return}
@@ -56,7 +66,7 @@ struct ExecutionProgressView:View {
                     ProposalCompareControl(title:text("details"),systemImage:state.navigation.expanded ? "chevron.down":"chevron.right",focused:focusedControl=="detail") {
                         state.expanded(!state.navigation.expanded)
                         if !state.navigation.expanded {focusedControl=row.id}
-                    }.focused($focusedControl,equals:"detail").accessibilityIdentifier("execution-detail")
+                    }.focused($focusedControl,equals:"detail").id("execution-detail").accessibilityIdentifier("execution-detail")
                     if state.navigation.expanded {history(row)}
                 }.onExitCommand {state.expanded(false);focusedControl=row.id}
                 .task(id:row.id) {
@@ -65,7 +75,7 @@ struct ExecutionProgressView:View {
                     let original=state.navigation
                     await Task.yield()
                     guard !Task.isCancelled,original==state.navigation,original.expanded,state.detail?.id==row.id else {return}
-                    focusedControl="detail"
+                    focusedControl="detail";reveal("execution-detail")
                 }
             }
             DisclosureGroup(text("source")) {
@@ -91,7 +101,7 @@ struct ExecutionProgressView:View {
                     await state.select(row.id)
                     // The mounted detail owns the guarded focus transition.
                 }
-            }.focused($focusedControl,equals:row.id).accessibilityIdentifier("execution-run-"+row.id)
+            }.focused($focusedControl,equals:row.id).id("execution-run-"+row.id).accessibilityIdentifier("execution-run-"+row.id)
             if state.navigation.submission==row.id,(state.navigation.run==nil || state.navigation.run==row.run_id),state.navigation.group==ActivityWire.hash(Data(row.groupKey.utf8)) {Label(text("details"),systemImage:"checkmark.circle").font(.caption)}
         }.padding(12).frame(maxWidth:.infinity,alignment:.leading).background(.quaternary,in:RoundedRectangle(cornerRadius:12))
     }

@@ -30,6 +30,7 @@ struct WorksetActivityView: View {
         if state.busy { ProgressView().controlSize(.small) }
     }
     var body:some View {
+        ScrollViewReader { proxy in
         ScrollView {
             VStack(alignment:.leading,spacing:14) {
                 Text(text("title")).font(.largeTitle.bold()).lineLimit(1).minimumScaleFactor(0.75)
@@ -71,7 +72,7 @@ struct WorksetActivityView: View {
                     }
                 }
                 if let access=state.access,!state.selected.isEmpty,!state.historical {
-                    ExecutionProgressView(state:execution,access:access,workset:state.selected,missions:state.pages.last?.current ?? [],connection:{await connection()})
+                    ExecutionProgressView(state:execution,access:access,workset:state.selected,missions:state.pages.last?.current ?? [],connection:{await connection()},reveal:{id in proxy.scrollTo(id,anchor:.center)})
                 }
                 if !state.pages.isEmpty {
                     if let page=state.pages.last {
@@ -140,6 +141,7 @@ struct WorksetActivityView: View {
                     Button(text("remember")) { Task { await state.rememberDisplayed(visible:visible && scene == .active) } }.disabled(!state.complete || state.busy)
                 }
             }.padding(18).frame(maxWidth:.infinity,alignment:.leading)
+        }
         }
         .task { visible=true;await state.reauthorize(await connection()) }
         .onDisappear { visible=false;execution.hide() }

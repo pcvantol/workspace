@@ -14,6 +14,9 @@ enum ExecutionFixture {
     static func raw(_ q:ExecutionQuery) throws->[String:Any] {
         let file=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/ExecutionProgress/source-only.json")
         var packet=try JSONSerialization.jsonObject(with:Data(contentsOf:file)) as! [String:Any]
+        packet["selected_mission_id"]=q.mission
+        var selection=packet["selection"] as! [String:Any];selection["mission_ids"]=[q.mission];packet["selection"]=selection
+        var rows=packet["records"] as! [[String:Any]];rows[0]["mission_id"]=q.mission;packet["records"]=rows
         if let run=q.run {packet["selected_run_id"]=run;packet["completeness"]="EXACT_RUN"}
         return ["contract_version":"workspace-execution-progress/1","actor_id":q.connection.actorID,"context_id":q.connection.workspaceProjectID,"workspace_instance_id":q.connection.workspaceInstanceID,"binding_id":"binding","activity_binding_id":q.activity.binding_id,"forge_instance_id":q.activity.scope.instance_id,"workset_id":q.workset,"producer_source":ExecutionWire.source,"expires_at":"2099-01-01T00:00:00Z","packet":packet]
     }
@@ -24,9 +27,10 @@ enum ExecutionFixture {
     }
 }
 private actor ExecutionSource:ExecutionServing {
-    var mode="normal";var calls:[ExecutionQuery]=[];var delay=false
+    var mode="normal";var calls:[ExecutionQuery]=[];var delay=false;var expiry:String?
     func set(_ mode:String) {self.mode=mode}
     func slow(_ value:Bool) {delay=value}
+    func expire(_ value:String) {expiry=value}
     func read(_ query:ExecutionQuery) async throws->ExecutionEnvelope {
         calls.append(query);let selectedMode=mode
         if delay {try? await Task.sleep(for:.milliseconds(180))}
@@ -39,7 +43,15 @@ private actor ExecutionSource:ExecutionServing {
         case "unsupported":throw ExecutionError.unsupported
         case "corrupt":throw ExecutionError.corrupt
         case "invalid":throw ExecutionError.invalid
-        default:return try ExecutionFixture.envelope(query,wrong:query.run != nil && selectedMode=="wrong")
+        default:
+            var value=try ExecutionFixture.envelope(query,wrong:query.run != nil && selectedMode=="wrong")
+            if let expiry {
+                var raw=try ExecutionFixture.raw(query);raw["expires_at"]=expiry;value=try ExecutionWire.decode(JSONSerialization.data(withJSONObject:raw),query)
+            }
+            if selectedMode=="empty" {
+                var raw=try ExecutionFixture.raw(query);var packet=raw["packet"] as! [String:Any];packet["records"]=[];packet["logical_action_count"]=0;raw["packet"]=packet;value=try ExecutionWire.decode(JSONSerialization.data(withJSONObject:raw),query)
+            }
+            return value
         }
     }
 }
@@ -120,6 +132,32 @@ final class ExecutionProgressTests:XCTestCase {
         let request=Task {await state.choose("mission")};try await Task.sleep(for:.milliseconds(30));state.hide();await request.value
         XCTAssertNil(state.overview);XCTAssertNil(state.detail);XCTAssertFalse(state.busy)
         await state.activate(q,current:{nil});await state.choose("mission");XCTAssertEqual(state.status,"denied")
+    }
+    @MainActor func testHiddenNaturalExpiryStillEnforcesDeniedAndClearsSelection() async throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
+        let q=try ExecutionFixture.query(),peer=ExecutionSource(),state=ExecutionProgressState(transport:peer,root:root);defer{state.reset()}
+        let formatter=ISO8601DateFormatter();formatter.formatOptions=[.withInternetDateTime,.withFractionalSeconds]
+        await peer.expire(formatter.string(from:Date().addingTimeInterval(0.9)))
+        await state.activate(q,current:{q.connection});await state.choose("mission");XCTAssertNotNil(state.overview)
+        state.hide();try await Task.sleep(for:.milliseconds(1400))
+        XCTAssertEqual(state.status,"denied");XCTAssertNil(state.overview);XCTAssertNil(state.detail);XCTAssertTrue(state.navigation.mission.isEmpty)
+    }
+    @MainActor func testSelectionChangeRejectsLateMissionReplyAndCoalescesRefresh() async throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
+        let q=try ExecutionFixture.query(),peer=ExecutionSource(),state=ExecutionProgressState(transport:peer,root:root);defer{state.reset()}
+        await state.activate(q,current:{q.connection});await peer.slow(true)
+        let first=Task {await state.choose("mission")};try await Task.sleep(for:.milliseconds(25))
+        let before=await peer.calls.count;await state.refresh();let after=await peer.calls.count;XCTAssertEqual(before,after)
+        await state.choose("second-mission");await first.value
+        XCTAssertEqual(state.navigation.mission,"second-mission");XCTAssertEqual(state.overview?.packet.selected_mission_id,"second-mission")
+        XCTAssertFalse(state.busy)
+    }
+    @MainActor func testMissingOriginalSelectionIsNotSilentlyReplacedByEmptyResult() async throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
+        let q=try ExecutionFixture.query(),peer=ExecutionSource(),state=ExecutionProgressState(transport:peer,root:root);defer{state.reset()}
+        await state.activate(q,current:{q.connection});await state.choose("mission");await state.select("sub");let original=state.navigation
+        await peer.set("empty");await state.refresh();XCTAssertEqual(state.status,"notFound");XCTAssertNil(state.detail);XCTAssertEqual(state.navigation,original)
+        await peer.set("normal");await state.refresh();XCTAssertEqual(state.status,"ready");XCTAssertEqual(state.detail?.id,"sub")
     }
     func testAllFiveLanguageLabelsHaveCompleteEntries() {
         for (key,values) in ExecutionProgressCopy.table {XCTAssertEqual(values.count,5,key);XCTAssertTrue(values.allSatisfy{!$0.isEmpty})}
