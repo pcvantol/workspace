@@ -41,8 +41,10 @@ under `/v1/project-proposal-decisions`, separate finite bearer plus
 
 At pickup Forge2.20.0 implementation13cd5d2 was a candidate; PR293 subsequently
 protected-merged to0ea1b1a7380aaef95205821bc7bf3c9a3f9ec3e2. The owning NEW final-main
-installed qualification/handoff is still required. Neither early contract tests nor
-that merge alone qualifies this new consumer combination. Existing qualified R52
+installed qualification/handoff was delivered in [6195333957](https://github.com/pcvantol/forge/issues/208#issuecomment-6195333957),
+terminal6195361250. Its original ZIP/member digests and331 qualified source payloads
+were independently verified. Earlier candidate labels remain unchanged; neither early
+contract tests nor the merge alone constituted that qualification. Existing qualified R52
 2.18.0/96e1d736 and R53 2.19.0/877602f pairings remain unchanged.
 
 The separate owner-only `proposal-content-bind-issue` pairs ONE explicit Workspace
@@ -167,3 +169,22 @@ allocation, preventing malformed own commands from poisoning pending recovery. D
 Earlier failed patch/test observations remain preserved. New installed checks of these
 deltas, full coverage/validation, qualified handoff and protected delivery remain open.
 Cumulative5 source rounds/2 installed attempts/0 full validations; no reset/maximum.
+
+## Integrated round6 — bounded monitoring extraction
+
+[Immutable source-bound candidate observations](https://github.com/pcvantol/workspace/tree/97f2a4a98a49c72e78986fd1c9daa21f32dd7a44/docs/qualification/plan106-candidate-observations-20261015)
+retain original ef47/999d9bb receipts,18 independently pixel/metadata-approved original
+images and all30 exact committed blob readbacks. Corrected reporting separates actual
+Mach-O SDK26.0/minimum26.0 from available-toolchain query27.0; original receipts remain.
+Full validation1 PASS328Python/320native+1isolated, all production sources>80.2%.
+
+Owning TDE38759152177 workflowSUCCESS but actualassessmentFAIL/repositoryFAILED,
+exits2/2: native load complexity32 exceeds productmaximum30. This failure is retained.
+Independent Security requested a bounded behavioral-preserving extraction of the
+existing expiry/monitor tasks into private watch, called at exactly the same point
+with the same captured value, current-authority closure, generation and source. No
+changed lifetime, frequency, validation, authorization fence, policy or suppression.
+Directed13 native tests PASS; new actual installed monitoring/refactor and full
+validation/TDE follow before protected delivery. No old screenshot or producer receipt
+is relabeled as this new source or final-main evidence.
+Cumulative6source rounds/3installed attempts/1fullvalidation; no reset/maximum.

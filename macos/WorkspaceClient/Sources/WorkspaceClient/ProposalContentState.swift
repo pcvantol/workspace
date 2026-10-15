@@ -69,30 +69,33 @@ import CryptoKit
                 }
             }
             result=value;pending=journal.flatMap{($0.completed || $0.rejected) ? nil:$0};phase="ready"
-            expiry=Task { [weak self] in
-                while !Task.isCancelled {
-                    try? await Task.sleep(for:.milliseconds(250))
-                    guard !Task.isCancelled,let self,self.generation==ticket else{return}
-                    if WorksetReleaseWire.date(value.expires_at).map({$0>Date()}) != true {self.conceal();self.phase="access";return}
-                }
-            }
-            monitor=Task { [weak self] in
-                while !Task.isCancelled {
-                    try? await Task.sleep(for:.seconds(5))
-                    guard !Task.isCancelled,let self,self.generation==ticket else{return}
-                    do {
-                        if self.busy {continue}
-                        try await self.checked(connection,current:current)
-                        let now=try await self.transport.proposal(connection,concept:concept.id,source:source.operation_id)
-                        try await self.checked(connection,current:current);try now.validate(connection,concept:concept,source:source)
-                        guard self.generation==ticket else{return}
-                        guard now.binding_id==value.binding_id,now.human_binding==value.human_binding,now.roles==value.roles,now.permissions==value.permissions,now.expires_at==value.expires_at,now.decision.subject==value.decision.subject else {throw ConceptError.denied}
-                        if self.result?.selection_digest != now.selection_digest {self.confirmation=nil}
-                        self.result=now
-                    } catch {if self.generation==ticket {self.failure(error)};return}
-                }
-            }
+            watch(value,connection:connection,source:source,concept:concept,ticket:ticket,current:current)
         } catch {if ticket==generation {failure(error)}}
+    }
+    private func watch(_ value:ProposalContentResult,connection:ConceptConnection,source:ConceptBaselineResult,concept:ProjectConcept,ticket:Int,current:@escaping @MainActor () async throws -> ConceptConnection) {
+        expiry=Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for:.milliseconds(250))
+                guard !Task.isCancelled,let self,self.generation==ticket else{return}
+                if WorksetReleaseWire.date(value.expires_at).map({$0>Date()}) != true {self.conceal();self.phase="access";return}
+            }
+        }
+        monitor=Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for:.seconds(5))
+                guard !Task.isCancelled,let self,self.generation==ticket else{return}
+                do {
+                    if self.busy {continue}
+                    try await self.checked(connection,current:current)
+                    let now=try await self.transport.proposal(connection,concept:concept.id,source:source.operation_id)
+                    try await self.checked(connection,current:current);try now.validate(connection,concept:concept,source:source)
+                    guard self.generation==ticket else{return}
+                    guard now.binding_id==value.binding_id,now.human_binding==value.human_binding,now.roles==value.roles,now.permissions==value.permissions,now.expires_at==value.expires_at,now.decision.subject==value.decision.subject else {throw ConceptError.denied}
+                    if self.result?.selection_digest != now.selection_digest {self.confirmation=nil}
+                    self.result=now
+                } catch {if self.generation==ticket {self.failure(error)};return}
+            }
+        }
     }
     func stage(role:String,choice:String,reason:String,acknowledged:Bool,concept:ProjectConcept) {
         confirmation=nil

@@ -336,15 +336,16 @@
           "assignment": "L4-NATIVE-PROPOSAL-CONTENT-DECISION-V1-20261015",
           "join": "L3-L4-PROPOSAL-CONTENT-DECISION-V1-20261015",
           "plan": 106,
-          "status": "IMPLEMENTING_QUALIFIED_R54_FINAL_HANDOFF_REQUIRED",
+          "status": "QUALIFIED_R54_DELIVERED_MONITOR_REFACTOR_ACCEPTANCE_IN_PROGRESS",
           "own_contract": "docs/WORKSPACE_PROPOSAL_CONTENT_DECISION_V1.md",
           "producer_contract": "forge-project-proposal-content-decision/v1",
           "profile": "CONTENT_BASELINE_ONLY/1.0",
           "full_parent_selected": false,
           "ep_dependency_for_subset": false,
-          "source_rounds": 5,
-          "installed_attempts": 2,
-          "full_validations": 0
+          "source_rounds": 6,
+          "installed_attempts": 3,
+          "full_validations": 1,
+          "qualified_handoff": "https://github.com/pcvantol/forge/issues/208#issuecomment-6195333957"
         }
       ]
     },
