@@ -72,6 +72,11 @@ Five UI languages, light/dark, narrow/wide, labels/icons and native focus contro
 Controls that capture Space explicitly declare keyboard input focus interactions;
 ordinary text editors retain their native Tab behavior. No system preference
 changes or accessibility focus injection can qualify keyboard acceptance.
+Focused/expanded document anchors and paging anchors reveal through the existing
+ScrollViewReader, guarded by the exact current own selected concept. Pager controls
+precede their content; focus/page transitions keep the control and page beginning
+visible. Escape collapses to the same visible opener. Stable original-pane anchors
+include document path and side, including absent-original cases.
 
 Capture original pair before reading. Current own authority and finite binding
 are checked before/between/after GETs and worker computation. Generation and pair

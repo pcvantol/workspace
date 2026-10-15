@@ -6,6 +6,7 @@ struct ProposalCompareView:View {
     let current:@MainActor () async throws->ConceptConnection
     var discuss:()->Void={}
     var returnFocusRequest=0
+    var reveal:(String)->Void={_ in}
     private enum ReturnTarget:Hashable {case refresh,discuss}
     @FocusState private var returnFocused:ReturnTarget?
     @State var differencesOnly=true
@@ -28,7 +29,7 @@ struct ProposalCompareView:View {
             Divider();Text(text("title")).font(.title2.bold())
             Text(text("preparation")).fixedSize(horizontal:false,vertical:true)
             Text(text("readOnly")).font(.caption).foregroundStyle(.secondary)
-            Button(text("refresh")) {Task {await state.load(concept,current:current)}}.disabled(state.busy).focusable(interactions:.edit).onKeyPress(.space) {guard !state.busy else{return .ignored};Task {await state.load(concept,current:current)};return .handled}.focused($returnFocused,equals:.refresh).accessibilityIdentifier("proposal-compare-refresh")
+            Button(text("refresh")) {Task {await state.load(concept,current:current)}}.disabled(state.busy).focusable(interactions:.edit).onKeyPress(.space) {guard !state.busy else{return .ignored};Task {await state.load(concept,current:current)};return .handled}.focused($returnFocused,equals:.refresh).accessibilityIdentifier("proposal-compare-refresh").id("proposal-compare-refresh")
             if state.busy {ProgressView(text("loading"))}
             if !["idle","loading","comparable"].contains(state.phase) {Text(text(state.phase)).accessibilityIdentifier("proposal-compare-status")}
             if state.partialHistory {Text(text("historyPartial")).foregroundStyle(.secondary)}
@@ -57,7 +58,7 @@ struct ProposalCompareView:View {
                     if !documents.isEmpty {
                         Text(text(group)).font(.subheadline.bold())
                         ForEach(documents) {document in
-                            ProposalCompareDocumentView(document:document,language:language)
+                            ProposalCompareDocumentView(document:document,language:language,reveal:reveal)
                                 .id(model.before.operation_id+model.after.operation_id+document.path)
                         }
                     }
@@ -74,6 +75,7 @@ struct ProposalCompareView:View {
                 Button(text("discuss"),action:discuss).focusable(interactions:.edit).onKeyPress(.space) {discuss();return .handled}.focused($returnFocused,equals:.discuss).accessibilityIdentifier("proposal-compare-discuss").id("proposal-compare-discuss")
             }
         }.frame(minWidth:0,maxWidth:.infinity,alignment:.leading)
+        .onChange(of:returnFocused) {_,target in if let target {reveal(target == .refresh ? "proposal-compare-refresh":"proposal-compare-discuss")} }
         .onChange(of:returnFocusRequest) {_,_ in returnFocused=state.comparison==nil ? .refresh:.discuss}
         .task(id:concept) {await state.load(concept,current:current)}
         .onDisappear {state.conceal()}
@@ -90,44 +92,81 @@ struct ProposalCompareView:View {
     }
 }
 
+// One bounded native pager keeps its focused control and the new page visible.
+struct ProposalComparePager:View {
+    @Binding var page:Int
+    let count:Int
+    let label:String
+    let language:String
+    let anchor:String
+    var reveal:(String)->Void={_ in}
+    private enum Direction {case previous,next}
+    @FocusState private var focused:Direction?
+    private func text(_ key:String)->String {ProposalCompareCopy.text(key,language)}
+    var body:some View {
+        HStack {
+            Button(text("previous")) {page-=1}
+                .focusable(interactions:.edit).focused($focused,equals:.previous)
+                .onKeyPress(.space) {guard page>0 else{return .ignored};page-=1;return .handled}
+                .accessibilityLabel([text("previous"),label].joined(separator:" · "))
+                .accessibilityIdentifier(anchor+"-previous").disabled(page==0)
+            Text(text("page")+" "+String(page+1)+" / "+String(count))
+            Button(text("next")) {page+=1}
+                .focusable(interactions:.edit).focused($focused,equals:.next)
+                .onKeyPress(.space) {guard page+1<count else{return .ignored};page+=1;return .handled}
+                .accessibilityLabel([text("next"),label].joined(separator:" · "))
+                .accessibilityIdentifier(anchor+"-next").disabled(page+1>=count)
+        }
+        .onChange(of:focused) {_,value in if value != nil {reveal(anchor)}}
+        .onChange(of:page) {_,_ in reveal(anchor)}
+    }
+}
+
 struct ProposalCompareDocumentView:View {
     let document:ProposalCompareModel.Document
     let language:String
+    var reveal:(String)->Void={_ in}
     @State var expanded=false
     @State var difference:ProposalCompareModel.Difference?
     @State var page=0
     @State var invisible=false
     @FocusState private var openerFocused:Bool
+    private var anchor:String {"proposal-compare-anchor-"+document.path}
     private func text(_ key:String)->String {ProposalCompareCopy.text(key,language)}
     var body:some View {
         VStack(alignment:.leading,spacing:8) {
             Button {expanded.toggle()} label: {Label(text(document.status)+" · "+document.path,systemImage:expanded ? "chevron.down":"chevron.right").multilineTextAlignment(.leading)}
-                .focusable(interactions:.edit).focused($openerFocused).onKeyPress(.space) {expanded.toggle();return .handled}.accessibilityIdentifier("proposal-compare-document-"+document.path)
+                .focusable(interactions:.edit).focused($openerFocused)
+                .onKeyPress(.space) {expanded.toggle();return .handled}
+                .accessibilityLabel(text(document.status)+" · "+document.path)
+                .accessibilityIdentifier("proposal-compare-document-"+document.path)
             if expanded {
                 Toggle(text("invisible"),isOn:$invisible)
                 if let difference {
                     if !difference.complete {Text(text("bounded")).font(.caption)}
                     if difference.rows.isEmpty,document.status=="changed" {Text(text("metadataOnly"))}
                     let pages=max(1,(difference.rows.count+119)/120)
+                    ProposalComparePager(page:$page,count:pages,label:document.path,language:language,anchor:anchor,reveal:reveal)
                     ForEach(Array(difference.rows.dropFirst(page*120).prefix(120))) {line in
                         Text(verbatim:line.sign+" "+(invisible ? ProposalCompareModel.visible(line.text):line.text)).font(.system(.caption,design:.monospaced)).textSelection(.enabled).frame(minWidth:0,maxWidth:.infinity,alignment:.leading)
                     }
-                    HStack {Button(text("previous")) {page-=1}.focusable(interactions:.edit).onKeyPress(.space) {guard page>0 else{return .ignored};page-=1;return .handled}.accessibilityLabel(text("previous")+" · "+document.path).disabled(page==0);Text(text("page")+" "+String(page+1)+" / "+String(pages));Button(text("next")) {page+=1}.focusable(interactions:.edit).onKeyPress(.space) {guard page+1<pages else{return .ignored};page+=1;return .handled}.accessibilityLabel(text("next")+" · "+document.path).disabled(page+1>=pages)}
                 } else {ProgressView()}
                 DisclosureGroup(text("full")) {
                     VStack(alignment:.leading) {
-                        ProposalCompareOriginalView(value:document.before,side:text("before"),language:language)
-                        ProposalCompareOriginalView(value:document.after,side:text("after"),language:language)
+                        ProposalCompareOriginalView(value:document.before,side:text("before"),language:language,reveal:reveal,documentPath:document.path)
+                        ProposalCompareOriginalView(value:document.after,side:text("after"),language:language,reveal:reveal,documentPath:document.path)
                     }
-                }
+                }.accessibilityIdentifier("proposal-compare-originals-"+document.path)
                 DisclosureGroup(text("details")) {
                     Text(verbatim:document.path).textSelection(.enabled)
                     ForEach([document.before,document.after].indices,id:\.self) {index in
                         if let value=[document.before,document.after][index] {Text(verbatim:String(value.mode)+" · "+String(value.content.utf8.count)+" bytes · "+value.sha256).font(.caption.monospaced()).textSelection(.enabled)}
                     }
-                }
+                }.accessibilityIdentifier("proposal-compare-document-details-"+document.path)
             }
-        }.padding(.leading,8)
+        }.padding(.leading,8).id(anchor)
+        .onChange(of:openerFocused) {_,value in if value {reveal(anchor)}}
+        .onChange(of:expanded) {_,_ in reveal(anchor)}
         .onExitCommand {if expanded {expanded=false;openerFocused=true}}
         .task {let result=await Task.detached(priority:.utility) {ProposalCompareModel.difference(document)}.value;if !Task.isCancelled {difference=result}}
     }
@@ -136,27 +175,19 @@ struct ProposalCompareOriginalView:View {
     let value:ConceptBaselineResult.Artifact?
     let side:String
     let language:String
+    var reveal:(String)->Void={_ in}
+    var documentPath=""
     @State var page=0
+    private var anchor:String {"proposal-compare-original-anchor-"+side+"-"+(documentPath.isEmpty ? value?.path ?? "missing":documentPath)}
     private func text(_ key:String)->String {ProposalCompareCopy.text(key,language)}
     var body:some View {
         VStack(alignment:.leading) {
             Text(side).font(.subheadline.bold())
             if let value {
                 let pages=ProposalCompareModel.pages(value.content)
+                ProposalComparePager(page:$page,count:pages.count,label:side+" · "+value.path,language:language,anchor:anchor,reveal:reveal)
                 Text(verbatim:pages[min(page,pages.count-1)]).font(.system(.caption,design:.monospaced)).textSelection(.enabled).frame(minWidth:0,maxWidth:.infinity,alignment:.leading)
-                let previousLabel=[text("previous"),side,value.path].joined(separator:" · ")
-                let nextLabel=[text("next"),side,value.path].joined(separator:" · ")
-                let pageLabel=text("page")+" "+String(page+1)+" / "+String(pages.count)
-                HStack {
-                    Button(text("previous")) {page-=1}
-                        .focusable(interactions:.edit).onKeyPress(.space) {guard page>0 else{return .ignored};page-=1;return .handled}
-                        .accessibilityLabel(previousLabel).disabled(page==0)
-                    Text(pageLabel)
-                    Button(text("next")) {page+=1}
-                        .focusable(interactions:.edit).onKeyPress(.space) {guard page+1<pages.count else{return .ignored};page+=1;return .handled}
-                        .accessibilityLabel(nextLabel).disabled(page+1>=pages.count)
-                }
             } else {Text(text("absent")).foregroundStyle(.secondary)}
-        }
+        }.id(anchor)
     }
 }

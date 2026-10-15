@@ -1,3 +1,17 @@
+### Plan105 round5 — keyboard viewport follows real focus
+
+Actual0574candidate proved keyboardactions, real5locale/theme/width, reversepair
+separateOSrestarts and realoutage/revoke afscherming; cleanupCOMPLETEbeforefixed
+originaldeadline. Preserve all receipts, failures and original source bindings.
+IndependentUX confirmed focusedcatalogopener y1717 outside windowbottom980: no
+complete UXacceptance was claimed. Round5 routes focus/expand/Escape and pager
+reveal through the existing guarded ScrollViewReader/stableanchors; page controls
+precede content so focus and new-page beginning are visible. No byte/auth/HTTP/model
+change. Directed15native and fullrun4 PASS297Python/306native+1isolated; strict
+per-file/package gates. CompareView348/38989.46%, ProjectConceptView369/41688.70%.
+Independent targeted Quality/Security/UX sourceacceptance PASS; new GUIproof follows.
+Cumulative5source rounds/3installed/4completed fullvalidations; no reset/maximum.
+
 ### Plan105 integrated round4 — hosted compiler and explicit keyboard input
 
 Preserved exact0d533b2 candidate proof: real five languages/lightdark/760–1420px,

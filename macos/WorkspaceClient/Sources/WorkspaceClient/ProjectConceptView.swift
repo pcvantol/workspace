@@ -131,7 +131,7 @@ struct ProjectConceptView: View {
                     ProposalCompareView(state:comparison,concept:selected,current:{try await baselineCurrent(selected)},discuss:{
                         if let model=comparison.comparison {comparisonContext=ProposalCompareCopy.text("title",language)+" · "+ProposalCompareCopy.text("revision",language)+" "+String(model.before.source_revision)+" → "+String(model.after.source_revision)}
                         proxy.scrollTo("concept-chat-panel",anchor:.top);comparisonFocusRequest+=1
-                    },returnFocusRequest:comparisonReturnFocus)
+                    },returnFocusRequest:comparisonReturnFocus,reveal:{id in guard state.selected==selected else{return};proxy.scrollTo(id,anchor:.top)})
                     if let created = WorksetReleaseWire.date(selected.created_at), let updated = WorksetReleaseWire.date(selected.updated_at) {
                         LabeledContent(text("created"),value:created.formatted(date:.abbreviated,time:.shortened))
                         LabeledContent(text("updated"),value:updated.formatted(date:.abbreviated,time:.shortened))
