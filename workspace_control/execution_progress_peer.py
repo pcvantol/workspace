@@ -50,7 +50,9 @@ class ExecutionProgressPeer(WorklistReadTransport):
         except FileNotFoundError:
             try:_private_json('execution-progress-initialized.json',dir_fd=self.root_fd)
             except FileNotFoundError:return []
+            except (OSError,ValueError,UnicodeError):raise wire.ProgressError('SOURCE_CORRUPT') from None
             raise wire.ProgressError('SOURCE_CORRUPT') from None
+        except (OSError,ValueError,UnicodeError):raise wire.ProgressError('SOURCE_CORRUPT') from None
         wire.require(type(doc) is dict and set(doc)=={'bindings'} and type(doc['bindings']) is list and len(doc['bindings'])<=100,'SOURCE_CORRUPT')
         rows=doc['bindings'];wire.require(all(self._valid_record(b) for b in rows),'SOURCE_CORRUPT')
         for key in (lambda b:b['id'],lambda b:(b['actor_id'],b['context_id'],b['activity_binding_id'],b['workset_id'])):

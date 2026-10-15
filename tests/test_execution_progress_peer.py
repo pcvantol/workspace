@@ -105,4 +105,18 @@ class ExecutionPeerTests(unittest.TestCase):
             self.assertEqual(request('/overview?mission_id=mission','POST')[0],405)
             self.assertEqual(request('/overview?mission_id=mission',extra={'X-Workspace-Draft-Grant':self.foreign})[0],403)
             self.progress_failure='SNAPSHOT_CONFLICT';self.assertEqual(request('/overview?mission_id=mission')[0],409)
+            self.progress_failure=None
+            for code in ['UNAVAILABLE','SOURCE_CORRUPT']:
+                with patch.object(self.peer,'fetch',side_effect=w.ProgressError(code,409)):
+                    self.assertEqual(request('/overview?mission_id=mission')[:2],(409,{'error':'EXECUTION_PROGRESS_'+code}))
+            # Own private storage corruption is never blamed on the request.
+            target=self.root/'execution-progress-bindings.json';original=target.read_bytes()
+            for raw in [b'{"bindings":',b'\xff',b'[]',b'{"bindings":[]}']:
+                target.write_bytes(raw)
+                expected='UNBOUND' if raw==b'{"bindings":[]}' else 'SOURCE_CORRUPT'
+                self.assertEqual(request('/overview?mission_id=mission')[:2],(503,{'error':'EXECUTION_PROGRESS_'+expected}))
+                self.assertEqual(target.read_bytes(),raw)
+            target.write_bytes(original);target.chmod(0o644)
+            self.assertEqual(request('/overview?mission_id=mission')[:2],(503,{'error':'EXECUTION_PROGRESS_SOURCE_CORRUPT'}))
+            target.chmod(0o600);self.assertEqual(request('/overview?mission_id=mission')[0],200)
         finally:server.shutdown();server.server_close();thread.join()
