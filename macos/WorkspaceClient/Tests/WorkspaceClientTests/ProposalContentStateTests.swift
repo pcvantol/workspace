@@ -54,4 +54,20 @@ import Foundation
         try await Task.sleep(for:.seconds(5.3));XCTAssertNil(state.confirmation);XCTAssertEqual(state.result?.decision.state,"CHANGES_REQUESTED")
         peer.failure=ConceptError.denied;try await Task.sleep(for:.seconds(5.3));XCTAssertNil(state.result);XCTAssertEqual(state.phase,"access");state.conceal()
     }
+    func testHealthyOwnMissingStaleLocalOriginalCanBeRetainedClosedWithoutProducerRetry()async throws {
+        let root=temporary();defer{try? FileManager.default.removeItem(at:root)};let peer=try ContentFixture();let state=ProposalContentState(transport:peer,root:root);let c=CompareFixture.connection;let concept=CompareFixture.concept
+        peer.ownMissing=true;peer.loseBeforeCapture=true
+        await state.load(peer.source,concept:concept,current:{c});stage(state);await state.confirm(peer.source,concept:concept,current:{c});let original=try XCTUnwrap(state.pending);XCTAssertEqual(peer.posts.count,0)
+        state.conceal();peer.loseBeforeCapture=false;peer.currentRevision=4
+        let changed=ProjectConcept(id:concept.id,actor_id:concept.actor_id,context_id:concept.context_id,title:"Later own concept",notes:"Later own source, not the saved proposal",revision:4,created_at:concept.created_at,updated_at:concept.updated_at,state:concept.state,lifecycle:concept.lifecycle)
+        await state.load(peer.source,concept:changed,current:{c});XCTAssertEqual(state.pending?.command,original.command)
+        await state.recover(peer.source,concept:changed,current:{c});XCTAssertNil(state.pending);XCTAssertEqual(state.phase,"conflict");XCTAssertEqual(peer.posts.count,0)
+        let stored=try JSONDecoder().decode(ProposalContentState.Journal.self,from:XCTUnwrap(state.records.load(original.key)));XCTAssertTrue(stored.rejected);XCTAssertEqual(stored.command,original.command)
+        await state.load(peer.source,concept:changed,current:{c});XCTAssertNil(state.pending)
+        state.stage(role:"BUSINESS",choice:"APPROVE_CONTENT",reason:"Fresh explicit assessment of the same historical document basis",acknowledged:true,concept:changed);XCTAssertNotEqual(state.confirmation?.operation_id,original.command.operation_id)
+        await state.confirm(peer.source,concept:changed,current:{c});XCTAssertEqual(peer.posts.count,1);XCTAssertEqual(peer.posts[0].expected_concept_revision,4);state.conceal()
+    }
+    func testConcealInvalidatesDeferredFocusGeneration()throws {
+        let peer=try ContentFixture();let state=ProposalContentState(transport:peer,root:temporary());let original=state.focusGeneration;state.conceal();XCTAssertNotEqual(state.focusGeneration,original)
+    }
 }

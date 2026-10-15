@@ -14,6 +14,7 @@ import CryptoKit
     private var monitor:Task<Void,Never>?
     private var expiry:Task<Void,Never>?
     private var generation=0
+    var focusGeneration:Int {generation}
     init(transport:any ProposalContentServing = ProposalContentTransport(),root:URL=FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0].appendingPathComponent("Workspace/ProposalContentIntents")) {
         self.transport=transport;records=PrivateLocalRecordStore(root:root,namespace:"proposal-content")
     }
@@ -135,15 +136,29 @@ import CryptoKit
     private func send(_ journal:Journal,connection:ConceptConnection,source:ConceptBaselineResult,concept:ProjectConcept,current:@escaping @MainActor () async throws -> ConceptConnection,ticket:Int) async throws {
         var value:ProposalContentResult
         do {value=try await transport.original(connection,concept:concept.id,operation:journal.command.operation_id)}
-        catch ConceptError.notFound {
-            try await checked(connection,current:current)
-            guard ticket==generation else{return}
-            value=try await transport.decide(connection,concept:concept.id,command:journal.command)
+        catch ProposalContentError.ownIntentNotFound {
+            // Healthy OWN absence is distinct from an absent producer record.
+            // A stale command cannot acquire a later own source revision; own
+            // Server must freeze durably before any peer POST, including races.
+            if journal.command.expected_concept_revision != concept.revision {
+                try await checked(connection,current:current)
+                guard ticket==generation else{return}
+                var rejected=journal;rejected.rejected=true
+                try records.saveBounded(JSONEncoder().encode(rejected),key:journal.key)
+                pending=nil;throw ConceptError.conflict
+            }
+            value=try await retry(journal,connection:connection,concept:concept,current:current,ticket:ticket)
         }
+        catch ConceptError.notFound {value=try await retry(journal,connection:connection,concept:concept,current:current,ticket:ticket)}
         try await checked(connection,current:current);try value.validate(connection,concept:concept,source:source,original:journal.command)
         guard ticket==generation else{return}
         guard value.binding_id==journal.binding_id,value.producer_source==journal.producer_source,value.decision.subject==journal.subject else {throw ConceptError.denied}
         var completed=journal;completed.completed=true;try records.saveBounded(JSONEncoder().encode(completed),key:journal.key)
         pending=nil;result=value;phase="ready"
+    }
+    private func retry(_ journal:Journal,connection:ConceptConnection,concept:ProjectConcept,current:@escaping @MainActor () async throws -> ConceptConnection,ticket:Int) async throws -> ProposalContentResult {
+        try await checked(connection,current:current)
+        guard ticket==generation else {throw CancellationError()}
+        return try await transport.decide(connection,concept:concept.id,command:journal.command)
     }
 }

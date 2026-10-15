@@ -36,14 +36,25 @@ private final class ContentURLProtocol:URLProtocol,@unchecked Sendable {
             ContentURLProtocol.reply={_ in (status,Data("{\"error\":\"CONTENT_PROFILE_UNSUPPORTED\"}".utf8),"application/json")}
             do {_=try await t.original(c,concept:id,operation:op);XCTFail()}catch ConceptError.denied {}
         }
-        for code in ["CONTENT_NOT_FOUND","CONTENT_OWN_NOT_FOUND"] {
+        for code in ["CONTENT_NOT_FOUND"] {
             ContentURLProtocol.reply={_ in (404,Data(("{\"error\":\""+code+"\"}").utf8),"application/json")}
             do {_=try await t.original(c,concept:id,operation:op);XCTFail()}catch ConceptError.notFound {}
         }
-        for (status,code) in [(503,"CONTENT_NOT_FOUND"),(404,"CONTENT_ROUTE_UNSUPPORTED"),(500,"OTHER")] {
+        ContentURLProtocol.reply={_ in (404,Data("{\"error\":\"CONTENT_OWN_INTENT_NOT_FOUND\"}".utf8),"application/json")}
+        do {_=try await t.original(c,concept:id,operation:op);XCTFail()}catch ProposalContentError.ownIntentNotFound {}
+        for body in [#"{"error":"CONTENT_OWN_INTENT_NOT_FOUND","extra":"ignored"}"#,
+                     #"{"error":404}"#, #"{"error":null}"#,
+                     #"{"error":"CONTENT_OWN_INTENT_NOT_FOUND","error":"CONTENT_OWN_INTENT_NOT_FOUND"}"#,
+                     #"{"error":"CONTENT_OWN_INTENT_NOT_FOUND","extra":{}}"#] {
+            ContentURLProtocol.reply={_ in (404,Data(body.utf8),"application/json")}
+            do {_=try await t.original(c,concept:id,operation:op);XCTFail()}catch ConceptError.invalid {}
+        }
+        for (status,code) in [(503,"CONTENT_NOT_FOUND"),(503,"CONTENT_PROFILE_UNSUPPORTED"),(503,"CONTENT_DECISION_CAPACITY"),(404,"CONTENT_ROUTE_UNSUPPORTED"),(404,"CONTENT_OWN_NOT_FOUND"),(500,"OTHER")] {
             ContentURLProtocol.reply={_ in (status,Data(("{\"error\":\""+code+"\"}").utf8),"application/json")}
             do {_=try await t.original(c,concept:id,operation:op);XCTFail()}catch ConceptError.unavailable {}
         }
+        ContentURLProtocol.reply={_ in (409,Data("{\"error\":\"WRONG_INSTANCE\"}".utf8),"application/json")}
+        do {_=try await t.original(c,concept:id,operation:op);XCTFail()}catch ConceptError.denied {}
         for code in ["CONTENT_DECISION_STALE","CONTENT_SUBJECT_CHANGED"] {
             ContentURLProtocol.reply={_ in (409,Data(("{\"error\":\""+code+"\"}").utf8),"application/json")}
             do {_=try await t.original(c,concept:id,operation:op);XCTFail()}catch ConceptError.conflict {}

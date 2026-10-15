@@ -38,3 +38,11 @@ class ContentWireTests(unittest.TestCase):
         with self.assertRaises(WorklistError):wire.capability(self.cap,self.binding)
         with self.assertRaises(WorklistError):wire.error({'contract_version':wire.CONTRACT,'error':{'code':'CONTENT_DENIED','extra':True}})
         wire.error({'contract_version':wire.CONTRACT,'error':{'code':'CONTENT_DENIED'}})
+
+    def test_original_subject_uses_exact_already_validated_published_R52_bytes(self):
+        import test_concept_baseline_wire as source_fixtures
+        from workspace_control.concept_baseline_wire import result as validate_source
+        fixture=source_fixtures.ConceptBaselineWireTests();fixture.setUp();before=deepcopy(fixture.packet)
+        source=validate_source(fixture.packet,fixture.binding,fixture.request)
+        subject=wire.original_subject(source,fixture.request);wire.validate(subject,'Subject')
+        self.assertEqual(subject['record_digest'],source['record_digest']);self.assertEqual(subject['input_digest'],source['result']['input_digest']);self.assertEqual(subject['result_digest'],source['result']['result_digest']);self.assertEqual(subject['source_references'],fixture.request['input']['source_references']);self.assertIsNone(subject['concept_revision']);self.assertEqual(fixture.packet,before)

@@ -27,7 +27,7 @@ def route(handler,service):
         protected_reply(handler,service,draft,identity,binding,value,peer=peer)
     except (PermissionError,WorklistError) as error:
         code=getattr(error,'state','DENIED')
-        status=403 if code in ('DENIED','UNAUTHORIZED','CONTENT_DENIED') else 404 if code=='CONTENT_NOT_FOUND' and getattr(error,'http_status',None)==404 else 409 if code in ('CONTENT_DECISION_STALE','CONTENT_SUBJECT_CHANGED','CONTENT_OPERATION_CONFLICT','CONTENT_DECISION_CAPACITY','CONTENT_STORAGE_CAPACITY','CONTENT_OPEN_POINTS_UNACKNOWLEDGED') else 503
+        status=403 if code in ('DENIED','UNAUTHORIZED','CONTENT_DENIED') else 404 if code in ('CONTENT_NOT_FOUND','CONTENT_OWN_INTENT_NOT_FOUND') and getattr(error,'http_status',None)==404 else 409 if getattr(error,'http_status',None)==409 and code in ('CONTENT_PROFILE_UNSUPPORTED','CONTENT_DECISION_STALE','CONTENT_SUBJECT_CHANGED','CONTENT_OPERATION_CONFLICT','CONTENT_DECISION_CAPACITY','CONTENT_STORAGE_CAPACITY','CONTENT_OPEN_POINTS_UNACKNOWLEDGED') else 503
         handler._reply(status,{'error':code})
     except FileNotFoundError:handler._reply(404,{'error':'CONTENT_OWN_NOT_FOUND'})
     except ConversationConflict:handler._reply(409,{'error':'CONTENT_CONFLICT'})

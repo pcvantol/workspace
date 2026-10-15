@@ -88,7 +88,12 @@ and bytes; no second effect or hidden new operation. Definitive authenticated R5
 CONTENT_DECISION_STALE409 is recorded as a durable terminal disposition, retaining the
 immutable original, so a fresh human assessment can choose a new operation.
 Own source staleness may close an original ONLY before any durable transport admission.
-Once transport was admitted, a missing read alone cannot disprove an in-flight effect;
+The native layer distinguishes healthy own CONTENT_OWN_INTENT_NOT_FOUND404
+from generic concept/source absence and producer404. A local
+stale command with no own Server allocation can be retained as rejected: mandatory
+own durable capture and own revision CAS forbid a later old transport effect.
+Producer404 alone never permits that disposition. Once producer transport was
+admitted, a missing read alone cannot disprove an in-flight effect;
 uncertainty remains until actual original or definitive producer disposition.
 
 Short fences acquire original-source pairing → human pairing → own authority in
@@ -126,3 +131,20 @@ screenshots, independent pixel/metadata privacy, immutable readback and own clea
 Cumulative source/installed/fullrun counters have no administrative maximum. Finite
 financial, grant, fixed-deadline, storage and privacy boundaries remain unchanged.
 No automatic next feature.
+
+## Preserved candidate checkpoint — integrated round4
+
+Original68b90b1 installed candidate proved one real ordinary R52 PREPARE (37 artifacts),
+explicit native Business partial then Architecture complete with actual R54 readback,
+exact unchanged original proposal bytes, and zero model/execution effects. Trial1
+cleanup completed before its fixed deadline. These are original candidate proofs,
+not round4 or final-main acceptance. Fresh source has29 compact Python and13 native
+tests passing. Independent targeted Q/S/UX source reviews accepted the source delta;
+complete installed matrix, privacy metadata review, qualified handoff, coverage/CI,
+protected delivery and new final-main proof remain open.
+
+Round4 binds post-dismiss focus to current selection/generation and preserves uncertain
+operations across malformed responses. Only a closed single plain error field, exact
+HTTP status and own operation route may authorize own missing-intent disposition;
+extra, mistyped or duplicate fields remain invalid. Cumulative counters4 source rounds,
+1 installed attempt,0 full validations; no reset or administrative maximum.

@@ -3,6 +3,9 @@ from copy import deepcopy
 from datetime import datetime,timezone,timedelta
 import json
 import threading
+import http.client
+import io
+from contextlib import redirect_stdout
 from unittest.mock import patch
 import unittest
 import test_project_concepts as own
@@ -98,7 +101,7 @@ class ContentPeerTests(unittest.TestCase):
         self.assertEqual(self.request(self.prefix+'/decisions')[0],405)
         self.assertEqual(self.request(self.prefix+'/proposals/'+'c'*32,'POST',{})[0],405)
         self.assertEqual(self.request(self.prefix+'/decisions','PATCH',{})[0],405)
-        self.assertEqual(self.request(self.prefix+'/operations/'+'f'*32),(404,{'error':'CONTENT_OWN_NOT_FOUND'}))
+        self.assertEqual(self.request(self.prefix+'/operations/'+'f'*32),(404,{'error':'CONTENT_OWN_INTENT_NOT_FOUND'}))
 
     def test_notfound503_never_authorizes_post_or_terminal_disposition(self):
         command=self.command();self.missing_status=503
@@ -151,3 +154,37 @@ class ContentPeerTests(unittest.TestCase):
         self.assertEqual(self.selection()['rejected_operations'],['b'*32]);self.assertEqual(self.selection()['pending_operations'],[])
         fresh=self.command(operation='f'*32);fresh['expected_concept_revision']=2
         self.assertEqual(self.request(self.prefix+'/decisions','POST',fresh)[0],200);self.assertEqual(len(self.posts),1)
+
+    def test_actual_peer_connect_then_own_revoke_returns_denied_before_send(self):
+        from workspace_control.advisory_http import request as actual_request
+        self.binding['endpoint']='http://127.0.0.1:'+str(self.server.server_port);self.source['endpoint']=self.binding['endpoint'];self.peer._write_bindings([self.binding]);self.service.concept_baselines._write_bindings([self.source])
+        original_connect=http.client.HTTPConnection.connect
+        def connected_then_revoke(connection):
+            original_connect(connection);self.service.conversations.revoke_grants('alice','own-context')
+        with patch('http.client.HTTPConnection.connect',connected_then_revoke):
+            with self.assertRaises(WorklistError) as raised:actual_request(self.binding,'GET','/v1/project-proposal-decisions/capability',content_audience='workspace',send_guard=lambda:self.peer.dispatch_guard(self.grant,self.identity,self.binding))
+        self.assertEqual(raised.exception.state,'DENIED');self.assertEqual(self.posts,[])
+
+    def test_real_owner_CLI_parser_issue_and_revoke_keep_human_mapping_explicit(self):
+        from workspace_control.cli import main
+        self.peer.revoke('decision-pair')
+        receipt={k:self.binding[k] for k in ('grant_id','principal_id','instance_id','audience','permissions','roles','human_binding','expires_at')};receipt.update(proposal_principal_id='source-owner',dossier_ids=['dossier'],profile_id='CONTENT_BASELINE_ONLY/1.0',state='ACTIVE')
+        path=self.root/'cli-receipt';path.write_text(json.dumps(receipt));path.chmod(0o600);token=self.root/'cli-token';token.write_text('T'*64);token.chmod(0o600)
+        output=io.StringIO()
+        with redirect_stdout(output):
+            status=main(['--root',str(self.root),'proposal-content-bind-issue','--actor','alice','--context','own-context','--concept-id',self.identity,'--human-principal-id','human-alice','--forge-grant-receipt-file',str(path),'--forge-token-file',str(token)])
+        self.assertEqual(status,0);binding=json.loads(output.getvalue());self.assertEqual(binding['concept_id'],self.identity)
+        with redirect_stdout(io.StringIO()):self.assertEqual(main(['--root',str(self.root),'proposal-content-bind-revoke','--binding-id',binding['binding_id']]),0)
+        self.assertEqual(self.request(self.prefix+'/proposals/'+'c'*32)[0],403)
+
+    def test_missing_original_source_is_not_an_absent_own_decision_intent(self):
+        command=self.command();self.assertEqual(self.request(self.prefix+'/decisions','POST',command)[0],200)
+        with patch.object(self.peer,'_source',side_effect=FileNotFoundError('original source unavailable')):
+            self.assertEqual(self.request(self.prefix+'/operations/'+command['operation_id']),(404,{'error':'CONTENT_OWN_NOT_FOUND'}))
+        self.assertEqual(self.peer.intents.get(('alice','own-context'),self.identity,command['operation_id'])['command'],command)
+        self.assertEqual(len(self.posts),1)
+
+    def test_profile_conflict_status_is_genuine_not_inferred_from_unavailable_code(self):
+        for upstream,expected in [(409,409),(503,503)]:
+            with patch.object(self.peer,'read_proposal',side_effect=WorklistError('CONTENT_PROFILE_UNSUPPORTED',http_status=upstream)):
+                self.assertEqual(self.request(self.prefix+'/proposals/'+'c'*32),(expected,{'error':'CONTENT_PROFILE_UNSUPPORTED'}))

@@ -18,6 +18,7 @@ struct ProposalContentView:View {
     @FocusState private var focused:Target?
     @State private var confirmationIdentity:String?
     @State private var dismissedSubject:String?
+    @State private var dismissedGeneration:Int?
     private var language:String {locale.language.languageCode?.identifier ?? "en"}
     private func text(_ key:String)->String {ProposalContentCopy.text(key,language)}
     private var selectedIdentity:String {source.operation_id+"/"+source.proposal.record_digest+"/"+String(concept.revision)}
@@ -25,9 +26,10 @@ struct ProposalContentView:View {
     private func resetForm() {role="";choice="";reason="";acknowledged=false;state.cancelConfirmation()}
     private var sourceSummary:some View {ProposalContentSourceView(source:source,currentRevision:concept.revision,language:language)}
     private func restoreFocus() {
-        guard let subject=dismissedSubject,subject==selectedIdentity,!state.busy else{return}
-        dismissedSubject=nil;reveal();focused=state.pending != nil ? .recover:state.result != nil ? .review:.inspect
+        guard let subject=dismissedSubject,subject==selectedIdentity,dismissedGeneration==state.focusGeneration,!state.busy else{return}
+        dismissedSubject=nil;dismissedGeneration=nil;reveal();focused=state.pending != nil ? .recover:state.result != nil ? .review:.inspect
     }
+    private func invalidateFocus() {confirmationIdentity=nil;dismissedSubject=nil;dismissedGeneration=nil;focused=nil;state.conceal()}
     private var questions:some View {
         VStack(alignment:.leading,spacing:8) {
             Text(text("questions")).font(.subheadline.bold())
@@ -87,16 +89,16 @@ struct ProposalContentView:View {
             }
         }
         .frame(minWidth:0,maxWidth:.infinity,alignment:.leading)
-        .sheet(isPresented:Binding(get:{state.confirmation != nil},set:{if !$0 {state.cancelConfirmation()}}),onDismiss:{dismissedSubject=confirmationIdentity;Task {await Task.yield();restoreFocus()}}) {
+        .sheet(isPresented:Binding(get:{state.confirmation != nil},set:{if !$0 {state.cancelConfirmation()}}),onDismiss:{let ticket=state.focusGeneration;dismissedSubject=confirmationIdentity;dismissedGeneration=ticket;Task {await Task.yield();guard state.focusGeneration==ticket else{return};restoreFocus()}}) {
             if let command=state.confirmation {
                 ProposalContentConfirmation(source:source,currentRevision:concept.revision,command:command,language:language,confirm:{Task {await state.confirm(source,concept:concept,current:current)}},cancel:{state.cancelConfirmation()})
             }
         }
-        .onChange(of:selectedIdentity) {_,_ in state.conceal();resetForm()}
-        .onChange(of:dirty) {_,changed in if changed {state.conceal();resetForm()}}
+        .onChange(of:selectedIdentity) {_,_ in invalidateFocus();resetForm()}
+        .onChange(of:dirty) {_,changed in if changed {invalidateFocus();resetForm()}}
         .onChange(of:state.busy) {_,busy in if !busy {restoreFocus()}}
         .onChange(of:returnFocusRequest) {_,_ in focused = .discuss}
-        .onDisappear {state.conceal()}
+        .onDisappear {invalidateFocus()}
     }
 }
 
@@ -145,7 +147,7 @@ struct ProposalContentConfirmation:View {
                 ForEach(Array(command.acknowledged_open_points.enumerated()),id:\.offset) {_,point in Text(verbatim:point).textSelection(.enabled)}
                 Text(text("acknowledge")).foregroundStyle(.secondary);Text(text("scope")).foregroundStyle(.secondary)
             }.frame(maxWidth:.infinity,alignment:.leading)}
-            Button(text("confirm"),action:confirm).buttonStyle(.borderedProminent).accessibilityIdentifier("proposal-content-confirm")
+            Button(text("confirm"),action:confirm).buttonStyle(.borderedProminent).keyboardShortcut(.defaultAction).accessibilityIdentifier("proposal-content-confirm")
             Button(text("cancel"),action:cancel).keyboardShortcut(.cancelAction).accessibilityIdentifier("proposal-content-cancel")
         }.padding(24).frame(minWidth:360,idealWidth:580,maxWidth:760,minHeight:320,idealHeight:600,maxHeight:800)
     }

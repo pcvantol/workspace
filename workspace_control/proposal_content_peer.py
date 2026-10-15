@@ -143,7 +143,9 @@ class ProposalContentPeer(ConceptBaselinePeer):
 
     def read(self,draft,identity,operation,*,expected=None):
         scope,_,binding=self.snapshot(draft,identity,expected);self.cap(binding,send_guard=lambda:self.dispatch_guard(draft,identity,binding))
-        with self.dispatch_guard(draft,identity,binding):intent=self.intents.get(scope,identity,operation)
+        with self.dispatch_guard(draft,identity,binding):
+            try:intent=self.intents.get(scope,identity,operation)
+            except FileNotFoundError:raise WorklistError('CONTENT_OWN_INTENT_NOT_FOUND',http_status=404) from None
         if intent['binding']!=self.descriptor(binding):raise WorklistError('DENIED')
         _,source,subject,points=self._source(draft,identity,binding,intent['command']['source_operation_id'])
         if subject!=intent['request']['subject'] or points!=intent['open_points']:raise WorklistError('INVALID_RESPONSE')

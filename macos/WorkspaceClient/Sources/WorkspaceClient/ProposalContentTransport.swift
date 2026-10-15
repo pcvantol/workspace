@@ -74,7 +74,7 @@ struct ProposalContentResult:Decodable,Sendable {
         } else if value.original_decision != nil {throw ConceptError.invalid}
     }
 }
-enum ProposalContentError:Error {case unsupportedProfile;case capacity}
+enum ProposalContentError:Error {case unsupportedProfile;case capacity;case ownIntentNotFound}
 protocol ProposalContentServing:Sendable {
     func proposal(_ connection:ConceptConnection,concept:String,source:String) async throws -> ProposalContentResult
     func decide(_ connection:ConceptConnection,concept:String,command:ProposalContentCommand) async throws -> ProposalContentResult
@@ -98,10 +98,17 @@ struct ProposalContentTransport:ProposalContentServing {
         if http.statusCode==401 || http.statusCode==403 {throw ConceptError.denied}
         guard data.count<=1150000,http.value(forHTTPHeaderField:"Content-Type")?.hasPrefix("application/json")==true else {throw ConceptError.invalid}
         if http.statusCode != 200 {
-            let code=(try? JSONSerialization.jsonObject(with:data) as? [String:String])?["error"]
-            if http.statusCode==404 && (code=="CONTENT_NOT_FOUND" || code=="CONTENT_OWN_NOT_FOUND") {throw ConceptError.notFound}
-            if code=="CONTENT_PROFILE_UNSUPPORTED" {throw ProposalContentError.unsupportedProfile}
-            if code=="CONTENT_DECISION_CAPACITY" || code=="CONTENT_STORAGE_CAPACITY" {throw ProposalContentError.capacity}
+            // Only one plain error field may authorize a terminal local disposition.
+            guard let text=String(data:data,encoding:.utf8),
+                  text.range(of:#"\A\s*\{\s*"error"\s*:\s*"[A-Z_]{1,80}"\s*\}\s*\z"#,options:.regularExpression) != nil,
+                  let object=try? JSONSerialization.jsonObject(with:data) as? [String:String],
+                  Set(object.keys)==["error"] else {throw ConceptError.invalid}
+            let code=object["error"]
+            if http.statusCode==404 && action=="operations" && code=="CONTENT_OWN_INTENT_NOT_FOUND" {throw ProposalContentError.ownIntentNotFound}
+            if http.statusCode==404 && code=="CONTENT_NOT_FOUND" {throw ConceptError.notFound}
+            if http.statusCode==409 && code=="WRONG_INSTANCE" {throw ConceptError.denied}
+            if http.statusCode==409 && code=="CONTENT_PROFILE_UNSUPPORTED" {throw ProposalContentError.unsupportedProfile}
+            if http.statusCode==409 && (code=="CONTENT_DECISION_CAPACITY" || code=="CONTENT_STORAGE_CAPACITY") {throw ProposalContentError.capacity}
             if http.statusCode==409 {throw ConceptError.conflict}
             throw ConceptError.unavailable
         }
