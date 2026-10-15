@@ -1,0 +1,417 @@
+{
+  "evidence_type": "SOURCE_ONLY_LOCAL_HTTP_SYNTHETIC_PRODUCER_DOUBLE_NOT_INSTALLED_FORGE",
+  "concept": {
+    "actor_id": "alice",
+    "context_id": "own-context",
+    "created_at": "2026-10-14T10:05:11.789570+00:00",
+    "id": "fdc24c14455f58277d9395fbb0e01f2b",
+    "notes": "Vrij beschrijven\n日本語 Deutsch français español",
+    "revision": 1,
+    "state": "CONCEPT_NOT_CONFIGURED",
+    "title": "Een nieuw idee 🌱",
+    "updated_at": "2026-10-14T10:05:11.789570+00:00"
+  },
+  "access": {
+    "actor_id": "alice",
+    "binding_id": "binding-one",
+    "can_advise": true,
+    "concept_id": "fdc24c14455f58277d9395fbb0e01f2b",
+    "context_id": "own-context",
+    "contract_version": "workspace-concept-chat/1",
+    "expires_at": "2099-01-01T00:00:00+00:00",
+    "maximum_seconds": 960,
+    "maximum_tokens": 384000,
+    "maximum_turns": 8,
+    "producer_source": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "provider": {
+      "context_token_bound": 48000,
+      "data_transfer": [
+        "explicit_briefing",
+        "user_message",
+        "accepted_prior_turns"
+      ],
+      "input_token_bound": 40000,
+      "model": "SESSION_CONFIGURED_NOT_REPORTED",
+      "output_token_bound": 8000,
+      "policy_digest": "sha256:65ac8b06210a61efc032678bb536473ad9a3d6fb3b1925b4d0852e6489fe4b9e",
+      "profile": null,
+      "provider_id": "concept-fixture",
+      "receiver": "INSTANCE_CONFIGURED_EXTERNAL_SESSION",
+      "timeout_seconds": 2,
+      "tools": false,
+      "transfer_policy_digest": "sha256:58b67518256347ddffc6b54eb823f7c8fa790db81d53754f61e9b5463f493028"
+    },
+    "source_revision": 1,
+    "transfer_authorized": true
+  },
+  "briefing": {
+    "accepted_from": null,
+    "briefing_version": "workspace-concept-briefing/1",
+    "concept": {
+      "actor_id": "alice",
+      "context_id": "own-context",
+      "id": "fdc24c14455f58277d9395fbb0e01f2b",
+      "notes": "Vrij beschrijven\n日本語 Deutsch français español",
+      "revision": 1,
+      "state": "CONCEPT_NOT_CONFIGURED",
+      "title": "Een nieuw idee 🌱"
+    },
+    "fields": {
+      "constraints": "",
+      "name": "Een nieuw idee 🌱",
+      "non_goals": "",
+      "open_questions": [],
+      "purpose": "Vrij beschrijven\n日本語 Deutsch français español",
+      "users": ""
+    },
+    "lifecycle": "ACTIVE",
+    "source_digest": "d0117740389f35714e718227b559fea4cc9f9bc6af82c2b37eed841a70403419"
+  },
+  "result": {
+    "actor_id": "alice",
+    "binding_id": "binding-one",
+    "concept_id": "fdc24c14455f58277d9395fbb0e01f2b",
+    "context_id": "own-context",
+    "contract_version": "workspace-concept-chat/1",
+    "operation_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "producer_source": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "proposal": {
+      "adoptable": true,
+      "changes": [
+        {
+          "after": "Lokale vrijwilligers",
+          "before": "",
+          "field": "users",
+          "reason": "Een beperkte proef verkleint onbewezen aannames."
+        }
+      ],
+      "displayed_change_digest": "d391c24b6647b4406c04b1c1c16fc78a0a3e9d348d9ec27b2beef0fd862c4c18",
+      "result_reference": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "source_digest": "d0117740389f35714e718227b559fea4cc9f9bc6af82c2b37eed841a70403419"
+    },
+    "source_revision": 1,
+    "turn": {
+      "audience": "synthetic-workspace",
+      "context": {
+        "evidence_references": [
+          "briefing:sha256:55d06553674de970b01f3a88598efed6f81dc7704423338149ace2b7fe329275",
+          "turn:cccccccccccccccccccccccccccccccc"
+        ],
+        "governance": "NO_APPROVAL",
+        "missing_information": "UNKNOWN",
+        "source_qualification": "SUPPLIED_UNVERIFIED"
+      },
+      "integrity": "0000000000000000000000000000000000000000000000000000000000000000",
+      "invocation_id": "synthetic-invocation-turn-one",
+      "outcome": {
+        "diagnostic": {
+          "classification": "COMPLETED_VALID",
+          "elapsed_milliseconds": 20,
+          "errno": null,
+          "error_category": null,
+          "exception_type": null,
+          "process_started": true,
+          "returncode": 0,
+          "terminal_events": [
+            "turn.completed"
+          ],
+          "timed_out": false
+        },
+        "error_code": null,
+        "execution": "CONFIRMED",
+        "observed_effort": "NOT_REPORTED",
+        "observed_model": "NOT_REPORTED",
+        "output": {
+          "advisor_kind": "BUSINESS",
+          "answer": "Synthetische modelproef: begin met een beperkte doelgroep en toets de aannames.",
+          "applied": false,
+          "assumptions": [
+            "De briefing bewijst nog geen operationele gereedheid."
+          ],
+          "briefing_digest": "sha256:55d06553674de970b01f3a88598efed6f81dc7704423338149ace2b7fe329275",
+          "changes": [
+            {
+              "before": null,
+              "field": "users",
+              "proposed": "Lokale vrijwilligers",
+              "reason": "Een beperkte proef verkleint onbewezen aannames.",
+              "references": [
+                "briefing:sha256:55d06553674de970b01f3a88598efed6f81dc7704423338149ace2b7fe329275"
+              ]
+            }
+          ],
+          "contract_version": "forge-preproject-concept-advisory/v1",
+          "language": "nl",
+          "questions": [
+            "Wie bevestigt de beoogde doelgroep?"
+          ],
+          "request_digest": "sha256:037681b084f18b73be897e14d58d9a5a7d44e9bed67d7948d89068697c93b6b3"
+        },
+        "result_digest": "sha256:e649c972a2c757146aa48294ad9774d0f7ebea2b165d06c49311ea071bf58233",
+        "usage": {
+          "input_tokens": 100,
+          "output_tokens": 60
+        },
+        "usage_status": "OBSERVED"
+      },
+      "principal_id": "alice",
+      "provider": {
+        "context_token_bound": 48000,
+        "generation_digest": "sha256:1b21a7bc170b1887799367341dd7006998e016b742a59ecc886980dd40719657",
+        "input_token_bound": 40000,
+        "output_token_bound": 8000,
+        "policy_digest": "sha256:65ac8b06210a61efc032678bb536473ad9a3d6fb3b1925b4d0852e6489fe4b9e",
+        "provider_id": "concept-fixture",
+        "requested_model": null,
+        "requested_profile": "explicit-synthetic-profile"
+      },
+      "request": {
+        "advisor_kind": "BUSINESS",
+        "briefing": {
+          "concept_id": "fdc24c14455f58277d9395fbb0e01f2b",
+          "fields": {
+            "constraints": null,
+            "name": "Een nieuw idee 🌱",
+            "non_goals": null,
+            "open_questions": null,
+            "purpose": "Vrij beschrijven\n日本語 Deutsch français español",
+            "users": null
+          },
+          "revision": 1
+        },
+        "briefing_digest": "sha256:55d06553674de970b01f3a88598efed6f81dc7704423338149ace2b7fe329275",
+        "contract_version": "forge-preproject-concept-advisory/v1",
+        "conversation_id": "conversation-alice",
+        "dossier_id": "dossier-alice",
+        "expected_revision": 0,
+        "instance_id": "synthetic-instance",
+        "language": "nl",
+        "message": "Voor wie is dit?",
+        "operation_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "transfer_policy_digest": "sha256:58b67518256347ddffc6b54eb823f7c8fa790db81d53754f61e9b5463f493028",
+        "turn_id": "cccccccccccccccccccccccccccccccc"
+      },
+      "request_digest": "sha256:037681b084f18b73be897e14d58d9a5a7d44e9bed67d7948d89068697c93b6b3",
+      "reserved_seconds": 2,
+      "reserved_tokens": 48000,
+      "revision": 1,
+      "session_id": "synthetic-session-turn-one",
+      "status": "COMPLETE"
+    }
+  },
+  "history": {
+    "actor_id": "alice",
+    "binding_id": "binding-one",
+    "concept_id": "fdc24c14455f58277d9395fbb0e01f2b",
+    "context_id": "own-context",
+    "contract_version": "workspace-concept-chat/1",
+    "history": {
+      "audience": "synthetic-workspace",
+      "contract_version": "forge-preproject-concept-advisory/v1",
+      "conversation_id": "conversation-alice",
+      "dossier_id": "dossier-alice",
+      "instance_id": "synthetic-instance",
+      "principal_id": "alice",
+      "read_only": true,
+      "revision": 1,
+      "turns": [
+        {
+          "audience": "synthetic-workspace",
+          "context": {
+            "evidence_references": [
+              "briefing:sha256:55d06553674de970b01f3a88598efed6f81dc7704423338149ace2b7fe329275",
+              "turn:cccccccccccccccccccccccccccccccc"
+            ],
+            "governance": "NO_APPROVAL",
+            "missing_information": "UNKNOWN",
+            "source_qualification": "SUPPLIED_UNVERIFIED"
+          },
+          "integrity": "0000000000000000000000000000000000000000000000000000000000000000",
+          "invocation_id": "synthetic-invocation-turn-one",
+          "outcome": {
+            "diagnostic": {
+              "classification": "COMPLETED_VALID",
+              "elapsed_milliseconds": 20,
+              "errno": null,
+              "error_category": null,
+              "exception_type": null,
+              "process_started": true,
+              "returncode": 0,
+              "terminal_events": [
+                "turn.completed"
+              ],
+              "timed_out": false
+            },
+            "error_code": null,
+            "execution": "CONFIRMED",
+            "observed_effort": "NOT_REPORTED",
+            "observed_model": "NOT_REPORTED",
+            "output": {
+              "advisor_kind": "BUSINESS",
+              "answer": "Synthetische modelproef: begin met een beperkte doelgroep en toets de aannames.",
+              "applied": false,
+              "assumptions": [
+                "De briefing bewijst nog geen operationele gereedheid."
+              ],
+              "briefing_digest": "sha256:55d06553674de970b01f3a88598efed6f81dc7704423338149ace2b7fe329275",
+              "changes": [
+                {
+                  "before": null,
+                  "field": "users",
+                  "proposed": "Lokale vrijwilligers",
+                  "reason": "Een beperkte proef verkleint onbewezen aannames.",
+                  "references": [
+                    "briefing:sha256:55d06553674de970b01f3a88598efed6f81dc7704423338149ace2b7fe329275"
+                  ]
+                }
+              ],
+              "contract_version": "forge-preproject-concept-advisory/v1",
+              "language": "nl",
+              "questions": [
+                "Wie bevestigt de beoogde doelgroep?"
+              ],
+              "request_digest": "sha256:037681b084f18b73be897e14d58d9a5a7d44e9bed67d7948d89068697c93b6b3"
+            },
+            "result_digest": "sha256:e649c972a2c757146aa48294ad9774d0f7ebea2b165d06c49311ea071bf58233",
+            "usage": {
+              "input_tokens": 100,
+              "output_tokens": 60
+            },
+            "usage_status": "OBSERVED"
+          },
+          "principal_id": "alice",
+          "provider": {
+            "context_token_bound": 48000,
+            "generation_digest": "sha256:1b21a7bc170b1887799367341dd7006998e016b742a59ecc886980dd40719657",
+            "input_token_bound": 40000,
+            "output_token_bound": 8000,
+            "policy_digest": "sha256:65ac8b06210a61efc032678bb536473ad9a3d6fb3b1925b4d0852e6489fe4b9e",
+            "provider_id": "concept-fixture",
+            "requested_model": null,
+            "requested_profile": "explicit-synthetic-profile"
+          },
+          "request": {
+            "advisor_kind": "BUSINESS",
+            "briefing": {
+              "concept_id": "fdc24c14455f58277d9395fbb0e01f2b",
+              "fields": {
+                "constraints": null,
+                "name": "Een nieuw idee 🌱",
+                "non_goals": null,
+                "open_questions": null,
+                "purpose": "Vrij beschrijven\n日本語 Deutsch français español",
+                "users": null
+              },
+              "revision": 1
+            },
+            "briefing_digest": "sha256:55d06553674de970b01f3a88598efed6f81dc7704423338149ace2b7fe329275",
+            "contract_version": "forge-preproject-concept-advisory/v1",
+            "conversation_id": "conversation-alice",
+            "dossier_id": "dossier-alice",
+            "expected_revision": 0,
+            "instance_id": "synthetic-instance",
+            "language": "nl",
+            "message": "Voor wie is dit?",
+            "operation_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "transfer_policy_digest": "sha256:58b67518256347ddffc6b54eb823f7c8fa790db81d53754f61e9b5463f493028",
+            "turn_id": "cccccccccccccccccccccccccccccccc"
+          },
+          "request_digest": "sha256:037681b084f18b73be897e14d58d9a5a7d44e9bed67d7948d89068697c93b6b3",
+          "reserved_seconds": 2,
+          "reserved_tokens": 48000,
+          "revision": 1,
+          "session_id": "synthetic-session-turn-one",
+          "status": "COMPLETE"
+        }
+      ]
+    },
+    "local_operations": [
+      {
+        "command": {
+          "expected_concept_revision": 1,
+          "language": "nl",
+          "message": "Voor wie is dit?",
+          "operation_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "role": "BUSINESS",
+          "turn_id": "cccccccccccccccccccccccccccccccc"
+        },
+        "operation_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "state": "COMPLETE"
+      }
+    ],
+    "producer_source": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "adopt_command": {
+    "operation_id": "dddddddddddddddddddddddddddddddd",
+    "expected_revision": 1,
+    "result_reference": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "displayed_change_digest": "d391c24b6647b4406c04b1c1c16fc78a0a3e9d348d9ec27b2beef0fd862c4c18"
+  },
+  "adopted": {
+    "accepted_from": {
+      "own_binding": {
+        "actor_id": "alice",
+        "adopted_revision": 2,
+        "concept_id": "fdc24c14455f58277d9395fbb0e01f2b",
+        "context_id": "own-context",
+        "operation_id": "dddddddddddddddddddddddddddddddd"
+      },
+      "producer_reference": {
+        "conversation_id": "conversation-alice",
+        "dossier_id": "dossier-alice",
+        "instance_id": "synthetic-instance",
+        "operation_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "producer_source": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "qualification": "MODEL_SUGGESTION_USER_ACCEPTED_NOT_APPROVAL",
+        "request_digest": "sha256:037681b084f18b73be897e14d58d9a5a7d44e9bed67d7948d89068697c93b6b3",
+        "result_digest": "sha256:e649c972a2c757146aa48294ad9774d0f7ebea2b165d06c49311ea071bf58233",
+        "turn_id": "cccccccccccccccccccccccccccccccc"
+      }
+    },
+    "adoption": {
+      "kind": "USER_ACCEPTED_PROPOSAL_NOT_APPROVAL",
+      "operation_id": "dddddddddddddddddddddddddddddddd",
+      "producer_reference": {
+        "own_binding": {
+          "actor_id": "alice",
+          "adopted_revision": 2,
+          "concept_id": "fdc24c14455f58277d9395fbb0e01f2b",
+          "context_id": "own-context",
+          "operation_id": "dddddddddddddddddddddddddddddddd"
+        },
+        "producer_reference": {
+          "conversation_id": "conversation-alice",
+          "dossier_id": "dossier-alice",
+          "instance_id": "synthetic-instance",
+          "operation_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "producer_source": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "qualification": "MODEL_SUGGESTION_USER_ACCEPTED_NOT_APPROVAL",
+          "request_digest": "sha256:037681b084f18b73be897e14d58d9a5a7d44e9bed67d7948d89068697c93b6b3",
+          "result_digest": "sha256:e649c972a2c757146aa48294ad9774d0f7ebea2b165d06c49311ea071bf58233",
+          "turn_id": "cccccccccccccccccccccccccccccccc"
+        }
+      }
+    },
+    "briefing_version": "workspace-concept-briefing/1",
+    "concept": {
+      "actor_id": "alice",
+      "context_id": "own-context",
+      "id": "fdc24c14455f58277d9395fbb0e01f2b",
+      "notes": "Vrij beschrijven\n日本語 Deutsch français español",
+      "revision": 2,
+      "state": "CONCEPT_NOT_CONFIGURED",
+      "title": "Een nieuw idee 🌱"
+    },
+    "fields": {
+      "constraints": "",
+      "name": "Een nieuw idee 🌱",
+      "non_goals": "",
+      "open_questions": [],
+      "purpose": "Vrij beschrijven\n日本語 Deutsch français español",
+      "users": "Lokale vrijwilligers"
+    },
+    "lifecycle": "ACTIVE",
+    "receipt_digest": "a6373a2887912237596c1045c0a454047c7540e9c21bb7754238c0cb9f87241d",
+    "source_digest": "7d710b4aa85bb2876f26308da212bbf985607ed098f40c6a10ea8cf1d159c4d1"
+  }
+}

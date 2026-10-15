@@ -6,6 +6,7 @@ struct WorkspaceDestination: Identifiable, Equatable {
     let symbol: String
     static func items(language: String) -> [Self] {
         [Self(id:5,title:ProjectConceptCopy.text("nav",language:language),symbol:"lightbulb"),
+         Self(id:8,title:ProjectLinkCopy.text("title",language:language),symbol:"folder"),
          Self(id:4,title:MissionWorkspaceCopy.text("missions",language:language),symbol:"bubble.left.and.text.bubble.right"),
          Self(id:0,title:ConversationCopy.text("nav",language:language),symbol:"bubble.left.and.bubble.right"),
          Self(id:1,title:MissionReviewCopy.text("nav",language:language),symbol:"checkmark.seal"),

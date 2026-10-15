@@ -179,10 +179,20 @@ function validProjectCatalogue(catalogue) {
     typeof catalogue.observed_at === 'string' && catalogue.observed_at.length > 0;
 }
 const ownOperations = {
+  'concept-chats.access': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-chats/{concept_id}/access'},
+  'concept-chats.briefing': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-chats/{concept_id}/briefing'},
+  'concept-chats.history': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-chats/{concept_id}/history'},
+  'concept-chats.send': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'POST',path:'/v1/concept-chats/{concept_id}/turns'},
+  'concept-chats.original': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-chats/{concept_id}/operations/{operation_id}'},
+  'concept-chats.adopt': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'POST',path:'/v1/concept-chats/{concept_id}/adopt'},
+  'concept-chats.bind.issue': {exposure:'LOCAL_ONLY_ADMIN',auth:'PRIVATE_ROOT_OWNER',local_cli:'concept-chat-bind-issue'},
+  'concept-chats.bind.revoke': {exposure:'LOCAL_ONLY_ADMIN',auth:'PRIVATE_ROOT_OWNER',local_cli:'concept-chat-bind-revoke'},
   'concept-baselines.access': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-baselines/{concept_id}/access'},
   'concept-baselines.history': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-baselines/{concept_id}/operations'},
   'concept-baselines.prepare': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'POST',path:'/v1/concept-baselines/{concept_id}/prepare'},
   'concept-baselines.original': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-baselines/{concept_id}/operations/{operation_id}'},
+  'project_link.bind.issue': {exposure:'LOCAL_ONLY_ADMIN',auth:'PRIVATE_ROOT_OWNER',local_cli:'project-link-bind-issue'},
+  'project_link.bind.revoke': {exposure:'LOCAL_ONLY_ADMIN',auth:'PRIVATE_ROOT_OWNER',local_cli:'project-link-bind-revoke'},
   'concept-baselines.bind.issue': {exposure:'LOCAL_ONLY_ADMIN',auth:'PRIVATE_ROOT_OWNER',local_cli:'concept-baseline-bind-issue'},
   'concept-baselines.bind.revoke': {exposure:'LOCAL_ONLY_ADMIN',auth:'PRIVATE_ROOT_OWNER',local_cli:'concept-baseline-bind-revoke'},
 
@@ -208,6 +218,11 @@ const ownOperations = {
   'project_concepts.create': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'POST', path: '/v1/project-concepts'},
   'project_concepts.get': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'GET', path: '/v1/project-concepts/{id}'},
   'project_concepts.update': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_GRANT', method: 'PATCH', path: '/v1/project-concepts/{id}'},
+  "project_link.access": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/project-links/access", "auth": "BEARER_PINNED_AND_EXISTING_ACTOR_PAIRING"},
+  "project_link.projects": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/project-links/projects", "auth": "BEARER_PINNED_AND_EXISTING_ACTOR_PAIRING"},
+  "project_link.inspect": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/project-links/{project_id}/inspect", "auth": "BEARER_PINNED_AND_EXISTING_ACTOR_PAIRING"},
+  "project_link.link": {"exposure": "HTTP_EXPOSED", "method": "POST", "path": "/v1/project-links/{project_id}/link", "auth": "BEARER_PINNED_AND_EXISTING_ACTOR_PAIRING"},
+  "project_link.open": {"exposure": "HTTP_EXPOSED", "method": "GET", "path": "/v1/project-links/{project_id}/open", "auth": "BEARER_PINNED_AND_EXISTING_ACTOR_PAIRING"},
   "workset-releases.access": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_WORKSET_RELEASE_GRANT", "method": "GET", "path": "/v1/workset-releases/access", "local_cli": "workset-release-access"},
   "workset-releases.capability": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_WORKSET_RELEASE_GRANT", "method": "GET", "path": "/v1/workset-releases/capability", "local_cli": "workset-release-capability"},
   "workset-releases.prepare": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_AND_WORKSET_RELEASE_GRANT", "method": "POST", "path": "/v1/workset-releases/prepare", "local_cli": "workset-release-prepare"},

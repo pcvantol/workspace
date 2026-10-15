@@ -74,6 +74,17 @@ def main(argv=None):
         order_issue.add_argument("--" + flag, required=True)
     order_revoke = commands.add_parser("workset-order-bind-revoke")
     order_revoke.add_argument("--binding-id", required=True)
+    chat_issue=commands.add_parser("concept-chat-bind-issue")
+    for flag in ["actor","context","concept-id","forge-endpoint","dossier-id","conversation-id","producer-source","forge-grant-receipt-file","forge-token-file"]:
+        chat_issue.add_argument("--"+flag,required=True)
+    chat_revoke=commands.add_parser("concept-chat-bind-revoke")
+    chat_revoke.add_argument("--binding-id",required=True)
+    link_issue=commands.add_parser("project-link-bind-issue")
+    for flag in ["actor","context","ep-endpoint","producer-source","ep-grant-receipt-file","ep-token-file"]:
+        link_issue.add_argument("--"+flag,required=True)
+    link_issue.add_argument("--project-id",action="append",default=[])
+    link_revoke=commands.add_parser("project-link-bind-revoke")
+    link_revoke.add_argument("--binding-id",required=True)
     baseline_issue=commands.add_parser("concept-baseline-bind-issue")
     for flag in ["actor","context","concept-id","forge-endpoint","dossier-id","producer-source","forge-grant-receipt-file","forge-token-file"]:
         baseline_issue.add_argument("--"+flag,required=True)
@@ -208,6 +219,20 @@ def main(argv=None):
             print(json.dumps(result,sort_keys=True))
         elif args.command == "mission-bind-revoke":
             with Service(args.root) as service:result=service.revoke_mission(args.binding_id)
+            print(json.dumps(result,sort_keys=True))
+        elif args.command == "concept-chat-bind-issue":
+            with Service(args.root) as service:
+                result=service.concept_chats.provision(args.actor,args.context,args.concept_id,args.forge_endpoint,args.dossier_id,args.conversation_id,args.producer_source,args.forge_grant_receipt_file,args.forge_token_file)
+            print(json.dumps(result,sort_keys=True))
+        elif args.command == "concept-chat-bind-revoke":
+            with Service(args.root) as service:result=service.concept_chats.revoke(args.binding_id)
+            print(json.dumps(result,sort_keys=True))
+        elif args.command == "project-link-bind-issue":
+            with Service(args.root) as service:
+                result=service.project_link_peer.provision(args.actor,args.context,args.ep_endpoint,args.producer_source,args.ep_grant_receipt_file,args.ep_token_file,args.project_id)
+            print(json.dumps(result,sort_keys=True))
+        elif args.command == "project-link-bind-revoke":
+            with Service(args.root) as service:result=service.project_link_peer.revoke(args.binding_id)
             print(json.dumps(result,sort_keys=True))
         elif args.command == "concept-baseline-bind-issue":
             with Service(args.root) as service:

@@ -35,9 +35,9 @@ class ConceptBaselinePeer(WorklistReadTransport):
         except (ValueError,TypeError,KeyError):return False
 
     def _bindings(self):
-        try:document=_private_json('concept-baseline-bindings.json',dir_fd=self.root_fd)
+        try:document=_private_json(self.namespace+'-bindings.json',dir_fd=self.root_fd)
         except FileNotFoundError:
-            try:_private_json('concept-baseline-bindings-initialized.json',dir_fd=self.root_fd)
+            try:_private_json(self.namespace+'-bindings-initialized.json',dir_fd=self.root_fd)
             except FileNotFoundError:return []
             raise WorklistError('INVALID_CONFIGURATION') from None
         except (ValueError,OSError,UnicodeError):raise WorklistError('INVALID_CONFIGURATION') from None
@@ -49,9 +49,9 @@ class ConceptBaselinePeer(WorklistReadTransport):
 
     def _write_bindings(self,rows):
         # A retained allocation marker forbids default-empty replacement after loss.
-        try:_private_json('concept-baseline-bindings-initialized.json',dir_fd=self.root_fd)
+        try:_private_json(self.namespace+'-bindings-initialized.json',dir_fd=self.root_fd)
         except FileNotFoundError:
-            fd=os.open('concept-baseline-bindings-initialized.json',os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600,dir_fd=self.root_fd)
+            fd=os.open(self.namespace+'-bindings-initialized.json',os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600,dir_fd=self.root_fd)
             with os.fdopen(fd,'w') as stream:
                 stream.write('{"schema_version":1}');stream.flush();os.fsync(stream.fileno())
             os.fsync(self.root_fd)

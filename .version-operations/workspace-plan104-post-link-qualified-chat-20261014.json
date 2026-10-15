@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "L4-NATIVE-CONCEPT-CHAT-REFINEMENT-V1-20261014-after-delivered-LINK",
+  "determined_version": "2.8.28",
+  "event_lineage": "L4-NATIVE-CONCEPT-CHAT-REFINEMENT-V1-20261014-after-delivered-LINK",
+  "expected_source_revision": "e1fea1cde3ea4dd0babf34b34e89cd4a9aee05cc",
+  "expected_version": "2.8.27",
+  "operation_id": "workspace-plan104-post-link-qualified-chat-20261014",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "PATCH",
+  "requested": {
+    "bump": "patch"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}
