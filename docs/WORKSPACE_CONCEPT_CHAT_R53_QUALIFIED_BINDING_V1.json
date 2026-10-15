@@ -1,0 +1,29 @@
+{
+  "evidence_type": "QUALIFIED_PRODUCER_AND_INDEPENDENTLY_ACCEPTED_CONSUMER_CANDIDATE",
+  "assignment": "L4-NATIVE-CONCEPT-CHAT-REFINEMENT-V1-20261014",
+  "plan": 104,
+  "qualified_source": "877602f016dee36c1977ef7df1d937c7c5793ccc",
+  "version": "2.19.0",
+  "schema_version": 46,
+  "frozen_actual_mac_wheel_sha256": "fca4f93684905e9eb524ada59bc68f2e41bf85ca5135f8f407db8bc261098912",
+  "schema_sha256": "62cf57cb370a3a239575283a69bc1ef36ea55c35a4d1692ab679f967a1abcb88",
+  "example_sha256": "89dbab979efadac794f6bb3ce212de0622e5aa37fda080079b0330dda6f95852",
+  "both_projection_bytes_identical_to_qualified_source": true,
+  "handoff": "https://github.com/pcvantol/forge/issues/208#issuecomment-6168468302",
+  "consumer_qualified_runtime": "PASS_SOURCE3936_TRIAL3_NOT_FINAL_MAIN",
+  "prior_candidate_receipt": "WORKSPACE_CONCEPT_CHAT_R53_PROJECTION_RECEIPT.json",
+  "provider": "EXPLICIT_SYNTHETIC_MODEL_FIXTURE_FOR_TECHNICAL_CONSUMER_QUALIFICATION_ONLY",
+  "live_advice_quality": false,
+  "integrated_source_validation": "FULL_RUN11_PASS_291native_plus1isolated_strict_perfile_packages",
+  "qualified_vs_original_candidate_payload": "ALL325_PRODUCT_FILES_BYTE_IDENTICAL",
+  "prior_candidate_proof_remains_original": true,
+  "consumer_source": "3936a060440eae3cb8a6f39c4751da611538ffd2",
+  "implementation_main": "812143bc5c9e8f8193cec249e5be53583eca4128",
+  "evidence_carrier": "6fa9bd15f20b6e48983857a1224467b7972ff527",
+  "independent_reviews": [
+    "Quality PASS",
+    "Security PASS",
+    "UX PASS"
+  ],
+  "final_main_runtime": "REQUIRED_AFTER_OWN_FINALIZATION"
+}

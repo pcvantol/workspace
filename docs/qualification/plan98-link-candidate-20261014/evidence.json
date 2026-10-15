@@ -1,0 +1,245 @@
+{
+  "assignment": "L4-VERIFIED-EXISTING-PROJECT-LINK-V1-20261012",
+  "plan": 98,
+  "product_version": "2.8.27",
+  "current_source": "2a75c5a5ccf88c0d4103d4663a6bc03de22abcbd",
+  "qualified_ep": {
+    "version": "2.3.120",
+    "source": "f375a4e8adcec0c1693aa100c0f31f6014b84b20",
+    "wheel_sha256": "487357c26d1c023b46ec073bd2f281d2b8157f091518f923266ba8aa13c430ef",
+    "schema_sha256": "1d909b8098f209ad2828c15ddfe171b65ed4d22aab5d18dd25f0dccf33d457e9",
+    "handoff": "https://github.com/pcvantol/forge/issues/208#issuecomment-6171877315"
+  },
+  "qualification": "ACTUAL_ISOLATED_INSTALLED_CANDIDATE_NOT_FINAL_MAIN",
+  "provider_or_model_calls": 0,
+  "real_user_or_production_ep": false,
+  "source_fixture_results_replace_installed": false,
+  "full_dod_complete": false,
+  "corrections_consumed": 8,
+  "installed_attempts": 1,
+  "full_validation_runs_this_resumption": 5,
+  "older_runs_and_failed_attempts_retained": true,
+  "images": [
+    {
+      "file": "native-nl-dark-preview.png",
+      "sha256": "685e42c2ff472da56e13da5dae199640f53f469a2384b02f22c5779a6c131a51",
+      "native_source_component_bytes": "64835f5ada94b6c87b32cd7415a39ab910109893",
+      "origin": "ACTUAL_INSTALLED_NATIVE_WINDOW_ONLY_CAPTURE",
+      "pixel_privacy": "INDEPENDENT_UX_PASS",
+      "metadata_privacy": "SEPARATE_WRITER_DECODED_TEXT_PASS"
+    },
+    {
+      "file": "native-nl-dark-recovered.png",
+      "sha256": "81c79bbe9e70c0ad672787792669fed65b882aee030fec9522a54b560020b4f8",
+      "native_source_component_bytes": "64835f5ada94b6c87b32cd7415a39ab910109893",
+      "origin": "ACTUAL_INSTALLED_NATIVE_WINDOW_ONLY_CAPTURE",
+      "pixel_privacy": "INDEPENDENT_UX_PASS",
+      "metadata_privacy": "SEPARATE_WRITER_DECODED_TEXT_PASS"
+    },
+    {
+      "file": "actual-en-light-1420.png",
+      "sha256": "0009eb8569f543e53c2ab2c8dc9a68fa3be3447d54b3e5278788b13662bad252",
+      "native_source_component_bytes": "64835f5ada94b6c87b32cd7415a39ab910109893",
+      "origin": "ACTUAL_INSTALLED_NATIVE_WINDOW_ONLY_CAPTURE",
+      "pixel_privacy": "INDEPENDENT_UX_PASS",
+      "metadata_privacy": "SEPARATE_WRITER_DECODED_TEXT_PASS"
+    },
+    {
+      "file": "actual-nl-dark-760.png",
+      "sha256": "2ec387839301604adbb8bb8c334f57447dae68e1a91129008627db1cd90a62e9",
+      "native_source_component_bytes": "64835f5ada94b6c87b32cd7415a39ab910109893",
+      "origin": "ACTUAL_INSTALLED_NATIVE_WINDOW_ONLY_CAPTURE",
+      "pixel_privacy": "INDEPENDENT_UX_PASS",
+      "metadata_privacy": "SEPARATE_WRITER_DECODED_TEXT_PASS"
+    },
+    {
+      "file": "actual-de-light-1420.png",
+      "sha256": "04cccaf178f0f7f6c31e1855601223ab786b5837d164b4d78b3993b351a146a9",
+      "native_source_component_bytes": "64835f5ada94b6c87b32cd7415a39ab910109893",
+      "origin": "ACTUAL_INSTALLED_NATIVE_WINDOW_ONLY_CAPTURE",
+      "pixel_privacy": "INDEPENDENT_UX_PASS",
+      "metadata_privacy": "SEPARATE_WRITER_DECODED_TEXT_PASS"
+    },
+    {
+      "file": "actual-fr-dark-760.png",
+      "sha256": "d6b2d9a6949c0e815e205b270647f46dd2b93a4fdb175d435ce0abf0127b464d",
+      "native_source_component_bytes": "64835f5ada94b6c87b32cd7415a39ab910109893",
+      "origin": "ACTUAL_INSTALLED_NATIVE_WINDOW_ONLY_CAPTURE",
+      "pixel_privacy": "INDEPENDENT_UX_PASS",
+      "metadata_privacy": "SEPARATE_WRITER_DECODED_TEXT_PASS"
+    },
+    {
+      "file": "actual-es-light-1420.png",
+      "sha256": "7f67471bc5004f37524bf5d2bb394a6f94c1e5a36b0f591f7e79383c126feb2f",
+      "native_source_component_bytes": "64835f5ada94b6c87b32cd7415a39ab910109893",
+      "origin": "ACTUAL_INSTALLED_NATIVE_WINDOW_ONLY_CAPTURE",
+      "pixel_privacy": "INDEPENDENT_UX_PASS",
+      "metadata_privacy": "SEPARATE_WRITER_DECODED_TEXT_PASS"
+    },
+    {
+      "file": "native-es-unknown-availability.png",
+      "sha256": "b549d6ab1ebafa5a204d9421d23d1ee20d6093427d6a4f3333bda345f9ccd978",
+      "native_source_component_bytes": "64835f5ada94b6c87b32cd7415a39ab910109893",
+      "origin": "ACTUAL_INSTALLED_NATIVE_WINDOW_ONLY_CAPTURE",
+      "pixel_privacy": "INDEPENDENT_UX_PASS",
+      "metadata_privacy": "SEPARATE_WRITER_DECODED_TEXT_PASS"
+    },
+    {
+      "file": "native-c8-expired-nl-dark-760.png",
+      "sha256": "ba344cb2bcfa7d3befcbeefe60cd33d5e7e3a68d421258e4409887bbc51296e4",
+      "native_source_component_bytes": "2a75c5a5ccf88c0d4103d4663a6bc03de22abcbd",
+      "origin": "ACTUAL_INSTALLED_NATIVE_WINDOW_ONLY_CAPTURE",
+      "pixel_privacy": "INDEPENDENT_UX_PASS",
+      "metadata_privacy": "SEPARATE_WRITER_DECODED_TEXT_PASS"
+    },
+    {
+      "file": "native-c8-opened-nl-dark-760.png",
+      "sha256": "e4095a854d077ad6240203b577006887c528e44bdf4ca37b8eaf29197155b744",
+      "native_source_component_bytes": "2a75c5a5ccf88c0d4103d4663a6bc03de22abcbd",
+      "origin": "ACTUAL_INSTALLED_NATIVE_WINDOW_ONLY_CAPTURE",
+      "pixel_privacy": "INDEPENDENT_UX_PASS",
+      "metadata_privacy": "SEPARATE_WRITER_DECODED_TEXT_PASS"
+    },
+    {
+      "file": "native-c8-late-denied-nl-dark-760.png",
+      "sha256": "74cbf34c8250354391bf7fdf99a3818973e622fbc8a40a10a24561d2ac0bbe8e",
+      "native_source_component_bytes": "2a75c5a5ccf88c0d4103d4663a6bc03de22abcbd",
+      "origin": "ACTUAL_INSTALLED_NATIVE_WINDOW_ONLY_CAPTURE",
+      "pixel_privacy": "INDEPENDENT_UX_PASS",
+      "metadata_privacy": "SEPARATE_WRITER_DECODED_TEXT_PASS"
+    }
+  ],
+  "original_recovery": {
+    "state": "ACTUAL_NATIVE_REOPEN_AFTER_LOST_REPLY_AND_SEPARATE_RESTARTS_PASS",
+    "operation_id": "22EF2F12-7997-430B-A92E-B620C363F3D5",
+    "references": 1,
+    "operation_receipts": 1,
+    "native_original_same": true,
+    "reply_sha256": "74bfeb3ba2a9c242c0d8656723d2b3e89944cbb50de2fe1cec02f254b9d9260a",
+    "saved_intent_sha256": "19c3b928e98dce5defcae09e09b68d9bd8c7d2f56aae62b6df08c92ab82dd24b",
+    "model_calls": 0,
+    "same_original_bytes": true,
+    "same_original_operation_id": true,
+    "new_receipts": 0,
+    "native_opened": true,
+    "reference_count": 1
+  },
+  "late_scope_red": {
+    "source": "64835f5_C7",
+    "actual_current_scope_empty": true,
+    "old_buffered_project_still_visible": true,
+    "references_unchanged": 1,
+    "state": "ACTUAL_NATIVE_SECURITY_FINDING_REPRODUCED",
+    "no_model_calls": true
+  },
+  "expiry_red": {
+    "state": "ACTUAL_TYPED_EXPIRY_MISCLASSIFIED_BY_NATIVE_BOOTSTRAP",
+    "actual_http_status": 403,
+    "actual_error": "PROJECT_LINK_ACCESS_EXPIRED",
+    "native_incorrect_denied_label": true,
+    "no_attachment_visibility_unknown_verified": true,
+    "native_protected_project_rows_cleared": true,
+    "system_clock_or_settings_changed": false
+  },
+  "late_scope_green": {
+    "state": "ACTUAL_PACKAGED_NATIVE_LATE_SCOPE_GREEN",
+    "actual_current_scope_empty": true,
+    "old_project_rows_concealed": true,
+    "actual_denied_label_verified": true,
+    "positive_original_reopen_before_negative": true,
+    "original_operation_id": "22EF2F12-7997-430B-A92E-B620C363F3D5",
+    "reference_count": 1,
+    "operation_receipt_count": 1,
+    "original_intent_bytes_retained": true,
+    "server_production_source_unchanged": true,
+    "model_calls": 0
+  },
+  "expiry_green": {
+    "state": "ACTUAL_INSTALLED_NATIVE_TYPED_EXPIRY_GREEN",
+    "original_expired_grant_reused_without_reissue": true,
+    "native_expired_label_verified": true,
+    "protected_rows_cleared": true,
+    "screenshot_sha256": "ba344cb2bcfa7d3befcbeefe60cd33d5e7e3a68d421258e4409887bbc51296e4",
+    "system_settings_or_clock_changed": false
+  },
+  "negative_matrix": {
+    "stale_before_save": 409,
+    "foreign_project": 403,
+    "old_binding_epoch": 403,
+    "wrong_viewer": 403,
+    "other_valid_own_actor_without_peer_binding": 503,
+    "wrong_peer_owner_pairing_rejected_without_config_write": true,
+    "real_EP_READ_revoked": 403,
+    "real_EP_offline": 503,
+    "one_reference_one_original_receipt": true,
+    "no_new_effects": true
+  },
+  "ep_read_purity": {
+    "actual_installed_consumer_reads": 3,
+    "before_sha256": "c0a21434a9a218bdb2241aa1fabbcb6aedcc2b1cdc5768296aef4519c99a473b",
+    "after_sha256": "c0a21434a9a218bdb2241aa1fabbcb6aedcc2b1cdc5768296aef4519c99a473b",
+    "database_bytes_identical": true,
+    "model_calls": 0
+  },
+  "server_payload_binding": {
+    "source": "2a75c5a5ccf88c0d4103d4663a6bc03de22abcbd",
+    "original_installed_server_wheel_source_phase": "C6",
+    "current_product_payload_byte_equal": true,
+    "payload_files": 53,
+    "wheel_sha256": "9c08e6813b54d6b775f8c560512c939ee6d9a6c8bd92861194b2512e156b3fe1"
+  },
+  "artifact_platform": {
+    "source": "2a75c5a5ccf88c0d4103d4663a6bc03de22abcbd",
+    "artifact_sha256": "48702772e444689ac5b1762129569d1d84c1e5970e006b814c5db879e42a88c9",
+    "actual_load_command": [
+      "      cmd LC_BUILD_VERSION",
+      "  cmdsize 32",
+      " platform 1",
+      "    minos 26.0",
+      "      sdk 26.0",
+      "   ntools 1",
+      "     tool 3",
+      "  version 27037.1"
+    ]
+  },
+  "cleanup": {
+    "state": "COMPLETE",
+    "all_own_processes_stopped": {
+      "client_pid": true,
+      "workspace": true,
+      "proxy": true,
+      "ep": true
+    },
+    "all_own_listeners_closed": true,
+    "own_pairing_and_actor_grants_revoked": true,
+    "both_EP_READ_grants_revoked": true,
+    "both_synthetic_agents_revoked": true,
+    "one_reference_one_original_operation_retained": true,
+    "earlier_failures_and_evidence_preserved": true,
+    "finished": "2026-10-14T21:07:36.153640+00:00",
+    "before_original_deadline": true
+  },
+  "scope_of_remaining_source_fixtures": [
+    "malformed/unsupported wire shapes and transport framing",
+    "exact grant/actor/publication concurrency source guards",
+    "capacity/storage-corruption and input-validation source cases"
+  ],
+  "independent_acceptance": {
+    "source": "2a75c5a5ccf88c0d4103d4663a6bc03de22abcbd",
+    "quality": "SOURCE_AND_SCOPED_ACTUAL_CANDIDATE_PASS",
+    "security": "SOURCE_AND_SCOPED_ACTUAL_CANDIDATE_AND_PUBLICATION_PASS",
+    "ux": "SOURCE_ACTUAL_KEYBOARD_FRAMES_AND_11_ORIGINAL_PIXELS_PASS",
+    "reviewers_ran_no_tests_or_probes": true,
+    "writer_metadata_audit_separate": true
+  },
+  "tde_c8_actual": {
+    "run": 38637620563,
+    "assessment": "PASS_WITH_WARNINGS",
+    "repository_qualification": "QUALIFIED",
+    "rule": "complexity.product.maximum",
+    "measured": 28,
+    "warning": 15,
+    "blocking": 30,
+    "own_runtime_coverage_separate": true
+  }
+}
