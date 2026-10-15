@@ -2,6 +2,11 @@ import Foundation
 
 enum ExecutionProgressCopy {
     static let table:[String:[String]]=[
+        "submissionState":["Original submission", "Oorspronkelijke aanbieding", "Ursprüngliche Einreichung", "Soumission d’origine", "Envío original"],
+        "technicalOutcome":["Technical outcome", "Technische uitkomst", "Technisches Ergebnis", "Résultat technique", "Resultado técnico"],
+        "requiredValidation":["Required validation", "Vereiste validatie", "Erforderliche Validierung", "Validation requise", "Validación requerida"],
+        "runQualification":["Execution qualification", "Uitvoeringskwalificatie", "Ausführungsqualifizierung", "Qualification de l’exécution", "Cualificación de ejecución"],
+
         "noRun":["No execution recorded", "Geen uitvoering vastgelegd", "Keine Ausführung erfasst", "Aucune exécution enregistrée", "Ninguna ejecución registrada"],
         "missionRevision":["Mission revision", "Missierevisie", "Missionsrevision", "Révision de mission", "Revisión de misión"],
         "retry":["Retry of an earlier attempt", "Herhaling van een eerdere poging", "Wiederholung eines früheren Versuchs", "Nouvelle tentative liée à la précédente", "Reintento vinculado al anterior"],

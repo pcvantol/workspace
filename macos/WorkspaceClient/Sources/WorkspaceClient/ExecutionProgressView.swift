@@ -70,13 +70,14 @@ struct ExecutionProgressView:View {
             Text(row.description ?? text(row.description_status=="WITHHELD_PRIVACY" ? "withheld":"noDescription")).font(.headline).fixedSize(horizontal:false,vertical:true)
             Text(text("missionRevision")+": "+row.mission_revision).font(.caption)
             if row.lineage?.retry_parent_submission_id != nil || row.lineage?.retry_parent_run_id != nil {Label(text("retry"),systemImage:"arrow.triangle.branch").font(.caption)}
-            Text(text(row.submission_disposition)).font(.caption)
+            Text(text("submissionState")+": "+text(row.submission_disposition)).font(.caption)
             Text(text(row.progress.current_phase ?? "UNAVAILABLE"))
             Text(text(row.progress.activity)).font(.caption)
             if row.progress.wait_reason != "NOT_RECORDED" {Label(text(row.progress.wait_reason),systemImage:"pause.circle").fixedSize(horizontal:false,vertical:true)}
             Text(text(row.progress.responsible_role)).font(.caption).foregroundStyle(.secondary)
-            Text(text(row.result.technical_outcome)).font(.callout)
-            Text([text(row.result.qualification.required_validation_state),text(row.result.qualification.run_qualification)].joined(separator:" · ")).font(.caption)
+            Text(text("technicalOutcome")+": "+text(row.result.technical_outcome)).font(.callout)
+            Text(text("requiredValidation")+": "+text(row.result.qualification.required_validation_state)).font(.caption)
+            Text(text("runQualification")+": "+text(row.result.qualification.run_qualification)).font(.caption)
             ProposalCompareControl(title:runTitle(row,packet:packet),focused:focusedControl==row.id) {
                 Task {
                     await state.select(row.id)
