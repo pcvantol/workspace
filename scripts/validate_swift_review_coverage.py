@@ -6,6 +6,7 @@ import sys
 
 
 SOURCES = {
+    "ExecutionProgressSchema.swift", "ExecutionProgressModels.swift", "ExecutionProgressTransport.swift", "ExecutionProgressState.swift", "ExecutionProgressCopy.swift", "ExecutionProgressView.swift",
     "ProposalContentTransport.swift", "ProposalContentState.swift", "ProposalContentCopy.swift", "ProposalContentView.swift",
     "ProposalCompareModel.swift", "ProposalCompareState.swift", "ProposalCompareCopy.swift", "ProposalCompareView.swift",
     "ConceptChatView.swift", "ConceptChatTransport.swift", "ConceptChatState.swift", "ConceptChatPanel.swift",

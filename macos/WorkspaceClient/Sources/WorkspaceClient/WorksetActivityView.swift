@@ -3,6 +3,8 @@ import SwiftUI
 struct WorksetActivityView: View {
     @ObservedObject var state:ActivityState
     @ObservedObject var client:ClientState
+    @ObservedObject var execution:ExecutionProgressState
+    init(state:ActivityState,client:ClientState,grants:any DraftGrantStore,execution:ExecutionProgressState=ExecutionProgressState()) {self.state=state;self.client=client;self.grants=grants;self.execution=execution}
     let grants:any DraftGrantStore
     @Environment(\.locale) private var locale
     @Environment(\.scenePhase) private var scene
@@ -67,6 +69,9 @@ struct WorksetActivityView: View {
                     } label: {
                         Text(text("sourceContext")).fixedSize(horizontal:false,vertical:true).frame(maxWidth:.infinity,alignment:.leading)
                     }
+                }
+                if let access=state.access,!state.selected.isEmpty,!state.historical {
+                    ExecutionProgressView(state:execution,access:access,workset:state.selected,missions:state.pages.last?.current ?? [],connection:{await connection()})
                 }
                 if !state.pages.isEmpty {
                     if let page=state.pages.last {
@@ -137,9 +142,9 @@ struct WorksetActivityView: View {
             }.padding(18).frame(maxWidth:.infinity,alignment:.leading)
         }
         .task { visible=true;await state.reauthorize(await connection()) }
-        .onDisappear { visible=false }
-        .onChange(of:client.phase) { _,phase in if phase != "CONNECTED" { state.invalidate() } }
-        .onChange(of:client.savedEndpoint) { _,_ in state.invalidate() }
-        .onChange(of:client.savedInstance) { _,_ in state.invalidate() }
+        .onDisappear { visible=false;execution.hide() }
+        .onChange(of:client.phase) { _,phase in if phase != "CONNECTED" { state.invalidate();execution.reset() } }
+        .onChange(of:client.savedEndpoint) { _,_ in state.invalidate();execution.reset() }
+        .onChange(of:client.savedInstance) { _,_ in state.invalidate();execution.reset() }
     }
 }

@@ -128,6 +128,7 @@ struct ContentView: View {
     @StateObject private var projectLinks = ProjectLinkState()
     @StateObject private var concepts = ProjectConceptState()
     @StateObject private var activity = ActivityState()
+    @StateObject private var executionProgress = ExecutionProgressState()
     @StateObject private var order = OrderState()
     private let conceptGrants: any DraftGrantStore
     @State private var selectedTab = 4
@@ -143,6 +144,7 @@ struct ContentView: View {
             conceptGrants = IsolatedDraftGrant(document)
             linkIntents = PrivateProjectLinkIntents(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("project-link-intents"))
             _order = StateObject(wrappedValue:OrderState(credentials:IsolatedOrderCredentials(document),store:OrderIntentStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("order-intents"))))
+            _executionProgress = StateObject(wrappedValue:ExecutionProgressState(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("execution-navigation")))
             _activity = StateObject(wrappedValue:ActivityState(credentials:IsolatedActivityCredentials(document),store:ActivityLocalStore(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("activity-views"))))
             _concepts = StateObject(wrappedValue:ProjectConceptState(root:URL(fileURLWithPath:document.local_root).appendingPathComponent("project-concept-intents")))
         } else { conceptGrants = DraftGrantKeychain(); linkIntents = PrivateProjectLinkIntents() }
@@ -223,7 +225,7 @@ struct ContentView: View {
                        bound.workspaceProjectID==access.binding.workspaceProjectID { await activity.fetch(restart:true) }
                 })
             case 6:
-                WorksetActivityView(state:activity,client:client,grants:conceptGrants)
+                WorksetActivityView(state:activity,client:client,grants:conceptGrants,execution:executionProgress)
             case 3:
                 ServerOverviewView(client:client)
             default:

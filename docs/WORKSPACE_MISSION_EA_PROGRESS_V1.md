@@ -1,0 +1,81 @@
+# Native Mission/EA execution read — r81-plan107
+
+Assignment L4-NATIVE-MISSION-EA-PROGRESS-V1-20261015; JOIN
+L2-L4-CENTRAL-MISSION-EA-PROGRESS-V1-20261015. Sole existing writer, base
+80f51fcfe2c90d1b3cbbef10702f6c8c300e426d; branch
+codex/plan107-native-mission-ea-progress; canonical PATCH2.8.31.
+Plan106/LINK/predecessors remain CLOSED; parent PB-W3-PROGRESS/HOB-EP03 open.
+
+## Actual published candidate, not qualified handoff
+
+EP2.3.122/CENTRAL76, published source d1679e8f3eb35354b766c909cd4b699680695c0d,
+PR359 OPEN at inspection. Original handoff6201761430 source ff4a970 retained;
+both schemas have SHA256ac4ccc1c43c02742dc6ad15e642fadc6456844f8a1a3e7425275f67d247b7d89.
+The committed data projection is byte-identical owning closed schema, not copied
+EP implementation. Full producer qualification/final-main handoff NOT DELIVERED.
+Source tests/candidate observations never substitute for that acceptance gate.
+
+## Concrete consumer boundary and identity mapping
+
+Native existing Activity → own authenticated Workspace Server → ONLY the two
+published EP authenticated GET routes, with finite separate EXECUTION_PROGRESS_READ.
+No upstream credential reaches Client; no discovery/inspection/submission token
+fallback, local phase engine, estimated percentage or executor-liveness claim.
+Own routes: GET /v1/execution-progress/{workset}/overview?mission_id=...
+and GET /v1/execution-progress/{workset}/runs/{run}?mission_id=...&expected_snapshot=...
+plus exact original own binding epoch header. No mutation operation exists.
+
+| Original fact | Existing authoritative source | Binding rule |
+|---|---|---|
+| actor/context/own instance | existing draft authorization | current on admission, forwarding and each publication chunk |
+| Forge instance/workset/definition/current Mission IDs | current separately authorized Activity binding/capability/read | exact original source, no activity cursor replacement |
+| EP project/authority | original verified-project reference + finite owner progress selection | exact actor/EP instance/project/authority; Forge null project is NOT an EP project |
+| producer and Mission | explicit trusted owner pairing + actual admitted CENTRAL record | exact producer/Mission IDs; no title/path/prompt join |
+| Mission revision | original accepted EP provenance | preserved as original string; NEVER equated to mutable Forge mission_state_revision |
+| EA/run/retry/attempt/root | original closed EP packet | group only producer/Mission/revision/EA; each simultaneous run/retry remains separately selectable |
+| phase/wait/role/history | owning same-snapshot lifecycle projection | preserve order/repeats/timestamps/pending/skipped/unknown; no inferred operator wait |
+
+No new project identity or registry is created: the binding uses existing private
+owner pairing and existing saved project references. Local trusted owner config
+explicitly maps the already authenticated Forge instance to one EP producer ID.
+An equal Mission string alone never creates this relationship. Admission must
+verify the real current Forge Mission and existing EP project/authority, then
+read the exact EP selection. Missing/inconsistent mapping is UNBOUND, not empty.
+Older Mission revisions and known-only completeness are shown honestly. EP
+technical COMPLETE and separate qualification never change Forge acceptance.
+
+## Presentation, snapshots and persistence
+
+Compact Uitvoering panel beside existing activity: select authorized Mission,
+logical EA, explicit run/attempt; phase/wait/technical outcome/qualification,
+as-of snapshot and bounded expandable original transition history. Plain-language
+five-language controls; safe original summary or explicit missing/withheld label.
+Original IDs live only under Source/details; no technical user input.
+
+One foreground refresh task, one in-flight selection; generation cancellation,
+backoff and app/panel activity fencing. No per-row timer. Independent expiry
+continues while hidden; current reauthorization on return/reconnect/restart.
+Only private bounded original navigation references persist, no packet/history
+or offline disclosure cache. Source loss clears protected current presentation;
+network unavailable is distinct from denied/unbound/healthy empty/run404/409/
+unsupported/corrupt. Snapshot is opaque64hex. Overview/detail must use one snapshot;
+409 discards mixed presentation and offers explicit full read without resubmission.
+
+All admission/serialization/socket waits are outside short own authorization
+locks. Upstream reads are bounded3s/524288bytes/100records/100events; no invented
+pagination or silent truncation. Publication rechecks current producer access
+through the same GET (there is no capability route), under the original snapshot,
+and uses existing chunk-level guarded nonblocking publication. A partial result
+cannot become valid native JSON. No business mutation is caused by any read.
+
+## Delivery status and counters
+
+Source preparation only. Directed26Python and7native tests PASS;
+not installed/GUI proof. Own cumulative2source rounds/0installed/0full validations,
+no administrative cap/reset; historical consumption retained. Next: own typed
+Server/Client connection and native panel; first real noneditable candidate chain
+and compact transitions/authority/restart/negative-control matrix before big runs.
+Final qualified producer handoff, strict per-production-source>80.2%, full owning
+validation/CI/honest TDE, independent Quality/Security/UX, normal protected source
+and own nonempty finalization merges, NEW exact-final-main installed/GUI/screens,
+safe immutable readback and own cleanup remain REQUIRED. No next feature.
