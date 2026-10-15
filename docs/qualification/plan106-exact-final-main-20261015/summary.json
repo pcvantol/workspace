@@ -1,0 +1,127 @@
+{
+  "consumer_source": "80f51fcfe2c90d1b3cbbef10702f6c8c300e426d",
+  "version": "2.8.30",
+  "wheel_sha256": "be04128262aa59473232ad03b7429254578faa35d2ddf2faa6b53982a48ccac9",
+  "producer_candidate_source": "0ea1b1a7380aaef95205821bc7bf3c9a3f9ec3e2",
+  "producer_candidate_wheel_sha256": "b38b697847b3addcee74ec3dbb60ff6449003f296b36d5be90d94bfc3535f43a",
+  "native_binary_sha256": "b9f19f81e86e26a4902fb4f1d25fff81fcc074aa0fbb0e8fd811950847aef05d",
+  "available_toolchain_SDK_query": "27.0",
+  "native_MachO_SDK": "26.0",
+  "noneditable_installation": true,
+  "outside_source_checkout": true,
+  "kind": "NEW_EXACT_FINAL_MAIN_INSTALLED_GUI_PROOF",
+  "protected_implementation_pr": "https://github.com/pcvantol/workspace/pull/179",
+  "protected_finalization_pr": "https://github.com/pcvantol/workspace/pull/180",
+  "qualified_R54_handoff": "https://github.com/pcvantol/forge/issues/208#issuecomment-6195333957",
+  "producer_version": "2.20.0",
+  "own_payload_count": 66,
+  "producer_payload_count": 331,
+  "native_source_payload_count": 229,
+  "own_producer_wheel_distinct_build_of_same_qualified_source": true,
+  "original_hosted_ZIP_sha256": "da757ddd5a1d36226b9a08aef81cf7ccf61d047e59e0f23ed4b2adaafa36465d",
+  "minimum_macos": "26.0",
+  "full_validation3": {
+    "result": "PASS",
+    "scope": "own documentary finalization WIP on3ec96ac",
+    "exit_code": 0,
+    "log_sha256": "b857f4492cf2b6f9b7b28f76cdaf0551cdf1308ff5425b4e5b5fb07bd1090272",
+    "Python": 328,
+    "native": 320,
+    "isolated_native": 1
+  },
+  "counters": {
+    "plan": 106,
+    "source_rounds": 6,
+    "installed_attempts": 5,
+    "full_validations_started": 3,
+    "no_administrative_maximum": true,
+    "historical_consumption_preserved": true
+  },
+  "original_source_bound_candidate_matrix_retained": true,
+  "earlier_failures_and_TDE32_retained": true,
+  "synthetic_technical_approval_not_Peter_real_business_approval": true,
+  "actual_implementation_TDE": {
+    "source": "8e5301b1180be51f1368161367f8f30da4dffacb",
+    "workflow_run": 38764643340,
+    "artifact": 11988221186,
+    "ZIP_sha256": "dee023f2bcfbb227d1fde12fd3b1167631ecd63bf84ea728f7b6f251015ef125",
+    "assessment": "PASS_WITH_WARNINGS",
+    "repository": "QUALIFIED",
+    "assessment_exit": 1,
+    "qualification_exit": 1,
+    "complexity_product_maximum": 28,
+    "earlier_FAIL32_preserved": true,
+    "policy_thresholds_suppressions_unchanged": true
+  },
+  "actual_finalization_TDE": {
+    "source": "582e15636e39d95796cbb9e1d392489ea84e882d",
+    "workflow_run": 38766429046,
+    "artifact": 11988023646,
+    "ZIP_sha256": "361dc8e6908448667cece1f29b9bc3a80a8acd2dc332f0196567cc1d4a9473fb",
+    "assessment": "PASS_WITH_WARNINGS",
+    "repository": "QUALIFIED",
+    "assessment_exit": 1,
+    "qualification_exit": 1,
+    "complexity_product_maximum": 28,
+    "earlier_FAIL32_preserved": true,
+    "policy_thresholds_suppressions_unchanged": true
+  },
+  "actual_final_main_TDE": {
+    "source": "80f51fcfe2c90d1b3cbbef10702f6c8c300e426d",
+    "workflow_run": 38768010062,
+    "artifact": 11989778414,
+    "ZIP_sha256": "b36dfb9b5abaaf0cbb231e8f48c6d1e8e0ba5ed453d44ccf1097428fd549af8b",
+    "assessment": "PASS_WITH_WARNINGS",
+    "repository": "QUALIFIED",
+    "assessment_exit": 1,
+    "qualification_exit": 1,
+    "complexity_product_maximum": 28,
+    "earlier_FAIL32_preserved": true,
+    "policy_thresholds_suppressions_unchanged": true
+  },
+  "actual_final_main_checks": {
+    "sha": "80f51fcfe2c90d1b3cbbef10702f6c8c300e426d",
+    "check_runs": [
+      {
+        "name": "Python 3.14 installed Server",
+        "status": "completed",
+        "conclusion": "success",
+        "details_url": "https://github.com/pcvantol/workspace/actions/runs/38768010044/job/116536186269",
+        "started_at": "2026-10-15T16:19:26Z",
+        "completed_at": "2026-10-15T16:23:04Z"
+      },
+      {
+        "name": "validate-version-source",
+        "status": "completed",
+        "conclusion": "success",
+        "details_url": "https://github.com/pcvantol/workspace/actions/runs/38768010146/job/116536186125",
+        "started_at": "2026-10-15T16:19:26Z",
+        "completed_at": "2026-10-15T16:19:38Z"
+      },
+      {
+        "name": "Native app build and transport tests",
+        "status": "completed",
+        "conclusion": "success",
+        "details_url": "https://github.com/pcvantol/workspace/actions/runs/38768010212/job/116536185893",
+        "started_at": "2026-10-15T16:19:32Z",
+        "completed_at": "2026-10-15T16:28:00Z"
+      },
+      {
+        "name": "Foundation validation",
+        "status": "completed",
+        "conclusion": "success",
+        "details_url": "https://github.com/pcvantol/workspace/actions/runs/38768010044/job/116536185868",
+        "started_at": "2026-10-15T16:19:26Z",
+        "completed_at": "2026-10-15T16:22:21Z"
+      },
+      {
+        "name": "TDE observe (non-blocking)",
+        "status": "completed",
+        "conclusion": "success",
+        "details_url": "https://github.com/pcvantol/workspace/actions/runs/38768010062/job/116536185834",
+        "started_at": "2026-10-15T16:19:26Z",
+        "completed_at": "2026-10-15T16:22:29Z"
+      }
+    ]
+  }
+}
