@@ -336,16 +336,22 @@
           "assignment": "L4-NATIVE-PROPOSAL-CONTENT-DECISION-V1-20261015",
           "join": "L3-L4-PROPOSAL-CONTENT-DECISION-V1-20261015",
           "plan": 106,
-          "status": "QUALIFIED_R54_DELIVERED_MONITOR_REFACTOR_ACCEPTANCE_IN_PROGRESS",
+          "status": "PROTECTED_IMPLEMENTATION_DELIVERED_OWN_FINALIZATION_IN_PROGRESS",
           "own_contract": "docs/WORKSPACE_PROPOSAL_CONTENT_DECISION_V1.md",
           "producer_contract": "forge-project-proposal-content-decision/v1",
           "profile": "CONTENT_BASELINE_ONLY/1.0",
           "full_parent_selected": false,
           "ep_dependency_for_subset": false,
           "source_rounds": 6,
-          "installed_attempts": 3,
-          "full_validations": 1,
-          "qualified_handoff": "https://github.com/pcvantol/forge/issues/208#issuecomment-6195333957"
+          "installed_attempts": 4,
+          "full_validations": 2,
+          "qualified_handoff": "https://github.com/pcvantol/forge/issues/208#issuecomment-6195333957",
+          "protected_implementation_main": "3ec96aceb61e92290ef2f607865c6b398d71b577",
+          "reviewed_source": "8e5301b1180be51f1368161367f8f30da4dffacb",
+          "own_finalization": "docs/WORKSPACE_PROPOSAL_CONTENT_DECISION_FINALIZATION_V1.md",
+          "qualified_candidate_evidence": "https://github.com/pcvantol/workspace/tree/d685af101ab1b1f01780c63c3c826034f691f5ad/docs/qualification/plan106-qualified-candidate-20261015",
+          "qualified_producer_source": "0ea1b1a7380aaef95205821bc7bf3c9a3f9ec3e2",
+          "new_exact_final_main_installed": "REQUIRED_AFTER_OWN_FINALIZATION_MERGE"
         }
       ]
     },
