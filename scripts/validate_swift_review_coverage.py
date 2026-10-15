@@ -6,6 +6,7 @@ import sys
 
 
 SOURCES = {
+    "ProposalContentTransport.swift", "ProposalContentState.swift", "ProposalContentCopy.swift", "ProposalContentView.swift",
     "ProposalCompareModel.swift", "ProposalCompareState.swift", "ProposalCompareCopy.swift", "ProposalCompareView.swift",
     "ConceptChatView.swift", "ConceptChatTransport.swift", "ConceptChatState.swift", "ConceptChatPanel.swift",
     "ConceptBaselineDraftView.swift", "ConceptBaselineTransport.swift", "ConceptBaselineState.swift", "ConceptBaselinePanel.swift",

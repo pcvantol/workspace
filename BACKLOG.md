@@ -1,3 +1,17 @@
+## Current selected plan106 — native proposal content decisions
+
+Assignment `L4-NATIVE-PROPOSAL-CONTENT-DECISION-V1-20261015`; JOIN
+`L3-L4-PROPOSAL-CONTENT-DECISION-V1-20261015`. Own PATCH2.8.30, base
+1af17ae1d7d1a4e1540c10788ad2b5fb490b64c4. [Scoped contract](docs/WORKSPACE_PROPOSAL_CONTENT_DECISION_V1.md).
+Exact original proposal → explicit separate Business/Architecture decision → real
+R54 readback only; no local Approved or repository/execution/Mission effect.
+Implementation/compact tests in progress; qualified R54 final handoff, actual installed
+matrix, independent complete acceptance and protected delivery remain required.
+Plan105 CLOSED [terminal record](https://github.com/pcvantol/forge/issues/208#issuecomment-6192675865)
+on exact final-main1af17ae; LINK and predecessors remain CLOSED. Earlier stage headers
+below are historical, not current delivery claims. Own counters3source rounds/0installed/
+0full validations; no administrative maximum or historical budget reset.
+
 ### Plan105 round5 — keyboard viewport follows real focus
 
 ## Plan105 protected implementation and candidate qualification — finalization
