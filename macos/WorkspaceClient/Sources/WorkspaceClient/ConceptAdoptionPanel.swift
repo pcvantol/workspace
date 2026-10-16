@@ -14,6 +14,11 @@ struct ConceptAdoptionPanel:View {
     private var language:String {locale.language.languageCode?.identifier ?? "en"}
     private func text(_ key:String)->String {ConceptAdoptionCopy.text(key,language)}
     private var selected:ConceptAdoptionSources.Source? {state.sources.first{$0.id==state.source}}
+    private func cardAnchor(_ operation:String,_ document:String)->String {"adoption-entry-"+state.source+"-"+operation+"-"+document}
+    private func revealFocus(_ target:String) {
+        if let result=state.result,let entry=result.document?.entries.first(where:{"adoption-detail-"+$0.id==target}) {reveal(cardAnchor(result.operation_id,entry.id))}
+        else {reveal(target)}
+    }
     var body:some View {
         VStack(alignment:.leading,spacing:12) {
             Divider();Text(text("title")).font(.title2.bold())
@@ -60,7 +65,7 @@ struct ConceptAdoptionPanel:View {
         }.frame(minWidth:0,maxWidth:.infinity,alignment:.leading)
         .task(id:concept) {await state.load(concept,current:current)}
         .onDisappear {state.conceal()}
-        .onChange(of:focus) {_,value in if let value {reveal(value)}}
+        .onChange(of:focus) {_,value in if let value {revealFocus(value)}}
         .onChange(of:vision) {_,_ in confirmed=false}
         .onChange(of:state.source) {_,_ in vision="";confirmed=false;state.expandedDocument=""}
         .onChange(of:concept) {_,_ in vision="";confirmed=false;state.expandedDocument="";requested=Set(["docs/product/VISION.md","docs/architecture/ARCHITECTURE.md","docs/roadmap/ROADMAP.md"])}
@@ -95,10 +100,10 @@ struct ConceptAdoptionPanel:View {
                                 // Re-reveal after layout even when restored focus already has this identity.
                                 await Task.yield()
                                 guard !Task.isCancelled,focus==target,state.source==source,state.expandedDocument==entry.id,state.result?.operation_id==operation else{return}
-                                reveal(target)
+                                revealFocus(target)
                             }
                     }
-                }.padding(12).frame(minWidth:0,maxWidth:.infinity,alignment:.leading).background(.quaternary.opacity(0.25),in:RoundedRectangle(cornerRadius:12))
+                }.padding(12).frame(minWidth:0,maxWidth:.infinity,alignment:.leading).background(.quaternary.opacity(0.25),in:RoundedRectangle(cornerRadius:12)).id(cardAnchor(result.operation_id,entry.id))
             }
                 }
             }

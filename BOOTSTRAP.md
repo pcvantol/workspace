@@ -1,3 +1,18 @@
+## Plan108 source round9 — stable document-card reveal at its beginning
+
+Actual matrix20 still fails the same restored-focus y986 detector after the
+single-category-root change. Retain that failure and normal cleanup; source8
+is not GUI acceptance. The panel now owns a source/operation/document-specific
+card-root ID; detail focus/restore targets that root. Its existing parent reader
+reveals the beginning, keeping the close control near the beginning of the card
+instead of centering a deep changing subtree. Original AX control IDs and
+cancellation/source/operation/focus guards remain intact. No new delays, data,
+rights or effect routes.35directed adoption/concept/viewport native tests PASS.
+Own9source/7artifact/20operational/6full starts preserved without reset/max.
+Same actual viewport detector, complete candidate tests/reviews, protected
+implementation, own finalization and NEW exact-final-main proof remain OPEN.
+Same writer/PATCH2.8.32; predecessors remain CLOSED.
+
 ## Plan108 source round8 — one native layout root per answer category
 
 Actual matrix19 preserves the same detail-focus failure at y986, outside the
