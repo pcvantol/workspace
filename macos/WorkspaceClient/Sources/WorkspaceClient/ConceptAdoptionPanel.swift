@@ -73,8 +73,8 @@ struct ConceptAdoptionPanel:View {
     private func documents(_ doc:ConceptAdoptionResult.Document,result:ConceptAdoptionResult)->some View {
         VStack(alignment:.leading,spacing:10) {
             LabeledContent(text("sourceRevision"),value:String(result.source_revision)).accessibilityIdentifier("adoption-source-revision")
-            if result.source_revision != concept.revision {
-                LabeledContent(text("currentRevision"),value:String(concept.revision))
+            if result.source_revision != result.current_revision {
+                LabeledContent(text("currentRevision"),value:String(result.current_revision))
                 Text(text("historicalConcept")).foregroundStyle(.secondary).fixedSize(horizontal:false,vertical:true)
             }
             Text(text("historical")).font(.callout).foregroundStyle(.secondary)

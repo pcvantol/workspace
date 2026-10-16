@@ -1,3 +1,21 @@
+## Plan108 source round11 — Server revision owns historical context
+
+Full Quality review catches stale selected-Client context: validated result
+current_revision can advance while the selected concept copy remains older.
+The historical label/warning now uses that actual Server envelope revision,
+not the captured Client revision.35existing directed native tests PASS. An
+attempted new native AX harness had an empty positive control and is retained
+as harness failure, NOT a red product regression; the unreliable added test
+is removed without weakening existing tests. Real concurrent-Client warning
+acceptance remains required. Immutable artifact8/sourcef860 actual matrix21
+passes the formerly red restored-focus detector (now742/797 inside viewport),
+original corruption503→exact-byte-restored200 and A excessive/metadata/unknown;
+then fails a driver menu timing assertion after real native concept save2.
+Partial evidence and normal cleanup retained; NOT full candidate PASS. Add a
+bounded current-enabled-control wait before the next driver menu interaction.
+Own11source/8artifact/21operational/6full starts preserved; no reset/max.
+Protected source, own finalization and NEW exact-final-main qualification open.
+
 ## Plan108 source round10 — honest original concept revision
 
 Independent full UX review identifies missing original-versus-current concept
