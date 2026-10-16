@@ -1,0 +1,70 @@
+{
+  "contract_version": "1.0",
+  "producer_version": "2.3.122",
+  "instance_id": "ep-instance",
+  "purpose": "EXECUTION_PROGRESS_READ",
+  "snapshot_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "observed_at": "2026-10-15T00:00:00Z",
+  "source_updated_at": null,
+  "freshness": "AS_OF_CENTRAL_SNAPSHOT_NOT_EXECUTOR_LIVENESS",
+  "selection": {
+    "project_id": "alpha",
+    "authority_repository_id": "alpha",
+    "repository_ids": [
+      "alpha"
+    ],
+    "mission_ids": [
+      "mission"
+    ],
+    "producer_ids": [
+      "forge"
+    ]
+  },
+  "selected_mission_id": "mission",
+  "selected_run_id": null,
+  "completeness": "COMPLETE_WITHIN_KNOWN_SCOPED_SUBMISSIONS",
+  "unlinked_legacy_records": 0,
+  "logical_action_count": 0,
+  "records": [
+    {
+      "submission_id": "sub",
+      "project_id": "alpha",
+      "repository_id": "alpha",
+      "producer_id": "forge",
+      "mission_id": "mission",
+      "mission_revision": "1",
+      "engineering_action_id": "ea",
+      "correlation_id": "correlation",
+      "submission_disposition": "QUEUED",
+      "run_id": "run",
+      "lineage": null,
+      "provenance": {
+        "status": "PERSISTED_V1_0",
+        "acceptance_submission_id": null,
+        "acceptance_receipt_id": null
+      },
+      "description": null,
+      "description_status": "NOT_RECORDED",
+      "progress": {
+        "available": false,
+        "current_phase": null,
+        "activity": "UNKNOWN",
+        "wait_reason": "NOT_RECORDED",
+        "responsible_role": "EXECUTION_HOST",
+        "steps": [],
+        "history": [],
+        "history_completeness": "UNAVAILABLE"
+      },
+      "result": {
+        "technical_outcome": "NOT_STARTED",
+        "qualification": {
+          "required_validation_state": "UNAVAILABLE",
+          "run_qualification": "UNAVAILABLE"
+        },
+        "forge_mission_acceptance": "NOT_OWNED_BY_EP"
+      },
+      "source_updated_at": "2026-10-15T00:00:00Z"
+    }
+  ],
+  "business_mutations": 0
+}

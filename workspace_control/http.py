@@ -177,6 +177,13 @@ for key,method,path in [("access","GET","/v1/project-links/access"),
         "auth":"BEARER_PINNED_AND_EXISTING_ACTOR_PAIRING","contract":"project_link",
         "summary":"own reference IPC; qualified producer binding required, unbound by default"}
 
+for key,path in [("overview","/v1/execution-progress/{workset_id}/overview"),("run","/v1/execution-progress/{workset_id}/runs/{run_id}")]:
+    OPERATIONS["execution_progress."+key]={"exposure":"HTTP_EXPOSED","method":"GET","path":path,
+        "auth":"BEARER_PINNED_AND_DRAFT_AND_ACTIVITY_GRANT","contract":"execution-progress",
+        "summary":"exact known Mission/EA snapshot read; separate finite EP progress binding"}
+for key in ["issue","revoke"]:
+    OPERATIONS["execution_progress.bind."+key]={"exposure":"LOCAL_ONLY_ADMIN","local_cli":"execution-progress-bind-"+key,"auth":"PRIVATE_ROOT_OWNER","summary":"pair or revoke existing finite progress READ; no new issuer"}
+
 ROUTES = {details["path"]: details["summary"] for details in OPERATIONS.values()
           if details["exposure"] == "HTTP_EXPOSED" and details.get("contract", "read") == "read"}
 
@@ -830,6 +837,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_GET(self):
             if not self._trusted_origin():
                 return
+            from .execution_progress_http import route as execution_progress_route
+            if execution_progress_route(self,service):return
             from .proposal_content_http import route as proposal_content_route
             if proposal_content_route(self,service):return
             from .concept_chat_http import route as concept_chat_route
@@ -945,6 +954,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_POST(self):
             if not self._trusted_origin():
                 return
+            from .execution_progress_http import route as execution_progress_route
+            if execution_progress_route(self,service):return
             from .proposal_content_http import route as proposal_content_route
             if proposal_content_route(self,service):return
             from .concept_chat_http import route as concept_chat_route
@@ -987,6 +998,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
         def do_PATCH(self):
             if not self._trusted_origin():
                 return
+            from .execution_progress_http import route as execution_progress_route
+            if execution_progress_route(self,service):return
             from .proposal_content_http import route as proposal_content_route
             if proposal_content_route(self,service):return
             from .concept_chat_http import route as concept_chat_route

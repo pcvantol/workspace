@@ -20,6 +20,10 @@ def main(argv=None):
     commands.add_parser("projects")
     commands.add_parser("capabilities")
     commands.add_parser("openapi")
+    progress_issue=commands.add_parser("execution-progress-bind-issue")
+    progress_issue.add_argument("--config-file",required=True)
+    progress_revoke=commands.add_parser("execution-progress-bind-revoke")
+    progress_revoke.add_argument("--binding-id",required=True)
     activity_issue=commands.add_parser("workset-activity-bind-issue")
     for flag in ["actor","project","forge-endpoint","forge-grant-receipt-file","forge-token-file","client-token-file"]:
         activity_issue.add_argument("--"+flag,required=True)
@@ -150,6 +154,12 @@ def main(argv=None):
                     expected_repository_id=args.expected_current_repository,
                     expected_revision=args.expected_current_revision)
             print(json.dumps(result, sort_keys=True))
+        elif args.command == "execution-progress-bind-issue":
+            with Service(args.root) as service:result=service.execution_progress.provision(args.config_file)
+            print(json.dumps(result,sort_keys=True))
+        elif args.command == "execution-progress-bind-revoke":
+            with Service(args.root) as service:result=service.execution_progress.revoke(args.binding_id)
+            print(json.dumps(result,sort_keys=True))
         elif args.command == "workset-activity-bind-issue":
             with Service(args.root) as service:
                 result=service.activities.provision(args.actor,args.project,args.forge_endpoint,args.forge_grant_receipt_file,args.forge_token_file,args.client_token_file)

@@ -56,6 +56,8 @@ struct ActivityEvent: Sendable, Identifiable {
 }
 struct ActivityCurrentItem: Decodable, Sendable, Identifiable {
     let candidate_id: String
+    let mission_id: String?
+    let mission_state_revision: Int?
     let title: String
     let approved: Bool
     let released: Bool

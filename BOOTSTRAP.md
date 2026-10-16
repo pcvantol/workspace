@@ -1,3 +1,36 @@
+## Plan107 qualified consumer candidate — protected implementation pending
+
+Selected `L4-NATIVE-MISSION-EA-PROGRESS-V1-20261015`, JOIN
+`L2-L4-CENTRAL-MISSION-EA-PROGRESS-V1-20261015`; Workspace2.8.31.
+Actual qualified EP2.3.122 final-mainbc441c0/schemaac4ccc1c handoff6208099239
+consumed. [Owning boundary](docs/WORKSPACE_MISSION_EA_PROGRESS_V1.md).
+[Fresh qualified candidate](https://github.com/pcvantol/workspace/tree/2f32a4a837f5061a056b685315dbeb2fe922f50c/docs/qualification/plan107-qualified-candidate-20261016) retains original sourcee453104 screenshots.
+Fullvalidation4 PASS356Python/335native+1isolated/strict owning coverage/wheel/app.
+Complete source reviews and fresh qualified UX/Security accepted; Quality verifies
+metadata correction: stale inherited inventory3entries preserved and repaired,
+exact Git export/actual compilemanifest/37MachO sections bind unchanged binary.
+New scope remains only execution-read; existing parents open, plan106/LINK CLOSED.
+Cumulative14source/8artifact/5operational/4fullvalidation; old history unchanged.
+Protected implementation, own nonempty finalization and NEW exact-final-main
+installed/GUI/readback/cleanup remain required. Earlier headers are history.
+
+## Current selected r81-plan107 — native Mission/EA execution progress
+
+L4-NATIVE-MISSION-EA-PROGRESS-V1-20261015 / JOIN
+L2-L4-CENTRAL-MISSION-EA-PROGRESS-V1-20261015. Same sole writer, own
+codex/plan107-native-mission-ea-progress from main80f51fc, PATCH2.8.31.
+[Scoped consumer contract](docs/WORKSPACE_MISSION_EA_PROGRESS_V1.md).
+Existing Activity → native Uitvoering → own authenticated Server → two actual
+finite EP progress GETs. Exact original identities; EPtechnical COMPLETE never
+Forgeacceptance; no own engine/percentage/model/mutation or L3-R55 pin change.
+Published EP4607202/2.3.122 is still candidate, qualified finalhandoff REQUIRED.
+Directed28Python/11native PASS, first actual79/d167 installed/native transitions
+retained, incomplete fixture matrix NOT PASS and normal own cleanup complete.
+Current5source rounds/2artifact starts/0full validations; no administrative cap.
+Complete required coverage/CI/TDE, independent Q/S/UX, protected source and own
+finalization and NEW exact-final-main installed/GUI/readback/cleanup remain open.
+Plan106/LINK/predecessors CLOSED; earlier checkpoints below are historical.
+
 ## Plan106 protected implementation — own finalization
 
 [PR179](https://github.com/pcvantol/workspace/pull/179) protected merged to `3ec96aceb61e92290ef2f607865c6b398d71b577`

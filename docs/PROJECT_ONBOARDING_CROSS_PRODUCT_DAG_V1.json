@@ -734,7 +734,15 @@
       "source_ref": "05e530d6339cb1c16b1e8f4814347578c5fd761c",
       "source_path": "docs/PROJECT_ONBOARDING_CONTRACT_PROPOSALS_V1.json",
       "source_path_owner": "workspace",
-      "implementation_selected_by_L4": false
+      "implementation_selected_by_L4": false,
+      "scoped_consumer_delivery": {
+        "scope": "NATIVE_MISSION_EA_EXECUTION_READ_ONLY",
+        "assignment": "L4-NATIVE-MISSION-EA-PROGRESS-V1-20261015",
+        "own_contract": "docs/WORKSPACE_MISSION_EA_PROGRESS_V1.md",
+        "producer_qualified_source": "bc441c0f4825fc5de7f68b06feffcc97e53af6d5",
+        "full_parent_selected": false,
+        "status": "QUALIFIED_CANDIDATE_PROTECTED_DELIVERY_PENDING"
+      }
     },
     {
       "id": "proposal:HOB-EP04",

@@ -1,3 +1,36 @@
+## Plan107 qualified consumer candidate — protected implementation pending
+
+Selected `L4-NATIVE-MISSION-EA-PROGRESS-V1-20261015`, JOIN
+`L2-L4-CENTRAL-MISSION-EA-PROGRESS-V1-20261015`; Workspace2.8.31.
+Actual qualified EP2.3.122 final-mainbc441c0/schemaac4ccc1c handoff6208099239
+consumed. [Owning boundary](docs/WORKSPACE_MISSION_EA_PROGRESS_V1.md).
+[Fresh qualified candidate](https://github.com/pcvantol/workspace/tree/2f32a4a837f5061a056b685315dbeb2fe922f50c/docs/qualification/plan107-qualified-candidate-20261016) retains original sourcee453104 screenshots.
+Fullvalidation4 PASS356Python/335native+1isolated/strict owning coverage/wheel/app.
+Complete source reviews and fresh qualified UX/Security accepted; Quality verifies
+metadata correction: stale inherited inventory3entries preserved and repaired,
+exact Git export/actual compilemanifest/37MachO sections bind unchanged binary.
+New scope remains only execution-read; existing parents open, plan106/LINK CLOSED.
+Cumulative14source/8artifact/5operational/4fullvalidation; old history unchanged.
+Protected implementation, own nonempty finalization and NEW exact-final-main
+installed/GUI/readback/cleanup remain required. Earlier headers are history.
+
+## Active plan107 — native Mission/EA execution read
+
+Selected `L4-NATIVE-MISSION-EA-PROGRESS-V1-20261015`, JOIN
+`L2-L4-CENTRAL-MISSION-EA-PROGRESS-V1-20261015`; own PATCH2.8.31 from80f51fc.
+[Bounded contract and identity mapping](docs/WORKSPACE_MISSION_EA_PROGRESS_V1.md).
+Actual noneditable installed candidate Client→Workspace Server→EP4607202 GETs
+and qualified original Forge2.15.0 Activity context are working. Compact actual
+phase/outcome/retry/legacy/snapshot/authority/lost-reply/separate-restart matrix
+and five-language native focus/viewport/Client-restart proof PASS as candidates.
+Fullvalidation3 PASS:356Python,335native+1isolated, package checks and strict
+per-file coverage. CI/TDE, qualified L2-final-main handoff, complete independent
+acceptance, protected implementation/finalization and NEW exact-final-main
+installed/GUI/readback remain REQUIRED. No final or complete-parent claim.
+Cumulative12source rounds/7artifact starts/4operation trials/3full-validation
+starts; original failures and normal cleanup recovery retained, no reset/cap.
+Plan106/LINK and predecessors remain CLOSED; the older headers below are history.
+
 ## Plan106 protected implementation — own finalization
 
 [PR179](https://github.com/pcvantol/workspace/pull/179) protected merged to `3ec96aceb61e92290ef2f607865c6b398d71b577`

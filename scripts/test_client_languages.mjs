@@ -36,6 +36,11 @@ const c=client();
 c.element('token').value='unsent synthetic token';
 await c.element('connect').listeners.click();
 assert.equal(c.requests(),4);
+for (const id of ['execution_progress.overview','execution_progress.run','execution_progress.bind.issue','execution_progress.bind.revoke']) {
+  assert.ok(c.element('capabilities').children.some(row=>row.textContent.startsWith(id+' · ')),id);
+}
+assert.equal(c.requests(),4); // Inventory display never invokes the described operations.
+
 assert.ok(c.element('capabilities').children.some(row=>row.textContent.startsWith('candidate.register')));
 assert.ok(c.element('capabilities').children.some(row=>row.textContent.startsWith('concept-baselines.prepare')));
 const labels={en:'Language',nl:'Taal',de:'Sprache',fr:'Langue',es:'Idioma'};
