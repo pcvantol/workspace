@@ -1,3 +1,13 @@
+## Plan108 early integrated source checkpoint
+
+Same selected inspection adoption preview, PATCH2.8.32. First actual installed
+qualified EP2.3.121 owner inspection COMPLETE200; normal revoke/stop recorded,
+separate from the consumer. Qualified Forge341/EP201 product bytes match exact
+Git sources. Integrated2source rounds:13directed Python/4native state tests PASS,
+including original-only recovery and causal late-response/mapping guards.
+First small consumer installed/GUI and complete scoped DoD still REQUIRED.
+Earlier counters below are original checkpoints; no reset/administrative cap.
+
 ## Current selected plan108 — native linked-inspection adoption preview
 
 L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016 / JOIN

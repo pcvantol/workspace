@@ -46,6 +46,7 @@ enum ProjectConceptCopy {
 struct ProjectConceptView: View {
     @ObservedObject var state: ProjectConceptState
     @StateObject private var chat:ConceptChatState
+    @StateObject private var adoption:ConceptAdoptionState
     @StateObject private var baseline:ConceptBaselineState
     @StateObject private var comparison:ProposalCompareState
     @StateObject private var content:ProposalContentState
@@ -54,6 +55,7 @@ struct ProjectConceptView: View {
     init(state:ProjectConceptState,client:ClientState,grants:any DraftGrantStore) {
         self.state=state;self.client=client;self.grants=grants
         _chat=StateObject(wrappedValue:ConceptChatState(root:state.records.root.appendingPathComponent("Chat")))
+        _adoption=StateObject(wrappedValue:ConceptAdoptionState(root:state.records.root.appendingPathComponent("AdoptionIntents")))
         _baseline=StateObject(wrappedValue:ConceptBaselineState(root:state.records.root.appendingPathComponent("Baseline")))
         _comparison=StateObject(wrappedValue:ProposalCompareState(root:state.records.root.appendingPathComponent("Baseline")))
         _content=StateObject(wrappedValue:ProposalContentState(root:state.records.root.appendingPathComponent("ContentDecisions")))
@@ -131,6 +133,7 @@ struct ProjectConceptView: View {
                     if state.selectionStale && state.phase != "conflict" { Text(text("conflict")).foregroundStyle(.secondary) }
                     if state.dirty || state.pending != nil { Text(text("lifecycleBlocked")).foregroundStyle(.secondary) }
                     ConceptChatPanel(state:chat,concept:selected,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)},adopted:{if state.dirty {state.selectionStale=true;state.phase="conflict"} else {await state.open(selected.id,current:current)}},focusRequest:comparisonFocusRequest,comparisonContext:comparisonContext,onFocusReturn:{guard state.selected==selected else{return};if contentDiscussion {proxy.scrollTo("proposal-content-discuss",anchor:.center);contentReturnFocus+=1} else {proxy.scrollTo("proposal-compare-discuss",anchor:.center);comparisonReturnFocus+=1}}).id("concept-chat-panel")
+                    ConceptAdoptionPanel(state:adoption,concept:selected,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)},reveal:{id in guard state.selected==selected else{return};proxy.scrollTo(id,anchor:.center)})
                     ConceptBaselinePanel(state:baseline,concept:selected,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)})
                     if let original=baseline.result {
                         ProposalContentView(state:content,concept:selected,source:original,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)},discuss:{
@@ -161,10 +164,10 @@ struct ProjectConceptView: View {
             else if client.authorizationLost { state.concealAuthorization() }
             else { state.clientPhaseChanged(phase) }
         }
-        .onChange(of:state.selected) {_,_ in comparisonContext=nil;contentDiscussion=false;content.conceal()}
-        .onChange(of:client.authorizationLost) {_,lost in if lost {baseline.conceal();chat.conceal();comparison.conceal();content.conceal()} }
-        .onChange(of:client.phase) {_,phase in if phase != "CONNECTED" {baseline.conceal();chat.conceal();comparison.conceal();content.conceal()} }
-        .onDisappear { state.cancelReads();state.stopObservingAuthority();baseline.conceal();chat.conceal();comparison.conceal();content.conceal() }
+        .onChange(of:state.selected) {_,_ in comparisonContext=nil;contentDiscussion=false;content.conceal();adoption.conceal()}
+        .onChange(of:client.authorizationLost) {_,lost in if lost {baseline.conceal();chat.conceal();comparison.conceal();content.conceal();adoption.conceal()} }
+        .onChange(of:client.phase) {_,phase in if phase != "CONNECTED" {baseline.conceal();chat.conceal();comparison.conceal();content.conceal();adoption.conceal()} }
+        .onDisappear { state.cancelReads();state.stopObservingAuthority();baseline.conceal();chat.conceal();comparison.conceal();content.conceal();adoption.conceal() }
         }
     }
 }

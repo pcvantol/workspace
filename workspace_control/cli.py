@@ -94,6 +94,10 @@ def main(argv=None):
     link_issue.add_argument("--project-id",action="append",default=[])
     link_revoke=commands.add_parser("project-link-bind-revoke")
     link_revoke.add_argument("--binding-id",required=True)
+    adoption_issue=commands.add_parser("concept-adoption-bind-issue")
+    adoption_issue.add_argument("--config-file",required=True)
+    adoption_revoke=commands.add_parser("concept-adoption-bind-revoke")
+    adoption_revoke.add_argument("--binding-id",required=True)
     baseline_issue=commands.add_parser("concept-baseline-bind-issue")
     for flag in ["actor","context","concept-id","forge-endpoint","dossier-id","producer-source","forge-grant-receipt-file","forge-token-file"]:
         baseline_issue.add_argument("--"+flag,required=True)
@@ -255,6 +259,12 @@ def main(argv=None):
             print(json.dumps(result,sort_keys=True))
         elif args.command == "proposal-content-bind-revoke":
             with Service(args.root) as service:result=service.proposal_content.revoke(args.binding_id)
+            print(json.dumps(result,sort_keys=True))
+        elif args.command == "concept-adoption-bind-issue":
+            with Service(args.root) as service:result=service.concept_adoptions.provision(args.config_file)
+            print(json.dumps(result,sort_keys=True))
+        elif args.command == "concept-adoption-bind-revoke":
+            with Service(args.root) as service:result=service.concept_adoptions.revoke(args.binding_id)
             print(json.dumps(result,sort_keys=True))
         elif args.command == "concept-baseline-bind-issue":
             with Service(args.root) as service:
