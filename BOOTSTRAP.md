@@ -1,3 +1,17 @@
+## Plan108 source round8 — one native layout root per answer category
+
+Actual matrix19 preserves the same detail-focus failure at y986, outside the
+900-point window, despite source round7. Original test rights revoked and own
+processes stopped normally. Independent read-only Quality/UX identify multiple
+roots per category in the nested SwiftUI ForEach as a plausible scroll-frame
+cause. Each category now has one explicit VStack; original entry/control IDs,
+source/operation/focus guards and all data/rights contracts remain intact.
+17 directed native adoption/viewport tests PASS. This is NOT actual GUI PASS;
+the unchanged real focused-control detector remains the acceptance gate.
+Own8 source/6 artifacts/19 operational/6 full starts retained, no reset/max.
+Full validation, complete Q/S/UX, protected implementation, own finalization
+and NEW exact-final-main qualification remain OPEN. Same sole writer/2.8.32.
+
 ## Plan108 source round7 — same focused control follows layout movement
 
 Actual matrix17 again fails the preserved y986/outside-window detail detector;

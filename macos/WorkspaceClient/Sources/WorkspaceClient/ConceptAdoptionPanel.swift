@@ -70,6 +70,8 @@ struct ConceptAdoptionPanel:View {
             Text(text("historical")).font(.callout).foregroundStyle(.secondary)
             Text(verbatim:doc.source_observation.observed_at).font(.caption)
             ForEach(["KEEP","LINK_EXISTING","PROPOSE_ADDITION","PROPOSE_CHANGE","CONFLICT","INSUFFICIENT_INFORMATION"].filter{op in doc.entries.contains{$0.operation==op}},id:\.self) {op in
+                // One layout root per category preserves nested scroll-target identity.
+                VStack(alignment:.leading,spacing:10) {
                 Text(text(op)).font(.headline)
                 ForEach(doc.entries.filter{$0.operation==op}) {entry in
                 VStack(alignment:.leading,spacing:8) {
@@ -98,6 +100,7 @@ struct ConceptAdoptionPanel:View {
                     }
                 }.padding(12).frame(minWidth:0,maxWidth:.infinity,alignment:.leading).background(.quaternary.opacity(0.25),in:RoundedRectangle(cornerRadius:12))
             }
+                }
             }
             DisclosureGroup(text("details")) {
                 Text(verbatim:result.proposal.plan_id);Text(verbatim:result.proposal.request_digest);Text(verbatim:doc.source_observation.snapshot_digest)
