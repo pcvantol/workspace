@@ -1,3 +1,16 @@
+## Plan108 source round10 — honest original concept revision
+
+Independent full UX review identifies missing original-versus-current concept
+revision labels on reopened history. The open result now shows its saved source
+revision; a different current concept revision and explicit historical warning
+appear in all five UI languages. Source digest remains under Details, alongside
+the original request/snapshot facts. No regenerated proposal, authorization or
+new effect.35directed native adoption/concept/viewport tests PASS. Own10source/
+7artifact/20operational/6full starts retained. Source9 card-root/top reveal has
+not yet passed the actual packaged detector; matrix20 remains a preserved FAIL.
+Full candidate Q/S/UX/tests, protected implementation, own finalization and NEW
+exact-final-main installed/GUI qualification remain OPEN. Same writer/2.8.32.
+
 ## Plan108 source round9 — stable document-card reveal at its beginning
 
 Actual matrix20 still fails the same restored-focus y986 detector after the

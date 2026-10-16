@@ -72,6 +72,11 @@ struct ConceptAdoptionPanel:View {
     }
     private func documents(_ doc:ConceptAdoptionResult.Document,result:ConceptAdoptionResult)->some View {
         VStack(alignment:.leading,spacing:10) {
+            LabeledContent(text("sourceRevision"),value:String(result.source_revision)).accessibilityIdentifier("adoption-source-revision")
+            if result.source_revision != concept.revision {
+                LabeledContent(text("currentRevision"),value:String(concept.revision))
+                Text(text("historicalConcept")).foregroundStyle(.secondary).fixedSize(horizontal:false,vertical:true)
+            }
             Text(text("historical")).font(.callout).foregroundStyle(.secondary)
             Text(verbatim:doc.source_observation.observed_at).font(.caption)
             ForEach(["KEEP","LINK_EXISTING","PROPOSE_ADDITION","PROPOSE_CHANGE","CONFLICT","INSUFFICIENT_INFORMATION"].filter{op in doc.entries.contains{$0.operation==op}},id:\.self) {op in
@@ -108,7 +113,7 @@ struct ConceptAdoptionPanel:View {
                 }
             }
             DisclosureGroup(text("details")) {
-                Text(verbatim:result.proposal.plan_id);Text(verbatim:result.proposal.request_digest);Text(verbatim:doc.source_observation.snapshot_digest)
+                Text(verbatim:result.proposal.plan_id);Text(verbatim:result.proposal.request_digest);Text(verbatim:result.source_digest);Text(verbatim:doc.source_observation.snapshot_digest)
                 Text(verbatim:doc.source_observation.selection.joined(separator:"\n"));Text(verbatim:doc.source_observation.exclusions.joined(separator:"\n"))
                 ForEach(doc.decisions,id:\.self) {Text(verbatim:$0)}
             }.font(.caption).textSelection(.enabled)
