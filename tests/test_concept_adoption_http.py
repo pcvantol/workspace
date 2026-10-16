@@ -114,3 +114,16 @@ class AdoptionHTTPTests(unittest.TestCase):
   ProjectConceptLibrary(self.service.project_concepts).move(('alice','own-context'),self.identity,dict(operation_id='c'*32,expected_revision=1,lifecycle='ARCHIVED'))
   self.assertEqual(self.request(self.prefix+'/prepare','POST',future),(403,{'error':'DENIED'}))
   self.assertEqual(self.posts,[])
+
+ def test_real_own_capacity_distinct_from_storage_or_mislabelled_producer_failure(self):
+  self.assertEqual(self.request(self.prefix+'/prepare','POST',self.command())[0],200)
+  second=self.command();second['operation_id']='c'*32
+  with patch('workspace_control.concept_adoption_intents.LIMIT',1):
+   self.assertEqual(self.request(self.prefix+'/prepare','POST',second),(409,{'error':'ADOPTION_CAPACITY'}))
+  self.assertEqual(len(self.posts),1);self.assertEqual(self.request(self.prefix+'/operations/'+'b'*32)[0],200)
+  with patch.object(self.peer,'cap',side_effect=WorklistError('INSPECTION_ADOPTION_CAPACITY_EXHAUSTED',http_status=503)):
+   self.assertEqual(self.request(self.prefix+'/access')[0],503)
+  with patch.object(self.peer,'cap',side_effect=WorklistError('INSPECTION_ADOPTION_IDEMPOTENCY_CONFLICT',http_status=503)):
+   self.assertEqual(self.request(self.prefix+'/access')[0],503)
+  with patch.object(self.peer,'cap',side_effect=WorklistError('INSPECTION_ADOPTION_CAPACITY_EXHAUSTED',http_status=409)):
+   self.assertEqual(self.request(self.prefix+'/access')[0],409)

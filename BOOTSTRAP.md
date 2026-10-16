@@ -1,3 +1,17 @@
+## Plan108 source round5 — bounded candidate recovery retained
+
+[Actual d93ac81 recovery candidate](docs/qualification/plan108-recovery-candidate-20261016/README.md):
+real lostreply/individual Client-Server-Forge-EP restarts/oneoriginal, red→green,
+current denial, five-language narrow/wide light/dark GUI,10safe screenshots;
+normal cleanup. Fullvalidation5b/5CI PASS, separate actual TDE QUALIFIED /
+PASS_WITH_WARNINGSmax29. Remaining variants/A→B/capacity and full DoD open.
+Round5 fixes independent real UX: correct optional vision placeholder, genuine
+capacity status/retained receipt versus storage/unavailable, readable actual
+limitation codes.29Python/12native directed PASS; newnative85.52–100%.
+Own5source/3artifact/5operational/5full starts, no reset/adminmaximum. Same
+solewriter/2.8.32; newsource validation/installed/reviews/protected source and own
+finalization/NEW final-main proof required; closed predecessors remain closed.
+
 ## Plan108 round4 source checkpoint — complete qualification still open
 
 28directedPython/11native PASS;63existing readonly PASS. All four new native

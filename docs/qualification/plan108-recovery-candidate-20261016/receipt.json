@@ -1,0 +1,46 @@
+{
+  "consumer_source": "d93ac81ba69d791ac1713d7635c7c734a91ff884",
+  "same_proposal_after_separate_Server_Forge_EP_restart": true,
+  "actual_revoke_DENIED": true,
+  "one_original_R55_record": true,
+  "product_inspection_POST": 0,
+  "five_languages": true,
+  "narrow_wide_and_light_dark": true,
+  "source_fault_red_restore_original_bytes_green": true,
+  "not_final_main": true,
+  "remaining_matrix": [
+    "metadata-only",
+    "too-large",
+    "conflicting-declaration",
+    "snapshot-conflict",
+    "capacity",
+    "causal-A-to-B"
+  ],
+  "phase": "SCOPED_CANDIDATE_RECOVERY_NOT_FULL_ACCEPTANCE",
+  "original_operation_sha256": "67b126c43cb1451fa691fd21df290e99bf537b089cefd256bdbe03d4ada88ca1",
+  "genuine_lost_committed_reply": {
+    "upstream_status": 200,
+    "upstream_complete_bytes": 19240,
+    "upstream_body_sha256": "83a2d0653d4de73369d15ba595ba613ab26030742c5b66db345d2ee7e956d823",
+    "native_reply_bytes": 0
+  },
+  "native_binary_sha256": "0da56d669ba5d431a522467d9189996d1de8c1535193ae31d68063aafe2d2b68",
+  "own_wheel_sha256": "8ad6f2832b7c1e62641026e88756751ccdb9d61ab6cc56e40a380e4d9dc636ce",
+  "forge_source": "cd483fd9b17a96d0deac0f0264ab6fc32c75e778",
+  "ep_source": "f3b56303b561a7193965f4aa41fd8da744a8c1c2",
+  "all_normal_own_cleanup": true,
+  "independent_Quality": "SCOPED_RUNTIME_PASS",
+  "independent_UX_Security_pixels_and_all_PNG_metadata": "PASS_ALL_10_ORIGINALS",
+  "screenshots_sha256": {
+    "matrix-current-access-revoked.png": "6ae22387fbfccde4e84104a9e7f84128656ff98e88c5f2ccadd795e3bd954dee",
+    "matrix-lost-committed-response-pending.png": "362716ebbc69a92cb3547c01d20f43577167d3e5e9fdf5265f0090384d304694",
+    "matrix-original-after-client-restart.png": "ceeb456878c7f7efd39f260c395b3ab29bcc585ab21c91199d0754883f4164fc",
+    "matrix-original-after-ep-restoration.png": "ceeb456878c7f7efd39f260c395b3ab29bcc585ab21c91199d0754883f4164fc",
+    "matrix-original-after-server-restart.png": "ceeb456878c7f7efd39f260c395b3ab29bcc585ab21c91199d0754883f4164fc",
+    "matrix-original-de-dark-1180.png": "14ad3b324d7437a2a4264a3f7addfcc2e9843166421ef07993f842cb8365ede2",
+    "matrix-original-en-dark-760.png": "771871b3beda0e9669dc4c43a652abe80a9dfe8dd1523c5623043502fdb83f80",
+    "matrix-original-es-dark-900.png": "e2873806c026cb175ed70ade26a81369075b80d605d166bb28cb96f2fb86f40b",
+    "matrix-original-fr-light-760.png": "707cdf3de3af8f9e23f5b45e0640ee5757699748645c797a6257bdddf3dd22e9",
+    "matrix-real-original-source-unavailable.png": "19ac76099616a10acfb0a77e9a3d7a860d70247281b774bcfc7c93cd177319a5"
+  }
+}

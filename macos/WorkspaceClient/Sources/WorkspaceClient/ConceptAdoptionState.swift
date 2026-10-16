@@ -3,7 +3,7 @@ import Combine
 
 @MainActor final class ConceptAdoptionState:ObservableObject {
     struct Navigation:Codable {let source:String;let operation:String?;let document:String?}
-    struct Journal:Codable {let key:String;let concept:String;let source:String;let command:ConceptAdoptionCommand;var complete:Bool;var peerDigest:String?;var rejected:Bool?;var retired:Bool?}
+    struct Journal:Codable {let key:String;let concept:String;let source:String;let command:ConceptAdoptionCommand;var complete:Bool;var peerDigest:String?;var rejected:Bool?;var retired:Bool?;var limitObserved:Bool?}
     @Published var sources:[ConceptAdoptionSources.Source]=[]
     @Published var source=""
     @Published var expandedDocument=""
@@ -28,7 +28,7 @@ import Combine
         do {let c=try await current();try await checked(c,concept,selected,ticket:ticket,current:current);guard let result,result.document?.entries.contains(where:{$0.id==path})==true else{throw ConceptError.invalid};let next=expandedDocument==path ? "":path;try saveNav(c,concept,source:selected,operation:result.operation_id,document:next);expandedDocument=next}
         catch {if ticket==generation {failure(error)}}
     }
-    func failure(_ error:Error) {result=nil;switch error {case ConceptAdoptionError.sourceRejected:phase="sourceRejected";case ConceptError.denied:conceal();phase="access";case ConceptError.conflict:phase="conflict";case ConceptError.notFound:phase="notFound";case ConceptError.invalid,is DecodingError:phase="invalid";default:phase="unavailable"}}
+    func failure(_ error:Error) {result=nil;switch error {case ConceptAdoptionError.capacity:phase="capacity";case ConceptAdoptionError.sourceRejected:phase="sourceRejected";case ConceptError.denied:conceal();phase="access";case ConceptError.conflict:phase="conflict";case ConceptError.notFound:phase=pending?.limitObserved==true ? "capacity":"notFound";case ConceptError.invalid,is DecodingError:phase="invalid";default:phase="unavailable"}}
     func checked(_ c:ConceptConnection,_ concept:ProjectConcept,_ selected:String,ticket:Int,current:@escaping @MainActor () async throws->ConceptConnection) async throws {
         guard generation==ticket else{throw CancellationError()}
         let now=try await current()
@@ -93,6 +93,12 @@ import Combine
             journal.complete=value.proposal.state=="PREPARED";journal.peerDigest=value.proposal.request_digest;try records.saveBounded(JSONEncoder().encode(journal),key:local);pending=journal.complete ? nil:journal;try saveNav(c,concept,source:selected,operation:command.operation_id,document:nil);result=value;phase=journal.complete ? "prepared":"pending"
             let freshHistory=try await transport.history(c,concept:concept.id,source:selected).operations
             try await checked(c,concept,selected,ticket:ticket,current:current);guard ticket==generation else{return};history=freshHistory
+        } catch ConceptAdoptionError.capacity {
+            guard ticket==generation else{return}
+            do {
+                if var journal=pending {journal.limitObserved=true;try records.saveBounded(JSONEncoder().encode(journal),key:journal.key);pending=journal}
+                phase="capacity"
+            } catch {failure(error)}
         } catch ConceptAdoptionError.sourceRejected {
             guard ticket==generation else{return}
             do {

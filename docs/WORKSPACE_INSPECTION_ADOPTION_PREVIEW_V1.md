@@ -133,3 +133,30 @@ cache then passed without signing-policy/system changes. Candidate2 source45958f
 is preserved but predates round4; no new-source acceptance is inferred from it.
 Qualified producer entrypoints and all201 EP manifest payloads independently match
 owning qualified source and noneditable installation. No peer rebuild/upgrade.
+
+## Actual recovery candidate and source round5
+
+[Bounded candidate recovery on d93ac81](qualification/plan108-recovery-candidate-20261016/README.md)
+retains actual lost committed response, separate normal process restarts, original
+packet identity, EP-unavailable red/restored green, real current denials, five
+native languages/windows/themes and normal cleanup; ten original independently
+safe images. Complete scope remains open. Fullvalidation5b and all five CI pass;
+actual separate TDE QUALIFIED/PASS_WITH_WARNINGS max29. Export validation4 lacked
+Git identity required by preservation tests; original error retained, independent
+detached identity/index with read-only original objects fixed that test setup.
+No shared index, remote, extra source branch or writer was introduced.
+
+Independent real UX requested two corrections. Source round5 gives the optional
+vision reference its own no-link placeholder and classifies only exact validated
+409 ADOPTION_CAPACITY / INSPECTION_ADOPTION_CAPACITY_EXHAUSTED as a genuine limit.
+Storage503 stays unavailable; producer503 with a capacity/conflict-shaped code
+cannot change HTTP class. Own finite SQLite record exhaustion has a separate
+capacity type, never inferred from arbitrary OSError/disk failure. A private
+historical limit receipt survives restart; pending/original is retained and no
+new POST or retirement bypass is introduced. Generic history says original
+request, since pending intents are not claimed as completed proposals. Qualified
+actual reason codes get readable five-language explanations, with exact codes
+retained under details; missing/metadata-only/oversized never mean absent.
+29directed Python and12native checks PASS, new native85.52–100% directed coverage.
+Source round5 complete validation/new installed coverage and reviews remain open;
+previous candidate artifacts/screens stay bound to their original d93ac81 source.

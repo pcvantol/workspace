@@ -1,7 +1,7 @@
 import Foundation
 import CryptoKit
 
-enum ConceptAdoptionError:Error {case sourceRejected}
+enum ConceptAdoptionError:Error {case sourceRejected,capacity}
 
 struct ConceptAdoptionCommand:Codable,Equatable,Sendable {
     struct Mapping:Codable,Equatable,Sendable {let artifact_path:String;let source_path:String;let choice:String}
@@ -61,6 +61,7 @@ struct ConceptAdoptionTransport:ConceptAdoptionServing {
             if action.hasSuffix("/prepare"),let error=try? JSONDecoder().decode([String:String].self,from:data),error==["error":"DENIED","reason":"ADOPTION_SOURCE_ARCHIVED_BEFORE_CAPTURE"] {throw ConceptAdoptionError.sourceRejected}
             throw ConceptError.denied;
         case 401:throw ConceptError.denied;case 409:
+            if let error=try? JSONDecoder().decode([String:String].self,from:data),error.count==1,let code=error["error"],["ADOPTION_CAPACITY","INSPECTION_ADOPTION_CAPACITY_EXHAUSTED"].contains(code) {throw ConceptAdoptionError.capacity}
             if action.hasSuffix("/prepare"),let error=try? JSONDecoder().decode([String:String].self,from:data),error==["error":"ADOPTION_SOURCE_REJECTED_BEFORE_CAPTURE"] {throw ConceptAdoptionError.sourceRejected}
             throw ConceptError.conflict;case 404:throw ConceptError.notFound;case 400:throw ConceptError.invalid;default:throw ConceptError.unavailable}
         return try JSONDecoder().decode(T.self,from:data)

@@ -5,6 +5,7 @@ import XCTest
 final class AdoptionFixture:ConceptAdoptionServing,@unchecked Sendable {
     let concept:ProjectConcept;let source=String(repeating:"e",count:32)
     var posts:[ConceptAdoptionCommand]=[];var created:[String:ConceptAdoptionResult]=[:]
+    var capacity=false
     var reject=false
     var lose=false;var holdRead=false;var holdHistory=false
     var readWait:CheckedContinuation<ConceptAdoptionResult,Error>?
@@ -14,7 +15,7 @@ final class AdoptionFixture:ConceptAdoptionServing,@unchecked Sendable {
     func access(_ c:ConceptConnection,concept:String,source:String) async throws->ConceptAdoptionAccess {.init(contract_version:"workspace-concept-adoption/1",actor_id:self.concept.actor_id,context_id:c.access.projectID,concept_id:concept,binding_id:source,producer_source:ConceptAdoptionResult.pin,source_revision:self.concept.revision,can_prepare:true,expires_at:"2099-01-01T00:00:00Z")}
     func history(_ c:ConceptConnection,concept:String,source:String) async throws->ConceptAdoptionHistory {if holdHistory{return try await withCheckedThrowingContinuation{historyWait=$0}};return .init(operations:[])}
     func packet(_ op:String,digest:String=String(repeating:"a",count:64))->ConceptAdoptionResult {.init(contract_version:"workspace-concept-adoption/1",actor_id:concept.actor_id,context_id:concept.context_id,concept_id:concept.id,binding_id:source,producer_source:ConceptAdoptionResult.pin,operation_id:op,source_revision:1,current_revision:concept.revision,source_digest:String(repeating:"d",count:64),proposal:.init(contract_version:"forge-ep-inspection-adoption-preview/v1",instance_id:"forge",principal_id:"actor",audience:"workspace",dossier_id:"dossier",pairing_id:"pairing",operation_id:op,plan_id:"original",request_digest:digest,state:"PREPARING",result:nil,proposal_kind:"ep-inspection-adoption-preview/1.0",original_intent:true,approval:"NOT_PERFORMED",registration:"NOT_PERFORMED"),document:nil)}
-    func prepare(_ c:ConceptConnection,concept:String,source:String,command:ConceptAdoptionCommand) async throws->ConceptAdoptionResult {posts.append(command);if reject{throw ConceptAdoptionError.sourceRejected};let value=packet(command.operation_id);created[command.operation_id]=value;if lose{throw ConceptError.unavailable};return value}
+    func prepare(_ c:ConceptConnection,concept:String,source:String,command:ConceptAdoptionCommand) async throws->ConceptAdoptionResult {posts.append(command);if capacity{throw ConceptAdoptionError.capacity};if reject{throw ConceptAdoptionError.sourceRejected};let value=packet(command.operation_id);created[command.operation_id]=value;if lose{throw ConceptError.unavailable};return value}
     func read(_ c:ConceptConnection,concept:String,source:String,operation:String) async throws->ConceptAdoptionResult {if holdRead{return try await withCheckedThrowingContinuation{readWait=$0}};guard let value=created[operation] else{throw ConceptError.notFound};return value}
 }
 final class ConceptAdoptionStateTests:XCTestCase {
@@ -87,6 +88,18 @@ final class ConceptAdoptionStateTests:XCTestCase {
         XCTAssertNil(state.pending);XCTAssertEqual(state.phase,"prepared");XCTAssertEqual(fixture.posts.count,1)
         let persisted=try JSONDecoder().decode(ConceptAdoptionState.Journal.self,from:XCTUnwrap(state.records.load(pending.key)));XCTAssertTrue(persisted.complete)
         state.conceal()
+    }
+
+    @MainActor func testActualLimitReceiptSurvivesRestartWithoutClaimingNewCapacityOrReposting() async throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
+        let(state,fixture,concept)=await configured(root);let active=connection;fixture.capacity=true
+        await state.prepare(concept,paths:["docs/product/VISION.md"],vision:nil,current:{active})
+        XCTAssertEqual(state.phase,"capacity");let pending=try XCTUnwrap(state.pending);XCTAssertEqual(pending.limitObserved,true);state.conceal()
+        let restored=ConceptAdoptionState(transport:fixture,root:root);await restored.load(concept,current:{active})
+        XCTAssertEqual(restored.phase,"capacity");XCTAssertEqual(restored.pending?.command,pending.command)
+        await restored.prepare(concept,paths:["docs/product/VISION.md"],vision:nil,current:{active})
+        await restored.retireRejected(concept:concept,current:{active})
+        XCTAssertEqual(fixture.posts.count,1);XCTAssertNotNil(restored.pending);XCTAssertTrue(fixture.created.isEmpty);restored.conceal()
     }
 
 }

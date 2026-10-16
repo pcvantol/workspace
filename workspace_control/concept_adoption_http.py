@@ -5,7 +5,7 @@ from .concept_baseline_http import protected_reply
 from .workset_release_http import _body
 from .worklist_peer import WorklistError
 from .conversations import ConversationConflict
-from .concept_adoption_intents import AdoptionSourceRejected,AdoptionArchivedRejected
+from .concept_adoption_intents import AdoptionSourceRejected,AdoptionArchivedRejected,AdoptionCapacity
 from .project_concepts import ConceptStorageUnavailable
 
 def route(handler,service):
@@ -44,8 +44,14 @@ def route(handler,service):
     except AdoptionArchivedRejected:handler._reply(403,{'error':'DENIED','reason':'ADOPTION_SOURCE_ARCHIVED_BEFORE_CAPTURE'})
     except (PermissionError,WorklistError) as error:
         code=getattr(error,'state','DENIED');status=403 if code in ('DENIED','UNAUTHORIZED') else 404 if code=='INSPECTION_ADOPTION_NOT_FOUND' and getattr(error,'http_status',None)==404 else 409 if 'CONFLICT' in code or 'CAPACITY' in code else 503
+        actual=getattr(error,'http_status',None)
+        if actual is not None:
+            # A code string cannot turn an unavailable producer into actual
+            # capacity/conflict/absence. Only its verified HTTP class may do so.
+            status=409 if actual==409 else 404 if actual==404 and code=='INSPECTION_ADOPTION_NOT_FOUND' else 403 if actual in (401,403) else 503
         handler._reply(status,{'error':code})
     except FileNotFoundError:handler._reply(404,{'error':'ADOPTION_NOT_FOUND'})
+    except AdoptionCapacity:handler._reply(409,{'error':'ADOPTION_CAPACITY'})
     except AdoptionSourceRejected:handler._reply(409,{'error':'ADOPTION_SOURCE_REJECTED_BEFORE_CAPTURE'})
     except ConversationConflict:handler._reply(409,{'error':'ADOPTION_CONFLICT'})
     except (ConceptStorageUnavailable,sqlite3.Error):handler._reply(503,{'error':'ADOPTION_STORAGE_UNAVAILABLE'})

@@ -20,6 +20,9 @@ RECORD_BYTES=192000
 COLUMNS={'actor_id','context_id','concept_id','operation_id','command_digest','record','record_digest','dispatched'}
 BINDING={'id','actor_id','context_id','concept_id','instance_id','dossier_id','audience','producer_source','principal_id','pairing_id','identity','source_options'}
 
+class AdoptionCapacity(ConceptStorageUnavailable):
+    """Actual finite own record limit, distinct from storage loss or disk failure."""
+
 class AdoptionArchivedRejected(PermissionError):
     """Archived PREPARE stays denied; own original is proven never captured."""
 
@@ -86,7 +89,7 @@ class ConceptAdoptionIntents:
                     briefing=ConceptBriefingStore(self.store)._read(db,scope,identity)
                     if briefing['accepted_from'] is not None:
                         source['briefing']={'fields':briefing['fields'],'accepted_from':briefing['accepted_from']}
-                    if exists and db.execute('SELECT count(*) FROM '+TABLE).fetchone()[0]>=LIMIT:raise ConceptStorageUnavailable('proposal history capacity')
+                    if exists and db.execute('SELECT count(*) FROM '+TABLE).fetchone()[0]>=LIMIT:raise AdoptionCapacity('proposal history capacity')
                     from .concept_adoption_mapping import mapping,request_for
                     mapped=mapping(source,scope,binding,command)
                     request=request_for(mapped,binding,operation)
