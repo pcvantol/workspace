@@ -1,3 +1,16 @@
+## Plan108 protected current-rights/focus repair — own finalization pending
+
+Protected repair main `a1a7c1c3b6c75b9bfa209ba392759aeb511022e6` equals exact reviewed743f967 tree.
+Actual full14 PASS364native+1isolated/allgates/package and strict >80.2% per
+changed production source; five checks and separate actual TDE successful.
+Three independent scoped reviewers accept source and actual candidate35:
+semantic Escape/one Space detailfocus12pt and history→real403 concealment,
+one original effect and normal cleanup. Earlier failures and all prior source-
+bound evidence remain preserved. [Own finalization](docs/WORKSPACE_INSPECTION_ADOPTION_ACCESS_REPAIR_FINALIZATION_V1.md)
+requires OWN full15/reviews/checks/TDE/protected merge then NEW exact-final-main
+installed/native lost-reply/restarts/screenshots/readback/cleanup. Version2.8.34
+NO_BUMP; qualified Forge/EP pins unchanged, parents OPEN, LINK/predecessors CLOSED.
+
 ## Plan108 source23 — actual TDE failure and cohesive monitor refactoring
 
 Exact source1ecc/artifact19/candidate35/full13 remain source-bound PASS, but its

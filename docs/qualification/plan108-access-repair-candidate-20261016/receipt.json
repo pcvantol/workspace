@@ -1,0 +1,77 @@
+{
+  "assignment": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
+  "plan": 108,
+  "phase": "BOUND_CANDIDATE_NOT_FINAL_MAIN",
+  "version": "2.8.34",
+  "version_meaning": "Canonical source and actual native Client only; isolatedServermetadata/runtime0.0.0",
+  "actual_isolated_Server_version": "0.0.0",
+  "canonical_installed_Server_qualified": false,
+  "source": "1ecc3f672b50e58dc441c8568db1fe8d04492547",
+  "artifact": 19,
+  "trial": 35,
+  "own_wheel_sha256": "47458b6719e95fa80df9a96e61230b5c0f4b2e149725f527ac21b272abf53244",
+  "native_binary_sha256": "e4bc7ccf0d9ba5b33e2061d8a3f03da4f8d9ddea7d9373c1c130dd7778a46165",
+  "own_payload_count": 78,
+  "native_input_count": 246,
+  "native_minimum_macos": "26.0",
+  "native_binary_SDK": "26.0",
+  "source21_causal_monitor_RED_GREEN": "3 actual started-monitor tests; base RED2/current GREEN3; originals retained",
+  "source22_navigation_tests": "4 causal lifecycle tests PASS; not keyboard simulation",
+  "actual_semantic_Escape_then_one_Space_detail_focus12pt": true,
+  "fast_key_race_not_declared_fixed": true,
+  "actual_history_open_then_current_revoke403_conceals": true,
+  "literal_original_Dutch_readable": true,
+  "selected_ABSENT_Architecture_addition": true,
+  "not_inspected_Roadmap_unknown": true,
+  "same_original_operation": "8c7b669c149d4e18b86227e8b76cb80c",
+  "original_packet_sha256": "5ddd16e40e0dc98fc9b654bf522f2f91f607b3d8048de0195af3c1fdff6c6cfc",
+  "one_native_prepare_one_own_intent_one_R55_record": true,
+  "separately_counted_owner_initial_EP_inspection": 1,
+  "product_EP_POST": 0,
+  "source_files_unchanged": 28,
+  "normal_finite_cleanup_complete": true,
+  "qualified_Forge": "2.21.0/cd483fd9b17a96d0deac0f0264ab6fc32c75e778",
+  "qualified_EP": "2.3.121/f3b56303b561a7193965f4aa41fd8da744a8c1c2",
+  "synthetic_isolated_not_Peters_live_project_or_approval": true,
+  "independent_Quality_Security_UX_pixel_metadata_privacy": "PASS for exact originals",
+  "images": [
+    {
+      "file": "early35-current-rights-revoked.png",
+      "sha256": "5a0781434f1356f929775c4f845671dfc1fc8835a24456b037850d348d0a6652",
+      "unmodified_pixels_and_metadata": true
+    },
+    {
+      "file": "early35-one-Space-original-detail.png",
+      "sha256": "c26dbe1b7bc6cedc02eae5cf9766722575012c9bc3bf599b40d6acacb28b5480",
+      "unmodified_pixels_and_metadata": true
+    },
+    {
+      "file": "early35-original-before-keyboard.png",
+      "sha256": "72fe93807191f6fc99b7cbfe3288008ca339aaa0c5c1223ad10ec2fa7786bfda",
+      "unmodified_pixels_and_metadata": true
+    },
+    {
+      "file": "early35-same-original-history-reopened.png",
+      "sha256": "b3d197e8e1ac4fbc3f491d05528c5eb395bed422df4107a2472000436417d22f",
+      "unmodified_pixels_and_metadata": true
+    },
+    {
+      "file": "early35-selected-absent-addition.png",
+      "sha256": "a8c055a4b22547d62b9d2ca783da05b71a0f5edf1fb888bced2b660281b0d285",
+      "unmodified_pixels_and_metadata": true
+    },
+    {
+      "file": "early35-semantically-closed-keyboard-opener.png",
+      "sha256": "a1a275e2ce75abbc8a13f103fd2af8fd3a89b9b0641a2c80be1d544363838932",
+      "unmodified_pixels_and_metadata": true
+    },
+    {
+      "file": "early35-uninspected-unknown.png",
+      "sha256": "61531ead142ad6fa0dd028c4b90603fe37b58468a45180b1b01f63d019d4d9cd",
+      "unmodified_pixels_and_metadata": true
+    }
+  ],
+  "previous_source_bound_evidence": "Preserved original five-language, negative, A→B, corruption and recovery matrix; not relabeled",
+  "trials32_33_34": "FAIL/PARTIAL original bindings preserved",
+  "NEW_exact_final_main_lost_reply_separate_restarts_native_GUI": "REQUIRED after own protected finalization"
+}

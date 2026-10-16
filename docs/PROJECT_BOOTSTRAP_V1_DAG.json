@@ -203,7 +203,7 @@
           "scope": "LINKED_INSPECTION_SOURCE_PRESENTATION_ONLY",
           "assignment": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
           "plan": 108,
-          "status": "SELECTED_MONITOR_COHESION_REFACTOR_UNDER_QUALIFICATION",
+          "status": "PROTECTED_ACCESS_FOCUS_REPAIR_OWN_FINALIZATION_PENDING",
           "full_parent_selected": false,
           "own_contract": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md",
           "candidate_runtime_evidence": "docs/qualification/plan108-bounded-candidate-20261016/README.md",
@@ -242,7 +242,12 @@
           "candidate34": "FAIL_NATIVE_FOCUS_AFTER_STABLE_ESCAPE_ONE_SPACE;BEFORE_MONITOR_PROOF;NORMAL_CLEANUP_RETAINED",
           "monitor_refactor_source_round": 23,
           "source22_TDE": "ACTUAL38930175925FAIL_FAILED_MAX30_EXITS2_2_WORKFLOW_SUCCESS_NOT_ACCEPTANCE",
-          "monitor_refactor": "EXACT_MONITOR_TASK_BODY_EXTRACTED;20_DIRECTED_TESTS_PASS"
+          "monitor_refactor": "EXACT_MONITOR_TASK_BODY_EXTRACTED;20_DIRECTED_TESTS_PASS",
+          "protected_access_focus_repair_main": "a1a7c1c3b6c75b9bfa209ba392759aeb511022e6",
+          "reviewed_access_focus_source": "743f96730837987a8907ef679b2d9a75710d0896",
+          "access_focus_finalization": "docs/WORKSPACE_INSPECTION_ADOPTION_ACCESS_REPAIR_FINALIZATION_V1.md",
+          "access_focus_candidate35": "docs/qualification/plan108-access-repair-candidate-20261016/README.md",
+          "actual_failed_trials32_33_34": "RETAINED_ORIGINAL_FAIL_PARTIAL"
         }
       ]
     },
@@ -406,7 +411,7 @@
           "scope": "SELECTED_INSPECTION_ADOPTION_PREVIEW",
           "assignment": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
           "plan": 108,
-          "status": "SELECTED_MONITOR_COHESION_REFACTOR_UNDER_QUALIFICATION",
+          "status": "PROTECTED_ACCESS_FOCUS_REPAIR_OWN_FINALIZATION_PENDING",
           "full_parent_selected": false,
           "own_contract": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md",
           "candidate_runtime_evidence": "docs/qualification/plan108-bounded-candidate-20261016/README.md",
@@ -445,7 +450,12 @@
           "candidate34": "FAIL_NATIVE_FOCUS_AFTER_STABLE_ESCAPE_ONE_SPACE;BEFORE_MONITOR_PROOF;NORMAL_CLEANUP_RETAINED",
           "monitor_refactor_source_round": 23,
           "source22_TDE": "ACTUAL38930175925FAIL_FAILED_MAX30_EXITS2_2_WORKFLOW_SUCCESS_NOT_ACCEPTANCE",
-          "monitor_refactor": "EXACT_MONITOR_TASK_BODY_EXTRACTED;20_DIRECTED_TESTS_PASS"
+          "monitor_refactor": "EXACT_MONITOR_TASK_BODY_EXTRACTED;20_DIRECTED_TESTS_PASS",
+          "protected_access_focus_repair_main": "a1a7c1c3b6c75b9bfa209ba392759aeb511022e6",
+          "reviewed_access_focus_source": "743f96730837987a8907ef679b2d9a75710d0896",
+          "access_focus_finalization": "docs/WORKSPACE_INSPECTION_ADOPTION_ACCESS_REPAIR_FINALIZATION_V1.md",
+          "access_focus_candidate35": "docs/qualification/plan108-access-repair-candidate-20261016/README.md",
+          "actual_failed_trials32_33_34": "RETAINED_ORIGINAL_FAIL_PARTIAL"
         }
       ]
     },

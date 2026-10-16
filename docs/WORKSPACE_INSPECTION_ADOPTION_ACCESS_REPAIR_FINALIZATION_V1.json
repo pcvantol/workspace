@@ -1,0 +1,313 @@
+{
+  "assignment": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
+  "join": "L3-L4-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
+  "plan": 108,
+  "version": "2.8.34",
+  "release_class": "NO_BUMP",
+  "version_operation": "workspace-plan108-access-repair-finalization-20261016",
+  "protected_repair_PR": 187,
+  "protected_repair_main": "a1a7c1c3b6c75b9bfa209ba392759aeb511022e6",
+  "reviewed_source": "743f96730837987a8907ef679b2d9a75710d0896",
+  "exact_tree": "dbbc650ed2ef23b6fae702840599fddafbe234b9",
+  "five_exact_head_checks": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T16:26:00Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38931845364/job/117077515413",
+      "name": "validate-version-source",
+      "startedAt": "2026-10-16T16:25:36Z",
+      "status": "COMPLETED",
+      "workflowName": "Canonical product versioning"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T16:29:13Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38931848776/job/117077527590",
+      "name": "TDE observe (non-blocking)",
+      "startedAt": "2026-10-16T16:25:38Z",
+      "status": "COMPLETED",
+      "workflowName": "TDE observe"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T16:28:39Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38931848764/job/117077527060",
+      "name": "Foundation validation",
+      "startedAt": "2026-10-16T16:25:38Z",
+      "status": "COMPLETED",
+      "workflowName": "Workspace CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T16:36:52Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38931848994/job/117077527909",
+      "name": "Native app build and transport tests",
+      "startedAt": "2026-10-16T16:25:46Z",
+      "status": "COMPLETED",
+      "workflowName": "Workspace native macOS Client"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T16:29:50Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38931848764/job/117077527439",
+      "name": "Python 3.14 installed Server",
+      "startedAt": "2026-10-16T16:25:38Z",
+      "status": "COMPLETED",
+      "workflowName": "Workspace CI"
+    }
+  ],
+  "actual_separate_TDE": {
+    "source": "743f96730837987a8907ef679b2d9a75710d0896",
+    "workflow": 38931848776,
+    "artifact": 12059417029,
+    "actual_zip_registry_sha256": "d12dc21c3b13d0a7e1eeed281419826345dbce6903f3b1a4d46a9bbffc209a73",
+    "actual_zip_CRC_pass": true,
+    "runtime": "1.1.1",
+    "assessment": "PASS_WITH_WARNINGS",
+    "repository": "QUALIFIED",
+    "qualification_id": "repository-qualification.f12d35f5949c5007f4097b93",
+    "assessment_evidence_id": "sha256:91d2e2091cd7dca69e11d6929c43cd8e5f283d0fb9083b505c2e5776249d6a36",
+    "repository_assessment_evidence_id": "sha256:47c6d1c52d2371fdffd8c8b6200f8d8993342bc0016724a983b2b4366551e51d",
+    "product_maximum": 28,
+    "exits": [
+      1,
+      1
+    ],
+    "policy_config_hash": "sha256:e20a38e862615021eeedb081e362d2261859d86f2eafc87c653638ab09d02590",
+    "raw_file_hashes": {
+      "qualification.json": "d5044978b459c62965770e6d73dda22e0fbf8c5255492d117c0349da8b60c64c",
+      "assessment.json": "d713e82a468136db46477089a8c9d3fe489f4027e55b356f78e13952e904b1c3",
+      "summary.txt": "17cd1a60d0a53b781c371b0aa0cb10015ab2b81d49ace8dd41d8184c059a3df4",
+      "executed-capabilities.txt": "fe31fad471f3e0ecd976daf4a924afe6bb86c662e72a5fdf4e2a0b22db765f11"
+    },
+    "coverage_evidence": "separate owning strict runtime gate, not supplied to TDE",
+    "original_a012_finding_parity": false,
+    "actual_finding_delta_from_original": {
+      "removed": [
+        {
+          "classification": "PRODUCT_SOURCE",
+          "description": "Cyclomatic complexity is 21 (threshold: 21).",
+          "location": {
+            "endLine": 171,
+            "line": 82,
+            "path": "macos/WorkspaceClient/Sources/WorkspaceClient/ConceptAdoptionState.swift"
+          },
+          "severity": "HIGH",
+          "state": "OPEN"
+        },
+        {
+          "classification": "PRODUCT_SOURCE",
+          "description": "Cyclomatic complexity is 29 (threshold: 21).",
+          "location": {
+            "endLine": 81,
+            "line": 49,
+            "path": "macos/WorkspaceClient/Sources/WorkspaceClient/ConceptAdoptionState.swift"
+          },
+          "severity": "HIGH",
+          "state": "OPEN"
+        }
+      ],
+      "added": [
+        {
+          "classification": "PRODUCT_SOURCE",
+          "description": "Cyclomatic complexity is 12 (threshold: 11).",
+          "location": {
+            "endLine": 160,
+            "line": 110,
+            "path": "macos/WorkspaceClient/Sources/WorkspaceClient/ConceptAdoptionPanel.swift"
+          },
+          "severity": "HIGH",
+          "state": "OPEN"
+        },
+        {
+          "classification": "PRODUCT_SOURCE",
+          "description": "Cyclomatic complexity is 21 (threshold: 21).",
+          "location": {
+            "endLine": 183,
+            "line": 91,
+            "path": "macos/WorkspaceClient/Sources/WorkspaceClient/ConceptAdoptionState.swift"
+          },
+          "severity": "HIGH",
+          "state": "OPEN"
+        },
+        {
+          "classification": "PRODUCT_SOURCE",
+          "description": "Cyclomatic complexity is 25 (threshold: 21).",
+          "location": {
+            "endLine": 74,
+            "line": 49,
+            "path": "macos/WorkspaceClient/Sources/WorkspaceClient/ConceptAdoptionState.swift"
+          },
+          "severity": "HIGH",
+          "state": "OPEN"
+        }
+      ]
+    },
+    "independent_delta_disposition_required": true,
+    "finding_count": 94
+  },
+  "independent_TDE_delta_disposition": {
+    "source": "743f96730837987a8907ef679b2d9a75710d0896",
+    "at": "2026-10-16T16:30:45.902009+00:00",
+    "Quality": "ACCEPTED_SCOPED_WITH_WARNINGS",
+    "Security": "ACCEPTED_SCOPED_WITH_WARNINGS",
+    "actual_summary": "access-repair-source23-TDE-summary.json",
+    "actual_result": "QUALIFIED/PASS_WITH_WARNINGS/runtime1.1.1/max28/exits1,1",
+    "actual_findings": 94,
+    "all_findings_remain_OPEN": true,
+    "delta": "select29→25; State21 relocation; Paneldocuments12 HIGH new",
+    "policy_threshold_suppression_changes": false,
+    "scope": "Existing navigation/finiteauthority branches + causal tests/retainedoriginalcandidate35/strictowningcoverage support scoped maintenance risk only; no general waiver",
+    "previous_source1ecc_TDEFAIL_retained": true,
+    "remainingCI_delivery_finalmain": "OPEN"
+  },
+  "full_validation14": {
+    "source": "743f96730837987a8907ef679b2d9a75710d0896",
+    "full_script_exit": 0,
+    "native_tests": 364,
+    "isolated_test": 1,
+    "strict_changed_production_file_lines": {
+      "ConceptAdoptionPanel.swift": {
+        "count": 465,
+        "covered": 420,
+        "percent": 90.32258064516128
+      },
+      "ConceptAdoptionState.swift": {
+        "count": 235,
+        "covered": 229,
+        "percent": 97.44680851063829
+      },
+      "ProposalCompareView.swift": {
+        "count": 546,
+        "covered": 505,
+        "percent": 92.4908424908425
+      }
+    },
+    "native_codecov_sha256": "fc5eb0990f05f081bd6c822c609a5a09211cdf63731d5b2134ed34d210437bec",
+    "all_other_required_gates": "actual full script PASS; retained full log",
+    "not_final_main": true
+  },
+  "independent_complete_scoped_Quality_Security_UX": "PASS source and candidate35 with retained original-source wider evidence",
+  "candidate35_original_source": "1ecc3f672b50e58dc441c8568db1fe8d04492547",
+  "monitor_task_parity": "source23 exact synchronous extraction; no runtime relabeling",
+  "candidate35_receipt": "qualification/plan108-access-repair-candidate-20261016/receipt.json",
+  "original_source1ecc_semantic_TDE_failure": {
+    "source": "1ecc3f672b50e58dc441c8568db1fe8d04492547",
+    "workflow": 38930175925,
+    "workflow_conclusion": "SUCCESS_NONBLOCKING_NOT_ACCEPTANCE",
+    "artifact": 12058915973,
+    "zip_registry_sha256": "2940b9fbae76017ef15000b3e7d9a7ea420dc0c2299ed788f2fe0596ecdfcae1",
+    "assessment": "FAIL",
+    "repository": "FAILED",
+    "runtime": "1.1.1",
+    "product_maximum": 30,
+    "exits": [
+      2,
+      2
+    ],
+    "policy_config_hash": "sha256:e20a38e862615021eeedb081e362d2261859d86f2eafc87c653638ab09d02590",
+    "finding_count": 94,
+    "exact_failure": "select complexity30; monitor closure new liveness guard included",
+    "old_PASS_assumption_in_retention_helper": "Stopped after preserving verified raw artifact; no PASS summary emitted",
+    "full13_and_candidate35": "Original-source PASS retained; no delivery closure",
+    "normal_source_refactoring_without_threshold_policy_suppression_change": "source23 booked"
+  },
+  "isolated_qualification_packaging_gap": {
+    "at": "2026-10-16T16:43:20.063070+00:00",
+    "finding": "Isolated qualification export omitted setup.py/MANIFEST.in; setuptools produced metadata/runtime0.0.0. Product complete-source full14 correctly builds/installs2.8.34.",
+    "detected_while_storage_smoke": true,
+    "migration_regression": false,
+    "before_migration_original_manifest_has_0_0_0_dist_info": true,
+    "original_source_and_all_copies_bytes_exact": true,
+    "source_patch_required": false,
+    "source_rounds_unchanged": 23,
+    "current_source": "743f96730837987a8907ef679b2d9a75710d0896",
+    "actual_artifact19_Source_Client_canonical": "2.8.34/source1ecc",
+    "actual_artifact19_Server_distribution_runtime": "0.0.0",
+    "candidate35_scope_disposition": "Retain genuine functional HTTP/GUI/oneeffect/denial evidence at exact payload/source1ecc; not canonical installedServer2.8.34 qualification",
+    "next_artifact20_corrected_export": [
+      "setup.py",
+      "MANIFEST.in",
+      "pyproject.toml",
+      "product-version.json",
+      "existing_product_source_inputs"
+    ],
+    "mandatory_new_assertions": [
+      "wheel filename canonical version",
+      "installed distribution and workspace_control.__version__ equal canonical version",
+      "owning Service.status version equals actual artifact canonical version"
+    ],
+    "new_exact_final_main_fullchain_still_required": true,
+    "no_original_proof_or_failure_relabeling": true,
+    "independent_Quality_Security_UX_disposition": "All accept source743/full14 proper packaging; retain35 functional only at original binding/actual0.0.0 Server; NEWproper20/36mandatory",
+    "retained_existing_plan108_wheel_names": {
+      "own-wheels3": "pcvantol_workspace_control-0.0.0-py3-none-any.whl",
+      "own-wheels4": "pcvantol_workspace_control-0.0.0-py3-none-any.whl",
+      "own-wheels5": "pcvantol_workspace_control-0.0.0-py3-none-any.whl",
+      "own-wheels13": "pcvantol_workspace_control-0.0.0-py3-none-any.whl",
+      "own-wheels14": "pcvantol_workspace_control-0.0.0-py3-none-any.whl",
+      "own-wheels15": "pcvantol_workspace_control-0.0.0-py3-none-any.whl",
+      "own-wheels12": "pcvantol_workspace_control-0.0.0-py3-none-any.whl",
+      "own-wheels9": "pcvantol_workspace_control-0.0.0-py3-none-any.whl",
+      "own-wheels7": "pcvantol_workspace_control-0.0.0-py3-none-any.whl",
+      "own-wheels6": "pcvantol_workspace_control-0.0.0-py3-none-any.whl",
+      "own-wheels8": "pcvantol_workspace_control-0.0.0-py3-none-any.whl",
+      "own-wheels19": "pcvantol_workspace_control-0.0.0-py3-none-any.whl",
+      "own-wheels17": "pcvantol_workspace_control-0.0.0-py3-none-any.whl",
+      "own-wheels10": "pcvantol_workspace_control-0.0.0-py3-none-any.whl",
+      "own-wheels11": "pcvantol_workspace_control-0.0.0-py3-none-any.whl",
+      "own-wheels16": "pcvantol_workspace_control-0.0.0-py3-none-any.whl",
+      "own-wheels18": "pcvantol_workspace_control-0.0.0-py3-none-any.whl"
+    }
+  },
+  "actual_monitor_task_extraction_parity": {
+    "old_source": "1ecc3f672b50e58dc441c8568db1fe8d04492547",
+    "old_monitor_task_nonwhitespace_tokens_equal_new_private_helper_body": true,
+    "new_helper_call_passes_original_c_concept_selected_cap_ticket_current": true,
+    "original_task_token_sha256": "08cb8fde2b55cadf105d777be3361f25072feeacd18b5b6709bc239d2be30a14",
+    "directed_adoption_tests": 20,
+    "failures": 0,
+    "directed_log_sha256": "d407650a6df5a27065adf66e382ec77b57c539c88a533edb580c3df56cae0a9d",
+    "not_installed_or_TDE_acceptance": true,
+    "source": "743f96730837987a8907ef679b2d9a75710d0896",
+    "whole_state_nonwhitespace_equal_after_exact_synchronous_task_inlining": true,
+    "Panel_exact_Git_blob_unchanged": true
+  },
+  "previous_protected_deliveries": [
+    183,
+    184,
+    185,
+    186
+  ],
+  "previous_failed_exact_main940_trials32_33_and_candidate34": "RETAINED FAIL/PARTIAL; no prior success relabeling",
+  "own_finalization_validation15_reviews_five_checks_TDE_protected_merge": "REQUIRED separately on this documentary source",
+  "new_exact_final_main_installed_own_Client_Server_pinned_ForEP_real_GUI_loss_restarts": "REQUIRED after own protected merge; no future SHA/PASS invented",
+  "cumulative_at_document_creation": {
+    "plan": 108,
+    "source_rounds": 23,
+    "installed_attempts": 19,
+    "operational_trials": 35,
+    "full_validations_started": 14,
+    "no_administrative_maximum": true,
+    "historical_consumption_preserved": true,
+    "initial_version_allocation": "2.8.32",
+    "prior_plan107_terminal": "6209882252",
+    "qualified_peer_artifact_builds": 2,
+    "qualified_native_runtime_artifact_installs": 1,
+    "finalization_document_groups": 4,
+    "current_version_allocation": "2.8.34",
+    "version_allocations": [
+      "2.8.32",
+      "2.8.33",
+      "2.8.34"
+    ]
+  },
+  "scope": "Only selected inspection-adoption-preview and source-presentation subsets; PB-W1-INSPECT/PB-W2-SETUP parents OPEN; LINK and predecessors CLOSED",
+  "no_new_scan_model_renderer_repo_approval_apply_Mission_or_next_feature": true,
+  "no_global_upgrade_credentials_settings_TCC_or_signing_policy_change": true
+}
