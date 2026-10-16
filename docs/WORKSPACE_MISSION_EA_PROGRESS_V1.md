@@ -1,3 +1,23 @@
+## Qualified candidate execution and retained metadata correction
+
+Fullvalidation4 PASS356Python/335native+1isolated, strict per-production-source
+coverage and package checks. [Fresh original safe evidence](https://github.com/pcvantol/workspace/tree/2f32a4a837f5061a056b685315dbeb2fe922f50c/docs/qualification/plan107-qualified-candidate-20261016) binds
+actual Client/own Server sourcee453104, qualified EPbc441c0 and original qualified
+Forge2.15.0 Activity. Directed four phases, snapshot409/fresh, exact original
+run/detail, foreign403, genuine negativeexit1, lost GET, separate Server/EP
+OS restarts and source503 PASS; normal cleanup all processes and grants complete.
+Old broad matrix stays on its original source. Actual new GUI Escape/Space
+and original focus/phase transition independently pixel/metadata accepted.
+
+Quality found three inherited stale native_sourcehash inventory entries in the
+fresh build receipt. Original manifest is retained. Only derived inventory repaired:
+actual exported files equal Git e453104, original compile PIF names actual qualified
+package, all37 packaged MachO section payloads equal the actual compile product,
+and actual binary hash is unchanged. Correct actualruntime-qualified payloads
+71own/205EP/287Forge were always consistent. No runtime, binary or probe relabeling.
+Original fullvalidation4 native/isolated raw coverage retained before later runs.
+Remaining protected delivery/finalization and NEW final-main proof are mandatory.
+
 ## Qualified producer handoff consumed — source13
 
 [Actual qualified handoff6208099239](https://github.com/pcvantol/forge/issues/208#issuecomment-6208099239)
