@@ -222,11 +222,15 @@ struct ProposalCompareFocusViewport:NSViewRepresentable {
 final class ProposalCompareViewportAnchor:NSView {
     private var currentFocus=false
     private var generation=0
+    override func setFrameOrigin(_ origin:NSPoint) {super.setFrameOrigin(origin);if currentFocus {reveal(true)}}
+    override func setFrameSize(_ size:NSSize) {super.setFrameSize(size);if currentFocus {reveal(true)}}
+    override func layout() {super.layout();if currentFocus {reveal(true)}}
     func reveal(_ focused:Bool) {
         currentFocus=focused;generation+=1;let ticket=generation
         guard focused else{return}
         DispatchQueue.main.async {[weak self] in
-            guard let self,self.window != nil,self.currentFocus,self.generation==ticket else{return}
+            guard let self,self.window != nil,self.currentFocus,self.generation==ticket,!self.bounds.isEmpty else{return}
+            guard !self.visibleRect.contains(self.bounds) else{return}
             self.scrollToVisible(self.bounds)
         }
     }

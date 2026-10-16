@@ -1,3 +1,20 @@
+## Plan108 source round7 — same focused control follows layout movement
+
+Actual matrix17 again fails the preserved y986/outside-window detail detector;
+source round6 alone is insufficient, not GUI PASS. New native regression starts
+RED on the existing viewport helper: a focused control moved by layout remains
+outside its clip without a fresh focus event. The existing helper now schedules
+reveal on frame-origin/size/layout changes, retaining generation/focus/window
+checks and avoiding scroll when already visible. Same regression GREEN;17own
+adoption/viewport tests PASS. New native86.04–100%, shared view90.50% executable
+coverage. No HTTP/rights/provider/state changes or reopened predecessor scope.
+Valid owner-issued wrong actor/context reads separately return404/no protected
+payload; normal negative-scope revoke, positive scope unchanged. Actual expiry15
+and earlier causal A→B proof retain original sources. Own7source/5artifact/
+18operational/6full starts preserved; current GUI regression/remaining matrix,
+full validation, complete Q/S/UX, protected implementation/own finalization and
+NEW exact-final-main proof remain OPEN. Same sole writer/PATCH2.8.32.
+
 ## Plan108 source round6 — visible restored detail focus
 
 Actual matrix14 confirms genuine oversized/metadata/unknown, declaration conflict,
