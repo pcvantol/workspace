@@ -64,26 +64,29 @@ import Combine
                     if WorksetReleaseWire.date(cap.expires_at).map({$0>Date()}) != true {self.conceal();return}
                 }
             }
-            monitor=Task { [weak self] in
-                while !Task.isCancelled {
-                    try? await Task.sleep(for:.seconds(3));guard !Task.isCancelled,let self,self.generation==ticket else{return}
-                    do {
-                        try await self.refreshOriginal(c,concept:concept,selected:selected,cap:cap,ticket:ticket,current:current)
-                    } catch {
-                        guard !Task.isCancelled,self.generation==ticket else{return}
-                        self.failure(error)
-                        // A recoverable read failure must not abandon capability checks.
-                        // DENIED uses conceal(), invalidating this scope and outstanding reads.
-                        guard self.generation==ticket else{return}
-                    }
-                }
-            }
+            startMonitor(c,concept:concept,selected:selected,cap:cap,ticket:ticket,current:current)
             let previous=try nav(c,concept)
             let operation=journal?.retired==true || journal?.rejected==true ? nil:journal?.complete==false ? journal?.command.operation_id:(previous?.source==selected ? previous?.operation:nil) ?? journal?.command.operation_id
             try saveNav(c,concept,source:selected,operation:operation,document:previous?.source==selected ? previous?.document:nil)
             if journal?.rejected==true && journal?.retired != true {phase="sourceRejected"}
             else if let operation {await open(operation,concept:concept,current:current)}
         } catch {if ticket==generation {failure(error)}}
+    }
+    private func startMonitor(_ c:ConceptConnection,concept:ProjectConcept,selected:String,cap:ConceptAdoptionAccess,ticket:Int,current:@escaping @MainActor () async throws->ConceptConnection) {
+    monitor=Task { [weak self] in
+        while !Task.isCancelled {
+            try? await Task.sleep(for:.seconds(3));guard !Task.isCancelled,let self,self.generation==ticket else{return}
+            do {
+                try await self.refreshOriginal(c,concept:concept,selected:selected,cap:cap,ticket:ticket,current:current)
+            } catch {
+                guard !Task.isCancelled,self.generation==ticket else{return}
+                self.failure(error)
+                // A recoverable read failure must not abandon capability checks.
+                // DENIED uses conceal(), invalidating this scope and outstanding reads.
+                guard self.generation==ticket else{return}
+            }
+        }
+    }
     }
     func prepare(_ concept:ProjectConcept,paths:[String],vision:String?,current:@escaping @MainActor () async throws->ConceptConnection) async {
         guard !busy,pending==nil,let cap=access,cap.can_prepare,!paths.isEmpty else{return}

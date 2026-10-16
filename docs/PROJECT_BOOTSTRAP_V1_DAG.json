@@ -203,7 +203,7 @@
           "scope": "LINKED_INSPECTION_SOURCE_PRESENTATION_ONLY",
           "assignment": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
           "plan": 108,
-          "status": "SELECTED_AUTHORIZED_DOCUMENT_FOCUS_AND_MONITOR_REPAIR_UNDER_QUALIFICATION",
+          "status": "SELECTED_MONITOR_COHESION_REFACTOR_UNDER_QUALIFICATION",
           "full_parent_selected": false,
           "own_contract": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md",
           "candidate_runtime_evidence": "docs/qualification/plan108-bounded-candidate-20261016/README.md",
@@ -239,7 +239,10 @@
           "protected_focus_repair_finalization_PR": 186,
           "protected_focus_repair_finalization_main": "940eb8f50f6256054efccd55e515c264253cd71e",
           "document_navigation_source_round": 22,
-          "candidate34": "FAIL_NATIVE_FOCUS_AFTER_STABLE_ESCAPE_ONE_SPACE;BEFORE_MONITOR_PROOF;NORMAL_CLEANUP_RETAINED"
+          "candidate34": "FAIL_NATIVE_FOCUS_AFTER_STABLE_ESCAPE_ONE_SPACE;BEFORE_MONITOR_PROOF;NORMAL_CLEANUP_RETAINED",
+          "monitor_refactor_source_round": 23,
+          "source22_TDE": "ACTUAL38930175925FAIL_FAILED_MAX30_EXITS2_2_WORKFLOW_SUCCESS_NOT_ACCEPTANCE",
+          "monitor_refactor": "EXACT_MONITOR_TASK_BODY_EXTRACTED;20_DIRECTED_TESTS_PASS"
         }
       ]
     },
@@ -403,7 +406,7 @@
           "scope": "SELECTED_INSPECTION_ADOPTION_PREVIEW",
           "assignment": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
           "plan": 108,
-          "status": "SELECTED_AUTHORIZED_DOCUMENT_FOCUS_AND_MONITOR_REPAIR_UNDER_QUALIFICATION",
+          "status": "SELECTED_MONITOR_COHESION_REFACTOR_UNDER_QUALIFICATION",
           "full_parent_selected": false,
           "own_contract": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md",
           "candidate_runtime_evidence": "docs/qualification/plan108-bounded-candidate-20261016/README.md",
@@ -439,7 +442,10 @@
           "protected_focus_repair_finalization_PR": 186,
           "protected_focus_repair_finalization_main": "940eb8f50f6256054efccd55e515c264253cd71e",
           "document_navigation_source_round": 22,
-          "candidate34": "FAIL_NATIVE_FOCUS_AFTER_STABLE_ESCAPE_ONE_SPACE;BEFORE_MONITOR_PROOF;NORMAL_CLEANUP_RETAINED"
+          "candidate34": "FAIL_NATIVE_FOCUS_AFTER_STABLE_ESCAPE_ONE_SPACE;BEFORE_MONITOR_PROOF;NORMAL_CLEANUP_RETAINED",
+          "monitor_refactor_source_round": 23,
+          "source22_TDE": "ACTUAL38930175925FAIL_FAILED_MAX30_EXITS2_2_WORKFLOW_SUCCESS_NOT_ACCEPTANCE",
+          "monitor_refactor": "EXACT_MONITOR_TASK_BODY_EXTRACTED;20_DIRECTED_TESTS_PASS"
         }
       ]
     },

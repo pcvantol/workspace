@@ -1,3 +1,21 @@
+## Plan108 source23 — actual TDE failure and cohesive monitor refactoring
+
+Exact source1ecc/artifact19/candidate35/full13 remain source-bound PASS, but its
+actual TDE38930175925 is assessment FAIL/repository FAILED, product maximum30,
+exits2/2. Workflow SUCCESS was only nonblocking observation. The verified raw
+artifact and original failure are retained; source1ecc is not delivery-qualified.
+The new liveness guard made the selection function too complex. Source23 is
+booked once on the same PR187 branch/unmerged PATCH2.8.34. Its authority-monitor
+Task is extracted intact into one cohesive private helper; interval, weak-self,
+error/retry, cancellation/generation and denial/concealment behavior are unchanged.
+Twenty existing directed adoption tests PASS, including all3 actual-started
+monitor regressions and4 serialized-navigation lifecycle cases. No policy,
+threshold, suppression, right, producer pin, operation or UI change.
+New full14, independent review with originally bound candidate35 and exact Task
+parity, actual current TDE/CI, protected repair/own finalization and NEW final-main
+installed/GUI remain OPEN. No duplicate unchanged candidate GUI matrix is required.
+Earlier failures/successes retain their original source; no budget reset or cap.
+
 ## Plan108 source22 — serialized authorized document focus under qualification
 
 Candidate18/source976 trial34 is FAIL before the current-rights phase: after
