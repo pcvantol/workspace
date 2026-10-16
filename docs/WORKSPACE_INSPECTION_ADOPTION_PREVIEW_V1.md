@@ -7,6 +7,19 @@ Same sole writer, codex/plan108-native-inspection-adoption from exact main
 [Mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6210119925).
 Plan107 accepted CLOSED_SCOPED6209882252; all predecessors/LINK stay closed.
 
+## Current bounded candidate checkpoint
+
+[Actual runtime and safe screenshots](qualification/plan108-bounded-candidate-20261016/README.md)
+prove current native source1706311; test/document checkpoint9989200 leaves all
+product bytes unchanged. Original conceptrevision and current Serverrevision
+are separate, even with a stale selected Client; reopening does not update the
+original. Source digest is under Details. Source/operation/document card anchors
+and top reveal retain the actual same original keyboard controls within viewport.
+Capacity keeps the original journal through four actual Client OS restarts.
+Earlier lostreply/restart/late/scope/expiry proofs retain their original sources.
+Full current validation/CI/actual TDE, protected delivery/own finalization and NEW
+exact-final-main qualification remain OPEN. This is not complete onboarding.
+
 ## Selected native outcome and initial mapping
 
 Existing saved Projectconcept detail → Adoption proposal → one owner-linked
@@ -47,7 +60,7 @@ AS_OF_OBSERVATION_NOT_CONTINUOUS, COMPLETE_WITHIN_SELECTION; quality/readiness
 NOT_ASSESSED. Always PROPOSED_NOT_APPROVED. R54 CONTENT_BASELINE_ONLY does NOT
 approve this kind; no reused approval buttons on adoption results.
 
-## Delivery state
+## Initial delivery state — historical
 
 Initial exact assets/scope/pending contract regressions3 PASS. Completed-result
 integrity, actual owner setup/small installed native chain and bounded matrices

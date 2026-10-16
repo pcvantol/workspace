@@ -205,7 +205,10 @@
           "plan": 108,
           "status": "SELECTED_IMPLEMENTING_NOT_QUALIFIED",
           "full_parent_selected": false,
-          "own_contract": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md"
+          "own_contract": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md",
+          "candidate_runtime_evidence": "docs/qualification/plan108-bounded-candidate-20261016/README.md",
+          "candidate_production_source": "170631191282970d7c0c5378fa7cd767db18bb83",
+          "new_exact_final_main_installed": "REQUIRED_AFTER_OWN_PROTECTED_FINALIZATION"
         }
       ]
     },
@@ -371,7 +374,10 @@
           "plan": 108,
           "status": "SELECTED_IMPLEMENTING_NOT_QUALIFIED",
           "full_parent_selected": false,
-          "own_contract": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md"
+          "own_contract": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md",
+          "candidate_runtime_evidence": "docs/qualification/plan108-bounded-candidate-20261016/README.md",
+          "candidate_production_source": "170631191282970d7c0c5378fa7cd767db18bb83",
+          "new_exact_final_main_installed": "REQUIRED_AFTER_OWN_PROTECTED_FINALIZATION"
         }
       ]
     },

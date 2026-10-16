@@ -1,3 +1,21 @@
+## Plan108 current bounded candidate — runtime proved, protected delivery open
+
+[Safe current candidate evidence](docs/qualification/plan108-bounded-candidate-20261016/README.md)
+records actual1706311 artifact9: exact Dutch/selectedABSENT/UNKNOWN, real keyboard
+Escape/Space and visible original opener; another Client1→2 while selectedClient1,
+new explicitB2/originalB1 unchanged, real capacity and four actual Client restarts
+in five languages/light-dark/760–1180. Normal cleanup/source byteidentity; actual
+EP operation rows only counted owner setup. Complete independent scoped runtime
+Quality PASS; all projected PNG pixels/metadata independently Security/UX PASS.
+Current35native PASS; all involved native strict coverage84.15–100% after adding
+historical5language renders. Source12 checkpoint changes only tests/docs from
+actual production170. Inherited20/21/22 source metadata error has separate
+independent recovery proof; originals/outcomes preserved, no failed→PASS relabel.
+12source/9artifact/24operational/6full starts retained. Next full current validation,
+allCI/actual TDE, exacthead independent acceptance/protected implementation, own
+nonempty finalization and NEW exact-final-main qualification remain REQUIRED.
+Same sole writer/PATCH2.8.32; predecessors remain CLOSED, full parents OPEN.
+
 ## Plan108 source round12 — actual historical layout in every UI language
 
 Native render tests now include the actual observed Servercurrent2/source1/
