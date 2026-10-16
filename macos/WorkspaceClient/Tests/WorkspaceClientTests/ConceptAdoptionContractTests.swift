@@ -1,6 +1,7 @@
 import XCTest
 import Foundation
 import SwiftUI
+import AppKit
 @testable import WorkspaceClient
 
 private final class AdoptionURLProtocol:URLProtocol,@unchecked Sendable {
@@ -62,6 +63,31 @@ final class ConceptAdoptionContractTests:XCTestCase {
         }
         for (data,type) in [(Data(),"text/html"),(Data(repeating:120,count:1150001),"application/json")] {AdoptionURLProtocol.reply={_ in (200,data,type)};do{_=try await t.sources(connection,concept:concept.id);XCTFail()}catch ConceptError.invalid {}}
     }
+    @MainActor func testActualRestoredAdoptionPanelRetainsFocusedDetailViewport() async throws {
+        let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer {try? FileManager.default.removeItem(at:root)}
+        let fixture=AdoptionFixture(concept),active=connection,selected=concept
+        let state=ConceptAdoptionState(transport:fixture,root:root)
+        let window=NSWindow(contentRect:NSRect(x:0,y:0,width:900,height:700),styleMask:[.titled,.closable,.resizable],backing:.buffered,defer:false);window.isReleasedWhenClosed=false
+        let host=NSHostingView(rootView:AdoptionViewportFixture(state:state,concept:selected,current:{active}));window.contentView=host;window.makeKeyAndOrderFront(nil)
+        defer {state.conceal();window.close()}
+        let ready=ContinuousClock.now.advanced(by:.seconds(2))
+        while state.sources.isEmpty,ContinuousClock.now<ready {try await Task.sleep(for:.milliseconds(10))}
+        XCTAssertFalse(state.sources.isEmpty)
+        state.source=source;try await Task.sleep(for:.milliseconds(50))
+        let original=try scoped();state.result=original;state.history=[.init(operation_id:original.operation_id,source_revision:1)]
+        try await Task.sleep(for:.milliseconds(50));state.expandedDocument="docs/product/VISION.md"
+        try await Task.sleep(for:.milliseconds(700));host.layoutSubtreeIfNeeded()
+        var pending:[NSView]=[host],focused:[ProposalCompareViewportAnchor]=[]
+        while let next=pending.popLast() {
+            if let anchor=next as? ProposalCompareViewportAnchor,Mirror(reflecting:anchor).children.contains(where:{$0.label=="currentFocus" && ($0.value as? Bool)==true}) {focused.append(anchor)}
+            pending+=next.subviews
+        }
+        XCTAssertEqual(focused.count,1,"The restored real panel must request exactly one focus")
+        for control in focused {
+            XCTAssertTrue(host.bounds.insetBy(dx:0,dy:12).contains(control.convert(control.bounds,to:host)),"Actual restored native panel must retain the focused detail inside the viewport")
+        }
+    }
+
     @MainActor func testHonestCategoriesAndFiveLanguageLayoutsAtBothWidths() throws {
         let root=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString);defer{try? FileManager.default.removeItem(at:root)}
         let fixture=AdoptionFixture(concept);let state=ConceptAdoptionState(transport:fixture,root:root);let result=try scoped();let active=connection
@@ -93,5 +119,22 @@ final class ConceptAdoptionContractTests:XCTestCase {
         }
         XCTAssertEqual(ConceptAdoptionCopy.text("missing-copy-key","nl"),"")
         XCTAssertEqual(ConceptAdoptionCopy.text("title","unknown"),ConceptAdoptionCopy.text("title","en"));state.conceal()
+    }
+}
+
+@MainActor private struct AdoptionViewportFixture:View {
+    @ObservedObject var state:ConceptAdoptionState
+    let concept:ProjectConcept
+    let current:@MainActor () async throws->ConceptConnection
+    var body:some View {
+        ScrollViewReader {proxy in
+            ScrollView {
+                VStack(alignment:.leading,spacing:16) {
+                    Color.clear.frame(height:1200)
+                    ConceptAdoptionPanel(state:state,concept:concept,dirty:false,current:current,reveal:{proxy.scrollTo($0,anchor:.top)})
+                    Color.clear.frame(height:1000)
+                }.padding(24)
+            }
+        }
     }
 }

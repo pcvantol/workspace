@@ -78,7 +78,11 @@ final class ConceptBaselineStateTests:XCTestCase {
         let concept=source();let fixture=BaselineFixture(concept);let state=ConceptBaselineState(transport:fixture,root:root);let active=connection
         fixture.expiry=ISO8601DateFormatter().string(from:Date().addingTimeInterval(2))
         await state.load(concept,current:{active});XCTAssertNotNil(state.access)
-        try await Task.sleep(for:.seconds(2.2));XCTAssertNil(state.access);XCTAssertNil(state.result)
+        try await Task.sleep(for:.seconds(2.2))
+        // Observe monitor publication; the original grant expiry and all denial assertions remain unchanged.
+        let concealed=ContinuousClock.now.advanced(by:.seconds(2))
+        while state.access != nil && ContinuousClock.now<concealed {try await Task.sleep(for:.milliseconds(20))}
+        XCTAssertNil(state.access);XCTAssertNil(state.result)
         fixture.expiry="2099-01-01T00:00:00Z";var current=active
         await state.load(concept,current:{current});current=ConceptConnection(access:active.access,bearer:"changed")
         await state.open(String(repeating:"f",count:32),concept:concept,current:{current});XCTAssertNil(state.result)

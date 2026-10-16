@@ -1,3 +1,99 @@
+## Plan108 source20 — concrete hosted expiry-observation correction
+
+Actual native CI38914630763 on a012 FAILED the existing baseline2.2s fixed
+expiry-observation assertion; the failure log and all old results are retained.
+The same expired grant and all access/result/changed-connection assertions remain.
+After the original2.2s wait, the test now awaits actual monitor publication within
+a bounded2s window, like the existing held-response expiry test. Directed case PASS.
+Production Client/Server bytes, version2.8.33, grants and deadlines do not change.
+Actual candidate31/full10 stay at a012, not relabeled; independent source parity
+must establish carryforward. New exact-source full11 and CI/TDE/reviews precede
+normal protected delivery. Own repair finalization and NEW final-main proof remain
+required. Cumulative20source/16artifact/31operational/10full, no reset or scope change.
+
+## Plan108 source19 — explicit current document reveal; acceptance OPEN
+
+Candidate30 onf5a43b4 remains FAIL with its original normal cleanup and one
+original effect. Focus/environment-only regressions did not establish packaged
+acceptance. Explicit document navigation now carries an immutable actor/context/
+concept/source/original-operation/document reveal request to its actual native
+anchor. It stays pending until a mounted window and valid geometry exist, then
+is consumed once. Request/mount generations, changed selection, detachment and
+dismantle invalidate old callbacks; it enables no continuous unfocused watch.
+The same consumed request cannot override subsequent manual scrolling.
+The pre-implementation no-request baseline uses clearly retained test-only no-op
+stubs (not an alleged existing API); it fails viewport assertion. Those stubs
+are removed. Fourteen directed native tests PASS, including delayed mount,
+selection/cancellation/new-mount fencing and retained focus/ancestor behavior.
+Cumulative19source/15artifact/30operational/9full validations, same writer/base/
+version and qualified R55/EP pins. No HTTP/authority/storage change. New actual
+packaged proof, full10, protected repair, own finalization and NEW exact-final-main
+installed/GUI/privacy/readback/cleanup remain OPEN; no administrative cap/reset.
+
+## Plan108 source18 — actual native focus propagation repaired; acceptance OPEN
+
+Candidate28 remains FAIL on2229a40. Explicit isolated diagnostic29 on5d3d6db
+recorded22 geometry/focus-only entries and zero currentFocus=true while AX
+confirmed the correct focused control. The helper consequently never ran.
+That diagnostic is private, not acceptance, and is completely removed here.
+The native regression reproduces genuine focus with a stale false caller
+snapshot: old source RED (tracking and viewport assertions), current source
+GREEN. The same existing helper now reads native isFocused inside its existing
+focusable scope, preserving the caller route without a second focus owner.
+Twelve directed native regressions PASS. No transport/rights/storage change.
+Cumulative18source/14artifact/29operational/9full validations; same writer,
+base9f91720/PATCH2.8.33 and qualified R55/EP pins. Original failures, source-bound
+evidence and budgets remain unchanged. New packaged proof, full10, protected
+repair, own repair finalization and NEW exact-final-main qualification are OPEN.
+
+## Plan108 source16 — effective window clip repair remains under qualification
+
+Candidate27 on4ffc93e remains **FAIL** after the actual lost committed reply
+and separate Client restart; normal cleanup and its one original effect are retained.
+The actual FocusState/ScrollViewReader/adoption-panel hosting cases are GREEN,
+so a focus-only diagnosis is not claimed. A separate real AppKit regression
+proves full nearest-clip bounds can include an ancestor/window-clipped region.
+The old helper leaves the control at0pt actual window margin; using the effective
+visible clip and constrained offset moves it to16pt. Eleven targeted tests pass,
+including the actual restored adoption panel, ancestor lifecycle and manual scroll.
+Same sole writer/base9f91720/PATCH2.8.33 and R55/EP pins; no transport or rights change.
+Source16 / artifact12 / operational27 / full-validation9 are cumulative, not reset.
+Fresh packaged candidate proof, full validation10, protected repair, own repair
+finalization and NEW exact-final-main installed/GUI/privacy/readback remain OPEN.
+
+## Plan108 source15 — real SwiftUI ancestor-layout regression
+
+Early candidate26/source601725f remains FAIL: focused detail stillflushbottom,
+private original pixels/measurements and normal cleanup retained. No full10 or
+new EP trial was started before native diagnosis. Actual NSHostingView regression
+shows nearest HostingScrollView exists; an ancestor moves136→1136 while the
+representable's own frame stays0,0. Plain AppKit self-frame tests missed this.
+NSWindow-update-only experiment also FAILS and is retained. The real hosted
+regression is now GREEN with focus-only weak ancestor frame/bounds observation,
+shared/restored notification flags and generation/window checks. Clip scrolling
+is excluded, so manual scroll is not pulled back.8own viewtests PASS, including
+actual hosted movement, both margins, overlap, restored flags and cancellation.
+Same PATCH2.8.33 allocation; no rights/HTTP/storage/proposal effects. Next early
+packaged proof on the unchanged actual detector precedes heavy full10/CI; normal
+protected repair, own finalization and NEW final-main proof remain REQUIRED.
+Cumulative15source/11artifact/26operational/9full and all history retained.
+
+## Plan108 source14 — preserve focus inside the actual viewport
+
+New final-main trial25 on9f91720 exposes a real boundary case after lost reply
+and separate Client restart: correct focused detail ends at windowbottom980,
+without required12pt breathing room. Original failure/raw measurements/one
+R55 record/one prepare/normal cleanup retained; artifact10 binding PASS is not
+runtime qualification. Same selected assignment continues, no predecessor reopen.
+Canonically allocate PATCH2.8.33 from actual main2.8.32, preserve prior allocations.
+Meaningful NSScrollView regression RED on old helper, GREEN with nearest-clip
+16pt vertical reveal in document coordinates, clipped to document bounds.
+Both clip edges, centered/no-scroll, focus loss and moved-focus guards pass.
+All six owning comparison-view tests PASS. No HTTP, rights or proposal semantics
+change. Next early real packaged recovery before heavy suites; full tests/strict
+coverage/independent reviews/protected repair/own finalization and NEW final-main
+proof remain REQUIRED. Cumulative14source/10artifact/25operational/9full preserved.
+
 ## Plan108 protected implementation — own finalization pending
 
 PR183 protected merge `28c9aa35f14feea03fe3cc645a88198cea3fbf17` equals reviewed5a33425 tree; all five exact-head

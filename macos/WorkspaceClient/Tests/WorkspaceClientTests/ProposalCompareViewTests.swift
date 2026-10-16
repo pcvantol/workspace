@@ -98,4 +98,204 @@ import AppKit
         XCTAssertEqual(scroll.contentView.bounds.origin,retained,"An unfocused layout change must not scroll")
     }
 
+    func testFocusedControlKeepsVerticalBreathingRoomAtClipEdge() async {
+        let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false)
+        window.isReleasedWhenClosed=false
+        let scroll=NSScrollView(frame:NSRect(x:0,y:0,width:400,height:300))
+        let document=NSView(frame:NSRect(x:0,y:0,width:400,height:1600))
+        let anchor=ProposalCompareViewportAnchor(frame:NSRect(x:20,y:270,width:200,height:30))
+        document.addSubview(anchor);scroll.documentView=document;window.contentView=scroll
+        defer {window.close()}
+        XCTAssertTrue(scroll.contentView.bounds.contains(anchor.frame),"Positive control: fully visible but flush against clip edge")
+        anchor.reveal(true)
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertTrue(scroll.contentView.bounds.insetBy(dx:0,dy:12).contains(anchor.frame),"Focused control and ring must remain inside the viewport with breathing room")
+        let revealed=scroll.contentView.bounds.origin
+        anchor.setFrameOrigin(NSPoint(x:20,y:100))
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertEqual(scroll.contentView.bounds.origin,revealed,"An already centered focus must not scroll")
+        anchor.setFrameOrigin(NSPoint(x:20,y:scroll.contentView.bounds.minY))
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertTrue(scroll.contentView.bounds.insetBy(dx:0,dy:12).contains(anchor.frame),"The opposite clip edge must retain the same vertical margin")
+        let afterOppositeEdge=scroll.contentView.bounds.origin
+        anchor.reveal(false);anchor.setFrameOrigin(NSPoint(x:20,y:1200))
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertEqual(scroll.contentView.bounds.origin,afterOppositeEdge,"Unfocused layout changes must not scroll")
+    }
+
+    func testRealSwiftUIHostingRevealsFocusAfterAncestorLayoutChanges() async throws {
+        let fixture=ViewportHostingFixture()
+        let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false)
+        window.isReleasedWhenClosed=false
+        let host=NSHostingView(rootView:ViewportHostingContent(fixture:fixture))
+        window.contentView=host;window.orderFront(nil)
+        defer {window.close()}
+        var anchor:ProposalCompareViewportAnchor?
+        let mounted=ContinuousClock.now.advanced(by:.seconds(2))
+        while anchor==nil,ContinuousClock.now<mounted {
+            host.layoutSubtreeIfNeeded()
+            var pending:[NSView]=[host]
+            while let next=pending.popLast() {if let value=next as? ProposalCompareViewportAnchor {anchor=value;break};pending+=next.subviews}
+            if anchor==nil {try await Task.sleep(for:.milliseconds(10))}
+        }
+        let control=try XCTUnwrap(anchor,"Actual representable must mount inside real SwiftUI ScrollView")
+        fixture.focused=true
+        try await Task.sleep(for:.milliseconds(40));host.layoutSubtreeIfNeeded()
+        XCTAssertTrue(host.bounds.insetBy(dx:0,dy:12).contains(control.convert(control.bounds,to:host)),"Positive control: initial centered hosted focus")
+        fixture.prefix=1100;fixture.expanded=true
+        let timeout=ContinuousClock.now.advanced(by:.seconds(2))
+        repeat {
+            try await Task.sleep(for:.milliseconds(10));host.layoutSubtreeIfNeeded()
+        } while !host.bounds.insetBy(dx:0,dy:12).contains(control.convert(control.bounds,to:host)) && ContinuousClock.now<timeout
+        XCTAssertTrue(host.bounds.insetBy(dx:0,dy:12).contains(control.convert(control.bounds,to:host)),"The actual same focused SwiftUI control must stay inside the viewport after ancestor layout changes")
+    }
+
+    func testNativeFocusRevealsControlEvenWhenCallerFocusSnapshotIsFalse() async throws {
+        let fixture=ViewportHostingFixture();fixture.nativeFocus=true;fixture.callerTracksFocus=false;fixture.prefix=1100;fixture.expanded=true
+        let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false);window.isReleasedWhenClosed=false
+        let host=NSHostingView(rootView:ViewportHostingContent(fixture:fixture));window.contentView=host;window.makeKeyAndOrderFront(nil)
+        defer {window.close()}
+        try await Task.sleep(for:.milliseconds(100));fixture.focused=true
+        let timeout=ContinuousClock.now.advanced(by:.seconds(2));var control:ProposalCompareViewportAnchor?
+        repeat {
+            try await Task.sleep(for:.milliseconds(10));host.layoutSubtreeIfNeeded();var pending:[NSView]=[host]
+            while let next=pending.popLast() {if let anchor=next as? ProposalCompareViewportAnchor {control=anchor;break};pending+=next.subviews}
+        } while (control==nil || !Mirror(reflecting:control!).children.contains(where:{$0.label=="currentFocus" && ($0.value as? Bool)==true})) && ContinuousClock.now<timeout
+        let anchor=try XCTUnwrap(control)
+        XCTAssertTrue(Mirror(reflecting:anchor).children.contains(where:{$0.label=="currentFocus" && ($0.value as? Bool)==true}),"The actual native focus owner must reach viewport tracking even if the parent snapshot is false")
+        XCTAssertTrue(host.bounds.insetBy(dx:0,dy:12).contains(anchor.convert(anchor.bounds,to:host)),"Actual focused control must retain visible margin")
+    }
+
+    func testExplicitDetailRequestSurvivesDeferredMountWithoutFocusNotification() async throws {
+        let anchor=ProposalCompareViewportAnchor(frame:.zero)
+        anchor.requestReveal("actor/context/concept/source/original/document")
+        anchor.reveal(false)
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false);window.isReleasedWhenClosed=false
+        let scroll=NSScrollView(frame:NSRect(x:0,y:0,width:400,height:300)),document=NSView(frame:NSRect(x:0,y:0,width:400,height:1600))
+        document.addSubview(anchor);scroll.documentView=document;window.contentView=scroll
+        defer {anchor.cancelRevealRequest();window.close()}
+        anchor.setFrameSize(NSSize(width:180,height:22));anchor.setFrameOrigin(NSPoint(x:20,y:1200))
+        let timeout=ContinuousClock.now.advanced(by:.seconds(2))
+        while !scroll.contentView.bounds.insetBy(dx:0,dy:12).contains(anchor.frame),ContinuousClock.now<timeout {try await Task.sleep(for:.milliseconds(10))}
+        XCTAssertTrue(scroll.contentView.bounds.insetBy(dx:0,dy:12).contains(anchor.frame),"One explicit current document request must reveal after actual mount even when both focus signals are false")
+        scroll.contentView.scroll(to:NSPoint(x:0,y:0));scroll.reflectScrolledClipView(scroll.contentView)
+        anchor.requestReveal("actor/context/concept/source/original/document");anchor.layout()
+        try await Task.sleep(for:.milliseconds(40))
+        XCTAssertEqual(scroll.contentView.bounds.minY,0,"Consumed same request must not pull back manual scrolling")
+    }
+
+    func testCancelledDetailRequestAndDetachedOldMountCannotScrollNewSelection() async throws {
+        let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false);window.isReleasedWhenClosed=false
+        let scroll=NSScrollView(frame:NSRect(x:0,y:0,width:400,height:300)),document=NSView(frame:NSRect(x:0,y:0,width:400,height:1600))
+        let anchor=ProposalCompareViewportAnchor(frame:NSRect(x:20,y:1200,width:180,height:22));document.addSubview(anchor);scroll.documentView=document;window.contentView=scroll
+        defer {window.close()}
+        let before=scroll.contentView.bounds.origin
+        anchor.requestReveal("old/source/operation/document");anchor.cancelRevealRequest()
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertEqual(scroll.contentView.bounds.origin,before,"Cancellation must invalidate queued old request")
+        anchor.requestReveal("old/source/operation/document");anchor.removeFromSuperview()
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertEqual(scroll.contentView.bounds.origin,before,"Detached old document must not scroll")
+        document.addSubview(anchor)
+        anchor.requestReveal("new/source/operation/document");anchor.requestReveal(nil)
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertEqual(scroll.contentView.bounds.origin,before,"Changed selection must invalidate a queued request")
+        anchor.requestReveal("new/source/operation/document")
+        let timeout=ContinuousClock.now.advanced(by:.seconds(2))
+        while !scroll.contentView.bounds.insetBy(dx:0,dy:12).contains(anchor.frame),ContinuousClock.now<timeout {try await Task.sleep(for:.milliseconds(10))}
+        XCTAssertTrue(scroll.contentView.bounds.insetBy(dx:0,dy:12).contains(anchor.frame),"A cancelled old callback must not consume the new mount request")
+        anchor.cancelRevealRequest()
+    }
+
+    func testFocusedControlUsesWindowClippedViewportInsteadOfOversizedClipBounds() async {
+        let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false);window.isReleasedWhenClosed=false
+        let root=NSView(frame:NSRect(x:0,y:0,width:400,height:300))
+        let scroll=NSScrollView(frame:NSRect(x:0,y:-100,width:400,height:400)),document=NSView(frame:NSRect(x:0,y:0,width:400,height:1600))
+        let control=ProposalCompareViewportAnchor(frame:NSRect(x:20,y:300,width:180,height:22))
+        document.addSubview(control);scroll.documentView=document;root.addSubview(scroll);window.contentView=root
+        scroll.contentView.scroll(to:NSPoint(x:0,y:200));scroll.reflectScrolledClipView(scroll.contentView)
+        defer {window.close()}
+        control.reveal(true)
+        try? await Task.sleep(for:.milliseconds(40))
+        XCTAssertTrue(root.bounds.insetBy(dx:0,dy:12).contains(control.convert(control.bounds,to:root)),"Focused control must fit actual window even when nearest clip extends beyond ancestor/window")
+    }
+
+    func testActualFocusBindingAndReaderScrollKeepControlInsideClip() async throws {
+        let fixture=ViewportHostingFixture();fixture.nativeFocus=true;fixture.useReader=true;fixture.prefix=1100;fixture.expanded=true
+        let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false)
+        window.isReleasedWhenClosed=false
+        let host=NSHostingView(rootView:ViewportHostingContent(fixture:fixture));window.contentView=host;window.makeKeyAndOrderFront(nil)
+        defer {window.close()}
+        try await Task.sleep(for:.milliseconds(100));fixture.focused=true
+        var anchor:ProposalCompareViewportAnchor?
+        let timeout=ContinuousClock.now.advanced(by:.seconds(2))
+        repeat {
+            try await Task.sleep(for:.milliseconds(10));host.layoutSubtreeIfNeeded()
+            var pending:[NSView]=[host]
+            while let next=pending.popLast() {if let value=next as? ProposalCompareViewportAnchor {anchor=value;break};pending+=next.subviews}
+        } while (anchor==nil || !host.bounds.insetBy(dx:0,dy:12).contains(anchor!.convert(anchor!.bounds,to:host))) && ContinuousClock.now<timeout
+        try await Task.sleep(for:.milliseconds(500));host.layoutSubtreeIfNeeded()
+        let control=try XCTUnwrap(anchor)
+        XCTAssertTrue(host.bounds.insetBy(dx:0,dy:12).contains(control.convert(control.bounds,to:host)),"Actual FocusState and reader navigation must retain focused control inside viewport")
+    }
+
+    func testAncestorSignalsKeepOverlappingFocusAndRestoreNotificationFlags() async throws {
+        let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false)
+        window.isReleasedWhenClosed=false
+        let scroll=NSScrollView(frame:NSRect(x:0,y:0,width:400,height:300))
+        let document=NSView(frame:NSRect(x:0,y:0,width:400,height:1600))
+        let container=NSView(frame:NSRect(x:0,y:100,width:400,height:100))
+        let first=ProposalCompareViewportAnchor(frame:NSRect(x:20,y:10,width:150,height:22)),second=ProposalCompareViewportAnchor(frame:NSRect(x:20,y:40,width:150,height:22))
+        container.addSubview(first);container.addSubview(second);document.addSubview(container);scroll.documentView=document;window.contentView=scroll
+        defer {window.close()}
+        let frames=container.postsFrameChangedNotifications,bounds=container.postsBoundsChangedNotifications
+        first.reveal(true);second.reveal(true);first.reveal(false)
+        try await Task.sleep(for:.milliseconds(20))
+        XCTAssertTrue(container.postsFrameChangedNotifications);XCTAssertTrue(container.postsBoundsChangedNotifications)
+        scroll.contentView.scroll(to:NSPoint(x:0,y:500));scroll.reflectScrolledClipView(scroll.contentView)
+        try await Task.sleep(for:.milliseconds(40))
+        XCTAssertEqual(scroll.contentView.bounds.minY,500,"Manual scrolling must not be pulled back to old focus")
+        container.setFrameOrigin(NSPoint(x:0,y:1100))
+        let timeout=ContinuousClock.now.advanced(by:.seconds(1))
+        while !scroll.contentView.bounds.insetBy(dx:0,dy:12).contains(second.convert(second.bounds,to:document)),ContinuousClock.now<timeout {try await Task.sleep(for:.milliseconds(10))}
+        XCTAssertTrue(scroll.contentView.bounds.insetBy(dx:0,dy:12).contains(second.convert(second.bounds,to:document)),"Ancestor motion must reveal the remaining focused control")
+        second.reveal(false)
+        let cleanup=ContinuousClock.now.advanced(by:.seconds(1))
+        while container.postsFrameChangedNotifications != frames || container.postsBoundsChangedNotifications != bounds {
+            if ContinuousClock.now>=cleanup {break}
+            try await Task.sleep(for:.milliseconds(10))
+        }
+        XCTAssertEqual(container.postsFrameChangedNotifications,frames);XCTAssertEqual(container.postsBoundsChangedNotifications,bounds)
+    }
+
+}
+
+@MainActor private final class ViewportHostingFixture:ObservableObject {
+    var callerTracksFocus=true
+    var nativeFocus=false
+    var useReader=false
+    @Published var prefix:CGFloat=100
+    @Published var focused=false
+    @Published var expanded=false
+}
+@MainActor private struct ViewportHostingContent:View {
+    @ObservedObject var fixture:ViewportHostingFixture
+    @FocusState private var nativeFocused:Bool
+    var body:some View {
+        ScrollViewReader {proxy in
+        ScrollView {
+            VStack(alignment:.leading,spacing:0) {
+                Color.clear.frame(height:fixture.prefix)
+                VStack(alignment:.leading,spacing:8) {
+                    Text("Original document opener")
+                    ProposalCompareControl(title:"Return to original document opener",focused:fixture.nativeFocus ? (fixture.callerTracksFocus && nativeFocused):fixture.focused) {}.focused($nativeFocused)
+                    if fixture.expanded {Text(String(repeating:"Original Dutch vision\n",count:20))}
+                }.padding(12).id("card")
+                Color.clear.frame(height:1000)
+            }
+        }
+        .onChange(of:fixture.focused) {_,value in if fixture.nativeFocus {nativeFocused=value;if fixture.useReader {proxy.scrollTo("card",anchor:.top)}}}
+        }
+    }
 }
