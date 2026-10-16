@@ -232,7 +232,7 @@ final class ProposalCompareViewportAnchor:NSView {
             next=view.superview
         }
         let row:[String:Any] = ["event":event,"focus":currentFocus,"generation":generation,"frame":NSStringFromRect(frame),"bounds":NSStringFromRect(bounds),"window_rect":NSStringFromRect(convert(bounds,to:nil)),"parents":parents,"window_frame":NSStringFromRect(window?.frame ?? .zero)]
-        if let data=try? JSONSerialization.data(withJSONObject:row,options:.sortedKeys),let text=String(data:data,encoding:.utf8) {print("ISOLATED_VIEWPORT_DIAGNOSTIC "+text)}
+        if let data=try? JSONSerialization.data(withJSONObject:row,options:.sortedKeys),let text=String(data:data,encoding:.utf8) {try? FileHandle.standardError.write(contentsOf:Data(("ISOLATED_VIEWPORT_DIAGNOSTIC "+text+"\n").utf8))}
     }
     #endif
     private var currentFocus=false
