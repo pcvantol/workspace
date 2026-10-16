@@ -922,7 +922,12 @@ extension WorksetReleaseTests {
         try await Task.sleep(for:.milliseconds(120),tolerance:.zero)
         XCTAssertTrue(state.busy);XCTAssertEqual(state.history,[original])
         clock.advance(0.05)
-        try await Task.sleep(for:.milliseconds(100),tolerance:.zero)
+        // The hosted scheduler may take longer than100ms; retain a finite window,
+        // with the original read still held and every expiry assertion unchanged.
+        let timeout=ContinuousClock.now.advanced(by:.seconds(2))
+        while state.phase != "denied",ContinuousClock.now<timeout {
+            try await Task.sleep(for:.milliseconds(10),tolerance:.zero)
+        }
         XCTAssertEqual(state.phase,"denied");XCTAssertTrue(state.history.isEmpty);XCTAssertFalse(state.busy)
         await peer.finishRead();await response.value
         XCTAssertTrue(state.history.isEmpty);XCTAssertNil(state.observation);XCTAssertEqual(state.phase,"denied")

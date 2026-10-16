@@ -1,3 +1,15 @@
+## Plan108 source13 — finite hosted scheduler observation
+
+Actual exact541 hosted native CI fails only the existing held-original expiry
+case at its fixed100ms pre-release observation; later post-release assertions
+pass. Preserve raw failure. The test now awaits the actual denied transition
+within the same finite2s window already used by the adjacent expiry test.
+Original read stays held; all history/busy/currentdenial/late-response/one-send
+assertions remain. Product bytes unchanged from1706311; no rights/deadline or
+runtime change. Own cumulative13source/9artifact/24operational/7full retained.
+Focused and fullvalidation8/newheadCI and independent review REQUIRED before
+protected implementation, own finalization and NEW exact-final-main evidence.
+
 ## Plan108 current bounded candidate — runtime proved, protected delivery open
 
 [Safe current candidate evidence](docs/qualification/plan108-bounded-candidate-20261016/README.md)
