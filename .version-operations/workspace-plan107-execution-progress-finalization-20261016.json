@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "L4-NATIVE-MISSION-EA-PROGRESS-V1-20261015-finalization",
+  "determined_version": "2.8.31",
+  "event_lineage": "L4-NATIVE-MISSION-EA-PROGRESS-V1-20261015-finalization",
+  "expected_source_revision": "c7840747829302578cafc55940c189d9f967c3af",
+  "expected_version": "2.8.31",
+  "operation_id": "workspace-plan107-execution-progress-finalization-20261016",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "NO_BUMP",
+  "requested": {
+    "bump": "none"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

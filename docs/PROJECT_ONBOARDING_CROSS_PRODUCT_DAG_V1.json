@@ -741,7 +741,9 @@
         "own_contract": "docs/WORKSPACE_MISSION_EA_PROGRESS_V1.md",
         "producer_qualified_source": "bc441c0f4825fc5de7f68b06feffcc97e53af6d5",
         "full_parent_selected": false,
-        "status": "QUALIFIED_CANDIDATE_PROTECTED_DELIVERY_PENDING"
+        "status": "PROTECTED_IMPLEMENTATION_OWN_FINALIZATION_PENDING",
+        "protected_implementation_main": "c7840747829302578cafc55940c189d9f967c3af",
+        "own_finalization": "docs/WORKSPACE_MISSION_EA_PROGRESS_FINALIZATION_V1.md"
       }
     },
     {
