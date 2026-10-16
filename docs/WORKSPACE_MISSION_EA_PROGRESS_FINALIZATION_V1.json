@@ -1,0 +1,126 @@
+{
+  "assignment": "L4-NATIVE-MISSION-EA-PROGRESS-V1-20261015",
+  "join": "L2-L4-CENTRAL-MISSION-EA-PROGRESS-V1-20261015",
+  "plan": 107,
+  "scope": "NATIVE_MISSION_EA_EXECUTION_READ only; parent PB-W3-PROGRESS/HOB-EP03 remain open",
+  "version": "2.8.31",
+  "release_class": "NO_BUMP",
+  "version_operation": "workspace-plan107-execution-progress-finalization-20261016",
+  "protected_implementation_main": "c7840747829302578cafc55940c189d9f967c3af",
+  "implementation_pr": "https://github.com/pcvantol/workspace/pull/181",
+  "merge_commit": "c7840747829302578cafc55940c189d9f967c3af",
+  "reviewed_source": "2dcdaa3539b70f598df2f027806008d58e3f0d05",
+  "exact_reviewed_tree": "4ca8e559ef5fc4d9fe2fc283e231ceba4541eb80",
+  "checks": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T06:22:27Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38860811085/job/116842423972",
+      "name": "validate-version-source",
+      "startedAt": "2026-10-16T06:22:14Z",
+      "status": "COMPLETED",
+      "workflowName": "Canonical product versioning"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T06:25:55Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38860815321/job/116842499119",
+      "name": "TDE observe (non-blocking)",
+      "startedAt": "2026-10-16T06:22:29Z",
+      "status": "COMPLETED",
+      "workflowName": "TDE observe"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T06:25:46Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38860815563/job/116842437604",
+      "name": "Foundation validation",
+      "startedAt": "2026-10-16T06:22:16Z",
+      "status": "COMPLETED",
+      "workflowName": "Workspace CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T06:27:37Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38860815376/job/116842437341",
+      "name": "Native app build and transport tests",
+      "startedAt": "2026-10-16T06:22:20Z",
+      "status": "COMPLETED",
+      "workflowName": "Workspace native macOS Client"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T06:26:22Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38860815563/job/116842437927",
+      "name": "Python 3.14 installed Server",
+      "startedAt": "2026-10-16T06:22:17Z",
+      "status": "COMPLETED",
+      "workflowName": "Workspace CI"
+    }
+  ],
+  "actual_TDE": {
+    "workflow": 38860815321,
+    "artifact": 12029163031,
+    "assessment": "PASS_WITH_WARNINGS",
+    "repository": "QUALIFIED",
+    "exits": [
+      1,
+      1
+    ],
+    "product_maximum": 28
+  },
+  "qualified_producer": {
+    "version": "2.3.122",
+    "source": "bc441c0f4825fc5de7f68b06feffcc97e53af6d5",
+    "schema_sha256": "ac4ccc1c43c02742dc6ad15e642fadc6456844f8a1a3e7425275f67d247b7d89",
+    "handoff": "https://github.com/pcvantol/forge/issues/208#issuecomment-6208099239",
+    "retained_distinct_wheel_all_205_payloads_and_10_entrypoints_equal_qualified_source": true
+  },
+  "source_and_complete_scoped_candidate_reviews": {
+    "Quality": "PASS",
+    "Security": "PASS",
+    "UX": "PASS"
+  },
+  "validation4": {
+    "result": "PASS",
+    "Python": 356,
+    "native": 335,
+    "isolated_native": 1,
+    "each_changed_production_executable_lines": ">80.2%",
+    "own_finalization_validation5": "REQUIRED"
+  },
+  "candidate_publication": "https://github.com/pcvantol/workspace/tree/2f32a4a837f5061a056b685315dbeb2fe922f50c/docs/qualification/plan107-qualified-candidate-20261016",
+  "qualified_candidate": {
+    "real_four_phase_transition_and_operator_wait": true,
+    "same_original_run_and_lineage": true,
+    "snapshot409_scope403_lost_GET_separate_Server_EP_OS_restarts_source503": true,
+    "native_real_Escape_Space_and_visible_opener": true,
+    "safe_original_PNGs_independently_reviewed": 5,
+    "zero_business_execution_effects": true,
+    "cleanup": "COMPLETE"
+  },
+  "native_metadata_correction": {
+    "original_inherited_three_stale_inventory_entries_preserved": true,
+    "corrected_all_237_inputs_equal_exact_Git_export": true,
+    "original_compile_manifest_and_all_37_MachO_sections_equal_packaged_binary": true,
+    "runtime_and_binary_unchanged": true
+  },
+  "unchanged_earlier_matrix": "Original trial3 HTTP matrix and trial4 five languages/light-dark/760-1420px/source-bound keyboard and expiry/revoke/late-response proofs retained; not relabeled final-main",
+  "historical_closed_scopes_unchanged": true,
+  "cumulative": {
+    "plan": 107,
+    "source_rounds": 14,
+    "installed_attempts": 8,
+    "full_validations_started": 5,
+    "no_administrative_maximum": true,
+    "historical_consumption_preserved": true,
+    "operational_trials": 5
+  },
+  "new_exact_final_main_installed": "REQUIRED_AFTER_OWN_FINALIZATION_PROTECTED_MERGE",
+  "terminal_receipt": "External immutable readback after fresh final-main qualification; no recursive future SHA claim"
+}
