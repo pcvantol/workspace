@@ -98,4 +98,29 @@ import AppKit
         XCTAssertEqual(scroll.contentView.bounds.origin,retained,"An unfocused layout change must not scroll")
     }
 
+    func testFocusedControlKeepsVerticalBreathingRoomAtClipEdge() async {
+        let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false)
+        window.isReleasedWhenClosed=false
+        let scroll=NSScrollView(frame:NSRect(x:0,y:0,width:400,height:300))
+        let document=NSView(frame:NSRect(x:0,y:0,width:400,height:1600))
+        let anchor=ProposalCompareViewportAnchor(frame:NSRect(x:20,y:270,width:200,height:30))
+        document.addSubview(anchor);scroll.documentView=document;window.contentView=scroll
+        defer {window.close()}
+        XCTAssertTrue(scroll.contentView.bounds.contains(anchor.frame),"Positive control: fully visible but flush against clip edge")
+        anchor.reveal(true)
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertTrue(scroll.contentView.bounds.insetBy(dx:0,dy:12).contains(anchor.frame),"Focused control and ring must remain inside the viewport with breathing room")
+        let revealed=scroll.contentView.bounds.origin
+        anchor.setFrameOrigin(NSPoint(x:20,y:100))
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertEqual(scroll.contentView.bounds.origin,revealed,"An already centered focus must not scroll")
+        anchor.setFrameOrigin(NSPoint(x:20,y:scroll.contentView.bounds.minY))
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertTrue(scroll.contentView.bounds.insetBy(dx:0,dy:12).contains(anchor.frame),"The opposite clip edge must retain the same vertical margin")
+        let afterOppositeEdge=scroll.contentView.bounds.origin
+        anchor.reveal(false);anchor.setFrameOrigin(NSPoint(x:20,y:1200))
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertEqual(scroll.contentView.bounds.origin,afterOppositeEdge,"Unfocused layout changes must not scroll")
+    }
+
 }

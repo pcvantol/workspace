@@ -203,7 +203,7 @@
           "scope": "LINKED_INSPECTION_SOURCE_PRESENTATION_ONLY",
           "assignment": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
           "plan": 108,
-          "status": "PROTECTED_IMPLEMENTATION_FINALIZATION_PENDING",
+          "status": "SELECTED_FOCUS_REPAIR_AFTER_FINAL_MAIN_QUALIFICATION_FAILURE",
           "full_parent_selected": false,
           "own_contract": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md",
           "candidate_runtime_evidence": "docs/qualification/plan108-bounded-candidate-20261016/README.md",
@@ -211,7 +211,10 @@
           "new_exact_final_main_installed": "REQUIRED_AFTER_OWN_PROTECTED_FINALIZATION",
           "protected_implementation_main": "28c9aa35f14feea03fe3cc645a88198cea3fbf17",
           "reviewed_source": "5a33425fffb0cce6fbc7279b8319a4be7790ceb9",
-          "own_finalization": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_FINALIZATION_V1.md"
+          "own_finalization": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_FINALIZATION_V1.md",
+          "focus_repair_base_main": "9f91720953109cb66983dbd0f727f3d12d21be4b",
+          "current_version_allocation": "2.8.33",
+          "failed_final_main_trial": 25
         }
       ]
     },
@@ -375,7 +378,7 @@
           "scope": "SELECTED_INSPECTION_ADOPTION_PREVIEW",
           "assignment": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
           "plan": 108,
-          "status": "PROTECTED_IMPLEMENTATION_FINALIZATION_PENDING",
+          "status": "SELECTED_FOCUS_REPAIR_AFTER_FINAL_MAIN_QUALIFICATION_FAILURE",
           "full_parent_selected": false,
           "own_contract": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md",
           "candidate_runtime_evidence": "docs/qualification/plan108-bounded-candidate-20261016/README.md",
@@ -383,7 +386,10 @@
           "new_exact_final_main_installed": "REQUIRED_AFTER_OWN_PROTECTED_FINALIZATION",
           "protected_implementation_main": "28c9aa35f14feea03fe3cc645a88198cea3fbf17",
           "reviewed_source": "5a33425fffb0cce6fbc7279b8319a4be7790ceb9",
-          "own_finalization": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_FINALIZATION_V1.md"
+          "own_finalization": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_FINALIZATION_V1.md",
+          "focus_repair_base_main": "9f91720953109cb66983dbd0f727f3d12d21be4b",
+          "current_version_allocation": "2.8.33",
+          "failed_final_main_trial": 25
         }
       ]
     },

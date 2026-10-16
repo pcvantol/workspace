@@ -230,8 +230,12 @@ final class ProposalCompareViewportAnchor:NSView {
         guard focused else{return}
         DispatchQueue.main.async {[weak self] in
             guard let self,self.window != nil,self.currentFocus,self.generation==ticket,!self.bounds.isEmpty else{return}
-            guard !self.visibleRect.contains(self.bounds) else{return}
-            self.scrollToVisible(self.bounds)
+            guard let scroll=self.enclosingScrollView,let document=scroll.documentView else{return}
+            // Include the focus ring inside the nearest clip, not merely flush with its edge.
+            let target=self.convert(self.bounds.insetBy(dx:0,dy:-16),to:document).intersection(document.bounds)
+            let visible=scroll.contentView.convert(scroll.contentView.bounds,to:document)
+            guard !target.isEmpty,!visible.contains(target) else{return}
+            document.scrollToVisible(target)
         }
     }
 }

@@ -1,3 +1,19 @@
+## Plan108 source14 — preserve focus inside the actual viewport
+
+New final-main trial25 on9f91720 exposes a real boundary case after lost reply
+and separate Client restart: correct focused detail ends at windowbottom980,
+without required12pt breathing room. Original failure/raw measurements/one
+R55 record/one prepare/normal cleanup retained; artifact10 binding PASS is not
+runtime qualification. Same selected assignment continues, no predecessor reopen.
+Canonically allocate PATCH2.8.33 from actual main2.8.32, preserve prior allocations.
+Meaningful NSScrollView regression RED on old helper, GREEN with nearest-clip
+16pt vertical reveal in document coordinates, clipped to document bounds.
+Both clip edges, centered/no-scroll, focus loss and moved-focus guards pass.
+All six owning comparison-view tests PASS. No HTTP, rights or proposal semantics
+change. Next early real packaged recovery before heavy suites; full tests/strict
+coverage/independent reviews/protected repair/own finalization and NEW final-main
+proof remain REQUIRED. Cumulative14source/10artifact/25operational/9full preserved.
+
 ## Plan108 protected implementation — own finalization pending
 
 PR183 protected merge `28c9aa35f14feea03fe3cc645a88198cea3fbf17` equals reviewed5a33425 tree; all five exact-head
