@@ -1,0 +1,100 @@
+{
+  "assignment": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
+  "plan": 108,
+  "phase": "BOUND_CANDIDATE_NOT_FINAL_MAIN",
+  "consumer_version": "2.8.33",
+  "source": "a012b29583eb8b2b3fe5214118ef1e8438ee2341",
+  "artifact": 16,
+  "operational_trial": 31,
+  "own_wheel_sha256": "f35a91daedc9d58c14e4109366f8c19e0ae684e442bb76522512e37128fb2987",
+  "native_binary_sha256": "65e3924d1adb4bbadf276e1363cb47fa2f3e114f82c69cb670602dfb29eec5a8",
+  "own_payloads": 78,
+  "native_inputs": 244,
+  "normal_isolated_adhoc_adapter": true,
+  "actual_minimum_macos": "26.0",
+  "actual_binary_SDK": "26.0",
+  "available_toolchain_query_separate": "27.0",
+  "qualified_Forge": "2.21.0/cd483fd9b17a96d0deac0f0264ab6fc32c75e778",
+  "qualified_EP": "2.3.121/f3b56303b561a7193965f4aa41fd8da744a8c1c2",
+  "real_lost_committed_reply_zero_native_bytes": true,
+  "same_original_separate_Client_Server_Forge_EP_restarts": true,
+  "one_original_intent_native_prepare_R55_record": true,
+  "one_separately_counted_normal_owner_initial_EP_inspection": true,
+  "product_EP_POST": 0,
+  "original_source_files_unchanged": 28,
+  "actual_NL_light_1180_EN_dark_760_margin_pt": 16,
+  "real_Escape_Space_same_visible_original_opener": true,
+  "actual_current_rights_denial_conceals_content": true,
+  "normal_cleanup_before_fixed_deadline": true,
+  "synthetic_isolated_qualification_not_Peters_real_project_or_owner_approval": true,
+  "independent_Quality_Security_UX_and_pixel_metadata_privacy": "PASS for these exact original hashes",
+  "capture_files": 10,
+  "unique_image_hashes": 8,
+  "identical_images_explanation": "EN-dark original, Server-restored original and EP-restored original share the same original-view bytes; not distinct visual states",
+  "images": [
+    {
+      "file": "candidate31-original-en-dark-760.png",
+      "sha256": "fc765d4c39d8f87fa6e958e1bf21cd93c9ac73cde4cfaca1e8efc001e0adc847",
+      "original_capture_mtime_ns": 1792159759071035467,
+      "unmodified_pixels_and_metadata": true
+    },
+    {
+      "file": "candidate31-selected-absent-addition.png",
+      "sha256": "f68edc6e8d47b12174a88c233777a17066bbcf387d2ef114a2389a018c864b85",
+      "original_capture_mtime_ns": 1792159860058744692,
+      "unmodified_pixels_and_metadata": true
+    },
+    {
+      "file": "candidate31-uninspected-unknown.png",
+      "sha256": "4a4ef9fd0cced3b77c3a5d7ac466940febe2c315254410c3f71d480b94ac981f",
+      "original_capture_mtime_ns": 1792159864621049616,
+      "unmodified_pixels_and_metadata": true
+    },
+    {
+      "file": "candidate31-visible-original-keyboard-opener.png",
+      "sha256": "1d99e58fb5340b780a84f0e72d47b8992f0bda27d837d7518c185b96aa4c4357",
+      "original_capture_mtime_ns": 1792159845020664231,
+      "unmodified_pixels_and_metadata": true
+    },
+    {
+      "file": "matrix-current-access-revoked.png",
+      "sha256": "58bf9e7ed3f7b3f2a0e1fe4b10a48fba4288e68e776cd5b4d4c4675f25cdf24a",
+      "original_capture_mtime_ns": 1792159883183044581,
+      "unmodified_pixels_and_metadata": true
+    },
+    {
+      "file": "matrix-lost-committed-response-pending.png",
+      "sha256": "4f0cd0531d17cea827f2b08470dda7fe877900f60a1e2e7d0657831163bb0763",
+      "original_capture_mtime_ns": 1792159694059753739,
+      "unmodified_pixels_and_metadata": true
+    },
+    {
+      "file": "matrix-original-after-client-restart.png",
+      "sha256": "a3aa70a424da6f7fc8abfa8720b3c9c81eef20725c66adce2c702f9ab5603edb",
+      "original_capture_mtime_ns": 1792159733872638322,
+      "unmodified_pixels_and_metadata": true
+    },
+    {
+      "file": "matrix-original-after-ep-restoration.png",
+      "sha256": "fc765d4c39d8f87fa6e958e1bf21cd93c9ac73cde4cfaca1e8efc001e0adc847",
+      "original_capture_mtime_ns": 1792159841470768841,
+      "unmodified_pixels_and_metadata": true
+    },
+    {
+      "file": "matrix-original-after-server-restart.png",
+      "sha256": "fc765d4c39d8f87fa6e958e1bf21cd93c9ac73cde4cfaca1e8efc001e0adc847",
+      "original_capture_mtime_ns": 1792159783290529171,
+      "unmodified_pixels_and_metadata": true
+    },
+    {
+      "file": "matrix-real-original-source-unavailable.png",
+      "sha256": "e1aabea6cb906dedd177738fca5cc926390d7f1768707fef7c56d207bdecba75",
+      "original_capture_mtime_ns": 1792159817782903604,
+      "unmodified_pixels_and_metadata": true
+    }
+  ],
+  "VISION_pixels_limit": "These recovery frames show visible control; literal Dutch bytes remain independently verified original HTTP/source-bound earlier proof. New final-main GUI will also show readable Dutch text.",
+  "previous_source_bound_evidence": "matrix23/small24 source1706311; earlier negatives/recovery/corruption retain original sources; no relabeling",
+  "earlier_trials25_to30": "Failures/diagnostic retained, not PASS",
+  "new_exact_final_main": "REQUIRED after own repair finalization"
+}

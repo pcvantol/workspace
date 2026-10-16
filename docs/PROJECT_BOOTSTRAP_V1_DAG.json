@@ -203,7 +203,7 @@
           "scope": "LINKED_INSPECTION_SOURCE_PRESENTATION_ONLY",
           "assignment": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
           "plan": 108,
-          "status": "SELECTED_FOCUS_REPAIR_CI_OBSERVATION_CORRECTION",
+          "status": "PROTECTED_FOCUS_REPAIR_OWN_FINALIZATION_PENDING",
           "full_parent_selected": false,
           "own_contract": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md",
           "candidate_runtime_evidence": "docs/qualification/plan108-bounded-candidate-20261016/README.md",
@@ -225,9 +225,12 @@
           "native_causal_regression": "EXPLICIT_CURRENT_DOCUMENT_DEFERRED_MOUNT_CANCEL_SELECTION_MANUAL_SCROLL_GREEN",
           "diagnostic_trial29": "RETAINED_NOT_ACCEPTANCE",
           "focus_repair_candidate31_source": "a012b29583eb8b2b3fe5214118ef1e8438ee2341",
-          "focus_repair_candidate31": "ACTUAL_NATIVE_RECOVERY_KEYBOARD_PRIVACY_PASS_NOT_FINAL_MAIN",
+          "focus_repair_candidate31": "docs/qualification/plan108-focus-repair-candidate-20261016/README.md",
           "failed_native_CI_source": "a012b29583eb8b2b3fe5214118ef1e8438ee2341",
-          "failed_native_CI_run": 38914630763
+          "failed_native_CI_run": 38914630763,
+          "protected_focus_repair_main": "288e15e79131956b8ecf000d2be04bc8f885ba52",
+          "reviewed_focus_repair_source": "bc7ab178856c5d4e1f857646bf6eab3ebb755324",
+          "focus_repair_finalization": "docs/WORKSPACE_INSPECTION_ADOPTION_FOCUS_REPAIR_FINALIZATION_V1.md"
         }
       ]
     },
@@ -391,7 +394,7 @@
           "scope": "SELECTED_INSPECTION_ADOPTION_PREVIEW",
           "assignment": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
           "plan": 108,
-          "status": "SELECTED_FOCUS_REPAIR_CI_OBSERVATION_CORRECTION",
+          "status": "PROTECTED_FOCUS_REPAIR_OWN_FINALIZATION_PENDING",
           "full_parent_selected": false,
           "own_contract": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md",
           "candidate_runtime_evidence": "docs/qualification/plan108-bounded-candidate-20261016/README.md",
@@ -413,9 +416,12 @@
           "native_causal_regression": "EXPLICIT_CURRENT_DOCUMENT_DEFERRED_MOUNT_CANCEL_SELECTION_MANUAL_SCROLL_GREEN",
           "diagnostic_trial29": "RETAINED_NOT_ACCEPTANCE",
           "focus_repair_candidate31_source": "a012b29583eb8b2b3fe5214118ef1e8438ee2341",
-          "focus_repair_candidate31": "ACTUAL_NATIVE_RECOVERY_KEYBOARD_PRIVACY_PASS_NOT_FINAL_MAIN",
+          "focus_repair_candidate31": "docs/qualification/plan108-focus-repair-candidate-20261016/README.md",
           "failed_native_CI_source": "a012b29583eb8b2b3fe5214118ef1e8438ee2341",
-          "failed_native_CI_run": 38914630763
+          "failed_native_CI_run": 38914630763,
+          "protected_focus_repair_main": "288e15e79131956b8ecf000d2be04bc8f885ba52",
+          "reviewed_focus_repair_source": "bc7ab178856c5d4e1f857646bf6eab3ebb755324",
+          "focus_repair_finalization": "docs/WORKSPACE_INSPECTION_ADOPTION_FOCUS_REPAIR_FINALIZATION_V1.md"
         }
       ]
     },
