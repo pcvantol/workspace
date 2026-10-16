@@ -198,6 +198,7 @@ struct ProposalCompareControl:View {
     let title:String
     var systemImage:String?=nil
     var focused=false
+    var revealRequest:String?=nil
     let action:()->Void
     @Environment(\.isEnabled) private var enabled
     private func activate()->KeyPress.Result {guard enabled else{return .ignored};action();return .handled}
@@ -207,7 +208,7 @@ struct ProposalCompareControl:View {
             .background(.quaternary,in:RoundedRectangle(cornerRadius:5)).opacity(enabled ? 1:0.45)
             .overlay(RoundedRectangle(cornerRadius:5).stroke(focused ? Color.accentColor:Color.clear,lineWidth:2))
             .contentShape(Rectangle())
-            .background(ProposalCompareFocusViewport(focused:focused).allowsHitTesting(false))
+            .background(ProposalCompareFocusViewport(focused:focused,revealRequest:revealRequest).allowsHitTesting(false))
             .focusable(enabled,interactions:.edit)
             .onTapGesture {if enabled {action()}}
             .onKeyPress(keys:[.space,.return]) {press in guard press.modifiers.isEmpty else{return .ignored};return activate()}
@@ -218,22 +219,34 @@ struct ProposalCompareControl:View {
 struct ProposalCompareFocusViewport:NSViewRepresentable {
     @Environment(\.isFocused) private var nativeFocused
     var focused:Bool
+    var revealRequest:String?=nil
     func makeNSView(context:Context)->ProposalCompareViewportAnchor {ProposalCompareViewportAnchor()}
-    func updateNSView(_ view:ProposalCompareViewportAnchor,context:Context) {view.reveal(focused || nativeFocused)}
-    static func dismantleNSView(_ view:ProposalCompareViewportAnchor,coordinator:()) {view.reveal(false)}
+    func updateNSView(_ view:ProposalCompareViewportAnchor,context:Context) {view.reveal(focused || nativeFocused);view.requestReveal(revealRequest)}
+    static func dismantleNSView(_ view:ProposalCompareViewportAnchor,coordinator:()) {view.cancelRevealRequest();view.reveal(false)}
 }
 final class ProposalCompareViewportAnchor:NSView {
     private var currentFocus=false
     private var generation=0
+    private var requestIdentity:String?
+    private var pendingRequest:String?
+    private var requestGeneration=0
+    private var hasMountedWindow=false
     private var ancestorIDs=Set<ObjectIdentifier>()
     private var ancestorSignals:[AnyCancellable]=[]
     override func viewDidMoveToWindow() {
-        super.viewDidMoveToWindow();watchAncestors()
+        super.viewDidMoveToWindow()
+        if window==nil && hasMountedWindow {cancelRevealRequest()}
+        if window != nil {hasMountedWindow=true}
+        watchAncestors()
         if currentFocus {reveal(true)}
+        scheduleRequestedReveal()
     }
     override func viewDidMoveToSuperview() {
-        super.viewDidMoveToSuperview();watchAncestors()
+        super.viewDidMoveToSuperview()
+        if superview==nil {cancelRevealRequest()}
+        watchAncestors()
         if currentFocus {reveal(true)}
+        scheduleRequestedReveal()
     }
     private func watchAncestors() {
         ancestorIDs.removeAll();ancestorSignals.removeAll()
@@ -255,9 +268,9 @@ final class ProposalCompareViewportAnchor:NSView {
             })
         }
     }
-    override func setFrameOrigin(_ origin:NSPoint) {super.setFrameOrigin(origin);if currentFocus {reveal(true)}}
-    override func setFrameSize(_ size:NSSize) {super.setFrameSize(size);if currentFocus {reveal(true)}}
-    override func layout() {super.layout();if currentFocus {reveal(true)}}
+    override func setFrameOrigin(_ origin:NSPoint) {super.setFrameOrigin(origin);if currentFocus {reveal(true)};scheduleRequestedReveal()}
+    override func setFrameSize(_ size:NSSize) {super.setFrameSize(size);if currentFocus {reveal(true)};scheduleRequestedReveal()}
+    override func layout() {super.layout();if currentFocus {reveal(true)};scheduleRequestedReveal()}
     func reveal(_ focused:Bool) {
         let changed=currentFocus != focused
         currentFocus=focused;generation+=1;let ticket=generation
@@ -265,20 +278,40 @@ final class ProposalCompareViewportAnchor:NSView {
         guard focused else{return}
         DispatchQueue.main.async {[weak self] in
             guard let self,self.window != nil,self.currentFocus,self.generation==ticket,!self.bounds.isEmpty else{return}
-            guard let scroll=self.enclosingScrollView,let document=scroll.documentView else{return}
-            // Include the focus ring inside the nearest clip, not merely flush with its edge.
-            let target=self.convert(self.bounds.insetBy(dx:0,dy:-16),to:document).intersection(document.bounds)
-            let clip=scroll.contentView
-            // The nearest clip can itself extend behind an ancestor/window boundary.
-            let effective=clip.visibleRect
-            let control=document.convert(target,to:clip)
-            guard !control.isEmpty,!effective.isEmpty,!effective.contains(control) else{return}
-            let dx=control.minX<effective.minX ? control.minX-effective.minX:control.maxX>effective.maxX ? control.maxX-effective.maxX:0
-            let dy=control.minY<effective.minY ? control.minY-effective.minY:control.maxY>effective.maxY ? control.maxY-effective.maxY:0
-            let proposed=clip.bounds.offsetBy(dx:dx,dy:dy)
-            clip.scroll(to:clip.constrainBoundsRect(proposed).origin)
-            scroll.reflectScrolledClipView(clip)
+            _ = self.revealGeometry()
         }
+    }
+    // An explicit current document-navigation request is independent of focus callbacks.
+    func requestReveal(_ identity:String?) {
+        if requestIdentity != identity {requestGeneration+=1;requestIdentity=identity;pendingRequest=identity}
+        scheduleRequestedReveal()
+    }
+    func cancelRevealRequest() {requestGeneration+=1;requestIdentity=nil;pendingRequest=nil}
+    private func scheduleRequestedReveal() {
+        guard let identity=pendingRequest else{return}
+        let ticket=requestGeneration
+        DispatchQueue.main.async {[weak self] in
+            guard let self,self.requestGeneration==ticket,self.pendingRequest==identity else{return}
+            if self.revealGeometry(),self.requestGeneration==ticket,self.pendingRequest==identity {self.pendingRequest=nil}
+        }
+    }
+    private func revealGeometry()->Bool {
+        guard window != nil,!bounds.isEmpty else{return false}
+        guard let scroll=enclosingScrollView,let document=scroll.documentView else{return false}
+        // Include the focus ring inside the nearest clip, not merely flush with its edge.
+        let target=convert(bounds.insetBy(dx:0,dy:-16),to:document).intersection(document.bounds)
+        let clip=scroll.contentView
+        // The nearest clip can itself extend behind an ancestor/window boundary.
+        let effective=clip.visibleRect
+        let control=document.convert(target,to:clip)
+        guard !control.isEmpty,!effective.isEmpty else{return false}
+        if effective.contains(control) {return true}
+        let dx=control.minX<effective.minX ? control.minX-effective.minX:control.maxX>effective.maxX ? control.maxX-effective.maxX:0
+        let dy=control.minY<effective.minY ? control.minY-effective.minY:control.maxY>effective.maxY ? control.maxY-effective.maxY:0
+        let proposed=clip.bounds.offsetBy(dx:dx,dy:dy)
+        clip.scroll(to:clip.constrainBoundsRect(proposed).origin)
+        scroll.reflectScrolledClipView(clip)
+        return true
     }
 }
 

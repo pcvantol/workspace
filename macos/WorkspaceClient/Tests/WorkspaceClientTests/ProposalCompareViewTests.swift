@@ -166,6 +166,48 @@ import AppKit
         XCTAssertTrue(host.bounds.insetBy(dx:0,dy:12).contains(anchor.convert(anchor.bounds,to:host)),"Actual focused control must retain visible margin")
     }
 
+    func testExplicitDetailRequestSurvivesDeferredMountWithoutFocusNotification() async throws {
+        let anchor=ProposalCompareViewportAnchor(frame:.zero)
+        anchor.requestReveal("actor/context/concept/source/original/document")
+        anchor.reveal(false)
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false);window.isReleasedWhenClosed=false
+        let scroll=NSScrollView(frame:NSRect(x:0,y:0,width:400,height:300)),document=NSView(frame:NSRect(x:0,y:0,width:400,height:1600))
+        document.addSubview(anchor);scroll.documentView=document;window.contentView=scroll
+        defer {anchor.cancelRevealRequest();window.close()}
+        anchor.setFrameSize(NSSize(width:180,height:22));anchor.setFrameOrigin(NSPoint(x:20,y:1200))
+        let timeout=ContinuousClock.now.advanced(by:.seconds(2))
+        while !scroll.contentView.bounds.insetBy(dx:0,dy:12).contains(anchor.frame),ContinuousClock.now<timeout {try await Task.sleep(for:.milliseconds(10))}
+        XCTAssertTrue(scroll.contentView.bounds.insetBy(dx:0,dy:12).contains(anchor.frame),"One explicit current document request must reveal after actual mount even when both focus signals are false")
+        scroll.contentView.scroll(to:NSPoint(x:0,y:0));scroll.reflectScrolledClipView(scroll.contentView)
+        anchor.requestReveal("actor/context/concept/source/original/document");anchor.layout()
+        try await Task.sleep(for:.milliseconds(40))
+        XCTAssertEqual(scroll.contentView.bounds.minY,0,"Consumed same request must not pull back manual scrolling")
+    }
+
+    func testCancelledDetailRequestAndDetachedOldMountCannotScrollNewSelection() async throws {
+        let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false);window.isReleasedWhenClosed=false
+        let scroll=NSScrollView(frame:NSRect(x:0,y:0,width:400,height:300)),document=NSView(frame:NSRect(x:0,y:0,width:400,height:1600))
+        let anchor=ProposalCompareViewportAnchor(frame:NSRect(x:20,y:1200,width:180,height:22));document.addSubview(anchor);scroll.documentView=document;window.contentView=scroll
+        defer {window.close()}
+        let before=scroll.contentView.bounds.origin
+        anchor.requestReveal("old/source/operation/document");anchor.cancelRevealRequest()
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertEqual(scroll.contentView.bounds.origin,before,"Cancellation must invalidate queued old request")
+        anchor.requestReveal("old/source/operation/document");anchor.removeFromSuperview()
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertEqual(scroll.contentView.bounds.origin,before,"Detached old document must not scroll")
+        document.addSubview(anchor)
+        anchor.requestReveal("new/source/operation/document");anchor.requestReveal(nil)
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertEqual(scroll.contentView.bounds.origin,before,"Changed selection must invalidate a queued request")
+        anchor.requestReveal("new/source/operation/document")
+        let timeout=ContinuousClock.now.advanced(by:.seconds(2))
+        while !scroll.contentView.bounds.insetBy(dx:0,dy:12).contains(anchor.frame),ContinuousClock.now<timeout {try await Task.sleep(for:.milliseconds(10))}
+        XCTAssertTrue(scroll.contentView.bounds.insetBy(dx:0,dy:12).contains(anchor.frame),"A cancelled old callback must not consume the new mount request")
+        anchor.cancelRevealRequest()
+    }
+
     func testFocusedControlUsesWindowClippedViewportInsteadOfOversizedClipBounds() async {
         let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false);window.isReleasedWhenClosed=false
         let root=NSView(frame:NSRect(x:0,y:0,width:400,height:300))

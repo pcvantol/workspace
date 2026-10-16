@@ -90,7 +90,7 @@ struct ConceptAdoptionPanel:View {
                     if ["INSUFFICIENT_INFORMATION","CONFLICT"].contains(entry.operation) {Text(ConceptAdoptionCopy.reason(entry.reason,language)).font(.callout).foregroundStyle(.secondary).fixedSize(horizontal:false,vertical:true)}
                     if state.expandedDocument==entry.id {
                         VStack(alignment:.leading,spacing:8) {
-                            ProposalCompareControl(title:text("close"),focused:focus=="adoption-detail-"+entry.id) {Task {await state.chooseDocument(entry.id,concept:concept,current:current)};focus="adoption-document-"+entry.id}
+                            ProposalCompareControl(title:text("close"),focused:focus=="adoption-detail-"+entry.id,revealRequest:String(reflecting:[concept.actor_id,concept.context_id,concept.id,state.source,result.operation_id,entry.id])) {Task {await state.chooseDocument(entry.id,concept:concept,current:current)};focus="adoption-document-"+entry.id}
                                 .focused($focus,equals:"adoption-detail-"+entry.id).id("adoption-detail-"+entry.id).accessibilityIdentifier("adoption-detail-"+entry.id)
                                 .onKeyPress(keys:[.escape]) {press in guard press.modifiers.isEmpty else{return .ignored};Task {await state.chooseDocument(entry.id,concept:concept,current:current)};focus="adoption-document-"+entry.id;return .handled}
                             if let original=entry.mapping_source.content ?? entry.before.content {bounded(original,label:text("before"),anchor:result.operation_id+entry.id+"-before")}

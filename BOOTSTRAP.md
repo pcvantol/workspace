@@ -1,3 +1,22 @@
+## Plan108 source19 — explicit current document reveal; acceptance OPEN
+
+Candidate30 onf5a43b4 remains FAIL with its original normal cleanup and one
+original effect. Focus/environment-only regressions did not establish packaged
+acceptance. Explicit document navigation now carries an immutable actor/context/
+concept/source/original-operation/document reveal request to its actual native
+anchor. It stays pending until a mounted window and valid geometry exist, then
+is consumed once. Request/mount generations, changed selection, detachment and
+dismantle invalidate old callbacks; it enables no continuous unfocused watch.
+The same consumed request cannot override subsequent manual scrolling.
+The pre-implementation no-request baseline uses clearly retained test-only no-op
+stubs (not an alleged existing API); it fails viewport assertion. Those stubs
+are removed. Fourteen directed native tests PASS, including delayed mount,
+selection/cancellation/new-mount fencing and retained focus/ancestor behavior.
+Cumulative19source/15artifact/30operational/9full validations, same writer/base/
+version and qualified R55/EP pins. No HTTP/authority/storage change. New actual
+packaged proof, full10, protected repair, own finalization and NEW exact-final-main
+installed/GUI/privacy/readback/cleanup remain OPEN; no administrative cap/reset.
+
 ## Plan108 source18 — actual native focus propagation repaired; acceptance OPEN
 
 Candidate28 remains FAIL on2229a40. Explicit isolated diagnostic29 on5d3d6db
