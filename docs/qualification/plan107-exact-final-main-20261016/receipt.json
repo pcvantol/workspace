@@ -16,7 +16,7 @@
     "ep": 205,
     "forge": 287
   },
-  "MachO_build_commands": "/Volumes/EP_DATA/lane4-plan107-qualification-20261015/final/Workspace.app/Contents/MacOS/WorkspaceClient:\nLoad command 11\n      cmd LC_BUILD_VERSION\n  cmdsize 32\n platform MACOS\n    minos 26.0\n      sdk 26.0\n   ntools 1\n     tool LD\n  version 27037.1\n",
+  "MachO_build_commands": "      cmd LC_BUILD_VERSION\n  cmdsize 32\n platform MACOS\n    minos 26.0\n      sdk 26.0\n   ntools 1\n     tool LD\n  version 27037.1",
   "native_input_files_verified": 237,
   "actual_new_chain": [
     "four actual phases with real operator wait",
