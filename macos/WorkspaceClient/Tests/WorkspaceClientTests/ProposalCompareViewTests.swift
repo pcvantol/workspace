@@ -150,6 +150,38 @@ import AppKit
         XCTAssertTrue(host.bounds.insetBy(dx:0,dy:12).contains(control.convert(control.bounds,to:host)),"The actual same focused SwiftUI control must stay inside the viewport after ancestor layout changes")
     }
 
+    func testFocusedControlUsesWindowClippedViewportInsteadOfOversizedClipBounds() async {
+        let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false);window.isReleasedWhenClosed=false
+        let root=NSView(frame:NSRect(x:0,y:0,width:400,height:300))
+        let scroll=NSScrollView(frame:NSRect(x:0,y:-100,width:400,height:400)),document=NSView(frame:NSRect(x:0,y:0,width:400,height:1600))
+        let control=ProposalCompareViewportAnchor(frame:NSRect(x:20,y:300,width:180,height:22))
+        document.addSubview(control);scroll.documentView=document;root.addSubview(scroll);window.contentView=root
+        scroll.contentView.scroll(to:NSPoint(x:0,y:200));scroll.reflectScrolledClipView(scroll.contentView)
+        defer {window.close()}
+        control.reveal(true)
+        try? await Task.sleep(for:.milliseconds(40))
+        XCTAssertTrue(root.bounds.insetBy(dx:0,dy:12).contains(control.convert(control.bounds,to:root)),"Focused control must fit actual window even when nearest clip extends beyond ancestor/window")
+    }
+
+    func testActualFocusBindingAndReaderScrollKeepControlInsideClip() async throws {
+        let fixture=ViewportHostingFixture();fixture.nativeFocus=true;fixture.useReader=true;fixture.prefix=1100;fixture.expanded=true
+        let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false)
+        window.isReleasedWhenClosed=false
+        let host=NSHostingView(rootView:ViewportHostingContent(fixture:fixture));window.contentView=host;window.makeKeyAndOrderFront(nil)
+        defer {window.close()}
+        try await Task.sleep(for:.milliseconds(100));fixture.focused=true
+        var anchor:ProposalCompareViewportAnchor?
+        let timeout=ContinuousClock.now.advanced(by:.seconds(2))
+        repeat {
+            try await Task.sleep(for:.milliseconds(10));host.layoutSubtreeIfNeeded()
+            var pending:[NSView]=[host]
+            while let next=pending.popLast() {if let value=next as? ProposalCompareViewportAnchor {anchor=value;break};pending+=next.subviews}
+        } while (anchor==nil || !host.bounds.insetBy(dx:0,dy:12).contains(anchor!.convert(anchor!.bounds,to:host))) && ContinuousClock.now<timeout
+        try await Task.sleep(for:.milliseconds(500));host.layoutSubtreeIfNeeded()
+        let control=try XCTUnwrap(anchor)
+        XCTAssertTrue(host.bounds.insetBy(dx:0,dy:12).contains(control.convert(control.bounds,to:host)),"Actual FocusState and reader navigation must retain focused control inside viewport")
+    }
+
     func testAncestorSignalsKeepOverlappingFocusAndRestoreNotificationFlags() async throws {
         let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false)
         window.isReleasedWhenClosed=false
@@ -182,23 +214,29 @@ import AppKit
 }
 
 @MainActor private final class ViewportHostingFixture:ObservableObject {
+    var nativeFocus=false
+    var useReader=false
     @Published var prefix:CGFloat=100
     @Published var focused=false
     @Published var expanded=false
 }
 @MainActor private struct ViewportHostingContent:View {
     @ObservedObject var fixture:ViewportHostingFixture
+    @FocusState private var nativeFocused:Bool
     var body:some View {
+        ScrollViewReader {proxy in
         ScrollView {
             VStack(alignment:.leading,spacing:0) {
                 Color.clear.frame(height:fixture.prefix)
                 VStack(alignment:.leading,spacing:8) {
                     Text("Original document opener")
-                    ProposalCompareControl(title:"Return to original document opener",focused:fixture.focused) {}
+                    ProposalCompareControl(title:"Return to original document opener",focused:fixture.nativeFocus ? nativeFocused:fixture.focused) {}.focused($nativeFocused)
                     if fixture.expanded {Text(String(repeating:"Original Dutch vision\n",count:20))}
-                }.padding(12)
+                }.padding(12).id("card")
                 Color.clear.frame(height:1000)
             }
+        }
+        .onChange(of:fixture.focused) {_,value in if fixture.nativeFocus {nativeFocused=value;if fixture.useReader {proxy.scrollTo("card",anchor:.top)}}}
         }
     }
 }

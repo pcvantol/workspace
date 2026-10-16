@@ -266,9 +266,16 @@ final class ProposalCompareViewportAnchor:NSView {
             guard let scroll=self.enclosingScrollView,let document=scroll.documentView else{return}
             // Include the focus ring inside the nearest clip, not merely flush with its edge.
             let target=self.convert(self.bounds.insetBy(dx:0,dy:-16),to:document).intersection(document.bounds)
-            let visible=scroll.contentView.convert(scroll.contentView.bounds,to:document)
-            guard !target.isEmpty,!visible.contains(target) else{return}
-            document.scrollToVisible(target)
+            let clip=scroll.contentView
+            // The nearest clip can itself extend behind an ancestor/window boundary.
+            let effective=clip.visibleRect
+            let control=document.convert(target,to:clip)
+            guard !control.isEmpty,!effective.isEmpty,!effective.contains(control) else{return}
+            let dx=control.minX<effective.minX ? control.minX-effective.minX:control.maxX>effective.maxX ? control.maxX-effective.maxX:0
+            let dy=control.minY<effective.minY ? control.minY-effective.minY:control.maxY>effective.maxY ? control.maxY-effective.maxY:0
+            let proposed=clip.bounds.offsetBy(dx:dx,dy:dy)
+            clip.scroll(to:clip.constrainBoundsRect(proposed).origin)
+            scroll.reflectScrolledClipView(clip)
         }
     }
 }

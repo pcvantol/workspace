@@ -1,3 +1,18 @@
+## Plan108 source16 — effective window clip repair remains under qualification
+
+Candidate27 on4ffc93e remains **FAIL** after the actual lost committed reply
+and separate Client restart; normal cleanup and its one original effect are retained.
+The actual FocusState/ScrollViewReader/adoption-panel hosting cases are GREEN,
+so a focus-only diagnosis is not claimed. A separate real AppKit regression
+proves full nearest-clip bounds can include an ancestor/window-clipped region.
+The old helper leaves the control at0pt actual window margin; using the effective
+visible clip and constrained offset moves it to16pt. Eleven targeted tests pass,
+including the actual restored adoption panel, ancestor lifecycle and manual scroll.
+Same sole writer/base9f91720/PATCH2.8.33 and R55/EP pins; no transport or rights change.
+Source16 / artifact12 / operational27 / full-validation9 are cumulative, not reset.
+Fresh packaged candidate proof, full validation10, protected repair, own repair
+finalization and NEW exact-final-main installed/GUI/privacy/readback remain OPEN.
+
 ## Plan108 source15 — real SwiftUI ancestor-layout regression
 
 Early candidate26/source601725f remains FAIL: focused detail stillflushbottom,
