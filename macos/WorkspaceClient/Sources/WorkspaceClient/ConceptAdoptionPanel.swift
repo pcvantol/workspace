@@ -85,7 +85,16 @@ struct ConceptAdoptionPanel:View {
                             if let proposed=entry.after.content {bounded(proposed,label:text("after"),anchor:result.operation_id+entry.id+"-after")}
                             if !entry.diff.isEmpty {DisclosureGroup(text("details")) {bounded(entry.diff,label:text("details"),anchor:result.operation_id+entry.id+"-diff")}}
                             DisclosureGroup(text("details")) {Text(verbatim:entry.reason);ForEach(entry.decisions,id:\.self) {Text(verbatim:$0)}}
-                        }.task(id:entry.id) {let operation=result.operation_id;await Task.yield();guard state.expandedDocument==entry.id,state.result?.operation_id==operation else{return};focus="adoption-detail-"+entry.id}
+                        }.task(id:entry.id) {
+                                let operation=result.operation_id,source=state.source,target="adoption-detail-"+entry.id
+                                await Task.yield()
+                                guard !Task.isCancelled,state.source==source,state.expandedDocument==entry.id,state.result?.operation_id==operation else{return}
+                                focus=target
+                                // Re-reveal after layout even when restored focus already has this identity.
+                                await Task.yield()
+                                guard !Task.isCancelled,focus==target,state.source==source,state.expandedDocument==entry.id,state.result?.operation_id==operation else{return}
+                                reveal(target)
+                            }
                     }
                 }.padding(12).frame(minWidth:0,maxWidth:.infinity,alignment:.leading).background(.quaternary.opacity(0.25),in:RoundedRectangle(cornerRadius:12))
             }

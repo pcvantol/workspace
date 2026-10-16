@@ -1,3 +1,20 @@
+## Plan108 source round6 — visible restored detail focus
+
+Actual matrix14 confirms genuine oversized/metadata/unknown, declaration conflict,
+causal A→B (unchanged A reply released after B), initialized-store corruption red
+and exact original restoration. It then exposed the correct focused detail below
+the window, so full candidate acceptance remains OPEN. Normal cleanup and failed
+original detector retained. Local panel now re-reveals the same control after
+layout, guarded by cancellation/source/operation/current expansion and focus.
+12directed native PASS; four new native sources86.04–100% executable coverage.
+Actual separate negative READ-only expiry200→401 with simultaneous positive200,
+ledgerACTIVE-but-expired, no business call/renewal and normal revoke PASS.
+All five source11f4504 CI SUCCESS; separate actual TDE QUALIFIED/PASS_WITH_WARNINGS.
+Own6source/4artifact/15operational/6full starts; no reset/adminmaximum. Existing
+source-bound recovery proof retained; new focus/remaining matrix, full validation,
+independent complete acceptance, protected implementation/own finalization and NEW
+exact-final-main proof remain required. Same writer/2.8.32; predecessors CLOSED.
+
 ## Plan108 source round5 — bounded candidate recovery retained
 
 [Actual d93ac81 recovery candidate](docs/qualification/plan108-recovery-candidate-20261016/README.md):
