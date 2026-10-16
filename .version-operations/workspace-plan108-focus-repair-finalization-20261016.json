@@ -1,0 +1,19 @@
+{
+  "allowed_projection_paths": [
+    "product-version.json"
+  ],
+  "classification_rationale": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016-focus-repair-finalization",
+  "determined_version": "2.8.33",
+  "event_lineage": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016-focus-repair-finalization",
+  "expected_source_revision": "288e15e79131956b8ecf000d2be04bc8f885ba52",
+  "expected_version": "2.8.33",
+  "operation_id": "workspace-plan108-focus-repair-finalization-20261016",
+  "policy_revision": "workspace-bootstrap-release-cadence-v2",
+  "product": "workspace",
+  "release_class": "NO_BUMP",
+  "requested": {
+    "bump": "none"
+  },
+  "result_commit": null,
+  "schema_version": 1
+}

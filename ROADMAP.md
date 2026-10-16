@@ -1,3 +1,19 @@
+## Plan108 protected focus repair — own repair finalization pending
+
+PR185 protected main `288e15e79131956b8ecf000d2be04bc8f885ba52` equals independently accepted sourcebc7 tree.
+Candidate31 retains its original a012 source; 349 production/build/version objects
+are byte-identical. The hosted a012 expiry-observation failure is retained; bc7
+changes only a finite test observation and documents.
+All five exact-head checks SUCCESS; actual TDE QUALIFIED/PASS_WITH_WARNINGS.
+Full11 PASS357native+1isolated; modified production files89.66%/92.49%.
+Actual candidate31, one original lost-reply/restart effect,16pt native margin in
+NL1180light/EN760dark, current-rights concealment and cleanup are independently
+accepted. [Own repair finalization](docs/WORKSPACE_INSPECTION_ADOPTION_FOCUS_REPAIR_FINALIZATION_V1.md)
+preserves original PR183/184 and all failed/source-bound proof. Its OWN validation12,
+reviews/checks/protected merge and NEW exact-final-main installed/native GUI,
+readable Dutch text, privacy/readback/cleanup remain mandatory. Version2.8.33
+NO_BUMP; no whole onboarding closure, global upgrade or automatic successor.
+
 ## Plan108 source20 — concrete hosted expiry-observation correction
 
 Actual native CI38914630763 on a012 FAILED the existing baseline2.2s fixed
