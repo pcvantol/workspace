@@ -214,7 +214,12 @@
           "own_finalization": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_FINALIZATION_V1.md",
           "focus_repair_base_main": "9f91720953109cb66983dbd0f727f3d12d21be4b",
           "current_version_allocation": "2.8.33",
-          "failed_final_main_trial": 25
+          "failed_final_main_trial": 25,
+          "current_focus_repair_source_round": 15,
+          "failed_candidate_trials": [
+            26
+          ],
+          "native_causal_regression": "REAL_SWIFTUI_ANCESTOR_MOVEMENT_RED_TO_GREEN"
         }
       ]
     },
@@ -389,7 +394,12 @@
           "own_finalization": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_FINALIZATION_V1.md",
           "focus_repair_base_main": "9f91720953109cb66983dbd0f727f3d12d21be4b",
           "current_version_allocation": "2.8.33",
-          "failed_final_main_trial": 25
+          "failed_final_main_trial": 25,
+          "current_focus_repair_source_round": 15,
+          "failed_candidate_trials": [
+            26
+          ],
+          "native_causal_regression": "REAL_SWIFTUI_ANCESTOR_MOVEMENT_RED_TO_GREEN"
         }
       ]
     },

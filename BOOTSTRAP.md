@@ -1,3 +1,20 @@
+## Plan108 source15 — real SwiftUI ancestor-layout regression
+
+Early candidate26/source601725f remains FAIL: focused detail stillflushbottom,
+private original pixels/measurements and normal cleanup retained. No full10 or
+new EP trial was started before native diagnosis. Actual NSHostingView regression
+shows nearest HostingScrollView exists; an ancestor moves136→1136 while the
+representable's own frame stays0,0. Plain AppKit self-frame tests missed this.
+NSWindow-update-only experiment also FAILS and is retained. The real hosted
+regression is now GREEN with focus-only weak ancestor frame/bounds observation,
+shared/restored notification flags and generation/window checks. Clip scrolling
+is excluded, so manual scroll is not pulled back.8own viewtests PASS, including
+actual hosted movement, both margins, overlap, restored flags and cancellation.
+Same PATCH2.8.33 allocation; no rights/HTTP/storage/proposal effects. Next early
+packaged proof on the unchanged actual detector precedes heavy full10/CI; normal
+protected repair, own finalization and NEW final-main proof remain REQUIRED.
+Cumulative15source/11artifact/26operational/9full and all history retained.
+
 ## Plan108 source14 — preserve focus inside the actual viewport
 
 New final-main trial25 on9f91720 exposes a real boundary case after lost reply

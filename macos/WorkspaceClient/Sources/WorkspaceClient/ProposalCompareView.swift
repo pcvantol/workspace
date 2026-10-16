@@ -1,5 +1,6 @@
 import SwiftUI
 import AppKit
+import Combine
 
 struct ProposalCompareView:View {
     @ObservedObject var state:ProposalCompareState
@@ -222,11 +223,43 @@ struct ProposalCompareFocusViewport:NSViewRepresentable {
 final class ProposalCompareViewportAnchor:NSView {
     private var currentFocus=false
     private var generation=0
+    private var ancestorIDs=Set<ObjectIdentifier>()
+    private var ancestorSignals:[AnyCancellable]=[]
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow();watchAncestors()
+        if currentFocus {reveal(true)}
+    }
+    override func viewDidMoveToSuperview() {
+        super.viewDidMoveToSuperview();watchAncestors()
+        if currentFocus {reveal(true)}
+    }
+    private func watchAncestors() {
+        ancestorIDs.removeAll();ancestorSignals.removeAll()
+        guard currentFocus,window != nil else{return}
+        var next=superview
+        let scroll=enclosingScrollView
+        while let view=next {
+            ancestorIDs.insert(ObjectIdentifier(view))
+            ancestorSignals.append(ProposalCompareViewportSignals.acquire(view))
+            if view === scroll {break}
+            next=view.superview
+        }
+        for name in [NSView.frameDidChangeNotification,NSView.boundsDidChangeNotification] {
+            ancestorSignals.append(NotificationCenter.default.publisher(for:name).receive(on:RunLoop.main).sink {[weak self] notification in
+                guard let self,self.currentFocus,let view=notification.object as? NSView,self.ancestorIDs.contains(ObjectIdentifier(view)) else{return}
+                // Manual scrolling is not an ancestor layout change.
+                if name==NSView.boundsDidChangeNotification,view is NSClipView {return}
+                self.reveal(true)
+            })
+        }
+    }
     override func setFrameOrigin(_ origin:NSPoint) {super.setFrameOrigin(origin);if currentFocus {reveal(true)}}
     override func setFrameSize(_ size:NSSize) {super.setFrameSize(size);if currentFocus {reveal(true)}}
     override func layout() {super.layout();if currentFocus {reveal(true)}}
     func reveal(_ focused:Bool) {
+        let changed=currentFocus != focused
         currentFocus=focused;generation+=1;let ticket=generation
+        if changed {watchAncestors()}
         guard focused else{return}
         DispatchQueue.main.async {[weak self] in
             guard let self,self.window != nil,self.currentFocus,self.generation==ticket,!self.bounds.isEmpty else{return}
@@ -236,6 +269,38 @@ final class ProposalCompareViewportAnchor:NSView {
             let visible=scroll.contentView.convert(scroll.contentView.bounds,to:document)
             guard !target.isEmpty,!visible.contains(target) else{return}
             document.scrollToVisible(target)
+        }
+    }
+}
+
+// Overlapping focus updates share notification flags without retaining ancestor views.
+@MainActor private final class ProposalCompareViewportSignals {
+    @MainActor private final class Entry {
+        weak var view:NSView?
+        let frames:Bool
+        let bounds:Bool
+        var owners=1
+        init(_ view:NSView) {self.view=view;frames=view.postsFrameChangedNotifications;bounds=view.postsBoundsChangedNotifications}
+    }
+    private static var entries:[ObjectIdentifier:Entry]=[:]
+    static func acquire(_ view:NSView)->AnyCancellable {
+        let key=ObjectIdentifier(view)
+        let entry:Entry
+        if let existing=entries[key],existing.view === view {entry=existing;entry.owners+=1}
+        else {
+            entry=Entry(view);entries[key]=entry
+            view.postsFrameChangedNotifications=true
+            if !(view is NSClipView) {view.postsBoundsChangedNotifications=true}
+        }
+        return AnyCancellable {
+            Task {@MainActor in
+                guard entries[key] === entry else{return}
+                entry.owners-=1
+                guard entry.owners==0 else{return}
+                entry.view?.postsFrameChangedNotifications=entry.frames
+                entry.view?.postsBoundsChangedNotifications=entry.bounds
+                entries.removeValue(forKey:key)
+            }
         }
     }
 }
