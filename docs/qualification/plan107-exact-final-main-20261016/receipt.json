@@ -1,0 +1,93 @@
+{
+  "kind": "NEW_EXACT_FINAL_MAIN_INSTALLED_AND_REAL_PACKAGED_GUI",
+  "assignment": "L4-NATIVE-MISSION-EA-PROGRESS-V1-20261015",
+  "join": "L2-L4-CENTRAL-MISSION-EA-PROGRESS-V1-20261015",
+  "actual_consumer_final_main": "98fb464cd71041fffa8d52dfee9d719d05c88f34",
+  "version": "2.8.31",
+  "own_wheel_sha256": "f345c27771bad7d47797f65e69c297ddf9d3636b9221dd188016a46396f4ee89",
+  "native_binary_sha256": "857010c81172ee35bc01898f06f61d13f9b5dc26f313f6b2a4c22a4b6172d883",
+  "qualified_EP_source": "bc441c0f4825fc5de7f68b06feffcc97e53af6d5",
+  "qualified_EP_handoff_wheel_reference": "91f41eadc0753bbfcea1773bb8933609926b7612893f0266940a8075f9983a4e",
+  "actual_retained_EP_wheel_sha256": "ec05b34ce3d0830d6f838fb83eb1fbc8d845a312dbfd8e33be6d57368c6503b9",
+  "distinct_EP_archive_all_205_product_payloads_and_10_entrypoints_equal_qualified_source": true,
+  "Forge_Activity_source": "989132660997909e74800ddc8648be11262be8d4",
+  "product_payload_counts": {
+    "own": 71,
+    "ep": 205,
+    "forge": 287
+  },
+  "MachO_build_commands": "/Volumes/EP_DATA/lane4-plan107-qualification-20261015/final/Workspace.app/Contents/MacOS/WorkspaceClient:\nLoad command 11\n      cmd LC_BUILD_VERSION\n  cmdsize 32\n platform MACOS\n    minos 26.0\n      sdk 26.0\n   ntools 1\n     tool LD\n  version 27037.1\n",
+  "native_input_files_verified": 237,
+  "actual_new_chain": [
+    "four actual phases with real operator wait",
+    "original selected Mission EA submission run retry lineage",
+    "snapshot409 explicit fresh read",
+    "foreign Mission403",
+    "genuine negative client exit1",
+    "lost GET same original",
+    "separate Client WorkspaceServer EP OS restarts preserve original",
+    "source503 never healthy empty",
+    "actual native Escape Space original visible focus",
+    "own normal cleanup"
+  ],
+  "actual_synthetic_owner_lifecycle": true,
+  "live_model_provider_target_execution": false,
+  "consumer_read_business_effects": 0,
+  "EP_COMPLETE_is_Forge_acceptance": false,
+  "screens": [
+    {
+      "file": "final-original-run-detail.png",
+      "sha256": "a522d6753efad4aa61de060c93f021c47da0a85c9fdee78b5f2b082333b76772",
+      "independent_privacy_pixels_metadata": "PASS",
+      "independent_UX": "PASS"
+    },
+    {
+      "file": "final-actual-phase-change.png",
+      "sha256": "2ec412f8aa595e708254bc61dbfb1d35e76db3dbaee9504d9bf8a54ce3324348",
+      "independent_privacy_pixels_metadata": "PASS",
+      "independent_UX": "PASS"
+    },
+    {
+      "file": "final-client-restart-original-detail.png",
+      "sha256": "49e415648101d0b068a1a1cd5d99be3878cb0b08ab1bf2d8c3b486a6779c66fd",
+      "independent_privacy_pixels_metadata": "PASS",
+      "independent_UX": "PASS"
+    }
+  ],
+  "full_validation5": "PASS_356Python_335native_1isolated_strict_owning_per_file_wheel_native_package",
+  "independent_reviews": {
+    "source": "98fb464cd71041fffa8d52dfee9d719d05c88f34",
+    "Quality": "PASS",
+    "Security": "PASS",
+    "UX": "PASS",
+    "screens_pixels_and_metadata": "PASS",
+    "all_six_original_PNGs_independently_viewed": true,
+    "actual_source_payload_compile_runtime_GUI_recovery_cleanup_reviewed": true,
+    "new_proof_not_prior_candidate_relabel": true,
+    "remaining": "actual final-main CI, immutable public readback and terminal registration"
+  },
+  "earlier_unchanged_matrix": "Original trial3/4 and qualified trial5 retained on original sources; five languages/light-dark/narrow-wide/expiry/revoke/late-response not relabeled final-main",
+  "normal_cleanup": {
+    "processes_stopped": true,
+    "normal_revoke": {
+      "progress_pairing": true,
+      "activity_pairing": true,
+      "own_actor_grant": true,
+      "EP_progress": true,
+      "Forge_activity": true
+    }
+  },
+  "cumulative": {
+    "plan": 107,
+    "source_rounds": 14,
+    "installed_attempts": 9,
+    "full_validations_started": 5,
+    "no_administrative_maximum": true,
+    "historical_consumption_preserved": true,
+    "operational_trials": 6
+  },
+  "historical_closed_scopes_unchanged": true,
+  "parent_families_complete": false,
+  "automatic_next_feature": false,
+  "terminal_delivery_receipt": "Published separately after immutable readback and actual final-main CI; no recursive future SHA claim"
+}
