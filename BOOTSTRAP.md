@@ -1,3 +1,16 @@
+## Plan108 source20 — concrete hosted expiry-observation correction
+
+Actual native CI38914630763 on a012 FAILED the existing baseline2.2s fixed
+expiry-observation assertion; the failure log and all old results are retained.
+The same expired grant and all access/result/changed-connection assertions remain.
+After the original2.2s wait, the test now awaits actual monitor publication within
+a bounded2s window, like the existing held-response expiry test. Directed case PASS.
+Production Client/Server bytes, version2.8.33, grants and deadlines do not change.
+Actual candidate31/full10 stay at a012, not relabeled; independent source parity
+must establish carryforward. New exact-source full11 and CI/TDE/reviews precede
+normal protected delivery. Own repair finalization and NEW final-main proof remain
+required. Cumulative20source/16artifact/31operational/10full, no reset or scope change.
+
 ## Plan108 source19 — explicit current document reveal; acceptance OPEN
 
 Candidate30 onf5a43b4 remains FAIL with its original normal cleanup and one
