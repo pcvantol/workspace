@@ -1,3 +1,15 @@
+## Current selected plan108 — native linked-inspection adoption preview
+
+L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016 / JOIN
+L3-L4-INSPECTION-ADOPTION-PREVIEW-V1-20261016. Same sole writer, own branch
+codex/plan108-native-inspection-adoption from main98fb464; PATCH2.8.32.
+[Scoped consumer contract](docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md).
+Qualified R55 Forge2.21.0/cd483fd9 with own EP2.3.121/f3b56303 only; no new scan,
+model, approval/apply/repository/Mission effect. First3 exact contract tests PASS;
+small real installed/GUI chain and full scoped DoD still required. Plan107 and
+predecessors CLOSED; all parent onboarding families remain open. Earlier headers
+are historical checkpoints. Own cumulative1source/0artifact/0operational/0full.
+
 ## Plan107 protected implementation — own finalization
 
 PR181 merged `c7840747829302578cafc55940c189d9f967c3af` with exact reviewed2dcdaa3 tree; Workspace2.8.31.
