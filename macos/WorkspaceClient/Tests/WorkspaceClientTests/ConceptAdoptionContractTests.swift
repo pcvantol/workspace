@@ -77,6 +77,16 @@ final class ConceptAdoptionContractTests:XCTestCase {
                 host.frame=NSRect(x:0,y:0,width:width,height:780);host.layoutSubtreeIfNeeded();_=host.fittingSize;XCTAssertEqual(host.frame.width,width)
             }}
         }
+        // The Server can know revision2 while this selected Client still holds revision1.
+        // Render that real contract case in every UI language, including its honest warning.
+        var newer=try scopedRaw();newer["current_revision"]=concept.revision+1
+        state.result=try JSONDecoder().decode(ConceptAdoptionResult.self,from:JSONSerialization.data(withJSONObject:newer))
+        XCTAssertEqual(state.result?.source_revision,concept.revision)
+        XCTAssertEqual(state.result?.current_revision,concept.revision+1)
+        for language in ["en","nl","de","fr","es"] {
+            let host=NSHostingView(rootView:ConceptAdoptionPanel(state:state,concept:concept,dirty:false,current:{active}).environment(\.locale,Locale(identifier:language)))
+            host.frame=NSRect(x:0,y:0,width:520,height:780);host.layoutSubtreeIfNeeded();XCTAssertGreaterThan(host.fittingSize.height,0)
+        }
         for phase in ["empty","access","unavailable","conflict","invalid","notFound","pending","sourceRejected","capacity"] {
             state.phase=phase;state.pending = .init(key:"rejected",concept:concept.id,source:source,command:.init(operation_id:concept.id,expected_revision:1,requested_artifacts:["docs/product/VISION.md"],mappings:[]),complete:false,rejected:true)
             let host=NSHostingView(rootView:ConceptAdoptionPanel(state:state,concept:concept,dirty:true,current:{active}));host.frame=NSRect(x:0,y:0,width:520,height:780);host.layoutSubtreeIfNeeded();_=host.fittingSize

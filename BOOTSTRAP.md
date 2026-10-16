@@ -1,3 +1,19 @@
+## Plan108 source round12 — actual historical layout in every UI language
+
+Native render tests now include the actual observed Servercurrent2/source1/
+selectedClient1 case in each language.35directed tests PASS; strict executable
+coverage: adoptionPanel352/406=86.70%, copy100%, state92.17%, transport100%,
+shared compare90.50%, parent conceptview84.15%. The earlier308/406 partial gate
+failure is retained and not waived. Production bytes unchanged from1706311.
+Actual trial22 validates normal other-Client HTTP edit1→2, unchanged original
+proposal and real native historical labels while selectedClient remains1.
+It then fails a driver-only screenshot anchor lookup (LabeledContent has no
+exposed AXIdentifier); preserve original failure/current labels/normal cleanup.
+Next driver uses an already proven documentcontrol for ordinary viewporting.
+Own12source/9artifact/22operational/6full starts preserved; no reset/max. All
+remaining actual cases, full validation, protected delivery/own finalization
+and NEW exact-final-main proof remain required, no complete candidate claim.
+
 ## Plan108 source round11 — Server revision owns historical context
 
 Full Quality review catches stale selected-Client context: validated result
