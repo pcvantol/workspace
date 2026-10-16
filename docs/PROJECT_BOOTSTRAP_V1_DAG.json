@@ -203,7 +203,7 @@
           "scope": "LINKED_INSPECTION_SOURCE_PRESENTATION_ONLY",
           "assignment": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
           "plan": 108,
-          "status": "PROTECTED_FOCUS_REPAIR_OWN_FINALIZATION_PENDING",
+          "status": "SELECTED_CURRENT_RIGHTS_MONITOR_REPAIR_UNDER_QUALIFICATION",
           "full_parent_selected": false,
           "own_contract": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md",
           "candidate_runtime_evidence": "docs/qualification/plan108-bounded-candidate-20261016/README.md",
@@ -230,7 +230,14 @@
           "failed_native_CI_run": 38914630763,
           "protected_focus_repair_main": "288e15e79131956b8ecf000d2be04bc8f885ba52",
           "reviewed_focus_repair_source": "bc7ab178856c5d4e1f857646bf6eab3ebb755324",
-          "focus_repair_finalization": "docs/WORKSPACE_INSPECTION_ADOPTION_FOCUS_REPAIR_FINALIZATION_V1.md"
+          "focus_repair_finalization": "docs/WORKSPACE_INSPECTION_ADOPTION_FOCUS_REPAIR_FINALIZATION_V1.md",
+          "authority_monitor_source_round": 21,
+          "authority_monitor_base": "940eb8f50f6256054efccd55e515c264253cd71e",
+          "authority_monitor_version": "2.8.34",
+          "failed_final_main_trials32_33": "ORIGINALS_RETAINED;32partialkeyboardprecondition,33stablekeyboardPASS_then_realrevokeconcealFAIL;nooverallPASS",
+          "actual_monitor_causal_regressions": "BASE_PRODUCTION_RED_2_FAILURE_CASES_CURRENT_GREEN_3_CASES_ONE_ORIGINAL_NO_EXTRA_POST",
+          "protected_focus_repair_finalization_PR": 186,
+          "protected_focus_repair_finalization_main": "940eb8f50f6256054efccd55e515c264253cd71e"
         }
       ]
     },
@@ -394,7 +401,7 @@
           "scope": "SELECTED_INSPECTION_ADOPTION_PREVIEW",
           "assignment": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
           "plan": 108,
-          "status": "PROTECTED_FOCUS_REPAIR_OWN_FINALIZATION_PENDING",
+          "status": "SELECTED_CURRENT_RIGHTS_MONITOR_REPAIR_UNDER_QUALIFICATION",
           "full_parent_selected": false,
           "own_contract": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md",
           "candidate_runtime_evidence": "docs/qualification/plan108-bounded-candidate-20261016/README.md",
@@ -421,7 +428,14 @@
           "failed_native_CI_run": 38914630763,
           "protected_focus_repair_main": "288e15e79131956b8ecf000d2be04bc8f885ba52",
           "reviewed_focus_repair_source": "bc7ab178856c5d4e1f857646bf6eab3ebb755324",
-          "focus_repair_finalization": "docs/WORKSPACE_INSPECTION_ADOPTION_FOCUS_REPAIR_FINALIZATION_V1.md"
+          "focus_repair_finalization": "docs/WORKSPACE_INSPECTION_ADOPTION_FOCUS_REPAIR_FINALIZATION_V1.md",
+          "authority_monitor_source_round": 21,
+          "authority_monitor_base": "940eb8f50f6256054efccd55e515c264253cd71e",
+          "authority_monitor_version": "2.8.34",
+          "failed_final_main_trials32_33": "ORIGINALS_RETAINED;32partialkeyboardprecondition,33stablekeyboardPASS_then_realrevokeconcealFAIL;nooverallPASS",
+          "actual_monitor_causal_regressions": "BASE_PRODUCTION_RED_2_FAILURE_CASES_CURRENT_GREEN_3_CASES_ONE_ORIGINAL_NO_EXTRA_POST",
+          "protected_focus_repair_finalization_PR": 186,
+          "protected_focus_repair_finalization_main": "940eb8f50f6256054efccd55e515c264253cd71e"
         }
       ]
     },

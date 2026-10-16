@@ -69,7 +69,13 @@ import Combine
                     try? await Task.sleep(for:.seconds(3));guard !Task.isCancelled,let self,self.generation==ticket else{return}
                     do {
                         try await self.refreshOriginal(c,concept:concept,selected:selected,cap:cap,ticket:ticket,current:current)
-                    } catch {if self.generation==ticket {self.failure(error)};return}
+                    } catch {
+                        guard !Task.isCancelled,self.generation==ticket else{return}
+                        self.failure(error)
+                        // A recoverable read failure must not abandon capability checks.
+                        // DENIED uses conceal(), invalidating this scope and outstanding reads.
+                        guard self.generation==ticket else{return}
+                    }
                 }
             }
             let previous=try nav(c,concept)
@@ -118,7 +124,10 @@ import Combine
         let fresh=try await transport.read(c,concept:concept.id,source:selected,operation:operation)
         try fresh.validate(c,concept:concept,source:selected,operation:operation)
         try await checked(c,concept,selected,ticket:ticket,current:current)
-        guard generation==ticket,result?.operation_id==operation else{throw CancellationError()}
+        guard generation==ticket else{throw CancellationError()}
+        // Explicit original navigation may temporarily clear or replace the result.
+        // Discard that obsolete observation without stopping the authority monitor.
+        guard !busy,result?.operation_id==operation else{return}
         try accept(fresh,c:c,concept:concept,selected:selected,ticket:ticket)
     }
     func accept(_ value:ConceptAdoptionResult,c:ConceptConnection,concept:ProjectConcept,selected:String,ticket:Int) throws {

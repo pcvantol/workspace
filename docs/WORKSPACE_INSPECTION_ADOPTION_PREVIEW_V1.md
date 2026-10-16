@@ -1,3 +1,33 @@
+## Plan108 source21 — current-rights monitor repair under qualification
+
+Actual final-main940/artifact17 trial32 remains FAIL/partial at an unsettled
+Escape→Space test transition. Small33 on the same artifact proves stable
+semantic Escape→oneSpace, additions/unknown and original history, then FAILS
+actual R55-revoke403/native concealment. Both normal cleanups and all original
+bytes are retained. Neither trial is an overall runtime PASS; main940 all-five
+CI/TDE success does not qualify this failed installed outcome.
+
+Same sole writer, plan108 and Forge2.21.0/cd483fd9 + EP2.3.121/f3b56303 pins.
+New canonical PATCH2.8.34 from actual protected main940eb8f. Source21 booked once;
+20→21 source groups,17 artifacts,33 trials,12 full validations,3 earlier own
+finalizations; no reset or administrative cap. PR185/186 and predecessors remain
+closed and preserved. A real started-monitor regression is RED on base production:
+concurrent original open supersedes a held refresh, killing capability polling;
+a late open can then restore content before a later denial. Recoverable read
+errors have the same liveness boundary. The scoped fix discards superseded
+same-scope refresh results and keeps finite capability polling after recoverable
+errors. Actual denial still conceals, changes generation and fences late opens.
+Three causal tests GREEN: held refresh/open then next actual capability poll and
+denial, recoverable-error overlap, and denial fencing a held original open.
+Each retains one original operation/POST; no direct refresh call substitutes for
+real monitor liveness. Rapid back-to-back key input is not declared fixed.
+
+Fresh targeted packaged current-rights proof, full13/strict per-file coverage,
+independent Quality/Security/UX, exact-head CI/TDE, normal protected repair,
+its own nonempty finalization and NEW final-main installed/GUI/privacy/readback
+remain required. No credentials/settings/rights widening, producer patch,
+new scan/model/repository/approval/Mission or automatic successor.
+
 ## Plan108 source20 — concrete hosted expiry-observation correction
 
 Actual native CI38914630763 on a012 FAILED the existing baseline2.2s fixed
