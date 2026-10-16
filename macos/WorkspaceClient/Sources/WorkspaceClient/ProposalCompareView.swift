@@ -221,6 +221,20 @@ struct ProposalCompareFocusViewport:NSViewRepresentable {
     static func dismantleNSView(_ view:ProposalCompareViewportAnchor,coordinator:()) {view.reveal(false)}
 }
 final class ProposalCompareViewportAnchor:NSView {
+    #if WORKSPACE_ISOLATED_TEST
+    private var diagnosticRemaining=100
+    private func recordViewportDiagnostic(_ event:String) {
+        guard ProcessInfo.processInfo.environment["WORKSPACE_ISOLATED_VIEWPORT_DIAGNOSTICS"]=="1",diagnosticRemaining>0 else{return}
+        diagnosticRemaining-=1
+        var parents:[[String:String]]=[],next=superview
+        while let view=next {
+            parents.append(["type":String(describing:type(of:view)),"frame":NSStringFromRect(view.frame),"bounds":NSStringFromRect(view.bounds),"visible":NSStringFromRect(view.visibleRect)])
+            next=view.superview
+        }
+        let row:[String:Any] = ["event":event,"focus":currentFocus,"generation":generation,"frame":NSStringFromRect(frame),"bounds":NSStringFromRect(bounds),"window_rect":NSStringFromRect(convert(bounds,to:nil)),"parents":parents,"window_frame":NSStringFromRect(window?.frame ?? .zero)]
+        if let data=try? JSONSerialization.data(withJSONObject:row,options:.sortedKeys),let text=String(data:data,encoding:.utf8) {print("ISOLATED_VIEWPORT_DIAGNOSTIC "+text)}
+    }
+    #endif
     private var currentFocus=false
     private var generation=0
     private var ancestorIDs=Set<ObjectIdentifier>()
@@ -260,9 +274,15 @@ final class ProposalCompareViewportAnchor:NSView {
         let changed=currentFocus != focused
         currentFocus=focused;generation+=1;let ticket=generation
         if changed {watchAncestors()}
+        #if WORKSPACE_ISOLATED_TEST
+        recordViewportDiagnostic("focus-update")
+        #endif
         guard focused else{return}
         DispatchQueue.main.async {[weak self] in
             guard let self,self.window != nil,self.currentFocus,self.generation==ticket,!self.bounds.isEmpty else{return}
+            #if WORKSPACE_ISOLATED_TEST
+            self.recordViewportDiagnostic("current-reveal")
+            #endif
             guard let scroll=self.enclosingScrollView,let document=scroll.documentView else{return}
             // Include the focus ring inside the nearest clip, not merely flush with its edge.
             let target=self.convert(self.bounds.insetBy(dx:0,dy:-16),to:document).intersection(document.bounds)
@@ -276,6 +296,9 @@ final class ProposalCompareViewportAnchor:NSView {
             let proposed=clip.bounds.offsetBy(dx:dx,dy:dy)
             clip.scroll(to:clip.constrainBoundsRect(proposed).origin)
             scroll.reflectScrolledClipView(clip)
+            #if WORKSPACE_ISOLATED_TEST
+            self.recordViewportDiagnostic("after-scroll")
+            #endif
         }
     }
 }
