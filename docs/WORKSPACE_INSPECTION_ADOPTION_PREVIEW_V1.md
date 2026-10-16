@@ -1,3 +1,19 @@
+## Plan108 source18 — actual native focus propagation repaired; acceptance OPEN
+
+Candidate28 remains FAIL on2229a40. Explicit isolated diagnostic29 on5d3d6db
+recorded22 geometry/focus-only entries and zero currentFocus=true while AX
+confirmed the correct focused control. The helper consequently never ran.
+That diagnostic is private, not acceptance, and is completely removed here.
+The native regression reproduces genuine focus with a stale false caller
+snapshot: old source RED (tracking and viewport assertions), current source
+GREEN. The same existing helper now reads native isFocused inside its existing
+focusable scope, preserving the caller route without a second focus owner.
+Twelve directed native regressions PASS. No transport/rights/storage change.
+Cumulative18source/14artifact/29operational/9full validations; same writer,
+base9f91720/PATCH2.8.33 and qualified R55/EP pins. Original failures, source-bound
+evidence and budgets remain unchanged. New packaged proof, full10, protected
+repair, own repair finalization and NEW exact-final-main qualification are OPEN.
+
 ## Plan108 source16 — effective window clip repair remains under qualification
 
 Candidate27 on4ffc93e remains **FAIL** after the actual lost committed reply

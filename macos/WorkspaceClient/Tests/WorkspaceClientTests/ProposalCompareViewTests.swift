@@ -150,6 +150,22 @@ import AppKit
         XCTAssertTrue(host.bounds.insetBy(dx:0,dy:12).contains(control.convert(control.bounds,to:host)),"The actual same focused SwiftUI control must stay inside the viewport after ancestor layout changes")
     }
 
+    func testNativeFocusRevealsControlEvenWhenCallerFocusSnapshotIsFalse() async throws {
+        let fixture=ViewportHostingFixture();fixture.nativeFocus=true;fixture.callerTracksFocus=false;fixture.prefix=1100;fixture.expanded=true
+        let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false);window.isReleasedWhenClosed=false
+        let host=NSHostingView(rootView:ViewportHostingContent(fixture:fixture));window.contentView=host;window.makeKeyAndOrderFront(nil)
+        defer {window.close()}
+        try await Task.sleep(for:.milliseconds(100));fixture.focused=true
+        let timeout=ContinuousClock.now.advanced(by:.seconds(2));var control:ProposalCompareViewportAnchor?
+        repeat {
+            try await Task.sleep(for:.milliseconds(10));host.layoutSubtreeIfNeeded();var pending:[NSView]=[host]
+            while let next=pending.popLast() {if let anchor=next as? ProposalCompareViewportAnchor {control=anchor;break};pending+=next.subviews}
+        } while (control==nil || !Mirror(reflecting:control!).children.contains(where:{$0.label=="currentFocus" && ($0.value as? Bool)==true})) && ContinuousClock.now<timeout
+        let anchor=try XCTUnwrap(control)
+        XCTAssertTrue(Mirror(reflecting:anchor).children.contains(where:{$0.label=="currentFocus" && ($0.value as? Bool)==true}),"The actual native focus owner must reach viewport tracking even if the parent snapshot is false")
+        XCTAssertTrue(host.bounds.insetBy(dx:0,dy:12).contains(anchor.convert(anchor.bounds,to:host)),"Actual focused control must retain visible margin")
+    }
+
     func testFocusedControlUsesWindowClippedViewportInsteadOfOversizedClipBounds() async {
         let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false);window.isReleasedWhenClosed=false
         let root=NSView(frame:NSRect(x:0,y:0,width:400,height:300))
@@ -214,6 +230,7 @@ import AppKit
 }
 
 @MainActor private final class ViewportHostingFixture:ObservableObject {
+    var callerTracksFocus=true
     var nativeFocus=false
     var useReader=false
     @Published var prefix:CGFloat=100
@@ -230,7 +247,7 @@ import AppKit
                 Color.clear.frame(height:fixture.prefix)
                 VStack(alignment:.leading,spacing:8) {
                     Text("Original document opener")
-                    ProposalCompareControl(title:"Return to original document opener",focused:fixture.nativeFocus ? nativeFocused:fixture.focused) {}.focused($nativeFocused)
+                    ProposalCompareControl(title:"Return to original document opener",focused:fixture.nativeFocus ? (fixture.callerTracksFocus && nativeFocused):fixture.focused) {}.focused($nativeFocused)
                     if fixture.expanded {Text(String(repeating:"Original Dutch vision\n",count:20))}
                 }.padding(12).id("card")
                 Color.clear.frame(height:1000)
