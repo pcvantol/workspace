@@ -1,3 +1,24 @@
+## Plan108 source22 — serialized authorized document focus under qualification
+
+Candidate18/source976 trial34 is FAIL before the current-rights phase: after
+observed detail absence, enabled focused opener and one actual Space, the detail
+opens but native focus stays on the opener. Its original logs, screenshots and
+normal cleanup are retained. This is not installed acceptance of source21.
+Source22 is booked once, preserving all counters and the same unmerged PATCH
+2.8.34 operation. Shared asynchronous opener/close/Escape navigation now waits
+for authorization and the actual document toggle, serializes actions, then
+focuses the actual resulting detail/opener. Ticket, generation, actor, context,
+concept, source, original operation and finite rights fence late focus/reveal.
+The state action also pins the original operation before awaiting connection.
+Four source-only lifecycle tests PASS: no early focus/duplicate action; original
+close; stale completion cannot clear newer busy; denial concealment; replacement
+original cannot receive an old navigation. They are not native keyboard proof.
+Source21 real-monitor RED/GREEN and all earlier failures remain preserved.
+Targeted new packaged GUI/current-rights proof, full13/strict per-file coverage,
+independent review, protected implementation/own finalization and NEW exact-final
+main installed acceptance remain OPEN. Pins, authority, prior closed deliveries
+and parent onboarding statuses are unchanged; no automatic next feature.
+
 ## Plan108 source21 — current-rights monitor repair under qualification
 
 Actual final-main940/artifact17 trial32 remains FAIL/partial at an unsettled

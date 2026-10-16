@@ -1,5 +1,38 @@
 import SwiftUI
 
+// Presentation-only serialization. Every completion is bound to the displayed original.
+@MainActor final class ConceptAdoptionDocumentNavigation:ObservableObject {
+    @Published private(set) var busy=false
+    private var ticket=0
+    func invalidate() {ticket+=1;busy=false}
+    func navigate(_ path:String,operation:String,state:ConceptAdoptionState,concept:ProjectConcept,current:@escaping @MainActor () async throws->ConceptConnection,focus:@MainActor (String?)->Void,reveal:@MainActor (String)->Void) async {
+        guard !busy,!state.busy,state.result?.operation_id==operation else{return}
+        ticket+=1;let request=ticket,generation=state.generation,source=state.source
+        func valid()->Bool {
+            guard request==ticket,generation==state.generation,source==state.source,!state.busy,
+                  let result=state.result,result.operation_id==operation,result.actor_id==concept.actor_id,
+                  result.context_id==concept.context_id,result.concept_id==concept.id,
+                  let access=state.access,access.actor_id==concept.actor_id,access.context_id==concept.context_id,
+                  access.concept_id==concept.id,access.binding_id==source,
+                  WorksetReleaseWire.date(access.expires_at).map({$0>Date()})==true else{return false}
+            return true
+        }
+        guard valid() else{return}
+        busy=true;defer {if ticket==request {busy=false}}
+        await state.chooseDocument(path,concept:concept,current:current)
+        guard valid(),state.expandedDocument.isEmpty || state.expandedDocument==path else{return}
+        let expanded=state.expandedDocument,target=(expanded.isEmpty ? "adoption-document-":"adoption-detail-")+path
+        // Re-enable the actual native control before requesting focus after the async action.
+        busy=false
+        await Task.yield()
+        guard valid(),state.expandedDocument==expanded else{return}
+        focus(nil)
+        await Task.yield()
+        guard valid(),state.expandedDocument==expanded else{return}
+        focus(target);reveal(target)
+    }
+}
+
 struct ConceptAdoptionPanel:View {
     @ObservedObject var state:ConceptAdoptionState
     let concept:ProjectConcept
@@ -11,6 +44,7 @@ struct ConceptAdoptionPanel:View {
     @State private var vision=""
     @State private var confirmed=false
     @FocusState private var focus:String?
+    @StateObject private var documentNavigation=ConceptAdoptionDocumentNavigation()
     private var language:String {locale.language.languageCode?.identifier ?? "en"}
     private func text(_ key:String)->String {ConceptAdoptionCopy.text(key,language)}
     private var selected:ConceptAdoptionSources.Source? {state.sources.first{$0.id==state.source}}
@@ -18,6 +52,9 @@ struct ConceptAdoptionPanel:View {
     private func revealFocus(_ target:String) {
         if let result=state.result,let entry=result.document?.entries.first(where:{"adoption-detail-"+$0.id==target}) {reveal(cardAnchor(result.operation_id,entry.id))}
         else {reveal(target)}
+    }
+    private func navigateDocument(_ path:String,operation:String) {
+        Task {await documentNavigation.navigate(path,operation:operation,state:state,concept:concept,current:current,focus:{focus=$0},reveal:revealFocus)}
     }
     var body:some View {
         VStack(alignment:.leading,spacing:12) {
@@ -64,11 +101,11 @@ struct ConceptAdoptionPanel:View {
             if let result=state.result,let document=result.document {documents(document,result:result)}
         }.frame(minWidth:0,maxWidth:.infinity,alignment:.leading)
         .task(id:concept) {await state.load(concept,current:current)}
-        .onDisappear {state.conceal()}
+        .onDisappear {documentNavigation.invalidate();state.conceal()}
         .onChange(of:focus) {_,value in if let value {revealFocus(value)}}
         .onChange(of:vision) {_,_ in confirmed=false}
-        .onChange(of:state.source) {_,_ in vision="";confirmed=false;state.expandedDocument=""}
-        .onChange(of:concept) {_,_ in vision="";confirmed=false;state.expandedDocument="";requested=Set(["docs/product/VISION.md","docs/architecture/ARCHITECTURE.md","docs/roadmap/ROADMAP.md"])}
+        .onChange(of:state.source) {_,_ in documentNavigation.invalidate();vision="";confirmed=false;state.expandedDocument=""}
+        .onChange(of:concept) {_,_ in documentNavigation.invalidate();vision="";confirmed=false;state.expandedDocument="";requested=Set(["docs/product/VISION.md","docs/architecture/ARCHITECTURE.md","docs/roadmap/ROADMAP.md"])}
     }
     private func documents(_ doc:ConceptAdoptionResult.Document,result:ConceptAdoptionResult)->some View {
         VStack(alignment:.leading,spacing:10) {
@@ -85,14 +122,16 @@ struct ConceptAdoptionPanel:View {
                 Text(text(op)).font(.headline)
                 ForEach(doc.entries.filter{$0.operation==op}) {entry in
                 VStack(alignment:.leading,spacing:8) {
-                    ProposalCompareControl(title:entry.artifact_path,focused:focus=="adoption-document-"+entry.id) {Task {await state.chooseDocument(entry.id,concept:concept,current:current)}}
+                    ProposalCompareControl(title:entry.artifact_path,focused:focus=="adoption-document-"+entry.id) {navigateDocument(entry.id,operation:result.operation_id)}
+                        .disabled(state.busy || documentNavigation.busy)
                         .focused($focus,equals:"adoption-document-"+entry.id).id("adoption-document-"+entry.id).accessibilityIdentifier("adoption-document-"+entry.id)
                     if ["INSUFFICIENT_INFORMATION","CONFLICT"].contains(entry.operation) {Text(ConceptAdoptionCopy.reason(entry.reason,language)).font(.callout).foregroundStyle(.secondary).fixedSize(horizontal:false,vertical:true)}
                     if state.expandedDocument==entry.id {
                         VStack(alignment:.leading,spacing:8) {
-                            ProposalCompareControl(title:text("close"),focused:focus=="adoption-detail-"+entry.id,revealRequest:String(reflecting:[concept.actor_id,concept.context_id,concept.id,state.source,result.operation_id,entry.id])) {Task {await state.chooseDocument(entry.id,concept:concept,current:current)};focus="adoption-document-"+entry.id}
+                            ProposalCompareControl(title:text("close"),focused:focus=="adoption-detail-"+entry.id,revealRequest:String(reflecting:[concept.actor_id,concept.context_id,concept.id,state.source,result.operation_id,entry.id])) {navigateDocument(entry.id,operation:result.operation_id)}
+                                .disabled(state.busy || documentNavigation.busy)
                                 .focused($focus,equals:"adoption-detail-"+entry.id).id("adoption-detail-"+entry.id).accessibilityIdentifier("adoption-detail-"+entry.id)
-                                .onKeyPress(keys:[.escape]) {press in guard press.modifiers.isEmpty else{return .ignored};Task {await state.chooseDocument(entry.id,concept:concept,current:current)};focus="adoption-document-"+entry.id;return .handled}
+                                .onKeyPress(keys:[.escape]) {press in guard press.modifiers.isEmpty,!state.busy,!documentNavigation.busy else{return .ignored};navigateDocument(entry.id,operation:result.operation_id);return .handled}
                             if let original=entry.mapping_source.content ?? entry.before.content {bounded(original,label:text("before"),anchor:result.operation_id+entry.id+"-before")}
                             if let proposed=entry.after.content {bounded(proposed,label:text("after"),anchor:result.operation_id+entry.id+"-after")}
                             if !entry.diff.isEmpty {DisclosureGroup(text("details")) {bounded(entry.diff,label:text("details"),anchor:result.operation_id+entry.id+"-diff")}}

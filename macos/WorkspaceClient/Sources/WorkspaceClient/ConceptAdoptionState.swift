@@ -24,8 +24,8 @@ import Combine
     func nav(_ c:ConceptConnection,_ concept:ProjectConcept) throws->Navigation? {try records.load(key(c,concept,"navigation")).map{try JSONDecoder().decode(Navigation.self,from:$0)}}
     func saveNav(_ c:ConceptConnection,_ concept:ProjectConcept,source:String,operation:String?,document:String?) throws {try records.saveBounded(JSONEncoder().encode(Navigation(source:source,operation:operation,document:document)),key:key(c,concept,"navigation"))}
     func chooseDocument(_ path:String,concept:ProjectConcept,current:@escaping @MainActor () async throws->ConceptConnection) async {
-        let ticket=generation;let selected=source
-        do {let c=try await current();try await checked(c,concept,selected,ticket:ticket,current:current);guard let result,result.document?.entries.contains(where:{$0.id==path})==true else{throw ConceptError.invalid};let next=expandedDocument==path ? "":path;try saveNav(c,concept,source:selected,operation:result.operation_id,document:next);expandedDocument=next}
+        let ticket=generation;let selected=source;let operation=result?.operation_id
+        do {let c=try await current();try await checked(c,concept,selected,ticket:ticket,current:current);guard result?.operation_id==operation else{return};guard let result,result.document?.entries.contains(where:{$0.id==path})==true else{throw ConceptError.invalid};let next=expandedDocument==path ? "":path;try saveNav(c,concept,source:selected,operation:result.operation_id,document:next);expandedDocument=next}
         catch {if ticket==generation {failure(error)}}
     }
     func failure(_ error:Error) {result=nil;switch error {case ConceptAdoptionError.capacity:phase="capacity";case ConceptAdoptionError.sourceRejected:phase="sourceRejected";case ConceptError.denied:conceal();phase="access";case ConceptError.conflict:phase="conflict";case ConceptError.notFound:phase=pending?.limitObserved==true ? "capacity":"notFound";case ConceptError.invalid,is DecodingError:phase="invalid";default:phase="unavailable"}}

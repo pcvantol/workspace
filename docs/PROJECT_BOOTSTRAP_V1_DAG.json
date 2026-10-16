@@ -203,7 +203,7 @@
           "scope": "LINKED_INSPECTION_SOURCE_PRESENTATION_ONLY",
           "assignment": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
           "plan": 108,
-          "status": "SELECTED_CURRENT_RIGHTS_MONITOR_REPAIR_UNDER_QUALIFICATION",
+          "status": "SELECTED_AUTHORIZED_DOCUMENT_FOCUS_AND_MONITOR_REPAIR_UNDER_QUALIFICATION",
           "full_parent_selected": false,
           "own_contract": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md",
           "candidate_runtime_evidence": "docs/qualification/plan108-bounded-candidate-20261016/README.md",
@@ -237,7 +237,9 @@
           "failed_final_main_trials32_33": "ORIGINALS_RETAINED;32partialkeyboardprecondition,33stablekeyboardPASS_then_realrevokeconcealFAIL;nooverallPASS",
           "actual_monitor_causal_regressions": "BASE_PRODUCTION_RED_2_FAILURE_CASES_CURRENT_GREEN_3_CASES_ONE_ORIGINAL_NO_EXTRA_POST",
           "protected_focus_repair_finalization_PR": 186,
-          "protected_focus_repair_finalization_main": "940eb8f50f6256054efccd55e515c264253cd71e"
+          "protected_focus_repair_finalization_main": "940eb8f50f6256054efccd55e515c264253cd71e",
+          "document_navigation_source_round": 22,
+          "candidate34": "FAIL_NATIVE_FOCUS_AFTER_STABLE_ESCAPE_ONE_SPACE;BEFORE_MONITOR_PROOF;NORMAL_CLEANUP_RETAINED"
         }
       ]
     },
@@ -401,7 +403,7 @@
           "scope": "SELECTED_INSPECTION_ADOPTION_PREVIEW",
           "assignment": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
           "plan": 108,
-          "status": "SELECTED_CURRENT_RIGHTS_MONITOR_REPAIR_UNDER_QUALIFICATION",
+          "status": "SELECTED_AUTHORIZED_DOCUMENT_FOCUS_AND_MONITOR_REPAIR_UNDER_QUALIFICATION",
           "full_parent_selected": false,
           "own_contract": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md",
           "candidate_runtime_evidence": "docs/qualification/plan108-bounded-candidate-20261016/README.md",
@@ -435,7 +437,9 @@
           "failed_final_main_trials32_33": "ORIGINALS_RETAINED;32partialkeyboardprecondition,33stablekeyboardPASS_then_realrevokeconcealFAIL;nooverallPASS",
           "actual_monitor_causal_regressions": "BASE_PRODUCTION_RED_2_FAILURE_CASES_CURRENT_GREEN_3_CASES_ONE_ORIGINAL_NO_EXTRA_POST",
           "protected_focus_repair_finalization_PR": 186,
-          "protected_focus_repair_finalization_main": "940eb8f50f6256054efccd55e515c264253cd71e"
+          "protected_focus_repair_finalization_main": "940eb8f50f6256054efccd55e515c264253cd71e",
+          "document_navigation_source_round": 22,
+          "candidate34": "FAIL_NATIVE_FOCUS_AFTER_STABLE_ESCAPE_ONE_SPACE;BEFORE_MONITOR_PROOF;NORMAL_CLEANUP_RETAINED"
         }
       ]
     },
