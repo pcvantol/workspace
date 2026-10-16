@@ -1,3 +1,16 @@
+## Qualified producer handoff consumed — source13
+
+[Actual qualified handoff6208099239](https://github.com/pcvantol/forge/issues/208#issuecomment-6208099239)
+selects EP2.3.122/CENTRAL76/contract1.0 final-main
+bc441c0f4825fc5de7f68b06feffcc97e53af6d5, tree7504941fec5ad17c64fcda6f7c186e8afa19fd88.
+All205 actual installed producer payloads equal its exact native Git blobs;
+closed schemaac4ccc1c unchanged. Retained actual wheel ec05b34c is not relabeled
+the producer handoff archive91f41ead: full runtime payload parity is explicit.
+Ordinary entrypoint metadata is verified separately. Pins now admit only this
+qualified source; old candidate proofs stay on their original sources. The
+following older delivery sections are historical checkpoints. Protected own
+implementation/finalization and NEW exact-final-main installed/GUI remain required.
+
 # Native Mission/EA execution read — r81-plan107
 
 Assignment L4-NATIVE-MISSION-EA-PROGRESS-V1-20261015; JOIN

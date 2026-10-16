@@ -12,7 +12,7 @@ SCHEMA_SHA256='ac4ccc1c43c02742dc6ad15e642fadc6456844f8a1a3e7425275f67d247b7d89'
 if hashlib.sha256(SCHEMA_BYTES).hexdigest()!=SCHEMA_SHA256:raise RuntimeError('progress schema projection changed')
 SCHEMA=json.loads(SCHEMA_BYTES)
 MAXIMUM_BYTES=524288
-CANDIDATE_SOURCE='4607202b805bf39808b02cadb2a9b79196b77d14'
+CANDIDATE_SOURCE='bc441c0f4825fc5de7f68b06feffcc97e53af6d5'
 PRODUCER_VERSION='2.3.122'
 
 class ProgressError(Exception):

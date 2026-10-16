@@ -58,7 +58,7 @@ struct ExecutionQuery:Equatable,Sendable {
 enum ExecutionError:Error {case denied,unbound,notFound,snapshot,unsupported,corrupt,unavailable,invalid}
 protocol ExecutionServing:Sendable {func read(_ query:ExecutionQuery) async throws->ExecutionEnvelope}
 enum ExecutionWire {
-    static let source="4607202b805bf39808b02cadb2a9b79196b77d14"
+    static let source="bc441c0f4825fc5de7f68b06feffcc97e53af6d5"
     static func envelope(_ data:Data,_ query:ExecutionQuery)->ExecutionEnvelope? {try? decode(data,query)}
     static func decode(_ data:Data,_ query:ExecutionQuery) throws->ExecutionEnvelope {
         try query.validate()
