@@ -122,7 +122,7 @@
     "source_rounds": 13,
     "installed_attempts": 9,
     "operational_trials": 24,
-    "full_validations_started": 8,
+    "full_validations_started": 9,
     "no_administrative_maximum": true,
     "historical_consumption_preserved": true,
     "initial_version_allocation": "2.8.32",
@@ -133,5 +133,7 @@
   "new_exact_final_main_installed": "REQUIRED_AFTER_OWN_FINALIZATION_PROTECTED_MERGE",
   "terminal_receipt": "External immutable evidence readback after fresh final-main qualification; no recursive future SHA claim",
   "scope": "Only SELECTED_INSPECTION_ADOPTION_PREVIEW and LINKED_INSPECTION_SOURCE_PRESENTATION_ONLY; full PB-W1-INSPECT/PB-W2-SETUP parents OPEN",
-  "closed_predecessors_and_LINK_preserved": true
+  "closed_predecessors_and_LINK_preserved": true,
+  "own_full_validation9_source": "3ea084720b8af3f0e27580fa410d52bd316e0438",
+  "document_consistency_correction": "Source-bound full9 retained; correct screenshot attribution and current admission counter only. Current exact-head hosted validation and targeted document/version/DAG gates required; no relabeling local full9 source."
 }
