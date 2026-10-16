@@ -179,6 +179,13 @@ function validProjectCatalogue(catalogue) {
     typeof catalogue.observed_at === 'string' && catalogue.observed_at.length > 0;
 }
 const ownOperations = {
+  'concept-adoptions.sources': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-adoptions/{concept_id}/sources'},
+  'concept-adoptions.access': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-adoptions/{concept_id}/{source_id}/access'},
+  'concept-adoptions.history': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-adoptions/{concept_id}/{source_id}/operations'},
+  'concept-adoptions.prepare': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'POST',path:'/v1/concept-adoptions/{concept_id}/{source_id}/prepare'},
+  'concept-adoptions.original': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-adoptions/{concept_id}/{source_id}/operations/{operation_id}'},
+  'concept-adoptions.bind.issue': {exposure:'LOCAL_ONLY_ADMIN',auth:'PRIVATE_ROOT_OWNER',local_cli:'concept-adoption-bind-issue'},
+  'concept-adoptions.bind.revoke': {exposure:'LOCAL_ONLY_ADMIN',auth:'PRIVATE_ROOT_OWNER',local_cli:'concept-adoption-bind-revoke'},
   'execution_progress.overview': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_AND_ACTIVITY_GRANT', method: 'GET', path: '/v1/execution-progress/{workset_id}/overview'},
   'execution_progress.run': {exposure: 'HTTP_EXPOSED', auth: 'BEARER_PINNED_AND_DRAFT_AND_ACTIVITY_GRANT', method: 'GET', path: '/v1/execution-progress/{workset_id}/runs/{run_id}'},
   'execution_progress.bind.issue': {exposure: 'LOCAL_ONLY_ADMIN', auth: 'PRIVATE_ROOT_OWNER', local_cli: 'execution-progress-bind-issue'},

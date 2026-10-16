@@ -1,0 +1,175 @@
+# Native inspection adoption preview — plan108
+
+Selected L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016;
+JOIN L3-L4-INSPECTION-ADOPTION-PREVIEW-V1-20261016.
+Same sole writer, codex/plan108-native-inspection-adoption from exact main
+98fb464cd71041fffa8d52dfee9d719d05c88f34; canonical PATCH2.8.32.
+[Mandate](https://github.com/pcvantol/forge/issues/208#issuecomment-6210119925).
+Plan107 accepted CLOSED_SCOPED6209882252; all predecessors/LINK stay closed.
+
+## Current bounded candidate checkpoint
+
+[Actual runtime and safe screenshots](qualification/plan108-bounded-candidate-20261016/README.md)
+prove current native source1706311; test/document checkpoint9989200 leaves all
+product bytes unchanged. Original conceptrevision and current Serverrevision
+are separate, even with a stale selected Client; reopening does not update the
+original. Source digest is under Details. Source/operation/document card anchors
+and top reveal retain the actual same original keyboard controls within viewport.
+Capacity keeps the original journal through four actual Client OS restarts.
+Earlier lostreply/restart/late/scope/expiry proofs retain their original sources.
+Full current validation/CI/actual TDE, protected delivery/own finalization and NEW
+exact-final-main qualification remain OPEN. This is not complete onboarding.
+
+## Selected native outcome and initial mapping
+
+Existing saved Projectconcept detail → Adoption proposal → one owner-linked
+inspection → selected Vision/Architecture/Roadmap and allowed existing vision
+reference confirmation → one explicit Make proposal → original contents,
+actual suggested bytes, conflicts/unknowns → reopen same original operation.
+No technical user fields, broad discovery, new inspection, renderer/model call,
+repository/identity/approval/apply/Mission effects or new peer dependency.
+
+The bounded source list contains only current-own-authorized private setup
+bindings and current R55 capability. Ownerlabels/reference options are SETUP
+METADATA, not observed repository facts. Observation time/selection/contents
+are shown only from actual qualified results. No valid binding is a clear
+No linked inspection available state with safe administrator setup explanation.
+
+Forge2.21.0/cd483fd9b17a96d0deac0f0264ab6fc32c75e778;
+R55 owns EP2.3.121/f3b56303b561a7193965f4aa41fd8da744a8c1c2.
+Exact closed packaged R55 request and proposal schemas are projected without
+modification. Existing Activity/R52/R54 and plan107 EPprogress pins stay separate.
+Native → own authenticated Server → Forge /v1/inspection-adoptions only;
+Bearer + X-Forge-Inspection-Audience; EP INSPECT_READ stays private at Forge.
+
+Existing saved concept mapping supplies only user-declared product context.
+Private owner setup explicitly binds proposed/existing authority identity;
+never infer it from path/title. Only catalogue paths and owner-allowed relative
+source references enter requested_artifacts/mappings. Confirmed source binding,
+exact conceptrevision and original operation/requestdigest are persisted before
+sending. Reopen/recovery uses only original intent/plan GET, never automatic
+newID/POST/scan. Pending is neither completion nor failure. Finite capacity,
+corruption failclosed, current own/peer authority and late-response generation
+fences apply. No lock spans network wait or rendering.
+
+Actual typed R55 result groups retained/link/addition/change/conflict/unknown.
+Only selected ABSENT justifies additions. Not inspected/metadata-only/too large
+remain insufficient information. Original Dutch vision bytes stay exact;
+English portable templates remain visibly English. Source is historical
+AS_OF_OBSERVATION_NOT_CONTINUOUS, COMPLETE_WITHIN_SELECTION; quality/readiness
+NOT_ASSESSED. Always PROPOSED_NOT_APPROVED. R54 CONTENT_BASELINE_ONLY does NOT
+approve this kind; no reused approval buttons on adoption results.
+
+## Initial delivery state — historical
+
+Initial exact assets/scope/pending contract regressions3 PASS. Completed-result
+integrity, actual owner setup/small installed native chain and bounded matrices
+are still to be delivered. This is initial implementation, not installed PASS.
+Full strict per-file coverage, independent Quality/Security/UX, owning CI/TDE,
+protected implementation, nonempty own finalization and NEW exact-final-main
+installed/GUI/recovery/safe screenshots/readback/normal cleanup remain required.
+Only SELECTED_INSPECTION_ADOPTION_PREVIEW under PB-W2-SETUP and bounded source
+presentation under PB-W1-INSPECT are selected; all full parents remain open.
+No administrative maximum or automatic successor. Original failures retained.
+
+## Concrete early chain and bounded recovery corrections
+
+[Original small installed/GUI chain](qualification/plan108-first-small-chain-20261016/README.md)
+is tied to sourceb547b2b, not a full matrix/final-main claim. Initial13Python and
+4native checks expanded to25Python/11native directed checks PASS. Source round3
+fixes complete-original journal publication, definitive own pre-capture revision
+rejection (separate from unknown/lost/peer404), strict initialized binding markers,
+shared fixed publication deadline and original plan identity. Current own access
+and original absence plus explicit user action are required to close a rejected
+request; old rejected journal retained. Unknown originals can never be retired
+by this action. Archived PREPARE denial stays unchanged. Vision deselection clears
+its hidden mapping, actual unknown reason stays visible, historical proposals
+have distinct sequence numbers. Browser inventory lists the exact closed own
+routes and never invokes them. Fullvalidation1 failed on that inventory omission;
+original failure retained; fullvalidation2 in progress. No acceptance yet.
+
+## Administrator preparation and ordinary user steps
+
+Ordinary users save a concept, choose an already linked inspection, select the
+three offered document kinds (or a subset), optionally select and explicitly
+confirm the allowed existing vision reference, then choose Make proposal once.
+They open each actual result category and its original/proposed contents, then
+reopen the same original from history. No technical identity/token/path input or
+new scan is present in that route. The displayed relative reference options are
+administrator setup metadata until the actual original R55 response supplies
+observed contents. A missing binding explains that an administrator must link
+an existing authorized inspection; it never pretends standalone discovery.
+
+The existing installation owner first supplies an actual qualified R55 finite
+PREPARE/READ receipt and token for the selected dossier/original EP pairing.
+Workspace neither issues those rights nor replaces their owning authorization.
+`workspace-server --root PRIVATE_ROOT concept-adoption-bind-issue --config-file PRIVATE_CONFIG`
+accepts only actor_id, context_id, concept_id, endpoint, dossier_id, label,
+identity, source_options, receipt_file and token_file. `identity` explicitly
+supplies status, project_id, repository_id, authority_repository_id and
+owner_reference. Authority_repository_id must equal repository_id. The private
+receipt supplies the exact instance/principal/audience/pairing, finite expiry,
+permissions and per-dossier limit; the token remains private at Server. Files
+must be private owner regular files; actual current R55 capability must match.
+No example credential or local runtime root is committed. Administrator revoke
+uses `concept-adoption-bind-revoke --binding-id BINDING_ID`. Up to8 bindings per
+concept/100 total,256 immutable own intent records, and finite upstream capacity
+fail closed without deletion of old originals or implicit renewal.
+
+Own intent schema/marker is separate from R52/R54. Native durable journal stores
+only own identity/frozen command/request digest/navigation, never protected result
+bytes or Forge/EP credentials. Every reopen uses current own authority, current
+peer capability and original Forge/EP read. Own publication revalidates the exact
+original before short guarded byte publication. Network I/O holds no own grant
+lock. Adoption alone opts into an absolute own-socket timeout across response
+headers/body; other consumers retain defaults. No progress model is invented.
+
+Definitive own revision rejection before capture is409. An archived source stays
+403/no-freeze/no-POST; only authorized own original absence and a nonfuture source
+revision may add the closed ARCHIVED_BEFORE_CAPTURE reason. Future revisions,
+ordinary permission denial, uncertain/lost response and producer404 never justify
+retirement. Explicit close rechecks current own rights/original absence, archives
+the rejected local journal, and leaves any new proposal to a separate user action.
+A completed original monitor updates that same durable journal; no second prepare.
+
+## Current bounded source qualification checkpoint
+
+Source round4 closes the independently reviewed archive-race, slowly dripping
+response and rejected-only action variants;28directed Python/11native checks PASS.
+All63 existing readonly tests PASS after explicit route/auth/method inventory
+updates. Native directed executable-line coverage: Copy100%, Panel85.42%,
+State93.84%, Transport100%; all new production files exceed80.2%. Complete full
+validation and complete installed matrix remain OPEN. Fullvalidation1/2/3 failed
+old inventory assumptions; originals retained. A native test build failed because
+iCloud added FinderInfo to a new cache; original retained, ordinary local Library
+cache then passed without signing-policy/system changes. Candidate2 source45958f0
+is preserved but predates round4; no new-source acceptance is inferred from it.
+Qualified producer entrypoints and all201 EP manifest payloads independently match
+owning qualified source and noneditable installation. No peer rebuild/upgrade.
+
+## Actual recovery candidate and source round5
+
+[Bounded candidate recovery on d93ac81](qualification/plan108-recovery-candidate-20261016/README.md)
+retains actual lost committed response, separate normal process restarts, original
+packet identity, EP-unavailable red/restored green, real current denials, five
+native languages/windows/themes and normal cleanup; ten original independently
+safe images. Complete scope remains open. Fullvalidation5b and all five CI pass;
+actual separate TDE QUALIFIED/PASS_WITH_WARNINGS max29. Export validation4 lacked
+Git identity required by preservation tests; original error retained, independent
+detached identity/index with read-only original objects fixed that test setup.
+No shared index, remote, extra source branch or writer was introduced.
+
+Independent real UX requested two corrections. Source round5 gives the optional
+vision reference its own no-link placeholder and classifies only exact validated
+409 ADOPTION_CAPACITY / INSPECTION_ADOPTION_CAPACITY_EXHAUSTED as a genuine limit.
+Storage503 stays unavailable; producer503 with a capacity/conflict-shaped code
+cannot change HTTP class. Own finite SQLite record exhaustion has a separate
+capacity type, never inferred from arbitrary OSError/disk failure. A private
+historical limit receipt survives restart; pending/original is retained and no
+new POST or retirement bypass is introduced. Generic history says original
+request, since pending intents are not claimed as completed proposals. Qualified
+actual reason codes get readable five-language explanations, with exact codes
+retained under details; missing/metadata-only/oversized never mean absent.
+29directed Python and12native checks PASS, new native85.52–100% directed coverage.
+Source round5 complete validation/new installed coverage and reviews remain open;
+previous candidate artifacts/screens stay bound to their original d93ac81 source.

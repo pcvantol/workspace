@@ -1,3 +1,200 @@
+## Plan108 source13 — finite hosted scheduler observation
+
+Actual exact541 hosted native CI fails only the existing held-original expiry
+case at its fixed100ms pre-release observation; later post-release assertions
+pass. Preserve raw failure. The test now awaits the actual denied transition
+within the same finite2s window already used by the adjacent expiry test.
+Original read stays held; all history/busy/currentdenial/late-response/one-send
+assertions remain. Product bytes unchanged from1706311; no rights/deadline or
+runtime change. Own cumulative13source/9artifact/24operational/7full retained.
+Focused and fullvalidation8/newheadCI and independent review REQUIRED before
+protected implementation, own finalization and NEW exact-final-main evidence.
+
+## Plan108 current bounded candidate — runtime proved, protected delivery open
+
+[Safe current candidate evidence](docs/qualification/plan108-bounded-candidate-20261016/README.md)
+records actual1706311 artifact9: exact Dutch/selectedABSENT/UNKNOWN, real keyboard
+Escape/Space and visible original opener; another Client1→2 while selectedClient1,
+new explicitB2/originalB1 unchanged, real capacity and four actual Client restarts
+in five languages/light-dark/760–1180. Normal cleanup/source byteidentity; actual
+EP operation rows only counted owner setup. Complete independent scoped runtime
+Quality PASS; all projected PNG pixels/metadata independently Security/UX PASS.
+Current35native PASS; all involved native strict coverage84.15–100% after adding
+historical5language renders. Source12 checkpoint changes only tests/docs from
+actual production170. Inherited20/21/22 source metadata error has separate
+independent recovery proof; originals/outcomes preserved, no failed→PASS relabel.
+12source/9artifact/24operational/6full starts retained. Next full current validation,
+allCI/actual TDE, exacthead independent acceptance/protected implementation, own
+nonempty finalization and NEW exact-final-main qualification remain REQUIRED.
+Same sole writer/PATCH2.8.32; predecessors remain CLOSED, full parents OPEN.
+
+## Plan108 source round12 — actual historical layout in every UI language
+
+Native render tests now include the actual observed Servercurrent2/source1/
+selectedClient1 case in each language.35directed tests PASS; strict executable
+coverage: adoptionPanel352/406=86.70%, copy100%, state92.17%, transport100%,
+shared compare90.50%, parent conceptview84.15%. The earlier308/406 partial gate
+failure is retained and not waived. Production bytes unchanged from1706311.
+Actual trial22 validates normal other-Client HTTP edit1→2, unchanged original
+proposal and real native historical labels while selectedClient remains1.
+It then fails a driver-only screenshot anchor lookup (LabeledContent has no
+exposed AXIdentifier); preserve original failure/current labels/normal cleanup.
+Next driver uses an already proven documentcontrol for ordinary viewporting.
+Own12source/9artifact/22operational/6full starts preserved; no reset/max. All
+remaining actual cases, full validation, protected delivery/own finalization
+and NEW exact-final-main proof remain required, no complete candidate claim.
+
+## Plan108 source round11 — Server revision owns historical context
+
+Full Quality review catches stale selected-Client context: validated result
+current_revision can advance while the selected concept copy remains older.
+The historical label/warning now uses that actual Server envelope revision,
+not the captured Client revision.35existing directed native tests PASS. An
+attempted new native AX harness had an empty positive control and is retained
+as harness failure, NOT a red product regression; the unreliable added test
+is removed without weakening existing tests. Real concurrent-Client warning
+acceptance remains required. Immutable artifact8/sourcef860 actual matrix21
+passes the formerly red restored-focus detector (now742/797 inside viewport),
+original corruption503→exact-byte-restored200 and A excessive/metadata/unknown;
+then fails a driver menu timing assertion after real native concept save2.
+Partial evidence and normal cleanup retained; NOT full candidate PASS. Add a
+bounded current-enabled-control wait before the next driver menu interaction.
+Own11source/8artifact/21operational/6full starts preserved; no reset/max.
+Protected source, own finalization and NEW exact-final-main qualification open.
+
+## Plan108 source round10 — honest original concept revision
+
+Independent full UX review identifies missing original-versus-current concept
+revision labels on reopened history. The open result now shows its saved source
+revision; a different current concept revision and explicit historical warning
+appear in all five UI languages. Source digest remains under Details, alongside
+the original request/snapshot facts. No regenerated proposal, authorization or
+new effect.35directed native adoption/concept/viewport tests PASS. Own10source/
+7artifact/20operational/6full starts retained. Source9 card-root/top reveal has
+not yet passed the actual packaged detector; matrix20 remains a preserved FAIL.
+Full candidate Q/S/UX/tests, protected implementation, own finalization and NEW
+exact-final-main installed/GUI qualification remain OPEN. Same writer/2.8.32.
+
+## Plan108 source round9 — stable document-card reveal at its beginning
+
+Actual matrix20 still fails the same restored-focus y986 detector after the
+single-category-root change. Retain that failure and normal cleanup; source8
+is not GUI acceptance. The panel now owns a source/operation/document-specific
+card-root ID; detail focus/restore targets that root. Its existing parent reader
+reveals the beginning, keeping the close control near the beginning of the card
+instead of centering a deep changing subtree. Original AX control IDs and
+cancellation/source/operation/focus guards remain intact. No new delays, data,
+rights or effect routes.35directed adoption/concept/viewport native tests PASS.
+Own9source/7artifact/20operational/6full starts preserved without reset/max.
+Same actual viewport detector, complete candidate tests/reviews, protected
+implementation, own finalization and NEW exact-final-main proof remain OPEN.
+Same writer/PATCH2.8.32; predecessors remain CLOSED.
+
+## Plan108 source round8 — one native layout root per answer category
+
+Actual matrix19 preserves the same detail-focus failure at y986, outside the
+900-point window, despite source round7. Original test rights revoked and own
+processes stopped normally. Independent read-only Quality/UX identify multiple
+roots per category in the nested SwiftUI ForEach as a plausible scroll-frame
+cause. Each category now has one explicit VStack; original entry/control IDs,
+source/operation/focus guards and all data/rights contracts remain intact.
+17 directed native adoption/viewport tests PASS. This is NOT actual GUI PASS;
+the unchanged real focused-control detector remains the acceptance gate.
+Own8 source/6 artifacts/19 operational/6 full starts retained, no reset/max.
+Full validation, complete Q/S/UX, protected implementation, own finalization
+and NEW exact-final-main qualification remain OPEN. Same sole writer/2.8.32.
+
+## Plan108 source round7 — same focused control follows layout movement
+
+Actual matrix17 again fails the preserved y986/outside-window detail detector;
+source round6 alone is insufficient, not GUI PASS. New native regression starts
+RED on the existing viewport helper: a focused control moved by layout remains
+outside its clip without a fresh focus event. The existing helper now schedules
+reveal on frame-origin/size/layout changes, retaining generation/focus/window
+checks and avoiding scroll when already visible. Same regression GREEN;17own
+adoption/viewport tests PASS. New native86.04–100%, shared view90.50% executable
+coverage. No HTTP/rights/provider/state changes or reopened predecessor scope.
+Valid owner-issued wrong actor/context reads separately return404/no protected
+payload; normal negative-scope revoke, positive scope unchanged. Actual expiry15
+and earlier causal A→B proof retain original sources. Own7source/5artifact/
+18operational/6full starts preserved; current GUI regression/remaining matrix,
+full validation, complete Q/S/UX, protected implementation/own finalization and
+NEW exact-final-main proof remain OPEN. Same sole writer/PATCH2.8.32.
+
+## Plan108 source round6 — visible restored detail focus
+
+Actual matrix14 confirms genuine oversized/metadata/unknown, declaration conflict,
+causal A→B (unchanged A reply released after B), initialized-store corruption red
+and exact original restoration. It then exposed the correct focused detail below
+the window, so full candidate acceptance remains OPEN. Normal cleanup and failed
+original detector retained. Local panel now re-reveals the same control after
+layout, guarded by cancellation/source/operation/current expansion and focus.
+12directed native PASS; four new native sources86.04–100% executable coverage.
+Actual separate negative READ-only expiry200→401 with simultaneous positive200,
+ledgerACTIVE-but-expired, no business call/renewal and normal revoke PASS.
+All five source11f4504 CI SUCCESS; separate actual TDE QUALIFIED/PASS_WITH_WARNINGS.
+Own6source/4artifact/15operational/6full starts; no reset/adminmaximum. Existing
+source-bound recovery proof retained; new focus/remaining matrix, full validation,
+independent complete acceptance, protected implementation/own finalization and NEW
+exact-final-main proof remain required. Same writer/2.8.32; predecessors CLOSED.
+
+## Plan108 source round5 — bounded candidate recovery retained
+
+[Actual d93ac81 recovery candidate](docs/qualification/plan108-recovery-candidate-20261016/README.md):
+real lostreply/individual Client-Server-Forge-EP restarts/oneoriginal, red→green,
+current denial, five-language narrow/wide light/dark GUI,10safe screenshots;
+normal cleanup. Fullvalidation5b/5CI PASS, separate actual TDE QUALIFIED /
+PASS_WITH_WARNINGSmax29. Remaining variants/A→B/capacity and full DoD open.
+Round5 fixes independent real UX: correct optional vision placeholder, genuine
+capacity status/retained receipt versus storage/unavailable, readable actual
+limitation codes.29Python/12native directed PASS; newnative85.52–100%.
+Own5source/3artifact/5operational/5full starts, no reset/adminmaximum. Same
+solewriter/2.8.32; newsource validation/installed/reviews/protected source and own
+finalization/NEW final-main proof required; closed predecessors remain closed.
+
+## Plan108 round4 source checkpoint — complete qualification still open
+
+28directedPython/11native PASS;63existing readonly PASS. All four new native
+production sources exceed80.2% directed executable coverage (85.42–100%).
+Archive PREPARE remains403/no effects with narrowly proven own nonfuture
+pre-capture rejection; original monitor/recovery, marker and fixed own-socket
+publication bound fixed. Earlier failures/caches/artifacts preserved; no reset.
+Own4source/2artifact/3operational/3full starts; next frozen source validation,
+expanded genuine matrix, Q/S/UX/CI/TDE, protected source/finalization and NEW
+exact-final-main qualification remain required. Same writer/2.8.32/closed history.
+
+## Plan108 partial actual chain; complete delivery remains open
+
+[First actual small native/Server/Forge/EP chain](docs/qualification/plan108-first-small-chain-20261016/README.md)
+sourceb547b2b, independently safe four screenshots. Exact Dutch vision, selected
+ABSENT addition, unknown uninspected roadmap, original-only readback and normal
+cleanup proved. Later source round3 recovery/integrity/UX corrections have25Python/
+11native directed checks PASS; full validation in progress, no complete acceptance.
+Own cumulative3source/1artifact/3operational/2full starts; history unchanged.
+Same solewriter/base/PATCH2.8.32; no next feature or reopened predecessor.
+
+## Plan108 early integrated source checkpoint
+
+Same selected inspection adoption preview, PATCH2.8.32. First actual installed
+qualified EP2.3.121 owner inspection COMPLETE200; normal revoke/stop recorded,
+separate from the consumer. Qualified Forge341/EP201 product bytes match exact
+Git sources. Integrated2source rounds:13directed Python/4native state tests PASS,
+including original-only recovery and causal late-response/mapping guards.
+First small consumer installed/GUI and complete scoped DoD still REQUIRED.
+Earlier counters below are original checkpoints; no reset/administrative cap.
+
+## Current selected plan108 — native linked-inspection adoption preview
+
+L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016 / JOIN
+L3-L4-INSPECTION-ADOPTION-PREVIEW-V1-20261016. Same sole writer, own branch
+codex/plan108-native-inspection-adoption from main98fb464; PATCH2.8.32.
+[Scoped consumer contract](docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md).
+Qualified R55 Forge2.21.0/cd483fd9 with own EP2.3.121/f3b56303 only; no new scan,
+model, approval/apply/repository/Mission effect. First3 exact contract tests PASS;
+small real installed/GUI chain and full scoped DoD still required. Plan107 and
+predecessors CLOSED; all parent onboarding families remain open. Earlier headers
+are historical checkpoints. Own cumulative1source/0artifact/0operational/0full.
+
 ## Plan107 protected implementation — own finalization
 
 PR181 merged `c7840747829302578cafc55940c189d9f967c3af` with exact reviewed2dcdaa3 tree; Workspace2.8.31.

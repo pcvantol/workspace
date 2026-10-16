@@ -77,4 +77,25 @@ import AppKit
         XCTAssertEqual(scroll.contentView.bounds.origin,revealed,"Detached control must not trigger stale scrolling")
     }
 
+    func testFocusedControlMovedByLayoutIsRevealedWithoutFocusIdentityChange() async {
+        let window=NSWindow(contentRect:NSRect(x:0,y:0,width:400,height:300),styleMask:.borderless,backing:.buffered,defer:false)
+        window.isReleasedWhenClosed=false
+        let scroll=NSScrollView(frame:NSRect(x:0,y:0,width:400,height:300))
+        let document=NSView(frame:NSRect(x:0,y:0,width:400,height:1600))
+        let anchor=ProposalCompareViewportAnchor(frame:NSRect(x:0,y:100,width:200,height:30))
+        document.addSubview(anchor);scroll.documentView=document;window.contentView=scroll
+        defer {window.close()}
+        anchor.reveal(true)
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertTrue(scroll.contentView.bounds.contains(anchor.frame))
+        // Reopened content grows before this same focused native control.
+        anchor.setFrameOrigin(NSPoint(x:0,y:1200))
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertTrue(scroll.contentView.bounds.contains(anchor.frame),"Same focus moved by layout must become visible without a new focus event")
+        anchor.reveal(false);let retained=scroll.contentView.bounds.origin
+        anchor.setFrameOrigin(NSPoint(x:0,y:100))
+        await withCheckedContinuation {continuation in DispatchQueue.main.async {continuation.resume()}}
+        XCTAssertEqual(scroll.contentView.bounds.origin,retained,"An unfocused layout change must not scroll")
+    }
+
 }

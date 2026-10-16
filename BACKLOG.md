@@ -1,3 +1,27 @@
+## Plan108 current candidate runtime — full delivery pending
+
+[Current bounded candidate evidence](docs/qualification/plan108-bounded-candidate-20261016/README.md)
+proves current Dutch/ABSENT/UNKNOWN and real Escape/Space, original1/current2
+including another Client, explicit new request and capacity across four native
+OS restarts/five languages. Exact artifact9 production source1706311; test-only
+checkpoint9989200 preserves product bytes. Original failures/metadata correction
+and all historical scopes/budgets retained.12source/9artifact/24operational/
+6full starts before next validation. Full owning validation/CI/actual TDE,
+protected implementation, own finalization and NEW exact-final-main proof remain
+OPEN. Parent PB-W1-INSPECT/PB-W2-SETUP are not closed or fully selected.
+
+## Initial plan108 pickup — historical checkpoint
+
+L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016 / JOIN
+L3-L4-INSPECTION-ADOPTION-PREVIEW-V1-20261016. Same sole writer, own branch
+codex/plan108-native-inspection-adoption from main98fb464; PATCH2.8.32.
+[Scoped consumer contract](docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md).
+Qualified R55 Forge2.21.0/cd483fd9 with own EP2.3.121/f3b56303 only; no new scan,
+model, approval/apply/repository/Mission effect. First3 exact contract tests PASS;
+small real installed/GUI chain and full scoped DoD still required. Plan107 and
+predecessors CLOSED; all parent onboarding families remain open. Earlier headers
+are historical checkpoints. Own cumulative1source/0artifact/0operational/0full.
+
 ## Plan107 protected implementation — own finalization
 
 PR181 merged `c7840747829302578cafc55940c189d9f967c3af` with exact reviewed2dcdaa3 tree; Workspace2.8.31.

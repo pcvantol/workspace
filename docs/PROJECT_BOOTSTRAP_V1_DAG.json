@@ -197,7 +197,20 @@
       "user_outcome": "Inspect chosen source safely before full initialization",
       "deliverable": "Inspect chosen source safely before full initialization",
       "acceptance": "pre-identity read scope, dirty/history/path exclusions, no hooks/write/network/provider",
-      "implementation_selected": false
+      "implementation_selected": false,
+      "scoped_implementations": [
+        {
+          "scope": "LINKED_INSPECTION_SOURCE_PRESENTATION_ONLY",
+          "assignment": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
+          "plan": 108,
+          "status": "SELECTED_IMPLEMENTING_NOT_QUALIFIED",
+          "full_parent_selected": false,
+          "own_contract": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md",
+          "candidate_runtime_evidence": "docs/qualification/plan108-bounded-candidate-20261016/README.md",
+          "candidate_production_source": "170631191282970d7c0c5378fa7cd767db18bb83",
+          "new_exact_final_main_installed": "REQUIRED_AFTER_OWN_PROTECTED_FINALIZATION"
+        }
+      ]
     },
     {
       "id": "PB-W2-BASELINE",
@@ -352,6 +365,19 @@
           "qualified_candidate_evidence": "https://github.com/pcvantol/workspace/tree/d685af101ab1b1f01780c63c3c826034f691f5ad/docs/qualification/plan106-qualified-candidate-20261015",
           "qualified_producer_source": "0ea1b1a7380aaef95205821bc7bf3c9a3f9ec3e2",
           "new_exact_final_main_installed": "REQUIRED_AFTER_OWN_FINALIZATION_MERGE"
+        }
+      ],
+      "scoped_implementations": [
+        {
+          "scope": "SELECTED_INSPECTION_ADOPTION_PREVIEW",
+          "assignment": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
+          "plan": 108,
+          "status": "SELECTED_IMPLEMENTING_NOT_QUALIFIED",
+          "full_parent_selected": false,
+          "own_contract": "docs/WORKSPACE_INSPECTION_ADOPTION_PREVIEW_V1.md",
+          "candidate_runtime_evidence": "docs/qualification/plan108-bounded-candidate-20261016/README.md",
+          "candidate_production_source": "170631191282970d7c0c5378fa7cd767db18bb83",
+          "new_exact_final_main_installed": "REQUIRED_AFTER_OWN_PROTECTED_FINALIZATION"
         }
       ]
     },

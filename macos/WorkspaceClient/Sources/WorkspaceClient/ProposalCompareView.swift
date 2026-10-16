@@ -176,15 +176,16 @@ struct ProposalCompareOriginalView:View {
     let language:String
     var reveal:(String)->Void={_ in}
     var documentPath=""
+    var content:String?=nil
     @State var page=0
     private var anchor:String {"proposal-compare-original-anchor-"+side+"-"+(documentPath.isEmpty ? value?.path ?? "missing":documentPath)}
     private func text(_ key:String)->String {ProposalCompareCopy.text(key,language)}
     var body:some View {
         VStack(alignment:.leading) {
             Text(side).font(.subheadline.bold())
-            if let value {
-                let pages=ProposalCompareModel.pages(value.content)
-                ProposalComparePager(page:$page,count:pages.count,label:side+" · "+value.path,language:language,anchor:anchor,reveal:reveal)
+            if let body=content ?? value?.content {
+                let pages=ProposalCompareModel.pages(body)
+                ProposalComparePager(page:$page,count:pages.count,label:side+" · "+(value?.path ?? documentPath),language:language,anchor:anchor,reveal:reveal)
                 Text(verbatim:pages[min(page,pages.count-1)]).font(.system(.caption,design:.monospaced)).textSelection(.enabled).frame(minWidth:0,maxWidth:.infinity,alignment:.leading)
             } else {Text(text("absent")).foregroundStyle(.secondary)}
         }.id(anchor)
@@ -221,11 +222,15 @@ struct ProposalCompareFocusViewport:NSViewRepresentable {
 final class ProposalCompareViewportAnchor:NSView {
     private var currentFocus=false
     private var generation=0
+    override func setFrameOrigin(_ origin:NSPoint) {super.setFrameOrigin(origin);if currentFocus {reveal(true)}}
+    override func setFrameSize(_ size:NSSize) {super.setFrameSize(size);if currentFocus {reveal(true)}}
+    override func layout() {super.layout();if currentFocus {reveal(true)}}
     func reveal(_ focused:Bool) {
         currentFocus=focused;generation+=1;let ticket=generation
         guard focused else{return}
         DispatchQueue.main.async {[weak self] in
-            guard let self,self.window != nil,self.currentFocus,self.generation==ticket else{return}
+            guard let self,self.window != nil,self.currentFocus,self.generation==ticket,!self.bounds.isEmpty else{return}
+            guard !self.visibleRect.contains(self.bounds) else{return}
             self.scrollToVisible(self.bounds)
         }
     }

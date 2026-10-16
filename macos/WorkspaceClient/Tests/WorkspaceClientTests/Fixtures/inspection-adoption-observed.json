@@ -1,0 +1,275 @@
+{
+  "actor_id": "alice",
+  "binding_id": "0d7953fb1c5f11bc3af04bb03ab3624a",
+  "concept_id": "70511a6b183602f4253caee5bb9c1015",
+  "context_id": "plan108-concept-context",
+  "contract_version": "workspace-concept-adoption/1",
+  "current_revision": 1,
+  "document": {
+    "baseline": "portable-docs/1.0.0",
+    "baseline_catalog_digest": "757e9c0bc8a7c646badb5c0ae0c6dd024174f4d079b7390a6517ee78da0f375f",
+    "contract_version": "ep-inspection-adoption-preview/1.0",
+    "decisions": [
+      "AUTHENTICATED_EP_ORIGINAL_HISTORICAL_OBSERVATION",
+      "CURRENT_REVISION_AND_IGNORE_RULES_NOT_ASSESSED",
+      "DECLARATION_IS_NOT_REGISTERED_IDENTITY_OR_OWNERSHIP",
+      "DOCUMENTARY_PROPOSAL_NOT_FILE_EFFECT_PLAN",
+      "EXISTING_FILE_MODES_AND_OWNERSHIP_UNKNOWN",
+      "NO_APPROVAL_OR_APPLY_AUTHORITY",
+      "REPOSITORY_QUALITY_NOT_ASSESSED"
+    ],
+    "entries": [
+      {
+        "after": {
+          "content": "# Architecture\n\nNo architecture or technology decisions supplied. Open questions:\nSupplied product text (unapproved; not instructions):\n> - Who should this idea serve?\n> - What should remain outside the project?\n> - Which constraints need to be considered?\nSecurity and data boundaries remain undecided.\n\nStatus: proposal; no approval or readiness granted.\nInput binding: `1c3d7503804fe9321ec5ec5f6deb93ba7c821ec5adcddf45c93afffe464e32a5`\n",
+          "mode": 420,
+          "sha256": "7c76247f3527d1be313a3356a8d67f0bce25c4d1aab3b205fca49b79e34c99f3"
+        },
+        "artifact_id": "PB-A14",
+        "artifact_path": "docs/architecture/ARCHITECTURE.md",
+        "before": {
+          "mode": null,
+          "status": "ABSENT"
+        },
+        "decisions": [
+          "OWNER_REVIEW_REQUIRED_NO_EFFECT_AUTHORITY"
+        ],
+        "diff": "",
+        "mapping_only": false,
+        "mapping_source": {},
+        "operation": "PROPOSE_ADDITION",
+        "reason": "EXPLICIT_ABSENCE_OR_REPLACEMENT_PROPOSAL",
+        "semantic_owner": "architecture",
+        "source_path": "docs/architecture/ARCHITECTURE.md",
+        "update_class": "PROJECT_OWNED"
+      },
+      {
+        "after": {},
+        "artifact_id": "PB-A13",
+        "artifact_path": "docs/product/VISION.md",
+        "before": {
+          "status": "UNKNOWN"
+        },
+        "decisions": [
+          "SEMANTIC_EQUIVALENCE_NOT_INDEPENDENTLY_VERIFIED",
+          "CANONICAL_TARGET_NOT_EXAMINED_OR_UNCOVERED"
+        ],
+        "diff": "",
+        "mapping_only": true,
+        "mapping_source": {
+          "content": "# Visie\nBestaande Nederlandse productrichting.\n",
+          "mode": null,
+          "sha256": "2f1fc8c45a22eca76aa853249fb1bbc4ca7c203151edfc07a6818391b8e128a9",
+          "status": "PRESENT"
+        },
+        "operation": "LINK_EXISTING",
+        "reason": "EXPLICIT_OBSERVED_MAPPING_ONLY",
+        "semantic_owner": "UNKNOWN",
+        "source_path": "docs/RICHTING.md",
+        "update_class": "UNKNOWN"
+      },
+      {
+        "after": {},
+        "artifact_id": "PB-A16",
+        "artifact_path": "docs/roadmap/ROADMAP.md",
+        "before": {
+          "status": "UNKNOWN"
+        },
+        "decisions": [
+          "EXCLUDED_OR_UNCOVERED"
+        ],
+        "diff": "",
+        "mapping_only": false,
+        "mapping_source": {},
+        "operation": "INSUFFICIENT_INFORMATION",
+        "reason": "EXCLUDED_OR_UNCOVERED",
+        "semantic_owner": "UNKNOWN",
+        "source_path": "docs/roadmap/ROADMAP.md",
+        "update_class": "UNKNOWN"
+      }
+    ],
+    "identity_registration": "NOT_PERFORMED",
+    "input_digest": "243cd6e01f8f622dfcfc3726df290d3d4ff9926967ce7cc0de9384c6ad383b6f",
+    "inventory_digest": "cf32144bde625abd5fcfc9caefeab07c062b49f79f7113ff7c831003269656ba",
+    "observations": "AUTHENTICATED_EP_HISTORICAL_WITHIN_SELECTION",
+    "origin": {
+      "audience": "synthetic-transfer",
+      "canonical_declaration": {
+        "identity": null,
+        "state": "NOT_INSPECTED"
+      },
+      "completeness": "COMPLETE_WITHIN_SELECTION",
+      "consumer_id": "forge-plan108",
+      "exclusions": [
+        "ALL_UNSELECTED_CONTENT",
+        "ASSESSMENT_AND_REPOSITORY_EXECUTION"
+      ],
+      "freshness": "AS_OF_OBSERVATION_NOT_CONTINUOUS",
+      "git": {
+        "git_execution": "NONE",
+        "hashed_worktree_bytes": 47,
+        "head": "930cbb13db0b0fce817aabe6195fa97b8c2a0478",
+        "ignore_rules": "NOT_EVALUATED",
+        "remote_present": false,
+        "staged_count": 0,
+        "state": "EXISTING_GIT",
+        "tree": "bdfc6a3a0027cd76af4a7f9bba821a77905a26dd",
+        "unresolved_index_entries": 0,
+        "unstaged_count": 0,
+        "untracked_candidate_count": 0
+      },
+      "host_id": "e1db6c12965e82ea1ced163e603efddc84170a8f2c41174022c9f0afe0ec7121",
+      "instance_id": "16ad3f90-4459-4759-8cb5-fbe85215719a",
+      "observed_at": "2026-10-16T09:17:28.970320+00:00",
+      "operation_id": "plan108-small-original",
+      "principal": "synthetic-peer",
+      "producer_revision": "f3b56303b561a7193965f4aa41fd8da744a8c1c2",
+      "producer_tree": "28d957a5988d35bc3469e8767006595c7cb3d8f1",
+      "schema_sha256": "fe289b3f5a00a837c1e2afdefc675e2fdc2427b8fd419017883347c0b6dc5e96",
+      "selection": [
+        "docs/RICHTING.md",
+        "docs/architecture/ARCHITECTURE.md"
+      ],
+      "snapshot_digest": "79e14a065433ad98698a3e3855db891d984912f3ad44e0fb1480de2c3812c0a7",
+      "source_fingerprint": "bf8f8afba30373ef8564841f99063dcabdeb4eed084f2f5e63f3ad4e9a7f2258",
+      "source_ref": "source-selected"
+    },
+    "proposal_digest": "db4470c1fd35d4bc384cb685553643f940ecc43ec0f3b16b439f7b548de33306",
+    "r50_render_digest": "5e76d9227e6e8710831d1c903b1200b429b7faeb0e61dadaab2aa4c08f915ec7",
+    "repository_quality": "NOT_ASSESSED",
+    "retained_inventory_paths": [
+      "docs/RICHTING.md",
+      "docs/architecture/ARCHITECTURE.md"
+    ],
+    "source_observation": {
+      "audience": "synthetic-transfer",
+      "canonical_declaration": {
+        "identity": null,
+        "state": "NOT_INSPECTED"
+      },
+      "completeness": "COMPLETE_WITHIN_SELECTION",
+      "consumer_id": "forge-plan108",
+      "exclusions": [
+        "ALL_UNSELECTED_CONTENT",
+        "ASSESSMENT_AND_REPOSITORY_EXECUTION"
+      ],
+      "freshness": "AS_OF_OBSERVATION_NOT_CONTINUOUS",
+      "git": {
+        "git_execution": "NONE",
+        "hashed_worktree_bytes": 47,
+        "head": "930cbb13db0b0fce817aabe6195fa97b8c2a0478",
+        "ignore_rules": "NOT_EVALUATED",
+        "remote_present": false,
+        "staged_count": 0,
+        "state": "EXISTING_GIT",
+        "tree": "bdfc6a3a0027cd76af4a7f9bba821a77905a26dd",
+        "unresolved_index_entries": 0,
+        "unstaged_count": 0,
+        "untracked_candidate_count": 0
+      },
+      "host_id": "e1db6c12965e82ea1ced163e603efddc84170a8f2c41174022c9f0afe0ec7121",
+      "instance_id": "16ad3f90-4459-4759-8cb5-fbe85215719a",
+      "observed_at": "2026-10-16T09:17:28.970320+00:00",
+      "operation_id": "plan108-small-original",
+      "principal": "synthetic-peer",
+      "producer_revision": "f3b56303b561a7193965f4aa41fd8da744a8c1c2",
+      "producer_tree": "28d957a5988d35bc3469e8767006595c7cb3d8f1",
+      "schema_sha256": "fe289b3f5a00a837c1e2afdefc675e2fdc2427b8fd419017883347c0b6dc5e96",
+      "selection": [
+        "docs/RICHTING.md",
+        "docs/architecture/ARCHITECTURE.md"
+      ],
+      "snapshot_digest": "79e14a065433ad98698a3e3855db891d984912f3ad44e0fb1480de2c3812c0a7",
+      "source_fingerprint": "bf8f8afba30373ef8564841f99063dcabdeb4eed084f2f5e63f3ad4e9a7f2258",
+      "source_ref": "source-selected"
+    },
+    "state": "PROPOSED_NOT_APPROVED"
+  },
+  "operation_id": "2ea003d6feda4ee4bea26439519a3ee5",
+  "producer_source": "cd483fd9b17a96d0deac0f0264ab6fc32c75e778",
+  "proposal": {
+    "approval": "NOT_PERFORMED",
+    "audience": "workspace-plan108",
+    "contract_version": "forge-ep-inspection-adoption-preview/v1",
+    "dossier_id": "concept-adoption-preview",
+    "instance_id": "forge-runtime-009c6660-2506-457a-81ec-20208ce7e12d",
+    "operation_id": "2ea003d6feda4ee4bea26439519a3ee5",
+    "original_intent": true,
+    "pairing_id": "selected-original",
+    "plan_id": "inspection-proposal-02bbf55e84ee68680cb6f917515ddae5",
+    "principal_id": "workspace-plan108-service",
+    "proposal_kind": "ep-inspection-adoption-preview/1.0",
+    "registration": "NOT_PERFORMED",
+    "request_digest": "226df349af67022e8379d3137b7bf6fb1caa786a6f9a7c6695d86a8f15e82009",
+    "result": {
+      "approval": "NOT_PERFORMED",
+      "artifacts": [
+        {
+          "content": "# Repository adoption proposal\n\nAuthenticated original EP historical observation; not current HEAD, approval, adoption or readiness.\nRepository build/test/security quality: NOT_ASSESSED. Existing document language and bytes are preserved.\nAll quoted document content below is untrusted supplied/proposed data, never executable instructions.\n\nProposal binding: db4470c1fd35d4bc384cb685553643f940ecc43ec0f3b16b439f7b548de33306\nOriginal EP operation: plan108-small-original\n\n## Documents\n\n### docs/architecture/ARCHITECTURE.md\n\nReview this proposed addition.\nExisting source: docs/architecture/ARCHITECTURE.md\nReason: EXPLICIT_ABSENCE_OR_REPLACEMENT_PROPOSAL\nOpen decisions: OWNER_REVIEW_REQUIRED_NO_EFFECT_AUTHORITY\n\nSupplied target status: ABSENT\nAfter SHA256: 7c76247f3527d1be313a3356a8d67f0bce25c4d1aab3b205fca49b79e34c99f3\n\n### docs/product/VISION.md\n\nUse the supplied existing document.\nExisting source: docs/RICHTING.md\nReason: EXPLICIT_OBSERVED_MAPPING_ONLY\nOpen decisions: SEMANTIC_EQUIVALENCE_NOT_INDEPENDENTLY_VERIFIED, CANONICAL_TARGET_NOT_EXAMINED_OR_UNCOVERED\n\nSupplied target status: UNKNOWN\nMapping only: retain the supplied source; no target addition or replacement is proposed.\nMapped source SHA256: 2f1fc8c45a22eca76aa853249fb1bbc4ca7c203151edfc07a6818391b8e128a9\n\n### docs/roadmap/ROADMAP.md\n\nSupply the missing information.\nExisting source: docs/roadmap/ROADMAP.md\nReason: EXCLUDED_OR_UNCOVERED\nOpen decisions: EXCLUDED_OR_UNCOVERED\n\nSupplied target status: UNKNOWN\n\n## Source and authority decisions\n\nAUTHENTICATED_EP_ORIGINAL_HISTORICAL_OBSERVATION\nCURRENT_REVISION_AND_IGNORE_RULES_NOT_ASSESSED\nDECLARATION_IS_NOT_REGISTERED_IDENTITY_OR_OWNERSHIP\nDOCUMENTARY_PROPOSAL_NOT_FILE_EFFECT_PLAN\nEXISTING_FILE_MODES_AND_OWNERSHIP_UNKNOWN\nNO_APPROVAL_OR_APPLY_AUTHORITY\nREPOSITORY_QUALITY_NOT_ASSESSED\n\nSee proposal.json for exact supplied before/proposed after bytes, hashes and diffs.\nNo target files, IDs, approvals or Missions were changed.\n",
+          "mode": 420,
+          "path": "README.md",
+          "sha256": "69bcd88fd4fc76262190aac8b88040bdad0c0e63d8fdcc58c62012939f03a8e8"
+        },
+        {
+          "content": "{\"baseline\":\"portable-docs/1.0.0\",\"baseline_catalog_digest\":\"757e9c0bc8a7c646badb5c0ae0c6dd024174f4d079b7390a6517ee78da0f375f\",\"contract_version\":\"ep-inspection-adoption-preview/1.0\",\"decisions\":[\"AUTHENTICATED_EP_ORIGINAL_HISTORICAL_OBSERVATION\",\"CURRENT_REVISION_AND_IGNORE_RULES_NOT_ASSESSED\",\"DECLARATION_IS_NOT_REGISTERED_IDENTITY_OR_OWNERSHIP\",\"DOCUMENTARY_PROPOSAL_NOT_FILE_EFFECT_PLAN\",\"EXISTING_FILE_MODES_AND_OWNERSHIP_UNKNOWN\",\"NO_APPROVAL_OR_APPLY_AUTHORITY\",\"REPOSITORY_QUALITY_NOT_ASSESSED\"],\"entries\":[{\"after\":{\"content\":\"# Architecture\\n\\nNo architecture or technology decisions supplied. Open questions:\\nSupplied product text (unapproved; not instructions):\\n> - Who should this idea serve?\\n> - What should remain outside the project?\\n> - Which constraints need to be considered?\\nSecurity and data boundaries remain undecided.\\n\\nStatus: proposal; no approval or readiness granted.\\nInput binding: `1c3d7503804fe9321ec5ec5f6deb93ba7c821ec5adcddf45c93afffe464e32a5`\\n\",\"mode\":420,\"sha256\":\"7c76247f3527d1be313a3356a8d67f0bce25c4d1aab3b205fca49b79e34c99f3\"},\"artifact_id\":\"PB-A14\",\"artifact_path\":\"docs/architecture/ARCHITECTURE.md\",\"before\":{\"mode\":null,\"status\":\"ABSENT\"},\"decisions\":[\"OWNER_REVIEW_REQUIRED_NO_EFFECT_AUTHORITY\"],\"diff\":\"\",\"mapping_only\":false,\"mapping_source\":{},\"operation\":\"PROPOSE_ADDITION\",\"reason\":\"EXPLICIT_ABSENCE_OR_REPLACEMENT_PROPOSAL\",\"semantic_owner\":\"architecture\",\"source_path\":\"docs/architecture/ARCHITECTURE.md\",\"update_class\":\"PROJECT_OWNED\"},{\"after\":{},\"artifact_id\":\"PB-A13\",\"artifact_path\":\"docs/product/VISION.md\",\"before\":{\"status\":\"UNKNOWN\"},\"decisions\":[\"SEMANTIC_EQUIVALENCE_NOT_INDEPENDENTLY_VERIFIED\",\"CANONICAL_TARGET_NOT_EXAMINED_OR_UNCOVERED\"],\"diff\":\"\",\"mapping_only\":true,\"mapping_source\":{\"content\":\"# Visie\\nBestaande Nederlandse productrichting.\\n\",\"mode\":null,\"sha256\":\"2f1fc8c45a22eca76aa853249fb1bbc4ca7c203151edfc07a6818391b8e128a9\",\"status\":\"PRESENT\"},\"operation\":\"LINK_EXISTING\",\"reason\":\"EXPLICIT_OBSERVED_MAPPING_ONLY\",\"semantic_owner\":\"UNKNOWN\",\"source_path\":\"docs/RICHTING.md\",\"update_class\":\"UNKNOWN\"},{\"after\":{},\"artifact_id\":\"PB-A16\",\"artifact_path\":\"docs/roadmap/ROADMAP.md\",\"before\":{\"status\":\"UNKNOWN\"},\"decisions\":[\"EXCLUDED_OR_UNCOVERED\"],\"diff\":\"\",\"mapping_only\":false,\"mapping_source\":{},\"operation\":\"INSUFFICIENT_INFORMATION\",\"reason\":\"EXCLUDED_OR_UNCOVERED\",\"semantic_owner\":\"UNKNOWN\",\"source_path\":\"docs/roadmap/ROADMAP.md\",\"update_class\":\"UNKNOWN\"}],\"identity_registration\":\"NOT_PERFORMED\",\"input_digest\":\"243cd6e01f8f622dfcfc3726df290d3d4ff9926967ce7cc0de9384c6ad383b6f\",\"inventory_digest\":\"cf32144bde625abd5fcfc9caefeab07c062b49f79f7113ff7c831003269656ba\",\"observations\":\"AUTHENTICATED_EP_HISTORICAL_WITHIN_SELECTION\",\"origin\":{\"audience\":\"synthetic-transfer\",\"canonical_declaration\":{\"identity\":null,\"state\":\"NOT_INSPECTED\"},\"completeness\":\"COMPLETE_WITHIN_SELECTION\",\"consumer_id\":\"forge-plan108\",\"exclusions\":[\"ALL_UNSELECTED_CONTENT\",\"ASSESSMENT_AND_REPOSITORY_EXECUTION\"],\"freshness\":\"AS_OF_OBSERVATION_NOT_CONTINUOUS\",\"git\":{\"git_execution\":\"NONE\",\"hashed_worktree_bytes\":47,\"head\":\"930cbb13db0b0fce817aabe6195fa97b8c2a0478\",\"ignore_rules\":\"NOT_EVALUATED\",\"remote_present\":false,\"staged_count\":0,\"state\":\"EXISTING_GIT\",\"tree\":\"bdfc6a3a0027cd76af4a7f9bba821a77905a26dd\",\"unresolved_index_entries\":0,\"unstaged_count\":0,\"untracked_candidate_count\":0},\"host_id\":\"e1db6c12965e82ea1ced163e603efddc84170a8f2c41174022c9f0afe0ec7121\",\"instance_id\":\"16ad3f90-4459-4759-8cb5-fbe85215719a\",\"observed_at\":\"2026-10-16T09:17:28.970320+00:00\",\"operation_id\":\"plan108-small-original\",\"principal\":\"synthetic-peer\",\"producer_revision\":\"f3b56303b561a7193965f4aa41fd8da744a8c1c2\",\"producer_tree\":\"28d957a5988d35bc3469e8767006595c7cb3d8f1\",\"schema_sha256\":\"fe289b3f5a00a837c1e2afdefc675e2fdc2427b8fd419017883347c0b6dc5e96\",\"selection\":[\"docs/RICHTING.md\",\"docs/architecture/ARCHITECTURE.md\"],\"snapshot_digest\":\"79e14a065433ad98698a3e3855db891d984912f3ad44e0fb1480de2c3812c0a7\",\"source_fingerprint\":\"bf8f8afba30373ef8564841f99063dcabdeb4eed084f2f5e63f3ad4e9a7f2258\",\"source_ref\":\"source-selected\"},\"proposal_digest\":\"db4470c1fd35d4bc384cb685553643f940ecc43ec0f3b16b439f7b548de33306\",\"r50_render_digest\":\"5e76d9227e6e8710831d1c903b1200b429b7faeb0e61dadaab2aa4c08f915ec7\",\"repository_quality\":\"NOT_ASSESSED\",\"retained_inventory_paths\":[\"docs/RICHTING.md\",\"docs/architecture/ARCHITECTURE.md\"],\"source_observation\":{\"audience\":\"synthetic-transfer\",\"canonical_declaration\":{\"identity\":null,\"state\":\"NOT_INSPECTED\"},\"completeness\":\"COMPLETE_WITHIN_SELECTION\",\"consumer_id\":\"forge-plan108\",\"exclusions\":[\"ALL_UNSELECTED_CONTENT\",\"ASSESSMENT_AND_REPOSITORY_EXECUTION\"],\"freshness\":\"AS_OF_OBSERVATION_NOT_CONTINUOUS\",\"git\":{\"git_execution\":\"NONE\",\"hashed_worktree_bytes\":47,\"head\":\"930cbb13db0b0fce817aabe6195fa97b8c2a0478\",\"ignore_rules\":\"NOT_EVALUATED\",\"remote_present\":false,\"staged_count\":0,\"state\":\"EXISTING_GIT\",\"tree\":\"bdfc6a3a0027cd76af4a7f9bba821a77905a26dd\",\"unresolved_index_entries\":0,\"unstaged_count\":0,\"untracked_candidate_count\":0},\"host_id\":\"e1db6c12965e82ea1ced163e603efddc84170a8f2c41174022c9f0afe0ec7121\",\"instance_id\":\"16ad3f90-4459-4759-8cb5-fbe85215719a\",\"observed_at\":\"2026-10-16T09:17:28.970320+00:00\",\"operation_id\":\"plan108-small-original\",\"principal\":\"synthetic-peer\",\"producer_revision\":\"f3b56303b561a7193965f4aa41fd8da744a8c1c2\",\"producer_tree\":\"28d957a5988d35bc3469e8767006595c7cb3d8f1\",\"schema_sha256\":\"fe289b3f5a00a837c1e2afdefc675e2fdc2427b8fd419017883347c0b6dc5e96\",\"selection\":[\"docs/RICHTING.md\",\"docs/architecture/ARCHITECTURE.md\"],\"snapshot_digest\":\"79e14a065433ad98698a3e3855db891d984912f3ad44e0fb1480de2c3812c0a7\",\"source_fingerprint\":\"bf8f8afba30373ef8564841f99063dcabdeb4eed084f2f5e63f3ad4e9a7f2258\",\"source_ref\":\"source-selected\"},\"state\":\"PROPOSED_NOT_APPROVED\"}\n",
+          "mode": 420,
+          "path": "proposal.json",
+          "sha256": "c277ca15b141d6c3e350ee125733b0b993164370dca55fc5cf3d7893d8b1e880"
+        }
+      ],
+      "input_digest": "243cd6e01f8f622dfcfc3726df290d3d4ff9926967ce7cc0de9384c6ad383b6f",
+      "observations": "AUTHENTICATED_EP_HISTORICAL_WITHIN_SELECTION",
+      "original_contract_version": "ep-inspection-adoption-preview/1.0",
+      "registration": "NOT_PERFORMED",
+      "repository_quality": "NOT_ASSESSED",
+      "result_digest": "a2a84eb3bf9674c1014d7bc867c237a069dc6bba25dd9c5f2fd796c348d98096",
+      "source_binding": {
+        "audience": "synthetic-transfer",
+        "canonical_declaration": {
+          "identity": null,
+          "state": "NOT_INSPECTED"
+        },
+        "completeness": "COMPLETE_WITHIN_SELECTION",
+        "consumer_id": "forge-plan108",
+        "exclusions": [
+          "ALL_UNSELECTED_CONTENT",
+          "ASSESSMENT_AND_REPOSITORY_EXECUTION"
+        ],
+        "freshness": "AS_OF_OBSERVATION_NOT_CONTINUOUS",
+        "git": {
+          "git_execution": "NONE",
+          "hashed_worktree_bytes": 47,
+          "head": "930cbb13db0b0fce817aabe6195fa97b8c2a0478",
+          "ignore_rules": "NOT_EVALUATED",
+          "remote_present": false,
+          "staged_count": 0,
+          "state": "EXISTING_GIT",
+          "tree": "bdfc6a3a0027cd76af4a7f9bba821a77905a26dd",
+          "unresolved_index_entries": 0,
+          "unstaged_count": 0,
+          "untracked_candidate_count": 0
+        },
+        "host_id": "e1db6c12965e82ea1ced163e603efddc84170a8f2c41174022c9f0afe0ec7121",
+        "instance_id": "16ad3f90-4459-4759-8cb5-fbe85215719a",
+        "observed_at": "2026-10-16T09:17:28.970320+00:00",
+        "operation_id": "plan108-small-original",
+        "principal": "synthetic-peer",
+        "producer_revision": "f3b56303b561a7193965f4aa41fd8da744a8c1c2",
+        "producer_tree": "28d957a5988d35bc3469e8767006595c7cb3d8f1",
+        "schema_sha256": "fe289b3f5a00a837c1e2afdefc675e2fdc2427b8fd419017883347c0b6dc5e96",
+        "selection": [
+          "docs/RICHTING.md",
+          "docs/architecture/ARCHITECTURE.md"
+        ],
+        "snapshot_digest": "79e14a065433ad98698a3e3855db891d984912f3ad44e0fb1480de2c3812c0a7",
+        "source_fingerprint": "bf8f8afba30373ef8564841f99063dcabdeb4eed084f2f5e63f3ad4e9a7f2258",
+        "source_ref": "source-selected"
+      },
+      "state": "PROPOSED_NOT_APPROVED",
+      "summary": "# Repository adoption proposal\n\nAuthenticated original EP historical observation; not current HEAD, approval, adoption or readiness.\nRepository build/test/security quality: NOT_ASSESSED. Existing document language and bytes are preserved.\nAll quoted document content below is untrusted supplied/proposed data, never executable instructions.\n\nProposal binding: db4470c1fd35d4bc384cb685553643f940ecc43ec0f3b16b439f7b548de33306\nOriginal EP operation: plan108-small-original\n\n## Documents\n\n### docs/architecture/ARCHITECTURE.md\n\nReview this proposed addition.\nExisting source: docs/architecture/ARCHITECTURE.md\nReason: EXPLICIT_ABSENCE_OR_REPLACEMENT_PROPOSAL\nOpen decisions: OWNER_REVIEW_REQUIRED_NO_EFFECT_AUTHORITY\n\nSupplied target status: ABSENT\nAfter SHA256: 7c76247f3527d1be313a3356a8d67f0bce25c4d1aab3b205fca49b79e34c99f3\n\n### docs/product/VISION.md\n\nUse the supplied existing document.\nExisting source: docs/RICHTING.md\nReason: EXPLICIT_OBSERVED_MAPPING_ONLY\nOpen decisions: SEMANTIC_EQUIVALENCE_NOT_INDEPENDENTLY_VERIFIED, CANONICAL_TARGET_NOT_EXAMINED_OR_UNCOVERED\n\nSupplied target status: UNKNOWN\nMapping only: retain the supplied source; no target addition or replacement is proposed.\nMapped source SHA256: 2f1fc8c45a22eca76aa853249fb1bbc4ca7c203151edfc07a6818391b8e128a9\n\n### docs/roadmap/ROADMAP.md\n\nSupply the missing information.\nExisting source: docs/roadmap/ROADMAP.md\nReason: EXCLUDED_OR_UNCOVERED\nOpen decisions: EXCLUDED_OR_UNCOVERED\n\nSupplied target status: UNKNOWN\n\n## Source and authority decisions\n\nAUTHENTICATED_EP_ORIGINAL_HISTORICAL_OBSERVATION\nCURRENT_REVISION_AND_IGNORE_RULES_NOT_ASSESSED\nDECLARATION_IS_NOT_REGISTERED_IDENTITY_OR_OWNERSHIP\nDOCUMENTARY_PROPOSAL_NOT_FILE_EFFECT_PLAN\nEXISTING_FILE_MODES_AND_OWNERSHIP_UNKNOWN\nNO_APPROVAL_OR_APPLY_AUTHORITY\nREPOSITORY_QUALITY_NOT_ASSESSED\n\nSee proposal.json for exact supplied before/proposed after bytes, hashes and diffs.\nNo target files, IDs, approvals or Missions were changed.\n"
+    },
+    "state": "PREPARED"
+  },
+  "source_digest": "64545ad63b11bd29da1038d49063317020c69e120350b35d1ba4b1f9013dc646",
+  "source_revision": 1
+}

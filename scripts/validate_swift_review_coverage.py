@@ -6,6 +6,7 @@ import sys
 
 
 SOURCES = {
+    "ConceptAdoptionTransport.swift", "ConceptAdoptionState.swift", "ConceptAdoptionCopy.swift", "ConceptAdoptionPanel.swift",
     "ExecutionProgressSchema.swift", "ExecutionProgressModels.swift", "ExecutionProgressTransport.swift", "ExecutionProgressState.swift", "ExecutionProgressCopy.swift", "ExecutionProgressView.swift",
     "ProposalContentTransport.swift", "ProposalContentState.swift", "ProposalContentCopy.swift", "ProposalContentView.swift",
     "ProposalCompareModel.swift", "ProposalCompareState.swift", "ProposalCompareCopy.swift", "ProposalCompareView.swift",

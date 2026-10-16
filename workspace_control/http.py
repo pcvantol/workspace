@@ -142,6 +142,11 @@ for key,method,path in [("access","GET","/v1/concept-chats/{concept_id}/access")
 for key in ["issue","revoke"]:
     OPERATIONS["concept-chats.bind."+key]={"exposure":"LOCAL_ONLY_ADMIN","local_cli":"concept-chat-bind-"+key,"auth":"PRIVATE_ROOT_OWNER","summary":"pair or revoke separate finite concept advice grant"}
 
+for key,method,path in [("sources","GET","/v1/concept-adoptions/{concept_id}/sources"),("access","GET","/v1/concept-adoptions/{concept_id}/{source_id}/access"),("history","GET","/v1/concept-adoptions/{concept_id}/{source_id}/operations"),("prepare","POST","/v1/concept-adoptions/{concept_id}/{source_id}/prepare"),("original","GET","/v1/concept-adoptions/{concept_id}/{source_id}/operations/{operation_id}")]:
+    OPERATIONS["concept-adoptions."+key]={"exposure":"HTTP_EXPOSED","method":method,"path":path,"auth":"BEARER_PINNED_AND_DRAFT_GRANT","contract":"concept-adoption","summary":"selected existing inspection documentary preview; no scan, approval, apply or Mission"}
+for key in ("issue","revoke"):
+    OPERATIONS["concept-adoptions.bind."+key]={"exposure":"LOCAL_ONLY_ADMIN","local_cli":"concept-adoption-bind-"+key,"auth":"PRIVATE_ROOT_OWNER","summary":"finite owner R55 pairing only; no automatic issuance"}
+
 for key,method,path in [("access","GET","/v1/concept-baselines/{concept_id}/access"),("history","GET","/v1/concept-baselines/{concept_id}/operations"),("prepare","POST","/v1/concept-baselines/{concept_id}/prepare"),("original","GET","/v1/concept-baselines/{concept_id}/operations/{operation_id}")]:
     OPERATIONS["concept-baselines."+key]={"exposure":"HTTP_EXPOSED","method":method,"path":path,"auth":"BEARER_PINNED_AND_DRAFT_GRANT","contract":"concept-baseline","summary":"saved concept document-only proposal; no registration/approval/apply/Mission"}
 for key in ["issue","revoke"]:
@@ -845,6 +850,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
             if concept_chat_route(self,service):return
             from .concept_baseline_http import route as concept_baseline_route
             if concept_baseline_route(self,service):return
+            from .concept_adoption_http import route as concept_adoption_route
+            if concept_adoption_route(self,service):return
             if handle_project_concept(self, service): return
             from .workset_order_http import route as order_route
             if order_route(self, service, self.command): return
@@ -962,6 +969,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
             if concept_chat_route(self,service):return
             from .concept_baseline_http import route as concept_baseline_route
             if concept_baseline_route(self,service):return
+            from .concept_adoption_http import route as concept_adoption_route
+            if concept_adoption_route(self,service):return
             if handle_project_concept(self, service): return
             from .workset_order_http import route as order_route
             if order_route(self, service, self.command): return
@@ -1006,6 +1015,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
             if concept_chat_route(self,service):return
             from .concept_baseline_http import route as concept_baseline_route
             if concept_baseline_route(self,service):return
+            from .concept_adoption_http import route as concept_adoption_route
+            if concept_adoption_route(self,service):return
             if handle_project_concept(self, service): return
             from .workset_order_http import route as order_route
             if order_route(self, service, self.command): return
