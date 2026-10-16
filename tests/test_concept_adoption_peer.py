@@ -1,4 +1,4 @@
-import unittest,json
+import unittest,json,hashlib,time,os
 from unittest.mock import patch
 import test_concept_adoption_intents as fixture
 from workspace_control.worklist_peer import WorklistError
@@ -13,7 +13,7 @@ class ConceptAdoptionPeerTests(unittest.TestCase):
   b={**self.binding,'endpoint':'http://127.0.0.1:9999','forge_token':'T'*64,'expires_at':'2099-01-01T00:00:00+00:00','permissions':['PREPARE','READ'],'maximum_records':8,'label':'Owner setup only'}
   peer._write_bindings([b]);return peer,b,self.freeze()
  def pending(self,b,intent):
-  return {**{k:b[k] for k in ['instance_id','principal_id','audience','dossier_id','pairing_id']},'contract_version':wire.CONTRACT,'operation_id':intent['request']['operation_id'],'plan_id':'pending-original','request_digest':wire.peer_digest(intent['request']),'state':'PREPARING','result':None,'proposal_kind':wire.KIND,'original_intent':True,'approval':'NOT_PERFORMED','registration':'NOT_PERFORMED'}
+  return {**{k:b[k] for k in ['instance_id','principal_id','audience','dossier_id','pairing_id']},'contract_version':wire.CONTRACT,'operation_id':intent['request']['operation_id'],'plan_id':'inspection-proposal-'+hashlib.sha256(wire.canonical([b[k] for k in ('instance_id','principal_id','audience','dossier_id')]+[intent['request']['operation_id']])+b'\n').hexdigest()[:32],'request_digest':wire.peer_digest(intent['request']),'state':'PREPARING','result':None,'proposal_kind':wire.KIND,'original_intent':True,'approval':'NOT_PERFORMED','registration':'NOT_PERFORMED'}
  def test_only_real_404_permits_first_dispatch_then_no_repost(self):
   peer,b,intent=self.configured();calls=[]
   def transport(binding,method,path,*args,**kw):
@@ -46,3 +46,25 @@ class ConceptAdoptionPeerTests(unittest.TestCase):
   with self.assertRaises(WorklistError):peer.snapshot(self.token,self.source['id'],b['id'])
   (self.root/'concept-adoption-bindings.json').unlink()
   with self.assertRaises(WorklistError):peer.sources(self.token,self.source['id'])
+
+ def test_binding_marker_loss_corruption_refuses_read_and_write_without_repair(self):
+  peer,b,_=self.configured();marker=self.root/'concept-adoption-bindings-initialized.json'
+  original=marker.read_bytes();bindings=(self.root/'concept-adoption-bindings.json').read_bytes()
+  for damage in [None,{}, {'schema_version':2},{'schema_version':True}]:
+   if damage is None:marker.unlink(missing_ok=True)
+   else:marker.write_text(json.dumps(damage))
+   with self.assertRaises(WorklistError):peer._bindings()
+   with self.assertRaises(WorklistError):peer._write_bindings([b])
+   self.assertEqual((self.root/'concept-adoption-bindings.json').read_bytes(),bindings)
+   self.assertEqual(marker.exists(),damage is not None)
+   marker.write_bytes(original);os.chmod(marker,0o600)
+  self.assertEqual(peer._bindings(),[b])
+ def test_original_plan_identity_mismatch_rejected_even_with_correct_scope_and_digest(self):
+  peer,b,intent=self.configured();packet=self.pending(b,intent)
+  wire.result(packet,b,intent['request']);packet['plan_id']='inspection-proposal-'+'0'*32
+  with self.assertRaises(WorklistError):wire.result(packet,b,intent['request'])
+ def test_read_budget_consumed_by_capability_cannot_start_original_get(self):
+  peer,b,intent=self.configured()
+  with patch.object(peer,'cap',side_effect=lambda *a,**kw:time.sleep(.02)),patch.object(peer,'fetch') as fetch:
+   with self.assertRaises(WorklistError) as error:peer.read(self.token,self.source['id'],b['id'],self.command['operation_id'],timeout=.001)
+   self.assertEqual(error.exception.state,'UNAVAILABLE');fetch.assert_not_called()

@@ -1,3 +1,13 @@
+## Plan108 partial actual chain; complete delivery remains open
+
+[First actual small native/Server/Forge/EP chain](docs/qualification/plan108-first-small-chain-20261016/README.md)
+sourceb547b2b, independently safe four screenshots. Exact Dutch vision, selected
+ABSENT addition, unknown uninspected roadmap, original-only readback and normal
+cleanup proved. Later source round3 recovery/integrity/UX corrections have25Python/
+11native directed checks PASS; full validation in progress, no complete acceptance.
+Own cumulative3source/1artifact/3operational/2full starts; history unchanged.
+Same solewriter/base/PATCH2.8.32; no next feature or reopened predecessor.
+
 ## Plan108 early integrated source checkpoint
 
 Same selected inspection adoption preview, PATCH2.8.32. First actual installed

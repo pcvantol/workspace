@@ -1,10 +1,11 @@
 """Closed concept adoption routes; current original EP GET before protected publication."""
-import re,sqlite3
+import re,sqlite3,time
 from types import SimpleNamespace
 from .concept_baseline_http import protected_reply
 from .workset_release_http import _body
 from .worklist_peer import WorklistError
 from .conversations import ConversationConflict
+from .concept_adoption_intents import AdoptionSourceRejected
 from .project_concepts import ConceptStorageUnavailable
 
 def route(handler,service):
@@ -32,15 +33,19 @@ def route(handler,service):
         elif part=='operations':value=peer.history(draft,identity,source)
         else:value=peer.read(draft,identity,source,operation)
         def publication_cap(b,**kw):
+            deadline=time.monotonic()+kw.get('timeout',5)
             peer.cap(b,**kw)
             if 'proposal' in value:
-                current=peer.read(draft,identity,source,value['operation_id'])
+                remaining=deadline-time.monotonic()
+                if remaining<=0:raise WorklistError('UNAVAILABLE')
+                current=peer.read(draft,identity,source,value['operation_id'],timeout=remaining)
                 if current!=value:raise WorklistError('CONFLICT')
         protected_reply(handler,service,draft,identity,binding,value,peer=SimpleNamespace(cap=publication_cap,dispatch_guard=peer.dispatch_guard))
     except (PermissionError,WorklistError) as error:
-        code=getattr(error,'state','DENIED');status=403 if code in ('DENIED','UNAUTHORIZED') else 404 if code=='INSPECTION_ADOPTION_NOT_FOUND' else 409 if 'CONFLICT' in code or 'CAPACITY' in code else 503
+        code=getattr(error,'state','DENIED');status=403 if code in ('DENIED','UNAUTHORIZED') else 404 if code=='INSPECTION_ADOPTION_NOT_FOUND' and getattr(error,'http_status',None)==404 else 409 if 'CONFLICT' in code or 'CAPACITY' in code else 503
         handler._reply(status,{'error':code})
     except FileNotFoundError:handler._reply(404,{'error':'ADOPTION_NOT_FOUND'})
+    except AdoptionSourceRejected:handler._reply(409,{'error':'ADOPTION_SOURCE_REJECTED_BEFORE_CAPTURE'})
     except ConversationConflict:handler._reply(409,{'error':'ADOPTION_CONFLICT'})
     except (ConceptStorageUnavailable,sqlite3.Error):handler._reply(503,{'error':'ADOPTION_STORAGE_UNAVAILABLE'})
     except ValueError:handler._reply(400 if handler.command=='POST' else 503,{'error':'ADOPTION_INVALID_OR_UNAVAILABLE'})

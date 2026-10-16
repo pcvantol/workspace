@@ -28,14 +28,17 @@ struct ConceptAdoptionPanel:View {
             if let selected {
                 Text(text("setup")).font(.caption).foregroundStyle(.secondary)
                 ForEach(Array(zip(["vision","architecture","roadmap"],["docs/product/VISION.md","docs/architecture/ARCHITECTURE.md","docs/roadmap/ROADMAP.md"])),id:\.1) {key,path in
-                    Toggle(text(key),isOn:Binding(get:{requested.contains(path)},set:{value in if value {requested.insert(path)} else {requested.remove(path)};confirmed=false})).disabled(state.busy || state.pending != nil).accessibilityIdentifier("adoption-request-"+key)
+                    Toggle(text(key),isOn:Binding(get:{requested.contains(path)},set:{value in if value {requested.insert(path)} else {requested.remove(path);if key=="vision" {vision=""}};confirmed=false})).disabled(state.busy || state.pending != nil).accessibilityIdentifier("adoption-request-"+key)
                 }
                 if requested.contains("docs/product/VISION.md") {
                     Picker(text("reference"),selection:$vision) {Text(text("choose")).tag("");ForEach(selected.source_options,id:\.self) {Text(verbatim:$0).tag($0)}}.disabled(state.busy || state.pending != nil).accessibilityIdentifier("adoption-vision-reference")
                     Toggle(text("confirm"),isOn:$confirmed).disabled(vision.isEmpty || state.busy || state.pending != nil).accessibilityIdentifier("adoption-confirm-vision")
                 }
                 if let pending=state.pending {
-                    Text(text("pending")).fixedSize(horizontal:false,vertical:true)
+                    if state.phase=="sourceRejected" {
+                        ProposalCompareControl(title:text("newAfterRejected"),focused:focus=="adoption-retire-rejected") {Task {await state.retireRejected(concept:concept,current:current)}}.disabled(state.busy).focused($focus,equals:"adoption-retire-rejected").id("adoption-retire-rejected").accessibilityIdentifier("adoption-retire-rejected")
+                    }
+                    Text(text(state.phase=="sourceRejected" ? "sourceRejected":"pending")).fixedSize(horizontal:false,vertical:true)
                     ProposalCompareControl(title:text("resume"),focused:focus=="adoption-resume") {Task {await state.open(pending.command.operation_id,concept:concept,current:current)}}.disabled(state.busy).focused($focus,equals:"adoption-resume").id("adoption-resume").accessibilityIdentifier("adoption-resume")
                 } else {
                     ProposalCompareControl(title:text("prepare"),focused:focus=="adoption-prepare") {Task {await state.prepare(concept,paths:requested.sorted(),vision:confirmed ? vision:nil,current:current)}}
@@ -49,7 +52,7 @@ struct ConceptAdoptionPanel:View {
             if state.busy {ProgressView()}
             if ["access","unavailable","conflict","invalid","notFound","pending"].contains(state.phase) {Text(text(state.phase)).fixedSize(horizontal:false,vertical:true).accessibilityIdentifier("adoption-status")}
             ForEach(state.history) {entry in
-                ProposalCompareControl(title:text("open")+" · "+String(entry.source_revision),focused:focus=="adoption-open-"+entry.id) {Task {await state.open(entry.operation_id,concept:concept,current:current)}}.disabled(state.busy).focused($focus,equals:"adoption-open-"+entry.id).id("adoption-open-"+entry.id).accessibilityIdentifier("adoption-open-"+entry.id)
+                ProposalCompareControl(title:text("open")+" "+String((state.history.firstIndex(where:{$0.id==entry.id}) ?? 0)+1)+" · "+String(entry.source_revision),focused:focus=="adoption-open-"+entry.id) {Task {await state.open(entry.operation_id,concept:concept,current:current)}}.disabled(state.busy).focused($focus,equals:"adoption-open-"+entry.id).id("adoption-open-"+entry.id).accessibilityIdentifier("adoption-open-"+entry.id)
             }
             if let result=state.result,let document=result.document {documents(document,result:result)}
         }.frame(minWidth:0,maxWidth:.infinity,alignment:.leading)
@@ -70,6 +73,7 @@ struct ConceptAdoptionPanel:View {
                 VStack(alignment:.leading,spacing:8) {
                     ProposalCompareControl(title:entry.artifact_path,focused:focus=="adoption-document-"+entry.id) {Task {await state.chooseDocument(entry.id,concept:concept,current:current)}}
                         .focused($focus,equals:"adoption-document-"+entry.id).id("adoption-document-"+entry.id).accessibilityIdentifier("adoption-document-"+entry.id)
+                    if entry.operation=="INSUFFICIENT_INFORMATION" {Text(verbatim:entry.reason).font(.callout).foregroundStyle(.secondary).fixedSize(horizontal:false,vertical:true)}
                     if state.expandedDocument==entry.id {
                         VStack(alignment:.leading,spacing:8) {
                             ProposalCompareControl(title:text("close"),focused:focus=="adoption-detail-"+entry.id) {Task {await state.chooseDocument(entry.id,concept:concept,current:current)};focus="adoption-document-"+entry.id}

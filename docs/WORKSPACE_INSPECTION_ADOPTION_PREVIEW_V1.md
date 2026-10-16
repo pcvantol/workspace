@@ -58,3 +58,19 @@ installed/GUI/recovery/safe screenshots/readback/normal cleanup remain required.
 Only SELECTED_INSPECTION_ADOPTION_PREVIEW under PB-W2-SETUP and bounded source
 presentation under PB-W1-INSPECT are selected; all full parents remain open.
 No administrative maximum or automatic successor. Original failures retained.
+
+## Concrete early chain and bounded recovery corrections
+
+[Original small installed/GUI chain](qualification/plan108-first-small-chain-20261016/README.md)
+is tied to sourceb547b2b, not a full matrix/final-main claim. Initial13Python and
+4native checks expanded to25Python/11native directed checks PASS. Source round3
+fixes complete-original journal publication, definitive own pre-capture revision
+rejection (separate from unknown/lost/peer404), strict initialized binding markers,
+shared fixed publication deadline and original plan identity. Current own access
+and original absence plus explicit user action are required to close a rejected
+request; old rejected journal retained. Unknown originals can never be retired
+by this action. Archived PREPARE denial stays unchanged. Vision deselection clears
+its hidden mapping, actual unknown reason stays visible, historical proposals
+have distinct sequence numbers. Browser inventory lists the exact closed own
+routes and never invokes them. Fullvalidation1 failed on that inventory omission;
+original failure retained; fullvalidation2 in progress. No acceptance yet.

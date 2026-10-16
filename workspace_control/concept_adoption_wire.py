@@ -34,6 +34,8 @@ def result(value,binding,original):
     try:
         check(value,'Response');bound(value,binding,('instance_id','principal_id','audience','dossier_id','pairing_id'))
         require(value['operation_id']==original['operation_id'] and value['request_digest']==peer_digest(original))
+        expected='inspection-proposal-'+hashlib.sha256(canonical([binding[k] for k in ('instance_id','principal_id','audience','dossier_id')]+[original['operation_id']])+b'\n').hexdigest()[:32]
+        require(value['plan_id']==expected)
         packet=value['result']
         if value['state']=='PREPARING':require(packet is None);return value
         require(packet is not None and packet['input_digest']==peer_digest(original['input']))

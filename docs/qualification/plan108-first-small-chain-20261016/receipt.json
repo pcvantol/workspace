@@ -1,0 +1,27 @@
+{
+  "consumer_source": "b547b2b132b465bb28fcde3f5aa4ec19471756f9",
+  "real_Client_Server_Forge_EP": true,
+  "Dutch_original_exact": true,
+  "actual_selected_absent_addition": true,
+  "not_inspected_roadmap_insufficient": true,
+  "one_original_R55_record": true,
+  "reopen_same_original_no_second_prepare": true,
+  "testowner_inspection_POST": 1,
+  "product_inspection_POST": 0,
+  "full_matrix": false,
+  "not_final_main": true,
+  "phase": "FIRST_SMALL_CANDIDATE_ONLY_NOT_COMPLETE_ACCEPTANCE",
+  "forge_source": "cd483fd9b17a96d0deac0f0264ab6fc32c75e778",
+  "ep_source": "f3b56303b561a7193965f4aa41fd8da744a8c1c2",
+  "normal_own_cleanup_complete": true,
+  "original_test_source_unchanged": true,
+  "independent_UX_and_Security_pixels_and_metadata": "PASS_EARLY_ONLY",
+  "screenshots_sha256": {
+    "small-linked-source-and-confirmed-mapping.png": "29c1af2c932f970d933dca9cc3c538c70a2a177510d18623341f370c9e41d375",
+    "small-original-Dutch-vision.png": "d86c654df89ebf021819f962d781e7b52ba10a502196106d6418fddf37696940",
+    "small-actual-architecture-addition.png": "6b1be9c86c7c9aa3d021c9c874b46076839e17e3b1f2d76b7752385a7ad661e2",
+    "small-not-inspected-roadmap-unknown.png": "7cb09f5d464915cc6c3f67029959206bb0165b60e2ab7e869a478f8e859092a4"
+  },
+  "previous_trial2": "RETAINED_NOT_ACCEPTED_OFFSCREEN_AX_OPERATIONS",
+  "driver3": "ordinary_UI_scroll_and_actual_focus_plus_window_bounds"
+}

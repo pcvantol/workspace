@@ -36,7 +36,7 @@ const c=client();
 c.element('token').value='unsent synthetic token';
 await c.element('connect').listeners.click();
 assert.equal(c.requests(),4);
-for (const id of ['execution_progress.overview','execution_progress.run','execution_progress.bind.issue','execution_progress.bind.revoke']) {
+for (const id of ['concept-adoptions.sources','concept-adoptions.access','concept-adoptions.history','concept-adoptions.prepare','concept-adoptions.original','concept-adoptions.bind.issue','concept-adoptions.bind.revoke','execution_progress.overview','execution_progress.run','execution_progress.bind.issue','execution_progress.bind.revoke']) {
   assert.ok(c.element('capabilities').children.some(row=>row.textContent.startsWith(id+' · ')),id);
 }
 assert.equal(c.requests(),4); // Inventory display never invokes the described operations.

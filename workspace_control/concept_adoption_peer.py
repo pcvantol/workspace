@@ -24,21 +24,38 @@ class ConceptAdoptionPeer(ConceptBaselinePeer):
             if not isinstance(v['label'],str) or not 1<=len(v['label'])<=120 or any(ord(c)<32 for c in v['label']):return False
             if type(v['identity']) is not dict or set(v['identity'])!={'status','project_id','repository_id','authority_repository_id','owner_reference'} or v['identity']['status'] not in ('PROVISIONAL_REFERENCE','OWNER_REGISTERED_REFERENCE') or v['identity']['authority_repository_id']!=v['identity']['repository_id']:return False
             if not isinstance(v['source_options'],list) or not 1<=len(v['source_options'])<=16 or len(set(v['source_options']))!=len(v['source_options']):return False
-            for path in v['source_options']:wire.path_safe(path)
+            for path in v['source_options']:
+                wire.path_safe(path)
+                if len(path)>256:return False
+            for k in ('project_id','repository_id','authority_repository_id'):
+                if not isinstance(v['identity'][k],str) or re.fullmatch('[a-z0-9][a-z0-9._-]{2,127}',v['identity'][k]) is None:return False
+            owner=v['identity']['owner_reference']
+            if not isinstance(owner,str) or not 1<=len(owner)<=256 or any(ord(c)<32 for c in owner):return False
             _endpoint(v['endpoint']);stamp=datetime.fromisoformat(v['expires_at'].replace('Z','+00:00'))
             return stamp.utcoffset() is not None and v['permissions'] in (['READ'],['PREPARE','READ']) and type(v['maximum_records']) is int and 1<=v['maximum_records']<=8
         except (KeyError,ValueError,TypeError,WorklistError):return False
+    def _marker(self):
+        try:value=_private_json(self.namespace+'-bindings-initialized.json',dir_fd=self.root_fd)
+        except FileNotFoundError:return None
+        except (OSError,ValueError,UnicodeError):raise WorklistError('INVALID_CONFIGURATION') from None
+        if value!={'schema_version':1} or type(value.get('schema_version')) is not int:raise WorklistError('INVALID_CONFIGURATION')
+        return value
     def _bindings(self):
+        marker=self._marker()
         try:document=_private_json(self.namespace+'-bindings.json',dir_fd=self.root_fd)
         except FileNotFoundError:
-            try:_private_json(self.namespace+'-bindings-initialized.json',dir_fd=self.root_fd)
-            except FileNotFoundError:return []
+            if marker is None:return []
             raise WorklistError('INVALID_CONFIGURATION') from None
         except (OSError,ValueError,UnicodeError):raise WorklistError('INVALID_CONFIGURATION') from None
-        if type(document) is not dict or set(document)!={'bindings'} or type(document['bindings']) is not list or len(document['bindings'])>100 or not all(self._valid_record(b) for b in document['bindings']):raise WorklistError('INVALID_CONFIGURATION')
+        if marker is None or type(document) is not dict or set(document)!={'bindings'} or type(document['bindings']) is not list or len(document['bindings'])>100 or not all(self._valid_record(b) for b in document['bindings']):raise WorklistError('INVALID_CONFIGURATION')
         rows=document['bindings']
         if len({b['id'] for b in rows})!=len(rows):raise WorklistError('INVALID_CONFIGURATION')
         return rows
+    def _write_bindings(self,rows):
+        # Validate both existing allocations before inherited atomic publication.
+        # Only a genuinely pristine namespace may create its first marker.
+        self._bindings()
+        super()._write_bindings(rows)
     def _current(self,scope,identity,source):
         for b in self._bindings():
             if (b['actor_id'],b['context_id'],b['concept_id'],b['id'])==(*scope,identity,source):
@@ -121,9 +138,9 @@ class ConceptAdoptionPeer(ConceptBaselinePeer):
         scope,_,b=self.snapshot(draft,identity,source);self.cap(b,send_guard=lambda:self.dispatch_guard(draft,identity,b))
         with self.dispatch_guard(draft,identity,b):rows=self.intents.list(scope,identity)
         return {'operations':[{'operation_id':v['request']['operation_id'],'source_revision':v['mapping']['source']['revision']} for v in rows if v['binding']==self.descriptor(b)]}
-    def fetch(self,draft,identity,b,intent,*,prepare=False):
+    def fetch(self,draft,identity,b,intent,*,prepare=False,timeout=15):
         operation=intent['request']['operation_id'];guard=lambda:self.dispatch_guard(draft,identity,b)
-        try:value=self._request(b,'GET','intents/'+operation+'?dossier_id='+b['dossier_id'],guard=guard)
+        try:value=self._request(b,'GET','intents/'+operation+'?dossier_id='+b['dossier_id'],guard=guard,timeout=timeout)
         except WorklistError as error:
             if error.state!='INSPECTION_ADOPTION_NOT_FOUND' or getattr(error,'http_status',None)!=404 or not prepare:raise
             with guard():sent=self.intents.claim_dispatch((b['actor_id'],b['context_id']),identity,operation)
@@ -140,8 +157,13 @@ class ConceptAdoptionPeer(ConceptBaselinePeer):
         if 'PREPARE' not in b['permissions'] or concept['lifecycle']=='ARCHIVED':raise WorklistError('DENIED')
         with self.dispatch_guard(draft,identity,b):intent=self.intents.freeze(scope,identity,command,self.descriptor(b))
         return self._publish(draft,identity,b,intent,self.fetch(draft,identity,b,intent,prepare=True))
-    def read(self,draft,identity,source,operation):
-        scope,_,b=self.snapshot(draft,identity,source);self.cap(b,send_guard=lambda:self.dispatch_guard(draft,identity,b))
+    def read(self,draft,identity,source,operation,*,timeout=30):
+        deadline=time.monotonic()+timeout
+        scope,_,b=self.snapshot(draft,identity,source);self.cap(b,timeout=timeout,send_guard=lambda:self.dispatch_guard(draft,identity,b))
         with self.dispatch_guard(draft,identity,b):intent=self.intents.get(scope,identity,operation)
         if intent['binding']!=self.descriptor(b):raise WorklistError('DENIED')
-        return self._publish(draft,identity,b,intent,self.fetch(draft,identity,b,intent))
+        remaining=deadline-time.monotonic()
+        if remaining<=0:raise WorklistError('UNAVAILABLE')
+        value=self.fetch(draft,identity,b,intent,timeout=remaining)
+        if time.monotonic()>=deadline:raise WorklistError('UNAVAILABLE')
+        return self._publish(draft,identity,b,intent,value)

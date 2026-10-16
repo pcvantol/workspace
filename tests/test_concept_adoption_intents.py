@@ -1,7 +1,7 @@
 import unittest,tempfile,os,json
 from pathlib import Path
 from workspace_control.service import initialize,Service
-from workspace_control.concept_adoption_intents import ConceptAdoptionIntents,TABLE,MARKER
+from workspace_control.concept_adoption_intents import ConceptAdoptionIntents,AdoptionSourceRejected,TABLE,MARKER
 from workspace_control.project_concept_library import ProjectConceptLibrary
 from workspace_control.project_concepts import ConceptStorageUnavailable
 from workspace_control.conversations import ConversationConflict
@@ -62,3 +62,14 @@ class ConceptAdoptionIntentTests(unittest.TestCase):
     def test_arbitrary_paths_and_changed_owner_identity_refused(self):
         for choices in [[{'artifact_path':'docs/product/VISION.md','source_path':'/private/foreign','choice':'LINK_EXISTING'}],[{'artifact_path':'docs/product/VISION.md','source_path':'docs/RICHTING.md','choice':'PROPOSE_REPLACEMENT'}]]:
             with self.assertRaises(ValueError):self.freeze(dict(self.command,mappings=choices))
+
+    def test_definitive_source_rejection_has_no_allocated_intent_and_old_revision_stays_original(self):
+        original=self.freeze()
+        self.store.save(self.scope,{'title':'Later revision','notes':'Later description','operation_id':'3'*32,'expected_revision':1},identity=self.source['id'])
+        rejected=dict(self.command,operation_id='4'*32)
+        with self.assertRaises(AdoptionSourceRejected):self.freeze(rejected)
+        with self.assertRaises(FileNotFoundError):self.journal.get(self.scope,self.source['id'],rejected['operation_id'])
+        self.assertEqual(self.freeze(),original)
+        self.assertEqual(len(self.journal.list(self.scope,self.source['id'])),1)
+        admitted=self.freeze(dict(rejected,expected_revision=2))
+        self.assertEqual(admitted['mapping']['source']['revision'],2)

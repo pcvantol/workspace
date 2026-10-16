@@ -15,7 +15,19 @@ class AdoptionWireTests(unittest.TestCase):
  def test_pending_original_never_means_completed_or_applied(self):
   b=dict(instance_id='forge',principal_id='owner',audience='workspace',pairing_id='existing',dossier_id='dossier')
   request={'operation_id':'original'}
-  v={**b,'contract_version':wire.CONTRACT,'operation_id':'original','plan_id':'plan-original','request_digest':wire.peer_digest(request),'state':'PREPARING','result':None,'proposal_kind':wire.KIND,'original_intent':True,'approval':'NOT_PERFORMED','registration':'NOT_PERFORMED'}
+  v={**b,'contract_version':wire.CONTRACT,'operation_id':'original','plan_id':'inspection-proposal-'+hashlib.sha256(wire.canonical([b[k] for k in ('instance_id','principal_id','audience','dossier_id')]+['original'])+b'\n').hexdigest()[:32],'request_digest':wire.peer_digest(request),'state':'PREPARING','result':None,'proposal_kind':wire.KIND,'original_intent':True,'approval':'NOT_PERFORMED','registration':'NOT_PERFORMED'}
   self.assertEqual(wire.result(v,b,request),v)
   for change in [dict(operation_id='new'),dict(request_digest='0'*64),dict(state='PREPARED'),dict(approval='APPROVED')]:
    with self.assertRaises(WorklistError):wire.result({**v,**change},b,request)
+
+ def test_observed_synthetic_packet_and_tampering(self):
+  f=json.loads(Path(__file__).with_name('fixtures').joinpath('inspection-adoption-observed.json').read_text());b=f['binding'];request=f['request'];v=f['response']
+  self.assertEqual(wire.result(v,b,request),v)
+  for field in ['instance_id','principal_id','audience','dossier_id','pairing_id','operation_id','request_digest','plan_id']:
+   changed=copy.deepcopy(v);changed[field]='foreign'
+   with self.assertRaises(WorklistError):wire.result(changed,b,request)
+  for field in ['result_digest','input_digest']:
+   changed=copy.deepcopy(v);changed['result'][field]='0'*64
+   with self.assertRaises(WorklistError):wire.result(changed,b,request)
+  changed=copy.deepcopy(v);changed['result']['artifacts'][0]['content']+='tampered'
+  with self.assertRaises(WorklistError):wire.result(changed,b,request)
