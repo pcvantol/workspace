@@ -1,0 +1,137 @@
+{
+  "assignment": "L4-NATIVE-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
+  "join": "L3-L4-INSPECTION-ADOPTION-PREVIEW-V1-20261016",
+  "plan": 108,
+  "version": "2.8.32",
+  "release_class": "NO_BUMP",
+  "version_operation": "workspace-plan108-inspection-adoption-finalization-20261016",
+  "implementation_pr": "https://github.com/pcvantol/workspace/pull/183",
+  "protected_implementation_main": "28c9aa35f14feea03fe3cc645a88198cea3fbf17",
+  "reviewed_source": "5a33425fffb0cce6fbc7279b8319a4be7790ceb9",
+  "exact_reviewed_tree": "69d985b0e234fd34fb8af83a566be9c8bf566ea5",
+  "checks": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T12:25:51Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38900397964/job/116970930718",
+      "name": "validate-version-source",
+      "startedAt": "2026-10-16T12:25:28Z",
+      "status": "COMPLETED",
+      "workflowName": "Canonical product versioning"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T12:28:44Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38900404409/job/116970954545",
+      "name": "TDE observe (non-blocking)",
+      "startedAt": "2026-10-16T12:25:32Z",
+      "status": "COMPLETED",
+      "workflowName": "TDE observe"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T12:28:50Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38900404360/job/116970953763",
+      "name": "Foundation validation",
+      "startedAt": "2026-10-16T12:25:32Z",
+      "status": "COMPLETED",
+      "workflowName": "Workspace CI"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T12:35:13Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38900404425/job/116970953906",
+      "name": "Native app build and transport tests",
+      "startedAt": "2026-10-16T12:25:38Z",
+      "status": "COMPLETED",
+      "workflowName": "Workspace native macOS Client"
+    },
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-10-16T12:29:05Z",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/pcvantol/workspace/actions/runs/38900404360/job/116970954004",
+      "name": "Python 3.14 installed Server",
+      "startedAt": "2026-10-16T12:25:32Z",
+      "status": "COMPLETED",
+      "workflowName": "Workspace CI"
+    }
+  ],
+  "actual_TDE": {
+    "source": "5a33425fffb0cce6fbc7279b8319a4be7790ceb9",
+    "workflow": 38900404409,
+    "artifact": 12045718483,
+    "runtime": "1.1.1",
+    "assessment": "PASS_WITH_WARNINGS",
+    "repository": "QUALIFIED",
+    "qualification_id": "repository-qualification.b1f62caa2e407dccd9ff876b",
+    "assessment_evidence_id": "sha256:b29f2622eb241cae4d0c6083fadf09d4b7ef333ac5b37c2d53039841d13a7f8d",
+    "repository_assessment_evidence_id": "sha256:67ca4bf1053f58b4381b56fd90408c72f40fceeba0bf7878bb485a16a8f21632",
+    "product_maximum": 29,
+    "exits": [
+      1,
+      1
+    ],
+    "raw_file_hashes": {
+      "qualification.json": "4c19a60fbcfbe5640b2f33a141372cec7c9c11867903b81d1d6d390db8fa0986",
+      "assessment.json": "b6324a242cf99e084c89ecf3c4531eac2b88343b13d074c56ddd9e575b98799d",
+      "summary.txt": "17cd1a60d0a53b781c371b0aa0cb10015ab2b81d49ace8dd41d8184c059a3df4",
+      "executed-capabilities.txt": "fe31fad471f3e0ecd976daf4a924afe6bb86c662e72a5fdf4e2a0b22db765f11"
+    },
+    "coverage_evidence": "separate owning strict runtime gate, not supplied to TDE"
+  },
+  "source_and_complete_scoped_candidate_reviews": {
+    "Quality": "PASS",
+    "Security": "PASS",
+    "UX": "PASS"
+  },
+  "validation8": {
+    "source": "5a33425fffb0cce6fbc7279b8319a4be7790ceb9",
+    "result": "PASS",
+    "native": 348,
+    "isolated_native": 1,
+    "each_changed_production_executable_lines": ">80.2%",
+    "own_finalization_validation9": "REQUIRED"
+  },
+  "qualified_producers": {
+    "Forge": "2.21.0/cd483fd9b17a96d0deac0f0264ab6fc32c75e778",
+    "EP": "2.3.121/f3b56303b561a7193965f4aa41fd8da744a8c1c2",
+    "distinct_rebuild_payloads_and_entrypoints_equal_owning_qualified_source": true
+  },
+  "candidate_runtime_source": "170631191282970d7c0c5378fa7cd767db18bb83",
+  "candidate_publication": "https://github.com/pcvantol/workspace/tree/5a33425fffb0cce6fbc7279b8319a4be7790ceb9/docs/qualification/plan108-bounded-candidate-20261016",
+  "candidate_complete": [
+    "matrix23",
+    "small24"
+  ],
+  "safe_original_screenshots": 15,
+  "retained_unchanged_original_recovery": [
+    "matrix5 source d93ac81",
+    "causal A-to-B matrix14",
+    "negative finite expiry15",
+    "wrong actor/context18",
+    "corrupt/red exact-byte-restored/green21"
+  ],
+  "inherited_20_21_22_source_field_correction": "Originals and failures preserved; actual executed Client/Server Git/export/install/PIF/sections independently verified; never relabeled partial or failed outcomes PASS",
+  "cumulative": {
+    "plan": 108,
+    "source_rounds": 13,
+    "installed_attempts": 9,
+    "operational_trials": 24,
+    "full_validations_started": 8,
+    "no_administrative_maximum": true,
+    "historical_consumption_preserved": true,
+    "initial_version_allocation": "2.8.32",
+    "prior_plan107_terminal": "6209882252",
+    "qualified_peer_artifact_builds": 2,
+    "qualified_native_runtime_artifact_installs": 1
+  },
+  "new_exact_final_main_installed": "REQUIRED_AFTER_OWN_FINALIZATION_PROTECTED_MERGE",
+  "terminal_receipt": "External immutable evidence readback after fresh final-main qualification; no recursive future SHA claim",
+  "scope": "Only SELECTED_INSPECTION_ADOPTION_PREVIEW and LINKED_INSPECTION_SOURCE_PRESENTATION_ONLY; full PB-W1-INSPECT/PB-W2-SETUP parents OPEN",
+  "closed_predecessors_and_LINK_preserved": true
+}
