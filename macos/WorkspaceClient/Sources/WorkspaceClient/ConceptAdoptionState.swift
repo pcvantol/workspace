@@ -24,8 +24,8 @@ import Combine
     func nav(_ c:ConceptConnection,_ concept:ProjectConcept) throws->Navigation? {try records.load(key(c,concept,"navigation")).map{try JSONDecoder().decode(Navigation.self,from:$0)}}
     func saveNav(_ c:ConceptConnection,_ concept:ProjectConcept,source:String,operation:String?,document:String?) throws {try records.saveBounded(JSONEncoder().encode(Navigation(source:source,operation:operation,document:document)),key:key(c,concept,"navigation"))}
     func chooseDocument(_ path:String,concept:ProjectConcept,current:@escaping @MainActor () async throws->ConceptConnection) async {
-        let ticket=generation;let selected=source
-        do {let c=try await current();try await checked(c,concept,selected,ticket:ticket,current:current);guard let result,result.document?.entries.contains(where:{$0.id==path})==true else{throw ConceptError.invalid};let next=expandedDocument==path ? "":path;try saveNav(c,concept,source:selected,operation:result.operation_id,document:next);expandedDocument=next}
+        let ticket=generation;let selected=source;let operation=result?.operation_id
+        do {let c=try await current();try await checked(c,concept,selected,ticket:ticket,current:current);guard result?.operation_id==operation else{return};guard let result,result.document?.entries.contains(where:{$0.id==path})==true else{throw ConceptError.invalid};let next=expandedDocument==path ? "":path;try saveNav(c,concept,source:selected,operation:result.operation_id,document:next);expandedDocument=next}
         catch {if ticket==generation {failure(error)}}
     }
     func failure(_ error:Error) {result=nil;switch error {case ConceptAdoptionError.capacity:phase="capacity";case ConceptAdoptionError.sourceRejected:phase="sourceRejected";case ConceptError.denied:conceal();phase="access";case ConceptError.conflict:phase="conflict";case ConceptError.notFound:phase=pending?.limitObserved==true ? "capacity":"notFound";case ConceptError.invalid,is DecodingError:phase="invalid";default:phase="unavailable"}}
@@ -64,20 +64,29 @@ import Combine
                     if WorksetReleaseWire.date(cap.expires_at).map({$0>Date()}) != true {self.conceal();return}
                 }
             }
-            monitor=Task { [weak self] in
-                while !Task.isCancelled {
-                    try? await Task.sleep(for:.seconds(3));guard !Task.isCancelled,let self,self.generation==ticket else{return}
-                    do {
-                        try await self.refreshOriginal(c,concept:concept,selected:selected,cap:cap,ticket:ticket,current:current)
-                    } catch {if self.generation==ticket {self.failure(error)};return}
-                }
-            }
+            startMonitor(c,concept:concept,selected:selected,cap:cap,ticket:ticket,current:current)
             let previous=try nav(c,concept)
             let operation=journal?.retired==true || journal?.rejected==true ? nil:journal?.complete==false ? journal?.command.operation_id:(previous?.source==selected ? previous?.operation:nil) ?? journal?.command.operation_id
             try saveNav(c,concept,source:selected,operation:operation,document:previous?.source==selected ? previous?.document:nil)
             if journal?.rejected==true && journal?.retired != true {phase="sourceRejected"}
             else if let operation {await open(operation,concept:concept,current:current)}
         } catch {if ticket==generation {failure(error)}}
+    }
+    private func startMonitor(_ c:ConceptConnection,concept:ProjectConcept,selected:String,cap:ConceptAdoptionAccess,ticket:Int,current:@escaping @MainActor () async throws->ConceptConnection) {
+    monitor=Task { [weak self] in
+        while !Task.isCancelled {
+            try? await Task.sleep(for:.seconds(3));guard !Task.isCancelled,let self,self.generation==ticket else{return}
+            do {
+                try await self.refreshOriginal(c,concept:concept,selected:selected,cap:cap,ticket:ticket,current:current)
+            } catch {
+                guard !Task.isCancelled,self.generation==ticket else{return}
+                self.failure(error)
+                // A recoverable read failure must not abandon capability checks.
+                // DENIED uses conceal(), invalidating this scope and outstanding reads.
+                guard self.generation==ticket else{return}
+            }
+        }
+    }
     }
     func prepare(_ concept:ProjectConcept,paths:[String],vision:String?,current:@escaping @MainActor () async throws->ConceptConnection) async {
         guard !busy,pending==nil,let cap=access,cap.can_prepare,!paths.isEmpty else{return}
@@ -118,7 +127,10 @@ import Combine
         let fresh=try await transport.read(c,concept:concept.id,source:selected,operation:operation)
         try fresh.validate(c,concept:concept,source:selected,operation:operation)
         try await checked(c,concept,selected,ticket:ticket,current:current)
-        guard generation==ticket,result?.operation_id==operation else{throw CancellationError()}
+        guard generation==ticket else{throw CancellationError()}
+        // Explicit original navigation may temporarily clear or replace the result.
+        // Discard that obsolete observation without stopping the authority monitor.
+        guard !busy,result?.operation_id==operation else{return}
         try accept(fresh,c:c,concept:concept,selected:selected,ticket:ticket)
     }
     func accept(_ value:ConceptAdoptionResult,c:ConceptConnection,concept:ProjectConcept,selected:String,ticket:Int) throws {
