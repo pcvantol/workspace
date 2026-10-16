@@ -57,7 +57,10 @@ struct ConceptAdoptionTransport:ConceptAdoptionServing {
         let url=try ServerEndpoint(c.access.endpoint).route("/v1/concept-adoptions/"+concept+"/"+action);var req=URLRequest(url:url);req.httpMethod=body==nil ? "GET":"POST";req.httpBody=body
         req.setValue("Bearer "+c.bearer,forHTTPHeaderField:"Authorization");req.setValue(c.access.instanceID,forHTTPHeaderField:"X-Workspace-Instance");req.setValue(c.access.token,forHTTPHeaderField:"X-Workspace-Draft-Grant");if body != nil {req.setValue("application/json",forHTTPHeaderField:"Content-Type")}
         let (data,response)=try await session.data(for:req);guard let http=response as? HTTPURLResponse,http.url==url,data.count<=1150000,http.value(forHTTPHeaderField:"Content-Type")?.hasPrefix("application/json")==true else{throw ConceptError.invalid}
-        switch http.statusCode {case 200:break;case 401,403:throw ConceptError.denied;case 409:
+        switch http.statusCode {case 200:break;case 403:
+            if action.hasSuffix("/prepare"),let error=try? JSONDecoder().decode([String:String].self,from:data),error==["error":"DENIED","reason":"ADOPTION_SOURCE_ARCHIVED_BEFORE_CAPTURE"] {throw ConceptAdoptionError.sourceRejected}
+            throw ConceptError.denied;
+        case 401:throw ConceptError.denied;case 409:
             if action.hasSuffix("/prepare"),let error=try? JSONDecoder().decode([String:String].self,from:data),error==["error":"ADOPTION_SOURCE_REJECTED_BEFORE_CAPTURE"] {throw ConceptAdoptionError.sourceRejected}
             throw ConceptError.conflict;case 404:throw ConceptError.notFound;case 400:throw ConceptError.invalid;default:throw ConceptError.unavailable}
         return try JSONDecoder().decode(T.self,from:data)

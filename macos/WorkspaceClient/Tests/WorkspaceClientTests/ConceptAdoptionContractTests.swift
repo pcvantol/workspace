@@ -47,6 +47,9 @@ final class ConceptAdoptionContractTests:XCTestCase {
         AdoptionURLProtocol.reply={_ in (409,Data("{\"error\":\"ADOPTION_SOURCE_REJECTED_BEFORE_CAPTURE\"}".utf8),"application/json")}
         do {_=try await t.prepare(connection,concept:concept.id,source:source,command:command);XCTFail()}catch ConceptAdoptionError.sourceRejected {}
         do {_=try await t.read(connection,concept:concept.id,source:source,operation:concept.id);XCTFail()}catch ConceptError.conflict {}
+        AdoptionURLProtocol.reply={_ in (403,Data("{\"error\":\"DENIED\",\"reason\":\"ADOPTION_SOURCE_ARCHIVED_BEFORE_CAPTURE\"}".utf8),"application/json")}
+        do {_=try await t.prepare(connection,concept:concept.id,source:source,command:command);XCTFail()}catch ConceptAdoptionError.sourceRejected {}
+        do {_=try await t.read(connection,concept:concept.id,source:source,operation:concept.id);XCTFail()}catch ConceptError.denied {}
         for code in [401,403,404,400,409,503] {
             AdoptionURLProtocol.reply={_ in (code,Data("{}".utf8),"application/json")}
             do {_=try await t.access(connection,concept:concept.id,source:source);XCTFail()}catch ConceptError.denied {XCTAssertTrue([401,403].contains(code))}catch ConceptError.notFound {XCTAssertEqual(code,404)}catch ConceptError.invalid {XCTAssertEqual(code,400)}catch ConceptError.conflict {XCTAssertEqual(code,409)}catch ConceptError.unavailable {XCTAssertEqual(code,503)}
@@ -70,6 +73,7 @@ final class ConceptAdoptionContractTests:XCTestCase {
             state.phase=phase;state.pending = .init(key:"rejected",concept:concept.id,source:source,command:.init(operation_id:concept.id,expected_revision:1,requested_artifacts:["docs/product/VISION.md"],mappings:[]),complete:false,rejected:true)
             let host=NSHostingView(rootView:ConceptAdoptionPanel(state:state,concept:concept,dirty:true,current:{active}));host.frame=NSRect(x:0,y:0,width:520,height:780);host.layoutSubtreeIfNeeded();_=host.fittingSize
         }
+        XCTAssertEqual(ConceptAdoptionCopy.text("missing-copy-key","nl"),"")
         XCTAssertEqual(ConceptAdoptionCopy.text("title","unknown"),ConceptAdoptionCopy.text("title","en"));state.conceal()
     }
 }

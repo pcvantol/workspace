@@ -3,12 +3,15 @@ from contextlib import nullcontext
 import http.client
 import json
 import ssl
+import socket
+import threading
+import time
 from .forge_peer import _endpoint
 from .review_peer import _unique_pairs
 from .worklist_peer import WorklistError
 from .advisory_contract import validate
 
-def request(binding, method, path, body=None, *, gate=None, error_validator=validate, maximum_bytes=65536, missing_as_state=None, proposal_audience=None, concept_audience=None, content_audience=None, send_guard=None, timeout=60, inspection_audience=None, success_statuses=(200,)):
+def request(binding, method, path, body=None, *, gate=None, error_validator=validate, maximum_bytes=65536, missing_as_state=None, proposal_audience=None, concept_audience=None, content_audience=None, send_guard=None, timeout=60, inspection_audience=None, success_statuses=(200,), absolute_timeout=False):
     if sum(value is not None for value in (proposal_audience,concept_audience,content_audience,inspection_audience))>1:
         raise WorklistError('INVALID_CONFIGURATION')
     audience=inspection_audience if inspection_audience is not None else content_audience if content_audience is not None else concept_audience if concept_audience is not None else proposal_audience
@@ -16,17 +19,29 @@ def request(binding, method, path, body=None, *, gate=None, error_validator=vali
         raise WorklistError('INVALID_CONFIGURATION')
     scheme,host,port=_endpoint(binding['endpoint'])
     connection=(http.client.HTTPSConnection(host,port,timeout=timeout,context=ssl.create_default_context()) if scheme=='https' else http.client.HTTPConnection(host,port,timeout=timeout))
+    deadline=time.monotonic()+timeout;timer=None
     try:
+        if absolute_timeout:
+            # Only this call's own socket is interrupted. No authority lock is held
+            # during connect, headers or body reads; other consumers keep defaults.
+            connection.connect()
+            sock=connection.sock
+            if time.monotonic()>=deadline:raise WorklistError('UNAVAILABLE')
+            def expire():
+                try:sock.shutdown(socket.SHUT_RDWR)
+                except OSError:pass
+            timer=threading.Timer(max(.001,deadline-time.monotonic()),expire);timer.daemon=True;timer.start()
         payload=None if body is None else json.dumps(body,sort_keys=True,ensure_ascii=content_audience is None,separators=(',',':')).encode()
         if send_guard is not None:
             from .concept_baseline_dispatch import install_guarded_send
-            connection.connect()  # DNS/TLS/connect wait holds no own authority lock.
+            if connection.sock is None:connection.connect()  # DNS/TLS/connect wait holds no own authority lock.
             install_guarded_send(connection,send_guard,timeout)
         with gate or nullcontext():
             headers={'Authorization':'Bearer '+binding['forge_token'],'Content-Type':'application/json','Accept':'application/json'}
             if audience is not None:
                 headers['X-Forge-Inspection-Audience' if inspection_audience is not None else 'X-Forge-Content-Audience' if content_audience is not None else 'X-Forge-Concept-Audience' if concept_audience is not None else 'X-Forge-Proposal-Audience']=audience
             connection.request(method,path,body=payload,headers=headers)
+        if absolute_timeout and time.monotonic()>=deadline:raise WorklistError('UNAVAILABLE')
         response=connection.getresponse()
         if response.status in (401,403):raise WorklistError('DENIED')
         if response.status==404 and missing_as_state:raise WorklistError(missing_as_state)
@@ -34,6 +49,7 @@ def request(binding, method, path, body=None, *, gate=None, error_validator=vali
         length=response.getheader('Content-Length')
         if length is not None and (not length.isdecimal() or int(length)>maximum_bytes):raise WorklistError('INVALID_RESPONSE')
         raw=response.read(maximum_bytes+1)
+        if absolute_timeout and time.monotonic()>=deadline:raise WorklistError('UNAVAILABLE')
         if len(raw)>maximum_bytes:raise WorklistError('INVALID_RESPONSE')
         value=json.loads(raw,object_pairs_hook=_unique_pairs)
         if response.status not in success_statuses:
@@ -43,4 +59,6 @@ def request(binding, method, path, body=None, *, gate=None, error_validator=vali
     except (ssl.SSLCertVerificationError,ssl.CertificateError):raise WorklistError('TLS_UNTRUSTED') from None
     except (OSError,TimeoutError,http.client.HTTPException):raise WorklistError('UNAVAILABLE') from None
     except (ValueError,UnicodeError,RecursionError):raise WorklistError('INVALID_RESPONSE') from None
-    finally:connection.close()
+    finally:
+        if timer is not None:timer.cancel()
+        connection.close()

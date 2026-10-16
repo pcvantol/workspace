@@ -1,3 +1,14 @@
+## Plan108 round4 source checkpoint — complete qualification still open
+
+28directedPython/11native PASS;63existing readonly PASS. All four new native
+production sources exceed80.2% directed executable coverage (85.42–100%).
+Archive PREPARE remains403/no effects with narrowly proven own nonfuture
+pre-capture rejection; original monitor/recovery, marker and fixed own-socket
+publication bound fixed. Earlier failures/caches/artifacts preserved; no reset.
+Own4source/2artifact/3operational/3full starts; next frozen source validation,
+expanded genuine matrix, Q/S/UX/CI/TDE, protected source/finalization and NEW
+exact-final-main qualification remain required. Same writer/2.8.32/closed history.
+
 ## Plan108 partial actual chain; complete delivery remains open
 
 [First actual small native/Server/Forge/EP chain](docs/qualification/plan108-first-small-chain-20261016/README.md)

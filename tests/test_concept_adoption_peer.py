@@ -68,3 +68,28 @@ class ConceptAdoptionPeerTests(unittest.TestCase):
   with patch.object(peer,'cap',side_effect=lambda *a,**kw:time.sleep(.02)),patch.object(peer,'fetch') as fetch:
    with self.assertRaises(WorklistError) as error:peer.read(self.token,self.source['id'],b['id'],self.command['operation_id'],timeout=.001)
    self.assertEqual(error.exception.state,'UNAVAILABLE');fetch.assert_not_called()
+
+ def test_absolute_transport_deadline_interrupts_dripping_headers_or_body(self):
+  import threading,time
+  from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
+  from workspace_control.advisory_http import request
+  for drip_headers in (False,True):
+   class Handler(BaseHTTPRequestHandler):
+    def log_message(self,*args):pass
+    def do_GET(self):
+     payload=b'{"value":"'+b'x'*100+b'"}'
+     try:
+      self.send_response(200)
+      if drip_headers:
+       self.wfile.write(b'X-Drip: ');self.wfile.flush()
+       for _ in range(100):self.wfile.write(b'x');self.wfile.flush();time.sleep(.03)
+       self.wfile.write(b'\r\n')
+      self.send_header('Content-Type','application/json');self.send_header('Content-Length',str(len(payload)));self.end_headers()
+      for byte in payload:self.wfile.write(bytes([byte]));self.wfile.flush();time.sleep(.03)
+     except (OSError,BrokenPipeError):pass
+   server=ThreadingHTTPServer(('127.0.0.1',0),Handler);thread=threading.Thread(target=server.serve_forever);thread.start()
+   start=time.monotonic()
+   try:
+    with self.assertRaises(WorklistError) as error:request({'endpoint':'http://127.0.0.1:'+str(server.server_port),'forge_token':'T'*64},'GET','/source-only',inspection_audience='workspace',timeout=.15,absolute_timeout=True)
+    self.assertEqual(error.exception.state,'UNAVAILABLE');self.assertLess(time.monotonic()-start,.8)
+   finally:server.shutdown();server.server_close();thread.join()

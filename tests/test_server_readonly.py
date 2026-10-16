@@ -308,7 +308,16 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual(set(operations), set(OPERATIONS))
         http_routes = {operation["path"] for operation in operations.values()
                        if operation["exposure"] == "HTTP_EXPOSED" and
-                       not operation["id"].startswith(("execution_progress.", "concept-chats.", "project_link.", "concept-baselines.", "project_concepts.", "conversations.", "reviews.", "worksets.", "workset-controls.", "workset-releases.", "workset-orders.", "workset-activity.", "advisory.", "candidate.", "mission-concepts."))}
+                       not operation["id"].startswith(("execution_progress.", "concept-adoptions.", "concept-chats.", "project_link.", "concept-baselines.", "project_concepts.", "conversations.", "reviews.", "worksets.", "workset-controls.", "workset-releases.", "workset-orders.", "workset-activity.", "advisory.", "candidate.", "mission-concepts."))}
+        adoption = {key: operation for key, operation in operations.items() if key.startswith("concept-adoptions.")}
+        self.assertEqual(set(adoption), {"concept-adoptions." + name for name in ("sources", "access", "history", "prepare", "original", "bind.issue", "bind.revoke")})
+        for key, operation in adoption.items():
+            if ".bind." in key:
+                self.assertEqual(operation["exposure"], "LOCAL_ONLY_ADMIN")
+                self.assertEqual(operation["auth"], "PRIVATE_ROOT_OWNER")
+            else:
+                self.assertEqual(operation["auth"], "BEARER_PINNED_AND_DRAFT_GRANT")
+                self.assertEqual(operation["method"], "POST" if key.endswith("prepare") else "GET")
         self.assertEqual(http_routes, set(ROUTES))
         self.assertEqual(operations["projects.read"]["local_cli"], "projects")
         self.assertEqual(operations["capabilities.read"]["local_cli"], "capabilities")
@@ -316,13 +325,13 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual({api["paths"][path]["get"]["operationId"] for path in http_routes},
                          {operation["id"] for operation in operations.values()
                           if operation["exposure"] == "HTTP_EXPOSED" and
-                          not operation["id"].startswith(("execution_progress.", "concept-chats.", "project_link.", "concept-baselines.", "project_concepts.", "conversations.", "reviews.", "worksets.", "workset-controls.", "workset-releases.", "workset-orders.", "workset-activity.", "advisory.", "candidate.", "mission-concepts."))})
+                          not operation["id"].startswith(("execution_progress.", "concept-adoptions.", "concept-chats.", "project_link.", "concept-baselines.", "project_concepts.", "conversations.", "reviews.", "worksets.", "workset-controls.", "workset-releases.", "workset-orders.", "workset-activity.", "advisory.", "candidate.", "mission-concepts."))})
         self.assertEqual({operation["id"] for operation in operations.values()
                           if operation["exposure"] == "LOCAL_ONLY_ADMIN"},
                          {"instance.init", "instance.inspect", "forge.read.configure", "server.serve",
                           "execution_progress.bind.issue", "execution_progress.bind.revoke",
                           "conversations.grant.issue", "conversations.grant.revoke",
-                          "project_link.bind.issue", "project_link.bind.revoke", "concept-chats.bind.issue", "concept-chats.bind.revoke", "concept-baselines.bind.issue", "concept-baselines.bind.revoke", "reviews.bind.issue", "reviews.bind.revoke", "worksets.bind.issue", "worksets.bind.revoke", "workset-controls.bind.issue", "workset-controls.bind.revoke", "advisory.bind.issue", "advisory.bind.revoke", "mission.bind.issue", "mission.bind.revoke", "workset-releases.bind.issue", "workset-releases.bind.revoke", "workset-orders.bind.issue", "workset-orders.bind.revoke", "workset-activity.bind.issue", "workset-activity.bind.revoke", "candidate.bind.issue", "candidate.bind.revoke"})
+                          "concept-adoptions.bind.issue", "concept-adoptions.bind.revoke", "project_link.bind.issue", "project_link.bind.revoke", "concept-chats.bind.issue", "concept-chats.bind.revoke", "concept-baselines.bind.issue", "concept-baselines.bind.revoke", "reviews.bind.issue", "reviews.bind.revoke", "worksets.bind.issue", "worksets.bind.revoke", "workset-controls.bind.issue", "workset-controls.bind.revoke", "advisory.bind.issue", "advisory.bind.revoke", "mission.bind.issue", "mission.bind.revoke", "workset-releases.bind.issue", "workset-releases.bind.revoke", "workset-orders.bind.issue", "workset-orders.bind.revoke", "workset-activity.bind.issue", "workset-activity.bind.revoke", "candidate.bind.issue", "candidate.bind.revoke"})
         self.assertTrue(all("path" not in operation for operation in operations.values()
                             if operation["exposure"] == "LOCAL_ONLY_ADMIN"))
         self.assertTrue(all(operation["auth"] in {"BEARER_PINNED", "BEARER_PINNED_AND_DRAFT_GRANT",

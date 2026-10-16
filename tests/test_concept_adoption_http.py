@@ -92,3 +92,25 @@ class AdoptionHTTPTests(unittest.TestCase):
   issued=self.peer.provision(str(config));self.assertEqual(issued['state'],'OWNER_LINKED_SETUP_METADATA')
   self.peer.revoke(issued['binding_id'])
   (self.root/'concept-adoption-bindings.json').unlink();self.assertEqual(self.request('/v1/concept-adoptions/'+self.identity+'/sources')[0],503);self.assertFalse((self.root/'concept-adoption-bindings.json').exists())
+
+ def test_late_archived_source_stays403_with_proven_pre_capture_receipt_then_restore(self):
+  from workspace_control.project_concept_library import ProjectConceptLibrary
+  library=ProjectConceptLibrary(self.service.project_concepts)
+  library.move(('alice','own-context'),self.identity,dict(operation_id='c'*32,expected_revision=1,lifecycle='ARCHIVED'))
+  self.assertEqual(self.request(self.prefix+'/prepare','POST',self.command()),(403,{'error':'DENIED','reason':'ADOPTION_SOURCE_ARCHIVED_BEFORE_CAPTURE'}))
+  self.assertEqual(self.posts,[]);self.assertEqual(self.request(self.prefix+'/operations/'+'b'*32),(404,{'error':'ADOPTION_NOT_FOUND'}))
+  restored=library.move(('alice','own-context'),self.identity,dict(operation_id='d'*32,expected_revision=2,lifecycle='ACTIVE'))
+  new=self.command();new['operation_id']='e'*32;new['expected_revision']=restored['revision']
+  self.assertEqual(self.request(self.prefix+'/prepare','POST',new)[0],200);self.assertEqual(len(self.posts),1)
+  self.assertEqual(self.request(self.prefix+'/operations/'+'b'*32)[0],404)
+  library.move(('alice','own-context'),self.identity,dict(operation_id='f'*32,expected_revision=3,lifecycle='ARCHIVED'))
+  self.assertEqual(self.request(self.prefix+'/prepare','POST',new),(403,{'error':'DENIED'}))
+  self.assertEqual(self.request(self.prefix+'/operations/'+'e'*32)[0],200);self.assertEqual(len(self.posts),1)
+
+ def test_future_revision_never_produces_retireable_receipt_after_archive(self):
+  from workspace_control.project_concept_library import ProjectConceptLibrary
+  future=self.command();future['expected_revision']=3
+  self.assertEqual(self.request(self.prefix+'/prepare','POST',future),(409,{'error':'ADOPTION_CONFLICT'}))
+  ProjectConceptLibrary(self.service.project_concepts).move(('alice','own-context'),self.identity,dict(operation_id='c'*32,expected_revision=1,lifecycle='ARCHIVED'))
+  self.assertEqual(self.request(self.prefix+'/prepare','POST',future),(403,{'error':'DENIED'}))
+  self.assertEqual(self.posts,[])

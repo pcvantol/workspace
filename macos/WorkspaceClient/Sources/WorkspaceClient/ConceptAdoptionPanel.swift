@@ -39,7 +39,9 @@ struct ConceptAdoptionPanel:View {
                         ProposalCompareControl(title:text("newAfterRejected"),focused:focus=="adoption-retire-rejected") {Task {await state.retireRejected(concept:concept,current:current)}}.disabled(state.busy).focused($focus,equals:"adoption-retire-rejected").id("adoption-retire-rejected").accessibilityIdentifier("adoption-retire-rejected")
                     }
                     Text(text(state.phase=="sourceRejected" ? "sourceRejected":"pending")).fixedSize(horizontal:false,vertical:true)
+                    if state.phase != "sourceRejected" {
                     ProposalCompareControl(title:text("resume"),focused:focus=="adoption-resume") {Task {await state.open(pending.command.operation_id,concept:concept,current:current)}}.disabled(state.busy).focused($focus,equals:"adoption-resume").id("adoption-resume").accessibilityIdentifier("adoption-resume")
+                    }
                 } else {
                     ProposalCompareControl(title:text("prepare"),focused:focus=="adoption-prepare") {Task {await state.prepare(concept,paths:requested.sorted(),vision:confirmed ? vision:nil,current:current)}}
                         .focused($focus,equals:"adoption-prepare").id("adoption-prepare").disabled(dirty || state.busy || state.access?.can_prepare != true || requested.isEmpty || (!vision.isEmpty && !confirmed)).accessibilityIdentifier("adoption-prepare")

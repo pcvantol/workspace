@@ -20,6 +20,9 @@ RECORD_BYTES=192000
 COLUMNS={'actor_id','context_id','concept_id','operation_id','command_digest','record','record_digest','dispatched'}
 BINDING={'id','actor_id','context_id','concept_id','instance_id','dossier_id','audience','producer_source','principal_id','pairing_id','identity','source_options'}
 
+class AdoptionArchivedRejected(PermissionError):
+    """Archived PREPARE stays denied; own original is proven never captured."""
+
 class AdoptionSourceRejected(ConversationConflict):
     """Own CAS rejected before any original intent was allocated."""
 
@@ -75,6 +78,7 @@ class ConceptAdoptionIntents:
                         if prior is not None:
                             if prior['command_digest']!=key:raise ConversationConflict('original proposal request changed')
                             return self._original(prior,scope,identity,operation)
+                    if current['revision']<command['expected_revision']:raise ConversationConflict('future concept revision')
                     if lifecycle_for(self.base,db,identity)=='ARCHIVED':raise AdoptionSourceRejected('restore concept before preparing')
                     if current['revision']!=command['expected_revision']:raise AdoptionSourceRejected('concept revision changed')
                     source=self.store._record(current)

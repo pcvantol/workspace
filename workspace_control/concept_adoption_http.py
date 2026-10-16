@@ -5,7 +5,7 @@ from .concept_baseline_http import protected_reply
 from .workset_release_http import _body
 from .worklist_peer import WorklistError
 from .conversations import ConversationConflict
-from .concept_adoption_intents import AdoptionSourceRejected
+from .concept_adoption_intents import AdoptionSourceRejected,AdoptionArchivedRejected
 from .project_concepts import ConceptStorageUnavailable
 
 def route(handler,service):
@@ -41,6 +41,7 @@ def route(handler,service):
                 current=peer.read(draft,identity,source,value['operation_id'],timeout=remaining)
                 if current!=value:raise WorklistError('CONFLICT')
         protected_reply(handler,service,draft,identity,binding,value,peer=SimpleNamespace(cap=publication_cap,dispatch_guard=peer.dispatch_guard))
+    except AdoptionArchivedRejected:handler._reply(403,{'error':'DENIED','reason':'ADOPTION_SOURCE_ARCHIVED_BEFORE_CAPTURE'})
     except (PermissionError,WorklistError) as error:
         code=getattr(error,'state','DENIED');status=403 if code in ('DENIED','UNAUTHORIZED') else 404 if code=='INSPECTION_ADOPTION_NOT_FOUND' and getattr(error,'http_status',None)==404 else 409 if 'CONFLICT' in code or 'CAPACITY' in code else 503
         handler._reply(status,{'error':code})

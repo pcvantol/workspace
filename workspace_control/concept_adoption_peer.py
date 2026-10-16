@@ -8,7 +8,7 @@ from .service import _private_json,_regular_private
 from .forge_peer import _endpoint
 from .review_peer import _id
 from .project_concept_library import ProjectConceptLibrary
-from .concept_adoption_intents import ConceptAdoptionIntents,BINDING
+from .concept_adoption_intents import ConceptAdoptionIntents,AdoptionArchivedRejected,BINDING
 from .advisory_http import request
 from . import concept_adoption_wire as wire
 FIELDS=BINDING|{'endpoint','forge_token','expires_at','permissions','maximum_records','label'}
@@ -80,7 +80,7 @@ class ConceptAdoptionPeer(ConceptBaselinePeer):
             if expected is not None and binding!=expected:raise WorklistError('DENIED')
             return scope,concept,binding
     def _request(self,b,method,path,body=None,*,guard=None,timeout=15):
-        return request(b,method,'/v1/inspection-adoptions/'+path,body,inspection_audience=b['audience'],error_validator=wire.error,maximum_bytes=wire.MAXIMUM_BYTES,send_guard=guard,timeout=timeout,success_statuses=(200,202))
+        return request(b,method,'/v1/inspection-adoptions/'+path,body,inspection_audience=b['audience'],error_validator=wire.error,maximum_bytes=wire.MAXIMUM_BYTES,send_guard=guard,timeout=timeout,success_statuses=(200,202),absolute_timeout=True)
     def cap(self,binding,*,timeout=15,send_guard=None):
         return wire.capability(self._request(binding,'GET','capability',guard=send_guard,timeout=timeout),binding)
     @contextmanager
@@ -154,7 +154,17 @@ class ConceptAdoptionPeer(ConceptBaselinePeer):
         return {'contract_version':'workspace-concept-adoption/1','actor_id':scope[0],'context_id':scope[1],'concept_id':identity,'binding_id':b['id'],'producer_source':wire.FORGE,'operation_id':intent['request']['operation_id'],'source_revision':mapped['source']['revision'],'current_revision':current['revision'],'source_digest':mapped['source_digest'],'proposal':value,'document':proposal}
     def prepare(self,draft,identity,source,command):
         scope,concept,b=self.snapshot(draft,identity,source);self.cap(b,send_guard=lambda:self.dispatch_guard(draft,identity,b))
-        if 'PREPARE' not in b['permissions'] or concept['lifecycle']=='ARCHIVED':raise WorklistError('DENIED')
+        if 'PREPARE' not in b['permissions']:raise WorklistError('DENIED')
+        if concept['lifecycle']=='ARCHIVED':
+            # No permission or source boundary is loosened: never freeze/dispatch
+            # on an archived source. Only an actual own original absence permits
+            # the specific denied-before-capture receipt; prior/unknown remains DENIED.
+            if not isinstance(command,dict) or not isinstance(command.get('operation_id'),str) or re.fullmatch('[0-9a-f]{32}',command['operation_id']) is None:raise ValueError('invalid operation')
+            if type(command.get('expected_revision')) is not int or not 1<=command['expected_revision']<=concept['revision']:raise WorklistError('DENIED')
+            with self.dispatch_guard(draft,identity,b):
+                try:self.intents.get(scope,identity,command['operation_id'])
+                except FileNotFoundError:raise AdoptionArchivedRejected('archived source denied before capture') from None
+            raise WorklistError('DENIED')
         with self.dispatch_guard(draft,identity,b):intent=self.intents.freeze(scope,identity,command,self.descriptor(b))
         return self._publish(draft,identity,b,intent,self.fetch(draft,identity,b,intent,prepare=True))
     def read(self,draft,identity,source,operation,*,timeout=30):

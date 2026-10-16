@@ -74,3 +74,62 @@ its hidden mapping, actual unknown reason stays visible, historical proposals
 have distinct sequence numbers. Browser inventory lists the exact closed own
 routes and never invokes them. Fullvalidation1 failed on that inventory omission;
 original failure retained; fullvalidation2 in progress. No acceptance yet.
+
+## Administrator preparation and ordinary user steps
+
+Ordinary users save a concept, choose an already linked inspection, select the
+three offered document kinds (or a subset), optionally select and explicitly
+confirm the allowed existing vision reference, then choose Make proposal once.
+They open each actual result category and its original/proposed contents, then
+reopen the same original from history. No technical identity/token/path input or
+new scan is present in that route. The displayed relative reference options are
+administrator setup metadata until the actual original R55 response supplies
+observed contents. A missing binding explains that an administrator must link
+an existing authorized inspection; it never pretends standalone discovery.
+
+The existing installation owner first supplies an actual qualified R55 finite
+PREPARE/READ receipt and token for the selected dossier/original EP pairing.
+Workspace neither issues those rights nor replaces their owning authorization.
+`workspace-server --root PRIVATE_ROOT concept-adoption-bind-issue --config-file PRIVATE_CONFIG`
+accepts only actor_id, context_id, concept_id, endpoint, dossier_id, label,
+identity, source_options, receipt_file and token_file. `identity` explicitly
+supplies status, project_id, repository_id, authority_repository_id and
+owner_reference. Authority_repository_id must equal repository_id. The private
+receipt supplies the exact instance/principal/audience/pairing, finite expiry,
+permissions and per-dossier limit; the token remains private at Server. Files
+must be private owner regular files; actual current R55 capability must match.
+No example credential or local runtime root is committed. Administrator revoke
+uses `concept-adoption-bind-revoke --binding-id BINDING_ID`. Up to8 bindings per
+concept/100 total,256 immutable own intent records, and finite upstream capacity
+fail closed without deletion of old originals or implicit renewal.
+
+Own intent schema/marker is separate from R52/R54. Native durable journal stores
+only own identity/frozen command/request digest/navigation, never protected result
+bytes or Forge/EP credentials. Every reopen uses current own authority, current
+peer capability and original Forge/EP read. Own publication revalidates the exact
+original before short guarded byte publication. Network I/O holds no own grant
+lock. Adoption alone opts into an absolute own-socket timeout across response
+headers/body; other consumers retain defaults. No progress model is invented.
+
+Definitive own revision rejection before capture is409. An archived source stays
+403/no-freeze/no-POST; only authorized own original absence and a nonfuture source
+revision may add the closed ARCHIVED_BEFORE_CAPTURE reason. Future revisions,
+ordinary permission denial, uncertain/lost response and producer404 never justify
+retirement. Explicit close rechecks current own rights/original absence, archives
+the rejected local journal, and leaves any new proposal to a separate user action.
+A completed original monitor updates that same durable journal; no second prepare.
+
+## Current bounded source qualification checkpoint
+
+Source round4 closes the independently reviewed archive-race, slowly dripping
+response and rejected-only action variants;28directed Python/11native checks PASS.
+All63 existing readonly tests PASS after explicit route/auth/method inventory
+updates. Native directed executable-line coverage: Copy100%, Panel85.42%,
+State93.84%, Transport100%; all new production files exceed80.2%. Complete full
+validation and complete installed matrix remain OPEN. Fullvalidation1/2/3 failed
+old inventory assumptions; originals retained. A native test build failed because
+iCloud added FinderInfo to a new cache; original retained, ordinary local Library
+cache then passed without signing-policy/system changes. Candidate2 source45958f0
+is preserved but predates round4; no new-source acceptance is inferred from it.
+Qualified producer entrypoints and all201 EP manifest payloads independently match
+owning qualified source and noneditable installation. No peer rebuild/upgrade.
