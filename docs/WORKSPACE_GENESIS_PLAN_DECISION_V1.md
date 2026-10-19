@@ -142,3 +142,61 @@ successes and failures; concealment cancels and clears active tasks. Existing
 expiry, send and publication checks remain unchanged. Held-response regressions
 cover actual coalescing, a changed bearer and a late failed background read.
 These source tests do not turn the retained candidate failure into installed PASS.
+
+
+### Current source12 / artifact4 / trial3 disposition
+
+Exact production source `c661e6529c27bb12bfdc7bc3560551471dfa2fb7`: full5 passes
+388 native tests plus the isolated credential case, full owning runtime/package
+validation, and strict >80.2% per changed executable production file. Genesis
+native Copy100%, Navigation97.5%, State92.98%, Transport98.99%, View85.53%.
+All five exact-head CI checks succeed. Actual TDE39231535764 is separately
+QUALIFIED/PASS_WITH_WARNINGS, max28, original assessment/qualification exits1/1;
+99 findings remain OPEN. No suppression or inference from workflow-green.
+
+[Current bounded candidate evidence](evidence/plan109/candidate-trial3/README.md)
+contains original independently privacy-reviewed JPEGs and a sanitized receipt.
+One genuine focused Escape and one Space preserve the exact original document
+anchor; FR long9005-character document is actually scrolled/read as text. Five
+languages, light/dark and actual760/901/1780/1800pt observations are bounded,
+not an exhaustive cross-product. Requested-Light/actual-Dark frames stay failures.
+
+One complete157124-byte decision success is dropped before downstream publication;
+separate Client/Workspace/Forge OS restarts recover the same original digest with
+one effect. Explicit targetB creates plan2 without inherited approval. A real
+concept1→2/new R52 originalB retains A; B receives403 instead of inheriting Genesis
+authority. Revoked exact effect and plan rights deny all three originals; own
+Workspace revocation automatically conceals all protected content. Cleanup finishes
+before the original fixed deadline with all five owned processes stopped, no
+failures and originals retained. Actual POST totals: R52=2, R54=2, R56 plans=2,
+R56 decisions=1; zero Apply/EP/target/Git/Mission/model effects.
+
+Restored production GenesisState6c253 with the unchanged current held-read test
+fails causally with3 GETs instead of2; current c661 passes the identical test.
+This is source-only RED→GREEN. The separate old-artifact GUI attempt remains
+inconclusive because a real peer503 contaminated the keyboard observation.
+Artifact4’s84 installed Server payload files exactly match artifact2; prior
+actual foreign actor/context404, wrong instance409, expired READ401/DENIED and
+stale409 refusal proofs are carried forward explicitly as source-bound Server
+evidence, never renamed new native or final-main proof.
+
+Actual accessible control names remain OPEN, as does remaining native historical
+plan presentation: the latest old-A frame is UNAVAILABLE with original request
+retained, not restored Genesis history. No new settings or rights are authorized.
+Protected implementation, own reviewed/nonempty Finalization and NEW exact-final-
+main installed/GUI/privacy/readback/cleanup are still required.
+
+
+### Source13 bounded header semantics correction
+
+Full6 also passes on unchanged c661 production code plus candidate documentation.
+Independent UX/Quality identify a bounded ancestor semantics risk behind the
+repeated tool output: group-wide accessibility label/identifier overrides mask
+distinct children. Source13/correction12 assigns the six section identifiers only
+to localized native headers. Children, actions, expansion state, document anchors,
+Escape/Space handlers, authorization and all producer/Server logic are unchanged.
+Actual before/after existing-CUA control names and unique identities, unchanged
+Escape/Space and remaining historical-plan presentation still require acceptance.
+No external reader, global setting or additional right is needed for this first
+step. Current strict validation, independent delta review and installed evidence
+remain required; no previous candidate proof is promoted to final-main.

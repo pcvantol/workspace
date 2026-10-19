@@ -64,6 +64,21 @@ synthetic REQUEST_CHANGES has one real producer POST200. Both original screensho
 are independently UX/Security privacy-approved. Trial2 overall remains OPEN/failed
 keyboard attempt retained; no Apply or effect execution.
 
+### Current plan109 checkpoint — source12 / trial3, not delivery closure
+
+Production sourcec661e65 full5 PASS388native+isolated1/strict per-file coverage;
+five exact-head checks SUCCESS, separate actual TDE39231535764 QUALIFIED /
+PASS_WITH_WARNINGS (max28, original exits1/1,99 findings OPEN). Artifact4/trial3
+binds same production source, real one-effect lost-success/restarts, explicit
+targetB, actual sourceA→B/no inheritance, current revoke/concealment and normal
+cleanup before the fixed deadline. Independent bounded source/security/privacy
+reviews accept these observations. [Candidate receipt/images](docs/evidence/plan109/candidate-trial3/README.md)
+retain actual failures and distinguish source-only RED→GREEN and byte-identical
+Server negative-proof carryforward. Accessible names and remaining native
+historical-plan presentation are OPEN; current old-A frame is UNAVAILABLE, not
+a history-PASS. Protected implementation/own Finalization/NEW final-main
+installed and GUI/readback/cleanup remain OPEN. No successor or settings change.
+
 ## Plan108 protected current-rights/focus repair — own finalization pending
 
 Protected repair main `a1a7c1c3b6c75b9bfa209ba392759aeb511022e6` equals exact reviewed743f967 tree.

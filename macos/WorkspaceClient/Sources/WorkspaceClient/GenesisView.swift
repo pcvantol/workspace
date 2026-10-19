@@ -34,9 +34,9 @@ struct GenesisView:View {
                         .accessibilityIdentifier("genesis-prepare")
                 }
                 if !access.plans.isEmpty {
-                    DisclosureGroup(text("history"),isExpanded:section("history")) {
+                    DisclosureGroup(isExpanded:section("history")) {
                         ForEach(access.plans) {p in ProposalCompareControl(title:text("history")+" · "+String(p.plan_revision)) {confirmation=nil;Task {await state.open(p.operation_id,concept:concept,source:source,current:current)}}.disabled(state.busy || state.pending != nil).accessibilityIdentifier("genesis-open-"+p.operation_id)}
-                    }.accessibilityLabel(text("history")).accessibilityIdentifier("genesis-history")
+                    } label:{Text(text("history")).accessibilityIdentifier("genesis-history")}
                 }
             }
             if state.busy {ProgressView()}
@@ -80,16 +80,16 @@ struct GenesisView:View {
         ForEach(p.original_content_decisions) {decision in Text(text(decision.role)+" · "+text(decision.decision=="APPROVE_CONTENT" ? "APPROVE_CONTENT":"request"))}
         ForEach(value.inapplicability_reasons,id:\.self) {Text(text($0)).foregroundStyle(.secondary)}
         if envelope.can_decide != true {Text(text("effectAccess")).foregroundStyle(.secondary)}
-        DisclosureGroup(text("steps"),isExpanded:section("steps")) {
+        DisclosureGroup(isExpanded:section("steps")) {
             ForEach(Array(p.effects.enumerated()),id:\.offset) {index,_ in Text(String(index+1)+". "+text("step"+String(index))).frame(maxWidth:.infinity,alignment:.leading)}
-        }.accessibilityLabel(text("steps")).accessibilityIdentifier("genesis-steps")
+        } label:{Text(text("steps")).accessibilityIdentifier("genesis-steps")}
         if !p.blocking_open_points.isEmpty {
             Text(text("requiredQuestions")).font(.headline)
             ForEach(Array(p.blocking_open_points.enumerated()),id:\.offset) {_,point in Text(verbatim:point).textSelection(.enabled)}
         }
-        DisclosureGroup(text("questions"),isExpanded:section("questions")) {ForEach(Array(p.open_questions.filter{!p.blocking_open_points.contains($0)}.enumerated()),id:\.offset) {_,q in Text(verbatim:q).textSelection(.enabled).frame(maxWidth:.infinity,alignment:.leading)}}.accessibilityLabel(text("questions")).accessibilityIdentifier("genesis-questions")
+        DisclosureGroup(isExpanded:section("questions")) {ForEach(Array(p.open_questions.filter{!p.blocking_open_points.contains($0)}.enumerated()),id:\.offset) {_,q in Text(verbatim:q).textSelection(.enabled).frame(maxWidth:.infinity,alignment:.leading)}} label:{Text(text("questions")).accessibilityIdentifier("genesis-questions")}
         Text(text("english")).font(.caption).foregroundStyle(.secondary)
-        DisclosureGroup(text("documents"),isExpanded:Binding(get:{state.documentsVisible},set:{state.setDocumentsVisible($0)})) {
+        DisclosureGroup(isExpanded:Binding(get:{state.documentsVisible},set:{state.setDocumentsVisible($0)})) {
             ForEach(p.documents.files) {file in
                 VStack(alignment:.leading,spacing:8) {
                     ProposalCompareControl(title:file.path,focused:focused=="genesis-document-"+file.path) {navigateDocument(file.path)}
@@ -103,21 +103,20 @@ struct GenesisView:View {
                     }
                 }.frame(minWidth:0,maxWidth:.infinity,alignment:.leading)
             }
-        }
-        .accessibilityLabel(text("documents")).accessibilityIdentifier("genesis-documents")
+        } label:{Text(text("documents")).accessibilityIdentifier("genesis-documents")}
         TextField(text("reason"),text:Binding(get:{state.reason},set:{state.updateReason($0)}),axis:.vertical).lineLimit(2...6).accessibilityIdentifier("genesis-reason").disabled(state.busy || state.pending != nil)
         ProposalCompareControl(title:text("approve")) {confirm("APPROVE_EFFECT")}.disabled(!canDecide || envelope.can_approve != true || target != envelope.target_id).accessibilityIdentifier("genesis-approve")
         ProposalCompareControl(title:text("request")) {confirm("REQUEST_CHANGES")}.disabled(!canDecide).accessibilityIdentifier("genesis-request-changes")
-        DisclosureGroup(text("decisions"),isExpanded:section("decisions")) {
+        DisclosureGroup(isExpanded:section("decisions")) {
             ForEach(value.effect_history) {d in
                 VStack(alignment:.leading) {Text(text(d.decision=="APPROVE_EFFECT" ? "approve":"request"));Text(verbatim:d.reason).textSelection(.enabled);Text(text("decisionRevision")+" "+String(d.decision_revision));Text(verbatim:d.occurred_at).font(.caption);DisclosureGroup(text("source")) {Text(verbatim:d.human_binding.operator_id);Text(verbatim:d.decision_id)}}
             }
-        }.accessibilityLabel(text("decisions")).accessibilityIdentifier("genesis-decisions")
-        DisclosureGroup(text("source"),isExpanded:section("source")) {
+        } label:{Text(text("decisions")).accessibilityIdentifier("genesis-decisions")}
+        DisclosureGroup(isExpanded:section("source")) {
             Text(verbatim:p.plan_id);Text(verbatim:p.plan_digest);Text(verbatim:p.documents.identity.project_id);Text(verbatim:p.documents.identity.repository_id)
             Text(verbatim:p.target.ep_instance_id+" / "+p.target.placement_ref+" / "+p.target.target_ref)
             Text(verbatim:envelope.producer_source);Text(verbatim:p.expires_at)
-        }.font(.caption).textSelection(.enabled).accessibilityLabel(text("source")).accessibilityIdentifier("genesis-source")
+        } label:{Text(text("source")).accessibilityIdentifier("genesis-source")} .font(.caption).textSelection(.enabled)
     }
     private var confirmationMessage:String {
         let label=confirmation?.targetLabel ?? ""
