@@ -1,0 +1,141 @@
+{
+  "assignment": "L4-NATIVE-GENESIS-EFFECT-PLAN-DECISION-V1-20261019",
+  "plan": 109,
+  "scope": "NEW_EXACT_FINAL_MAIN_INSTALLED_CLIENT_SERVER_FORGE_AND_NATIVE_GUI",
+  "consumer_source": "c2e7d2aa281b211a70c4e64a2f0ce100f9748538",
+  "consumer_version": "2.8.35",
+  "artifact": 6,
+  "trial": 6,
+  "implementation_PR": 189,
+  "implementation_main": "0bcc70dc28a8dc9541c4c3275822c5bb48ce2e58",
+  "own_finalization_PR": 190,
+  "finalization_reviewed_head": "b0192503709bfae00e067e184f876e3fd3e60b55",
+  "finalization_whole_tree_equal_to_final_main": true,
+  "native_binary_sha256": "2988c8b28e3eb243e7cdd44263a575c33e0e42bb0f31a9c403f7703ca22f673c",
+  "noneditable_Server_wheel_sha256": "97d6443137c2daf498d76e88d67770dae6fbe4ef74b4a2229f9ab5e7b2fd2ea6",
+  "all84_installed_Server_product_payload_files_match_source_and_wheel": true,
+  "native_MachO_minOS": "26.0",
+  "native_MachO_SDK": "26.0",
+  "available_SDK_query_separate": "27.0",
+  "actual_Server_HTTP_version": "2.8.35",
+  "producer": {
+    "version": "2.22.1",
+    "source": "8ee60c8409b2c3801e70cf129f20f1ff1480d03b",
+    "official_wheel_sha256": "6f0fca3139aa40b8bd886d32c99d17c4802caa39a40e6f948d5e97218a587c82",
+    "all346_installed_product_files_independently_byte_equal_official_wheel": true,
+    "global_upgrade": false
+  },
+  "actual": {
+    "original_document_count": 37,
+    "effect_decision": "APPROVE_EFFECT",
+    "decision_revision": 1,
+    "complete_lost_success_bytes": 157166,
+    "original_response_sha256": "7e28549cfc2225244f1ac54047d9dd51292b3af3aa78226298b8663cea80ad77",
+    "lost_success_downstream_bytes": 0,
+    "one_original_plan_and_decision_operation_across_all_phases": true,
+    "phases": [
+      "initial",
+      "client",
+      "workspace",
+      "forge",
+      "final"
+    ],
+    "separate_OS_restarts": [
+      "Client",
+      "Workspace Server",
+      "Forge"
+    ],
+    "other_processes_preserved_during_each_restart": true,
+    "one_effect_no_POST_replay": true,
+    "native_original_history_and_document_reopen": true,
+    "execution_authorized": false,
+    "synthetic_test_not_Peter_approval": true,
+    "POST_counts": {
+      "/v1/onboarding/plans": 1,
+      "/v1/project-proposal-decisions/decisions": 2,
+      "/v1/genesis-bootstrap/plans": 1,
+      "/v1/genesis-bootstrap/decisions": 1
+    },
+    "Apply_EP_target_Git_Mission_model_POSTs": 0
+  },
+  "cleanup": {
+    "completed_at": "2026-10-19T12:09:57.255382+00:00",
+    "fixed_deadline": "2026-10-19T13:19:31.673971+00:00",
+    "before_fixed_deadline": true,
+    "own_binding_revocations": 4,
+    "producer_grant_revocations": 4,
+    "own_synthetic_draft_grant_revocations": 1,
+    "all_five_owned_processes_stopped": true,
+    "remaining_owned_process_map_empty": true,
+    "originals_and_failures_retained": true
+  },
+  "gates": {
+    "full7_and_own_finalization_full8": "PASS388native+1isolated/strict/package/noneditable/nativebuild",
+    "all_changed_production_files_strict_gt80_2": true,
+    "GenesisView": "277/323=85.76%",
+    "GenesisState": "265/285=92.98%",
+    "implementation_CI": "5/5 SUCCESS exactc82f416",
+    "own_finalization_CI": "5/5 SUCCESS exactb019250",
+    "independent_implementation_and_own_finalization_Quality_Security_UX": "PASS",
+    "new_final_main_recovery_and_GUI_Quality_Security_UX": "reviewed; final cleanup/publication readback recorded separately",
+    "TDE6": {
+      "source": "b0192503709bfae00e067e184f876e3fd3e60b55",
+      "run": 39246103953,
+      "assessment": "PASS_WITH_WARNINGS",
+      "repository": "QUALIFIED",
+      "runtime": "1.1.1",
+      "original_exits": [
+        1,
+        1
+      ],
+      "complexity_maximum": 28,
+      "threshold": 15,
+      "findings": "99 OPEN unchanged; no suppression"
+    }
+  },
+  "evidence_bounds": [
+    "Five-language/light-dark/narrow-wide/long-text/access/source-target switching/revocation and restored-fault observations retain original candidate source bindings and explicit unchanged-product parity; no full cross-product rerun or claim.",
+    "Restored-fault RED to GREEN is source-only; older GUI503 control remains inconclusive. Earlier partial reads, failed attempts and wrong-theme frames are preserved, never promoted to PASS.",
+    "New trial6 partial original reads safely failed closed; bounded reads of the same original later succeeded. No new operation, repeated confirmation or replayed POST.",
+    "Friendly names previously verified via own focused AXAttributedDescription; no VoiceOver speech claim or system-setting change.",
+    "Original response hash is a digest, not a published protected document body. Only synthetic privacy-approved screenshots are public.",
+    "This evidence-only commit does not alter qualified main or become the installed source. No Apply, EP execution, target/Git change, model/provider/scan/Mission effect or automatic successor."
+  ],
+  "images": [
+    {
+      "file": "plan-before-effect.jpg",
+      "sha256": "8bbdf921e9da92743743ef18c1e25b51a798816df0bc87c663cc63225d8f9e21",
+      "bytes": 452257,
+      "caption": "Original immutable plan before separate effect decision; target remains unobserved and unreserved.",
+      "privacy": "Independent Security and UX personally inspected original pixels and AX: PASS"
+    },
+    {
+      "file": "one-confirmation.jpg",
+      "sha256": "90e2f0d070baa7d2400cfd2062d0f868920723eb93f9ad140cada28c0751706c",
+      "bytes": 94723,
+      "caption": "One genuine native confirmation, explicitly synthetic technical qualification, not approval on Peter’s behalf or execution.",
+      "privacy": "Independent Security and UX personally inspected original pixels and AX: PASS"
+    },
+    {
+      "file": "original-response-pending.jpg",
+      "sha256": "47ecc9b36324f885fdf9e497909082330d25240ba07c467ce71347c8dd42c5c8",
+      "bytes": 442142,
+      "caption": "Original request retained after lost reply; unavailable/unknown phase, never a false approval.",
+      "privacy": "Independent Security and UX personally inspected original pixels and AX: PASS"
+    },
+    {
+      "file": "recovered-approved-history.jpg",
+      "sha256": "60f1b9aa2a64fb892cabdd15860077e639c6f389f319cec0460175aba088dcb5",
+      "bytes": 482416,
+      "caption": "After all three separate process restarts: original approved plan and actual decision revision1/reason; EP admission and execution still required.",
+      "privacy": "Independent Security and UX personally inspected original pixels and AX: PASS"
+    },
+    {
+      "file": "original-plan-reopened-document.jpg",
+      "sha256": "f1493b971f768e251c11e37036945c2f212e1a076919a8aeb8f4cc2f2cb7e820",
+      "bytes": 382720,
+      "caption": "Same original plan explicitly reopened through native history; original AGENTS.md readable with focused, named return control.",
+      "privacy": "Independent Security and UX personally inspected original pixels and AX: PASS"
+    }
+  ]
+}
