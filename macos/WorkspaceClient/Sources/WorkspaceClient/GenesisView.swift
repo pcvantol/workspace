@@ -97,6 +97,7 @@ struct GenesisView:View {
                     if state.expandedDocument==file.path {
                         VStack(alignment:.leading,spacing:8) {
                             ProposalCompareControl(title:text("closeDocument"),focused:focused=="genesis-detail-"+file.path) {navigateDocument(file.path)}.focused($focused,equals:"genesis-detail-"+file.path).disabled(state.busy || navigation.busy).padding(.top,16).accessibilityIdentifier("genesis-detail-"+file.path)
+                                .onKeyPress(keys:[.escape]) {press in guard press.modifiers.isEmpty,!state.busy,!navigation.busy else{return .ignored};navigateDocument(file.path);return .handled}
                             Text(verbatim:file.content).font(.system(.body,design:.monospaced)).textSelection(.enabled).fixedSize(horizontal:false,vertical:true).frame(minWidth:0,maxWidth:.infinity,alignment:.leading)
                         }.id("genesis-detail-"+file.path)
                     }

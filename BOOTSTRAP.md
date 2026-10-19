@@ -53,6 +53,17 @@ is independently UX privacy-reviewed; transient503s and failed proof-driver path
 403-only expiry assumptions remain retained. Actual expired READ is401 without
 protected data; no authentication failure is converted to unsupported or success.
 
+Full4 on42463a7 passes all owning gates; previous source505 evidence stays bound.
+Actual artifact2/trial2 discovers Escape does not close the focused original
+document: concrete independent UX P1, NOT keyboard acceptance. Source11/correction10
+uses the already qualified explicit focused-detail Escape handler, same serialized
+authorized navigation and handled-once behavior. New actual repaired keyboard proof,
+full5 and exact-head CI/independent acceptance remain required. Actual trial2 single
+confirmation cancel has zero decision POSTs/intents; a later separate native
+synthetic REQUEST_CHANGES has one real producer POST200. Both original screenshots
+are independently UX/Security privacy-approved. Trial2 overall remains OPEN/failed
+keyboard attempt retained; no Apply or effect execution.
+
 ## Plan108 protected current-rights/focus repair — own finalization pending
 
 Protected repair main `a1a7c1c3b6c75b9bfa209ba392759aeb511022e6` equals exact reviewed743f967 tree.
