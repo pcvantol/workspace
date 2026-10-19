@@ -79,6 +79,17 @@ historical-plan presentation are OPEN; current old-A frame is UNAVAILABLE, not
 a history-PASS. Protected implementation/own Finalization/NEW final-main
 installed and GUI/readback/cleanup remain OPEN. No successor or settings change.
 
+### Plan109 source13 candidate followup
+
+Exactd13b0c3/24 directednativePASS. New artifact5/trial4 actual37distinctdocument
+IDs, settled original Escape/Space and realREQUEST_CHANGES/history/explicit same-
+plan reopen are independently accepted within bounds. Nine own bindings/grants
+revoked and all5ownprocesses stopped before deadline; actual Server HTTP2.8.35,
+Client minOS/SDK26.0/26.0, unchanged84Serverpayloads. [Original candidate evidence](docs/evidence/plan109/candidate-trial4/README.md).
+Friendly raw AX/control names remain OPEN; no spoken-name inference from CUA IDs.
+Full current owning gates/CI and protected implementation/own Finalization/NEW
+final-main qualification remain required. No automatic successor/settings change.
+
 ## Plan108 protected current-rights/focus repair — own finalization pending
 
 Protected repair main `a1a7c1c3b6c75b9bfa209ba392759aeb511022e6` equals exact reviewed743f967 tree.

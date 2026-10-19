@@ -1,0 +1,126 @@
+{
+  "scope": "SOURCE_BOUND_CANDIDATE_ONLY_NOT_FINAL_MAIN_NOT_COMPLETE_SCOPED_ACCEPTANCE",
+  "assignment": "L4-NATIVE-GENESIS-EFFECT-PLAN-DECISION-V1-20261019",
+  "consumer_source": "d13b0c3f4f1a9ba523648d8766697860c15ed81c",
+  "consumer_version": "2.8.35",
+  "artifact": 5,
+  "trial": 4,
+  "native_minimum_OS": "26.0",
+  "actual_MachO_SDK": "26.0",
+  "available_SDK_query_separate": "27.0",
+  "native_binary_sha256": "9a21aea4fcc6c1d15c7c78dbdcd4df191091906cb3b80275c033ef6fa7709bb9",
+  "noneditable_Server_wheel_sha256": "22015347fa17148e966c3dff7898d7a6a190d84bcfa85baae0ec303ae6a58ec9",
+  "Server_payload_files": 84,
+  "Server_payload_byte_identical_to_artifact4": true,
+  "actual_Server_HTTP_version": "2.8.35",
+  "producer": {
+    "version": "2.22.1",
+    "source": "8ee60c8409b2c3801e70cf129f20f1ff1480d03b",
+    "official_wheel_sha256": "6f0fca3139aa40b8bd886d32c99d17c4802caa39a40e6f948d5e97218a587c82"
+  },
+  "bounded_native_delta": "Only six outer group accessibility label/identifier overrides moved to native localized section headers; child content/actions/focus/auth/state/transport/copy unchanged",
+  "directed_native_tests": {
+    "count": 24,
+    "result": "PASS"
+  },
+  "actual": {
+    "distinct_document_identifiers": 37,
+    "real_original_Escape_then_Space": "settled exact opener/detail focus and unchanged original AGENTS.md",
+    "original_document_count": 37,
+    "separate_real_R54_content_roles": 2,
+    "explicit_plan_POSTs": 1,
+    "effect_confirmations_submitted": 1,
+    "effect_decision": "REQUEST_CHANGES",
+    "effect_decision_revision": 1,
+    "effect_POSTs": 1,
+    "complete_effect_reply_bytes": 157167,
+    "effect_reply_deliberately_dropped": false,
+    "original_plan_explicitly_reopened_via_native_history": true,
+    "original_plan_bytes_and37_documents_unchanged": true,
+    "original_decision_and_history_retained": true,
+    "execution_authorized": false,
+    "POST_counts": {
+      "/v1/onboarding/plans": 1,
+      "/v1/project-proposal-decisions/decisions": 2,
+      "/v1/genesis-bootstrap/plans": 1,
+      "/v1/genesis-bootstrap/decisions": 1
+    },
+    "Apply_EP_target_Git_Mission_model_POSTs": 0,
+    "cleanup_before_fixed_deadline": true,
+    "temporary_own_bindings_revoked": 4,
+    "producer_synthetic_grants_revoked": 4,
+    "own_Draft_grants_revoked": 1,
+    "all_five_owned_processes_stopped": true,
+    "originals_and_failures_preserved": true
+  },
+  "technical_decisions": "SYNTHETIC_OWNER_TEST_ONLY_NOT_PETER_APPROVAL",
+  "evidence_bounds": [
+    "37 distinct actual document identifiers establish causal header-identity improvement; current CUA formatter still does not expose friendly raw AX names",
+    "Immediate post-Escape busy/auth frame is retained privately and is not the settled keyboard PASS",
+    "First confirmation lookup used stale UI element112 and was rejected before action; same original dialog actual fresh button clicked once, no second dialog or effect",
+    "Prior trial3 old-A UNAVAILABLE image remains unchanged and is never relabeled restored-plan GUI PASS",
+    "Earlier five-language/theme/width/positive lostreply/restarts/source-change/revocation/negative matrices retain ORIGINAL source bindings; unchanged code/payload parity is explicit, not new final-main evidence"
+  ],
+  "independent_reviews": {
+    "Quality": "bounded source/runtime/history/37bytes/payload-parity accepted; owning gates and complete delivery remain required",
+    "Security": "source13 delta/runtime and all8 image pixels/privacy PASS",
+    "UX": "bounded semantic delta/37identities/actual Escape-Space/history/reopen/privacy PASS; friendly raw AX names OPEN"
+  },
+  "open": [
+    "friendly actual AX/control names; CUA outputs identifiers, no raw name or spoken-name inference",
+    "current exact-head owning validation/CI/TDE tracked in PR189",
+    "protected exact-head implementation",
+    "own nonempty reviewed/protected Finalization",
+    "NEW exact-final-main installed and genuine GUI/privacy/digest/readback/cleanup"
+  ],
+  "images": [
+    {
+      "file": "document-before-escape.jpg",
+      "sha256": "55a1df0a9b1eba1d522f95a73572091632d5850e109417e1aadc04985bc8b9d2",
+      "caption": "NL/light/901pt: original AGENTS.md detail, blue close focus.",
+      "privacy": "Independent Security/UX personally reviewed original pixels and AX; PASS"
+    },
+    {
+      "file": "document-escape-settled.jpg",
+      "sha256": "b0d29f8cf0ea9f6127b8d3d5fab7a01b4425249d17aea33c18d62e962cbccd07",
+      "caption": "One genuine Escape after authorization/read settles: original AGENTS.md opener focus and no detail.",
+      "privacy": "Independent Security/UX personally reviewed original pixels and AX; PASS"
+    },
+    {
+      "file": "document-space-settled.jpg",
+      "sha256": "927899896a7fb39ed39ff922c9ae702db847f912f08e1da7ba2f584fa54459f5",
+      "caption": "One genuine Space after read settles: same original content and blue close focus.",
+      "privacy": "Independent Security/UX personally reviewed original pixels and AX; PASS"
+    },
+    {
+      "file": "one-confirmation.jpg",
+      "sha256": "f566ed93209fc8e23d8d5b3cbe41369fd030243bdae77ba17fe45c1d9f3b8a19",
+      "caption": "One understandable original technical REQUEST_CHANGES confirmation for exact plan/target; never Peter approval or execution.",
+      "privacy": "Independent Security/UX personally reviewed original pixels and AX; PASS"
+    },
+    {
+      "file": "request-changes-history.jpg",
+      "sha256": "68f76454726f03eaa7cfa31679655690054200783490bbe6869b5b950f4e5dff",
+      "caption": "NL/light/901pt: actual REQUEST_CHANGES reason/revision1/history, distinct content approval facts.",
+      "privacy": "Independent Security/UX personally reviewed original pixels and AX; PASS"
+    },
+    {
+      "file": "current-state-and-history.jpg",
+      "sha256": "2195e049f3294bc4feba9dd5b0513eb04dc9cc59b3c5c1a931e54138cec6c6b8",
+      "caption": "NL/light/1800pt: actual changed-plan status and original decision history; no execution claim.",
+      "privacy": "Independent Security/UX personally reviewed original pixels and AX; PASS"
+    },
+    {
+      "file": "original-plan-reopened.jpg",
+      "sha256": "a8758230db2bc4dc57028b4ff41dfad5cd3cc8623676e5f8767f0cc589414744",
+      "caption": "After explicit native history selection: same original plan with current changes-requested status; history is shown in companion images and authoritative readback.",
+      "privacy": "Independent Security/UX personally reviewed original pixels and AX; PASS"
+    },
+    {
+      "file": "original-source-and-history.jpg",
+      "sha256": "29d48cfea580ea5800753a7685d000a40879b804cba8e158d894485592437e2b",
+      "caption": "Actual frozen plan, original decision history and producer/source metadata under details.",
+      "privacy": "Independent Security/UX personally reviewed original pixels and AX; PASS"
+    }
+  ]
+}

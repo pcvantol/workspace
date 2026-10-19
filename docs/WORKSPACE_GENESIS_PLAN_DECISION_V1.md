@@ -200,3 +200,25 @@ Escape/Space and remaining historical-plan presentation still require acceptance
 No external reader, global setting or additional right is needed for this first
 step. Current strict validation, independent delta review and installed evidence
 remain required; no previous candidate proof is promoted to final-main.
+
+
+### Source13 actual candidate followup
+
+[Artifact5/trial4 originals and receipt](evidence/plan109/candidate-trial4/README.md)
+bind exactd13b0c3 production, new packaged Client/noneditable Server2.8.35, actual
+minOS/SDK26.0/26.0 and byte-identical84-file Server payload. All24 directed Genesis
+tests PASS. Actual CUA now shows37 separate document identities; settled one
+Escape→same opener and one Space→same original detail are independently UX/privacy
+accepted. Friendly raw AX names remain OPEN: identifier output is not spoken-name
+proof. No external reader, new permission or system setting was used.
+
+One actual separate technical REQUEST_CHANGES confirmation produces one complete
+157167-byte R56 response. Native status/reason/history show decisionrevision1;
+explicit history selection reopens the same original plan. Own HTTP original plan
+and decision readbacks preserve the identical37-document plan and history, with
+execution_authorized=false. These new pixels genuinely fill the general original
+plan/history stage; old trial3 A-after-B UNAVAILABLE remains a retained failure.
+Nine own test binding/grant revocations and all five owned process stops complete
+before the fixed deadline. No deletion, grant extension, Apply or other effect.
+Current full owning/CI/TDE and all protected/final-main gates remain required;
+complete UX acceptance is still blocked on actual friendly accessible names.
