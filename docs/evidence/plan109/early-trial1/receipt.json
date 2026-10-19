@@ -8,7 +8,7 @@
   "own_wheel_sha256": "46806b35ddeca9d0dde5bb8b25bd18c68fbb7597fdd3ca3db46bcf6e4e461c00",
   "native_binary_sha256": "979b92879d96ca24689a0b7cd8cab67bbdc8d8b28d5ee8e2e0d04b0ea7736c4c",
   "native_minimum_macos": "26.0",
-  "actual_SDK": "27.0",
+  "actual_SDK": "26.0",
   "noneditable_payload_parity_files": 84,
   "forge_version": "2.22.1",
   "forge_source": "8ee60c8409b2c3801e70cf129f20f1ff1480d03b",
@@ -105,5 +105,6 @@
     "repaired source packaged GUI in five languages/light-dark/narrow-wide/keyboard/long-document",
     "protected implementation and own nonempty protected finalization",
     "NEW exact-final-main installed GUI/privacy/readback/cleanup"
-  ]
+  ],
+  "available_SDK_at_build": "27.0"
 }

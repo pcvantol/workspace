@@ -84,6 +84,21 @@ class GenesisHTTPTests(unittest.TestCase):
         status,value=self.request(self.path+'/decision-access/'+'b'*32);self.assertEqual(status,200,value)
         return {'operation_id':op,'source_operation_id':self.sourceop,'expected_concept_revision':1,'selection_digest':value['selection_digest'],'plan_operation_id':'b'*32,'decision':'APPROVE_EFFECT','reason':'Synthetic explicit effect decision, not Peter approval'}
     def posts(self):return [c for c in self.calls if c[0]=='POST']
+    def test_real_inventory_describes_only_existing_bounded_routes_and_local_owner_pairing(self):
+        code,value=self.request('/v1/capabilities');self.assertEqual(code,200,value)
+        rows=[v for v in value['operations'] if v['id'].startswith('concept-genesis.')]
+        http=[v for v in rows if v['exposure']=='HTTP_EXPOSED'];local=[v for v in rows if v['exposure']=='LOCAL_ONLY_ADMIN']
+        self.assertEqual({(v['method'],v['path']) for v in http},{
+            ('GET','/v1/concept-genesis/{concept_id}/access/{source_operation_id}'),
+            ('POST','/v1/concept-genesis/{concept_id}/plans'),
+            ('GET','/v1/concept-genesis/{concept_id}/decision-access/{plan_operation_id}'),
+            ('POST','/v1/concept-genesis/{concept_id}/decisions'),
+            ('GET','/v1/concept-genesis/{concept_id}/operations/{operation_id}')})
+        self.assertTrue(all(v['auth']=='BEARER_PINNED_AND_DRAFT_GRANT' for v in http))
+        self.assertEqual({v['local_cli'] for v in local},{'genesis-bind-issue','genesis-bind-revoke'})
+        self.assertTrue(all('path' not in v and v['auth']=='PRIVATE_ROOT_OWNER' for v in local))
+        self.assertFalse(value['peer_operations_qualified']);self.assertEqual(self.posts(),[])
+
     def test_real_own_HTTP_original_plan_reopen_no_execution(self):
         result=self.prepare();self.assertFalse(result['result']['execution_authorized']);self.assertEqual(len(self.posts()),1)
         self.assertEqual(self.request(self.path+'/operations/'+'b'*32)[1]['result']['plan'],result['result']['plan']);self.assertEqual(len(self.posts()),1)
