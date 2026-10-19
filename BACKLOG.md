@@ -1260,8 +1260,11 @@ PR153/source aab52e73f38eed2ca49384d2ced1f7bfff5a67cc delivered at2.8.19, exact 
 
 ## Selected r81-plan109 — native Genesis plan and separate effect decision
 
-Workspace2.8.35 source candidate consumes exact official Forge2.22.1 R56 HTTP.
-[Own contract and real route mapping](docs/WORKSPACE_GENESIS_PLAN_DECISION_V1.md).
-Plan108/LINK CLOSED; broader onboarding parents OPEN. No Apply or new effect
-authority. Owning installed/GUI/strict coverage/reviews/protected delivery and
-separate finalization remain OPEN; no automatic successor.
+Workspace2.8.35 implementation protected in PR189/main0bcc70dc; exact official
+Forge2.22.1 R56 HTTP. Independent implementation Quality/Security/UX, owning
+strict coverage and all five checks accepted. Actual source-bound candidate
+names/keyboard/history/recovery evidence is retained, not final-main proof.
+[Own finalization and remaining gates](docs/WORKSPACE_GENESIS_PLAN_DECISION_FINALIZATION_V1.md).
+Own finalization checks/protected merge and NEW exact-final-main installed/GUI
+qualification remain required. Plan108/LINK CLOSED; broader onboarding parents
+OPEN. No Apply or automatic successor.

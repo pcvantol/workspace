@@ -222,3 +222,18 @@ Nine own test binding/grant revocations and all five owned process stops complet
 before the fixed deadline. No deletion, grant extension, Apply or other effect.
 Current full owning/CI/TDE and all protected/final-main gates remain required;
 complete UX acceptance is still blocked on actual friendly accessible names.
+
+
+### Protected implementation and current targeted-name acceptance
+
+PR189 protected main0bcc70dc (reviewed c82f416, same tree) and full7/strict
+coverage/all five checks have complete independent implementation Q/S/UX
+acceptance. Actual TDE5 remains QUALIFIED/PASS_WITH_WARNINGS with99 OPEN.
+[Trial5 actual focused names](evidence/plan109/candidate-trial5/README.md) closes
+the names evidence gap using the actual macOS AXAttributedDescription under
+existing own-process access; no settings, rights or product change. Earlier
+missing-attribute observations stay incomplete and preserved. Trial4 genuinely
+shows original plan/history reopening; trial3 old-A UNAVAILABLE stays retained.
+[Own finalization](WORKSPACE_GENESIS_PLAN_DECISION_FINALIZATION_V1.md) retains
+separate required current checks/protected merge and NEW exact-final-main
+installed/GUI/readback/cleanup gates. No future main or PASS is asserted.
