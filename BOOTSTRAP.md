@@ -1,3 +1,32 @@
+## Plan109 — native Genesis plan/effect decision, selected and OPEN
+
+Same sole writer; assignment `L4-NATIVE-GENESIS-EFFECT-PLAN-DECISION-V1-20261019`.
+Base protected main `bdc71d86ec02ba0b6b765b314031eb73dc0568b6`, branch
+`codex/plan109-native-genesis-plan-decision`, canonical PATCH2.8.35. Plan108
+and LINK are CLOSED; historical sections below retain their original source.
+No Apply, EP effect, target/Git write, provider/model or automatic successor.
+
+Candidate82323f5 has real outside-checkout packaged Client/own noneditable
+Server/official Forge2.22.1/8ee60c8 binding, actual R52 original37 files,
+distinct synthetic R54 roles and R56 plan/one separate technical effect decision.
+The full success answer was lost at the external relay (157220 upstream bytes,
+zero downstream); original read and separate Client/ownServer/ForgeServer OS
+restarts retain the same plan/decision bytes and one effect. Independent bounded
+Quality/Security evidence checks PASS; early screenshots privacy-reviewed as
+original JPEG, not PNG. Explicit targetB gets separate plan2 without inherited
+approval; old plan1 remains unchanged with historical decision/PLAN_SUPERSEDED.
+All of this remains source-bound CANDIDATE evidence, not complete acceptance.
+
+Source5/correction4 repairs authorized original document-section/anchor return,
+scoped presentation after recoverable read failure, and reuses existing qualified
+accessible focus controls. Sixteen directed native tests PASS. Failed standalone
+SwiftUI AX traversal experiment is retained privately with its original logs;
+no click pass is inferred from hosting. Strict coverage, full validation/current
+CI/TDE, full independent UX/Quality/Security, remaining actual negative/GUI
+controls, protected implementation, own nonempty finalization and NEW exact-final-
+main installed/GUI/readback/cleanup remain OPEN. Trial1 read failures/timeouts and
+proof-driver assumption failures are retained, not relabeled as product PASS.
+
 ## Plan108 protected current-rights/focus repair — own finalization pending
 
 Protected repair main `a1a7c1c3b6c75b9bfa209ba392759aeb511022e6` equals exact reviewed743f967 tree.

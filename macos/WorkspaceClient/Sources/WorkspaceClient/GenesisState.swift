@@ -13,10 +13,11 @@ struct GenesisPending:Codable,Sendable {
     @Published private(set) var phase="choose"
     @Published private(set) var reason=""
     @Published private(set) var expandedDocument=""
+    @Published private(set) var documentsVisible=false
     private var presentationKey:String?
     struct Presentation:Codable {
         let actor:String;let context:String;let concept:String;let source:String;let planDigest:String
-        var document:String;var reason:String
+        var document:String;var reason:String;var documentsVisible:Bool?
     }
     private let transport:any GenesisServing
     let records:PrivateLocalRecordStore
@@ -25,7 +26,7 @@ struct GenesisPending:Codable,Sendable {
     private var expiry:Task<Void,Never>?
     private var planOperation:String?
     init(root:URL,transport:any GenesisServing=GenesisTransport()) {self.transport=transport;records=PrivateLocalRecordStore(root:root,namespace:"genesis-bootstrap")}
-    func conceal() {monitor?.cancel();monitor=nil;expiry?.cancel();expiry=nil;generation+=1;access=nil;result=nil;pending=nil;busy=false;planOperation=nil;presentationKey=nil;reason="";expandedDocument="";phase="choose"}
+    func conceal() {monitor?.cancel();monitor=nil;expiry?.cancel();expiry=nil;generation+=1;access=nil;result=nil;pending=nil;busy=false;planOperation=nil;presentationKey=nil;reason="";expandedDocument="";documentsVisible=false;phase="choose"}
     private func key(_ connection:ConceptConnection,_ concept:ProjectConcept,_ source:ConceptBaselineResult)->String {
         SHA256.hash(data:Data((connection.key+"\n"+concept.actor_id+"\n"+concept.id+"\n"+source.operation_id).utf8)).map{String(format:"%02x",$0)}.joined()
     }
@@ -53,7 +54,7 @@ struct GenesisPending:Codable,Sendable {
     }
     private func failure(_ error:Error,ticket:Int) {
         guard ticket==generation else {return}
-        result=nil;access=nil;expandedDocument="";reason=""
+        result=nil;access=nil;presentationKey=nil;expandedDocument="";documentsVisible=false;reason=""
         switch error {
         case ConceptError.denied:conceal();phase="access"
         case ConceptError.conflict:phase="conflict"
@@ -81,15 +82,15 @@ struct GenesisPending:Codable,Sendable {
     private func restorePresentation(_ value:GenesisEnvelope,connection:ConceptConnection,concept:ProjectConcept,source:ConceptBaselineResult) {
         let k=SHA256.hash(data:Data(("presentation\n"+key(connection,concept,source)+"\n"+value.result.plan.plan_digest).utf8)).map{String(format:"%02x",$0)}.joined()
         guard k != presentationKey else {return}
-        presentationKey=k;reason="";expandedDocument=""
+        presentationKey=k;reason="";expandedDocument="";documentsVisible=false
         guard let data=try? records.load(k),let saved=try? JSONDecoder().decode(Presentation.self,from:data),
               saved.actor==concept.actor_id,saved.context==concept.context_id,saved.concept==concept.id,saved.source==source.operation_id,saved.planDigest==value.result.plan.plan_digest,saved.reason.unicodeScalars.count<=2000,
               saved.document.isEmpty || value.result.plan.documents.files.contains(where:{$0.path==saved.document}) else {return}
-        reason=saved.reason;expandedDocument=saved.document
+        reason=saved.reason;expandedDocument=saved.document;documentsVisible=saved.documentsVisible ?? !saved.document.isEmpty
     }
     private func savePresentation() throws {
         guard let k=presentationKey,let result else {return}
-        let record=Presentation(actor:result.actor_id,context:result.context_id,concept:result.concept_id,source:result.source_operation_id,planDigest:result.result.plan.plan_digest,document:expandedDocument,reason:reason)
+        let record=Presentation(actor:result.actor_id,context:result.context_id,concept:result.concept_id,source:result.source_operation_id,planDigest:result.result.plan.plan_digest,document:expandedDocument,reason:reason,documentsVisible:documentsVisible)
         try records.saveBounded(JSONEncoder().encode(record),key:k)
     }
     func updateReason(_ text:String) {
@@ -97,7 +98,11 @@ struct GenesisPending:Codable,Sendable {
         reason=text
         do {try savePresentation()} catch {failure(error,ticket:generation)}
     }
-    func chooseDocument(_ path:String,concept:ProjectConcept,source:ConceptBaselineResult,current:@escaping @MainActor () async throws -> ConceptConnection) async {
+    func setDocumentsVisible(_ visible:Bool) {
+        guard result != nil else {return};documentsVisible=visible
+        do {try savePresentation()} catch {failure(error,ticket:generation)}
+    }
+    func chooseDocument(_ path:String,restoring:Bool=false,concept:ProjectConcept,source:ConceptBaselineResult,current:@escaping @MainActor () async throws -> ConceptConnection) async {
         guard !busy,let original=result,original.result.plan.documents.files.contains(where:{$0.path==path}) else {return}
         let ticket=generation;busy=true
         defer {if ticket==generation {busy=false}}
@@ -107,7 +112,8 @@ struct GenesisPending:Codable,Sendable {
             try await checked(ticket,c,current:current)
             guard result?.operation_id==original.operation_id,value.operation_id==original.operation_id,value.result.plan.plan_digest==original.result.plan.plan_digest else {throw ConceptError.conflict}
             try install(value,c,concept,source)
-            expandedDocument=expandedDocument==path ? "":path
+            expandedDocument=restoring ? path:expandedDocument==path ? "":path
+            if !expandedDocument.isEmpty {documentsVisible=true}
             try savePresentation()
         } catch {failure(error,ticket:ticket)}
     }

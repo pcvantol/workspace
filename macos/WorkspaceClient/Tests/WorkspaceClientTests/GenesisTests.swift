@@ -126,6 +126,29 @@ actor GenesisFixture:GenesisServing {
         await navigation.navigate(path,state:state,concept:peer.concept,source:peer.source,current:{c},focus:{focus.append($0)},reveal:{anchors.append($0)})
         XCTAssertEqual(state.expandedDocument,"");XCTAssertEqual(focus.last!,"genesis-document-"+path);XCTAssertEqual(anchors.last,"genesis-document-"+path);XCTAssertFalse(navigation.busy);state.conceal()
     }
+    func testAuthorizedOriginalDocumentSectionAndAnchorRestoreWithoutToggleOrEffect()async throws {
+        let peer=try GenesisFixture();let root=root();defer{try? FileManager.default.removeItem(at:root)};let c=peer.connection
+        let first=GenesisState(root:root,transport:peer);await first.load(peer.concept,source:peer.source,current:{c});await first.prepare(peer.concept,source:peer.source,target:"local",current:{c})
+        let path=try XCTUnwrap(first.result?.result.plan.documents.files.first?.path)
+        await first.chooseDocument(path,concept:peer.concept,source:peer.source,current:{c});XCTAssertTrue(first.documentsVisible);first.conceal()
+        let reopened=GenesisState(root:root,transport:peer);await reopened.load(peer.concept,source:peer.source,current:{c});XCTAssertTrue(reopened.documentsVisible);XCTAssertEqual(reopened.expandedDocument,path)
+        let navigation=GenesisDocumentNavigation();var revealed:[String]=[];var focused:[String?]=[]
+        await navigation.navigate(path,restoring:true,state:reopened,concept:peer.concept,source:peer.source,current:{c},focus:{focused.append($0)},reveal:{revealed.append($0)})
+        XCTAssertEqual(reopened.expandedDocument,path);XCTAssertEqual(revealed,["genesis-detail-"+path]);XCTAssertEqual(focused.last!,"genesis-detail-"+path)
+        reopened.setDocumentsVisible(false);reopened.conceal()
+        let collapsed=GenesisState(root:root,transport:peer);await collapsed.load(peer.concept,source:peer.source,current:{c});XCTAssertFalse(collapsed.documentsVisible);XCTAssertEqual(collapsed.expandedDocument,path)
+        await peer.setDenied(true);revealed=[];focused=[]
+        await navigation.navigate(path,restoring:true,state:collapsed,concept:peer.concept,source:peer.source,current:{c},focus:{focused.append($0)},reveal:{revealed.append($0)})
+        XCTAssertNil(collapsed.result);XCTAssertTrue(revealed.isEmpty);XCTAssertTrue(focused.isEmpty);let count=await peer.count();XCTAssertEqual(count,1);collapsed.conceal()
+    }
+    func testRecoverableOriginalReadConcealsThenRestoresScopedReasonAndDocument()async throws {
+        let peer=try GenesisFixture();let root=root();defer{try? FileManager.default.removeItem(at:root)};let state=GenesisState(root:root,transport:peer);let c=peer.connection
+        await state.load(peer.concept,source:peer.source,current:{c});await state.prepare(peer.concept,source:peer.source,target:"local",current:{c})
+        let path=try XCTUnwrap(state.result?.result.plan.documents.files.first?.path);state.updateReason("Exact original reason after unavailable read");await state.chooseDocument(path,concept:peer.concept,source:peer.source,current:{c})
+        await peer.setUnavailable(true);try await Task.sleep(for:.seconds(3.35));XCTAssertNil(state.result);XCTAssertEqual(state.reason,"");XCTAssertFalse(state.documentsVisible)
+        await peer.setUnavailable(false);try await Task.sleep(for:.seconds(3.35));XCTAssertNotNil(state.result);XCTAssertEqual(state.reason,"Exact original reason after unavailable read");XCTAssertEqual(state.expandedDocument,path);XCTAssertTrue(state.documentsVisible)
+        let count=await peer.count();XCTAssertEqual(count,1);state.conceal()
+    }
     func testFiveLanguagesAndHostedNarrowWideLightDarkRemainSourceEvidence()async throws {
         for (_,values) in GenesisCopy.rows {XCTAssertEqual(values.count,5);XCTAssertTrue(values.allSatisfy{!$0.isEmpty})}
         for language in ["nl","en","de","fr","es"] {XCTAssertNotEqual(GenesisCopy.text("title",language),"title")}

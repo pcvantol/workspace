@@ -80,3 +80,28 @@ cumulative counters. Actual isolated synthetic decisions are never Peter approva
 No R57 Apply, L2 host repair, general peer ACK, installer or new L3 route gate.
 Only this selected plan/decision slice may close; broader onboarding parents OPEN.
 No automatic successor.
+
+## Current bounded candidate evidence (not final acceptance)
+
+Register execution: Forge#208 comment6262569421. Artifact1/source82323f5 binds
+actual noneditable Server2.8.35 payload84 files and packaged Client minimumOS26.0,
+actual SDK27.0. Official Forge2.22.1 wheel SHA256
+`6f0fca3139aa40b8bd886d32c99d17c4802caa39a40e6f948d5e97218a587c82`
+matches its release receipt and selected R56 source/schema projection.
+The actual original request returns37 documents; real separate synthetic R54
+Business/Architecture decisions and R56 plan/effect decision are technical tests,
+never approval on Peter's behalf. One effect POST succeeded, all157220 upstream
+bytes were dropped before downstream publication, and the native original-recovery
+action plus three separate OS restarts retained identical original plan/decision.
+Two explicitly selected targets produce distinct planrevisions; the second does
+not inherit effect approval. No Apply or EP effect exists.
+
+Original JPEG screenshots have exact source/digest/privacy bindings. A failed
+source-only hosted AX traversal experiment, two driver field assumptions and
+actual read/unavailability failures remain retained. They are not GUI passes.
+The actual scoped DoD and new final-main qualification remain open. Source5 adds
+bound persistent section state and an authorized exact-anchor return; failed reads
+conceal protected presentation and later authorized reads restore its original
+reason/document without another effect. Reused native focus controls expose labels
+and visible focus. Sixteen source-only native cases pass; strict coverage and
+actual repaired-artifact acceptance are still required.
