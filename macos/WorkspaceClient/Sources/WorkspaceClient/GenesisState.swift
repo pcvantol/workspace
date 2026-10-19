@@ -24,11 +24,13 @@ struct GenesisPending:Codable,Sendable {
     let records:PrivateLocalRecordStore
     private(set) var generation=0
     private(set) var presentationEpoch=0
+    private var readEpoch=0
+    private var reads:[String:Task<GenesisEnvelope,Error>]=[:]
     private var monitor:Task<Void,Never>?
     private var expiry:Task<Void,Never>?
     private var planOperation:String?
     init(root:URL,transport:any GenesisServing=GenesisTransport()) {self.transport=transport;records=PrivateLocalRecordStore(root:root,namespace:"genesis-bootstrap")}
-    func conceal() {presentationEpoch+=1;monitor?.cancel();monitor=nil;expiry?.cancel();expiry=nil;generation+=1;access=nil;result=nil;pending=nil;busy=false;planOperation=nil;presentationKey=nil;reason="";expandedDocument="";documentsVisible=false;sections=[];phase="choose"}
+    func conceal() {readEpoch+=1;for task in reads.values {task.cancel()};reads.removeAll();presentationEpoch+=1;monitor?.cancel();monitor=nil;expiry?.cancel();expiry=nil;generation+=1;access=nil;result=nil;pending=nil;busy=false;planOperation=nil;presentationKey=nil;reason="";expandedDocument="";documentsVisible=false;sections=[];phase="choose"}
     private func key(_ connection:ConceptConnection,_ concept:ProjectConcept,_ source:ConceptBaselineResult)->String {
         SHA256.hash(data:Data((connection.key+"\n"+concept.actor_id+"\n"+concept.id+"\n"+source.operation_id).utf8)).map{String(format:"%02x",$0)}.joined()
     }
@@ -111,13 +113,24 @@ struct GenesisPending:Codable,Sendable {
         guard result != nil else {return};documentsVisible=visible
         do {try savePresentation()} catch {failure(error,ticket:generation)}
     }
+    // Share only an actively running exact-scope GET. Completed responses and
+    // authorization are never cached; all send/publication guards stay in Server.
+    private func readOriginal(_ c:ConceptConnection,concept:ProjectConcept,source:ConceptBaselineResult,action:String,operation:String) async throws -> GenesisEnvelope {
+        let bearerDigest=SHA256.hash(data:Data(c.bearer.utf8)).map{String(format:"%02x",$0)}.joined()
+        let k=String(generation)+"\n"+bearerDigest+"\n"+c.key+"\n"+concept.actor_id+"\n"+concept.context_id+"\n"+concept.id+"\n"+source.operation_id+"\n"+action+"\n"+operation
+        if let active=reads[k] {return try await active.value}
+        let task=Task {try await transport.result(c,concept:concept.id,action:action,operation:operation,body:nil)}
+        reads[k]=task
+        defer {reads.removeValue(forKey:k)}
+        return try await task.value
+    }
     func chooseDocument(_ path:String,restoring:Bool=false,concept:ProjectConcept,source:ConceptBaselineResult,current:@escaping @MainActor () async throws -> ConceptConnection) async {
         guard !busy,let original=result,original.result.plan.documents.files.contains(where:{$0.path==path}) else {return}
-        let ticket=generation;busy=true
+        let ticket=generation;readEpoch+=1;busy=true
         defer {if ticket==generation {busy=false}}
         do {
             let c=try await current()
-            let value=try await transport.result(c,concept:concept.id,action:original.kind=="DECISION" ? "operations":"decision-access",operation:original.operation_id,body:nil)
+            let value=try await readOriginal(c,concept:concept,source:source,action:original.kind=="DECISION" ? "operations":"decision-access",operation:original.operation_id)
             try await checked(ticket,c,current:current)
             guard result?.operation_id==original.operation_id,value.operation_id==original.operation_id,value.result.plan.plan_digest==original.result.plan.plan_digest else {throw ConceptError.conflict}
             try install(value,c,concept,source)
@@ -128,7 +141,7 @@ struct GenesisPending:Codable,Sendable {
     }
 
     func load(_ concept:ProjectConcept,source:ConceptBaselineResult,current:@escaping @MainActor () async throws -> ConceptConnection) async {
-        conceal();let ticket=generation;busy=true
+        conceal();let ticket=generation;readEpoch+=1;busy=true
         defer {if ticket==generation {busy=false}}
         do {
             let c=try await current();let value=try await transport.access(c,concept:concept.id,source:source.operation_id)
@@ -140,12 +153,12 @@ struct GenesisPending:Codable,Sendable {
                 let prior=try JSONDecoder().decode(GenesisPending.self,from:data)
                 guard prior.source==source.operation_id,prior.actor==concept.actor_id,prior.context==concept.context_id,prior.concept==concept.id,["PLAN","DECISION"].contains(prior.kind),prior.operation.range(of:"^[0-9a-f]{32}$",options:.regularExpression) != nil else {throw ConceptError.invalid}
                 pending=prior.completed ? nil:prior
-                let original=try await transport.result(c,concept:concept.id,action:"operations",operation:prior.operation,body:nil)
+                let original=try await readOriginal(c,concept:concept,source:source,action:"operations",operation:prior.operation)
                 try await checked(ticket,c,current:current);try install(original,c,concept,source);try complete(prior,key:localKey);pending=nil
                 planOperation=prior.kind=="PLAN" ? prior.operation:value.plans.first(where:{$0.plan_id==original.result.plan.plan_id})?.operation_id
             } else if let latest=value.latest {
                 planOperation=latest.operation_id
-                let active=try await transport.result(c,concept:concept.id,action:"decision-access",operation:latest.operation_id,body:nil)
+                let active=try await readOriginal(c,concept:concept,source:source,action:"decision-access",operation:latest.operation_id)
                 try await checked(ticket,c,current:current);try install(active,c,concept,source)
             } else {phase="choose"}
             startMonitor(concept,source:source,connection:c,ticket:ticket,current:current)
@@ -159,24 +172,26 @@ struct GenesisPending:Codable,Sendable {
                 do {try await Task.sleep(for:.seconds(3))} catch {return}
                 guard let self,ticket==self.generation else {return}
                 if self.busy {continue}
+                let activity=self.readEpoch
                 if let currentResult=self.result {reference=(currentResult.kind,currentResult.operation_id)}
                 guard let original=reference else {
                     do {
                         let cap=try await self.transport.access(connection,concept:concept.id,source:source.operation_id)
                         try await self.checked(ticket,connection,current:current);try cap.validate(connection,concept:concept,source:source)
-                        guard !self.busy,self.result==nil else {continue}
+                        guard activity==self.readEpoch,!self.busy,self.result==nil else {continue}
                         self.access=cap;self.phase="choose";self.armExpiry(cap.expires_at)
-                    } catch {self.failure(error,ticket:ticket)}
+                    } catch {if activity==self.readEpoch,!self.busy {self.failure(error,ticket:ticket)}}
                     continue
                 }
                 do {
                     let action=original.0=="DECISION" ? "operations":"decision-access"
                     let operation=original.0=="DECISION" ? original.1:(self.planOperation ?? original.1)
-                    let value=try await self.transport.result(connection,concept:concept.id,action:action,operation:operation,body:nil)
+                    let value=try await self.readOriginal(connection,concept:concept,source:source,action:action,operation:operation)
                     try await self.checked(ticket,connection,current:current)
-                    guard !self.busy,self.result==nil || self.result?.operation_id==original.1 else {continue}
+                    guard activity==self.readEpoch,!self.busy,self.result==nil || self.result?.operation_id==original.1 else {continue}
                     try self.install(value,connection,concept,source)
                 } catch {
+                    guard activity==self.readEpoch,!self.busy else {continue}
                     if case ConceptError.denied=error {self.failure(error,ticket:ticket);return}
                     self.failure(error,ticket:ticket)
                 }
@@ -184,7 +199,7 @@ struct GenesisPending:Codable,Sendable {
         }
     }
     private func send(_ value:GenesisPending,_ concept:ProjectConcept,_ source:ConceptBaselineResult,current:@escaping @MainActor () async throws -> ConceptConnection) async {
-        guard !busy else {return};let ticket=generation;busy=true
+        guard !busy else {return};let ticket=generation;readEpoch+=1;busy=true
         defer {if ticket==generation {busy=false}}
         do {
             let c=try await current();try await checked(ticket,c,current:current)
@@ -198,7 +213,7 @@ struct GenesisPending:Codable,Sendable {
             try complete(value,key:key(c,concept,source));pending=nil
             if value.kind=="PLAN" {
                 planOperation=value.operation
-                let active=try await transport.result(c,concept:concept.id,action:"decision-access",operation:value.operation,body:nil)
+                let active=try await readOriginal(c,concept:concept,source:source,action:"decision-access",operation:value.operation)
                 try await checked(ticket,c,current:current);try install(active,c,concept,source)
             }
             startMonitor(concept,source:source,connection:c,ticket:ticket,current:current)
@@ -227,10 +242,10 @@ struct GenesisPending:Codable,Sendable {
         await send(pending,concept,source,current:current)
     }
     func open(_ operation:String,concept:ProjectConcept,source:ConceptBaselineResult,current:@escaping @MainActor () async throws -> ConceptConnection) async {
-        guard !busy,pending==nil else {return};let ticket=generation;busy=true
+        guard !busy,pending==nil else {return};let ticket=generation;readEpoch+=1;busy=true
         defer {if ticket==generation {busy=false}}
         do {
-            let c=try await current();let value=try await transport.result(c,concept:concept.id,action:"decision-access",operation:operation,body:nil)
+            let c=try await current();let value=try await readOriginal(c,concept:concept,source:source,action:"decision-access",operation:operation)
             try await checked(ticket,c,current:current);try install(value,c,concept,source);planOperation=operation
         } catch {failure(error,ticket:ticket)}
     }

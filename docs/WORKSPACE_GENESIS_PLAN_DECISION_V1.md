@@ -85,7 +85,7 @@ No automatic successor.
 
 Register execution: Forge#208 comment6262569421. Artifact1/source82323f5 binds
 actual noneditable Server2.8.35 payload84 files and packaged Client minimumOS26.0,
-actual SDK27.0. Official Forge2.22.1 wheel SHA256
+actual Mach-O SDK26.0 (the available SDK query separately returned27.0). Official Forge2.22.1 wheel SHA256
 `6f0fca3139aa40b8bd886d32c99d17c4802caa39a40e6f948d5e97218a587c82`
 matches its release receipt and selected R56 source/schema projection.
 The actual original request returns37 documents; real separate synthetic R54
@@ -119,3 +119,26 @@ Reopen restores that original target unless the user explicitly chooses another
 new-plan target. No identifier is inferred from name or path.
 
 See [early original candidate evidence](evidence/plan109/early-trial1/README.md).
+
+### Retained trial2 failure and bounded source12 correction
+
+Trial2 retained its fixed deadline and original source/plan/decision operations.
+It made one R52 plan, two separate R54 role decisions, one R56 plan and one
+R56 REQUEST_CHANGES. Actual cancellation before the final confirmation made
+zero effect POSTs or local effect intents. All temporary grants were revoked and
+all five owned processes stopped before the deadline. This candidate trial did
+not pass overall: artifact2 Escape did not close the document, and an actual
+producer200 read returned130905 bytes instead of the usual157135-byte original.
+The original relay incorrectly labeled all upstream reads complete; original logs
+remain unchanged. Its corrected accounting checks declared length and remainder,
+preserves the producer length, and never deliberately drops an incomplete reply.
+
+Source11 uses the existing focused explicit Escape-handler pattern. Its real GUI
+acceptance is still open. Source12 shares only an actively running exact-scope
+GET, including a private bearer digest as well as actor/context/concept/source,
+action, operation and generation. It stores no completed response or authority
+cache, and never shares a POST. Foreground activity fences both late background
+successes and failures; concealment cancels and clears active tasks. Existing
+expiry, send and publication checks remain unchanged. Held-response regressions
+cover actual coalescing, a changed bearer and a late failed background read.
+These source tests do not turn the retained candidate failure into installed PASS.

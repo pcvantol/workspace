@@ -15,6 +15,8 @@ actor GenesisFixture:GenesisServing {
     private var lost=false
     private var denied=false
     private var posts=0
+    private var gets=0
+    private var heldReplyFailure=false
     private var holdNextReply=false
     private var replyHeld=false
     private var release:CheckedContinuation<Void,Never>?
@@ -29,7 +31,8 @@ actor GenesisFixture:GenesisServing {
     }
     func holdReply() {holdNextReply=true}
     func replyIsHeld()->Bool {replyHeld}
-    func releaseReply() {release?.resume();release=nil;replyHeld=false}
+    func releaseReply(failing:Bool=false) {heldReplyFailure=failing;release?.resume();release=nil;replyHeld=false}
+    func readCount()->Int {gets}
     func setLost() {lost=true}
     func setDenied(_ value:Bool) {denied=value}
     func setUnavailable(_ value:Bool) {available = !value}
@@ -56,6 +59,7 @@ actor GenesisFixture:GenesisServing {
     }
     func result(_ connection:ConceptConnection,concept:String,action:String,operation:String?,body:Data?) async throws -> GenesisEnvelope {
         if denied {throw ConceptError.denied};if !available {throw ConceptError.unavailable}
+        if body==nil {gets+=1}
         if let body {
             let cmd=try JSONSerialization.jsonObject(with:body) as! [String:Any];posts+=1;created=true
             var result=object["result"] as! [String:Any];var p=result["plan"] as! [String:Any]
@@ -73,13 +77,63 @@ actor GenesisFixture:GenesisServing {
         }
         guard created else {throw ConceptError.notFound}
         let frozen=try JSONSerialization.data(withJSONObject:object)
-        if holdNextReply {holdNextReply=false;replyHeld=true;await withCheckedContinuation {release=$0}}
+        if holdNextReply {holdNextReply=false;replyHeld=true;await withCheckedContinuation {release=$0};if heldReplyFailure {heldReplyFailure=false;throw ConceptError.unavailable}}
         return try JSONDecoder().decode(GenesisEnvelope.self,from:frozen)
     }
 }
 
 @MainActor final class GenesisTests:XCTestCase {
     func root()->URL {FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)}
+    func testHeldBackgroundOriginalReadIsSharedWithForegroundDocumentNavigation()async throws {
+        let peer=try GenesisFixture();let root=root();defer{try? FileManager.default.removeItem(at:root)}
+        let state=GenesisState(root:root,transport:peer);let c=peer.connection
+        await state.load(peer.concept,source:peer.source,current:{c});await state.prepare(peer.concept,source:peer.source,target:"local",current:{c})
+        let path=try XCTUnwrap(state.result?.result.plan.documents.files.first?.path)
+        await peer.holdReply()
+        for _ in 0..<450 {if await peer.replyIsHeld() {break};try await Task.sleep(for:.milliseconds(10))}
+        let held=await peer.replyIsHeld();XCTAssertTrue(held)
+        let before=await peer.readCount()
+        let foreground=Task {await state.chooseDocument(path,concept:peer.concept,source:peer.source,current:{c})}
+        for _ in 0..<100 {if state.busy {break};await Task.yield()}
+        XCTAssertTrue(state.busy)
+        let during=await peer.readCount();XCTAssertEqual(during,before,"The held exact original GET must be shared, not duplicated")
+        await peer.releaseReply();await foreground.value
+        XCTAssertEqual(state.expandedDocument,path);XCTAssertNotNil(state.result)
+        let count=await peer.count();XCTAssertEqual(count,1);state.conceal()
+    }
+    func testChangedBearerDoesNotJoinOldPollAndLateFailureCannotHideForeground()async throws {
+        let peer=try GenesisFixture();let root=root();defer{try? FileManager.default.removeItem(at:root)}
+        let state=GenesisState(root:root,transport:peer);let old=peer.connection
+        var current=old
+        await state.load(peer.concept,source:peer.source,current:{current});await state.prepare(peer.concept,source:peer.source,target:"local",current:{current})
+        let path=try XCTUnwrap(state.result?.result.plan.documents.files.first?.path)
+        await peer.holdReply()
+        for _ in 0..<450 {if await peer.replyIsHeld() {break};try await Task.sleep(for:.milliseconds(10))}
+        let held=await peer.replyIsHeld();XCTAssertTrue(held)
+        let before=await peer.readCount()
+        current=ConceptConnection(access:old.access,bearer:"different-own-bearer")
+        await state.chooseDocument(path,concept:peer.concept,source:peer.source,current:{current})
+        let after=await peer.readCount();XCTAssertEqual(after,before+1,"A different bearer must make its own authenticated GET")
+        XCTAssertEqual(state.expandedDocument,path);let operation=state.result?.operation_id,epoch=state.presentationEpoch
+        await peer.releaseReply(failing:true)
+        for _ in 0..<30 {await Task.yield()}
+        XCTAssertEqual(state.result?.operation_id,operation);XCTAssertEqual(state.expandedDocument,path);XCTAssertEqual(state.presentationEpoch,epoch)
+        let count=await peer.count();XCTAssertEqual(count,1);state.conceal()
+    }
+    func testLateFailedBackgroundPollCannotConcealReloadedOriginal()async throws {
+        let peer=try GenesisFixture();let root=root();defer{try? FileManager.default.removeItem(at:root)}
+        let state=GenesisState(root:root,transport:peer);let c=peer.connection
+        await state.load(peer.concept,source:peer.source,current:{c});await state.prepare(peer.concept,source:peer.source,target:"local",current:{c})
+        await peer.holdReply()
+        for _ in 0..<450 {if await peer.replyIsHeld() {break};try await Task.sleep(for:.milliseconds(10))}
+        let held=await peer.replyIsHeld();XCTAssertTrue(held)
+        await state.load(peer.concept,source:peer.source,current:{c})
+        let operation=try XCTUnwrap(state.result?.operation_id),epoch=state.presentationEpoch
+        await peer.releaseReply(failing:true)
+        for _ in 0..<30 {await Task.yield()}
+        XCTAssertEqual(state.result?.operation_id,operation);XCTAssertEqual(state.presentationEpoch,epoch);XCTAssertEqual(state.phase,"loaded")
+        let count=await peer.count();XCTAssertEqual(count,1);state.conceal()
+    }
     func testOriginalPlanAndSeparateDecisionNoEffects()async throws {
         let peer=try GenesisFixture();let root=root();defer{try? FileManager.default.removeItem(at:root)}
         let state=GenesisState(root:root,transport:peer);let c=peer.connection
