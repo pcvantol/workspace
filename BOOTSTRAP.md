@@ -1,3 +1,95 @@
+## Plan109 — native Genesis plan/effect decision, selected and OPEN
+
+Same sole writer; assignment `L4-NATIVE-GENESIS-EFFECT-PLAN-DECISION-V1-20261019`.
+Base protected main `bdc71d86ec02ba0b6b765b314031eb73dc0568b6`, branch
+`codex/plan109-native-genesis-plan-decision`, canonical PATCH2.8.35. Plan108
+and LINK are CLOSED; historical sections below retain their original source.
+No Apply, EP effect, target/Git write, provider/model or automatic successor.
+
+Candidate82323f5 has real outside-checkout packaged Client/own noneditable
+Server/official Forge2.22.1/8ee60c8 binding, actual R52 original37 files,
+distinct synthetic R54 roles and R56 plan/one separate technical effect decision.
+The full success answer was lost at the external relay (157220 upstream bytes,
+zero downstream); original read and separate Client/ownServer/ForgeServer OS
+restarts retain the same plan/decision bytes and one effect. Independent bounded
+Quality/Security evidence checks PASS; early screenshots privacy-reviewed as
+original JPEG, not PNG. Explicit targetB gets separate plan2 without inherited
+approval; old plan1 remains unchanged with historical decision/PLAN_SUPERSEDED.
+All of this remains source-bound CANDIDATE evidence, not complete acceptance.
+
+Source5/correction4 repairs authorized original document-section/anchor return,
+scoped presentation after recoverable read failure, and reuses existing qualified
+accessible focus controls. Sixteen directed native tests PASS. Failed standalone
+SwiftUI AX traversal experiment is retained privately with its original logs;
+no click pass is inferred from hosting. Strict coverage, full validation/current
+CI/TDE, full independent UX/Quality/Security, remaining actual negative/GUI
+controls, protected implementation, own nonempty finalization and NEW exact-final-
+main installed/GUI/readback/cleanup remain OPEN. Trial1 read failures/timeouts and
+proof-driver assumption failures are retained, not relabeled as product PASS.
+
+Source6/correction5 binds restoration to a presentation epoch and the real
+navigation coordinator; an actual hosted View failure→same-original recovery
+now invokes the original anchor again. Original opened inspect sections persist
+per exact plan. Twenty directed native cases PASS; source6f executable lines:
+Copy100%, Navigation97.5%, State92.54%, Transport98.99%, View85.29%. Last localized
+accessibility labels/shared history-control followup passes three hosted cases.
+These are source-only evidence, not a new packaged acceptance. Full validation
+and current independent review remain required. Original candidate images and a
+sanitized limited receipt are retained in docs/evidence/plan109/early-trial1.
+
+Source7/8/9 integrate five existing own HTTP operations and two local owner
+commands into the machine inventory and closed web presentation. Full1/2 failures
+are retained; full3 on505cd6d passes all owning gates: 415 Python runtime cases,
+385 native plus isolated credential case, strict per-file coverage and packaging.
+Actual TDE39224690247 on505cd6d is QUALIFIED/PASS_WITH_WARNINGS (product maximum28;
+assessment/qualification exit1/1), independently read from raw artifacts.
+Draft PR189 remains OPEN: its macOS26 compiler failed the long confirmation
+message expression despite local full3 success. Source10/correction9 extracts
+identical text into a typed helper; 21 directed native cases PASS. New full4 and
+exact-head CI, complete independent/current installed acceptance and all protected
+implementation/finalization/final-main gates remain OPEN. Artifact2 remains bound
+to1323 production, not this new helper. Real trial2 missing Architecture screenshot
+is independently UX privacy-reviewed; transient503s and failed proof-driver path/
+403-only expiry assumptions remain retained. Actual expired READ is401 without
+protected data; no authentication failure is converted to unsupported or success.
+
+Full4 on42463a7 passes all owning gates; previous source505 evidence stays bound.
+Actual artifact2/trial2 discovers Escape does not close the focused original
+document: concrete independent UX P1, NOT keyboard acceptance. Source11/correction10
+uses the already qualified explicit focused-detail Escape handler, same serialized
+authorized navigation and handled-once behavior. New actual repaired keyboard proof,
+full5 and exact-head CI/independent acceptance remain required. Actual trial2 single
+confirmation cancel has zero decision POSTs/intents; a later separate native
+synthetic REQUEST_CHANGES has one real producer POST200. Both original screenshots
+are independently UX/Security privacy-approved. Trial2 overall remains OPEN/failed
+keyboard attempt retained; no Apply or effect execution.
+
+### Current plan109 checkpoint — source12 / trial3, not delivery closure
+
+Production sourcec661e65 full5 PASS388native+isolated1/strict per-file coverage;
+five exact-head checks SUCCESS, separate actual TDE39231535764 QUALIFIED /
+PASS_WITH_WARNINGS (max28, original exits1/1,99 findings OPEN). Artifact4/trial3
+binds same production source, real one-effect lost-success/restarts, explicit
+targetB, actual sourceA→B/no inheritance, current revoke/concealment and normal
+cleanup before the fixed deadline. Independent bounded source/security/privacy
+reviews accept these observations. [Candidate receipt/images](docs/evidence/plan109/candidate-trial3/README.md)
+retain actual failures and distinguish source-only RED→GREEN and byte-identical
+Server negative-proof carryforward. Accessible names and remaining native
+historical-plan presentation are OPEN; current old-A frame is UNAVAILABLE, not
+a history-PASS. Protected implementation/own Finalization/NEW final-main
+installed and GUI/readback/cleanup remain OPEN. No successor or settings change.
+
+### Plan109 source13 candidate followup
+
+Exactd13b0c3/24 directednativePASS. New artifact5/trial4 actual37distinctdocument
+IDs, settled original Escape/Space and realREQUEST_CHANGES/history/explicit same-
+plan reopen are independently accepted within bounds. Nine own bindings/grants
+revoked and all5ownprocesses stopped before deadline; actual Server HTTP2.8.35,
+Client minOS/SDK26.0/26.0, unchanged84Serverpayloads. [Original candidate evidence](docs/evidence/plan109/candidate-trial4/README.md).
+Friendly raw AX/control names remain OPEN; no spoken-name inference from CUA IDs.
+Full current owning gates/CI and protected implementation/own Finalization/NEW
+final-main qualification remain required. No automatic successor/settings change.
+
 ## Plan108 protected current-rights/focus repair — own finalization pending
 
 Protected repair main `a1a7c1c3b6c75b9bfa209ba392759aeb511022e6` equals exact reviewed743f967 tree.

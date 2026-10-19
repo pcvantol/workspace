@@ -6,6 +6,7 @@ import sys
 
 
 SOURCES = {
+    "GenesisTransport.swift", "GenesisState.swift", "GenesisCopy.swift", "GenesisView.swift", "GenesisDocumentNavigation.swift",
     "ConceptAdoptionTransport.swift", "ConceptAdoptionState.swift", "ConceptAdoptionCopy.swift", "ConceptAdoptionPanel.swift",
     "ExecutionProgressSchema.swift", "ExecutionProgressModels.swift", "ExecutionProgressTransport.swift", "ExecutionProgressState.swift", "ExecutionProgressCopy.swift", "ExecutionProgressView.swift",
     "ProposalContentTransport.swift", "ProposalContentState.swift", "ProposalContentCopy.swift", "ProposalContentView.swift",

@@ -11,10 +11,10 @@ from .review_peer import _unique_pairs
 from .worklist_peer import WorklistError
 from .advisory_contract import validate
 
-def request(binding, method, path, body=None, *, gate=None, error_validator=validate, maximum_bytes=65536, missing_as_state=None, proposal_audience=None, concept_audience=None, content_audience=None, send_guard=None, timeout=60, inspection_audience=None, success_statuses=(200,), absolute_timeout=False):
-    if sum(value is not None for value in (proposal_audience,concept_audience,content_audience,inspection_audience))>1:
+def request(binding, method, path, body=None, *, gate=None, error_validator=validate, maximum_bytes=65536, missing_as_state=None, proposal_audience=None, concept_audience=None, content_audience=None, send_guard=None, timeout=60, inspection_audience=None, success_statuses=(200,), absolute_timeout=False, bootstrap_audience=None):
+    if sum(value is not None for value in (proposal_audience,concept_audience,content_audience,inspection_audience,bootstrap_audience))>1:
         raise WorklistError('INVALID_CONFIGURATION')
-    audience=inspection_audience if inspection_audience is not None else content_audience if content_audience is not None else concept_audience if concept_audience is not None else proposal_audience
+    audience=bootstrap_audience if bootstrap_audience is not None else inspection_audience if inspection_audience is not None else content_audience if content_audience is not None else concept_audience if concept_audience is not None else proposal_audience
     if audience is not None and (not isinstance(audience,str) or not 1<=len(audience)<=128 or any(ord(c)<32 or ord(c)>126 for c in audience)):
         raise WorklistError('INVALID_CONFIGURATION')
     scheme,host,port=_endpoint(binding['endpoint'])
@@ -39,7 +39,7 @@ def request(binding, method, path, body=None, *, gate=None, error_validator=vali
         with gate or nullcontext():
             headers={'Authorization':'Bearer '+binding['forge_token'],'Content-Type':'application/json','Accept':'application/json'}
             if audience is not None:
-                headers['X-Forge-Inspection-Audience' if inspection_audience is not None else 'X-Forge-Content-Audience' if content_audience is not None else 'X-Forge-Concept-Audience' if concept_audience is not None else 'X-Forge-Proposal-Audience']=audience
+                headers['X-Forge-Bootstrap-Audience' if bootstrap_audience is not None else 'X-Forge-Inspection-Audience' if inspection_audience is not None else 'X-Forge-Content-Audience' if content_audience is not None else 'X-Forge-Concept-Audience' if concept_audience is not None else 'X-Forge-Proposal-Audience']=audience
             connection.request(method,path,body=payload,headers=headers)
         if absolute_timeout and time.monotonic()>=deadline:raise WorklistError('UNAVAILABLE')
         response=connection.getresponse()

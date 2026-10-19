@@ -1,0 +1,151 @@
+{
+  "scope": "SOURCE_BOUND_CANDIDATE_ONLY_NOT_COMPLETE_ACCEPTANCE_NOT_FINAL_MAIN",
+  "assignment": "L4-NATIVE-GENESIS-EFFECT-PLAN-DECISION-V1-20261019",
+  "consumer_source": "c661e6529c27bb12bfdc7bc3560551471dfa2fb7",
+  "consumer_version": "2.8.35",
+  "artifact": 4,
+  "trial": 3,
+  "native_minimum_os": "26.0",
+  "actual_MachO_SDK": "26.0",
+  "available_SDK_query_separate": "27.0",
+  "server_noneditable": true,
+  "server_payload_files": 84,
+  "server_payload_byte_parity_with_artifact2": true,
+  "producer": {
+    "version": "2.22.1",
+    "source": "8ee60c8409b2c3801e70cf129f20f1ff1480d03b",
+    "official_wheel_sha256": "6f0fca3139aa40b8bd886d32c99d17c4802caa39a40e6f948d5e97218a587c82"
+  },
+  "technical_test_decisions": "SYNTHETIC_OWNER_TEST_ONLY_NOT_PETER_APPROVAL",
+  "actual": {
+    "original_documents": 37,
+    "missing_Architecture_blocks": true,
+    "separate_content_roles": 2,
+    "effect_confirmations_submitted": 1,
+    "fully_received_success_upstream_bytes": 157124,
+    "delivered_reply_bytes": 0,
+    "original_response_sha256": "5c3ac25be1ef2c9329823dcf7f33797c817b36c2c989bea19d2a5b92540c2bdd",
+    "original_recovery_same_response_after_separate_OS_restarts": [
+      "Client",
+      "Workspace Server",
+      "Forge Server"
+    ],
+    "effect_POSTs": 1,
+    "explicit_alternate_target_plan_revision": 2,
+    "no_inherited_effect_decision": true,
+    "old_original_plan_and_history_retained_by_HTTP": true,
+    "new_R52_source_revision": 2,
+    "new_source_Genesis_access": 403,
+    "original_effect_after_revoke": 403,
+    "all_three_original_Genesis_reads_after_revoke": 403,
+    "own_authorization_revocation_conceals_all_protected_content": true,
+    "POST_counts": {
+      "/v1/onboarding/plans": 2,
+      "/v1/project-proposal-decisions/decisions": 2,
+      "/v1/genesis-bootstrap/plans": 2,
+      "/v1/genesis-bootstrap/decisions": 1
+    },
+    "Apply_EP_target_Git_Mission_model_POSTs": 0,
+    "owned_processes_stopped": {
+      "client": true,
+      "workspace": true,
+      "proxy": true,
+      "forge": true,
+      "guardian": true
+    },
+    "cleanup_before_fixed_deadline": true,
+    "cleanup_failures": []
+  },
+  "negative_evidence_carryforward": {
+    "source": "artifact2/trial2; exact84-file installed Server payload parity with artifact4",
+    "actual_expired_READ": "401 DENIED, not unsupported",
+    "foreign_actor_context": "404, no disclosure",
+    "wrong_instance": "409",
+    "stale_command": "409, no new intent/POST",
+    "not_new_native_or_final_main_evidence": true
+  },
+  "restored_fault_control": {
+    "kind": "SOURCE_ONLY",
+    "production_state_restored_from": "6c25324e4c9e4e71d3320d0f4b4ebf8810e46e9b",
+    "test": "testHeldBackgroundOriginalReadIsSharedWithForegroundDocumentNavigation",
+    "restored_RED": "actual GET count3 vs expected2",
+    "current_GREEN": "same test on c661 within18 directed native tests",
+    "old_GUI_control": "INCONCLUSIVE; actual peer503 contaminated Escape observation; retained, not PASS"
+  },
+  "retained_failures": [
+    "actual producer partial200 and own unavailable/truncated read",
+    "revoke baseline GET first attempt incomplete JSON, no revoke occurred; next original GET succeeded",
+    "source-change proof driver used nonexistent concept_revision; corrected to actual source_revision/current_revision, no extra POST",
+    "requested Light but actual Dark in earlier frame; not light PASS",
+    "three hosted accessibility diagnostic attempts inconclusive; not actual accessible-name PASS/FAIL",
+    "old-a-history-final shows unavailable, not restored native Genesis history"
+  ],
+  "independent_reviews": {
+    "Quality": "candidate source/core and bounded actual source/revoke/cleanup accepted; full delivery OPEN",
+    "Security": "candidate source, bounded actual source/revoke/cleanup and image privacy PASS; full delivery OPEN",
+    "UX": "bounded five languages/themes/sizes/keyboard/long document/source-change/revocation/privacy PASS; accessible names and required native historical-plan presentation remain OPEN"
+  },
+  "open": [
+    "actual accessible names; external focused-own-process reader awaits explicit narrow permission, no settings change",
+    "remaining native historical-plan presentation acceptance",
+    "protected exact-head implementation",
+    "own nonempty reviewed/protected Finalization",
+    "NEW exact-final-main installed Client/Server/Forge and genuine GUI/privacy/digest/Git Blob readback/cleanup"
+  ],
+  "images": [
+    {
+      "file": "keyboard-escape.jpg",
+      "sha256": "30763cfb0caed7e0220e237554dee26b93b108f4d1966c76347b780e589602da",
+      "caption": "NL/dark/760pt; one real Escape returns blue focus to the exact original opener.",
+      "privacy": "Independent Security/UX pixel/privacy PASS; Quality candidate evidence review; original bytes"
+    },
+    {
+      "file": "en-light-real.jpg",
+      "sha256": "036866d9ef367e5ac75f3c2140bd89c2f10d6443381135e0ebcc146db05ddae5",
+      "caption": "EN/light/1800pt; original approved plan after separate Client restart; EP admission/execution still required.",
+      "privacy": "Independent Security/UX pixel/privacy PASS; Quality candidate evidence review; original bytes"
+    },
+    {
+      "file": "de-target-b-plan2.jpg",
+      "sha256": "359be713e720df8ba805e01ce252182fdd6199d817ab590fefc6875efa0bf815",
+      "caption": "DE/dark/wide; explicit alternate target produces plan2 with no inherited effect decision.",
+      "privacy": "Independent Security/UX pixel/privacy PASS; Quality candidate evidence review; original bytes"
+    },
+    {
+      "file": "fr-light-half.jpg",
+      "sha256": "fd2bdec1e235f8ef39c47e5be323459a3ed6a122401c5858a785623bbeee848b",
+      "caption": "FR/light/901pt; original plan2, separate exact decision authority missing.",
+      "privacy": "Independent Security/UX pixel/privacy PASS; Quality candidate evidence review; original bytes"
+    },
+    {
+      "file": "fr-long-document-scrolled.jpg",
+      "sha256": "75f0a1130223ef7e720c29b0bf4ad77ca81d3a372ab69ec425d97a04e4237e24",
+      "caption": "FR/light/901pt; actual 9005-character original render_core.py scrolled as text, never executed.",
+      "privacy": "Independent Security/UX pixel/privacy PASS; Quality candidate evidence review; original bytes"
+    },
+    {
+      "file": "es-dark-long-reopened.jpg",
+      "sha256": "7e6a0a6ad7c33e89326e2c4ad79c7c9605c4e7de669ace33bd028a5c09fef873",
+      "caption": "ES/dark/901pt; same original long document after separate language/process restart; no pixel-offset claim.",
+      "privacy": "Independent Security/UX pixel/privacy PASS; Quality candidate evidence review; original bytes"
+    },
+    {
+      "file": "source-b-no-inheritance.jpg",
+      "sha256": "1bcb92373d75f1b4256df1aa5a524e5db0b05dc5f72134df091d2746e7b02122",
+      "caption": "ES/dark/901pt; actual concept revision2/new R52 source B, no inherited Genesis plan or approval.",
+      "privacy": "Independent Security/UX pixel/privacy PASS; Quality candidate evidence review; original bytes"
+    },
+    {
+      "file": "own-revoked-concealed.jpg",
+      "sha256": "d9d4d03d62629163f2d92cd974b759c5dce065a493c10b01b040c9e8f7139251",
+      "caption": "ES/dark/901pt; own synthetic Workspace authorization revoked, all protected concept/plan/source content hidden.",
+      "privacy": "Independent Security/UX pixel/privacy PASS; Quality candidate evidence review; original bytes"
+    },
+    {
+      "file": "old-a-history-final.jpg",
+      "sha256": "8026cddc75c4377a2508d92a5de8bae50817a574ec03b5ef29e97cbd712b6619",
+      "caption": "ES/dark/901pt; old R52 revision1 versus current2 and actual Genesis UNAVAILABLE. NOT restored historical Genesis plan/history acceptance.",
+      "privacy": "Independent Security/UX pixel/privacy PASS; Quality candidate evidence review; original bytes"
+    }
+  ]
+}

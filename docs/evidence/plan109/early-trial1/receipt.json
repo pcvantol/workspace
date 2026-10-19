@@ -1,0 +1,110 @@
+{
+  "scope": "EARLY_CANDIDATE_REAL_CHAIN_AND_ORIGINAL_RECOVERY_ONLY",
+  "full_scoped_DoD": "OPEN",
+  "final_main_installed_acceptance": "OPEN",
+  "source": "82323f53a96bb5926ee1c23b04841d1af56a1cbf",
+  "base": "bdc71d86ec02ba0b6b765b314031eb73dc0568b6",
+  "workspace_version": "2.8.35",
+  "own_wheel_sha256": "46806b35ddeca9d0dde5bb8b25bd18c68fbb7597fdd3ca3db46bcf6e4e461c00",
+  "native_binary_sha256": "979b92879d96ca24689a0b7cd8cab67bbdc8d8b28d5ee8e2e0d04b0ea7736c4c",
+  "native_minimum_macos": "26.0",
+  "actual_SDK": "26.0",
+  "noneditable_payload_parity_files": 84,
+  "forge_version": "2.22.1",
+  "forge_source": "8ee60c8409b2c3801e70cf129f20f1ff1480d03b",
+  "forge_wheel_sha256": "6f0fca3139aa40b8bd886d32c99d17c4802caa39a40e6f948d5e97218a587c82",
+  "trial": 1,
+  "fixed_deadline": "2026-10-19T08:22:17.761661+00:00",
+  "grant_margin_after_deadline_seconds": 1800.0,
+  "ended_at": "2026-10-19T08:18:11.037311+00:00",
+  "decisions": "SYNTHETIC_TECHNICAL_NOT_PETER_APPROVAL",
+  "original_document_count": 37,
+  "lost_success": {
+    "upstream_complete_bytes": 157220,
+    "downstream_bytes": 0,
+    "effect_decision_POSTs": 1,
+    "original_plan_digest": "b53b5c91094568f205656d4c0a03724bf1ccbabeb69184d40bcf773645523285",
+    "original_decision_digest": "be1e48a1fe6532ece92bcdcba042fbb866cfb9bf3a7c1d45335eb1869210da8b",
+    "canonical_own_wire_sha256": "18e84e752f105a3f978efa2a0bc5b2efc1229c51f3fcab0d3badd20a55007d49",
+    "unchanged_after_separate_Client_Server_Forge_OS_restarts": true,
+    "independent_bounded_Quality_Security_evidence_review": "PASS"
+  },
+  "new_target_disposition": {
+    "original_plan_revision": 1,
+    "explicit_new_plan_revision": 2,
+    "original37_documents_identical": true,
+    "new_plan_no_inherited_decision": true,
+    "old_original_plan_unchanged": true,
+    "old_decision_preserved_historically": true,
+    "old_current_applicability": false,
+    "old_inapplicability": "PLAN_SUPERSEDED",
+    "plan_POSTs": 2,
+    "decision_POSTs": 1,
+    "execution_authorized": false,
+    "source_bound_candidate_only": true
+  },
+  "actual_revoke": {
+    "own_original_effect_read_status": 403,
+    "error": "DENIED",
+    "native_protected_content_concealed": true
+  },
+  "cleanup": {
+    "success": true,
+    "revocation_steps": 7,
+    "owned_processes_stopped": {
+      "client": true,
+      "workspace": true,
+      "proxy": true,
+      "forge": true,
+      "guardian": true
+    },
+    "original_records_and_failures_preserved": true
+  },
+  "POST_counts": {
+    "/v1/genesis-bootstrap/decisions": 1,
+    "/v1/genesis-bootstrap/plans": 2,
+    "/v1/onboarding/plans": 1,
+    "/v1/project-proposal-decisions/decisions": 2
+  },
+  "EP_Apply_target_Git_Mission_model_effects": 0,
+  "retained_failures": [
+    "standalone hosted SwiftUI AX traversal unavailable; not click acceptance",
+    "two proof-driver field assumptions; no duplicate operation",
+    "actual own-read503/unavailability; explicit original recovery retained"
+  ],
+  "screenshots": {
+    "plan1-before-effect.jpg": {
+      "sha256": "ca3dacc49729f10fa75372841b878f379a551351ed427f9b88386007d344ed36",
+      "format": "JPEG",
+      "unmodified_original": true,
+      "privacy_review": "independent bounded UX review; synthetic only"
+    },
+    "original-after-restarts.jpg": {
+      "sha256": "a6f749aaaefc2453930483f023e962b47572b8394b2847e3f70da373268c2f35",
+      "format": "JPEG",
+      "unmodified_original": true,
+      "privacy_review": "independent bounded UX/Security review; synthetic only"
+    },
+    "separate-target-b-plan2.jpg": {
+      "sha256": "b481166ba831c7c0386b756cae53f28ae10ae256ec80604e5bdef71b268c2f4e",
+      "format": "JPEG",
+      "unmodified_original": true,
+      "privacy_review": "independent bounded UX/Security review; synthetic only"
+    },
+    "revoked-protected-content.jpg": {
+      "sha256": "fd1c539e4f6d2115111a4bcc1517258b3bd9e72b658972bd9782195b538a359b",
+      "format": "JPEG",
+      "unmodified_original": true,
+      "privacy_review": "independent bounded UX/Security review; synthetic only"
+    }
+  },
+  "remaining": [
+    "strict owning full-suite coverage/CI/TDE",
+    "complete current independent acceptance",
+    "remaining authorization/expiry/stale/late-scope/restored-fault controls",
+    "repaired source packaged GUI in five languages/light-dark/narrow-wide/keyboard/long-document",
+    "protected implementation and own nonempty protected finalization",
+    "NEW exact-final-main installed GUI/privacy/readback/cleanup"
+  ],
+  "available_SDK_at_build": "27.0"
+}

@@ -153,6 +153,19 @@ for key in ["issue","revoke"]:
     OPERATIONS["project_link.bind."+key]={"exposure":"LOCAL_ONLY_ADMIN","local_cli":"project-link-bind-"+key,"auth":"PRIVATE_ROOT_OWNER","summary":"pair or revoke existing finite EP discovery READ; no issuer"}
     OPERATIONS["concept-baselines.bind."+key]={"exposure":"LOCAL_ONLY_ADMIN","local_cli":"concept-baseline-bind-"+key,"auth":"PRIVATE_ROOT_OWNER","summary":"pair or revoke existing finite private dossier capability"}
 
+for key,method,path in [
+    ("access","GET","/v1/concept-genesis/{concept_id}/access/{source_operation_id}"),
+    ("prepare","POST","/v1/concept-genesis/{concept_id}/plans"),
+    ("decision_access","GET","/v1/concept-genesis/{concept_id}/decision-access/{plan_operation_id}"),
+    ("decide","POST","/v1/concept-genesis/{concept_id}/decisions"),
+    ("original","GET","/v1/concept-genesis/{concept_id}/operations/{operation_id}")]:
+    OPERATIONS["concept-genesis."+key]={"exposure":"HTTP_EXPOSED","method":method,"path":path,
+        "auth":"BEARER_PINNED_AND_DRAFT_GRANT","contract":"concept-genesis",
+        "summary":"exact original Genesis plan and separate finite human effect decision; no Apply or execution"}
+for key in ("issue","revoke"):
+    OPERATIONS["concept-genesis.bind."+key]={"exposure":"LOCAL_ONLY_ADMIN","local_cli":"genesis-bind-"+key,
+        "auth":"PRIVATE_ROOT_OWNER","summary":"map or revoke separate existing finite R56 grants; no issuer"}
+
 for key,method,path in [("context","GET","/v1/mission-concepts/{conversation_id}/context"),("resolve","POST","/v1/mission-concepts/resolve"),("package","GET","/v1/mission-concepts/{conversation_id}/package"),("approve","POST","/v1/mission-concepts/{conversation_id}/approve"),("operation","GET","/v1/mission-concepts/{conversation_id}/operations/{operation_id}")]:
     OPERATIONS["mission-concepts."+key]={"exposure":"HTTP_EXPOSED","method":method,"path":path,"auth":"BEARER_PINNED_AND_DRAFT_AND_ADVISORY_GRANT","contract":"mission","summary":"exact frozen approval and separate current operation readback"}
 OPERATIONS["mission-concepts.contract.read"]={"exposure":"HTTP_EXPOSED","method":"GET","path":"/v1/mission-concepts/openapi.json","auth":"BEARER_PINNED","contract":"mission","summary":"closed versioned mission transport contract"}
@@ -844,6 +857,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return
             from .execution_progress_http import route as execution_progress_route
             if execution_progress_route(self,service):return
+            from .genesis_http import route as genesis_route
+            if genesis_route(self,service):return
             from .proposal_content_http import route as proposal_content_route
             if proposal_content_route(self,service):return
             from .concept_chat_http import route as concept_chat_route
@@ -963,6 +978,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return
             from .execution_progress_http import route as execution_progress_route
             if execution_progress_route(self,service):return
+            from .genesis_http import route as genesis_route
+            if genesis_route(self,service):return
             from .proposal_content_http import route as proposal_content_route
             if proposal_content_route(self,service):return
             from .concept_chat_http import route as concept_chat_route
@@ -1009,6 +1026,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return
             from .execution_progress_http import route as execution_progress_route
             if execution_progress_route(self,service):return
+            from .genesis_http import route as genesis_route
+            if genesis_route(self,service):return
             from .proposal_content_http import route as proposal_content_route
             if proposal_content_route(self,service):return
             from .concept_chat_http import route as concept_chat_route

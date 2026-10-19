@@ -308,7 +308,7 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual(set(operations), set(OPERATIONS))
         http_routes = {operation["path"] for operation in operations.values()
                        if operation["exposure"] == "HTTP_EXPOSED" and
-                       not operation["id"].startswith(("execution_progress.", "concept-adoptions.", "concept-chats.", "project_link.", "concept-baselines.", "project_concepts.", "conversations.", "reviews.", "worksets.", "workset-controls.", "workset-releases.", "workset-orders.", "workset-activity.", "advisory.", "candidate.", "mission-concepts."))}
+                       not operation["id"].startswith(("concept-genesis.", "execution_progress.", "concept-adoptions.", "concept-chats.", "project_link.", "concept-baselines.", "project_concepts.", "conversations.", "reviews.", "worksets.", "workset-controls.", "workset-releases.", "workset-orders.", "workset-activity.", "advisory.", "candidate.", "mission-concepts."))}
         adoption = {key: operation for key, operation in operations.items() if key.startswith("concept-adoptions.")}
         self.assertEqual(set(adoption), {"concept-adoptions." + name for name in ("sources", "access", "history", "prepare", "original", "bind.issue", "bind.revoke")})
         for key, operation in adoption.items():
@@ -325,10 +325,11 @@ class ReadOnlyTests(unittest.TestCase):
         self.assertEqual({api["paths"][path]["get"]["operationId"] for path in http_routes},
                          {operation["id"] for operation in operations.values()
                           if operation["exposure"] == "HTTP_EXPOSED" and
-                          not operation["id"].startswith(("execution_progress.", "concept-adoptions.", "concept-chats.", "project_link.", "concept-baselines.", "project_concepts.", "conversations.", "reviews.", "worksets.", "workset-controls.", "workset-releases.", "workset-orders.", "workset-activity.", "advisory.", "candidate.", "mission-concepts."))})
+                          not operation["id"].startswith(("concept-genesis.", "execution_progress.", "concept-adoptions.", "concept-chats.", "project_link.", "concept-baselines.", "project_concepts.", "conversations.", "reviews.", "worksets.", "workset-controls.", "workset-releases.", "workset-orders.", "workset-activity.", "advisory.", "candidate.", "mission-concepts."))})
         self.assertEqual({operation["id"] for operation in operations.values()
                           if operation["exposure"] == "LOCAL_ONLY_ADMIN"},
                          {"instance.init", "instance.inspect", "forge.read.configure", "server.serve",
+                          "concept-genesis.bind.issue", "concept-genesis.bind.revoke",
                           "execution_progress.bind.issue", "execution_progress.bind.revoke",
                           "conversations.grant.issue", "conversations.grant.revoke",
                           "concept-adoptions.bind.issue", "concept-adoptions.bind.revoke", "project_link.bind.issue", "project_link.bind.revoke", "concept-chats.bind.issue", "concept-chats.bind.revoke", "concept-baselines.bind.issue", "concept-baselines.bind.revoke", "reviews.bind.issue", "reviews.bind.revoke", "worksets.bind.issue", "worksets.bind.revoke", "workset-controls.bind.issue", "workset-controls.bind.revoke", "advisory.bind.issue", "advisory.bind.revoke", "mission.bind.issue", "mission.bind.revoke", "workset-releases.bind.issue", "workset-releases.bind.revoke", "workset-orders.bind.issue", "workset-orders.bind.revoke", "workset-activity.bind.issue", "workset-activity.bind.revoke", "candidate.bind.issue", "candidate.bind.revoke"})
