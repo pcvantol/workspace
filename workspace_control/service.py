@@ -283,6 +283,8 @@ class Service:
             self.concept_adoptions = ConceptAdoptionPeer(self.root, self._root_fd, self.project_concepts)
             from .proposal_content_peer import ProposalContentPeer
             self.proposal_content = ProposalContentPeer(self.root, self._root_fd, self.project_concepts, self.concept_baselines)
+            from .genesis_peer import GenesisPeer
+            self.genesis = GenesisPeer(self.root, self._root_fd, self.project_concepts, self.concept_baselines, self.proposal_content)
             from .concept_chat_peer import ConceptChatPeer
             self.concept_chats = ConceptChatPeer(self.root, self._root_fd, self.project_concepts)
             from .project_link_peer import ProjectLinkPeer

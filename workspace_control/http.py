@@ -844,6 +844,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return
             from .execution_progress_http import route as execution_progress_route
             if execution_progress_route(self,service):return
+            from .genesis_http import route as genesis_route
+            if genesis_route(self,service):return
             from .proposal_content_http import route as proposal_content_route
             if proposal_content_route(self,service):return
             from .concept_chat_http import route as concept_chat_route
@@ -963,6 +965,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return
             from .execution_progress_http import route as execution_progress_route
             if execution_progress_route(self,service):return
+            from .genesis_http import route as genesis_route
+            if genesis_route(self,service):return
             from .proposal_content_http import route as proposal_content_route
             if proposal_content_route(self,service):return
             from .concept_chat_http import route as concept_chat_route
@@ -1009,6 +1013,8 @@ def handler_for(service, *, public_host=None, scheme="http"):
                 return
             from .execution_progress_http import route as execution_progress_route
             if execution_progress_route(self,service):return
+            from .genesis_http import route as genesis_route
+            if genesis_route(self,service):return
             from .proposal_content_http import route as proposal_content_route
             if proposal_content_route(self,service):return
             from .concept_chat_http import route as concept_chat_route

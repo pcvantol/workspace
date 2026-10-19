@@ -50,6 +50,7 @@ struct ProjectConceptView: View {
     @StateObject private var baseline:ConceptBaselineState
     @StateObject private var comparison:ProposalCompareState
     @StateObject private var content:ProposalContentState
+    @StateObject private var genesis:GenesisState
     @ObservedObject var client: ClientState
     let grants: any DraftGrantStore
     init(state:ProjectConceptState,client:ClientState,grants:any DraftGrantStore) {
@@ -59,6 +60,7 @@ struct ProjectConceptView: View {
         _baseline=StateObject(wrappedValue:ConceptBaselineState(root:state.records.root.appendingPathComponent("Baseline")))
         _comparison=StateObject(wrappedValue:ProposalCompareState(root:state.records.root.appendingPathComponent("Baseline")))
         _content=StateObject(wrappedValue:ProposalContentState(root:state.records.root.appendingPathComponent("ContentDecisions")))
+        _genesis=StateObject(wrappedValue:GenesisState(root:state.records.root.appendingPathComponent("Genesis")))
     }
     @Environment(\.locale) private var locale
     @Environment(\.nativeTabCommandsActive) private var commandsActive
@@ -140,6 +142,9 @@ struct ProjectConceptView: View {
                             contentDiscussion=true;comparisonContext=ProposalContentCopy.text("title",language)+" · "+ProposalContentCopy.text("revision",language)+" "+String(original.source_revision)
                             proxy.scrollTo("concept-chat-panel",anchor:.top);comparisonFocusRequest+=1
                         },returnFocusRequest:contentReturnFocus,reveal:{guard state.selected==selected else{return};proxy.scrollTo("proposal-content-panel",anchor:.top)}).id("proposal-content-panel")
+                    }
+                    if let original=baseline.result {
+                        GenesisView(state:genesis,concept:selected,source:original,dirty:state.dirty || state.pending != nil || state.pendingLifecycle != nil || state.selectionStale,current:{try await baselineCurrent(selected)},reveal:{id in guard state.selected==selected else{return};proxy.scrollTo(id,anchor:.top)}).id("genesis-panel")
                     }
                     ProposalCompareView(state:comparison,concept:selected,current:{try await baselineCurrent(selected)},discuss:{
                         contentDiscussion=false

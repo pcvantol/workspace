@@ -78,6 +78,10 @@ def main(argv=None):
         order_issue.add_argument("--" + flag, required=True)
     order_revoke = commands.add_parser("workset-order-bind-revoke")
     order_revoke.add_argument("--binding-id", required=True)
+    genesis_issue=commands.add_parser("genesis-bind-issue")
+    genesis_issue.add_argument("--config-file",required=True)
+    genesis_revoke=commands.add_parser("genesis-bind-revoke")
+    genesis_revoke.add_argument("--binding-id",required=True)
     content_issue=commands.add_parser("proposal-content-bind-issue")
     for flag in ["actor","context","concept-id","human-principal-id","forge-grant-receipt-file","forge-token-file"]:
         content_issue.add_argument("--"+flag,required=True)
@@ -252,6 +256,12 @@ def main(argv=None):
             print(json.dumps(result,sort_keys=True))
         elif args.command == "project-link-bind-revoke":
             with Service(args.root) as service:result=service.project_link_peer.revoke(args.binding_id)
+            print(json.dumps(result,sort_keys=True))
+        elif args.command == "genesis-bind-issue":
+            with Service(args.root) as service:result=service.genesis.provision(args.config_file)
+            print(json.dumps(result,sort_keys=True))
+        elif args.command == "genesis-bind-revoke":
+            with Service(args.root) as service:result=service.genesis.revoke(args.binding_id)
             print(json.dumps(result,sort_keys=True))
         elif args.command == "proposal-content-bind-issue":
             with Service(args.root) as service:
