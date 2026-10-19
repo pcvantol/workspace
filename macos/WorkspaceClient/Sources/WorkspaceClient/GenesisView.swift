@@ -61,7 +61,7 @@ struct GenesisView:View {
                 Button(text(saved.decision=="APPROVE_EFFECT" ? "approve":"request")) {confirmation=nil;Task {await state.decide(concept,source:source,decision:saved.decision,reason:saved.reason,expectedSelection:saved.selection,current:current)}}.accessibilityIdentifier("genesis-confirm-effect")
             }
             Button(text("cancel"),role:.cancel) {confirmation=nil}
-        } message:{Text(text("boundary")+"\n"+(confirmation?.targetLabel ?? "")+" · "+text("planRevision")+" "+String(confirmation?.revision ?? 0)+"\n"+(confirmation?.reason ?? ""))}
+        } message:{Text(confirmationMessage)}
         .onExitCommand {if !state.expandedDocument.isEmpty {navigateDocument(state.expandedDocument)}}
     }
     @ViewBuilder private func plan(_ envelope:GenesisEnvelope)->some View {
@@ -117,6 +117,12 @@ struct GenesisView:View {
             Text(verbatim:p.target.ep_instance_id+" / "+p.target.placement_ref+" / "+p.target.target_ref)
             Text(verbatim:envelope.producer_source);Text(verbatim:p.expires_at)
         }.font(.caption).textSelection(.enabled).accessibilityLabel(text("source")).accessibilityIdentifier("genesis-source")
+    }
+    private var confirmationMessage:String {
+        let label=confirmation?.targetLabel ?? ""
+        let revision=confirmation?.revision ?? 0
+        let reason=confirmation?.reason ?? ""
+        return "\(text("boundary"))\n\(label) · \(text("planRevision")) \(revision)\n\(reason)"
     }
     private func synchronizeTarget() {
         guard !targetChosenByUser,let choices=state.access?.targets,!choices.isEmpty else {return}

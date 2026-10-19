@@ -37,6 +37,22 @@ These are source-only evidence, not a new packaged acceptance. Full validation
 and current independent review remain required. Original candidate images and a
 sanitized limited receipt are retained in docs/evidence/plan109/early-trial1.
 
+Source7/8/9 integrate five existing own HTTP operations and two local owner
+commands into the machine inventory and closed web presentation. Full1/2 failures
+are retained; full3 on505cd6d passes all owning gates: 415 Python runtime cases,
+385 native plus isolated credential case, strict per-file coverage and packaging.
+Actual TDE39224690247 on505cd6d is QUALIFIED/PASS_WITH_WARNINGS (product maximum28;
+assessment/qualification exit1/1), independently read from raw artifacts.
+Draft PR189 remains OPEN: its macOS26 compiler failed the long confirmation
+message expression despite local full3 success. Source10/correction9 extracts
+identical text into a typed helper; 21 directed native cases PASS. New full4 and
+exact-head CI, complete independent/current installed acceptance and all protected
+implementation/finalization/final-main gates remain OPEN. Artifact2 remains bound
+to1323 production, not this new helper. Real trial2 missing Architecture screenshot
+is independently UX privacy-reviewed; transient503s and failed proof-driver path/
+403-only expiry assumptions remain retained. Actual expired READ is401 without
+protected data; no authentication failure is converted to unsupported or success.
+
 ## Plan108 protected current-rights/focus repair — own finalization pending
 
 Protected repair main `a1a7c1c3b6c75b9bfa209ba392759aeb511022e6` equals exact reviewed743f967 tree.
