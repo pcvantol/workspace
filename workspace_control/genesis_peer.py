@@ -1,5 +1,6 @@
 """Native Genesis plan/decision transport; Forge retains all decision authority."""
 from datetime import datetime,timezone
+from contextlib import contextmanager
 from .genesis_binding import GenesisBinding,PREFIX,timestamp
 from .genesis_intents import PLAN_COMMAND,DECISION_COMMAND
 from .concept_baseline_mapping import digest
@@ -13,7 +14,29 @@ CONTRACT='workspace-genesis-plan-decision/1'
 
 class GenesisPeer(GenesisBinding):
     def _call(self,draft,identity,binding,method,path,body=None,*,revision=None):
-        return request(binding,method,PREFIX+path,body,bootstrap_audience=binding['audience'],error_validator=wire.error,maximum_bytes=wire.MAXIMUM_BYTES,timeout=15,absolute_timeout=True,send_guard=lambda:self.dispatch_guard(draft,identity,binding,revision))
+        return request(binding,method,PREFIX+path,body,bootstrap_audience=binding['audience'],error_validator=wire.error,maximum_bytes=wire.MAXIMUM_BYTES,timeout=15,absolute_timeout=True,send_guard=(lambda:self.positive_guard(draft,identity,binding,body['operation_id'],revision)) if method=='POST' and path=='/decisions' and body.get('decision')=='APPROVE_EFFECT' else (lambda:self.dispatch_guard(draft,identity,binding,revision)))
+
+    def original_plan(self,scope,identity,intent):
+        original=intent if intent['kind']=='PLAN' else self.intents.get(scope,identity,intent['command']['plan_operation_id'])
+        if original['kind']!='PLAN' or original['command']['source_operation_id']!=intent['command']['source_operation_id']:raise ConversationConflict('original Genesis plan required')
+        return original
+
+    def target_projection(self,scope,identity,original):
+        b=self.binding(scope,identity);frozen=original['metadata']['target']
+        matches=[t for t in b['targets'] if t['id']==frozen['id']]
+        current=matches[0] if len(matches)==1 else None
+        valid=(original['binding']==self.descriptor(b) and current==frozen and timestamp(frozen['expires_at'])>datetime.now(timezone.utc))
+        return {'target_current':valid,'target_label':frozen['label'],'target_id':frozen['id'],'target_selection_digest':digest({'binding':self.descriptor(b),'frozen':frozen,'current':current})}
+
+    @contextmanager
+    def positive_guard(self,draft,identity,binding,operation,revision=None):
+        with self.dispatch_guard(draft,identity,binding,revision):
+            # dispatch_guard already holds the live own-grant file lock. Reuse its
+            # validated scope; a second flock on a new descriptor is not reentrant.
+            scope=(binding['actor_id'],binding['context_id'])
+            intent=self.intents.get(scope,identity,operation);original=self.original_plan(scope,identity,intent)
+            if not self.target_projection(scope,identity,original)['target_current']:raise WorklistError('GENESIS_TARGET_STALE',http_status=409)
+            yield
 
     def _cap(self,draft,identity,binding):return self.cap(binding,send_guard=lambda:self.dispatch_guard(draft,identity,binding))
 
@@ -37,7 +60,10 @@ class GenesisPeer(GenesisBinding):
         value=self._call(draft,identity,binding,'GET','/'+leaf+'/'+intent['command']['operation_id']+'?dossier_id='+binding['dossier_id'])
         wire.response(value,binding,packet,subject,expected=intent['request'])
         envelope=self._envelope(draft,identity,binding)
-        return envelope|{'operation_id':intent['command']['operation_id'],'kind':intent['kind'],'source_operation_id':intent['command']['source_operation_id'],'source_revision':source['mapping']['source']['revision'],'result':value}
+        scope,_,_=self.snapshot(draft,identity,binding)
+        original=self.original_plan(scope,identity,intent);target=self.target_projection(scope,identity,original)
+        envelope['source_revision']=source['mapping']['source']['revision']
+        return envelope|target|self.decision_projection(envelope,binding,target,value)|{'plan_operation_id':original['command']['operation_id'],'operation_id':intent['command']['operation_id'],'kind':intent['kind'],'source_operation_id':intent['command']['source_operation_id'],'source_revision':source['mapping']['source']['revision'],'result':value}
 
     def _records(self,draft,identity,binding,source_operation):
         scope,_,_=self.snapshot(draft,identity,binding)
@@ -96,22 +122,29 @@ class GenesisPeer(GenesisBinding):
         if len(targets)!=1:raise ConversationConflict('configured target changed or expired')
         target=targets[0];prior=access['latest']['result']['plan'] if access['latest'] else None
         req={'contract_version':wire.CONTRACT,'instance_id':binding['instance_id'],'dossier_id':binding['dossier_id'],'operation_id':command['operation_id'],'source_plan_id':access['content']['subject']['plan_id'],'source_subject':access['content']['subject'],'expected_content_revision':access['content']['decision_revision'],'target':target['target'],'effects':wire.EFFECTS,'expires_at':target['expires_at'],'expected_plan_revision':prior['plan_revision'] if prior else 0,'previous_plan_id':prior['plan_id'] if prior else None,'blocking_open_points':target['blocking_open_points']}
-        with self.dispatch_guard(draft,identity,binding,revision=concept['revision']):intent=self.intents.freeze(scope,identity,'PLAN',command,self.descriptor(binding),req)
+        with self.dispatch_guard(draft,identity,binding,revision=concept['revision']):intent=self.intents.freeze(scope,identity,'PLAN',command,self.descriptor(binding),req,metadata={'target':target})
         return self._recover_or_send(draft,identity,binding,intent)
 
+    def decision_projection(self,view,binding,target,value):
+        can_decide=(binding['kind']=='DECISION' and view['current_revision']==view['source_revision'])
+        selection=digest({'binding':self.descriptor(binding),'current_revision':view['current_revision'],'plan_digest':value['plan']['plan_digest'],'effect_decision_revision':value['effect_decision_revision'],'previous_decision_id':value['effect_history'][-1]['decision_id'] if value['effect_history'] else None,'eligible':value['effect_decision_eligible'],'target_selection_digest':target['target_selection_digest']})
+        return {'can_decide':can_decide,'can_approve':can_decide and target['target_current'] and value['effect_decision_eligible'],'selection_digest':selection if can_decide else None}
+
     def decision_access(self,draft,identity,plan_operation):
-        original=self.read(draft,identity,plan_operation);p=original['result']['plan'];scope,_,_=self.snapshot(draft,identity)
+        original=self.read(draft,identity,plan_operation)
+        if original['kind']!='PLAN':raise ValueError('original plan operation required')
+        p=original['result']['plan'];scope,_,_=self.snapshot(draft,identity)
         try:b=self.binding(scope,identity,kind='DECISION',plan={'plan_id':p['plan_id'],'plan_digest':p['plan_digest']})
         except WorklistError as error:
             if error.state!='DENIED':raise
-            return original|{'can_decide':False,'decision_access':'ACCESS_REQUIRED','selection_digest':None}
+            return original|{'can_decide':False,'can_approve':False,'decision_access':'ACCESS_REQUIRED','selection_digest':None}
         self._cap(draft,identity,b)
         _,_,packet,subject=self._source(draft,identity,b,original['source_operation_id'])
         value=self._call(draft,identity,b,'GET','/plans/'+p['plan_id']+'?dossier_id='+b['dossier_id'])
         wire.response(value,b,packet,subject,original_plan=p)
-        view=self._envelope(draft,identity,b)|{k:original[k] for k in ('operation_id','kind','source_operation_id','source_revision')}
-        selection=digest({'binding':self.descriptor(b),'current_revision':view['current_revision'],'plan_digest':p['plan_digest'],'effect_decision_revision':value['effect_decision_revision'],'previous_decision_id':value['effect_history'][-1]['decision_id'] if value['effect_history'] else None,'eligible':value['effect_decision_eligible']})
-        return view|{'result':value,'can_decide':view['current_revision']==view['source_revision'],'decision_access':'FINITE_EXACT_PLAN','selection_digest':selection}
+        plan_intent=self.intents.get(scope,identity,plan_operation);target=self.target_projection(scope,identity,plan_intent)
+        view=self._envelope(draft,identity,b)|target|{k:original[k] for k in ('operation_id','kind','source_operation_id','source_revision','plan_operation_id')}
+        return view|self.decision_projection(view,b,target,value)|{'result':value,'decision_access':'FINITE_EXACT_PLAN'}
 
     def decide(self,draft,identity,command,*,expected=None):
         if type(command) is not dict or set(command)!=DECISION_COMMAND:raise ValueError('closed explicit effect decision required')
@@ -126,7 +159,7 @@ class GenesisPeer(GenesisBinding):
         if not view['can_decide']:raise WorklistError('DENIED')
         if command['source_operation_id']!=view['source_operation_id'] or command['expected_concept_revision']!=view['current_revision'] or command['selection_digest']!=view['selection_digest']:raise ConversationConflict('exact Genesis plan selection changed')
         value=view['result'];p=value['plan'];binding=self.binding(scope,identity,binding_id=view['binding_id'])
-        if command['decision']=='APPROVE_EFFECT' and not value['effect_decision_eligible']:raise ConversationConflict('Genesis positive effect decision blocked')
+        if command['decision']=='APPROVE_EFFECT' and not view['can_approve']:raise ConversationConflict('Genesis positive effect decision blocked')
         history=value['effect_history'];req={'contract_version':wire.CONTRACT,'instance_id':binding['instance_id'],'dossier_id':binding['dossier_id'],'operation_id':command['operation_id'],'plan_id':p['plan_id'],'plan_digest':p['plan_digest'],'purpose':wire.PURPOSE,'decision':command['decision'],'reason':command['reason'],'expected_decision_revision':value['effect_decision_revision'],'previous_decision_id':history[-1]['decision_id'] if history else None}
         with self.dispatch_guard(draft,identity,binding,revision=view['current_revision']):intent=self.intents.freeze(scope,identity,'DECISION',command,self.descriptor(binding),req)
         return self._recover_or_send(draft,identity,binding,intent)

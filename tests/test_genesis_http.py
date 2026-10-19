@@ -18,7 +18,7 @@ class GenesisHTTPTests(unittest.TestCase):
         own.ProjectConceptTests.setUp(self)
         _,self.concept=self.request(method='POST',body=self.fields());self.identity=self.concept['id'];self.peer=self.service.genesis;self.path='/v1/concept-genesis/'+self.identity;self.sourceop='c'*32
         self.original=json.loads((Path(__file__).parent/'fixtures/genesis/original-plan.json').read_text());self.subject=self.original['source_subject'];self.source={'result':{'result_digest':self.original['documents']['bundle_digest'],'artifacts':[{k:f[k] for k in ('path','mode','sha256','content')} for f in self.original['documents']['files']]}}
-        self.content={'subject':self.subject,'decision_revision':0,'history':[],'state':'DECISION_NEEDED'};self.calls=[];self.plans={};self.decisions={};self.drop=False;self.drop_before=False;self.corrupt=False;self.denied=False;self.eligible=True;self.peer503=False
+        self.content={'subject':self.subject,'decision_revision':0,'history':[],'required_roles':['BUSINESS','ARCHITECTURE'],'state':'DECISION_NEEDED'};self.calls=[];self.plans={};self.decisions={};self.drop=False;self.drop_before=False;self.corrupt=False;self.denied=False;self.eligible=True;self.peer503=False
         test=self
         class Producer(BaseHTTPRequestHandler):
             def log_message(self,*args):pass
@@ -36,6 +36,11 @@ class GenesisHTTPTests(unittest.TestCase):
         self.sourcebinding={'id':'original-source','actor_id':'alice','context_id':'own-context','concept_id':self.identity,'instance_id':p['instance_id'],'principal_id':self.subject['proposal_principal_id'],'dossier_id':p['dossier_id'],'audience':p['audience'],'producer_source':PRODUCER_SOURCE,'endpoint':endpoint,'forge_token':'S'*64,'expires_at':expiry,'permissions':['PREPARE','READ'],'maximum_records':8};self.service.concept_baselines._write_bindings([self.sourcebinding])
         self.binding={k:self.sourcebinding[k] for k in ('actor_id','context_id','concept_id','instance_id','dossier_id','audience','producer_source','endpoint','expires_at')}
         self.binding.update(id='genesis-plan-binding',source_binding_id='original-source',source_principal_id=self.sourcebinding['principal_id'],principal_id=p['principal_id'],grant_id='genesis-plan-grant',human_binding={'operator_id':'human','operator_binding_version':1,'installation_id':'installation'},forge_token='P'*64,permissions=['PREPARE','READ'],source_plan_ids=[self.subject['plan_id']],exact_plans=[],kind='PLAN',targets=[{'id':'local','label':'Nieuw lokaal project','target':{k:p['target'][k] for k in ('ep_instance_id','placement_ref','target_ref')},'expires_at':expiry,'blocking_open_points':[]}])
+        history=[]
+        for i,role in enumerate(('BUSINESS','ARCHITECTURE')):
+            req={'contract_version':'forge-project-proposal-content-decision/v1','instance_id':self.binding['instance_id'],'dossier_id':self.binding['dossier_id'],'operation_id':'content-'+role.lower(),'plan_id':self.subject['plan_id'],'subject':self.subject,'profile_id':'CONTENT_BASELINE_ONLY/1.0','role':role,'decision':'APPROVE_CONTENT','expected_decision_revision':i,'previous_decision_id':history[-1]['decision_id'] if history else None,'reason':'Synthetic source-only distinct content role','acknowledged_open_points':self.original['open_questions']}
+            history.append({'decision_id':'content-'+str(i),'revision':i+1,'request':req,'request_digest':wire.peer_digest(req),'principal_id':'human','audience':self.binding['audience'],'human_binding':self.binding['human_binding'],'grant_id':'content-grant-'+str(i),'occurred_at':'2026-10-19T00:00:00Z','integrity':'a'*64})
+        self.content.update(history=history,decision_revision=2,state='CONTENT_APPROVED')
         self.peer._write_bindings([self.binding]);self.install_source()
     def install_source(self):
         self.source_patch=patch.object(self.peer,'_source',side_effect=lambda *args:(self.concept,{'mapping':{'source':{'revision':1,'title':'Saved idea'}}},deepcopy(self.source),deepcopy(self.subject)));self.source_patch.start();self.addCleanup(self.source_patch.stop)
@@ -51,7 +56,7 @@ class GenesisHTTPTests(unittest.TestCase):
         if path.endswith('/capability'):return 200,{'contract_version':wire.CONTRACT,**{k:b[k] for k in ('instance_id','principal_id','audience','source_plan_ids','permissions')},'dossier_ids':[b['dossier_id']],'profile_id':wire.PROFILE,'purpose':wire.PURPOSE,'target_write':False,'ep_admission':False,'execution_authorized':False}
         if method=='POST' and path.endswith('/plans'):
             self.assertEqual(self.peer.intents.get(('alice','own-context'),self.identity,body['operation_id'])['request'],body)
-            p=deepcopy(self.original);p.update(plan_id='bootstrap-plan-'+body['operation_id'],plan_revision=body['expected_plan_revision']+1,previous_plan_id=body['previous_plan_id'],operation_id=body['operation_id'],request_digest=wire.peer_digest(body),expires_at=body['expires_at'],content_revision=body['expected_content_revision'],blocking_open_points=body['blocking_open_points']);p['target'].update(body['target']);p['plan_digest']=wire.peer_digest({k:v for k,v in p.items() if k!='plan_digest'});self.plans[body['operation_id']]=p
+            p=deepcopy(self.original);p.update(plan_id='bootstrap-plan-'+body['operation_id'],plan_revision=body['expected_plan_revision']+1,previous_plan_id=body['previous_plan_id'],operation_id=body['operation_id'],request_digest=wire.peer_digest(body),expires_at=body['expires_at'],content_revision=body['expected_content_revision'],blocking_open_points=body['blocking_open_points']);p['original_content_decisions']=[{**{k:d[k] for k in ('decision_id','revision','request_digest','human_binding','grant_id')},'role':d['request']['role'],'decision':d['request']['decision']} for d in self.content['history']];p['content_history_digest']=wire.peer_digest(self.content['history']);p['target'].update(body['target']);p['plan_digest']=wire.peer_digest({k:v for k,v in p.items() if k!='plan_digest'});self.plans[body['operation_id']]=p
             return 200,self.view(b,p)
         if method=='POST' and path.endswith('/decisions'):
             self.assertEqual(self.peer.intents.get(('alice','own-context'),self.identity,body['operation_id'])['request'],body)
@@ -103,6 +108,52 @@ class GenesisHTTPTests(unittest.TestCase):
         command=self.command();self.assertEqual(self.request(self.path+'/plans','POST',command,grant=self.other)[0],404)
         self.denied=True;self.assertEqual(self.request(self.path+'/plans','POST',command)[0],403);self.assertEqual(self.posts(),[])
         self.denied=False;self.binding['expires_at']='2000-01-01T00:00:00+00:00';self.binding['targets'][0]['expires_at']=self.binding['expires_at'];self.peer._write_bindings([self.binding]);self.assertEqual(self.request(self.path+'/plans','POST',command)[0],403)
+    def test_existing_plan_target_change_remove_or_expiry_blocks_positive_but_retains_original(self):
+        original=self.prepare();self.add_decider(original);original_command=self.decision_command()
+        saved=deepcopy(self.binding['targets'])
+        for changed in ([dict(saved[0],target=dict(saved[0]['target'],target_ref='changed'))],[],[dict(saved[0],expires_at='2000-01-01T00:00:00+00:00')]):
+            self.binding['targets']=changed;self.peer._write_bindings([self.binding,self.decider])
+            code,current=self.request(self.path+'/decision-access/'+'b'*32);self.assertEqual(code,200,current);self.assertFalse(current['target_current']);self.assertFalse(current['can_approve']);self.assertEqual(current['result']['plan'],original['result']['plan'])
+            self.assertEqual(self.request(self.path+'/decisions','POST',original_command)[0],409)
+            command=original_command|{'selection_digest':current['selection_digest']}
+            self.assertEqual(self.request(self.path+'/decisions','POST',command)[0],409)
+        self.assertEqual(len(self.posts()),1)
+        self.binding['targets']=saved;self.peer._write_bindings([self.binding,self.decider]);self.assertTrue(self.request(self.path+'/decision-access/'+'b'*32)[1]['can_approve'])
+
+    def owner_config(self):
+        receipt={k:self.binding[k] for k in ('grant_id','principal_id','instance_id','audience','source_plan_ids','permissions','exact_plans','human_binding','expires_at')}
+        receipt.update(proposal_principal_id=self.binding['source_principal_id'],dossier_ids=[self.binding['dossier_id']],purpose=wire.PURPOSE,state='ACTIVE')
+        receipt_path=self.root/'genesis-owner-receipt.private.json';token=self.root/'genesis-owner-token.private';config=self.root/'genesis-owner-config.private.json'
+        receipt_path.write_text(json.dumps(receipt));token.write_text('P'*64)
+        value={k:self.binding[k] for k in ('actor_id','context_id','concept_id','producer_source','targets','kind')};value.update(receipt_file=str(receipt_path),token_file=str(token));config.write_text(json.dumps(value))
+        for path in (receipt_path,token,config):path.chmod(0o600)
+        return config,receipt_path,receipt
+    def test_actual_owner_provision_private_receipt_separate_scope_and_duplicate_rejected(self):
+        self.peer.revoke(self.binding['id']);config,receipt_path,receipt=self.owner_config()
+        result=self.peer.provision(str(config));self.assertEqual(result['kind'],'PLAN');self.assertEqual(result['producer_source'],self.binding['producer_source']);self.assertNotIn('forge_token',result)
+        with self.assertRaises(Exception):self.peer.provision(str(config))
+        self.assertEqual(self.peer.revoke(result['binding_id'])['state'],'REVOKED')
+        receipt['purpose']='CONTENT_BASELINE_ONLY/1.0';receipt_path.write_text(json.dumps(receipt))
+        with self.assertRaises(PermissionError):self.peer.provision(str(config))
+    def test_owner_config_cannot_expand_purpose_dossier_or_source_principal(self):
+        self.peer.revoke(self.binding['id']);config,receipt_path,receipt=self.owner_config()
+        for key,changed in [('dossier_ids',['foreign']),('proposal_principal_id','foreign'),('instance_id','foreign'),('state','REVOKED')]:
+            value=receipt|{key:changed};receipt_path.write_text(json.dumps(value))
+            with self.assertRaises(PermissionError):self.peer.provision(str(config))
+        receipt_path.write_text(json.dumps(receipt));value=json.loads(config.read_text());value['producer_source']='a'*40;config.write_text(json.dumps(value))
+        with self.assertRaises(ValueError):self.peer.provision(str(config))
+        self.assertEqual(self.posts(),[])
+    def test_current_target_is_rechecked_inside_real_guarded_send_after_capture(self):
+        original=self.prepare();self.add_decider(original);command=self.decision_command();actual=self.peer._call
+        def mutate_before_send(draft,identity,binding,method,path,body=None,**kwargs):
+            if method=='POST' and path=='/decisions':
+                self.binding['targets'][0]['target']['target_ref']='changed-after-admission'
+                with self.peer._pairings_locked():self.peer._write_bindings([self.binding,self.decider])
+            return actual(draft,identity,binding,method,path,body,**kwargs)
+        with patch.object(self.peer,'_call',side_effect=mutate_before_send):self.assertEqual(self.request(self.path+'/decisions','POST',command)[0],409)
+        self.assertEqual(len(self.posts()),1);self.assertEqual(self.decisions,{})
+        self.assertEqual(self.request(self.path+'/operations/'+'b'*32)[1]['result']['plan'],original['result']['plan'])
+
     def test_true_non_authority_response_detector_red_green(self):
         original=self.prepare();self.corrupt=True;self.assertEqual(self.request(self.path+'/operations/'+'b'*32)[0],503);self.corrupt=False;status,value=self.request(self.path+'/operations/'+'b'*32);self.assertEqual(status,200,value);self.assertEqual(value['result']['plan'],original['result']['plan'])
     def test_peer503_not_healthy_empty_and_no_apply_route(self):

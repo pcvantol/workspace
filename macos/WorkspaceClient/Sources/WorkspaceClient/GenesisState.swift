@@ -11,14 +11,21 @@ struct GenesisPending:Codable,Sendable {
     @Published private(set) var pending:GenesisPending?
     @Published private(set) var busy=false
     @Published private(set) var phase="choose"
+    @Published private(set) var reason=""
+    @Published private(set) var expandedDocument=""
+    private var presentationKey:String?
+    struct Presentation:Codable {
+        let actor:String;let context:String;let concept:String;let source:String;let planDigest:String
+        var document:String;var reason:String
+    }
     private let transport:any GenesisServing
     let records:PrivateLocalRecordStore
-    private var generation=0
+    private(set) var generation=0
     private var monitor:Task<Void,Never>?
     private var expiry:Task<Void,Never>?
     private var planOperation:String?
     init(root:URL,transport:any GenesisServing=GenesisTransport()) {self.transport=transport;records=PrivateLocalRecordStore(root:root,namespace:"genesis-bootstrap")}
-    func conceal() {monitor?.cancel();monitor=nil;expiry?.cancel();expiry=nil;generation+=1;access=nil;result=nil;pending=nil;busy=false;planOperation=nil;phase="choose"}
+    func conceal() {monitor?.cancel();monitor=nil;expiry?.cancel();expiry=nil;generation+=1;access=nil;result=nil;pending=nil;busy=false;planOperation=nil;presentationKey=nil;reason="";expandedDocument="";phase="choose"}
     private func key(_ connection:ConceptConnection,_ concept:ProjectConcept,_ source:ConceptBaselineResult)->String {
         SHA256.hash(data:Data((connection.key+"\n"+concept.actor_id+"\n"+concept.id+"\n"+source.operation_id).utf8)).map{String(format:"%02x",$0)}.joined()
     }
@@ -46,7 +53,7 @@ struct GenesisPending:Codable,Sendable {
     }
     private func failure(_ error:Error,ticket:Int) {
         guard ticket==generation else {return}
-        result=nil
+        result=nil;access=nil;expandedDocument="";reason=""
         switch error {
         case ConceptError.denied:conceal();phase="access"
         case ConceptError.conflict:phase="conflict"
@@ -57,9 +64,13 @@ struct GenesisPending:Codable,Sendable {
     }
     private func install(_ value:GenesisEnvelope,_ connection:ConceptConnection,_ concept:ProjectConcept,_ source:ConceptBaselineResult) throws {
         try value.validate(connection,concept:concept,source:source)
-        result=value;phase="loaded"
+        restorePresentation(value,connection:connection,concept:concept,source:source)
+        result=value;phase="loaded";planOperation=value.plan_operation_id
+        armExpiry(value.expires_at)
+    }
+    private func armExpiry(_ text:String) {
         expiry?.cancel()
-        guard let until=WorksetReleaseWire.date(value.expires_at) else {throw ConceptError.invalid}
+        guard let until=WorksetReleaseWire.date(text) else {return}
         let ticket=generation
         expiry=Task { [weak self] in
             try? await Task.sleep(for:.seconds(max(0,until.timeIntervalSinceNow)))
@@ -67,12 +78,46 @@ struct GenesisPending:Codable,Sendable {
             self.conceal();self.phase="access"
         }
     }
+    private func restorePresentation(_ value:GenesisEnvelope,connection:ConceptConnection,concept:ProjectConcept,source:ConceptBaselineResult) {
+        let k=SHA256.hash(data:Data(("presentation\n"+key(connection,concept,source)+"\n"+value.result.plan.plan_digest).utf8)).map{String(format:"%02x",$0)}.joined()
+        guard k != presentationKey else {return}
+        presentationKey=k;reason="";expandedDocument=""
+        guard let data=try? records.load(k),let saved=try? JSONDecoder().decode(Presentation.self,from:data),
+              saved.actor==concept.actor_id,saved.context==concept.context_id,saved.concept==concept.id,saved.source==source.operation_id,saved.planDigest==value.result.plan.plan_digest,saved.reason.unicodeScalars.count<=2000,
+              saved.document.isEmpty || value.result.plan.documents.files.contains(where:{$0.path==saved.document}) else {return}
+        reason=saved.reason;expandedDocument=saved.document
+    }
+    private func savePresentation() throws {
+        guard let k=presentationKey,let result else {return}
+        let record=Presentation(actor:result.actor_id,context:result.context_id,concept:result.concept_id,source:result.source_operation_id,planDigest:result.result.plan.plan_digest,document:expandedDocument,reason:reason)
+        try records.saveBounded(JSONEncoder().encode(record),key:k)
+    }
+    func updateReason(_ text:String) {
+        guard result != nil,text.unicodeScalars.count<=2000 else {return}
+        reason=text
+        do {try savePresentation()} catch {failure(error,ticket:generation)}
+    }
+    func chooseDocument(_ path:String,concept:ProjectConcept,source:ConceptBaselineResult,current:@escaping @MainActor () async throws -> ConceptConnection) async {
+        guard !busy,let original=result,original.result.plan.documents.files.contains(where:{$0.path==path}) else {return}
+        let ticket=generation;busy=true
+        defer {if ticket==generation {busy=false}}
+        do {
+            let c=try await current()
+            let value=try await transport.result(c,concept:concept.id,action:original.kind=="DECISION" ? "operations":"decision-access",operation:original.operation_id,body:nil)
+            try await checked(ticket,c,current:current)
+            guard result?.operation_id==original.operation_id,value.operation_id==original.operation_id,value.result.plan.plan_digest==original.result.plan.plan_digest else {throw ConceptError.conflict}
+            try install(value,c,concept,source)
+            expandedDocument=expandedDocument==path ? "":path
+            try savePresentation()
+        } catch {failure(error,ticket:ticket)}
+    }
+
     func load(_ concept:ProjectConcept,source:ConceptBaselineResult,current:@escaping @MainActor () async throws -> ConceptConnection) async {
         conceal();let ticket=generation;busy=true
         defer {if ticket==generation {busy=false}}
         do {
             let c=try await current();let value=try await transport.access(c,concept:concept.id,source:source.operation_id)
-            try await checked(ticket,c,current:current);try value.validate(c,concept:concept,source:source);access=value
+            try await checked(ticket,c,current:current);try value.validate(c,concept:concept,source:source);access=value;armExpiry(value.expires_at)
             let localKey=key(c,concept,source);let data=try records.load(localKey);let witness=try records.load(witnessKey(localKey))
             if witness != nil && data==nil {throw ConceptError.unavailable}
             if let data {
@@ -100,13 +145,21 @@ struct GenesisPending:Codable,Sendable {
                 guard let self,ticket==self.generation else {return}
                 if self.busy {continue}
                 if let currentResult=self.result {reference=(currentResult.kind,currentResult.operation_id)}
-                guard let original=reference else {continue}
+                guard let original=reference else {
+                    do {
+                        let cap=try await self.transport.access(connection,concept:concept.id,source:source.operation_id)
+                        try await self.checked(ticket,connection,current:current);try cap.validate(connection,concept:concept,source:source)
+                        guard !self.busy,self.result==nil else {continue}
+                        self.access=cap;self.phase="choose";self.armExpiry(cap.expires_at)
+                    } catch {self.failure(error,ticket:ticket)}
+                    continue
+                }
                 do {
                     let action=original.0=="DECISION" ? "operations":"decision-access"
                     let operation=original.0=="DECISION" ? original.1:(self.planOperation ?? original.1)
                     let value=try await self.transport.result(connection,concept:concept.id,action:action,operation:operation,body:nil)
                     try await self.checked(ticket,connection,current:current)
-                    guard !self.busy else {continue}
+                    guard !self.busy,self.result==nil || self.result?.operation_id==original.1 else {continue}
                     try self.install(value,connection,concept,source)
                 } catch {
                     if case ConceptError.denied=error {self.failure(error,ticket:ticket);return}
@@ -146,7 +199,7 @@ struct GenesisPending:Codable,Sendable {
     }
     func decide(_ concept:ProjectConcept,source:ConceptBaselineResult,decision:String,reason:String,expectedSelection:String,current:@escaping @MainActor () async throws -> ConceptConnection) async {
         guard pending==nil,let result,result.can_decide==true,result.selection_digest==expectedSelection,let planOperation,
-              decision != "APPROVE_EFFECT" || result.result.effect_decision_eligible,
+              decision != "APPROVE_EFFECT" || result.can_approve==true,
               ["APPROVE_EFFECT","REQUEST_CHANGES"].contains(decision),!reason.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty,reason.unicodeScalars.count<=2000 else {return}
         let command=GenesisEffectCommand(operation_id:UUID().uuidString.replacingOccurrences(of:"-",with:"").lowercased(),source_operation_id:source.operation_id,expected_concept_revision:concept.revision,selection_digest:expectedSelection,plan_operation_id:planOperation,decision:decision,reason:reason)
         do {

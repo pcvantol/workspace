@@ -38,7 +38,8 @@ struct GenesisEnvelope:Decodable,Sendable {
     }
     let contract_version:String;let actor_id:String;let context_id:String;let concept_id:String;let binding_id:String
     let producer_source:String;let expires_at:String;let current_revision:Int;let source_revision:Int;let source_operation_id:String
-    let operation_id:String;let kind:String;let result:Result;let can_decide:Bool?;let selection_digest:String?
+    let operation_id:String;let kind:String;let result:Result;let can_decide:Bool?;let can_approve:Bool?;let selection_digest:String?
+    let target_current:Bool;let target_label:String;let target_id:String;let plan_operation_id:String
     func validate(_ connection:ConceptConnection,concept:ProjectConcept,source:ConceptBaselineResult) throws {
         let p=result.plan
         guard contract_version=="workspace-genesis-plan-decision/1",actor_id==concept.actor_id,context_id==concept.context_id,context_id==connection.access.projectID,concept_id==concept.id,
@@ -69,7 +70,9 @@ struct GenesisEnvelope:Decodable,Sendable {
 }
 struct GenesisAccess:Decodable,Sendable {
     struct PlanEntry:Decodable,Identifiable,Sendable {let operation_id:String;let plan_id:String;let plan_revision:Int;var id:String{operation_id}}
-    struct Content:Decodable,Sendable {let state:String}
+    struct Content:Decodable,Sendable {let state:String;let required_roles:[String];let history:[ProposalContentRecord]
+        var missingRoles:[String] {let latest=Dictionary(grouping:history,by:{$0.request.role});return required_roles.filter{latest[$0]?.last?.request.decision != "APPROVE_CONTENT"}}
+    }
     let contract_version:String;let actor_id:String;let context_id:String;let concept_id:String;let producer_source:String;let expires_at:String
     let current_revision:Int;let source_revision:Int;let source_operation_id:String;let selection_digest:String
     let targets:[GenesisTarget];let can_plan:Bool;let pending_plan_operations:[String];let plans:[PlanEntry];let latest:GenesisEnvelope?;let content:Content
@@ -101,10 +104,27 @@ struct GenesisTransport:GenesisServing {
         guard let http=response as? HTTPURLResponse,http.url==url else {throw ConceptError.invalid}
         if [401,403].contains(http.statusCode) {throw ConceptError.denied}
         guard data.count<=1150000,http.value(forHTTPHeaderField:"Content-Type")?.hasPrefix("application/json")==true else {throw ConceptError.invalid}
-        if http.statusCode==404 {throw ConceptError.notFound}
-        if http.statusCode==409 {throw ConceptError.conflict}
-        guard http.statusCode==200 else {throw ConceptError.unavailable}
+        if http.statusCode != 200 {
+            guard let object=try? JSONSerialization.jsonObject(with:data) as? [String:String],Set(object.keys)==["error"],let code=object["error"],code.range(of:"^[A-Z_]{1,80}$",options:.regularExpression) != nil else {throw ConceptError.invalid}
+            if http.statusCode==404 && ["GENESIS_OWN_NOT_FOUND","GENESIS_NOT_FOUND"].contains(code) {throw ConceptError.notFound}
+            if http.statusCode==409 && code=="WRONG_INSTANCE" {throw ConceptError.denied}
+            if http.statusCode==409 {throw ConceptError.conflict}
+            throw ConceptError.unavailable
+        }
+        guard let root=try JSONSerialization.jsonObject(with:data) as? [String:Any],try CanonicalJSON.data(root,ascii:false)==data else {throw ConceptError.invalid}
+        if let result=root["result"] as? [String:Any] {
+            guard let plan=result["plan"] as? [String:Any],let digest=plan["plan_digest"] as? String else {throw ConceptError.invalid}
+            var original=plan;original.removeValue(forKey:"plan_digest")
+            guard try Self.digest(original)==digest else {throw ConceptError.invalid}
+            for item in result["effect_history"] as? [[String:Any]] ?? [] {
+                var decision=item;let expected=decision.removeValue(forKey:"decision_digest") as? String
+                guard try Self.digest(decision)==expected else {throw ConceptError.invalid}
+            }
+        }
         return data
+    }
+    private static func digest(_ value:[String:Any])throws->String {
+        SHA256.hash(data:try CanonicalJSON.data(value,ascii:false)+Data([10])).map{String(format:"%02x",$0)}.joined()
     }
     func access(_ connection:ConceptConnection,concept:String,source:String) async throws -> GenesisAccess {
         try JSONDecoder().decode(GenesisAccess.self,from:await request(connection,concept:concept,action:"access",operation:source,body:nil))

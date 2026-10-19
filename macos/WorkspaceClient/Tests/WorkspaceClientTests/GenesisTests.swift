@@ -27,6 +27,10 @@ actor GenesisFixture:GenesisServing {
     func setLost() {lost=true}
     func setDenied(_ value:Bool) {denied=value}
     func setUnavailable(_ value:Bool) {available = !value}
+    func expireAccess(after seconds:Double) {
+        let f=ISO8601DateFormatter();f.formatOptions=[.withInternetDateTime,.withFractionalSeconds]
+        accessObject["expires_at"]=f.string(from:Date().addingTimeInterval(seconds))
+    }
     func count()->Int {posts}
     func access(_ connection:ConceptConnection,concept:String,source:String) async throws -> GenesisAccess {
         if denied {throw ConceptError.denied};if !available {throw ConceptError.unavailable}
@@ -39,7 +43,7 @@ actor GenesisFixture:GenesisServing {
             var result=object["result"] as! [String:Any];var p=result["plan"] as! [String:Any]
             object["operation_id"]=cmd["operation_id"]
             if action=="plans" {
-                object["kind"]="PLAN";p["operation_id"]=cmd["operation_id"];result["plan"]=p
+                object["plan_operation_id"]=cmd["operation_id"];object["kind"]="PLAN";p["operation_id"]=cmd["operation_id"];result["plan"]=p
                 accessObject["plans"]=[["operation_id":cmd["operation_id"]!,"plan_id":p["plan_id"]!,"plan_revision":p["plan_revision"]!]]
             } else {
                 object["kind"]="DECISION"
@@ -88,6 +92,39 @@ actor GenesisFixture:GenesisServing {
         let peer=try GenesisFixture();let root=root();defer{try? FileManager.default.removeItem(at:root)};let state=GenesisState(root:root,transport:peer);let c=peer.connection
         await peer.setUnavailable(true);await state.load(peer.concept,source:peer.source,current:{c});XCTAssertNil(state.access);XCTAssertEqual(state.phase,"unavailable")
         await peer.setUnavailable(false);await state.load(peer.concept,source:peer.source,current:{c});state.conceal();XCTAssertNil(state.result)
+    }
+    func testAccessOnlyActualMonitorConcealsRevokeWithoutAnyPlanOrPOST()async throws {
+        let peer=try GenesisFixture();let root=root();defer{try? FileManager.default.removeItem(at:root)};let state=GenesisState(root:root,transport:peer);let c=peer.connection
+        await state.load(peer.concept,source:peer.source,current:{c});XCTAssertNotNil(state.access);XCTAssertNil(state.result)
+        await peer.setDenied(true);try await Task.sleep(for:.seconds(3.35));XCTAssertNil(state.access);XCTAssertNil(state.result);XCTAssertEqual(state.phase,"access")
+        let count=await peer.count();XCTAssertEqual(count,0);state.conceal()
+    }
+    func testAccessOnlyRealClockExpiryConcealsBeforeFirstPlan()async throws {
+        let peer=try GenesisFixture();let root=root();defer{try? FileManager.default.removeItem(at:root)};let state=GenesisState(root:root,transport:peer);let c=peer.connection
+        await peer.expireAccess(after:0.8);await state.load(peer.concept,source:peer.source,current:{c});XCTAssertNotNil(state.access)
+        try await Task.sleep(for:.seconds(1.1));XCTAssertNil(state.access);XCTAssertEqual(state.phase,"access");let count=await peer.count();XCTAssertEqual(count,0);state.conceal()
+    }
+    func testAccessOnlyRecoverableReadFailureMonitorSurvivesAndRestores()async throws {
+        let peer=try GenesisFixture();let root=root();defer{try? FileManager.default.removeItem(at:root)};let state=GenesisState(root:root,transport:peer);let c=peer.connection
+        await state.load(peer.concept,source:peer.source,current:{c});await peer.setUnavailable(true)
+        try await Task.sleep(for:.seconds(3.35));XCTAssertNil(state.access);XCTAssertEqual(state.phase,"unavailable")
+        await peer.setUnavailable(false);try await Task.sleep(for:.seconds(3.35));XCTAssertNotNil(state.access);XCTAssertEqual(state.phase,"choose");let count=await peer.count();XCTAssertEqual(count,0);state.conceal()
+    }
+    func testOriginalReasonAndDocumentAreScopedAndPreservedAcrossClientStateReopen()async throws {
+        let peer=try GenesisFixture();let root=root();defer{try? FileManager.default.removeItem(at:root)};let state=GenesisState(root:root,transport:peer);let c=peer.connection
+        await state.load(peer.concept,source:peer.source,current:{c});await state.prepare(peer.concept,source:peer.source,target:"local",current:{c})
+        state.updateReason("Only this exact original plan");let path=try XCTUnwrap(state.result?.result.plan.documents.files.first?.path)
+        await state.chooseDocument(path,concept:peer.concept,source:peer.source,current:{c});XCTAssertEqual(state.expandedDocument,path);state.conceal();XCTAssertEqual(state.reason,"")
+        let reopened=GenesisState(root:root,transport:peer);await reopened.load(peer.concept,source:peer.source,current:{c});XCTAssertEqual(reopened.reason,"Only this exact original plan");XCTAssertEqual(reopened.expandedDocument,path);reopened.conceal()
+    }
+    func testDocumentNavigationFocusFollowsActualAuthorizedToggleAndReturnsToExactOpener()async throws {
+        let peer=try GenesisFixture();let root=root();defer{try? FileManager.default.removeItem(at:root)};let state=GenesisState(root:root,transport:peer);let c=peer.connection
+        await state.load(peer.concept,source:peer.source,current:{c});await state.prepare(peer.concept,source:peer.source,target:"local",current:{c})
+        let path=try XCTUnwrap(state.result?.result.plan.documents.files.first?.path);let navigation=GenesisDocumentNavigation();var focus:[String?]=[];var anchors:[String]=[]
+        await navigation.navigate(path,state:state,concept:peer.concept,source:peer.source,current:{c},focus:{focus.append($0)},reveal:{anchors.append($0)})
+        XCTAssertEqual(state.expandedDocument,path);XCTAssertEqual(focus.last!,"genesis-detail-"+path);XCTAssertEqual(anchors.last,"genesis-detail-"+path)
+        await navigation.navigate(path,state:state,concept:peer.concept,source:peer.source,current:{c},focus:{focus.append($0)},reveal:{anchors.append($0)})
+        XCTAssertEqual(state.expandedDocument,"");XCTAssertEqual(focus.last!,"genesis-document-"+path);XCTAssertEqual(anchors.last,"genesis-document-"+path);XCTAssertFalse(navigation.busy);state.conceal()
     }
     func testFiveLanguagesAndHostedNarrowWideLightDarkRemainSourceEvidence()async throws {
         for (_,values) in GenesisCopy.rows {XCTAssertEqual(values.count,5);XCTAssertTrue(values.allSatisfy{!$0.isEmpty})}

@@ -3,6 +3,12 @@ import Foundation
 enum GenesisCopy {
     static let effects=["CREATE_NEW_TARGET","INITIALIZE_LOCAL_GIT","WRITE_EXACT_MANIFEST_FILES","RUN_EXTERNALLY_PINNED_VALIDATION","CREATE_LOCAL_COMMIT","REGISTER_COMMITTED_AUTHORITY_ATTACHMENT"]
     static let rows:[String:[String]]=[
+        "newTarget":["Doel voor een nieuw plan", "Target for a new plan", "Ziel für einen neuen Plan", "Destination d’un nouveau plan", "Destino para un nuevo plan"],
+        "contentRoleMissing":["Inhoudsbesluit voor deze rol ontbreekt of vraagt wijzigingen.", "This role’s content decision is missing or requests changes.", "Inhaltsbeschluss dieser Rolle fehlt oder verlangt Änderungen.", "La décision de contenu de ce rôle manque ou demande des modifications.", "Falta la decisión de contenido de este rol o solicita cambios."],
+        "planRevision":["Planversie", "Plan revision", "Planrevision", "Version du plan", "Revisión del plan"],
+        "decisionRevision":["Besluitversie", "Decision revision", "Beschlussrevision", "Version de décision", "Revisión de la decisión"],
+        "requiredQuestions":["Eerst beantwoorden voor goedkeuring", "Answer before approval", "Vor Genehmigung beantworten", "Répondre avant approbation", "Responder antes de aprobar"],
+        "targetChanged":["De doelbinding van dit oorspronkelijke plan is gewijzigd of verlopen; geen nieuwe goedkeuring.", "The original plan’s target binding changed or expired; no new approval.", "Zielbindung des Originalplans geändert oder abgelaufen; keine neue Genehmigung.", "La destination du plan original a changé ou expiré ; aucune nouvelle approbation.", "El destino del plan original cambió o caducó; no se permite otra aprobación."],
         "title":["Project lokaal inrichten", "Set up project locally", "Projekt lokal einrichten", "Configurer le projet localement", "Configurar el proyecto localmente"],
         "boundary":["Alleen een plan en afzonderlijk besluit. EP-toelating en uitvoering zijn nog nodig.", "A plan and separate decision only. EP admission and execution are still required.", "Nur Plan und gesonderter Beschluss. EP-Zulassung und Ausführung sind noch erforderlich.", "Un plan et une décision distincte seulement. Admission EP et exécution restent nécessaires.", "Solo un plan y una decisión independiente. Aún se requieren admisión EP y ejecución."],
         "scope":["Documentbasis met 37 oorspronkelijke bestanden; geen GitHub-publicatie.", "Document baseline with 37 original files; no GitHub publication.", "Dokumentbasis mit 37 Originaldateien; keine GitHub-Veröffentlichung.", "Base documentaire de 37 fichiers originaux ; aucune publication GitHub.", "Base documental con 37 archivos originales; sin publicación en GitHub."],
@@ -53,5 +59,5 @@ enum GenesisCopy {
         "BUSINESS":["Business", "Business", "Business", "Business", "Negocio"],
         "ARCHITECTURE":["Architectuur", "Architecture", "Architektur", "Architecture", "Arquitectura"]
     ]
-    static func text(_ key:String,_ language:String)->String {rows[key]?[(["nl":0,"en":1,"de":2,"fr":3,"es":4][language] ?? 1)] ?? rows["unavailable"]![1]}
+    static func text(_ key:String,_ language:String)->String {let index=["nl":0,"en":1,"de":2,"fr":3,"es":4][language] ?? 1;return rows[key]?[index] ?? rows["unavailable"]![index]}
 }

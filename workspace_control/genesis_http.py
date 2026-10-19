@@ -27,10 +27,18 @@ def route(handler,service):
         elif action=='plans':value=peer.prepare(draft,identity,_body(handler))
         else:value=peer.decide(draft,identity,_body(handler))
         with peer.concepts.authorized(draft) as scope:binding=peer.binding(scope,identity,binding_id=value['binding_id'])
-        protected_reply(handler,service,draft,identity,binding,value,peer=peer)
+        if action=='decisions' and value['result']['original_decision']['decision']=='APPROVE_EFFECT':
+            # Recheck the same local target at every protected publication chunk;
+            # historical GETs remain readable with an explicit obsolete-target fact.
+            class Publication:
+                cap=peer.cap
+                def dispatch_guard(self,draft,identity,binding):return peer.positive_guard(draft,identity,binding,value['operation_id'])
+            publisher=Publication()
+        else:publisher=peer
+        protected_reply(handler,service,draft,identity,binding,value,peer=publisher)
     except (PermissionError,WorklistError) as error:
         code=getattr(error,'state','DENIED');peer_status=getattr(error,'http_status',None)
-        status=403 if code in ('DENIED','UNAUTHORIZED','GENESIS_SCOPE_DENIED') else 404 if code=='GENESIS_NOT_FOUND' and peer_status==404 else 409 if peer_status==409 and code in ('GENESIS_OPERATION_CONFLICT','GENESIS_PLAN_STALE','GENESIS_SOURCE_CHANGED','GENESIS_EFFECT_STALE','GENESIS_EFFECT_INAPPLICABLE','GENESIS_EXACT_PLAN_REQUIRED','GENESIS_PLAN_EXPIRY') else 503
+        status=403 if code in ('DENIED','UNAUTHORIZED','GENESIS_SCOPE_DENIED') else 404 if code=='GENESIS_NOT_FOUND' and peer_status==404 else 409 if peer_status==409 and code in ('GENESIS_OPERATION_CONFLICT','GENESIS_PLAN_STALE','GENESIS_SOURCE_CHANGED','GENESIS_EFFECT_STALE','GENESIS_EFFECT_INAPPLICABLE','GENESIS_EXACT_PLAN_REQUIRED','GENESIS_PLAN_EXPIRY','GENESIS_TARGET_STALE') else 503
         handler._reply(status,{'error':code})
     except FileNotFoundError:handler._reply(404,{'error':'GENESIS_OWN_NOT_FOUND'})
     except ConversationConflict:handler._reply(409,{'error':'GENESIS_CONFLICT'})

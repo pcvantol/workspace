@@ -56,8 +56,9 @@ class GenesisIntents:
     def _original(self,db,row,scope,identity):
         try:
             v=json.loads(row['record']);op=v['command']['operation_id'];key=digest({'concept_id':identity,'command':v['command'],'binding':v['binding'],'kind':v['kind']})
-            if set(v)!={'kind','command','binding','request','request_digest'} or len(row['record'].encode())>192000 or row['concept_id']!=identity or digest(v)!=row['record_digest'] or row['command_digest']!=key or row['operation_id']!=op or v['request_digest']!=wire.peer_digest(v['request']):raise ValueError('integrity')
+            if set(v)!={'kind','command','binding','request','request_digest','metadata'} or len(row['record'].encode())>192000 or row['concept_id']!=identity or digest(v)!=row['record_digest'] or row['command_digest']!=key or row['operation_id']!=op or v['request_digest']!=wire.peer_digest(v['request']):raise ValueError('integrity')
             self.check(scope,identity,v['kind'],v['command'],v['binding'],v['request'])
+            self.check_metadata(v['kind'],v['command'],v['request'],v['metadata'])
             roww=db.execute('SELECT * FROM project_concept_operations_v1 WHERE actor_id=? AND context_id=? AND operation_id=?',(*scope,op)).fetchone()
             expected={WITNESS:1,'concept_id':identity,'operation_id':op,'record_digest':row['record_digest']}
             if roww is None or roww['request_digest']!=key:raise ValueError('original allocation witness missing')
@@ -66,8 +67,19 @@ class GenesisIntents:
             return v
         except (ValueError,TypeError,KeyError) as error:raise ConceptStorageUnavailable('original Genesis intent corrupt') from error
 
-    def freeze(self,scope,identity,kind,command,binding,request):
+    def check_metadata(self,kind,command,request,metadata):
+        if kind=='DECISION':
+            if metadata!={}:raise ValueError('closed decision metadata required')
+            return
+        if type(metadata) is not dict or set(metadata)!={'target'}:raise ValueError('original target metadata required')
+        t=metadata['target']
+        if type(t) is not dict or set(t)!={'id','label','target','expires_at','blocking_open_points'} or t['id']!=command['target_id'] or any(t[k]!=request[k] for k in ('target','expires_at','blocking_open_points')):raise ValueError('original target metadata changed')
+        if not isinstance(t['label'],str) or not 1<=len(t['label'])<=120 or any(ord(c)<32 for c in t['label']):raise ValueError('original target label required')
+
+    def freeze(self,scope,identity,kind,command,binding,request,metadata=None):
         self.check(scope,identity,kind,command,binding,request)
+        metadata={} if metadata is None else metadata
+        self.check_metadata(kind,command,request,metadata)
         key=digest({'concept_id':identity,'command':command,'binding':binding,'kind':kind})
         with self.base.lock:
             db=self.concepts._connect(write=True)
@@ -80,12 +92,12 @@ class GenesisIntents:
                         prior=db.execute('SELECT * FROM '+TABLE+' WHERE actor_id=? AND context_id=? AND operation_id=?',(*scope,command['operation_id'])).fetchone()
                         if prior is not None:
                             value=self._original(db,prior,scope,identity)
-                            if value['command']!=command or value['binding']!=binding or value['kind']!=kind or value['request']!=request:raise ConversationConflict('original Genesis operation changed')
+                            if value['command']!=command or value['binding']!=binding or value['kind']!=kind or value['request']!=request or value['metadata']!=metadata:raise ConversationConflict('original Genesis operation changed')
                             return value
                     if db.execute('SELECT 1 FROM project_concept_operations_v1 WHERE actor_id=? AND context_id=? AND operation_id=?',(*scope,command['operation_id'])).fetchone():raise ConversationConflict('operation already allocated')
                     if concept['revision']!=command['expected_concept_revision'] or lifecycle_for(self.base,db,identity)=='ARCHIVED':raise ConversationConflict('concept changed or archived')
                     if (present and db.execute('SELECT count(*) FROM '+TABLE).fetchone()[0]>=256) or db.execute('SELECT count(*) FROM project_concept_operations_v1 WHERE actor_id=? AND context_id=?',scope).fetchone()[0]>=4096:raise ConceptStorageUnavailable('Genesis history capacity')
-                    value={'kind':kind,'command':command,'binding':binding,'request':request,'request_digest':wire.peer_digest(request)};raw=canonical(value)
+                    value={'kind':kind,'command':command,'binding':binding,'request':request,'request_digest':wire.peer_digest(request),'metadata':metadata};raw=canonical(value)
                     if len(raw)>192000:raise ValueError('Genesis intent byte limit')
                     self._schema(db,write=True);record_digest=digest(value)
                     db.execute('INSERT INTO '+TABLE+' VALUES (?,?,?,?,?,?,?)',(*scope,identity,command['operation_id'],key,raw.decode(),record_digest))
