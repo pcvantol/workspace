@@ -15,6 +15,9 @@ actor GenesisFixture:GenesisServing {
     private var lost=false
     private var denied=false
     private var posts=0
+    private var holdNextReply=false
+    private var replyHeld=false
+    private var release:CheckedContinuation<Void,Never>?
     private var available=true
     init()throws {
         let url=URL(fileURLWithPath:#filePath).deletingLastPathComponent().appendingPathComponent("Fixtures/genesis-source-only.json")
@@ -24,6 +27,9 @@ actor GenesisFixture:GenesisServing {
         connection=ConceptConnection(access:.init(endpoint:"http://127.0.0.1:8888/",instanceID:String(repeating:"b",count:32),projectID:concept.context_id,token:String(repeating:"c",count:43)),bearer:"own-only")
         accessObject=root["access"] as! [String:Any];object=root["result"] as! [String:Any]
     }
+    func holdReply() {holdNextReply=true}
+    func replyIsHeld()->Bool {replyHeld}
+    func releaseReply() {release?.resume();release=nil;replyHeld=false}
     func setLost() {lost=true}
     func setDenied(_ value:Bool) {denied=value}
     func setUnavailable(_ value:Bool) {available = !value}
@@ -66,7 +72,9 @@ actor GenesisFixture:GenesisServing {
             if lost {lost=false;throw ConceptError.unavailable}
         }
         guard created else {throw ConceptError.notFound}
-        return try JSONDecoder().decode(GenesisEnvelope.self,from:JSONSerialization.data(withJSONObject:object))
+        let frozen=try JSONSerialization.data(withJSONObject:object)
+        if holdNextReply {holdNextReply=false;replyHeld=true;await withCheckedContinuation {release=$0}}
+        return try JSONDecoder().decode(GenesisEnvelope.self,from:frozen)
     }
 }
 
@@ -104,6 +112,26 @@ actor GenesisFixture:GenesisServing {
         let peer=try GenesisFixture();let root=root();defer{try? FileManager.default.removeItem(at:root)};let state=GenesisState(root:root,transport:peer);let c=peer.connection
         await peer.setUnavailable(true);await state.load(peer.concept,source:peer.source,current:{c});XCTAssertNil(state.access);XCTAssertEqual(state.phase,"unavailable")
         await peer.setUnavailable(false);await state.load(peer.concept,source:peer.source,current:{c});state.conceal();XCTAssertNil(state.result)
+    }
+    func testActualHeldOriginalReplyCannotPublishIntoNewForeignContext()async throws {
+        let peer=try GenesisFixture();let root=root();defer{try? FileManager.default.removeItem(at:root)}
+        let state=GenesisState(root:root,transport:peer);let a=peer.connection
+        let b=ConceptConnection(access:.init(endpoint:a.access.endpoint,instanceID:a.access.instanceID,projectID:"different-context",token:a.access.token),bearer:a.bearer)
+        var selected=a
+        await state.load(peer.concept,source:peer.source,current:{selected});await peer.holdReply()
+        let original=Task {await state.prepare(peer.concept,source:peer.source,target:"local",current:{selected})}
+        for _ in 0..<100 {if await peer.replyIsHeld() {break};try await Task.sleep(for:.milliseconds(10))}
+        let held=await peer.replyIsHeld();XCTAssertTrue(held,"The original POST reply must actually be suspended before selection changes")
+        selected=b
+        await state.load(peer.concept,source:peer.source,current:{selected})
+        XCTAssertNil(state.result);XCTAssertNil(state.access);XCTAssertEqual(state.phase,"invalid")
+        await peer.releaseReply();await original.value
+        XCTAssertNil(state.result);XCTAssertNil(state.access);XCTAssertNil(state.pending);XCTAssertEqual(state.phase,"invalid","Late A must not overwrite the new scope state")
+        selected=a
+        await state.load(peer.concept,source:peer.source,current:{selected})
+        XCTAssertNotNil(state.result,"Returning to authorized A must recover its original operation")
+        let count=await peer.count();XCTAssertEqual(count,1,"Late reply and scope return cannot create another plan")
+        state.conceal()
     }
     func testAccessOnlyActualMonitorConcealsRevokeWithoutAnyPlanOrPOST()async throws {
         let peer=try GenesisFixture();let root=root();defer{try? FileManager.default.removeItem(at:root)};let state=GenesisState(root:root,transport:peer);let c=peer.connection
