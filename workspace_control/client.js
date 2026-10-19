@@ -179,6 +179,13 @@ function validProjectCatalogue(catalogue) {
     typeof catalogue.observed_at === 'string' && catalogue.observed_at.length > 0;
 }
 const ownOperations = {
+  "concept-genesis.access": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_GRANT", "method": "GET", "path": "/v1/concept-genesis/{concept_id}/access/{source_operation_id}"},
+  "concept-genesis.bind.issue": {"exposure": "LOCAL_ONLY_ADMIN", "auth": "PRIVATE_ROOT_OWNER", "local_cli": "genesis-bind-issue"},
+  "concept-genesis.bind.revoke": {"exposure": "LOCAL_ONLY_ADMIN", "auth": "PRIVATE_ROOT_OWNER", "local_cli": "genesis-bind-revoke"},
+  "concept-genesis.decide": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_GRANT", "method": "POST", "path": "/v1/concept-genesis/{concept_id}/decisions"},
+  "concept-genesis.decision_access": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_GRANT", "method": "GET", "path": "/v1/concept-genesis/{concept_id}/decision-access/{plan_operation_id}"},
+  "concept-genesis.original": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_GRANT", "method": "GET", "path": "/v1/concept-genesis/{concept_id}/operations/{operation_id}"},
+  "concept-genesis.prepare": {"exposure": "HTTP_EXPOSED", "auth": "BEARER_PINNED_AND_DRAFT_GRANT", "method": "POST", "path": "/v1/concept-genesis/{concept_id}/plans"},
   'concept-adoptions.sources': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-adoptions/{concept_id}/sources'},
   'concept-adoptions.access': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-adoptions/{concept_id}/{source_id}/access'},
   'concept-adoptions.history': {exposure:'HTTP_EXPOSED',auth:'BEARER_PINNED_AND_DRAFT_GRANT',method:'GET',path:'/v1/concept-adoptions/{concept_id}/{source_id}/operations'},
