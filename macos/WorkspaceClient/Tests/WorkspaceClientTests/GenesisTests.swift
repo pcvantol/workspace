@@ -31,6 +31,18 @@ actor GenesisFixture:GenesisServing {
         let f=ISO8601DateFormatter();f.formatOptions=[.withInternetDateTime,.withFractionalSeconds]
         accessObject["expires_at"]=f.string(from:Date().addingTimeInterval(seconds))
     }
+    // Presentation-only source variants: never peer capability or installed proof.
+    func presentationVariant(_ variant:String) {
+        if variant=="noTargets" {accessObject["targets"]=[];accessObject["can_plan"]=false}
+        if variant=="missingArchitecture" {
+            var content=accessObject["content"] as! [String:Any];content["state"]="DECISION_NEEDED"
+            content["history"]=(content["history"] as! [[String:Any]]).filter{($0["request"] as? [String:Any])?["role"] as? String != "ARCHITECTURE"};accessObject["content"]=content
+        }
+        if variant=="blocked" {
+            var value=object["result"] as! [String:Any];var p=value["plan"] as! [String:Any]
+            p["blocking_open_points"]=[(p["open_questions"] as! [String]).first!];value["plan"]=p;value["effect_decision_eligible"]=false;value["inapplicability_reasons"]=["REQUIRED_OPEN_POINTS_UNANSWERED"];object["result"]=value;object["target_current"]=false;object["can_approve"]=false
+        }
+    }
     func count()->Int {posts}
     func access(_ connection:ConceptConnection,concept:String,source:String) async throws -> GenesisAccess {
         if denied {throw ConceptError.denied};if !available {throw ConceptError.unavailable}
@@ -148,6 +160,21 @@ actor GenesisFixture:GenesisServing {
         await peer.setUnavailable(true);try await Task.sleep(for:.seconds(3.35));XCTAssertNil(state.result);XCTAssertEqual(state.reason,"");XCTAssertFalse(state.documentsVisible)
         await peer.setUnavailable(false);try await Task.sleep(for:.seconds(3.35));XCTAssertNotNil(state.result);XCTAssertEqual(state.reason,"Exact original reason after unavailable read");XCTAssertEqual(state.expandedDocument,path);XCTAssertTrue(state.documentsVisible)
         let count=await peer.count();XCTAssertEqual(count,1);state.conceal()
+    }
+    func testRestorationCoordinatorRevealsOriginalAgainAfterActualMonitorFailureAndRecovery()async throws {
+        let peer=try GenesisFixture();let root=root();defer{try? FileManager.default.removeItem(at:root)};let state=GenesisState(root:root,transport:peer);let c=peer.connection
+        await state.load(peer.concept,source:peer.source,current:{c});await state.prepare(peer.concept,source:peer.source,target:"local",current:{c})
+        let path=try XCTUnwrap(state.result?.result.plan.documents.files.first?.path);await state.chooseDocument(path,concept:peer.concept,source:peer.source,current:{c})
+        let nav=GenesisDocumentNavigation();var anchors:[String]=[];var focuses:[String?]=[]
+        await nav.restore(state:state,concept:peer.concept,source:peer.source,current:{c},focus:{focuses.append($0)},reveal:{anchors.append($0)})
+        await nav.restore(state:state,concept:peer.concept,source:peer.source,current:{c},focus:{focuses.append($0)},reveal:{anchors.append($0)})
+        XCTAssertEqual(anchors,["genesis-detail-"+path]);let epoch=state.presentationEpoch
+        await peer.setUnavailable(true);try await Task.sleep(for:.seconds(3.35));XCTAssertNil(state.result);XCTAssertGreaterThan(state.presentationEpoch,epoch)
+        await nav.restore(state:state,concept:peer.concept,source:peer.source,current:{c},focus:{focuses.append($0)},reveal:{anchors.append($0)})
+        XCTAssertEqual(anchors.count,1)
+        await peer.setUnavailable(false);try await Task.sleep(for:.seconds(3.35));XCTAssertNotNil(state.result)
+        await nav.restore(state:state,concept:peer.concept,source:peer.source,current:{c},focus:{focuses.append($0)},reveal:{anchors.append($0)})
+        XCTAssertEqual(anchors,["genesis-detail-"+path,"genesis-detail-"+path]);XCTAssertEqual(focuses.last!,"genesis-detail-"+path);let count=await peer.count();XCTAssertEqual(count,1);state.conceal()
     }
     func testFiveLanguagesAndHostedNarrowWideLightDarkRemainSourceEvidence()async throws {
         for (_,values) in GenesisCopy.rows {XCTAssertEqual(values.count,5);XCTAssertTrue(values.allSatisfy{!$0.isEmpty})}

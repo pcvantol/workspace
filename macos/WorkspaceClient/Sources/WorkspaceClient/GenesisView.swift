@@ -7,8 +7,8 @@ struct GenesisView:View {
     let reveal:@MainActor (String)->Void
     @Environment(\.locale) private var locale
     @State private var target=""
+    @State private var targetChosenByUser=false
     @State private var confirmation:Confirmation?
-    @State private var restoredPresentation=""
     @FocusState private var focused:String?
     @StateObject private var navigation=GenesisDocumentNavigation()
     private struct Confirmation {let decision:String;let reason:String;let selection:String;let targetLabel:String;let revision:Int}
@@ -26,7 +26,7 @@ struct GenesisView:View {
                 else {ForEach(access.content.missingRoles,id:\.self) {role in Text(text(role)+" · "+text("contentRoleMissing"))}}
                 if access.targets.isEmpty {Text(text("noTargets")).foregroundStyle(.secondary)}
                 else {
-                    Picker(text("newTarget"),selection:$target) {
+                    Picker(text("newTarget"),selection:Binding(get:{target},set:{target=$0;targetChosenByUser=true})) {
                         ForEach(access.targets) {t in Text(verbatim:t.label).tag(t.id)}
                     }.accessibilityIdentifier("genesis-target").disabled(state.busy || state.pending != nil)
                     ProposalCompareControl(title:text("prepare")) {confirmation=nil;Task {await state.prepare(concept,source:source,target:target,current:current)}}
@@ -34,9 +34,9 @@ struct GenesisView:View {
                         .accessibilityIdentifier("genesis-prepare")
                 }
                 if !access.plans.isEmpty {
-                    DisclosureGroup(text("history")) {
-                        ForEach(access.plans) {p in Button(text("history")+" · "+String(p.plan_revision)) {confirmation=nil;Task {await state.open(p.operation_id,concept:concept,source:source,current:current)}}.disabled(state.busy || state.pending != nil).accessibilityIdentifier("genesis-open-"+p.operation_id)}
-                    }
+                    DisclosureGroup(text("history"),isExpanded:section("history")) {
+                        ForEach(access.plans) {p in ProposalCompareControl(title:text("history")+" · "+String(p.plan_revision)) {confirmation=nil;Task {await state.open(p.operation_id,concept:concept,source:source,current:current)}}.disabled(state.busy || state.pending != nil).accessibilityIdentifier("genesis-open-"+p.operation_id)}
+                    }.accessibilityLabel(text("history")).accessibilityIdentifier("genesis-history")
                 }
             }
             if state.busy {ProgressView()}
@@ -48,9 +48,10 @@ struct GenesisView:View {
             }
             if let envelope=state.result {plan(envelope)}
         }.frame(minWidth:0,maxWidth:.infinity,alignment:.leading)
-        .task(id:identity) {navigation.invalidate();target="";confirmation=nil;await state.load(concept,source:source,current:current);if target.isEmpty {target=state.access?.targets.first?.id ?? ""}}
+        .task(id:identity) {navigation.invalidate();target="";targetChosenByUser=false;confirmation=nil;await state.load(concept,source:source,current:current);synchronizeTarget()}
         .onChange(of:state.busy) {_,busy in if !busy {Task {await restoreDocument()}}}
-        .onChange(of:state.result?.result.plan.plan_digest) {_,_ in Task {await Task.yield();await restoreDocument()}}
+        .onChange(of:state.access?.targets.map(\.id)) {_,_ in synchronizeTarget()}
+        .onChange(of:state.result?.result.plan.plan_digest) {_,_ in synchronizeTarget();Task {await Task.yield();await restoreDocument()}}
         .onChange(of:dirty) {_,changed in if changed {confirmation=nil}}
         .onChange(of:state.result?.selection_digest) {_,_ in confirmation=nil}
         .onChange(of:target) {old,new in if old != new {confirmation=nil}}
@@ -69,19 +70,24 @@ struct GenesisView:View {
         Text(text(value.effect_decision_currently_applicable && envelope.target_current ? "approved":value.effect_history.last?.decision=="REQUEST_CHANGES" ? "changed":value.effect_history.last?.decision=="APPROVE_EFFECT" ? "historical":"notApproved")).font(.headline).accessibilityIdentifier("genesis-plan-state")
         Text(verbatim:envelope.target_label).font(.headline).accessibilityIdentifier("genesis-frozen-target")
         Text(text("planRevision")+" "+String(p.plan_revision))
+        Text(text("projectName")+" · "+source.source_product.name).font(.headline)
+        Text(text("identityUnreserved")).foregroundStyle(.secondary)
+        Text(text("targetNotObserved")).foregroundStyle(.secondary)
+        if dirty {Text(text("saveFirst")).foregroundStyle(.secondary)}
+        if envelope.can_approve==true && target != envelope.target_id {Text(text("targetSelectionMismatch")).foregroundStyle(.secondary)}
         if !envelope.target_current {Text(text("targetChanged")).foregroundStyle(.secondary)}
         Text(text("scope"));Text(verbatim:source.source_product.purpose).textSelection(.enabled)
         ForEach(p.original_content_decisions) {decision in Text(text(decision.role)+" · "+text(decision.decision=="APPROVE_CONTENT" ? "APPROVE_CONTENT":"request"))}
         ForEach(value.inapplicability_reasons,id:\.self) {Text(text($0)).foregroundStyle(.secondary)}
         if envelope.can_decide != true {Text(text("effectAccess")).foregroundStyle(.secondary)}
-        DisclosureGroup(text("steps")) {
+        DisclosureGroup(text("steps"),isExpanded:section("steps")) {
             ForEach(Array(p.effects.enumerated()),id:\.offset) {index,_ in Text(String(index+1)+". "+text("step"+String(index))).frame(maxWidth:.infinity,alignment:.leading)}
-        }
+        }.accessibilityLabel(text("steps")).accessibilityIdentifier("genesis-steps")
         if !p.blocking_open_points.isEmpty {
             Text(text("requiredQuestions")).font(.headline)
             ForEach(Array(p.blocking_open_points.enumerated()),id:\.offset) {_,point in Text(verbatim:point).textSelection(.enabled)}
         }
-        DisclosureGroup(text("questions")) {ForEach(Array(p.open_questions.filter{!p.blocking_open_points.contains($0)}.enumerated()),id:\.offset) {_,q in Text(verbatim:q).textSelection(.enabled).frame(maxWidth:.infinity,alignment:.leading)}}
+        DisclosureGroup(text("questions"),isExpanded:section("questions")) {ForEach(Array(p.open_questions.filter{!p.blocking_open_points.contains($0)}.enumerated()),id:\.offset) {_,q in Text(verbatim:q).textSelection(.enabled).frame(maxWidth:.infinity,alignment:.leading)}}.accessibilityLabel(text("questions")).accessibilityIdentifier("genesis-questions")
         Text(text("english")).font(.caption).foregroundStyle(.secondary)
         DisclosureGroup(text("documents"),isExpanded:Binding(get:{state.documentsVisible},set:{state.setDocumentsVisible($0)})) {
             ForEach(p.documents.files) {file in
@@ -101,30 +107,30 @@ struct GenesisView:View {
         TextField(text("reason"),text:Binding(get:{state.reason},set:{state.updateReason($0)}),axis:.vertical).lineLimit(2...6).accessibilityIdentifier("genesis-reason").disabled(state.busy || state.pending != nil)
         ProposalCompareControl(title:text("approve")) {confirm("APPROVE_EFFECT")}.disabled(!canDecide || envelope.can_approve != true || target != envelope.target_id).accessibilityIdentifier("genesis-approve")
         ProposalCompareControl(title:text("request")) {confirm("REQUEST_CHANGES")}.disabled(!canDecide).accessibilityIdentifier("genesis-request-changes")
-        DisclosureGroup(text("decisions")) {
+        DisclosureGroup(text("decisions"),isExpanded:section("decisions")) {
             ForEach(value.effect_history) {d in
                 VStack(alignment:.leading) {Text(text(d.decision=="APPROVE_EFFECT" ? "approve":"request"));Text(verbatim:d.reason).textSelection(.enabled);Text(text("decisionRevision")+" "+String(d.decision_revision));Text(verbatim:d.occurred_at).font(.caption);DisclosureGroup(text("source")) {Text(verbatim:d.human_binding.operator_id);Text(verbatim:d.decision_id)}}
             }
-        }
-        DisclosureGroup(text("source")) {
+        }.accessibilityLabel(text("decisions")).accessibilityIdentifier("genesis-decisions")
+        DisclosureGroup(text("source"),isExpanded:section("source")) {
             Text(verbatim:p.plan_id);Text(verbatim:p.plan_digest);Text(verbatim:p.documents.identity.project_id);Text(verbatim:p.documents.identity.repository_id)
             Text(verbatim:p.target.ep_instance_id+" / "+p.target.placement_ref+" / "+p.target.target_ref)
             Text(verbatim:envelope.producer_source);Text(verbatim:p.expires_at)
-        }.font(.caption).textSelection(.enabled)
+        }.font(.caption).textSelection(.enabled).accessibilityLabel(text("source")).accessibilityIdentifier("genesis-source")
     }
+    private func synchronizeTarget() {
+        guard !targetChosenByUser,let choices=state.access?.targets,!choices.isEmpty else {return}
+        if let frozen=state.result?.target_id,choices.contains(where:{$0.id==frozen}) {target=frozen}
+        else {target=choices[0].id}
+    }
+    private func section(_ key:String)->Binding<Bool> {Binding(get:{state.sections.contains(key)},set:{state.setSection(key,$0)})}
     private func confirm(_ decision:String) {
         guard canDecide,let selection=state.result?.selection_digest else {return}
         guard let envelope=state.result,decision != "APPROVE_EFFECT" || (envelope.can_approve==true && target==envelope.target_id) else {return}
         confirmation=Confirmation(decision:decision,reason:state.reason,selection:selection,targetLabel:envelope.target_label,revision:envelope.result.plan.plan_revision)
     }
     private func restoreDocument() async {
-        guard !state.busy,let envelope=state.result else {return}
-        let key=identity+"/"+String(state.generation)+"/"+envelope.result.plan.plan_digest
-        guard key != restoredPresentation else {return}
-        restoredPresentation=key
-        guard state.documentsVisible,!state.expandedDocument.isEmpty else {return}
-        let restored=await navigation.navigate(state.expandedDocument,restoring:true,state:state,concept:concept,source:source,current:current,focus:{focused=$0},reveal:reveal)
-        if !restored && restoredPresentation==key {restoredPresentation=""}
+        await navigation.restore(state:state,concept:concept,source:source,current:current,focus:{focused=$0},reveal:reveal)
     }
     private func navigateDocument(_ path:String) {
         Task {await navigation.navigate(path,state:state,concept:concept,source:source,current:current,focus:{focused=$0},reveal:reveal)}

@@ -105,3 +105,17 @@ conceal protected presentation and later authorized reads restore its original
 reason/document without another effect. Reused native focus controls expose labels
 and visible focus. Sixteen source-only native cases pass; strict coverage and
 actual repaired-artifact acceptance are still required.
+
+Source6 binds restore de-duplication and late focus to a presentation epoch as
+well as the existing scope/generation/original operation. The actual hosted
+View regression sees document → unavailable read/concealment → original recovery
+→ same document anchor again, without another effect. Opened inspect sections
+persist with the exact private plan presentation. Source-only20 native cases
+pass with >80.2% on all five Genesis production files in that targeted run;
+current full owning validation and installed acceptance remain required.
+The original project name comes from the frozen R52 source; proposed/unreserved
+identity and unobserved target availability are explained in five languages.
+Reopen restores that original target unless the user explicitly chooses another
+new-plan target. No identifier is inferred from name or path.
+
+See [early original candidate evidence](evidence/plan109/early-trial1/README.md).

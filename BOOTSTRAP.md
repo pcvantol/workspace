@@ -27,6 +27,16 @@ controls, protected implementation, own nonempty finalization and NEW exact-fina
 main installed/GUI/readback/cleanup remain OPEN. Trial1 read failures/timeouts and
 proof-driver assumption failures are retained, not relabeled as product PASS.
 
+Source6/correction5 binds restoration to a presentation epoch and the real
+navigation coordinator; an actual hosted View failure→same-original recovery
+now invokes the original anchor again. Original opened inspect sections persist
+per exact plan. Twenty directed native cases PASS; source6f executable lines:
+Copy100%, Navigation97.5%, State92.54%, Transport98.99%, View85.29%. Last localized
+accessibility labels/shared history-control followup passes three hosted cases.
+These are source-only evidence, not a new packaged acceptance. Full validation
+and current independent review remain required. Original candidate images and a
+sanitized limited receipt are retained in docs/evidence/plan109/early-trial1.
+
 ## Plan108 protected current-rights/focus repair — own finalization pending
 
 Protected repair main `a1a7c1c3b6c75b9bfa209ba392759aeb511022e6` equals exact reviewed743f967 tree.

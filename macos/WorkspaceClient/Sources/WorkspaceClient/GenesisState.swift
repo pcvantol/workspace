@@ -14,19 +14,21 @@ struct GenesisPending:Codable,Sendable {
     @Published private(set) var reason=""
     @Published private(set) var expandedDocument=""
     @Published private(set) var documentsVisible=false
+    @Published private(set) var sections:Set<String>=[]
     private var presentationKey:String?
     struct Presentation:Codable {
         let actor:String;let context:String;let concept:String;let source:String;let planDigest:String
-        var document:String;var reason:String;var documentsVisible:Bool?
+        var document:String;var reason:String;var documentsVisible:Bool?;var sections:[String]?
     }
     private let transport:any GenesisServing
     let records:PrivateLocalRecordStore
     private(set) var generation=0
+    private(set) var presentationEpoch=0
     private var monitor:Task<Void,Never>?
     private var expiry:Task<Void,Never>?
     private var planOperation:String?
     init(root:URL,transport:any GenesisServing=GenesisTransport()) {self.transport=transport;records=PrivateLocalRecordStore(root:root,namespace:"genesis-bootstrap")}
-    func conceal() {monitor?.cancel();monitor=nil;expiry?.cancel();expiry=nil;generation+=1;access=nil;result=nil;pending=nil;busy=false;planOperation=nil;presentationKey=nil;reason="";expandedDocument="";documentsVisible=false;phase="choose"}
+    func conceal() {presentationEpoch+=1;monitor?.cancel();monitor=nil;expiry?.cancel();expiry=nil;generation+=1;access=nil;result=nil;pending=nil;busy=false;planOperation=nil;presentationKey=nil;reason="";expandedDocument="";documentsVisible=false;sections=[];phase="choose"}
     private func key(_ connection:ConceptConnection,_ concept:ProjectConcept,_ source:ConceptBaselineResult)->String {
         SHA256.hash(data:Data((connection.key+"\n"+concept.actor_id+"\n"+concept.id+"\n"+source.operation_id).utf8)).map{String(format:"%02x",$0)}.joined()
     }
@@ -54,7 +56,8 @@ struct GenesisPending:Codable,Sendable {
     }
     private func failure(_ error:Error,ticket:Int) {
         guard ticket==generation else {return}
-        result=nil;access=nil;presentationKey=nil;expandedDocument="";documentsVisible=false;reason=""
+        presentationEpoch+=1
+        result=nil;access=nil;presentationKey=nil;expandedDocument="";documentsVisible=false;sections=[];reason=""
         switch error {
         case ConceptError.denied:conceal();phase="access"
         case ConceptError.conflict:phase="conflict"
@@ -82,20 +85,26 @@ struct GenesisPending:Codable,Sendable {
     private func restorePresentation(_ value:GenesisEnvelope,connection:ConceptConnection,concept:ProjectConcept,source:ConceptBaselineResult) {
         let k=SHA256.hash(data:Data(("presentation\n"+key(connection,concept,source)+"\n"+value.result.plan.plan_digest).utf8)).map{String(format:"%02x",$0)}.joined()
         guard k != presentationKey else {return}
-        presentationKey=k;reason="";expandedDocument="";documentsVisible=false
+        presentationKey=k;reason="";expandedDocument="";documentsVisible=false;sections=[]
         guard let data=try? records.load(k),let saved=try? JSONDecoder().decode(Presentation.self,from:data),
               saved.actor==concept.actor_id,saved.context==concept.context_id,saved.concept==concept.id,saved.source==source.operation_id,saved.planDigest==value.result.plan.plan_digest,saved.reason.unicodeScalars.count<=2000,
               saved.document.isEmpty || value.result.plan.documents.files.contains(where:{$0.path==saved.document}) else {return}
-        reason=saved.reason;expandedDocument=saved.document;documentsVisible=saved.documentsVisible ?? !saved.document.isEmpty
+        guard Set(saved.sections ?? []).isSubset(of:["history","steps","questions","decisions","source"]) else {return}
+        reason=saved.reason;expandedDocument=saved.document;documentsVisible=saved.documentsVisible ?? !saved.document.isEmpty;sections=Set(saved.sections ?? [])
     }
     private func savePresentation() throws {
         guard let k=presentationKey,let result else {return}
-        let record=Presentation(actor:result.actor_id,context:result.context_id,concept:result.concept_id,source:result.source_operation_id,planDigest:result.result.plan.plan_digest,document:expandedDocument,reason:reason,documentsVisible:documentsVisible)
+        let record=Presentation(actor:result.actor_id,context:result.context_id,concept:result.concept_id,source:result.source_operation_id,planDigest:result.result.plan.plan_digest,document:expandedDocument,reason:reason,documentsVisible:documentsVisible,sections:sections.sorted())
         try records.saveBounded(JSONEncoder().encode(record),key:k)
     }
     func updateReason(_ text:String) {
         guard result != nil,text.unicodeScalars.count<=2000 else {return}
         reason=text
+        do {try savePresentation()} catch {failure(error,ticket:generation)}
+    }
+    func setSection(_ key:String,_ expanded:Bool) {
+        guard result != nil,["history","steps","questions","decisions","source"].contains(key) else {return}
+        if expanded {sections.insert(key)} else {sections.remove(key)}
         do {try savePresentation()} catch {failure(error,ticket:generation)}
     }
     func setDocumentsVisible(_ visible:Bool) {

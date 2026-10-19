@@ -5,12 +5,22 @@ import Foundation
 @MainActor final class GenesisDocumentNavigation:ObservableObject {
     @Published private(set) var busy=false
     private var ticket=0
-    func invalidate() {ticket+=1;busy=false}
+    private var restoredIdentity=""
+    func invalidate() {ticket+=1;busy=false;restoredIdentity=""}
+    func restore(state:GenesisState,concept:ProjectConcept,source:ConceptBaselineResult,current:@escaping @MainActor () async throws->ConceptConnection,focus:@MainActor (String?)->Void,reveal:@MainActor (String)->Void) async {
+        guard !state.busy,let envelope=state.result else {return}
+        let key=concept.id+"/"+String(concept.revision)+"/"+source.operation_id+"/"+String(state.generation)+"/"+String(state.presentationEpoch)+"/"+envelope.result.plan.plan_digest
+        guard key != restoredIdentity else {return}
+        restoredIdentity=key
+        guard state.documentsVisible,!state.expandedDocument.isEmpty else {return}
+        let restored=await navigate(state.expandedDocument,restoring:true,state:state,concept:concept,source:source,current:current,focus:focus,reveal:reveal)
+        if !restored && restoredIdentity==key {restoredIdentity=""}
+    }
     @discardableResult func navigate(_ path:String,restoring:Bool=false,state:GenesisState,concept:ProjectConcept,source:ConceptBaselineResult,current:@escaping @MainActor () async throws->ConceptConnection,focus:@MainActor (String?)->Void,reveal:@MainActor (String)->Void) async ->Bool {
         guard !busy,!state.busy,let original=state.result else {return false}
-        ticket+=1;let request=ticket,generation=state.generation,digest=original.result.plan.plan_digest,operation=original.operation_id
+        ticket+=1;let request=ticket,generation=state.generation,epoch=state.presentationEpoch,digest=original.result.plan.plan_digest,operation=original.operation_id
         func valid()->Bool {
-            guard request==ticket,generation==state.generation,!state.busy,let value=state.result,value.operation_id==operation,value.result.plan.plan_digest==digest,
+            guard request==ticket,generation==state.generation,epoch==state.presentationEpoch,!state.busy,let value=state.result,value.operation_id==operation,value.result.plan.plan_digest==digest,
                   value.actor_id==concept.actor_id,value.context_id==concept.context_id,value.concept_id==concept.id,value.source_operation_id==source.operation_id,
                   WorksetReleaseWire.date(value.expires_at).map({$0>Date()})==true else {return false}
             return true
