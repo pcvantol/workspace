@@ -1,0 +1,77 @@
+{
+  "scope": "TARGETED_SOURCE_BOUND_CANDIDATE_NOT_FINAL_MAIN_OR_COMPLETE_DELIVERY",
+  "source": "d13b0c3f4f1a9ba523648d8766697860c15ed81c",
+  "reviewed_head": "c82f416e0813f62223bc8ae461bb1eefcc9ef836",
+  "production_and_tests_unchanged": true,
+  "artifact": 5,
+  "trial": 5,
+  "version": "2.8.35",
+  "producer_version": "2.22.1",
+  "producer_source": "8ee60c8409b2c3801e70cf129f20f1ff1480d03b",
+  "images": [
+    {
+      "file": "AGENTS-open.jpg",
+      "sha256": "1a52ebb5c5a27be201262a69cfa7bb7b09875692c09883679c89c98c1f7104f7",
+      "bytes": 382945
+    },
+    {
+      "file": "AGENTS-opener.jpg",
+      "sha256": "1dbd63bce4e95033f0e82cf047cb7d3380598f0dd2f06ea01510b42ac5265ff5",
+      "bytes": 347151
+    },
+    {
+      "file": "long-document.jpg",
+      "sha256": "5b026ff8b109dd2ff738c1ce4122a301b6e8deab490914690d46e85d1d3be52b",
+      "bytes": 381869
+    }
+  ],
+  "actual_focused_accessibility_names": [
+    {
+      "role": "AXButton",
+      "identifier": "genesis-detail-AGENTS.md",
+      "name": "Terug naar documentkeuze",
+      "name_attribute": "AXAttributedDescription",
+      "own_focused_process_only": true,
+      "permission_requested": false
+    },
+    {
+      "role": "AXButton",
+      "identifier": "genesis-document-AGENTS.md",
+      "name": "AGENTS.md",
+      "name_attribute": "AXAttributedDescription",
+      "own_focused_process_only": true,
+      "permission_requested": false
+    },
+    {
+      "role": "AXButton",
+      "identifier": "genesis-detail-engineering/baselines/portable-docs/1.0.0/baseline-lock.schema.json",
+      "name": "Terug naar documentkeuze",
+      "name_attribute": "AXAttributedDescription",
+      "own_focused_process_only": true,
+      "permission_requested": false
+    }
+  ],
+  "spoken_VoiceOver_tested": false,
+  "system_settings_or_permission_changes": false,
+  "reader_missing_attributed_name_observations": "RETAINED_INCOMPLETE_NOT_PRODUCT_FAILURE",
+  "original_failures": [
+    "documentation parity allowlist rejected before trial start",
+    "Business response timeout, original operation found by GET; no POST retry",
+    "R56 plan response incomplete, original operation recovered by GET; no POST retry"
+  ],
+  "post_counts": {
+    "/v1/onboarding/plans": 1,
+    "/v1/project-proposal-decisions/decisions": 2,
+    "/v1/genesis-bootstrap/plans": 1,
+    "/v1/genesis-bootstrap/decisions": 0
+  },
+  "effect_decision_grant_issued": false,
+  "Apply_EP_target_Git_Mission_model_POSTs": 0,
+  "cleanup": {
+    "all7_own_revocations_pass": true,
+    "all5_own_processes_stopped": true,
+    "before_fixed_deadline": true,
+    "originals_preserved": true
+  },
+  "independent_Quality_Security_UX": "COMPLETE_SCOPED_IMPLEMENTATION_AND_PRIVACY_PASS_NOT_FINAL_MAIN"
+}

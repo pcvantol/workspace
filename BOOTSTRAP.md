@@ -1,3 +1,14 @@
+# Workspace Bootstrap
+
+## Plan109 protected implementation and own finalization — 19 October 2026
+
+Genesis plan/separate decision implementation PR189 is protected on main
+0bcc70dc28a8dc9541c4c3275822c5bb48ce2e58, exact reviewed c82f416 tree.
+Read [own finalization](docs/WORKSPACE_GENESIS_PLAN_DECISION_FINALIZATION_V1.md).
+Independent source/candidate acceptance and current tests/strict coverage/CI are
+complete; own finalization and NEW exact-final-main installed/GUI evidence remain
+required. No Apply, EP effect, next feature or reopening plan108/LINK.
+
 ## Plan109 — native Genesis plan/effect decision, selected and OPEN
 
 Same sole writer; assignment `L4-NATIVE-GENESIS-EFFECT-PLAN-DECISION-V1-20261019`.
